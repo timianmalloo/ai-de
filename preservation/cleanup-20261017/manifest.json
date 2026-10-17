@@ -1,0 +1,3170 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "cea76307fe75b943a945cf837139e6a80ea2595d",
+  "original_branch": "refs/heads/atlas/e1-core-metadata",
+  "archive_sha256": "3f08bec68ab7b3c2495bdfab92f763a3bdc1bfa67dfd9bcd7be5adcc26cce288",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 41943040,
+      "sha256": "207859a722451ae3297f065719beb3ba3fb4b8e2df51bc15dc2242096c8de03f"
+    },
+    {
+      "path": "evidence.zip.part002",
+      "bytes": 41943040,
+      "sha256": "9842bfc1057c78e936b5f30d56203d77b7268964164bd2aef8be54788473ec33"
+    },
+    {
+      "path": "evidence.zip.part003",
+      "bytes": 4774808,
+      "sha256": "a4510f7d3ad1ff976184902ac3831fe2e953e683b322ec99220c6d5f1e01a46d"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/owner78-core-metadata/author-committed-receipt.json",
+      "bytes": 429506,
+      "sha256": "0f3bf509f4b7ebf37afdb37ed721588086e02cf1201563e3566249392fc7311a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/author-final-receipt.json",
+      "bytes": 429723,
+      "sha256": "25ceb4559f2129d6fa6b635942752963c0ead1f6b872dfe006358837a2e91241"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/author-receipt-uncommitted.json",
+      "bytes": 429318,
+      "sha256": "76ad7a22f50c9e0df6e170eaaa8c3a3232070305b41ba26d39fc24559fa26d50"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Ipc_AtlasRemoteReader.cs.txt",
+      "bytes": 18101,
+      "sha256": "ae256dae237e622e557bb459fdacd191c3c1afff6f7fdf751a2c17c4fd296811"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Ipc_AtlasWorkspaceOperations.cs.txt",
+      "bytes": 8316,
+      "sha256": "caa9bfabb03887b70ffc70a95e17d54cc680fbb16f91e137872f338e2de12648"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasManifest.cs.txt",
+      "bytes": 23767,
+      "sha256": "cff786a8542829102f50b4cba5d2487db66e19a204a34d7a57aa9313f383bf81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasQueryContracts.cs.txt",
+      "bytes": 15401,
+      "sha256": "8a08ea0ece9b36332d84b335707cd79b8e7b53253cec1ba7b4302a337711ea45"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasQueryService.cs.txt",
+      "bytes": 39463,
+      "sha256": "4b1d9a982cdd3fa66545b93207a6bcb8e5c8ca6180523b18be43f7d686476184"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasReadScopeIssuer.cs.txt",
+      "bytes": 29821,
+      "sha256": "f9513a0087a529b394ef71ad74c425c24ca0c3826b7ba4b8f5d5fa20e26242b1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasReaderContracts.cs.txt",
+      "bytes": 5558,
+      "sha256": "fb2eacaf17d3f2be26c92874c7be449806000cc5e8dd0d4292e9abea17b30cfc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_AtlasReaderProjection.cs.txt",
+      "bytes": 42676,
+      "sha256": "0cb4726b97961a0156eb229f535f672b37dab103ab46f27f4a1a6bf1939fb11c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/src_AiDe.Core_Understanding_CSharpDeclarationObservation.cs.txt",
+      "bytes": 27777,
+      "sha256": "4222081e135dd1629a54327678e8ba4d265c467119360a7b5094d949d2a6a41d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticObservationTests.cs.txt",
+      "bytes": 18693,
+      "sha256": "ffd2034157c6bf33dd2646e22b6af4b43aca852240b09b9ea62e4670576edc3d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticReaderContractTests.cs.txt",
+      "bytes": 35790,
+      "sha256": "8953c7362c931dfc08d97d122df9400a242c724ff251938496b8e07f4d30c56b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/charge-schema-red/owner78-charge-schema-red.trx",
+      "bytes": 16976,
+      "sha256": "51445516484505b1c527b8f25f36459b70c5ed27ab191b2ae5278b5426bd1838"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-core/owner78-final-core.trx",
+      "bytes": 728148,
+      "sha256": "e2e77c62bd6c9f68d3a5700d25a70469c36dc3acb94565b3509617d979c97554"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "f44bd13fa1aeef04d4ef99c5e090e4b9a07750439131885ce2b55c2107d9f51b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-late-operation.json",
+      "bytes": 295,
+      "sha256": "3231620ae1d4bb9f8e3bb199c597d289bad66da6dc18df050807df99ca88ca88"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 183,
+      "sha256": "38fcfd354e7f52cf13e298951faffc1c8a4ef4cdffeb5580565575ec0685742f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 187,
+      "sha256": "00b60888e601e0bb3155c276ff86259b6a9c8c8d4e6897542ef20caa78f29fde"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 185,
+      "sha256": "da8ac4ba62c4656b88412a1ed47b4bfcdc39bbae5cad72626102f412db30ba6e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 184,
+      "sha256": "1076845eaa9eed3098d1e274ba68996353a94b1854cfbc6e94e3ebc6936ecd5f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/candidate.patch",
+      "bytes": 74027,
+      "sha256": "7504c6d7fc337849767ec3d55261d668400c5beae932c23849145329f668d9bc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/manifest.json",
+      "bytes": 1788,
+      "sha256": "0d61813c095cd5973c70da14fd692832169ad91410a89f181d7fcf9c4ab70103"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Ipc_AtlasRemoteReader.cs.txt",
+      "bytes": 18101,
+      "sha256": "ae256dae237e622e557bb459fdacd191c3c1afff6f7fdf751a2c17c4fd296811"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Ipc_AtlasWorkspaceOperations.cs.txt",
+      "bytes": 8316,
+      "sha256": "caa9bfabb03887b70ffc70a95e17d54cc680fbb16f91e137872f338e2de12648"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasManifest.cs.txt",
+      "bytes": 23767,
+      "sha256": "cff786a8542829102f50b4cba5d2487db66e19a204a34d7a57aa9313f383bf81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasQueryContracts.cs.txt",
+      "bytes": 15401,
+      "sha256": "8a08ea0ece9b36332d84b335707cd79b8e7b53253cec1ba7b4302a337711ea45"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasQueryService.cs.txt",
+      "bytes": 39701,
+      "sha256": "aada0f73b46f460d59f62bf4aec3caa11173552fbfb4e4e4d65bce6e0731a086"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasReadScopeIssuer.cs.txt",
+      "bytes": 29821,
+      "sha256": "f9513a0087a529b394ef71ad74c425c24ca0c3826b7ba4b8f5d5fa20e26242b1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasReaderContracts.cs.txt",
+      "bytes": 5798,
+      "sha256": "21fec4323ca93e9b4b9bc64b887b6a0a7665c5c932da6639f1ab65ac6e1f3147"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_AtlasReaderProjection.cs.txt",
+      "bytes": 42827,
+      "sha256": "81a50620fd70cc968cbe656d6f1a88829ec9ba1e62ad59d923ff92afe21277b9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/src_AiDe.Core_Understanding_CSharpDeclarationObservation.cs.txt",
+      "bytes": 27777,
+      "sha256": "4222081e135dd1629a54327678e8ba4d265c467119360a7b5094d949d2a6a41d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticObservationTests.cs.txt",
+      "bytes": 18693,
+      "sha256": "ffd2034157c6bf33dd2646e22b6af4b43aca852240b09b9ea62e4670576edc3d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/final-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticReaderContractTests.cs.txt",
+      "bytes": 35880,
+      "sha256": "877011a1038efe209deba0a2b454c849b5af28b719c072faaf0aa5c14535829b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/first-product/owner78-first-product.trx",
+      "bytes": 69147,
+      "sha256": "145edfe49151882189d7bf25df55de39098afa1df1d269a626446828c8a38d55"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "40b71eeced23d9d42909825a8c31e59c6945bc3cc5d43324e8cb38782ada5588"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-late-operation.json",
+      "bytes": 295,
+      "sha256": "3231620ae1d4bb9f8e3bb199c597d289bad66da6dc18df050807df99ca88ca88"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 183,
+      "sha256": "38fcfd354e7f52cf13e298951faffc1c8a4ef4cdffeb5580565575ec0685742f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 187,
+      "sha256": "00b60888e601e0bb3155c276ff86259b6a9c8c8d4e6897542ef20caa78f29fde"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 185,
+      "sha256": "da8ac4ba62c4656b88412a1ed47b4bfcdc39bbae5cad72626102f412db30ba6e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 184,
+      "sha256": "1076845eaa9eed3098d1e274ba68996353a94b1854cfbc6e94e3ebc6936ecd5f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v1/owner78-full-v1.trx",
+      "bytes": 731770,
+      "sha256": "511e6e014708c2ec4be9c8ae79d982812b7c0df66630f42cc3e03747b1de6d12"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "1cc8b2f790ebaf14788f3ff80be75eb7fb32d370859a6234838b58cc72fd9d3e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-late-operation.json",
+      "bytes": 295,
+      "sha256": "3231620ae1d4bb9f8e3bb199c597d289bad66da6dc18df050807df99ca88ca88"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 183,
+      "sha256": "38fcfd354e7f52cf13e298951faffc1c8a4ef4cdffeb5580565575ec0685742f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 187,
+      "sha256": "00b60888e601e0bb3155c276ff86259b6a9c8c8d4e6897542ef20caa78f29fde"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 185,
+      "sha256": "da8ac4ba62c4656b88412a1ed47b4bfcdc39bbae5cad72626102f412db30ba6e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 184,
+      "sha256": "1076845eaa9eed3098d1e274ba68996353a94b1854cfbc6e94e3ebc6936ecd5f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/candidate.patch",
+      "bytes": 72597,
+      "sha256": "6ce0a51e2f729333d93eca7d31b61a63f6e3c0af19fb3c33962ca3179c80be0b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/manifest.json",
+      "bytes": 1788,
+      "sha256": "86c66f56828a8b632a73d31f43d514e20e54aec6a8e19e634c628ff14b1d8f68"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Ipc_AtlasRemoteReader.cs.txt",
+      "bytes": 18101,
+      "sha256": "ae256dae237e622e557bb459fdacd191c3c1afff6f7fdf751a2c17c4fd296811"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Ipc_AtlasWorkspaceOperations.cs.txt",
+      "bytes": 8316,
+      "sha256": "caa9bfabb03887b70ffc70a95e17d54cc680fbb16f91e137872f338e2de12648"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasManifest.cs.txt",
+      "bytes": 23767,
+      "sha256": "cff786a8542829102f50b4cba5d2487db66e19a204a34d7a57aa9313f383bf81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasQueryContracts.cs.txt",
+      "bytes": 15401,
+      "sha256": "8a08ea0ece9b36332d84b335707cd79b8e7b53253cec1ba7b4302a337711ea45"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasQueryService.cs.txt",
+      "bytes": 39701,
+      "sha256": "aada0f73b46f460d59f62bf4aec3caa11173552fbfb4e4e4d65bce6e0731a086"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasReadScopeIssuer.cs.txt",
+      "bytes": 29821,
+      "sha256": "f9513a0087a529b394ef71ad74c425c24ca0c3826b7ba4b8f5d5fa20e26242b1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasReaderContracts.cs.txt",
+      "bytes": 5558,
+      "sha256": "fb2eacaf17d3f2be26c92874c7be449806000cc5e8dd0d4292e9abea17b30cfc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_AtlasReaderProjection.cs.txt",
+      "bytes": 42676,
+      "sha256": "0cb4726b97961a0156eb229f535f672b37dab103ab46f27f4a1a6bf1939fb11c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/src_AiDe.Core_Understanding_CSharpDeclarationObservation.cs.txt",
+      "bytes": 27777,
+      "sha256": "4222081e135dd1629a54327678e8ba4d265c467119360a7b5094d949d2a6a41d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticObservationTests.cs.txt",
+      "bytes": 18693,
+      "sha256": "ffd2034157c6bf33dd2646e22b6af4b43aca852240b09b9ea62e4670576edc3d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2-source/tests_AiDe.Core.Tests_Understanding_AtlasStaticReaderContractTests.cs.txt",
+      "bytes": 35024,
+      "sha256": "907d642108a88803ffc5af8bb440d2b96220ee9b3ff82ab08af07cc14364cd6c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/full-v2/owner78-full-v2.trx",
+      "bytes": 726646,
+      "sha256": "0800d3083c85cfba84ccf87a606931915f27cfe287e95383731a366f29f83461"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/.msCoverageSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.AcpProbe.deps.json",
+      "bytes": 13608,
+      "sha256": "99d137ad3f52bb07f9ae17ed87bf21e4da8fa3cdd532950d29a0d88540aa7cce"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.AcpProbe.exe",
+      "bytes": 162816,
+      "sha256": "102e43e660a61c2f2ba246da4a13a19ef9bc4e6229a1876a78fe010b99b23205"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.AcpProbe.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.TerminalHost.deps.json",
+      "bytes": 13620,
+      "sha256": "8e6705de304250b4436e0c81886a08a723ab88101a488cd0cf89ccb5a02b9dcb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.TerminalHost.exe",
+      "bytes": 162816,
+      "sha256": "ba53f6553ec515ecdc383fe26704a84e0e7a59b315632475fec5d5fd73b4baae"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.TerminalHost.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.Tests.deps.json",
+      "bytes": 30015,
+      "sha256": "4547690a562bfdb5e0bf96e188fa1867f994b1a76420fba38ff1db96bc3a9d23"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.Tests.dll",
+      "bytes": 2447360,
+      "sha256": "04fccb6590a14792bc1adde0d6ba31e90d799c11c2c8d2267dafadaa1874a7fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.Tests.runtimeconfig.json",
+      "bytes": 318,
+      "sha256": "f0c3aeb0de8768c419a86c1dc92e79d302ce70a018d1a86de3efb13bd0f00a4c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Core.dll",
+      "bytes": 2330624,
+      "sha256": "6353ae7ed46937fe3d47cb510bd41d192da53c0f7e38ef5f5731726e8eb1a0db"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Daemon.deps.json",
+      "bytes": 13598,
+      "sha256": "7524f9133c7542e4042d51d62f74abb6d0557db7004687b3ac03960fb5e06289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Daemon.exe",
+      "bytes": 162304,
+      "sha256": "24303b429497219c0eb6e799ff55e63369d479333883a47311e24d96805ca8ff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Daemon.runtimeconfig.json",
+      "bytes": 327,
+      "sha256": "b0aba54930a2518eaf726583d5dcc3edf934e380cd7f7be076680446c1105eb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Mcp.deps.json",
+      "bytes": 13578,
+      "sha256": "df93b9d9055f583ac269685281d5eef7f2ad4d02b751df65737951a5f779248e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Mcp.dll",
+      "bytes": 53760,
+      "sha256": "ac48789a9dd7c24c41d69d20b79fc48cac4606497f417bae22a10c2f0d1c755c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Mcp.exe",
+      "bytes": 162304,
+      "sha256": "886e6c64486286c78c1c23fc5b0f732ec79ce4b50e3bd4f89b898bb828f52ad6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/AiDe.Mcp.runtimeconfig.json",
+      "bytes": 377,
+      "sha256": "79d12e54ac614d5fe8cdeb8849ab5f6568250bb7ac1c2647c2bce5876475f20e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/CoverletSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.CodeAnalysis.CSharp.dll",
+      "bytes": 6697768,
+      "sha256": "53302acca07700e9bb10dcf21034435d6e0454c8eebf2481164ec13e520004c9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.CodeAnalysis.dll",
+      "bytes": 3029800,
+      "sha256": "395736b2d0e02be77bedc3847b269da7a93bf8e49cd3431a4a8e68d2c52d5846"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.Data.Sqlite.dll",
+      "bytes": 177504,
+      "sha256": "4abd9c2a61e580eb853e93ca8953a3cef2c05714ae28d2d1859d4dbc5e5700bc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.TestPlatform.CommunicationUtilities.dll",
+      "bytes": 137776,
+      "sha256": "e38a359aa502bb1867d6092dca9aba5c130dd6f9111decea8156aa746b2c69e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.TestPlatform.CoreUtilities.dll",
+      "bytes": 98336,
+      "sha256": "f6e2495c44640d8915b2aefc938f391c970300266da014350ff35512a448ee84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.TestPlatform.CrossPlatEngine.dll",
+      "bytes": 316960,
+      "sha256": "d55399bc66dc5b451d60ad82662452ca4a5f735918135dfc91ca9b5e3e38a6ab"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.TestPlatform.PlatformAbstractions.dll",
+      "bytes": 51232,
+      "sha256": "7b919ce4429c3b7b8fa2c36fd641b70b2f459a30ecb7c65fd80f437673cec930"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.TestPlatform.Utilities.dll",
+      "bytes": 67104,
+      "sha256": "01ffd64d25a4bd905aef9594d2aa700e020273a90a77a8720af6bec8b4fd5444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+      "bytes": 17464,
+      "sha256": "a753bc15f23a957f4f91a059376e4472c6bacd1503622de4b9b2b079ad8ea289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.VisualStudio.TestPlatform.Common.dll",
+      "bytes": 248352,
+      "sha256": "059aa2f335c3f7b14ac3fb7caa1625bc2767581b9548e9ff53a246c7f2f94d6a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+      "bytes": 334392,
+      "sha256": "f83e38ee9020baa42e284e2299e233070ffa86ce4b10213583f9b7c8a521bcd0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/Newtonsoft.Json.dll",
+      "bytes": 712464,
+      "sha256": "22c649f75fce5be7c7ccda8880473b634ef69ecf33f5d1ab8ad892caf47d5a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/SQLitePCLRaw.batteries_v2.dll",
+      "bytes": 5120,
+      "sha256": "815ce410c9eab531dd219318e3ba16c5e38e83d361cfbbdbb4bbca222c497b0b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/SQLitePCLRaw.core.dll",
+      "bytes": 51200,
+      "sha256": "af340ac9eb9195795660d7fc1114f486b6ab63998f33176e2f24c8e0acb9aa84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/SQLitePCLRaw.provider.e_sqlite3.dll",
+      "bytes": 36864,
+      "sha256": "df996bcae63c2cabcfe8d4b9c5110eb39a2a4706178b07d875665391c6eb3995"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/YamlDotNet.dll",
+      "bytes": 300032,
+      "sha256": "d618138109a40e4a7250e49e2abad8c450e3636bee18d7499ab231e37fa9150a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 441640,
+      "sha256": "f719e4b45e06f203a1c2d4e79fa2b496f8b16f6f63c4265809844def53ad41f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48424,
+      "sha256": "818f84b95fd8273ec0e9753f90af2a98820bb0492cb53268db70a7403eaaa2af"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16440,
+      "sha256": "b983773dc5112854fe411fa22223e929c7fa230a1a843fcc58023237aca326f4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "26be9bb3a8932ba04014e4ae9b8f20a0222a3e2c1a1b41cec11d49bff609ce72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "2f776bf0e946ffcd3f8a38af2653137785eb55db3cdb0c5a392bbe07d2ccc082"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20520,
+      "sha256": "cd637384e1b3973be3c18409ed886f8234e2e3c3a65edf7d721d154e26aa64f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23624,
+      "sha256": "12b0829d24f6f53f0e22fcbe370d3f91b67bbcaca7f0d82323d08cd7752f4519"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 471848,
+      "sha256": "d936e4075af47eb5a34e8418e6bf1eaa3e4d3c86d6b40ab7dffefbd8e6f8b594"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50456,
+      "sha256": "1b1d805608929ec02b8acc2fb8c09ec7a335797b11686719ee2112d5bfbb18fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "d11f2a5262947fc1b6d426a6e1828325cedf40fee28e29ed856804ec9ef3f15c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "403e0eaf8528656c0b47c31cd5fe9a25b8fd733adccb8e6d47a09f28658b5283"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "7ad3c45f58aa4d030fd5d65d9d4ac9cabbc06d79d071c29727b5376cd3459d77"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21064,
+      "sha256": "ca308a5d314fa7d7e9cae94083cc1f62375ac225094d289961d9bce49b564b65"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "e91489bb7ec3e2e97d19cf32bc5e3f7fc57e994e0315f0870fd2024ccb2cf337"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 461608,
+      "sha256": "559fa2a4d36a832a5e05f92dabff6ba737cc0443f95850611c485b21592046fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49960,
+      "sha256": "4c83f9c227fa9a912209c5450380ef34e84d91867aff8208300e8aadab269456"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "ddbdd3bf9afe6ddd3babd4f0358ab2f4697fc5d5ec72b60cb772085af9bf9859"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "7ec8e83494a8a50f1158c85d29b98e87c85d74ad5c4d94e2e9656e1cf60b0dff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21032,
+      "sha256": "67063a36cfcae95b3ea4646b88c3cf3642f0914dfc06ecc5fc4d3f77e0e97e64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b5340851bd9cb979d497f67123d09f91ba20ac9d2b3e0e17076fd2abd615c933"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "f19c11474e9074d5407f9b5a78cfb0bc1b4aeb90ffec819a676f63509cec443a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fixtures/claude-trust-gate.escaped.txt",
+      "bytes": 1695,
+      "sha256": "290771e7b5e1b01e4adbc284718e0a9d15106b4015280af206f8f924491533d9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473880,
+      "sha256": "c538cddb8e217bc1b96312956b7923855d6f392e467d7b7c7ce9341d9da1f23c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a92746c7d8f241e7d207a7995007f59d694a10e5f8903ceadfc5a73c195f63a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "044cf1373cc4527fff78adb5ad70489532303b58ba0de2c059c422926af46c4b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "78d675cbab45a56cc8916466ba13f16fab18a44fd3ad4481c8f5f4e13b1f8b5d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "3fe869c312793444f9509af17ca0b14f444cbddef60a47251f441a5d7859a05f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "5a8f4f4ea8b5a332883a67202877bd19100b21d766bf0443ffec21610dfb2ecf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "ba030af725dea6bceb72c4eb49ccc3520222a97ea0fae812e16b7ba78450b98a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 468240,
+      "sha256": "995a868345367e1c68011617d8b8ac85decf2dd15fb85ea92a28205e2c6a5fba"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50440,
+      "sha256": "9489584f3d6ec723bfd2adf1a0d1bdc9bafcadab857fa7c48d18157e223a5541"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "b023b85f510d1e5c6d5183ba51614ea1b6dee5c25ab287773bebc8cdb36e3168"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a1ac732615a7dc5c59e01a1570da23210ede65ef24d5bb101294cf68481fe984"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "b6b4b25e77f51f4ef5252512d1ea2cd8025ff388852ea93897b136bcc33bb5e0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b9f6be59cc1c05594f9b19db9e72add58d6b37661397f81a62d4fee37e7be621"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "93911f7a3c20cecd88ddb85dfdaaa9bf768e72a0fa5f745f3f3ae40dc78da66b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 515376,
+      "sha256": "866eabb5f0f51df82de1a2be933c542df60617d033f463e7010719bdc6f55fa7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 54040,
+      "sha256": "9b0bea97965c04ce925e92a5b8575b866c75b185a89741185f4b24f72182a0bb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "5db61a11e8c40176f0293658e48bc955ebed6a3dd46d3808aacc762f71732544"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "1ded53cdfde469bbb90d12f371891d3789a835e976557541c43166f027f7f111"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 22088,
+      "sha256": "f6d2748ee250f131374c306d7dc8a905464dbda3f75e857d333946c7ff89494c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21552,
+      "sha256": "c55083e71e3a5bb8dbe36e10eb12b301ccfd809e8fe1187350beb6774c7f794b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24632,
+      "sha256": "c2c077136e3ccfd8a249758979c0f754fe3c8a35b0c6478aa7a87ea38a817690"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473392,
+      "sha256": "f8b995c988ddee33a02e41fe4658d63aef32f380678aef70a5164143a25c1ee4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50464,
+      "sha256": "2c799493e0a5032ed0e643a550d149dc324210da3a69337a68ae6460f56bb2e1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "7026d9d93b3fb7b521fc4a35fcb8348020fe466c054309e8ec0d27e84a555cb9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "fdc5422bb6f99cb357515ac6edd47c6f495da1da0eca43b7f85fdb7fd1c2492a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21560,
+      "sha256": "e5231e879c215210cfe0b6d8f5740f8ecb2b08afa98ee4055fff6ba10ddac96c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "e90ac368f79ea0e99f44fe1133db10af08c3653749056362822b2c8f414ccd64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "4f427ed5c7c78043c7a9a7c9dc659133d96f6100ca9ba8719857709832e4bb58"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 474416,
+      "sha256": "bfd0ba4491a1e072f243b4599d0b9fe1f189ecbef4aae6b0aa4c6306079717df"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a6d855a49e7b867ff1837b5b24d037a67a7bc9723a569ebdea85f0c73c8146e2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "0d1c05f1c3dfa21fbaca7537910bea9a54a52a9a800caf1c7d46691fb3a41eaa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "4b7843359aea21962c73c7474d374410fe8d039a30ac7902f5f09a19a52c778a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21536,
+      "sha256": "2f82d58fb67a8261ad060a2633b872c7867f48608368144db3a93bf4debe2444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "911ef37ee7d78eb7132581aeaeb7753e81589600535c3c2244b1c447b61e1a5a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "88993b0056f183385a9e9e67931932bce0e564d288164ad43b2cc1bf6cacfb1c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 453928,
+      "sha256": "0bb661e270c1b6675bf2b06b0465ea8b0b551f0765999f31ab9cae308f83e3de"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49424,
+      "sha256": "40258d2ce74c4fb71bd7b145f6d33081f3d73e19afda25050832dde3e58cf33f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "f2292ef0dd72f1a95892714f17e5d49259452e27332d54dbff308236a50d7d40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "119f896f964ce17da4558c72b728d832fa19abc2dcf12bbed7cc386b741edd6b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "ea5d8ecffcb9371d3e559e1d477ebdf5e7c3bd0663746fdccebd9330df2b9008"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "b33e6b979805fa9047ebfb7722c4c3b07b1d3706acc108883b8c30d77d10db72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "976fae7c172b9170340633a3fe1a3f0ec6fc0731f4bf089ddaf611d60d446f40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 621360,
+      "sha256": "68c0ed0122bd4e153717bcbd7d8a53d52d90535859b622df601c27eab58cfb3b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 60728,
+      "sha256": "9f6778a2b6d2141397b8d331fc38577ae2b398b6120eb3654db7575b62e1b0d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "4b29d6fadb5b709c5c90f25a8934e6c3c58027cf35aa28c6ef7100ab30f9cd39"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17464,
+      "sha256": "67820043048cca339e29b563b1ed9da9f7d702b67c0cadd0b643f5781bc78789"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 23072,
+      "sha256": "4970c26bed952eccea42fbd3c7064bdd690eb5a7e538a77ce78ffed487877d9b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 23096,
+      "sha256": "fcaedb770d94be752a6c9befe5d2b8219bb8d1bfce83f2dc9011fa4b7eebd00a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 26168,
+      "sha256": "f7084df5889cd4a8d141f73be63b267519ae4daa75c6394cf39c4a96fba35d68"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a",
+      "bytes": 1308854,
+      "sha256": "c64ae8d44dc3e1aa03aca4e79ccc501cbc3a3c490e8e2ea9e369367f68cf0f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-arm/native/libe_sqlite3.so",
+      "bytes": 982224,
+      "sha256": "43556c2f5075857bf57be1136d556733bdc27195884fbdde127cd976d1c25ad5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-arm64/native/libe_sqlite3.so",
+      "bytes": 1534296,
+      "sha256": "707fff6b18c1f083158e7a543c8d2545d5485f547ffd96db29679a95f52878d5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-armel/native/libe_sqlite3.so",
+      "bytes": 1375344,
+      "sha256": "3f4d9b9ca49bb3f100882e78ba85807398cee19b481bfd4c301a8f5f58d48540"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-mips64/native/libe_sqlite3.so",
+      "bytes": 1756544,
+      "sha256": "985884523e512414f3e50aa359f08dad3ce635e99405e7823de9b26a7db38d09"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-musl-arm/native/libe_sqlite3.so",
+      "bytes": 1322584,
+      "sha256": "7fec7057d16e8b5ae54fed0c42a0e6b85e40df0d57092ef20cd647a4e1c1e0ed"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-musl-arm64/native/libe_sqlite3.so",
+      "bytes": 1450704,
+      "sha256": "530e2f74f259fe04faa4b595336e671fab5eedbb6f4e94dad59494efb7b00c2a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-musl-riscv64/native/libe_sqlite3.so",
+      "bytes": 1015888,
+      "sha256": "d8e54eb7dc52ea0a7df9b78ac6feb85af429e7264613099df478825dea5805d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-musl-s390x/native/libe_sqlite3.so",
+      "bytes": 1685752,
+      "sha256": "64260c0460ad6efa7dce9263bff7a4b64ad66172ccc580cb09181c845e1a3407"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-musl-x64/native/libe_sqlite3.so",
+      "bytes": 1445336,
+      "sha256": "647b7b5886526691aed58e0fcbb56dc1e6dea8b1f9f5390782f0c95269250db1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-ppc64le/native/libe_sqlite3.so",
+      "bytes": 1937408,
+      "sha256": "1ef00b5e3ac63e491f59ecf587680fc52ad844cea62e0a879a1315ef6bd10fc6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-riscv64/native/libe_sqlite3.so",
+      "bytes": 1291896,
+      "sha256": "6b390eecbc6f55c44d9ab8a774f1fe4283dfb33a72e6f29f4e0b173065e7e105"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-s390x/native/libe_sqlite3.so",
+      "bytes": 1655776,
+      "sha256": "dfd5ab35f6d61155a3c629d0bceff4d6e0f0f190983f3fb8f681fb34ec08c67e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-x64/native/libe_sqlite3.so",
+      "bytes": 1470784,
+      "sha256": "b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/linux-x86/native/libe_sqlite3.so",
+      "bytes": 1547984,
+      "sha256": "fe8229e5baeaf21e721cf65626a6b07ec22d9b17d07bd624e7a77927174277f1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1695264,
+      "sha256": "8d63d80bc6caa754679d6fc89fd741a32c156f136c34759cc8fff8cd51468a93"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724352,
+      "sha256": "43d27adbc5ba40850bac42a12aea08314a22a43d3ce77cdc7a6cc47ecffb5746"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/osx-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1696624,
+      "sha256": "09fe20a6c050912a7944b2f2f2981debe31679f7919f523c87251ae8cf0f2daa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/osx-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724472,
+      "sha256": "02344e1d0bcb5ed447ad9b79ed19e37a590fb1ece3eba1e63efbc35e36e47bdf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/win-arm64/native/e_sqlite3.dll",
+      "bytes": 1814528,
+      "sha256": "4177542756bd94f75b55fb74367e0cf34e66a88ffaf95755489af14c6ca2f792"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/win-x64/native/e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/runtimes/win-x86/native/e_sqlite3.dll",
+      "bytes": 1533952,
+      "sha256": "d13eb819d1353d98c684c88672868bbfcc6a52eb5987bdf2557ec02fabce4ea7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/testhost.dll",
+      "bytes": 49696,
+      "sha256": "92cbdf52db5249112f9f53f1fcdaf9f9aa3fce467141c688a31a7fe095e4d304"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/testhost.exe",
+      "bytes": 150576,
+      "sha256": "fb63eb314f25584a532683de7abf4ca8a0b43103f3699f5d5d87317338eeda76"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 449848,
+      "sha256": "93202286c8514bfa1b1c4b413666cd11a84abd69496e7aa8d2f9d565bd2d15a1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48936,
+      "sha256": "6af8e8e793b071ef1de200629bb551dd2bdbce3823376b347836a2af15367a5c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "ef6bf78a0fd4613b1ffe8dc560b0f2f5cf2c05724fc8aed314f9ced18a90cf03"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a4d0c1d36f10425e39cdaade487220a9808e6f6954998644c57011fbeb3a33a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21024,
+      "sha256": "6ad665b04f30253b05acdbcf02196af45332a95091e112e55d2f2379273d9cac"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20536,
+      "sha256": "96efbcb535b02ad348598505210ae60b3d24ba7b8d364547ec89d353e891fae2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23608,
+      "sha256": "5a392fba8650b4b574e5e7c42615f5c6d2a879c3838cf5b5219856185b33c8f5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/xunit.abstractions.dll",
+      "bytes": 21928,
+      "sha256": "3166dc70323fb30ccf1cedb0fe86f2ad122c46d254542342d90386efc4c9285c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/xunit.assert.dll",
+      "bytes": 187088,
+      "sha256": "bcd9711b22d227ac8cd4c1568e72433a0f576d2ec8aae64ac508081892015b1d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/xunit.core.dll",
+      "bytes": 70352,
+      "sha256": "2f7feeec8c6dec7df684c25fb80aadb292b963d09723460f03d53c5ad2088acc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/xunit.execution.dotnet.dll",
+      "bytes": 279760,
+      "sha256": "e70febe547c15f8155db3e2d95c3ba4445a59cbc21a3e7541ab22ed49d3dcf7b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/xunit.runner.visualstudio.testadapter.dll",
+      "bytes": 1251840,
+      "sha256": "98a7395cd6abd03d0ac8eeb82d720c24db00602f047ca49bd6e88e77fc6d1153"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 401168,
+      "sha256": "5b81b1d4537d44a365fdb48aa24e51a0b0c3ee308debcc225c9339249e0a8bb3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45368,
+      "sha256": "a41b72555a1943e367e9714fb3329454dbad4366500db0899519ffb558a060cb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "61e5b362940ca90e3b89a452218fb1d3882aea679a1b73e6ad868d0ac1bb88fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "4a8c0ef1c60069942082fa7493dbe683033e14e15dff09c8ba8c230e2a4443c6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20008,
+      "sha256": "0b12a586cd3759757f641a6219f491aff7c5fbdf603a6339b98faa57ce6eb7c0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20040,
+      "sha256": "8fb34ecf4343a77647006f0ad1fb41e8c4dd48cf38fe97b93c345b743f538908"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23072,
+      "sha256": "396cc3c959cfc9f24bbe7a2d38846dfb97b696a9610eb95234306cbcdebd4f06"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 400680,
+      "sha256": "d1e716652b5705373fb560105ca2710ff2bc0b704285b50b08ec8df9fd2f8287"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45328,
+      "sha256": "0bb422559a2582df1a49faed25a337b6037eb3878ac4ee7c118b68349ca312b7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "b411fe26d281ec982d0432f1b0bce2c1c86f200d17e837bbbe91086f8e38270f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "a9012f419d3b66a730d635760f63fea1721a63b2105a4146c2d1309bb6f31b14"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20552,
+      "sha256": "540bee11c69534fc48bb4a9626683a6203e9f1f4bae15ff72069eaf9f65f5e81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20024,
+      "sha256": "d69e7127de46141b6406fd968d4a66271dda99271701f912d56ce6813af48cf2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23096,
+      "sha256": "b90f264a4d72987fd0aa0d11fc51dd248f831740bcd72d281045e16936fda16b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-baseline-manifest.json",
+      "bytes": 1859,
+      "sha256": "a19e23a59dbc81bccc1235a10939bf9b56ae4d6b41e8869f088e7c750da8887f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/.msCoverageSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.AcpProbe.deps.json",
+      "bytes": 13608,
+      "sha256": "99d137ad3f52bb07f9ae17ed87bf21e4da8fa3cdd532950d29a0d88540aa7cce"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.AcpProbe.exe",
+      "bytes": 162816,
+      "sha256": "102e43e660a61c2f2ba246da4a13a19ef9bc4e6229a1876a78fe010b99b23205"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.AcpProbe.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.TerminalHost.deps.json",
+      "bytes": 13620,
+      "sha256": "8e6705de304250b4436e0c81886a08a723ab88101a488cd0cf89ccb5a02b9dcb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.TerminalHost.exe",
+      "bytes": 162816,
+      "sha256": "ba53f6553ec515ecdc383fe26704a84e0e7a59b315632475fec5d5fd73b4baae"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.TerminalHost.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.Tests.deps.json",
+      "bytes": 30015,
+      "sha256": "4547690a562bfdb5e0bf96e188fa1867f994b1a76420fba38ff1db96bc3a9d23"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.Tests.dll",
+      "bytes": 2447360,
+      "sha256": "04fccb6590a14792bc1adde0d6ba31e90d799c11c2c8d2267dafadaa1874a7fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.Tests.runtimeconfig.json",
+      "bytes": 318,
+      "sha256": "f0c3aeb0de8768c419a86c1dc92e79d302ce70a018d1a86de3efb13bd0f00a4c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Core.dll",
+      "bytes": 2330624,
+      "sha256": "6353ae7ed46937fe3d47cb510bd41d192da53c0f7e38ef5f5731726e8eb1a0db"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Daemon.deps.json",
+      "bytes": 13598,
+      "sha256": "7524f9133c7542e4042d51d62f74abb6d0557db7004687b3ac03960fb5e06289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Daemon.exe",
+      "bytes": 162304,
+      "sha256": "24303b429497219c0eb6e799ff55e63369d479333883a47311e24d96805ca8ff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Daemon.runtimeconfig.json",
+      "bytes": 327,
+      "sha256": "b0aba54930a2518eaf726583d5dcc3edf934e380cd7f7be076680446c1105eb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Mcp.deps.json",
+      "bytes": 13578,
+      "sha256": "df93b9d9055f583ac269685281d5eef7f2ad4d02b751df65737951a5f779248e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Mcp.dll",
+      "bytes": 53760,
+      "sha256": "ac48789a9dd7c24c41d69d20b79fc48cac4606497f417bae22a10c2f0d1c755c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Mcp.exe",
+      "bytes": 162304,
+      "sha256": "886e6c64486286c78c1c23fc5b0f732ec79ce4b50e3bd4f89b898bb828f52ad6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/AiDe.Mcp.runtimeconfig.json",
+      "bytes": 377,
+      "sha256": "79d12e54ac614d5fe8cdeb8849ab5f6568250bb7ac1c2647c2bce5876475f20e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/CoverletSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.CodeAnalysis.CSharp.dll",
+      "bytes": 6697768,
+      "sha256": "53302acca07700e9bb10dcf21034435d6e0454c8eebf2481164ec13e520004c9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.CodeAnalysis.dll",
+      "bytes": 3029800,
+      "sha256": "395736b2d0e02be77bedc3847b269da7a93bf8e49cd3431a4a8e68d2c52d5846"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.Data.Sqlite.dll",
+      "bytes": 177504,
+      "sha256": "4abd9c2a61e580eb853e93ca8953a3cef2c05714ae28d2d1859d4dbc5e5700bc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.TestPlatform.CommunicationUtilities.dll",
+      "bytes": 137776,
+      "sha256": "e38a359aa502bb1867d6092dca9aba5c130dd6f9111decea8156aa746b2c69e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.TestPlatform.CoreUtilities.dll",
+      "bytes": 98336,
+      "sha256": "f6e2495c44640d8915b2aefc938f391c970300266da014350ff35512a448ee84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.TestPlatform.CrossPlatEngine.dll",
+      "bytes": 316960,
+      "sha256": "d55399bc66dc5b451d60ad82662452ca4a5f735918135dfc91ca9b5e3e38a6ab"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.TestPlatform.PlatformAbstractions.dll",
+      "bytes": 51232,
+      "sha256": "7b919ce4429c3b7b8fa2c36fd641b70b2f459a30ecb7c65fd80f437673cec930"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.TestPlatform.Utilities.dll",
+      "bytes": 67104,
+      "sha256": "01ffd64d25a4bd905aef9594d2aa700e020273a90a77a8720af6bec8b4fd5444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+      "bytes": 17464,
+      "sha256": "a753bc15f23a957f4f91a059376e4472c6bacd1503622de4b9b2b079ad8ea289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.VisualStudio.TestPlatform.Common.dll",
+      "bytes": 248352,
+      "sha256": "059aa2f335c3f7b14ac3fb7caa1625bc2767581b9548e9ff53a246c7f2f94d6a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+      "bytes": 334392,
+      "sha256": "f83e38ee9020baa42e284e2299e233070ffa86ce4b10213583f9b7c8a521bcd0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/Newtonsoft.Json.dll",
+      "bytes": 712464,
+      "sha256": "22c649f75fce5be7c7ccda8880473b634ef69ecf33f5d1ab8ad892caf47d5a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/SQLitePCLRaw.batteries_v2.dll",
+      "bytes": 5120,
+      "sha256": "815ce410c9eab531dd219318e3ba16c5e38e83d361cfbbdbb4bbca222c497b0b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/SQLitePCLRaw.core.dll",
+      "bytes": 51200,
+      "sha256": "af340ac9eb9195795660d7fc1114f486b6ab63998f33176e2f24c8e0acb9aa84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/SQLitePCLRaw.provider.e_sqlite3.dll",
+      "bytes": 36864,
+      "sha256": "df996bcae63c2cabcfe8d4b9c5110eb39a2a4706178b07d875665391c6eb3995"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/YamlDotNet.dll",
+      "bytes": 300032,
+      "sha256": "d618138109a40e4a7250e49e2abad8c450e3636bee18d7499ab231e37fa9150a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 441640,
+      "sha256": "f719e4b45e06f203a1c2d4e79fa2b496f8b16f6f63c4265809844def53ad41f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48424,
+      "sha256": "818f84b95fd8273ec0e9753f90af2a98820bb0492cb53268db70a7403eaaa2af"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16440,
+      "sha256": "b983773dc5112854fe411fa22223e929c7fa230a1a843fcc58023237aca326f4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "26be9bb3a8932ba04014e4ae9b8f20a0222a3e2c1a1b41cec11d49bff609ce72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "2f776bf0e946ffcd3f8a38af2653137785eb55db3cdb0c5a392bbe07d2ccc082"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20520,
+      "sha256": "cd637384e1b3973be3c18409ed886f8234e2e3c3a65edf7d721d154e26aa64f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23624,
+      "sha256": "12b0829d24f6f53f0e22fcbe370d3f91b67bbcaca7f0d82323d08cd7752f4519"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 471848,
+      "sha256": "d936e4075af47eb5a34e8418e6bf1eaa3e4d3c86d6b40ab7dffefbd8e6f8b594"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50456,
+      "sha256": "1b1d805608929ec02b8acc2fb8c09ec7a335797b11686719ee2112d5bfbb18fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "d11f2a5262947fc1b6d426a6e1828325cedf40fee28e29ed856804ec9ef3f15c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "403e0eaf8528656c0b47c31cd5fe9a25b8fd733adccb8e6d47a09f28658b5283"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "7ad3c45f58aa4d030fd5d65d9d4ac9cabbc06d79d071c29727b5376cd3459d77"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21064,
+      "sha256": "ca308a5d314fa7d7e9cae94083cc1f62375ac225094d289961d9bce49b564b65"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "e91489bb7ec3e2e97d19cf32bc5e3f7fc57e994e0315f0870fd2024ccb2cf337"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 461608,
+      "sha256": "559fa2a4d36a832a5e05f92dabff6ba737cc0443f95850611c485b21592046fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49960,
+      "sha256": "4c83f9c227fa9a912209c5450380ef34e84d91867aff8208300e8aadab269456"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "ddbdd3bf9afe6ddd3babd4f0358ab2f4697fc5d5ec72b60cb772085af9bf9859"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "7ec8e83494a8a50f1158c85d29b98e87c85d74ad5c4d94e2e9656e1cf60b0dff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21032,
+      "sha256": "67063a36cfcae95b3ea4646b88c3cf3642f0914dfc06ecc5fc4d3f77e0e97e64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b5340851bd9cb979d497f67123d09f91ba20ac9d2b3e0e17076fd2abd615c933"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "f19c11474e9074d5407f9b5a78cfb0bc1b4aeb90ffec819a676f63509cec443a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fixtures/claude-trust-gate.escaped.txt",
+      "bytes": 1695,
+      "sha256": "290771e7b5e1b01e4adbc284718e0a9d15106b4015280af206f8f924491533d9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473880,
+      "sha256": "c538cddb8e217bc1b96312956b7923855d6f392e467d7b7c7ce9341d9da1f23c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a92746c7d8f241e7d207a7995007f59d694a10e5f8903ceadfc5a73c195f63a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "044cf1373cc4527fff78adb5ad70489532303b58ba0de2c059c422926af46c4b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "78d675cbab45a56cc8916466ba13f16fab18a44fd3ad4481c8f5f4e13b1f8b5d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "3fe869c312793444f9509af17ca0b14f444cbddef60a47251f441a5d7859a05f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "5a8f4f4ea8b5a332883a67202877bd19100b21d766bf0443ffec21610dfb2ecf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "ba030af725dea6bceb72c4eb49ccc3520222a97ea0fae812e16b7ba78450b98a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 468240,
+      "sha256": "995a868345367e1c68011617d8b8ac85decf2dd15fb85ea92a28205e2c6a5fba"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50440,
+      "sha256": "9489584f3d6ec723bfd2adf1a0d1bdc9bafcadab857fa7c48d18157e223a5541"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "b023b85f510d1e5c6d5183ba51614ea1b6dee5c25ab287773bebc8cdb36e3168"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a1ac732615a7dc5c59e01a1570da23210ede65ef24d5bb101294cf68481fe984"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "b6b4b25e77f51f4ef5252512d1ea2cd8025ff388852ea93897b136bcc33bb5e0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b9f6be59cc1c05594f9b19db9e72add58d6b37661397f81a62d4fee37e7be621"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "93911f7a3c20cecd88ddb85dfdaaa9bf768e72a0fa5f745f3f3ae40dc78da66b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 515376,
+      "sha256": "866eabb5f0f51df82de1a2be933c542df60617d033f463e7010719bdc6f55fa7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 54040,
+      "sha256": "9b0bea97965c04ce925e92a5b8575b866c75b185a89741185f4b24f72182a0bb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "5db61a11e8c40176f0293658e48bc955ebed6a3dd46d3808aacc762f71732544"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "1ded53cdfde469bbb90d12f371891d3789a835e976557541c43166f027f7f111"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 22088,
+      "sha256": "f6d2748ee250f131374c306d7dc8a905464dbda3f75e857d333946c7ff89494c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21552,
+      "sha256": "c55083e71e3a5bb8dbe36e10eb12b301ccfd809e8fe1187350beb6774c7f794b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24632,
+      "sha256": "c2c077136e3ccfd8a249758979c0f754fe3c8a35b0c6478aa7a87ea38a817690"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473392,
+      "sha256": "f8b995c988ddee33a02e41fe4658d63aef32f380678aef70a5164143a25c1ee4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50464,
+      "sha256": "2c799493e0a5032ed0e643a550d149dc324210da3a69337a68ae6460f56bb2e1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "7026d9d93b3fb7b521fc4a35fcb8348020fe466c054309e8ec0d27e84a555cb9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "fdc5422bb6f99cb357515ac6edd47c6f495da1da0eca43b7f85fdb7fd1c2492a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21560,
+      "sha256": "e5231e879c215210cfe0b6d8f5740f8ecb2b08afa98ee4055fff6ba10ddac96c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "e90ac368f79ea0e99f44fe1133db10af08c3653749056362822b2c8f414ccd64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "4f427ed5c7c78043c7a9a7c9dc659133d96f6100ca9ba8719857709832e4bb58"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 474416,
+      "sha256": "bfd0ba4491a1e072f243b4599d0b9fe1f189ecbef4aae6b0aa4c6306079717df"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a6d855a49e7b867ff1837b5b24d037a67a7bc9723a569ebdea85f0c73c8146e2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "0d1c05f1c3dfa21fbaca7537910bea9a54a52a9a800caf1c7d46691fb3a41eaa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "4b7843359aea21962c73c7474d374410fe8d039a30ac7902f5f09a19a52c778a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21536,
+      "sha256": "2f82d58fb67a8261ad060a2633b872c7867f48608368144db3a93bf4debe2444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "911ef37ee7d78eb7132581aeaeb7753e81589600535c3c2244b1c447b61e1a5a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "88993b0056f183385a9e9e67931932bce0e564d288164ad43b2cc1bf6cacfb1c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 453928,
+      "sha256": "0bb661e270c1b6675bf2b06b0465ea8b0b551f0765999f31ab9cae308f83e3de"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49424,
+      "sha256": "40258d2ce74c4fb71bd7b145f6d33081f3d73e19afda25050832dde3e58cf33f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "f2292ef0dd72f1a95892714f17e5d49259452e27332d54dbff308236a50d7d40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "119f896f964ce17da4558c72b728d832fa19abc2dcf12bbed7cc386b741edd6b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "ea5d8ecffcb9371d3e559e1d477ebdf5e7c3bd0663746fdccebd9330df2b9008"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "b33e6b979805fa9047ebfb7722c4c3b07b1d3706acc108883b8c30d77d10db72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "976fae7c172b9170340633a3fe1a3f0ec6fc0731f4bf089ddaf611d60d446f40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 621360,
+      "sha256": "68c0ed0122bd4e153717bcbd7d8a53d52d90535859b622df601c27eab58cfb3b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 60728,
+      "sha256": "9f6778a2b6d2141397b8d331fc38577ae2b398b6120eb3654db7575b62e1b0d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "4b29d6fadb5b709c5c90f25a8934e6c3c58027cf35aa28c6ef7100ab30f9cd39"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17464,
+      "sha256": "67820043048cca339e29b563b1ed9da9f7d702b67c0cadd0b643f5781bc78789"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 23072,
+      "sha256": "4970c26bed952eccea42fbd3c7064bdd690eb5a7e538a77ce78ffed487877d9b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 23096,
+      "sha256": "fcaedb770d94be752a6c9befe5d2b8219bb8d1bfce83f2dc9011fa4b7eebd00a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 26168,
+      "sha256": "f7084df5889cd4a8d141f73be63b267519ae4daa75c6394cf39c4a96fba35d68"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a",
+      "bytes": 1308854,
+      "sha256": "c64ae8d44dc3e1aa03aca4e79ccc501cbc3a3c490e8e2ea9e369367f68cf0f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-arm/native/libe_sqlite3.so",
+      "bytes": 982224,
+      "sha256": "43556c2f5075857bf57be1136d556733bdc27195884fbdde127cd976d1c25ad5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-arm64/native/libe_sqlite3.so",
+      "bytes": 1534296,
+      "sha256": "707fff6b18c1f083158e7a543c8d2545d5485f547ffd96db29679a95f52878d5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-armel/native/libe_sqlite3.so",
+      "bytes": 1375344,
+      "sha256": "3f4d9b9ca49bb3f100882e78ba85807398cee19b481bfd4c301a8f5f58d48540"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-mips64/native/libe_sqlite3.so",
+      "bytes": 1756544,
+      "sha256": "985884523e512414f3e50aa359f08dad3ce635e99405e7823de9b26a7db38d09"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-musl-arm/native/libe_sqlite3.so",
+      "bytes": 1322584,
+      "sha256": "7fec7057d16e8b5ae54fed0c42a0e6b85e40df0d57092ef20cd647a4e1c1e0ed"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-musl-arm64/native/libe_sqlite3.so",
+      "bytes": 1450704,
+      "sha256": "530e2f74f259fe04faa4b595336e671fab5eedbb6f4e94dad59494efb7b00c2a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-musl-riscv64/native/libe_sqlite3.so",
+      "bytes": 1015888,
+      "sha256": "d8e54eb7dc52ea0a7df9b78ac6feb85af429e7264613099df478825dea5805d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-musl-s390x/native/libe_sqlite3.so",
+      "bytes": 1685752,
+      "sha256": "64260c0460ad6efa7dce9263bff7a4b64ad66172ccc580cb09181c845e1a3407"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-musl-x64/native/libe_sqlite3.so",
+      "bytes": 1445336,
+      "sha256": "647b7b5886526691aed58e0fcbb56dc1e6dea8b1f9f5390782f0c95269250db1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-ppc64le/native/libe_sqlite3.so",
+      "bytes": 1937408,
+      "sha256": "1ef00b5e3ac63e491f59ecf587680fc52ad844cea62e0a879a1315ef6bd10fc6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-riscv64/native/libe_sqlite3.so",
+      "bytes": 1291896,
+      "sha256": "6b390eecbc6f55c44d9ab8a774f1fe4283dfb33a72e6f29f4e0b173065e7e105"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-s390x/native/libe_sqlite3.so",
+      "bytes": 1655776,
+      "sha256": "dfd5ab35f6d61155a3c629d0bceff4d6e0f0f190983f3fb8f681fb34ec08c67e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-x64/native/libe_sqlite3.so",
+      "bytes": 1470784,
+      "sha256": "b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/linux-x86/native/libe_sqlite3.so",
+      "bytes": 1547984,
+      "sha256": "fe8229e5baeaf21e721cf65626a6b07ec22d9b17d07bd624e7a77927174277f1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1695264,
+      "sha256": "8d63d80bc6caa754679d6fc89fd741a32c156f136c34759cc8fff8cd51468a93"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724352,
+      "sha256": "43d27adbc5ba40850bac42a12aea08314a22a43d3ce77cdc7a6cc47ecffb5746"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/osx-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1696624,
+      "sha256": "09fe20a6c050912a7944b2f2f2981debe31679f7919f523c87251ae8cf0f2daa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/osx-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724472,
+      "sha256": "02344e1d0bcb5ed447ad9b79ed19e37a590fb1ece3eba1e63efbc35e36e47bdf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/win-arm64/native/e_sqlite3.dll",
+      "bytes": 1814528,
+      "sha256": "4177542756bd94f75b55fb74367e0cf34e66a88ffaf95755489af14c6ca2f792"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/win-x64/native/e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/runtimes/win-x86/native/e_sqlite3.dll",
+      "bytes": 1533952,
+      "sha256": "d13eb819d1353d98c684c88672868bbfcc6a52eb5987bdf2557ec02fabce4ea7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/testhost.dll",
+      "bytes": 49696,
+      "sha256": "92cbdf52db5249112f9f53f1fcdaf9f9aa3fce467141c688a31a7fe095e4d304"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/testhost.exe",
+      "bytes": 150576,
+      "sha256": "fb63eb314f25584a532683de7abf4ca8a0b43103f3699f5d5d87317338eeda76"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 449848,
+      "sha256": "93202286c8514bfa1b1c4b413666cd11a84abd69496e7aa8d2f9d565bd2d15a1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48936,
+      "sha256": "6af8e8e793b071ef1de200629bb551dd2bdbce3823376b347836a2af15367a5c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "ef6bf78a0fd4613b1ffe8dc560b0f2f5cf2c05724fc8aed314f9ced18a90cf03"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a4d0c1d36f10425e39cdaade487220a9808e6f6954998644c57011fbeb3a33a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21024,
+      "sha256": "6ad665b04f30253b05acdbcf02196af45332a95091e112e55d2f2379273d9cac"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20536,
+      "sha256": "96efbcb535b02ad348598505210ae60b3d24ba7b8d364547ec89d353e891fae2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23608,
+      "sha256": "5a392fba8650b4b574e5e7c42615f5c6d2a879c3838cf5b5219856185b33c8f5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/xunit.abstractions.dll",
+      "bytes": 21928,
+      "sha256": "3166dc70323fb30ccf1cedb0fe86f2ad122c46d254542342d90386efc4c9285c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/xunit.assert.dll",
+      "bytes": 187088,
+      "sha256": "bcd9711b22d227ac8cd4c1568e72433a0f576d2ec8aae64ac508081892015b1d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/xunit.core.dll",
+      "bytes": 70352,
+      "sha256": "2f7feeec8c6dec7df684c25fb80aadb292b963d09723460f03d53c5ad2088acc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/xunit.execution.dotnet.dll",
+      "bytes": 279760,
+      "sha256": "e70febe547c15f8155db3e2d95c3ba4445a59cbc21a3e7541ab22ed49d3dcf7b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/xunit.runner.visualstudio.testadapter.dll",
+      "bytes": 1251840,
+      "sha256": "98a7395cd6abd03d0ac8eeb82d720c24db00602f047ca49bd6e88e77fc6d1153"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 401168,
+      "sha256": "5b81b1d4537d44a365fdb48aa24e51a0b0c3ee308debcc225c9339249e0a8bb3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45368,
+      "sha256": "a41b72555a1943e367e9714fb3329454dbad4366500db0899519ffb558a060cb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "61e5b362940ca90e3b89a452218fb1d3882aea679a1b73e6ad868d0ac1bb88fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "4a8c0ef1c60069942082fa7493dbe683033e14e15dff09c8ba8c230e2a4443c6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20008,
+      "sha256": "0b12a586cd3759757f641a6219f491aff7c5fbdf603a6339b98faa57ce6eb7c0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20040,
+      "sha256": "8fb34ecf4343a77647006f0ad1fb41e8c4dd48cf38fe97b93c345b743f538908"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23072,
+      "sha256": "396cc3c959cfc9f24bbe7a2d38846dfb97b696a9610eb95234306cbcdebd4f06"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 400680,
+      "sha256": "d1e716652b5705373fb560105ca2710ff2bc0b704285b50b08ec8df9fd2f8287"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45328,
+      "sha256": "0bb422559a2582df1a49faed25a337b6037eb3878ac4ee7c118b68349ca312b7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "b411fe26d281ec982d0432f1b0bce2c1c86f200d17e837bbbe91086f8e38270f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "a9012f419d3b66a730d635760f63fea1721a63b2105a4146c2d1309bb6f31b14"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20552,
+      "sha256": "540bee11c69534fc48bb4a9626683a6203e9f1f4bae15ff72069eaf9f65f5e81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20024,
+      "sha256": "d69e7127de46141b6406fd968d4a66271dda99271701f912d56ce6813af48cf2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23096,
+      "sha256": "b90f264a4d72987fd0aa0d11fc51dd248f831740bcd72d281045e16936fda16b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-probe.patch",
+      "bytes": 7403,
+      "sha256": "e6a6ab6d819952a9b1c6103b7990d4cbc1227f0d4cd3b32755deb19fa071bb2b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/.msCoverageSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.AcpProbe.deps.json",
+      "bytes": 13608,
+      "sha256": "99d137ad3f52bb07f9ae17ed87bf21e4da8fa3cdd532950d29a0d88540aa7cce"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.AcpProbe.exe",
+      "bytes": 162816,
+      "sha256": "102e43e660a61c2f2ba246da4a13a19ef9bc4e6229a1876a78fe010b99b23205"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.AcpProbe.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.TerminalHost.deps.json",
+      "bytes": 13620,
+      "sha256": "8e6705de304250b4436e0c81886a08a723ab88101a488cd0cf89ccb5a02b9dcb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.TerminalHost.exe",
+      "bytes": 162816,
+      "sha256": "ba53f6553ec515ecdc383fe26704a84e0e7a59b315632475fec5d5fd73b4baae"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.TerminalHost.runtimeconfig.json",
+      "bytes": 270,
+      "sha256": "256dda2706e1151bb95987b6b5be610bf68d64e058285b19e7e958222fc90414"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.Tests.deps.json",
+      "bytes": 30015,
+      "sha256": "4547690a562bfdb5e0bf96e188fa1867f994b1a76420fba38ff1db96bc3a9d23"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.Tests.dll",
+      "bytes": 2465792,
+      "sha256": "641bdfadb1834748bbaf758f41508a593eef300cb0960b286bb57c00623030da"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.Tests.runtimeconfig.json",
+      "bytes": 318,
+      "sha256": "f0c3aeb0de8768c419a86c1dc92e79d302ce70a018d1a86de3efb13bd0f00a4c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Core.dll",
+      "bytes": 2330624,
+      "sha256": "6353ae7ed46937fe3d47cb510bd41d192da53c0f7e38ef5f5731726e8eb1a0db"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Daemon.deps.json",
+      "bytes": 13598,
+      "sha256": "7524f9133c7542e4042d51d62f74abb6d0557db7004687b3ac03960fb5e06289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Daemon.exe",
+      "bytes": 162304,
+      "sha256": "24303b429497219c0eb6e799ff55e63369d479333883a47311e24d96805ca8ff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Daemon.runtimeconfig.json",
+      "bytes": 327,
+      "sha256": "b0aba54930a2518eaf726583d5dcc3edf934e380cd7f7be076680446c1105eb7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Mcp.deps.json",
+      "bytes": 13578,
+      "sha256": "df93b9d9055f583ac269685281d5eef7f2ad4d02b751df65737951a5f779248e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Mcp.dll",
+      "bytes": 53760,
+      "sha256": "ac48789a9dd7c24c41d69d20b79fc48cac4606497f417bae22a10c2f0d1c755c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Mcp.exe",
+      "bytes": 162304,
+      "sha256": "886e6c64486286c78c1c23fc5b0f732ec79ce4b50e3bd4f89b898bb828f52ad6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/AiDe.Mcp.runtimeconfig.json",
+      "bytes": 377,
+      "sha256": "79d12e54ac614d5fe8cdeb8849ab5f6568250bb7ac1c2647c2bce5876475f20e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/CoverletSourceRootsMapping_AiDe.Core.Tests",
+      "bytes": 4318,
+      "sha256": "0fd3fc21ddf7ff1baf2aa58cda8b7650a17a2a1ac88ab84c2cd79e7bca9d1f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.CodeAnalysis.CSharp.dll",
+      "bytes": 6697768,
+      "sha256": "53302acca07700e9bb10dcf21034435d6e0454c8eebf2481164ec13e520004c9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.CodeAnalysis.dll",
+      "bytes": 3029800,
+      "sha256": "395736b2d0e02be77bedc3847b269da7a93bf8e49cd3431a4a8e68d2c52d5846"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.Data.Sqlite.dll",
+      "bytes": 177504,
+      "sha256": "4abd9c2a61e580eb853e93ca8953a3cef2c05714ae28d2d1859d4dbc5e5700bc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.TestPlatform.CommunicationUtilities.dll",
+      "bytes": 137776,
+      "sha256": "e38a359aa502bb1867d6092dca9aba5c130dd6f9111decea8156aa746b2c69e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.TestPlatform.CoreUtilities.dll",
+      "bytes": 98336,
+      "sha256": "f6e2495c44640d8915b2aefc938f391c970300266da014350ff35512a448ee84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.TestPlatform.CrossPlatEngine.dll",
+      "bytes": 316960,
+      "sha256": "d55399bc66dc5b451d60ad82662452ca4a5f735918135dfc91ca9b5e3e38a6ab"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.TestPlatform.PlatformAbstractions.dll",
+      "bytes": 51232,
+      "sha256": "7b919ce4429c3b7b8fa2c36fd641b70b2f459a30ecb7c65fd80f437673cec930"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.TestPlatform.Utilities.dll",
+      "bytes": 67104,
+      "sha256": "01ffd64d25a4bd905aef9594d2aa700e020273a90a77a8720af6bec8b4fd5444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+      "bytes": 17464,
+      "sha256": "a753bc15f23a957f4f91a059376e4472c6bacd1503622de4b9b2b079ad8ea289"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.VisualStudio.TestPlatform.Common.dll",
+      "bytes": 248352,
+      "sha256": "059aa2f335c3f7b14ac3fb7caa1625bc2767581b9548e9ff53a246c7f2f94d6a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll",
+      "bytes": 334392,
+      "sha256": "f83e38ee9020baa42e284e2299e233070ffa86ce4b10213583f9b7c8a521bcd0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/Newtonsoft.Json.dll",
+      "bytes": 712464,
+      "sha256": "22c649f75fce5be7c7ccda8880473b634ef69ecf33f5d1ab8ad892caf47d5a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/SQLitePCLRaw.batteries_v2.dll",
+      "bytes": 5120,
+      "sha256": "815ce410c9eab531dd219318e3ba16c5e38e83d361cfbbdbb4bbca222c497b0b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/SQLitePCLRaw.core.dll",
+      "bytes": 51200,
+      "sha256": "af340ac9eb9195795660d7fc1114f486b6ab63998f33176e2f24c8e0acb9aa84"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/SQLitePCLRaw.provider.e_sqlite3.dll",
+      "bytes": 36864,
+      "sha256": "df996bcae63c2cabcfe8d4b9c5110eb39a2a4706178b07d875665391c6eb3995"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/YamlDotNet.dll",
+      "bytes": 300032,
+      "sha256": "d618138109a40e4a7250e49e2abad8c450e3636bee18d7499ab231e37fa9150a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 441640,
+      "sha256": "f719e4b45e06f203a1c2d4e79fa2b496f8b16f6f63c4265809844def53ad41f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48424,
+      "sha256": "818f84b95fd8273ec0e9753f90af2a98820bb0492cb53268db70a7403eaaa2af"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16440,
+      "sha256": "b983773dc5112854fe411fa22223e929c7fa230a1a843fcc58023237aca326f4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "26be9bb3a8932ba04014e4ae9b8f20a0222a3e2c1a1b41cec11d49bff609ce72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "2f776bf0e946ffcd3f8a38af2653137785eb55db3cdb0c5a392bbe07d2ccc082"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20520,
+      "sha256": "cd637384e1b3973be3c18409ed886f8234e2e3c3a65edf7d721d154e26aa64f3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23624,
+      "sha256": "12b0829d24f6f53f0e22fcbe370d3f91b67bbcaca7f0d82323d08cd7752f4519"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 471848,
+      "sha256": "d936e4075af47eb5a34e8418e6bf1eaa3e4d3c86d6b40ab7dffefbd8e6f8b594"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50456,
+      "sha256": "1b1d805608929ec02b8acc2fb8c09ec7a335797b11686719ee2112d5bfbb18fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "d11f2a5262947fc1b6d426a6e1828325cedf40fee28e29ed856804ec9ef3f15c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "403e0eaf8528656c0b47c31cd5fe9a25b8fd733adccb8e6d47a09f28658b5283"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "7ad3c45f58aa4d030fd5d65d9d4ac9cabbc06d79d071c29727b5376cd3459d77"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21064,
+      "sha256": "ca308a5d314fa7d7e9cae94083cc1f62375ac225094d289961d9bce49b564b65"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "e91489bb7ec3e2e97d19cf32bc5e3f7fc57e994e0315f0870fd2024ccb2cf337"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 461608,
+      "sha256": "559fa2a4d36a832a5e05f92dabff6ba737cc0443f95850611c485b21592046fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49960,
+      "sha256": "4c83f9c227fa9a912209c5450380ef34e84d91867aff8208300e8aadab269456"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "ddbdd3bf9afe6ddd3babd4f0358ab2f4697fc5d5ec72b60cb772085af9bf9859"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "7ec8e83494a8a50f1158c85d29b98e87c85d74ad5c4d94e2e9656e1cf60b0dff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21032,
+      "sha256": "67063a36cfcae95b3ea4646b88c3cf3642f0914dfc06ecc5fc4d3f77e0e97e64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b5340851bd9cb979d497f67123d09f91ba20ac9d2b3e0e17076fd2abd615c933"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "f19c11474e9074d5407f9b5a78cfb0bc1b4aeb90ffec819a676f63509cec443a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fixtures/claude-trust-gate.escaped.txt",
+      "bytes": 1695,
+      "sha256": "290771e7b5e1b01e4adbc284718e0a9d15106b4015280af206f8f924491533d9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473880,
+      "sha256": "c538cddb8e217bc1b96312956b7923855d6f392e467d7b7c7ce9341d9da1f23c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a92746c7d8f241e7d207a7995007f59d694a10e5f8903ceadfc5a73c195f63a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "044cf1373cc4527fff78adb5ad70489532303b58ba0de2c059c422926af46c4b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "78d675cbab45a56cc8916466ba13f16fab18a44fd3ad4481c8f5f4e13b1f8b5d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21040,
+      "sha256": "3fe869c312793444f9509af17ca0b14f444cbddef60a47251f441a5d7859a05f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "5a8f4f4ea8b5a332883a67202877bd19100b21d766bf0443ffec21610dfb2ecf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "ba030af725dea6bceb72c4eb49ccc3520222a97ea0fae812e16b7ba78450b98a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 468240,
+      "sha256": "995a868345367e1c68011617d8b8ac85decf2dd15fb85ea92a28205e2c6a5fba"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50440,
+      "sha256": "9489584f3d6ec723bfd2adf1a0d1bdc9bafcadab857fa7c48d18157e223a5541"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "b023b85f510d1e5c6d5183ba51614ea1b6dee5c25ab287773bebc8cdb36e3168"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a1ac732615a7dc5c59e01a1570da23210ede65ef24d5bb101294cf68481fe984"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "b6b4b25e77f51f4ef5252512d1ea2cd8025ff388852ea93897b136bcc33bb5e0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21040,
+      "sha256": "b9f6be59cc1c05594f9b19db9e72add58d6b37661397f81a62d4fee37e7be621"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24096,
+      "sha256": "93911f7a3c20cecd88ddb85dfdaaa9bf768e72a0fa5f745f3f3ae40dc78da66b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 515376,
+      "sha256": "866eabb5f0f51df82de1a2be933c542df60617d033f463e7010719bdc6f55fa7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 54040,
+      "sha256": "9b0bea97965c04ce925e92a5b8575b866c75b185a89741185f4b24f72182a0bb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "5db61a11e8c40176f0293658e48bc955ebed6a3dd46d3808aacc762f71732544"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "1ded53cdfde469bbb90d12f371891d3789a835e976557541c43166f027f7f111"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 22088,
+      "sha256": "f6d2748ee250f131374c306d7dc8a905464dbda3f75e857d333946c7ff89494c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21552,
+      "sha256": "c55083e71e3a5bb8dbe36e10eb12b301ccfd809e8fe1187350beb6774c7f794b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24632,
+      "sha256": "c2c077136e3ccfd8a249758979c0f754fe3c8a35b0c6478aa7a87ea38a817690"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 473392,
+      "sha256": "f8b995c988ddee33a02e41fe4658d63aef32f380678aef70a5164143a25c1ee4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50464,
+      "sha256": "2c799493e0a5032ed0e643a550d149dc324210da3a69337a68ae6460f56bb2e1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16944,
+      "sha256": "7026d9d93b3fb7b521fc4a35fcb8348020fe466c054309e8ec0d27e84a555cb9"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "fdc5422bb6f99cb357515ac6edd47c6f495da1da0eca43b7f85fdb7fd1c2492a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21560,
+      "sha256": "e5231e879c215210cfe0b6d8f5740f8ecb2b08afa98ee4055fff6ba10ddac96c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "e90ac368f79ea0e99f44fe1133db10af08c3653749056362822b2c8f414ccd64"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "4f427ed5c7c78043c7a9a7c9dc659133d96f6100ca9ba8719857709832e4bb58"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 474416,
+      "sha256": "bfd0ba4491a1e072f243b4599d0b9fe1f189ecbef4aae6b0aa4c6306079717df"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 50488,
+      "sha256": "a6d855a49e7b867ff1837b5b24d037a67a7bc9723a569ebdea85f0c73c8146e2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "0d1c05f1c3dfa21fbaca7537910bea9a54a52a9a800caf1c7d46691fb3a41eaa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16936,
+      "sha256": "4b7843359aea21962c73c7474d374410fe8d039a30ac7902f5f09a19a52c778a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21536,
+      "sha256": "2f82d58fb67a8261ad060a2633b872c7867f48608368144db3a93bf4debe2444"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "911ef37ee7d78eb7132581aeaeb7753e81589600535c3c2244b1c447b61e1a5a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24136,
+      "sha256": "88993b0056f183385a9e9e67931932bce0e564d288164ad43b2cc1bf6cacfb1c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 453928,
+      "sha256": "0bb661e270c1b6675bf2b06b0465ea8b0b551f0765999f31ab9cae308f83e3de"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 49424,
+      "sha256": "40258d2ce74c4fb71bd7b145f6d33081f3d73e19afda25050832dde3e58cf33f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "f2292ef0dd72f1a95892714f17e5d49259452e27332d54dbff308236a50d7d40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "119f896f964ce17da4558c72b728d832fa19abc2dcf12bbed7cc386b741edd6b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21048,
+      "sha256": "ea5d8ecffcb9371d3e559e1d477ebdf5e7c3bd0663746fdccebd9330df2b9008"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 21048,
+      "sha256": "b33e6b979805fa9047ebfb7722c4c3b07b1d3706acc108883b8c30d77d10db72"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 24120,
+      "sha256": "976fae7c172b9170340633a3fe1a3f0ec6fc0731f4bf089ddaf611d60d446f40"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 621360,
+      "sha256": "68c0ed0122bd4e153717bcbd7d8a53d52d90535859b622df601c27eab58cfb3b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 60728,
+      "sha256": "9f6778a2b6d2141397b8d331fc38577ae2b398b6120eb3654db7575b62e1b0d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 17440,
+      "sha256": "4b29d6fadb5b709c5c90f25a8934e6c3c58027cf35aa28c6ef7100ab30f9cd39"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 17464,
+      "sha256": "67820043048cca339e29b563b1ed9da9f7d702b67c0cadd0b643f5781bc78789"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 23072,
+      "sha256": "4970c26bed952eccea42fbd3c7064bdd690eb5a7e538a77ce78ffed487877d9b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 23096,
+      "sha256": "fcaedb770d94be752a6c9befe5d2b8219bb8d1bfce83f2dc9011fa4b7eebd00a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 26168,
+      "sha256": "f7084df5889cd4a8d141f73be63b267519ae4daa75c6394cf39c4a96fba35d68"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a",
+      "bytes": 1308854,
+      "sha256": "c64ae8d44dc3e1aa03aca4e79ccc501cbc3a3c490e8e2ea9e369367f68cf0f21"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-arm/native/libe_sqlite3.so",
+      "bytes": 982224,
+      "sha256": "43556c2f5075857bf57be1136d556733bdc27195884fbdde127cd976d1c25ad5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-arm64/native/libe_sqlite3.so",
+      "bytes": 1534296,
+      "sha256": "707fff6b18c1f083158e7a543c8d2545d5485f547ffd96db29679a95f52878d5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-armel/native/libe_sqlite3.so",
+      "bytes": 1375344,
+      "sha256": "3f4d9b9ca49bb3f100882e78ba85807398cee19b481bfd4c301a8f5f58d48540"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-mips64/native/libe_sqlite3.so",
+      "bytes": 1756544,
+      "sha256": "985884523e512414f3e50aa359f08dad3ce635e99405e7823de9b26a7db38d09"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-musl-arm/native/libe_sqlite3.so",
+      "bytes": 1322584,
+      "sha256": "7fec7057d16e8b5ae54fed0c42a0e6b85e40df0d57092ef20cd647a4e1c1e0ed"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-musl-arm64/native/libe_sqlite3.so",
+      "bytes": 1450704,
+      "sha256": "530e2f74f259fe04faa4b595336e671fab5eedbb6f4e94dad59494efb7b00c2a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-musl-riscv64/native/libe_sqlite3.so",
+      "bytes": 1015888,
+      "sha256": "d8e54eb7dc52ea0a7df9b78ac6feb85af429e7264613099df478825dea5805d4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-musl-s390x/native/libe_sqlite3.so",
+      "bytes": 1685752,
+      "sha256": "64260c0460ad6efa7dce9263bff7a4b64ad66172ccc580cb09181c845e1a3407"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-musl-x64/native/libe_sqlite3.so",
+      "bytes": 1445336,
+      "sha256": "647b7b5886526691aed58e0fcbb56dc1e6dea8b1f9f5390782f0c95269250db1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-ppc64le/native/libe_sqlite3.so",
+      "bytes": 1937408,
+      "sha256": "1ef00b5e3ac63e491f59ecf587680fc52ad844cea62e0a879a1315ef6bd10fc6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-riscv64/native/libe_sqlite3.so",
+      "bytes": 1291896,
+      "sha256": "6b390eecbc6f55c44d9ab8a774f1fe4283dfb33a72e6f29f4e0b173065e7e105"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-s390x/native/libe_sqlite3.so",
+      "bytes": 1655776,
+      "sha256": "dfd5ab35f6d61155a3c629d0bceff4d6e0f0f190983f3fb8f681fb34ec08c67e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-x64/native/libe_sqlite3.so",
+      "bytes": 1470784,
+      "sha256": "b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/linux-x86/native/libe_sqlite3.so",
+      "bytes": 1547984,
+      "sha256": "fe8229e5baeaf21e721cf65626a6b07ec22d9b17d07bd624e7a77927174277f1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1695264,
+      "sha256": "8d63d80bc6caa754679d6fc89fd741a32c156f136c34759cc8fff8cd51468a93"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724352,
+      "sha256": "43d27adbc5ba40850bac42a12aea08314a22a43d3ce77cdc7a6cc47ecffb5746"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/osx-arm64/native/libe_sqlite3.dylib",
+      "bytes": 1696624,
+      "sha256": "09fe20a6c050912a7944b2f2f2981debe31679f7919f523c87251ae8cf0f2daa"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/osx-x64/native/libe_sqlite3.dylib",
+      "bytes": 1724472,
+      "sha256": "02344e1d0bcb5ed447ad9b79ed19e37a590fb1ece3eba1e63efbc35e36e47bdf"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/win-arm64/native/e_sqlite3.dll",
+      "bytes": 1814528,
+      "sha256": "4177542756bd94f75b55fb74367e0cf34e66a88ffaf95755489af14c6ca2f792"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/win-x64/native/e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/runtimes/win-x86/native/e_sqlite3.dll",
+      "bytes": 1533952,
+      "sha256": "d13eb819d1353d98c684c88672868bbfcc6a52eb5987bdf2557ec02fabce4ea7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/testhost.dll",
+      "bytes": 49696,
+      "sha256": "92cbdf52db5249112f9f53f1fcdaf9f9aa3fce467141c688a31a7fe095e4d304"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/testhost.exe",
+      "bytes": 150576,
+      "sha256": "fb63eb314f25584a532683de7abf4ca8a0b43103f3699f5d5d87317338eeda76"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 449848,
+      "sha256": "93202286c8514bfa1b1c4b413666cd11a84abd69496e7aa8d2f9d565bd2d15a1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 48936,
+      "sha256": "6af8e8e793b071ef1de200629bb551dd2bdbce3823376b347836a2af15367a5c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "ef6bf78a0fd4613b1ffe8dc560b0f2f5cf2c05724fc8aed314f9ced18a90cf03"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "a4d0c1d36f10425e39cdaade487220a9808e6f6954998644c57011fbeb3a33a0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 21024,
+      "sha256": "6ad665b04f30253b05acdbcf02196af45332a95091e112e55d2f2379273d9cac"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20536,
+      "sha256": "96efbcb535b02ad348598505210ae60b3d24ba7b8d364547ec89d353e891fae2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23608,
+      "sha256": "5a392fba8650b4b574e5e7c42615f5c6d2a879c3838cf5b5219856185b33c8f5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/xunit.abstractions.dll",
+      "bytes": 21928,
+      "sha256": "3166dc70323fb30ccf1cedb0fe86f2ad122c46d254542342d90386efc4c9285c"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/xunit.assert.dll",
+      "bytes": 187088,
+      "sha256": "bcd9711b22d227ac8cd4c1568e72433a0f576d2ec8aae64ac508081892015b1d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/xunit.core.dll",
+      "bytes": 70352,
+      "sha256": "2f7feeec8c6dec7df684c25fb80aadb292b963d09723460f03d53c5ad2088acc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/xunit.execution.dotnet.dll",
+      "bytes": 279760,
+      "sha256": "e70febe547c15f8155db3e2d95c3ba4445a59cbc21a3e7541ab22ed49d3dcf7b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/xunit.runner.visualstudio.testadapter.dll",
+      "bytes": 1251840,
+      "sha256": "98a7395cd6abd03d0ac8eeb82d720c24db00602f047ca49bd6e88e77fc6d1153"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 401168,
+      "sha256": "5b81b1d4537d44a365fdb48aa24e51a0b0c3ee308debcc225c9339249e0a8bb3"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45368,
+      "sha256": "a41b72555a1943e367e9714fb3329454dbad4366500db0899519ffb558a060cb"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "61e5b362940ca90e3b89a452218fb1d3882aea679a1b73e6ad868d0ac1bb88fc"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16928,
+      "sha256": "4a8c0ef1c60069942082fa7493dbe683033e14e15dff09c8ba8c230e2a4443c6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20008,
+      "sha256": "0b12a586cd3759757f641a6219f491aff7c5fbdf603a6339b98faa57ce6eb7c0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20040,
+      "sha256": "8fb34ecf4343a77647006f0ad1fb41e8c4dd48cf38fe97b93c345b743f538908"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23072,
+      "sha256": "396cc3c959cfc9f24bbe7a2d38846dfb97b696a9610eb95234306cbcdebd4f06"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
+      "bytes": 400680,
+      "sha256": "d1e716652b5705373fb560105ca2710ff2bc0b704285b50b08ec8df9fd2f8287"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.CodeAnalysis.resources.dll",
+      "bytes": 45328,
+      "sha256": "0bb422559a2582df1a49faed25a337b6037eb3878ac4ee7c118b68349ca312b7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
+      "bytes": 16416,
+      "sha256": "b411fe26d281ec982d0432f1b0bce2c1c86f200d17e837bbbe91086f8e38270f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll",
+      "bytes": 16952,
+      "sha256": "a9012f419d3b66a730d635760f63fea1721a63b2105a4146c2d1309bb6f31b14"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
+      "bytes": 20552,
+      "sha256": "540bee11c69534fc48bb4a9626683a6203e9f1f4bae15ff72069eaf9f65f5e81"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
+      "bytes": 20024,
+      "sha256": "d69e7127de46141b6406fd968d4a66271dda99271701f912d56ce6813af48cf2"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-bin/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
+      "bytes": 23096,
+      "sha256": "b90f264a4d72987fd0aa0d11fc51dd248f831740bcd72d281045e16936fda16b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-manifest.json",
+      "bytes": 441,
+      "sha256": "b081f0f50e88b1a700a64ebdd90c4c16a4f06dfd932987d221b5b4492207ac91"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-probe.patch",
+      "bytes": 7590,
+      "sha256": "9639153170d247c8d0587df09502e82414280d4ea5c77e080944ff18991de0f4"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-qualified-source.cs.txt",
+      "bytes": 16396,
+      "sha256": "6e7ac5c69fd1660b8e19d16baa8ecb898f0e818599ab11ddd2c3b6668f78dc1b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-peer-source.cs.txt",
+      "bytes": 16219,
+      "sha256": "3957ad4a111f20519967f40044104985aa6988544905bb3df90e6d631c44dace"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasManifest.cs.txt",
+      "bytes": 23054,
+      "sha256": "4386927b860b7c71e443672fcc3b3eadc7e32b79affac6befa60a9bdbd0ae264"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasQueryContracts.cs.txt",
+      "bytes": 15268,
+      "sha256": "98a124d96aa27e6f2ca2dedd53255e186ad7840caa852dc4779f0ffa62f4e8ac"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasQueryService.cs.txt",
+      "bytes": 38428,
+      "sha256": "24e0cf1ed23eb674e68c0a2997212ebcc45c3fc2e35e088807ab7f215db9986b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasReadScopeIssuer.cs.txt",
+      "bytes": 29240,
+      "sha256": "5d8a8b1d8f0d17b8d3591a24d9ee880bbdb462ba2f750b03c806bbbbab82cc7a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasReaderContracts.cs.txt",
+      "bytes": 5088,
+      "sha256": "83190c5c3812155382945cf6692a82636eec21a2004083f927c72a8e8544f2c8"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasReaderProjection.cs.txt",
+      "bytes": 38058,
+      "sha256": "5c13533ca6ec83106e341691da26644da9d4a7cefb65449b37e5368938139e63"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasRemoteReader.cs.txt",
+      "bytes": 17790,
+      "sha256": "4e8b954d31abf17ab27cfe0de1dff2e5217f6c763428967b5afd1666c04f64f7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasStaticObservationTests.cs.txt",
+      "bytes": 13690,
+      "sha256": "548a82a03ef31cc42e10eb8a3c9833bb39fd6a81aa8c95f7fe18c659478ae951"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasStaticReaderContractTests.cs.txt",
+      "bytes": 9735,
+      "sha256": "d6f511445b8712f0c4dd6fedaf871f7385430861fcc1ba1ad644539abece5fa5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/AtlasWorkspaceOperations.cs.txt",
+      "bytes": 8270,
+      "sha256": "fdcdaafef9a6af43a3053ed7218ad486f566a04d0df715347a3125743063bd97"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/legacy-source/CSharpDeclarationObservation.cs.txt",
+      "bytes": 24850,
+      "sha256": "68ec56124f71728f554f6a35970133bda0d0e9553bb46b93b2c3517886fb5e5a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "5f263072a33c1116b03d74fbbaae34fd98a9d353b2c5a069e6eabb13c234b3cd"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "a579b5ec74ef33f32871a0efc790613ae161d470f4e4fa879738d671133b61fe"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/matrix-v1/owner78-matrix-v1.trx",
+      "bytes": 114767,
+      "sha256": "cf2111db096b3a58603d288a84f67c2a6b9dfcb4d115af10acdacddc19ee0ad7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/56dd73aeb4564e75b816e083cce85cf7/compatibility.json",
+      "bytes": 3235,
+      "sha256": "b0f8a469977e32161dbbc8a8111b264be284e486bb3240e73a2ea0028516c9d5"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/56dd73aeb4564e75b816e083cce85cf7/peer.trx",
+      "bytes": 2971,
+      "sha256": "800f16829f3011b1cde70b203f17627143e6c8d853b090e482e727dea51ea70f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/5fbebed9c44a46d89c48ae8d8f32cf11/compatibility.json",
+      "bytes": 3235,
+      "sha256": "e8183625877ccea47c9349ad50dc0531d619864f972f55d3f062215e975156ec"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/5fbebed9c44a46d89c48ae8d8f32cf11/peer.trx",
+      "bytes": 2971,
+      "sha256": "23c8af7150aacc278395fff1730024fee14c1eb938129434127e3c24a15c0033"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/677ba9d306ff49cb95da01899d74baf5/compatibility.json",
+      "bytes": 3235,
+      "sha256": "5146919e85b1a39bffae1ed2dec46fe8477e3cd7341d485fcca3efb0279a166e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/677ba9d306ff49cb95da01899d74baf5/peer.trx",
+      "bytes": 2971,
+      "sha256": "ac9a0c6a9a5fd0c4bc6785ecf8b46872e6c1693fc3e23f89d9e293dd39f5273e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/88db0dedcdb3429a8f2c39e9d4c55cfc/compatibility.json",
+      "bytes": 3235,
+      "sha256": "7a30fb247c87257ff6bf5abda85559cb26f2c8a1e9fedf8f1dc2cae826891e9e"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/88db0dedcdb3429a8f2c39e9d4c55cfc/peer.trx",
+      "bytes": 2971,
+      "sha256": "8ef0d172d7fc9777b7e0427d1bdfc17408498add996e6d3202cb3cd11513f028"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/9744977c1f1e44cb8b1056f5b81d5bfc/compatibility.json",
+      "bytes": 3235,
+      "sha256": "3e86e0a67dafcb18349edbc210dc0f1f9acf1bfa89a4fdc54b9d5f328a30ede6"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/9744977c1f1e44cb8b1056f5b81d5bfc/peer.trx",
+      "bytes": 2971,
+      "sha256": "c55c1f3af94eb9dffcc941b28efc02a4a5ff9507b7c901a15acff53ffce7901b"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/a143f7a54d5142d5b3e1a02f25a0f84c/compatibility.json",
+      "bytes": 3235,
+      "sha256": "16c5ae8ef3f97f5d57ee148f2c1679ba0d384634913082f2beca365acf6506ce"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/a143f7a54d5142d5b3e1a02f25a0f84c/peer.trx",
+      "bytes": 2971,
+      "sha256": "16bf1c9904be3c8fef679e4a2cc798694465124435aab50fe3aa3b10fb06e1ba"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/b4cf32fccbc44020bcc8a0cd9739ec00/compatibility.json",
+      "bytes": 3235,
+      "sha256": "75702b80f29bc595b3e0bc932f69e816bb75f6f0d33d4afb88c8d9be8bf9d0d1"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/b4cf32fccbc44020bcc8a0cd9739ec00/peer.trx",
+      "bytes": 2971,
+      "sha256": "5a5b017b33d08e5accc9999f1a4e17fbea19b017775087137ccf0a086651d254"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/c60035e1a89545efb582c7bf39dd58fa/compatibility.json",
+      "bytes": 3235,
+      "sha256": "6341077acd9c676e89a7dc5351a89afbb264b9ff1669ac4385b4d03a9ddecad7"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/c60035e1a89545efb582c7bf39dd58fa/peer.trx",
+      "bytes": 2971,
+      "sha256": "d5f1eac664897efebdc6a7316ead4aa63d6c89e9d7abdd27d6f0d37a8bdbae3f"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/ef1763e82acb4151a9191d4332e31892/compatibility.json",
+      "bytes": 3235,
+      "sha256": "deee8f87d55eaa70dd9397a6ac7c340e8d5e1ec2e4d1f349761907fccc9f14ae"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/ef1763e82acb4151a9191d4332e31892/peer.trx",
+      "bytes": 2971,
+      "sha256": "14fd0e3645a65c8e574428782e262705b76ac9bc25cdb09d6ab542706a54b9b0"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/f17910492a1e42f792c41e921707117f/compatibility.json",
+      "bytes": 3235,
+      "sha256": "48e40662763a17ac059a7de2083201336ae43a928454b9f78229cf5efbaa7c4a"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/peer-runs/f17910492a1e42f792c41e921707117f/peer.trx",
+      "bytes": 2971,
+      "sha256": "3690290c479d2ccf537cc8a90f53cde374a516df658ab5bdf39b50549c12c5ff"
+    },
+    {
+      "path": ".artifacts/owner78-core-metadata/semantic-red/owner78-semantic-red.trx",
+      "bytes": 18845,
+      "sha256": "8c1ff137828713469e2b977191eae485e245726c47e13e5b84324a44ec95409a"
+    }
+  ]
+}
