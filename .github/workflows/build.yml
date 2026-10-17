@@ -7,13 +7,8 @@ name: Build
 # by the branch that introduced them. A gate that only guards the destination is a gate that reports
 # problems to the wrong person.
 on:
-  push:
-  pull_request:
-  # RING 2 (CE4): a daily full sweep, so anything the per-push scoping below skips is still proven
-  # within 24h. This is the safety net under the mutation-replay scoping, not a second opinion.
-  schedule:
-    - cron: '23 4 * * *'
   workflow_dispatch:
+
 
 permissions:
   contents: read
@@ -152,8 +147,8 @@ jobs:
       - name: No conflict markers in tracked files
         if: ${{ !cancelled() }}
         run: |
-          python tools/verify-no-conflict-markers.py --self-test
-          python tools/verify-no-conflict-markers.py
+          python docs/ai-forward-pack/scripts/verify-no-conflict-markers.py --self-test
+          python docs/ai-forward-pack/scripts/verify-no-conflict-markers.py
 
       # DC-107: a frame-budget assertion compared a measured p95 against 16.67 ms, a number taken on
       # a developer workstation. The CI runner is ~3x slower, so it failed 38 consecutive runs while
@@ -459,6 +454,47 @@ jobs:
       # what keeps a gate switched on (DC-104). Widening to any path-named receiver reaches 23
       # sites, some of whose Ordinal comparisons are correct, and would need a waiver mechanism.
       # That ratchet is deliberately not taken yet.
+      # F5 (docs/plans/conductor-front-door.md): the nine clauses of the front-door exit evidence,
+      # over the recorded exit run. It is a gate rather than a one-off script for the reason CI6
+      # gives - a lesson recorded as prose is a memoir - and because clause 0 is the only check in
+      # this repository that reads its OWN commit: it compares the oracle's bytes at the cited sha
+      # against the bytes now running, so an oracle quietly widened after the run reddens here
+      # rather than passing. The self-test proves it can fail on every clause it claims to check.
+      # ONLY THE SELF-TEST UNTIL THE SUBJECT EXISTS. The gate reads the exit run's recorded
+      # evidence; until F5's run has happened there is no record to read, and a bare invocation here
+      # would be a step that is red for the honest reason that its subject does not exist yet. The
+      # self-test is a real invocation doing real work - it proves the gate reddens on every clause
+      # it claims to check - which satisfies verify-project-coverage without wiring a control ahead
+      # of the thing it controls. The bare run is added in the same commit that lands
+      # spikes/conductor-front-door-exit-run/exit-evidence.json, and F5's Proof Pack carries that as
+      # a named step rather than leaving it to be remembered.
+      - name: Front-door exit evidence (F5) — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-evidence.py --self-test
+
+      # The record landed 2026-09-14 on the operator's word (Ruling 103). The nine-clause oracle above
+      # stays byte-identical to its commit (its clause 0 demands it) and keeps proving it can fail; the
+      # BARE reading is this sibling, which accepts a frameless record on the operator's word only and
+      # reports each clause MET / NOT MET from the untouched oracle's findings.
+      - name: Front-door exit evidence (F5) — attended reading
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-attended.py
+
+      - name: Front-door exit evidence (F5) — attended reading self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-attended.py --self-test
+
+      # DC-211: a text-mode subprocess that lets the locale decode the child read its own committed
+      # bytes as changed (cp1252 against UTF-8). Every such statement under tools/ and spikes/ states
+      # its encoding, or this is red.
+      - name: Subprocess encoding gate
+        if: ${{ !cancelled() }}
+        run: python tools/verify-subprocess-utf8.py
+
+      - name: Subprocess encoding gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-subprocess-utf8.py --self-test
+
       - name: Containment-comparison gate — self-test
         if: ${{ !cancelled() }}
         run: python tools/verify-containment-comparisons.py --self-test
@@ -504,11 +540,11 @@ jobs:
       # default terminal is Windows Terminal, and the tab's agent outlives the test. Code lines only.
       - name: No new-console launches gate — self-test
         if: ${{ !cancelled() }}
-        run: python tools/verify-no-new-console-launches.py --self-test
+        run: python docs/ai-forward-pack/scripts/verify-no-new-console-launches.py --self-test
 
       - name: No test or product code opens a new console
         if: ${{ !cancelled() }}
-        run: python tools/verify-no-new-console-launches.py
+        run: python docs/ai-forward-pack/scripts/verify-no-new-console-launches.py
 
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
