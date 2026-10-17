@@ -1,0 +1,40 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "fc60fd35920576899386fb0f710456c6152814e8",
+  "original_branch": "refs/heads/review/d1-r3-consumer-boundary",
+  "archive_sha256": "fbc3b3cb3c8c5d1abcdd0507315ff081704b8833025ae5f0de0e2beafd15fce3",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 21938,
+      "sha256": "fbc3b3cb3c8c5d1abcdd0507315ff081704b8833025ae5f0de0e2beafd15fce3"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d1-review/close.py",
+      "bytes": 15271,
+      "sha256": "d2df83a30cff1670547af8ee850c571cf9f565447ea36d6485cca625e4d6c211"
+    },
+    {
+      "path": ".artifacts/d1-review/excerpts.txt",
+      "bytes": 31392,
+      "sha256": "ea6d4eac0d9b9b5cc52eecaeef684503c66793777978c940a1d9f5e011985c3b"
+    },
+    {
+      "path": ".artifacts/d1-review/pins.json",
+      "bytes": 813,
+      "sha256": "9b222911928f8b9a1adbc13e9d38e44a441df2ef332caa3d4ace6aeeb3e97c56"
+    },
+    {
+      "path": ".artifacts/d1-review/prompt.txt",
+      "bytes": 3217,
+      "sha256": "c0d6b0bd51b3d34ae46bc5fdf777003edf4b2c31fac1070b80564c6b3adb2178"
+    },
+    {
+      "path": ".artifacts/d1-review/read-evidence.py",
+      "bytes": 1103,
+      "sha256": "595f229b8693a7a56db6b2742c220d012b008f961e4e6c9eeb3fb86995e71fc5"
+    }
+  ]
+}

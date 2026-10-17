@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:52:52Z",
+  "generated": "2026-09-16T16:10:51Z",
   "audit": [
     {
       "actor": null,
@@ -19871,6 +19871,58 @@ window.AUDIT_DATA = {
         "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
         "short": "bcf4959bc",
         "branch": "understanding-views-d1",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NFRDWGJC0NRWKRTVDJHYS6",
+      "shortname": "d1-r3-consumer-boundary-review",
+      "datetime": "2026-09-16T16:10:51Z",
+      "session": "codex-d1-r3-consumer-review",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NFRE27J43Z1HFT2C8Z0VWB",
+      "shortname": "d1-r3-consumer-boundary-clear",
+      "datetime": "2026-09-16T16:10:51Z",
+      "session": "codex-d1-r3-consumer-review",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "summary": "Independent document boundary CLEAR: all five r3 corrections and four exact consumer pins verified; same-blob coordinator peer ACK remains. No implementation or runtime claim. Broad output truncation repaired by bounded clause readback; derived regeneration remains owed.",
+      "kind": "manual",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently clear or block D1 r3 consumer boundary against Owner-approved requirements",
+      "done_when": "All five corrections and four consumer pins checked; independent CLEAR receipt committed",
+      "tier": "T2",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T16:06:49Z",
+      "duration_seconds": 242.0,
+      "git": {
+        "sha": "17cd8317442f948ca6e0846f02cc06ef9f3a9673",
+        "short": "17cd83174",
+        "branch": "review/d1-r3-consumer-boundary",
         "pushed": null
       }
     }
