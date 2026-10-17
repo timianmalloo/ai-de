@@ -1,0 +1,1170 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "626d16a211757db5e4da7515cf234a686f610e6c",
+  "original_branch": "refs/heads/test/atlas-native-instance-observer",
+  "archive_sha256": "1bea8c7bf85dae9ba4fab50fd0a5233571362ab443b2077f40f8df6db5f1095b",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 613496,
+      "sha256": "1bea8c7bf85dae9ba4fab50fd0a5233571362ab443b2077f40f8df6db5f1095b"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-instance-design/adapter-evidence.json",
+      "bytes": 7351,
+      "sha256": "89757fedbedb73fedd3f64cfd289c8e45fc4747d4ffae01aa754d2da93a032ac"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/close.py",
+      "bytes": 7309,
+      "sha256": "26de97703cd31bbd6a1dd5c5b140473cafba4b02556fa6a401ff6ac289b43585"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/frozen-before-mutants.cs.txt",
+      "bytes": 101142,
+      "sha256": "5565b10a9dffdd3f30dfa02ccb5bd41080e6694370fb4754844a78727f9659e5"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/implement-close.py",
+      "bytes": 13576,
+      "sha256": "69505be60b36b436a569b60c5f60e081c0f6ad761e94b034fd82ff660966c7e3"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/implement-prompt.txt",
+      "bytes": 510,
+      "sha256": "f8451e15a143a9b937d754b32f05661dabc3017878939b6663660bf583553494"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/inspected-results.json",
+      "bytes": 34239,
+      "sha256": "dbc18fea9d245f82edcb811b72308cd6ce66c4ddac2373577292f943f1c67373"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/mutation-results.json",
+      "bytes": 7510,
+      "sha256": "e341f98d20fca79d6e91a9637b0a56746fc345452dac606e2689c8789e4f5417"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-additional-red-source.cs.txt",
+      "bytes": 96864,
+      "sha256": "33e6471124f8a80eb58fd29813557143a20cfacd6fac54c686740348dc826068"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-additional-red.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-additional-red.trx",
+      "bytes": 39354,
+      "sha256": "57c6ab9330849209fa22af1240b2186451a6e8345a083cc97087e0b95c48dc8a"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-complete-source.cs.txt",
+      "bytes": 100132,
+      "sha256": "d1d20e2366841cb138bd72d6d76770d354471e1d17a9997b1c58b236c34cb578"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-complete.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-complete.py",
+      "bytes": 4857,
+      "sha256": "e0bb895b6511fe3bac0b74b2f137712f8bc84032cd605b258e73ef7f6efc3094"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-complete.trx",
+      "bytes": 25264,
+      "sha256": "ebb0099e477c986bac603093a7b3cff74f85199ffcd849efdab29431aa76da3b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-failure-controls.py",
+      "bytes": 2636,
+      "sha256": "69e6d8a0b4bc1e0ed845817ffb625b5d587a948c2b5153925148179b9ba74057"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-final.exit",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-final.trx",
+      "bytes": 26761,
+      "sha256": "e36418be7c1c79f72a9a66969324db33062a219937274933ef677ac8515a8bed"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-first-source.cs.txt",
+      "bytes": 91226,
+      "sha256": "bd7486025d2050d9123451d092bec24b5e59a226b6a983d9cde3cb4fcac53c99"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-first.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-first.trx",
+      "bytes": 17885,
+      "sha256": "f2c4d6f0a98135831a3f6d2eff94a7022ead7d7160e8631001ad58b37800fd6c"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-implement.py",
+      "bytes": 6873,
+      "sha256": "388bca605e0253b7743e16fe5d304de5c0d6f8c8f41ed1a50f93519a1420d887"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-implementation.txt",
+      "bytes": 11879,
+      "sha256": "ecd7b4ec6f60e3c9fc611a7a814e2f38fb916279dd27799f98568ef572424374"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-more-controls.py",
+      "bytes": 6588,
+      "sha256": "5ce3bfba32ce1b86d2c0fd8c8281dc660fcb92c99c536c627f36a1f13d5d3f0e"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-child.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-child.trx",
+      "bytes": 7597,
+      "sha256": "37160f6f4707113e1c0e763c6d719d4e3c9fe60c7da7cce3449d555ec8e5b141"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-equality.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-equality.trx",
+      "bytes": 4839,
+      "sha256": "bf9cd43cbfb3efaa8fb27441733315000582fb44645354fcddb4bddcd4eb57ae"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-finally.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-finally.trx",
+      "bytes": 35370,
+      "sha256": "7a4b788c96f818d95507586b101ec16c1d9518b604d9f2e20354119b0e2416fd"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-sink.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutant-sink.trx",
+      "bytes": 30282,
+      "sha256": "2eeab23cd33ba98898db6f3958b354bee58123c6ada1da474ec2374762c6d364"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-mutations.py",
+      "bytes": 5477,
+      "sha256": "1949a0dc02d896aa86a17aea2773ae84a0047873ca8aba7e835ccfef061a89df"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-null-red-source.cs.txt",
+      "bytes": 98375,
+      "sha256": "09931c6013517fa7a46dbbfd8c7db73bca15fb775ec9f079a16c907ad05feb7f"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-null-red.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-null-red.trx",
+      "bytes": 14910,
+      "sha256": "e6fc32cdb6077a669ecb0b8ae5437f1a69e8390b135edaadd4e04262e0126e9b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-red-source.cs.txt",
+      "bytes": 78972,
+      "sha256": "ed6d076fa02f4fa6dbc00ffe71f9602b1a8248887b0a6766b2d792200cc33e0e"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-red.exit",
+      "bytes": 3,
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-red.py",
+      "bytes": 12245,
+      "sha256": "06c8bb3f2739f2fd57055bc87ae3fec65b03e98b9281c1b8780ec6f4fc589860"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/observer-red.trx",
+      "bytes": 52463,
+      "sha256": "409cdd28512299e0a0ea2c252677c206ea789b4d9a19c73b60edb963569356ae"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/prompt.txt",
+      "bytes": 460,
+      "sha256": "8a855a63ad75ee16aeef34a156f3820e1e28c80c6be04e580889c92d61a34503"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/reconstructed-source.cs",
+      "bytes": 100132,
+      "sha256": "d1d20e2366841cb138bd72d6d76770d354471e1d17a9997b1c58b236c34cb578"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-close.py",
+      "bytes": 14177,
+      "sha256": "0edbdda2892787cea8f4be8eee23f11d41cb4e52fa5bed014a581803417af744"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-final.trx",
+      "bytes": 32856,
+      "sha256": "998b5b9be866c15809cac3d3b10c89ac045b235b4dec34ca56ba742cf6c6b2cb"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-fix-source.cs.txt",
+      "bytes": 105004,
+      "sha256": "ae749110bb063a71609b2df3de68203f4002a223291486912786f1fd24735dca"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-fix.json",
+      "bytes": 785,
+      "sha256": "259f36569e6d52bc87559c34f4c8921f828fd0b819cf63401551eebd77ad6460"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-fix.trx",
+      "bytes": 32856,
+      "sha256": "b0ba6bc2121bf74d5730c9de982e9c80f718fcb026ac7315b00feedd04586667"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-frozen.cs.txt",
+      "bytes": 105004,
+      "sha256": "ae749110bb063a71609b2df3de68203f4002a223291486912786f1fd24735dca"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-inspected.json",
+      "bytes": 21793,
+      "sha256": "bd74273ff1833decb2617e31682aa7e3b080b2c3996a5a9548ac3dfea588d922"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-mutant-source.cs.txt",
+      "bytes": 105006,
+      "sha256": "c490741807dd263c19788bbad63dd2145afa201867086dac93d9ae69930a81f8"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-mutant.json",
+      "bytes": 1013,
+      "sha256": "d3fd22ba67810ac0a99826f227dda1e4770a79c8942f765f525c280fab014e66"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-mutant.trx",
+      "bytes": 34629,
+      "sha256": "505fd0172e4b1567a00e8db16e994b3f4d2ba3797c28e2fd7b65802d5146d94b"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-red-source.cs.txt",
+      "bytes": 104645,
+      "sha256": "e8bb58647fe1383bddb529d0e6123cb546329d002541da448eebb73b1fe59bd8"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-red.json",
+      "bytes": 1755,
+      "sha256": "af2b898677ef5711c3d195386546ad5ddb6d67e441c7d2dbc678306aee1e54e0"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-red.trx",
+      "bytes": 66052,
+      "sha256": "4b9f577629e977e6625fd76577e3b2d315cf00148e4d3af4cb41f60e7746e364"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction-shared-readback.json",
+      "bytes": 1325,
+      "sha256": "ea269d80887f7a305b5b7c84955c91cfdc962960fc2d2bcb41e28772a38246bc"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/sink-correction.py",
+      "bytes": 6277,
+      "sha256": "ccd033e864e03e87ccb9b87a79e3e93834dfe3cdbbef282214471c99efa4342e"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/source-chronology.json",
+      "bytes": 1241,
+      "sha256": "5091471b5b5948f5c415c5def15104f678f8b0362a6e8c04ad401e858e736354"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/view-state-final.trx",
+      "bytes": 32856,
+      "sha256": "db799ebc38fa0cf866419c8f90828fea8243cf0d6be73e4dba8b3ef2ea0741c9"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/view-state-red.trx",
+      "bytes": 4791,
+      "sha256": "c4be8c0150a9b7962f0486040dec843c8bc4464a1378d57a6c3433f9bf1fce57"
+    },
+    {
+      "path": ".artifacts/atlas-instance-design/write-design.py",
+      "bytes": 25172,
+      "sha256": "03a6d43a2957ebaf713b25c1dc1ecfa0ecd598d7372d81ba4d2601b3f317e3f3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/05638fc43c454684a33d010a86411016/receipt.json",
+      "bytes": 1003,
+      "sha256": "4371a279b1d53629eab9b8a1f5cb9202bfb78d5b638e58e6801a2e48cb4050fc"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/056d9d1ceb39459a9ac747e6235e63ed/receipt.json",
+      "bytes": 564,
+      "sha256": "39fd5d85c060cff8f452a1e87982c4d88f92c62be00b3eaa3ded403f170c92e9"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/05d5be70771e46ddb81cb407ba0d6318/receipt.json",
+      "bytes": 2940,
+      "sha256": "56156a65188ce21e30561d8ff775e6f6ea964d0bb48cd4a4d468ed2226ed9c32"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0699acac018945569c71c71a35b65072/receipt.json",
+      "bytes": 2266,
+      "sha256": "7bce360758b747d8fc5e8d7a7a45fd9c4d5676e2615fa1b8fa14effb6ced488d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/08b277a099944afd986945c2905c74c3/receipt.json",
+      "bytes": 2074,
+      "sha256": "9c8936bf8fc9cfc0678fb381d6116fdd68a7dad4c0cde8b4d8d2e511a34b90e7"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/09e65417c7504d56914512b13e304815/receipt.json",
+      "bytes": 3389,
+      "sha256": "d5559dde0d3d65bd3575645bec2a407a9efd8a189985a672a0c5ebc52bfd1c99"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/09f35dc6f2834d66a48c2d1f8e8c46bd/receipt.json",
+      "bytes": 855,
+      "sha256": "2221e10f550f3e06b152e4a8240acb0054ddd6d085095c038324cd826488e758"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0af094a2e3894d5486f5745e53c90be1/receipt.json",
+      "bytes": 527,
+      "sha256": "0e681dbbbc2e84cb4b73b25a6bd60e9c23a0fd6856daeff16efb7c48612ca772"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0c3240da28874b29a1c652c5888c567f/receipt.json",
+      "bytes": 2059,
+      "sha256": "dcc5719322753ec65ddfc29e02eb13b8a7c4e92d65cc9b87d347dd35aa656fbc"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0e319ea675574e52a4b4513eeb73c3d3/receipt.json",
+      "bytes": 3490,
+      "sha256": "54522601f46e0b4e91ba5bb82b76ba7d888bda447a0dd49497e452566c85c578"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0e79de39f66748ec8ab8b26ea4e372dc/receipt.json",
+      "bytes": 5736,
+      "sha256": "488ff44cfd02c69193b8d41ea67c5061dc423b340bc7d174bd0e438fd35a7fc1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0ec020cd57954879be76a829847a1711/receipt.json",
+      "bytes": 3510,
+      "sha256": "d19930183e44b429e810252acda5ef52292251cefa790e5dc49ec7ea7f57877f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0eea1d6f37694d4098cfa9e43428cc2e/receipt.json",
+      "bytes": 527,
+      "sha256": "27e94a4fdba0027992934c6d6723651659135b6b56afa35c25f9f79415b1424a"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0eec9e4bd669478eb30aad0f4d6ddecc/receipt.json",
+      "bytes": 6618,
+      "sha256": "57f3b3752eee39bc29af9c9c8926fc3967e9ab11344330bd4e8cc4c543edabd2"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/107b9b0bf3d1425c8e75b01fbefed251/receipt.json",
+      "bytes": 2593,
+      "sha256": "d8eb1c5b08b577da06cbcaa59d721de701a468440a2a1af08dffe1ff9d5d9a47"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1132c85816cd4f86b07f46c008d94f88/receipt.json",
+      "bytes": 2427,
+      "sha256": "9af6cba87dfbe792c7e9cfce0697a3317834a24ac323dff1a4e7f64e7fa2f882"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1344e2b1cc704624b08d6e9877cc86b6/receipt.json",
+      "bytes": 2436,
+      "sha256": "1a986b3d42943a8b4ef39883b072ca41399acdf6171fc07acfe72c997eca6730"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1511e70e3ea646cd8451111a017bb1e0/receipt.json",
+      "bytes": 2430,
+      "sha256": "44e5ec47a7bc3491345296118ee7a40a92e913666911154dbabbce9468f36380"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1720d75f327b4305ab6b0a4e6657d162/receipt.json",
+      "bytes": 2427,
+      "sha256": "433331155e90373e69a98ac3465487f1625e192a89827748a4c3b33ce967e0e8"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/17c8bb5a549c48f9865dbd8ea4cff12d/receipt.json",
+      "bytes": 2891,
+      "sha256": "7fca4b579852dfedc3d57d47fcc48114438e6c70f6e58c2fad828881746212ec"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/19840ca1634244ef83c2e8631f620d41/receipt.json",
+      "bytes": 564,
+      "sha256": "c4282294f5add26ca1c165eb40d5b2110a41a2ae21ef1d436158e56439bb1aa1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1a7dc3251fa64c77941364a99822605c/receipt.json",
+      "bytes": 3509,
+      "sha256": "84801fbbe44f1ee8e7844ea65bec4ed1cae42bfed0460465120728b2958c5c14"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1aa9bce54abe416b8f9b3de26caa475a/receipt.json",
+      "bytes": 2882,
+      "sha256": "2958c35004aa71af1836c30300638010f35c1d0b0b051e50fd587281d099b043"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1fb59c59db584c8882e1fafb425215fb/receipt.json",
+      "bytes": 564,
+      "sha256": "bf33f8d0aba31a0688882a9fdef7412a3ba755ccd1aeca3f5e6da8560fc04705"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/22a9e5353800429e82901fd49f2dd7be/receipt.json",
+      "bytes": 3376,
+      "sha256": "6cbef120fb45276c4673c9fda349104975ddc5e4aea83239d8e95b017fc0607b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/22da756a8a7c46b4a5615e1ac265c456/receipt.json",
+      "bytes": 2949,
+      "sha256": "4501cce7f00882c545676841971f2852862a5eb4a649d59f0b09277ab57b9d37"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/24a50d88a335453d9ba8679371bf1a7f/receipt.json",
+      "bytes": 1003,
+      "sha256": "8bfb17b83eb0d610cafb9f45cc4ac58a7d40ee98b93f2508b6c08671e79a4e58"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/24af9bf1e1c7419e8b596ff228b59101/receipt.json",
+      "bytes": 1831,
+      "sha256": "1c02f822908abccb757baabcb9e75fbb8c13aef880d9c903454d644bc2825894"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/25d8a8035e874997b8ef8d9df8f6a67f/receipt.json",
+      "bytes": 2504,
+      "sha256": "9f1cd77cc5ea1f118953de36264a95de476d0d50f40cf33db94609ffbe53285b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/2e284bc5a8674d9489454f49cc713e28/receipt.json",
+      "bytes": 1003,
+      "sha256": "2d76f9d3e883f4a62b0a5bb1e88e4991f92c79a19d75abab7779bea9f9f37a96"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/329dd425eb2145b5aa103d1c151e416e/receipt.json",
+      "bytes": 2276,
+      "sha256": "735e3a0b81e1eefc019872367ff6d144af3042e4a0d6337fe82f546ad7f3fb1d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/33cdde9cb98041d68e88a69e83f67b2f/receipt.json",
+      "bytes": 3376,
+      "sha256": "db88204a0d4ffb591775a3f450291762ae02c03fbe487d5694b138da3c2daf70"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/33e046cd2e10456fb20c1a0e8403ede5/receipt.json",
+      "bytes": 3371,
+      "sha256": "19c775fa66491e2bf402db3f3faec5e45048e7dd5948913c4897a4cc0b21ca10"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/34363e3a532d4eb4b2e0148f53acc26b/receipt.json",
+      "bytes": 3371,
+      "sha256": "59bfe16c19f88b5ca8d94594d114331dd2aa236a4ab7e345f0c7e4ebebced9ab"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/35a5f53dd4124cb4b197db12d06651d5/receipt.json",
+      "bytes": 564,
+      "sha256": "3d2903ebba1e9a18211a23906d643cf64c39d9ff3ad99fd93c56352dd096d473"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/3623ac899b894dedb7fd2c56e8ea45a6/receipt.json",
+      "bytes": 2597,
+      "sha256": "dc7ad60d387ccb77c84f0658d22275d31d94074a6a29c6c9d8526a40c5b0cfed"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/36951cf98d5443bf8d1bc9d3e71911ac/receipt.json",
+      "bytes": 855,
+      "sha256": "66f64e71243d7484956d4346a9bc375fe34835d7e3331f6b4b8c76f797eb5223"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/37d03e78ad75419da5de681d2a4cd91a/receipt.json",
+      "bytes": 1331,
+      "sha256": "ab4ce08ae30f747e2a42207c0f3045b178e8f4a553e9ebd06696c6057ea4e664"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/3a54be2e88ac4a0ba1a02a9fff35403e/receipt.json",
+      "bytes": 3390,
+      "sha256": "f5a5cef3ce28302277d69048b56cf0aa67be2afc8ed34abb9f984d65604ab1c8"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/3d5cfcf40f14416e8b99ba833f8f83dc/receipt.json",
+      "bytes": 2506,
+      "sha256": "44938b30ea3d3c2460b0a0c2e882cab42597882dd1a5d60deaeb4810e5125630"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/3f0c43df9ddc4652b8fbfec889d0abed/receipt.json",
+      "bytes": 564,
+      "sha256": "312a8af8369790309ebe0d78180146013c7b51b2f16311f94f8c4d750b687889"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4211ccc128d44f24bacade8affbdf3d0/receipt.json",
+      "bytes": 2948,
+      "sha256": "01cf08ce0740b06c49af49f1deae9370e412b0fbfcd2d78d6671e9f281d45d92"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4219d3beda3e415bb616f68af4df5e3d/receipt.json",
+      "bytes": 3393,
+      "sha256": "3eb98b45da0e2960b96723cfaed315f0e144281bd3ffb1823ec81fa946b1f0cc"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/44d8fbbb41bb48baaf6f02273e829b9b/receipt.json",
+      "bytes": 2506,
+      "sha256": "60ae8fa6b250f4d4321a411aa7046232a090f8ee25b128be5e908a941801c6bc"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/452d1af6f2154292a5471041360fc572/receipt.json",
+      "bytes": 855,
+      "sha256": "e54259e8e2768eeb38ce602c55009ae159b2f3458c9483454e4225f26bd26eef"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4787c0861b0f4cf48e64906b1402a6b1/receipt.json",
+      "bytes": 2940,
+      "sha256": "bf3450cd31feae6a7ccaeb829752943bef2f13cbb962ead200710469e15fe705"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/48e02e7eb50e41d484aa8e2ca7f2fcd3/receipt.json",
+      "bytes": 564,
+      "sha256": "9e30814e8a056be19fc755f844f28d523380a8bb4d74be72a73ab8b7e44b9097"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/48e7dff930ea40ed8dae4ed29c50c4d1/receipt.json",
+      "bytes": 4446,
+      "sha256": "11ed232533f4e176ef6ffd1924a88761586de9496317a85f3ff42d9bd8cde5d3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4a8c97b70a5243cab7ad644d6800d690/receipt.json",
+      "bytes": 10543,
+      "sha256": "10e3625000ec61ca7749cbc58dcf02eeb4270550f10f9a4c4b26d5d40cb22dde"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4bd40f947fce43c1aca77c6d6cab5ca2/receipt.json",
+      "bytes": 564,
+      "sha256": "7c4c29d49e9e5f1302b1f0d239f9324c08bddaba043094fa34264430a6a50aa5"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4f47de8010a54ae083dccb1cd0d3922f/receipt.json",
+      "bytes": 2426,
+      "sha256": "fa0b6adf52bdf1ed2467088c70c374a75d51dc9fdf3186df5298b1a98f3883d0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/50cf7f40ae6b48c98074c0825daeaf8e/receipt.json",
+      "bytes": 3510,
+      "sha256": "41fc6af23454bf642be9480ba6c6726784d17b38047887ced269162f60a34da6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/5289eb7488484af9b7545742dbbb676f/receipt.json",
+      "bytes": 2266,
+      "sha256": "bfa2cb0d7e347c59b3d7601e45f385b2567fa7a9928d9cfc5e29dfe9f41608e6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/54ceaa5b4b6d4511ae750c65b6901fd9/receipt.json",
+      "bytes": 3371,
+      "sha256": "f6023f33d3f5a55d330ac763cd1717650b08d8f4a83193500ee910ad3b084e59"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/55de81cbd65f43848345f9474597e3bc/receipt.json",
+      "bytes": 1686,
+      "sha256": "1887699584753f3f0ae8dd26fe7b5a21bde090a1eb8875743c533f708485b5f1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/576ecdced5284d4ebe0668115aff0cc5/receipt.json",
+      "bytes": 10569,
+      "sha256": "d26c4d16800856fdb2772b6a6108fd5e65afaa1702aa21b2295a4c9f1c39effe"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/57fb63c28bbc44a8bcb663ce70bac714/receipt.json",
+      "bytes": 2506,
+      "sha256": "ae843e139e7db6560ab05a4177c5e391787059809792c21f1ceec3d6fbfc00bb"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/5a8d043ef2a64513acad2041ed4aa2a0/receipt.json",
+      "bytes": 855,
+      "sha256": "2bd5b7b014b596e20272f35707306110023f0bc8de1b1cfc098085c09232982f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/5abeaaf1533247c197d2183640f1898a/receipt.json",
+      "bytes": 1832,
+      "sha256": "faf650d062e92b9cb8100bded4e62a5b69d7b58f8413c76c6621aff458086c6b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/5f5446647de94c519025e61c8109a0b5/receipt.json",
+      "bytes": 2940,
+      "sha256": "7772b770458041ae6f81d06e3fdcc3eecaae09a7cd3aaf64e7a552ec731718ef"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6206fee7fed8480796a6800f65633d4f/receipt.json",
+      "bytes": 564,
+      "sha256": "5a8aee77aa03118e3486d7e7f8abc710922a53c4f286526c6c25addb12649fb8"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/63c5eb564cdc42f29f65906e2f456954/receipt.json",
+      "bytes": 2266,
+      "sha256": "195a1039f450fcd08b61ac9f21b68f44ae050aa56aa87f109b8e73c9b71e18d4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6458ecc127b1423b9b180f7676368357/receipt.json",
+      "bytes": 3374,
+      "sha256": "d4a66f718ec1c5a42ef1ce3546d042fb0da4b1e04faab786e98edb28f6eb419e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/646170d7daf8490b9e102016f6994a09/receipt.json",
+      "bytes": 1842,
+      "sha256": "41278a338d50ae9422bae79e253e004355f73b4bdf526f61b9e3c3cf8f9818f1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/646fc71b3c3943a1afb524fdaf6c8769/receipt.json",
+      "bytes": 1842,
+      "sha256": "62d489b100f6416e8e8136daf5012c5dbf4484f7594a4fcfda8aed9d729819dd"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/64d7c553d2e24089b11376ab912bb972/receipt.json",
+      "bytes": 10542,
+      "sha256": "32f3176b4b96f7a09c7aa8f487d15d2a9ce65b8bad786295ac1cbda5121b9077"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/65a90cb731e84cf3bb6ebeca1210ad96/receipt.json",
+      "bytes": 2116,
+      "sha256": "369670c57c9689512ce30fc15012b97a4ba965aca98034730c6bf5a4aaa7439b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6b3311c2338a4ed9958245aea72a14b3/receipt.json",
+      "bytes": 7275,
+      "sha256": "8ec98a9361b055e8183f84a36cd7cfaa9703d5fa8cd8e85edb86b920f0f3c52c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6bcf963c331a446e891703e6a92a3591/receipt.json",
+      "bytes": 563,
+      "sha256": "75f35b7df7285e9d854ae8c06ba219f2a36a12e54cd40285185cd7b6d77296a3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6ce70f53a576461aafcd52dc8031a662/receipt.json",
+      "bytes": 3393,
+      "sha256": "3725ce8078d44ee7eeda6739d00ae55ae44f2dbb6d40fad14f1f72c44b98e1ce"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6cefbffe2bdc4537a98bbe52ac2ef282/receipt.json",
+      "bytes": 1003,
+      "sha256": "7532e029f3eb8e5b5c2ebc8ef64553d2f68e356d9166dc42609f91c3403841ef"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6ecfe26bb9374cc59970037e698f9d1c/receipt.json",
+      "bytes": 7888,
+      "sha256": "78dbd7ab8243c75e59bf1e71777aea1ed1a37660ca8a58a90585a21346c5d191"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/6ef8257560a84b969b2cbf6c3280ea2e/receipt.json",
+      "bytes": 1832,
+      "sha256": "ee1b9fffe1a72c6624e2d693377b46d277c87bb982efa5f3183a2b75942524e1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/700bac828fba44339d8fdab5f7de90b2/receipt.json",
+      "bytes": 2651,
+      "sha256": "d9915ca50ce5511675167f355f0ef3078a6c74cfcafdda9eceded4f225150762"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/70c1948d18cd430aaac5bf1e0cbe0ecb/receipt.json",
+      "bytes": 3391,
+      "sha256": "895306aa6946bfa877844b1db3a96339466743904c31c040e270b8699006b96f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/73e03dee10f04b1da921a1998a618fc8/receipt.json",
+      "bytes": 1331,
+      "sha256": "ac6028f6b866074a60ec9b3c8a2b06a8d3f064be35ec085c09fbd841d4e79fd0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/74c66fa6d643449fbf48a56e859a1ad6/receipt.json",
+      "bytes": 1831,
+      "sha256": "7f0710efe1c82f9f0afc0f8534d9ec7e263f1744bc78c64f69937c5ed54bafba"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/75835413fe4541319410098b4440883d/receipt.json",
+      "bytes": 3491,
+      "sha256": "877ec6b03582ef8764f64f007014cd1a10c89888d8c4e5af4d31eea09bab19f7"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/76073fdf43c2402fa0c61c6d7db11e6d/receipt.json",
+      "bytes": 5765,
+      "sha256": "02222e5f82d50e114a3410624d5deee8c0ed866ac9e03a1501b72946c4f7318d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/76e139be03ac4a53b02f8269e529ec92/receipt.json",
+      "bytes": 3388,
+      "sha256": "71f52cc15f427252244b056a830d8b2fb6dbd664afbd7e26a4dd741abceadae3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/76e36265415a41819c64f7db59fc6074/receipt.json",
+      "bytes": 1003,
+      "sha256": "2790d200a8663b409644a3778aa24aeb217c2a85057dfb4f73f24a92739ac2ad"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/77d2696f5809422196f6cabfbf9754de/receipt.json",
+      "bytes": 3490,
+      "sha256": "82fcab7af24c8c41e0eb29a8c9160bd3548218d629acc4c5cc3b35be4813c66d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/784ada021f534339b763853ff31703ba/receipt.json",
+      "bytes": 527,
+      "sha256": "0e73fffbb71f08eab73c0773ad8b9b7bc1c2b8e163aff36ffe4b2f4d96637052"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/795f5572d9514768938de6cab209b8b6/receipt.json",
+      "bytes": 5741,
+      "sha256": "790da4e6c266ab4c3f2061af4c7484d6295255743a5f112d5e7066d5fa3fbb71"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7961d4b9ee974a0383c3128cbfe3f127/receipt.json",
+      "bytes": 5764,
+      "sha256": "629a22245aaa2c50c4aa62fe9c7697511074e31c63ad96e63ff854300a3c6990"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/79a20f8185104d639828e1fad15fa143/receipt.json",
+      "bytes": 854,
+      "sha256": "ce10a769498215e88fcd7af2e77506c8f78b3178ca0f2bcbe473d8961630cc91"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7a7854121e3a4a75b71e555dcae3ef4f/receipt.json",
+      "bytes": 2437,
+      "sha256": "a6b8b5d3a6fcb83b24fe6360c9d1881d2548dd262067acfeb46e9a5e244176ec"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7d425a4d53844fa5bc3c95a2f94e6ca0/receipt.json",
+      "bytes": 855,
+      "sha256": "ac0542f3076187bc9911d9d4f68fd2cd605ae73e91aa1c945910f9018e6dd7e6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7e144c0a82ce488f97d24f32ac5af866/receipt.json",
+      "bytes": 564,
+      "sha256": "152ab330f5946d6200032cda4d4ebedeb7a1b784c09626a6b0abccfcf8b51f00"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7e922be47d4b44b4a0e40130a6a6c95f/receipt.json",
+      "bytes": 2427,
+      "sha256": "b8e5bf886d615ea4de9ecae03fc9dcc2fd004c8b84ba5c37d3e7682d7ce84483"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7f2c71620aaf401d8234e43b5cf83c6a/receipt.json",
+      "bytes": 3370,
+      "sha256": "18017a154494d4dc8fca0fc0e69a65ac24aa12461749470f8e5222eb1efbdfc0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7f4a176ecbfd4fc5bedc66f1633e7f29/receipt.json",
+      "bytes": 5760,
+      "sha256": "bccf6875f7eefa82ea19531df466a712810326e65592be371de9bd0180c480d8"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/838d7254bdf14700bd86ceb060987baf/receipt.json",
+      "bytes": 2436,
+      "sha256": "9ea43b08cd11e1b977e646d71a3f8ecaa445e7a7987db3d224a88493aae2f919"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8870206078954824bd204a4c244c00b6/receipt.json",
+      "bytes": 564,
+      "sha256": "7a9d362702e651ab230d7cb65f7ddde98cdbdf40bb50fa2702bd6361cd8010d9"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8913533eefdb476f9b4d61a1b672e178/receipt.json",
+      "bytes": 681,
+      "sha256": "3aeb8b875cb5ab9924b7780ab49482b7aa641ea9d7a13830120cdd12d6a2b401"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8a898270acc349288c652da60ed00df6/receipt.json",
+      "bytes": 2276,
+      "sha256": "1c87a4412849c52693a80d1ed4222b02e6411469f52f62c8bd8f0f596f23daa4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8b74a5e952d545218c95151cb79f6c3a/receipt.json",
+      "bytes": 564,
+      "sha256": "551a07f4519b3481e942e2d1ef10875647a931e471006651a216913096b6abaa"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8bbd0abb66fa422c85fb267bd3ec82a4/receipt.json",
+      "bytes": 2881,
+      "sha256": "e04e7cd1ac70d47188fd00dba823a94b913274c04484a803ea26a3b379b9c327"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8ff1dd08ec964dbd9facc507690a49c6/receipt.json",
+      "bytes": 564,
+      "sha256": "7894eae6026c63e876314382a77dda80e5cae05bd5c035fe34dd3abe993fbfc3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/90b89dad7dc34696b056f887efe5e408/receipt.json",
+      "bytes": 1684,
+      "sha256": "f37e0ed080dfcb862edf15cbe79f63228cd92489d01d8ca5286853e718647d9b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/91e256b7ccf647219c96f1739cf1e77c/receipt.json",
+      "bytes": 1682,
+      "sha256": "3b5d9b39d1223e4dc6d878d4e8e4cc6d5e7138e54c011be095f209e9b46fe2ac"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/927657a9cc734dfda2c5d9187abb3d65/receipt.json",
+      "bytes": 10582,
+      "sha256": "43f078a9205dee062ef288443af1de7576901109e9bc01c6a6c8a915413f6703"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9310ff6c6fb4454ab1996bdb1e436539/receipt.json",
+      "bytes": 564,
+      "sha256": "1a8637ca402e8aef5776288c6baaf8e7a44403b695d13928e31c8223aee2afe4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/942948a9045646faa9bde2a9fbc12f33/receipt.json",
+      "bytes": 1683,
+      "sha256": "b2314c3fab5326ab799c5e9556bb3d266e9edca0cc6c9af93275a08c9ed12f91"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/95011c372f6741438a43545b00764013/receipt.json",
+      "bytes": 10539,
+      "sha256": "adeccf6711bedb787115028dce94718ff9ac7996918a9574a4574330ab74a899"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/95c822b7faf249b7a5980ed186afb1be/receipt.json",
+      "bytes": 2940,
+      "sha256": "b2270f74c43fc6bd3ef639d4ac86b4544ae5c77fe9c0b46cb2c922dc4bcac433"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/96022341d805478f8d83f7445370a78c/receipt.json",
+      "bytes": 2436,
+      "sha256": "ebdf4a54c4662e6ac828f046f6d46bc0eb541f72beb0c860cb9b4b09b89882f9"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9785ad0f77ff43828bd4c2adea74fc2d/receipt.json",
+      "bytes": 2592,
+      "sha256": "c93a4190ec290e22a70166ccae565d96a6e348a830636af83834d95000efcf17"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/990b14722fc14d03a1062bb7d81cdb87/receipt.json",
+      "bytes": 2429,
+      "sha256": "6194028118cd0d6716c4eae38008ed4daf0601b9266750477b7a59035eee43b6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/991eb0d93b4a456b98de3af5d99dd638/receipt.json",
+      "bytes": 2619,
+      "sha256": "1cca4bacca43d5b7fac78c05eb1e0b63629d3397b416674f68c2ce5ecdbc99ce"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/99c0f790177b4ef3a6761f5fd2bd7101/receipt.json",
+      "bytes": 2275,
+      "sha256": "d19084de001e66b9136da9c4dd7329a43e5a79d36d5748a6aa6b9996047e245c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9a9a1d67ea63485baf5d8af5787b8890/receipt.json",
+      "bytes": 3371,
+      "sha256": "9c2dabb680bf2900f04bc562b9cda8e2a1b500a933a9d11b4b938ff634336b09"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9ebbe2ed56cb4108bd80d6f0d75d51e2/receipt.json",
+      "bytes": 855,
+      "sha256": "5fb1a5188bbf8bd47c381641cb9a07a9501bcadc865a44365d789b78eeb24902"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9ff48829b82b4bc1b393d265f9d3338d/receipt.json",
+      "bytes": 3389,
+      "sha256": "1f7df3340c32cc7fc6544fd0902f529306443837e26a6d9d023a81265b8035cc"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a140162e5e9e469a82db43b1aca77395/receipt.json",
+      "bytes": 2440,
+      "sha256": "a5ea20d8a82d8dddac65d78a9955866afb80348d08bd66625c6dd3f4a224f7de"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a25f8535cfd54e32a3edab93863abaf6/receipt.json",
+      "bytes": 3375,
+      "sha256": "c231bd92be2cf9bcc19aa63c169c848ec4fdb0b53dbd0a41aa366f482fdccc02"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a471ba02cc6146a6b70b07e811acb5ca/receipt.json",
+      "bytes": 855,
+      "sha256": "e5329e2f8b5b572703a7fb5c5b66da4432a66604198bfdcd0e9831e6478732cf"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a548ff3c5db64274b20b9d44eb5f8bb4/receipt.json",
+      "bytes": 1004,
+      "sha256": "44121d2daaf97b0e54db192b50c0c3717e3eb6c8fa38d6c1c784ea3595d4813f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a91e28738b5144a586ee72bc03c80a48/receipt.json",
+      "bytes": 2509,
+      "sha256": "5cd046d199fe1eaa605cdb13c645ab8105f92c0b881514d0779462cf4bb7d405"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a9bfac9396324d8e86131675175f2e04/receipt.json",
+      "bytes": 2949,
+      "sha256": "ac57a42a0b552e51324bddbe164268d657bae81470f2f536a318051a2f6b0728"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/aa925a8c719e4153a7d02604c266262b/receipt.json",
+      "bytes": 2616,
+      "sha256": "3c742c6feeabadd424173c4bfcf6a443c8f380334f97cee90fbc2e0a24f3286b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/abd4b6a7580e47d8bec856cc0c53f31b/receipt.json",
+      "bytes": 855,
+      "sha256": "f1e4942cc94dce44a2e4da942d41fcf9faba8789bcb98657262c655a5af3370e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/abf853a3e4054ef99e2be6d07520a315/receipt.json",
+      "bytes": 855,
+      "sha256": "ce350b3e9c2ec0a120cf76201363a4cd87676434b5362c4f3ccc4273dfe34104"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/af59e6e689df4223bc78abb5ac41cc7d/receipt.json",
+      "bytes": 3370,
+      "sha256": "1fdafe27d71250e89b26cd5e383e4addd7e290153ec313f3e476d5f3ba9d5856"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/af5e561916204e2cb30921daf48370c3/receipt.json",
+      "bytes": 2118,
+      "sha256": "d7437ae59b23c05b28c69366bbaf9981d6dbbc27223ccd25dbc494a9c5479ce2"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b041a776905c48d1b40ab3cc58c49c86/receipt.json",
+      "bytes": 855,
+      "sha256": "48385a82bd5d91457de7cfeae8408098508732571dd769bd17fdb9d6d64d5e74"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b0b4f551ea934f0cad272b3b3edafd60/receipt.json",
+      "bytes": 3371,
+      "sha256": "dbb2dd572488b9ec424c83e5e355901fd4c5464488adaaeb0b032e9c6d9ac4e3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b17250dc5c1e4e759c0312422405721a/receipt.json",
+      "bytes": 564,
+      "sha256": "f18037edac38756e2ad758c7191f3fda91198491e2113678decf69bbebaa87c0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b1cf5a7f4c96491bb15bdf947456fcf3/receipt.json",
+      "bytes": 3375,
+      "sha256": "59ae98e6acbe4170687d9b3d91371c59bb1e772c69749465b22c3b74ecf6a359"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b6b00f81732a4a53b1e4f48c16d0a6c7/receipt.json",
+      "bytes": 2059,
+      "sha256": "ac3fb8c03bb8d0ebc9a27411b6632816c7e605b966d90d0b0cd1f3b4086f3321"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b7dcac331d1040bfa14ff8ee7bfb3585/receipt.json",
+      "bytes": 1840,
+      "sha256": "5fe840cd54b6918e4f93dab757708d33881b129901624818479392cc59bb7ba6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b9606c7669034b2a832227411b3bde71/receipt.json",
+      "bytes": 5738,
+      "sha256": "5dffbc782cc9b6317f041db7c748eaa78d3ef8104cb5604bee651f454df0f0ff"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ba1dbd1be8be476592534ff82b5b31c2/receipt.json",
+      "bytes": 564,
+      "sha256": "665910202f317e811d61a841f832bda56d6ff1afefaf71ace71f620475a4e7fd"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ba3633700d044864a8c27ccb16513913/receipt.json",
+      "bytes": 2619,
+      "sha256": "41348f02715ea6ec95d1bffdc4e081246e2f9013355f0924f0af3dd43bdfc117"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/bc6db4f466e44c34b93ee51b374ffb33/receipt.json",
+      "bytes": 564,
+      "sha256": "f370b0d1dec5c286cfb18cdf76cbb01b32aad15ad5e844ded0834c603a803b90"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/be3b1d48853643209e4f042abed73214/receipt.json",
+      "bytes": 564,
+      "sha256": "c2d52236422f8d8168768ea400cb80c6bb1d529a31c345dc8aad7e7305d6b262"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c0ae58a2baf44a6682ef4360f197c4d5/receipt.json",
+      "bytes": 564,
+      "sha256": "e08017a24bfaeb9c5fac9549dc678e883950283569916a5a26248be47978b056"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c17ab77e25e54b909c838088e09f63c1/receipt.json",
+      "bytes": 2427,
+      "sha256": "f78fa11a4d162982491fa28bfd1ac680875b4e601835fce997d41916b13e8b6d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c3d0ede8e72549dcbb8ae7351659402d/receipt.json",
+      "bytes": 5739,
+      "sha256": "4ddba5e95c4f7aefe9d39a8c5646510b7340b253f8d30b4507e68a0b82e13d0b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c4a52fcbeed44e7cbf0d4671073eb08a/receipt.json",
+      "bytes": 2073,
+      "sha256": "c0e8e25cbbfcc2cb335cf2c2b208082e3c7be063cd3f97aac716f31fe2905bd0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c708537cd56e496185b96a5953485248/receipt.json",
+      "bytes": 564,
+      "sha256": "fa7e87aa19e7669724fb298b541841106b082ca4ec4d2424731871c5c6a3c0a7"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ca7aea0fdacf447996174e3a50f62701/receipt.json",
+      "bytes": 10767,
+      "sha256": "a4fae674169ed35dc3cef20ece51ec78fbca4f5cbe789a121c7b30d0668347ef"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/cb4b476dfdc647dcb54a9b93b994855c/receipt.json",
+      "bytes": 2505,
+      "sha256": "45d15f0865dcda3ec7886ec3bf29ef8aa69ed44ab4b70692d5060c14a39b2622"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/cd945503a260461580a16c3f5d704ae2/receipt.json",
+      "bytes": 1003,
+      "sha256": "2d0c683c8eabfb8c7af7f9013ecd9c351d13472fdb6dd2ed164dfdc2124c0939"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/cde1f3cdfc4c410ab63d431398bd91ab/receipt.json",
+      "bytes": 2426,
+      "sha256": "962fbaa9cd4ff4150931835a86ed761010aa6900b0930a1d981ec22dc250c771"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/cf108b17e8e042f886ccadf47f1a4518/receipt.json",
+      "bytes": 564,
+      "sha256": "a9abf1ddc9afbe0fc41136226aa8dba8812fbd7f931d57f5010df9ccce574c72"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/cf3b7ec4b2db466d995133472881c92a/receipt.json",
+      "bytes": 2882,
+      "sha256": "8570ab8f87a36574a897bc1f0a7ab049161e5932f384d4d5704c6dfb71b5834e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/d1829ceeb4c14b06b19d0608aee99c23/receipt.json",
+      "bytes": 1003,
+      "sha256": "b7b0df254a77ed6e7a6640599b8bb05716c2703ad4898de341bfb1557d80e49d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/d23e079e93e54a57aa3a8177833d5ecb/receipt.json",
+      "bytes": 3490,
+      "sha256": "2ca3a454bda368bda4437002c954a14cc7f88eaf1577055e6570928a03d27ddf"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/dcec401abcfc40eab384d50e2f80e564/receipt.json",
+      "bytes": 2510,
+      "sha256": "29a4a78c3aceb2e1ae992342f3cb592d99616c40f959f05d1583b16569434541"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/dd4f965e7bc94d96b6d2a04bc8e839d7/receipt.json",
+      "bytes": 2892,
+      "sha256": "746c1ae3fcae268f05ec5548c75337c078e8bacc61d4d4a500aabc587271a513"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/dd73eb66356a41f7b111feeb6afd7ce3/receipt.json",
+      "bytes": 3370,
+      "sha256": "a9913b9cb051c66c12a13d0d729e6e13b4188249c6302d16c02ebed92748c228"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/df3e8453e1f0487b89402a4d6a192003/receipt.json",
+      "bytes": 2506,
+      "sha256": "c7690d8694c743ab83346e2c36da32477bb758195489df9383594c0e50c39792"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/dfdd1a8bae2749ab91cf22ad6323d39d/receipt.json",
+      "bytes": 10573,
+      "sha256": "6a191febbc2e18b293562fc299e1dc9fd435f3244d8c407cf96aea5a49efeca3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e0cf5438d94a4b2e837456a7206e2558/receipt.json",
+      "bytes": 3371,
+      "sha256": "1f17387a09e5a655e30611aa744d7bdd5d4cf6c83b75ff890050c5562eaadb28"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e1920a5302324225a5acaa872bba4444/receipt.json",
+      "bytes": 3396,
+      "sha256": "be14f472282d8680ab0dabab2006c8022785380717fc704fac2099e9068011e6"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e3a8b53f386d46e4b3528c7fa8ea0ea2/receipt.json",
+      "bytes": 2074,
+      "sha256": "9002f7f423e168fd2041aaf1c8969edcabdb037a55ee2b5b4477c0ea2d5cde0b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e47b2195c2ab4c7aa1d233757d76aebc/receipt.json",
+      "bytes": 2266,
+      "sha256": "47424b91367e9da8e225958c6e1393a9186c90ace8207ebe38951bafeabcdfcb"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e4ed2da05dd54da8bf4d85ac10fbdf31/receipt.json",
+      "bytes": 2437,
+      "sha256": "5375485b1494dc3cf9c05da32cc2e6cc22e22e03dcb041985dea3b0ddc880340"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e5efb4d033654186888de830f9a8fe99/receipt.json",
+      "bytes": 564,
+      "sha256": "5a08e6f96ae9dc1376216f7a750243ddd718e970e5e9ab8e8bbac8655d02aaed"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e61b884e6c004f1d93f5008177bee77b/receipt.json",
+      "bytes": 527,
+      "sha256": "14589e9dbd846b3b727475bc94818d7b94b9711550c00cad292a07093cd72608"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/eb9bc2f2f3144d8fb8208144fc4c7b85/receipt.json",
+      "bytes": 2891,
+      "sha256": "d792c0f187fac42975abfcbf1586199c4c7f65caf11253ffb70974eaca70f45e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f0d9143121734f1d86edb5418f58b62f/receipt.json",
+      "bytes": 564,
+      "sha256": "8098a5661bffa91dfeedeed622197753b2d08d47302104e7ee32088db1e79229"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f0ebfbec98e74fc693248609f26045fa/receipt.json",
+      "bytes": 565,
+      "sha256": "05045a8a599ab65fb694fb70c3a672d1ec7a0f632ef248a2159ef3659ae534a3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f233819f7b9a476e9fb4ab6bfda6e1f0/receipt.json",
+      "bytes": 3388,
+      "sha256": "ea9606d9231c8fe43de21c819ba05182a1f3bbc61d6d4d723f3e2b10c1eb99df"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f2cbbaceb92a4bad8633af5ee8d03e09/receipt.json",
+      "bytes": 2881,
+      "sha256": "49fdc66d36c51af312377a1c71b4575ec3734cf0e222e36ed4e5d0ed7605eefb"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f9a77f78a6d54e10a828a0f1075bb992/receipt.json",
+      "bytes": 855,
+      "sha256": "4b53365d268c094ab2e64a0c17c00f7602dbfb27e5b1d126cbc272424d2bfc18"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fb9e11b2d1644e4b86c2ef5abac95a17/receipt.json",
+      "bytes": 3371,
+      "sha256": "1db697ed5f3f3c8652c32d9bcf643e3cdfb733a2be16e8453842185e026e9a03"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fbe517026440426cbbd7e957f6adfb10/receipt.json",
+      "bytes": 3489,
+      "sha256": "4c29f021a9185695bd9591e75550ed85ea5876141d1cbf91596976fbf2daa127"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fbf1c69b85bb471fbb54fcd5565f5433/receipt.json",
+      "bytes": 564,
+      "sha256": "8237b976c2a50b6b795bdbaa33f9adffa21187d6b6a5b891031d821955001128"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fcc4f021255d4782b7b9c04f6ac82b08/receipt.json",
+      "bytes": 564,
+      "sha256": "0bc0bb13a95b6b808c280f3ec0a29d60b90a19aef3405253251b199a208a3661"
+    }
+  ]
+}
