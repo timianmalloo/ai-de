@@ -1,0 +1,730 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "3c097fa94871057cf67569102bde5cf387f2b22d",
+  "original_branch": "refs/heads/atlas/production-core-runtime",
+  "archive_sha256": "e14cdae8b7b4ffb97ff6889f1eda76189b76ce24868d587096842d3f7b418afb",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 1282040,
+      "sha256": "e14cdae8b7b4ffb97ff6889f1eda76189b76ce24868d587096842d3f7b418afb"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-runtime/awaited-endpoint.trx",
+      "bytes": 8602,
+      "sha256": "5f7f2538754b251a4abf40d78e39b633c65ee722be553192b24aa04e3d8ad37b"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/compiler-cancellation.txt",
+      "bytes": 73,
+      "sha256": "3bab5d1039517ce1cbe17e20f242cfc0cbc382c33a5026cba0e807f9b1972717"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/daemon-memory.txt",
+      "bytes": 136,
+      "sha256": "db72f9a7e7f5e0d1c2da582dc44d52258e6b6097e41ebc46c061434d5126d8b8"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/daemon-output.txt",
+      "bytes": 71,
+      "sha256": "797fcd1ba7adb99ad218159a2fc037a16ca3adae45f60cbc8bc86c3aac2b0b57"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/foundation.trx",
+      "bytes": 7159,
+      "sha256": "12438c4b569c51f7abd80a932481720ac7537294fbe9d38d7a9c5550211d6cf3"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-app-fixed.trx",
+      "bytes": 122961,
+      "sha256": "148f3887e6dd28b1f1a70b709e0c073a1d4eb99d9ff326772fa4f47463023556"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-app-regressions.trx",
+      "bytes": 122959,
+      "sha256": "b4fca19bf9bfc44a316694afe63936518ea44156634ef2e3e83b75c7a1693b23"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-core-final.trx",
+      "bytes": 660179,
+      "sha256": "66c726a85daf10ab863ed4cdfc5392725f160836352faf9fab68844d83b04752"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-core-fixed.trx",
+      "bytes": 658748,
+      "sha256": "08abbd267adaffe6c79a6ae92580a9d8946e3e12ea378966e0851f982ccdbf96"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-core-regressions.trx",
+      "bytes": 657317,
+      "sha256": "72e4d8d6b365dca3a974f42bdadb600cbeb0d4bc1e2ca62fcf0c67f7e110d850"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/deadline.json",
+      "bytes": 992,
+      "sha256": "f40e8f19deeeb5cad973f6d84f86fbf39c4012f1c9095159223fee1031c766da"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/disconnect.json",
+      "bytes": 842,
+      "sha256": "22ad98b01a6f131b9d9d99cf3da5f91b5cd0665c66d58028ab5c0236618c0897"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/ownership.json",
+      "bytes": 857,
+      "sha256": "a579b5ec74ef33f32871a0efc790613ae161d470f4e4fa879738d671133b61fe"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-final-replay/write-timeout.json",
+      "bytes": 944,
+      "sha256": "c121477252bcb4a1634d6685b0387dac1d35bcba056b6ea2561d9a423610dd1d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-fixed-receipt.txt",
+      "bytes": 12159,
+      "sha256": "054c0da437601e0437ecdfd0f0f28b11e11edfa23559d746a1da1b746e7175c6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-investigation-receipt.txt",
+      "bytes": 9253,
+      "sha256": "29102cdc04b6a4a8718fbc0ce3a3b7d7b8122956e74669d0acf09998617c8aed"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/completed.json",
+      "bytes": 750,
+      "sha256": "abcddc0cd393e4c89ce2063840623a459992c4d39c5f1bc79c6e5d3bca4cab86"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/deadline.json",
+      "bytes": 812,
+      "sha256": "dedcb11a0eea8d6ffaa5bff38690fdadafcdab632d4251e34d3f126370bc4283"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/disconnect.json",
+      "bytes": 701,
+      "sha256": "8f0de5a7da84e4d15065a0aea2d937c9b4e9f776073f66414ea2508befd25685"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/expire.json",
+      "bytes": 793,
+      "sha256": "331227cce204b42e2c6722563cbf3c5c379ecaec2d0eda278be2a1cb98ee0931"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/ownership.json",
+      "bytes": 716,
+      "sha256": "27dc9f3ac61ccff869a315f9fb871e1efc8c136890bb3b169bf0a4c55fc83e58"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/repeat.json",
+      "bytes": 742,
+      "sha256": "09b6274718eec05c5d76698430ca99fb3b330ca08faf264f427693864d8b5353"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-final/revoke.json",
+      "bytes": 742,
+      "sha256": "046fe35e265539a8e48c0ce30a0342e9e20dad6164bfdffcb9345faf54c12e71"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/deadline.json",
+      "bytes": 992,
+      "sha256": "f40e8f19deeeb5cad973f6d84f86fbf39c4012f1c9095159223fee1031c766da"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/disconnect.json",
+      "bytes": 842,
+      "sha256": "22ad98b01a6f131b9d9d99cf3da5f91b5cd0665c66d58028ab5c0236618c0897"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/ownership.json",
+      "bytes": 857,
+      "sha256": "a579b5ec74ef33f32871a0efc790613ae161d470f4e4fa879738d671133b61fe"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-fixed/write-timeout.json",
+      "bytes": 944,
+      "sha256": "c121477252bcb4a1634d6685b0387dac1d35bcba056b6ea2561d9a423610dd1d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed.trx",
+      "bytes": 26867,
+      "sha256": "e238eaa883e4d6921174a495d169dc14ce6bee3c77641c5d83ed5b7adea60b5b"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/completed.json",
+      "bytes": 750,
+      "sha256": "abcddc0cd393e4c89ce2063840623a459992c4d39c5f1bc79c6e5d3bca4cab86"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/deadline.json",
+      "bytes": 812,
+      "sha256": "dedcb11a0eea8d6ffaa5bff38690fdadafcdab632d4251e34d3f126370bc4283"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/disconnect.json",
+      "bytes": 701,
+      "sha256": "8f0de5a7da84e4d15065a0aea2d937c9b4e9f776073f66414ea2508befd25685"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/expire.json",
+      "bytes": 793,
+      "sha256": "331227cce204b42e2c6722563cbf3c5c379ecaec2d0eda278be2a1cb98ee0931"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/ownership.json",
+      "bytes": 716,
+      "sha256": "27dc9f3ac61ccff869a315f9fb871e1efc8c136890bb3b169bf0a4c55fc83e58"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/partial.json",
+      "bytes": 740,
+      "sha256": "f7b8e8dd761f880acf226738a1b1aea37b78f890532a4de061cfa4882096d88a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/repeat.json",
+      "bytes": 742,
+      "sha256": "09b6274718eec05c5d76698430ca99fb3b330ca08faf264f427693864d8b5353"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-observed/revoke.json",
+      "bytes": 742,
+      "sha256": "046fe35e265539a8e48c0ce30a0342e9e20dad6164bfdffcb9345faf54c12e71"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-red-final.trx",
+      "bytes": 26839,
+      "sha256": "3b99bee3c8cda0fdd9b03689580ece1200c8aa9bcc5ebe660cd997bde7870d88"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-red.trx",
+      "bytes": 26837,
+      "sha256": "a86b00668466e351f7c01a762f85091587851bfe0f0c4b4ada97ed4ba7c16104"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/deadline.json",
+      "bytes": 992,
+      "sha256": "f40e8f19deeeb5cad973f6d84f86fbf39c4012f1c9095159223fee1031c766da"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/disconnect.json",
+      "bytes": 842,
+      "sha256": "22ad98b01a6f131b9d9d99cf3da5f91b5cd0665c66d58028ab5c0236618c0897"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-regressions/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first.trx",
+      "bytes": 12965,
+      "sha256": "8e33af7da3774040c386278dfb60c59f911aed5dc02b93801855127b77c83b3b"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/deadline.json",
+      "bytes": 992,
+      "sha256": "f40e8f19deeeb5cad973f6d84f86fbf39c4012f1c9095159223fee1031c766da"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/disconnect.json",
+      "bytes": 842,
+      "sha256": "22ad98b01a6f131b9d9d99cf3da5f91b5cd0665c66d58028ab5c0236618c0897"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication-repair-first/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/completed.json",
+      "bytes": 750,
+      "sha256": "abcddc0cd393e4c89ce2063840623a459992c4d39c5f1bc79c6e5d3bca4cab86"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/deadline.json",
+      "bytes": 812,
+      "sha256": "dedcb11a0eea8d6ffaa5bff38690fdadafcdab632d4251e34d3f126370bc4283"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/disconnect.json",
+      "bytes": 701,
+      "sha256": "8f0de5a7da84e4d15065a0aea2d937c9b4e9f776073f66414ea2508befd25685"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/expire.json",
+      "bytes": 793,
+      "sha256": "331227cce204b42e2c6722563cbf3c5c379ecaec2d0eda278be2a1cb98ee0931"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/ownership.json",
+      "bytes": 716,
+      "sha256": "27dc9f3ac61ccff869a315f9fb871e1efc8c136890bb3b169bf0a4c55fc83e58"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/repeat.json",
+      "bytes": 742,
+      "sha256": "09b6274718eec05c5d76698430ca99fb3b330ca08faf264f427693864d8b5353"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-publication/revoke.json",
+      "bytes": 742,
+      "sha256": "046fe35e265539a8e48c0ce30a0342e9e20dad6164bfdffcb9345faf54c12e71"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner53-scoped-diff.txt",
+      "bytes": 386,
+      "sha256": "d5a8fb0f1c0bf4490b0f696b2095e73953f738d2aa30ab70526a72f4aed06cf2"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-app-final.trx",
+      "bytes": 122960,
+      "sha256": "5da49468be6d1795e016e7de4f682a5f2cc78087404d4bcba80e5a82e199e800"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-core-final.trx",
+      "bytes": 678047,
+      "sha256": "843c778abc5e310306a0a3cf8c18338b037f47d1c97f7d882c5c3fb6188b0c1f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-late-operation.json",
+      "bytes": 295,
+      "sha256": "3231620ae1d4bb9f8e3bb199c597d289bad66da6dc18df050807df99ca88ca88"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 183,
+      "sha256": "38fcfd354e7f52cf13e298951faffc1c8a4ef4cdffeb5580565575ec0685742f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 187,
+      "sha256": "00b60888e601e0bb3155c276ff86259b6a9c8c8d4e6897542ef20caa78f29fde"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 185,
+      "sha256": "da8ac4ba62c4656b88412a1ed47b4bfcdc39bbae5cad72626102f412db30ba6e"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 184,
+      "sha256": "1076845eaa9eed3098d1e274ba68996353a94b1854cfbc6e94e3ebc6936ecd5f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/ownership.json",
+      "bytes": 857,
+      "sha256": "a579b5ec74ef33f32871a0efc790613ae161d470f4e4fa879738d671133b61fe"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-final/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-receipt.txt",
+      "bytes": 3659,
+      "sha256": "1445227f895d67bf58b2ca5845f3167142a68052ce06046d387886da13ee367c"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed.trx",
+      "bytes": 27676,
+      "sha256": "b5d8b902625753047dcfe62ce665c46f9764008058f6b3d869af8554a6b79498"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-late-operation.json",
+      "bytes": 306,
+      "sha256": "03e8a8719d7a8d639efef82196127678f7082efea22b136ae284c0e0ea151ea4"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 160,
+      "sha256": "db1907e10e75876543e7975991d03735d74ca19de67c96e01cbe98e25e1a3678"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 164,
+      "sha256": "b672b65eff95e5cc7915ba0826badc944aa4610412811313df15e76e29d56aa4"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 162,
+      "sha256": "655255ea80612cc3fd1fee5eaa43871b02ff1ebfa2d426b17567a213ee3e306f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red-observed/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 161,
+      "sha256": "184163e16f859a1d4cd86f8a1931789c24a3a3ebb57a92dc5747777303ff8917"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-Active.json",
+      "bytes": 773,
+      "sha256": "be18a7847b51c2eb85cb3ee54e45a4bc55f25fd6caff4d146709bcfd4d68fcb7"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-NativeBuffers.json",
+      "bytes": 794,
+      "sha256": "7233e16496018a4e7c922066593a064dd7cd8de7977955f47d85e9c0a85f8139"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-NativeOwners.json",
+      "bytes": 791,
+      "sha256": "51b18e027b51196bc17f839a58e269e369690bd1b9fa6d95fc74c42a25d4b371"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-Owned.json",
+      "bytes": 770,
+      "sha256": "1335898d384cce0edafb3a594df7068fd30f4ddb2ec23d08f45ab26a9a4e9131"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-Retained.json",
+      "bytes": 779,
+      "sha256": "d9729f7221b86584dd3fe53da6d94895556730791eb83aaab9b7e60bff50c7d6"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-counter-mutant-Scopes.json",
+      "bytes": 773,
+      "sha256": "ed80b5b5e03c2a5f3c2585c19f112051f8d12f6c1a7fe5d39506d815e361bb19"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-missing-held-atlas.admit.v1.json",
+      "bytes": 160,
+      "sha256": "db1907e10e75876543e7975991d03735d74ca19de67c96e01cbe98e25e1a3678"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-missing-held-atlas.inventory.v1.json",
+      "bytes": 164,
+      "sha256": "b672b65eff95e5cc7915ba0826badc944aa4610412811313df15e76e29d56aa4"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-missing-held-atlas.restore.v1.json",
+      "bytes": 162,
+      "sha256": "655255ea80612cc3fd1fee5eaa43871b02ff1ebfa2d426b17567a213ee3e306f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner54-red/owner54-missing-held-atlas.select.v1.json",
+      "bytes": 161,
+      "sha256": "184163e16f859a1d4cd86f8a1931789c24a3a3ebb57a92dc5747777303ff8917"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-app-final.trx",
+      "bytes": 122962,
+      "sha256": "fb99c471fe2d44dfc64ac014071dfdd4dd92a46404b41bf93add71c908f3df60"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-core-final.trx",
+      "bytes": 678047,
+      "sha256": "b382eddfa569d5ac040e3f7d8de0b5958299f025a95d273e927585ab3f1326b3"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-final/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "7301bd7148f84e8b93b7ad226bb662113998797bd9f9ddeb8ef25e44448dc6ee"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-receipt.txt",
+      "bytes": 2715,
+      "sha256": "a11f8e203db68a3dd2f7e19a5447269950d834440d0080e5749fadc74d63159d"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-red.trx",
+      "bytes": 6338,
+      "sha256": "ef77d9eeeb083ec2824cc4aa836c00ed90ee85fff1bc036b860356385c13771e"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/owner55-red/matched-idle-drain.json",
+      "bytes": 709,
+      "sha256": "cf6873fca5661fe30d550537dd6964b4d20db54cde9307ffcfc6748d53b7af9f"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/publication-authority-controls.trx",
+      "bytes": 4390,
+      "sha256": "45ed736f85f19839b3f3ab95404a7efa43dd010df4b1439728d6c08c89b6ac88"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/real-daemon-diagnostic.trx",
+      "bytes": 8610,
+      "sha256": "9dd6c90079aed74e50cfc46fdd0c220447ca1188cfa75f260e420b5dfcf6c0a0"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/real-daemon-proof.trx",
+      "bytes": 5869,
+      "sha256": "ba08962e7f541f1fc6d4c3aa0e96bd25e3dab854beb6c2dfc2c9573dd87b86b8"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/receipt-policy-final.trx",
+      "bytes": 3106,
+      "sha256": "aa9a98b241b72c6001e464b6892a0dd7aed1b5c92353e458e7868d8fba3881f1"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/registration-red.trx",
+      "bytes": 4797,
+      "sha256": "ed5cb8698d2b4b5c9161fb8143d04a74d2d26be8bb56377a5229663206a560ba"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-app-final.trx",
+      "bytes": 122961,
+      "sha256": "8b3cd18ed930466a6e3a9cb44f7ba77c3076d795981789e88366fd05aab0c868"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-app-handoff.trx",
+      "bytes": 122959,
+      "sha256": "02ee63d9c413cd75c7d687e32ae689323b8573692e8c4b9c76b5d098879a73b4"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-author-receipt.txt",
+      "bytes": 6287,
+      "sha256": "ed515b3697387d8bc3591cca2f115e8a24b9b710b0416499f101f4cc004e5011"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-core-final.trx",
+      "bytes": 645955,
+      "sha256": "5e06cb173183d0ed7a79dc663c40d095661cf8d7a16dcf9bd51f436d6e482f21"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-core-handoff.trx",
+      "bytes": 641731,
+      "sha256": "18c9f3b52fd4b9776c403073520560e771112999e9d5a722822fac69d40b064e"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-final-controls.trx",
+      "bytes": 33483,
+      "sha256": "05640e7dc1921a51e7ea1f571f57a03aef508e687ae856923ef20c678a28d475"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-lifetime-controls.trx",
+      "bytes": 24876,
+      "sha256": "743a964922fa34425dd8ba88a974c000deb0a89a94b62890320fc885164025df"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-native-third.trx",
+      "bytes": 20342,
+      "sha256": "3d09c197059a5b6db3c577db7ecfc2c5987c23c32d9dc2cfe776aa44fd620c58"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-owner-controls.trx",
+      "bytes": 29259,
+      "sha256": "912569e14177f5881c3b2c17ec96fe7828693f7f5ec8f9aa738027939b980e84"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/runtime-regressions-first.trx",
+      "bytes": 637128,
+      "sha256": "c0ce0e7a3f27d82f1522a131295ac607440453f27f1151bf705d35f0d25da165"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/source-diagnostic.trx",
+      "bytes": 5737,
+      "sha256": "52a9411733f847a646032ad1792597b167dffc4233bba5a790d0ebc81bb75060"
+    },
+    {
+      "path": ".artifacts/atlas-runtime/source-handoff.trx",
+      "bytes": 4882,
+      "sha256": "914000ee6b6761a513e2bf171121d25f08f5ca26dcb2c920bf82d98c29b7f8c1"
+    }
+  ]
+}
