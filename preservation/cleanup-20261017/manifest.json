@@ -1,0 +1,95 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "d8fe8b1f2da0df053694221d3a26e66026ce66b3",
+  "original_branch": "refs/heads/fix/d0-atlas-conditional-closure",
+  "archive_sha256": "d62c458486a83e57a4b1e3537c91463c3758041748d9b42426efb73cba02fd68",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 284409,
+      "sha256": "d62c458486a83e57a4b1e3537c91463c3758041748d9b42426efb73cba02fd68"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-closure/audit.json",
+      "bytes": 3059,
+      "sha256": "ca659d5f8573e08bc0034e86fbd52909d1eaad0ac009c322a52f1b9ceb1eaf8d"
+    },
+    {
+      "path": ".artifacts/d0-closure/close.py",
+      "bytes": 10480,
+      "sha256": "ac952aeb9139fd945100d05e6c82539efd1a0c70780186662b212969aa77890e"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-first.trx",
+      "bytes": 234804,
+      "sha256": "a866804158b9bbcc872804c02232dff13ed17f5137f1c01555fccf0ddae15278"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-fixture-red.trx",
+      "bytes": 705922,
+      "sha256": "dcaa810e0b1b088dc7868b39cb375e6d8c9154e2acbd23da3f6df3d66f797fde"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-green.trx",
+      "bytes": 377206,
+      "sha256": "4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-meaningful-red.trx",
+      "bytes": 740648,
+      "sha256": "0617a1271c9420d4e23b98afa65fadfbedb74da332f0cb354e6b7bdd714fa6c7"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-red.trx",
+      "bytes": 940212,
+      "sha256": "26f453666614e5d133c46481a93425af40a20cfa448ed4a3b758efd7b26944d2"
+    },
+    {
+      "path": ".artifacts/d0-closure/closure-third.trx",
+      "bytes": 377423,
+      "sha256": "89e304a79db727ca700cdedf83e9bf9da0bc0b172288d8d51de9e7c91cd09698"
+    },
+    {
+      "path": ".artifacts/d0-closure/freeze.py",
+      "bytes": 2179,
+      "sha256": "e1e42d3b87d5a46cd83d220edac9cee2aa5fed0bdc517d41fc7d406fe518b8e0"
+    },
+    {
+      "path": ".artifacts/d0-closure/green.exit",
+      "bytes": 3,
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": ".artifacts/d0-closure/implement.py",
+      "bytes": 10400,
+      "sha256": "e4748d024753f39f8b2c66e27820087aaf34fe7bf8635bc90bdd3f410108e9a0"
+    },
+    {
+      "path": ".artifacts/d0-closure/inventory.json",
+      "bytes": 1991,
+      "sha256": "b4aeb4a3e366a13f33a15acf2b3fc154ec4b57cae95a5ef1836551fa77f2c5f0"
+    },
+    {
+      "path": ".artifacts/d0-closure/observed.txt",
+      "bytes": 3144,
+      "sha256": "b620983542dd4bc18513c596e31bbadd77323c00926c06a0b163e129fafaa639"
+    },
+    {
+      "path": ".artifacts/d0-closure/prompt.txt",
+      "bytes": 2415,
+      "sha256": "ddf185b8741e66e3feaebcc3680e226bed05bd007c21d2d3d6252cf80b2950bf"
+    },
+    {
+      "path": ".artifacts/d0-closure/qualify.py",
+      "bytes": 7024,
+      "sha256": "91738c1453841270aca461f152d0bbfd3785a96e88d67e4cb63abc18b718356e"
+    },
+    {
+      "path": ".artifacts/d0-closure/recover.py",
+      "bytes": 6229,
+      "sha256": "73ce471bf3a866acb9c57f3c945347c083c2672c6e650d1f6201081add4791d0"
+    }
+  ]
+}
