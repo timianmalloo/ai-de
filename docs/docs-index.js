@@ -9889,7 +9889,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46ff5f0517e393f8b462bd370a9aed786d3a3a707577512c3370a9989ccaa8c6"
+      "sourceSha256": "e7aa7de4b63e17e1f76fe63815565acd8c5aa31dc4cd7a2e58929200ddbacc5d"
     },
     {
       "id": "design-session-profiler",
@@ -12244,6 +12244,37 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "cca029134893249980c7c8fc167bb959b8ec1dd726037889515b7febbdc42ac8"
+    },
+    {
+      "id": "plan-worktree-cleanup-20261017",
+      "path": "docs/plans/worktree-cleanup-20261017.md",
+      "title": "Preserve and retire AI-DE worktrees",
+      "type": "doc",
+      "status": "draft",
+      "owner": "engineering",
+      "phase": "",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Preserve and verify remote recovery for all linked worktrees before retiring them.",
+      "tags": [
+        "git",
+        "worktrees",
+        "preservation"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Diagram 1",
+          "mermaid": "flowchart LR\n  I[Inventory and safety floor] --> P[Commit and push preservation]\n  P --> R[Remove clean linked worktrees]\n  R --> V[Read back disk and refs; publish proof]"
+        }
+      ],
+      "sourceSha256": "c853771059b3ee7156a70acb005a0b82b360b7aed9299ac0d4d7c31571105ecd"
     },
     {
       "id": "profile-addendum-cd",
@@ -22857,7 +22888,15 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "proof-updatepack-r102-20261017"
+    },
+    {
+      "id": "surface-plans-worktree-cleanup-20261017",
+      "path": "docs/plans/worktree-cleanup-20261017.html",
+      "title": "Worktree Cleanup 20261017",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "plan-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "e862d4bbb3cfae8346528fa047c95ef0543a3451a52a07fd291c5bb9ad3bc320"
+  "graphSha256": "a93bee09dfff026ac08f7c847344df9ec0e78716365cc9951b4df2b849360812"
 };

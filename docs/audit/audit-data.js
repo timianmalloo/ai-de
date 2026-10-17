@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-17T20:00:54Z",
+  "generated": "2026-10-17T21:01:20Z",
   "audit": [
     {
       "actor": null,
@@ -21233,6 +21233,45 @@ window.AUDIT_DATA = {
       "fan_out": 3,
       "started_at": "2026-10-17T19:11:17Z",
       "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55TEAMZZKKJ2AVVTCN67N9R",
+      "shortname": "commit and push all then clean up all of the AI-De worktrees so that the…",
+      "datetime": "2026-10-17T20:56:49Z",
+      "session": "prompt-log",
+      "prompt": "commit and push all then clean up all of the AI-De worktrees so that the only thing left locally is the local checkout",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M55TPKC6J24DWNFXNSJ8AW3F",
+      "shortname": "optimize-graph-worktree-cleanup",
+      "datetime": "2026-10-17T21:01:20Z",
+      "session": "codex-cleanup-20261017",
+      "prompt": "commit and push all then clean up all of the AI-De worktrees so that the only thing left locally is the local checkout",
+      "summary": "Planned four dependent phases: inventory, remote preservation, safe cleanup, filesystem and ref readback. Fan-out zero. Historical workflow drift observed and guarded before further preservation pushes.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/worktree-cleanup-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Commit and push remaining AI-DE work and retire linked worktrees.",
+      "done_when": "Remote recovery verified; only primary checkout remains locally.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-17T20:56:48Z",
+      "duration_seconds": 272.0
     }
   ],
   "changes": [

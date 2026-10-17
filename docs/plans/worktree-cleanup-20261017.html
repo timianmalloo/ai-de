@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Worktree Cleanup 20261017</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from worktree-cleanup-20261017.md</div><p>Goal: commit and push remaining work, then leave only <code>C:/Projects/ai-de</code> locally. Done when main matches origin, every removed tree&#x27;s commits and uncommitted work have remote recovery references, Git lists one tree, and sibling worktree directories are absent. Do not merge divergent historical branches or delete the primary checkout. Tier T2; agent fan-out zero.</p>
+<p>The compiled request maps “commit and push all” to preservation of main changes, historical tracked changes and untracked evidence; “only thing left locally is the local checkout” maps to removal of registered trees and relocation of orphan evidence inside the primary checkout.</p>
+<p>Grounding reference: the installed <code>optimize-graph</code> skill and <code>.claude/knowledge/execution-graph-optimization.md</code>. Its named <code>kb-graph-and-loop-engineering</code> knowledge node is absent in this consuming repository, so the plan links to the existing knowledge hub rather than creating a dangling graph edge.</p>
+<table><thead><tr><th>Node</th><th>Capability</th><th>Inputs</th><th>Exit / oracle</th><th>Dependencies</th><th>Tier</th></tr></thead><tbody><tr><td>Inventory</td><td>Deterministic mechanics</td><td>Git inventory, session holds, disk</td><td>Every linked tree has status and remote containment; active hold blocks removal</td><td>None</td><td>T0</td></tr><tr><td>Preserve</td><td>Deterministic mechanics</td><td>Inventory</td><td>New files archived with hashes, tracked changes committed, remote refs verified</td><td>Inventory (data)</td><td>T0</td></tr><tr><td>Remove</td><td>Deterministic mechanics</td><td>Verified recovery refs</td><td>Clean, unheld trees removed by coordination cleanup; primary excluded</td><td>Preserve (safety decision)</td><td>T0</td></tr><tr><td>Verify and publish</td><td>Deterministic mechanics</td><td>Disk and Git readback</td><td>One registered tree, no sibling worktree directories, clean main equals remote</td><td>Remove (data)</td><td>T0</td></tr></tbody></table>
+<pre><code class="language-mermaid">flowchart LR
+  I[Inventory and safety floor] --&gt; P[Commit and push preservation]
+  P --&gt; R[Remove clean linked worktrees]
+  R --&gt; V[Read back disk and refs; publish proof]</code></pre>
+<p>Safety floors are immovable: primary/current directory exclusion, clean status, remote preservation, no live holds, resolved-path checks before deletion, and disk readback after Git removal. Surface list: file content → Git index/object → remote ref → worktree registration → physical directory → cleanup proof. Scope of sibling scan: direct children of <code>C:/Projects</code>, names starting <code>ai-de-</code>, confirmed by the initial worktree inventory or evidence-only inspection. No unrelated repository is eligible.</p>
+<p>Naive and optimized shapes both have four dependent phases, modeled work 4 and span 4 equal phase units (Inferred; not duration estimates). Width 1; all mechanical steps deterministic. Parallel mutation would contend on shared refs and coordination logs. Loops process a finite inventory: remaining unchecked/preserved/removed trees strictly decreases to zero; ceiling is the initial inventory count, and a refusal stops that item for investigation rather than discarding it. Budget: one inventory, one preservation per dirty tree, one cleanup, readback; any failure retains data and is reported. Re-plan at preservation volume, push failure, live hold, or surviving directory.</p>
+<p>Adversarial checks: remote containment alone does not prove dirty files preserved; archives and content hashes provide that evidence. Git removal exit status alone does not prove disk absence; direct filesystem checks provide it. A pushed preservation branch is recovery evidence, not acceptance of its code. Existing generated evidence will be archived rather than mixed into main source.</p>
+<p>Actual measurements and recovery refs are recorded in the sibling cleanup proof at completion. Tokens and spend are not exposed by this runner and will be reported as not recorded.</p></main></body></html>
