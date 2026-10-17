@@ -1,0 +1,35 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "47f5f54cd8b1dbd7b65cca344f0585b712139422",
+  "original_branch": "refs/heads/fix/atlas-core-gates",
+  "archive_sha256": "bfe97a7e68491f1267172bf502eb6247069a3ea094f65c57ab8bfa430e0be80b",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 22637,
+      "sha256": "bfe97a7e68491f1267172bf502eb6247069a3ea094f65c57ab8bfa430e0be80b"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-core-gates/boundary-baseline.trx",
+      "bytes": 22207,
+      "sha256": "f3e5ad9d25b3736fa8cc503df64570de244340d2d07af7a135f501fee6cd6bd1"
+    },
+    {
+      "path": ".artifacts/atlas-core-gates/clamp-mutant.trx",
+      "bytes": 7575,
+      "sha256": "fb10e93d6e47d7e16089c5daced920018287f5164170e132a8c08cad45177e81"
+    },
+    {
+      "path": ".artifacts/atlas-core-gates/focused-final.trx",
+      "bytes": 88979,
+      "sha256": "0a8c3ad7ae44ac72ce09d3b922d375eb76572e04ecc4dec2321012ae00537187"
+    },
+    {
+      "path": ".artifacts/atlas-core-gates/forwarding-mutant.trx",
+      "bytes": 7575,
+      "sha256": "13745b5840d2c14fb66a48aeed7aa4c7607c10ed3b8cf8ec05a5cad325b4d7e2"
+    }
+  ]
+}
