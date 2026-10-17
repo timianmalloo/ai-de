@@ -1,0 +1,85 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "97a9e200b5a5b0047e2b42cae931ffd35db02bc0",
+  "original_branch": "refs/heads/fix/d0-atlas-independence",
+  "archive_sha256": "495e49bf1a52344740f09a39b338ba86ebcc8f6de6877aaa2a5f950fcba562a7",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 58584,
+      "sha256": "495e49bf1a52344740f09a39b338ba86ebcc8f6de6877aaa2a5f950fcba562a7"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-independence/author-prompt.txt",
+      "bytes": 3129,
+      "sha256": "a382ee137d35a195db2c9b4a1303375bdc483f499f83ae3a0568f10265156b9a"
+    },
+    {
+      "path": ".artifacts/d0-independence/classification-mutant.trx",
+      "bytes": 12067,
+      "sha256": "636bab9f584798c5379ee209553230debfc862fecdb35133ad55ad04d445718d"
+    },
+    {
+      "path": ".artifacts/d0-independence/conditional-red.trx",
+      "bytes": 10285,
+      "sha256": "9768f8e94f5741b0c47f135d4b2e337cf6242707828328d1dadb1d807926048e"
+    },
+    {
+      "path": ".artifacts/d0-independence/frozen-source-sha.txt",
+      "bytes": 206,
+      "sha256": "a32fcfd9f066de8676f5816f3f031d14d1f820e22345fd261743be2862277908"
+    },
+    {
+      "path": ".artifacts/d0-independence/obsolete-red.trx",
+      "bytes": 4567,
+      "sha256": "42831660f0c7a26d999753dfb3587a95697a84e549fb51701ea93205004d3398"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-final.trx",
+      "bytes": 62790,
+      "sha256": "528cbf09278a90cfdbd24450e26261801be285504332ff0797f3bd08f5481717"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-first-check.trx",
+      "bytes": 11383,
+      "sha256": "4a5890b998a8163f96153d0d8c6e562ce79f6cb00e55f52a0d83b0268a08e932"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-freeze.trx",
+      "bytes": 120727,
+      "sha256": "336d0e06496c1306168a8e192394abaa0e25bf88713a8465400f39069fe74500"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-frozen.trx",
+      "bytes": 71788,
+      "sha256": "b05ad586e247a1651def17271d6489c30671cb6800e8e0faf9c9ce2d6f51b49c"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-green.trx",
+      "bytes": 58589,
+      "sha256": "a8cf40c060bed9c4f202de38df7a7b5e23e5a392db9ff51ef256923a10a30505"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-policy-red.trx",
+      "bytes": 39695,
+      "sha256": "b2e63ed64ed09e4452ea0913d05bdd84645591e1351aaccb1660b2d001df0240"
+    },
+    {
+      "path": ".artifacts/d0-independence/semantic-qualified.trx",
+      "bytes": 67459,
+      "sha256": "c73be4f3f02cf0d977d93fc8890f603c9506fdc4f5ecd220e03a3aef90e02327"
+    },
+    {
+      "path": ".artifacts/d0-independence/spike/Program.cs",
+      "bytes": 6950,
+      "sha256": "dc75a45173f145b066c28b77bfe6f966bf02866b76fb61ad6f6d9d8e86f7fe8c"
+    },
+    {
+      "path": ".artifacts/d0-independence/spike/Spike.csproj",
+      "bytes": 615,
+      "sha256": "8f841318594f101663ae262ef2b5b192522e98f7c8bf41f72328a79bcb6136bc"
+    }
+  ]
+}

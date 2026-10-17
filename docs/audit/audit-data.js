@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T00:16:29Z",
+  "generated": "2026-09-16T00:59:13Z",
   "audit": [
     {
       "actor": null,
@@ -23969,6 +23969,44 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-16T00:10:02Z",
       "duration_seconds": 386.0
+    },
+    {
+      "id": "al-01M2KVK5NMAJAQ5WGK9MVGD0CP",
+      "shortname": "d0-atlas-independence",
+      "datetime": "2026-09-16T00:59:12Z",
+      "session": "codex-d0-atlas-independence",
+      "prompt": "START FIRST in newly provisioned tree: set AGENT_SESSION=codex-d0-atlas-independence AGENT_NAME=codex-astra-d0-author PYTHONIOENCODING=utf-8 in each shell; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d0-atlas-independence --skill implement. Tree C:/Projects/ai-de-fix-d0-atlas-independence branch fix/d0-atlas-independence base247e6b4eaefb; Conductor created via coord lifecycle. Never EnterWorktree, no old-tree writes. BOUNDED AUTHOR unit, Astra justified semantic source boundary. Initial budget24 calls/30min/context ceiling400k, checkpoint at8 with spike/design findings; cap is defect signal, no wider scope. Goal replace ONLY obsolete global noAtlas assertion with nonempty direct static D0 boundary independence. Exact allowed source tests/AiDe.App.Tests/SolutionTreeProbeTests.cs; task proof docs/proof/d0-atlas-independence.md; ignored scratch/receipts; own audit via official writer only. No product files/projectfiles/baseline/shared register/derived writes; root joins audit and regens. Lease exact test/proof only for editing. Owner + independent Test/architecture plan CLEAR: complete types SolutionTreeSurface.cs and SolutionTreeProjection.cs (all bodies incl lambdas/localfunctions), exact D0 members of IWorkspaceQueries/LocalWorkspaceQueries/WorkspaceClient/WorkspaceOperations (solution-tree registrationlambda)/ProjectionService D0helpers/SurfaceContentFactory solution-tree row/builder/WorkbenchShell bind refresh populate retry activate ShowGraph D0helpers. Enumerate exact membernames+shared ports BEFORE implementing. Shared ports explicit projection/store/path/skip-policy, IPCframe/querydispatch, NodeContentAsync, graphreveal, WPF/BCL, registration/sharednavigation. Reject Core.Understanding semantic symbols/sourcepaths, missing/duplicate roots, unresolved selected references, emptycoverage, newly unaccounted D0helper edges outside roots/sharedports. Label DIRECT STATIC only, no arbitrarytransitive/runtimeproof. Inspect actualsharedhandoffs; indirectAtlas found escalates. Native/no-Atlas policy source untouched. User conflict grant + Owner interpretation D0 not implemented THROUGH Atlas, elsewhere coexistenceallowed, will be recorded by root. Installed Roslyn preferred; first SPIKE real-project compilation/binding contract before dependency. No newdeps. Return simpler alternative if semantic harness explodes; do not build generalizedanalyzer. Required red-first: currentfailedTRX preserved integration artifacts/atlas-five-gates/failed-slot-p1-01; meaningful mutated Atlasdirect/alias/lambda/localfunction/sharedseam reference fails, missingroot/unresolved/newhelper fails, unrelatedregistration/commentsstrings/sharedports pass; report exactpopulations. Preserve all other testmethods unchanged. Headless testfilter ONLY this new semanticprobe+syntheticfixtures, NEVER FactoryBuild/Sta/shown/fulltests without rootslot. Indepreview separate. Return commit/artifacts actualcounts risk, exactscope. Escalate toConductor nothuman. Read localinstructions, implementation/testingprotocol beforeedit; recordclass DC118 widthdrift (root will updatecentralregister).",
+      "summary": "Finite direct-static D0 boundary replaces obsolete global Atlas absence. Installed Roslyn spike; meaningful red mutations; final headless filter 20/20. Exact source/proof scope; independent review pending; Conductor owns audit union and DC118 register.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "docs/proof/d0-atlas-independence.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove direct static D0 independence while admitting unrelated Atlas coexistence",
+      "done_when": "Exact nonempty roots bind; adversarial cases reject; coexistence cases pass; frozen proof handed to independent reviewer",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T00:32:17Z",
+      "duration_seconds": 1615.0,
+      "git": {
+        "sha": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "short": "247e6b4ea",
+        "branch": "fix/d0-atlas-independence",
+        "pushed": null
+      }
     }
   ],
   "changes": [
