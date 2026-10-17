@@ -1,0 +1,80 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "921cc2291f291d2cb6f99de9297dba60b90f0d54",
+  "original_branch": "refs/heads/fix/d0-atlas-correction",
+  "archive_sha256": "a194f8b058bc00d1f4a199e47b95c8544ab9c9bc8898562e814faab0d926b51c",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 116015,
+      "sha256": "a194f8b058bc00d1f4a199e47b95c8544ab9c9bc8898562e814faab0d926b51c"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-correction/author-prompt.txt",
+      "bytes": 3147,
+      "sha256": "30dc3afd11f99a60acc5d675e933c7f86833e322a29af93fdcc8ff8c06a2147c"
+    },
+    {
+      "path": ".artifacts/d0-correction/conditional-width-red.trx",
+      "bytes": 115249,
+      "sha256": "e2e01dc8293b0066676d6d2d453b567ebc919b0a84c899ab736108ac64b633fb"
+    },
+    {
+      "path": ".artifacts/d0-correction/correction-first.trx",
+      "bytes": 251428,
+      "sha256": "03bcbe5d6a2d9ab8b17faf59d4b4d6163205624a3fd0d5b47c23127dbe0f5bdf"
+    },
+    {
+      "path": ".artifacts/d0-correction/correction-frozen.trx",
+      "bytes": 251553,
+      "sha256": "92f2168ef678e7b99d4e443406e7d4a199fdc5ea2052cc15825929d4f4bef3b3"
+    },
+    {
+      "path": ".artifacts/d0-correction/correction-qualified.trx",
+      "bytes": 227740,
+      "sha256": "d01d081c722f34dfb4223ba85772c65f15ef556ecb02e893991a70a313171776"
+    },
+    {
+      "path": ".artifacts/d0-correction/correction-red.trx",
+      "bytes": 124752,
+      "sha256": "d1efd6dbe1931a2274f799b2eddba1ffae0020e83b2e581902a6d4cd066d77eb"
+    },
+    {
+      "path": ".artifacts/d0-correction/correction-second.trx",
+      "bytes": 186233,
+      "sha256": "8fbb5387dd30480ed835ae11de89838d9c4c85f4f5a417afad14fe872fc9387e"
+    },
+    {
+      "path": ".artifacts/d0-correction/implement.py",
+      "bytes": 9559,
+      "sha256": "7c66bb81ad98add2c3c9d4923f4f80e98fa33722d88fe3238179d84300b3676d"
+    },
+    {
+      "path": ".artifacts/d0-correction/ports.txt",
+      "bytes": 6354,
+      "sha256": "8cfae332409437968283bd4fd1fb51d896f8a3acf6b9fe86236f54ddc310ba7b"
+    },
+    {
+      "path": ".artifacts/d0-correction/receipt.py",
+      "bytes": 13441,
+      "sha256": "bab4f765ebd015551678ded3b069d44cf80359a6babb9dc158c735c2b87c2fed"
+    },
+    {
+      "path": ".artifacts/d0-correction/recovery-prompt.txt",
+      "bytes": 1207,
+      "sha256": "0746a9575ea0d0acec87602bd77747e041d4e6f7f76c2a6b3a018ea291e4b205"
+    },
+    {
+      "path": ".artifacts/d0-correction/spike/Program.cs",
+      "bytes": 4539,
+      "sha256": "df3060ae827ffc5da362ba61364655b21409411840208dae3eaff62e1597ced3"
+    },
+    {
+      "path": ".artifacts/d0-correction/spike/Spike.csproj",
+      "bytes": 345,
+      "sha256": "058898a6b0d26b5636bf2febd430abbddd9f7803da60adc8552d9099199960e4"
+    }
+  ]
+}
