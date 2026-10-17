@@ -14,7 +14,7 @@ Usage
   pack-doctor.py [--root <repo>] [--json] [--strict]
 Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 """
-import argparse, json, os, re, sys
+import argparse, json, os, re, shutil, subprocess, sys
 
 from bounded_process import run_bounded
 
@@ -56,8 +56,9 @@ def check_installed(root):
 
 
 def check_surface(root, label, subdirs):
-    missing = [d for d in subdirs if not os.path.isdir(os.path.join(root, *d.split("/")))]
-    surface = "Claude Code" if label == ".claude" else "Copilot"
+    missing = [d for d in subdirs if not os.path.exists(os.path.join(root, *d.split("/")))]
+    names = {".claude": "Claude Code", ".github": "Copilot", ".grok": "Grok Build", ".agents": "Antigravity"}
+    surface = names.get(label, label)
     if not os.path.isdir(os.path.join(root, label)):
         return _result(f"{surface} surface", FAIL, f"{label}/ not present",
                        "run /updatepack (or pwsh tools/sync-pack.ps1 in the source repo)")
@@ -77,6 +78,126 @@ def _read(path):
             return fh.read()
     except OSError:
         return None
+
+
+def check_codex(root):
+    """Check the deployed pack contract, never claim a running Codex catalog was read."""
+    name = "Codex repository readiness"
+    fix = "run $updatepack (or pwsh tools/sync-pack.ps1 in the source repo); see docs/ai-forward-pack/codex.md"
+    problems = []
+    required = ["AGENTS.md", "docs/ai-forward-pack/codex.md",
+                "docs/ai-forward-pack/scripts/audit-log.py",
+                "docs/ai-forward-pack/scripts/prompt-log.py",
+                "docs/ai-forward-pack/scripts/docs-graph.py"]
+    required += [".claude/knowledge/" + doc + ".md" for doc in (
+        "agent-body-of-knowledge", "agent-rules-of-the-road", "agent-persona-catalog",
+        "layered-optimized-architecture", "engineering-governance")]
+    for rel in required:
+        if not (_read(os.path.join(root, rel)) or "").strip():
+            problems.append("missing or empty " + rel)
+    agents = _read(os.path.join(root, "AGENTS.md")) or ""
+    if "docs/ai-forward-pack/codex.md" not in agents:
+        problems.append("AGENTS.md does not direct Codex to its grounding guide")
+
+    manifest = "docs/ai-forward-pack/codex-skills.json"
+    try:
+        inventory = json.loads(_read(os.path.join(root, manifest)) or "null")
+    except ValueError:
+        inventory = None
+    if not isinstance(inventory, dict) or not inventory:
+        return _result(name, FAIL, "; ".join(problems + ["missing or invalid " + manifest]), fix)
+    for skill, files in inventory.items():
+        # Only the pack's portable relative-path inventory is admitted. Local extra
+        # skills are allowed and do not substitute for an absent pack-owned skill.
+        if (not re.fullmatch(r"[a-z0-9-]+", skill) or not isinstance(files, list)
+                or "SKILL.md" not in files or any(
+                    not isinstance(f, str) or not f or "\\" in f
+                    or f.startswith("/") or ":" in f or ".." in f.split("/") for f in files)):
+            problems.append("invalid skill inventory entry " + skill)
+            continue
+        for rel in files:
+            target = ".agents/skills/" + skill + "/" + rel
+            if not os.path.isfile(os.path.join(root, target)):
+                problems.append("missing " + target)
+        target = ".agents/skills/" + skill + "/SKILL.md"
+        text = _read(os.path.join(root, target)) or ""
+        header = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", text, re.S)
+        fields = {}
+        if header:
+            for key in ("name", "description"):
+                match = re.search(r"^" + key + r":[ \t]*([^\r\n]+)", header.group(1), re.M)
+                fields[key] = match.group(1).strip().strip("\"'") if match else ""
+        # The pack emits single-line scalar metadata. This is a pack contract
+        # check, not a general YAML validator for arbitrary user skills.
+        if fields.get("name") != skill or not fields.get("description", "").strip():
+            problems.append("invalid name/description in " + target)
+    if problems:
+        return _result(name, FAIL, "; ".join(problems), fix)
+    if (_read(os.path.join(root, "AGENTS.override.md")) or "").strip():
+        return _result(name, WARN, "AGENTS.override.md takes precedence over AGENTS.md; pack grounding may be shadowed",
+                       "review the override with its owner; do not overwrite it automatically")
+    return _result(name, PASS,
+                   "%d pack skills, companion files, constitution and scripts present; filesystem only, Codex catalog not queried"
+                   % len(inventory))
+
+
+def check_muse(root):
+    """Check the deployed Muse contract, never claim a running Muse catalog was read.
+
+    Muse discovers the shared .agents/skills surface (the Codex/Antigravity
+    tree) and reads AGENTS.md; its own contribution is the path map
+    docs/ai-forward-pack/muse-surface.md plus the AGENTS.md pointer to it.
+    The skill inventory is the shared codex-skills.json manifest."""
+    name = "Muse repository readiness"
+    fix = "run $updatepack (or pwsh tools/sync-pack.ps1 in the source repo); see docs/ai-forward-pack/muse-surface.md"
+    problems = []
+    required = ["AGENTS.md", "docs/ai-forward-pack/muse-surface.md",
+                "docs/ai-forward-pack/scripts/audit-log.py",
+                "docs/ai-forward-pack/scripts/prompt-log.py",
+                "docs/ai-forward-pack/scripts/docs-graph.py"]
+    required += [".claude/knowledge/" + doc + ".md" for doc in (
+        "agent-body-of-knowledge", "agent-rules-of-the-road", "agent-persona-catalog",
+        "layered-optimized-architecture", "engineering-governance")]
+    for rel in required:
+        if not (_read(os.path.join(root, rel)) or "").strip():
+            problems.append("missing or empty " + rel)
+    agents = _read(os.path.join(root, "AGENTS.md")) or ""
+    if "docs/ai-forward-pack/muse-surface.md" not in agents:
+        problems.append("AGENTS.md does not direct Muse to its grounding guide")
+
+    manifest = "docs/ai-forward-pack/codex-skills.json"
+    try:
+        inventory = json.loads(_read(os.path.join(root, manifest)) or "null")
+    except ValueError:
+        inventory = None
+    if not isinstance(inventory, dict) or not inventory:
+        return _result(name, FAIL, "; ".join(problems + ["missing or invalid " + manifest]), fix)
+    for skill, files in inventory.items():
+        if (not re.fullmatch(r"[a-z0-9-]+", skill) or not isinstance(files, list)
+                or "SKILL.md" not in files or any(
+                    not isinstance(f, str) or not f or "\\" in f
+                    or f.startswith("/") or ":" in f or ".." in f.split("/") for f in files)):
+            problems.append("invalid skill inventory entry " + skill)
+            continue
+        for rel in files:
+            target = ".agents/skills/" + skill + "/" + rel
+            if not os.path.isfile(os.path.join(root, target)):
+                problems.append("missing " + target)
+        target = ".agents/skills/" + skill + "/SKILL.md"
+        text = _read(os.path.join(root, target)) or ""
+        header = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", text, re.S)
+        fields = {}
+        if header:
+            for key in ("name", "description"):
+                match = re.search(r"^" + key + r":[ \t]*([^\r\n]+)", header.group(1), re.M)
+                fields[key] = match.group(1).strip().strip("\"'") if match else ""
+        if fields.get("name") != skill or not fields.get("description", "").strip():
+            problems.append("invalid name/description in " + target)
+    if problems:
+        return _result(name, FAIL, "; ".join(problems), fix)
+    return _result(name, PASS,
+                   "%d pack skills, companion files, constitution and scripts present; filesystem only, Muse catalog not queried"
+                   % len(inventory))
 
 
 def check_claude_md_import(root):
@@ -152,20 +273,88 @@ def check_claude_settings(root):
 def check_hooks(root):
     """F-07 / CTX-D. The re-read guard is a control only when a host runs it."""
     cop = os.path.join(root, ".github", "hooks", "ai-forward.json")
+    grok = os.path.join(root, ".grok", "hooks", "ai-forward.json")
+    agy = os.path.join(root, ".agents", "hooks.json")
     cc = _read(os.path.join(root, ".claude", "settings.json")) or ""
     have = []
     if os.path.isfile(cop):
         have.append("Copilot (.github/hooks/ai-forward.json)")
-    if "reread-guard" in cc:
+    if os.path.isfile(grok):
+        have.append("Grok Build (.grok/hooks/ai-forward.json)")
+    if os.path.isfile(agy):
+        have.append("Antigravity (.agents/hooks.json)")
+    # B15: the guard runs inside the per-event dispatcher (dispatch.py); older installs name it directly.
+    if "reread-guard" in cc or "dispatch.py --host claude" in cc:
         have.append("Claude Code (.claude/settings.json)")
-    guard = os.path.isfile(os.path.join(root, "docs", "ai-forward-pack", "hooks", "reread-guard.py"))
-    if have and guard:
+    hooks_dir = os.path.join(root, "docs", "ai-forward-pack", "hooks")
+    missing = [f for f in ("reread-guard.py", "dispatch.py") if not os.path.isfile(os.path.join(hooks_dir, f))]
+    if have and not missing:
         return _result("re-read guard hook", PASS, "installed for " + ", ".join(have))
-    if have and not guard:
-        return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/reread-guard.py is missing",
-                       "copy adapters/hooks/reread-guard.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
-    return _result("re-read guard hook", WARN, "not installed on either host",
-                   "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.5)")
+    if have:
+        return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/{0} is missing"
+                       .format(" and ".join(missing)),
+                       "copy adapters/hooks/reread-guard.py and dispatch.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
+    return _result("re-read guard hook", WARN, "not installed on any host",
+                   "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json, grok.ai-forward-hooks.json to .grok/hooks/ai-forward.json, agy.ai-forward-hooks.json to .agents/hooks.json, and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.4 / 1.7 / 1.8)")
+
+
+def check_hook_launchers(root):
+    """Scan five config files recursively for legacy command tokens; no custom allowlist."""
+    import shutil
+    import subprocess
+    files = [".claude/settings.json", ".github/hooks/ai-forward.json",
+             ".agents/hooks.json", ".codex/hooks.json"]
+    grok_hooks = os.path.join(root, ".grok", "hooks")
+    if os.path.isdir(grok_hooks):
+        files.extend(".grok/hooks/" + name for name in sorted(os.listdir(grok_hooks)) if name.endswith(".json"))
+    configured = False
+
+    def walk(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key in ("command", "bash", "powershell") and isinstance(item, str):
+                    yield item
+                else:
+                    yield from walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                yield from walk(item)
+
+    for relative in files:
+        try:
+            with open(os.path.join(root, relative), encoding="utf-8") as handle:
+                text = handle.read()
+            config = json.loads(text)
+        except FileNotFoundError:
+            continue
+        except (OSError, ValueError):
+            return _result("hook launchers", FAIL, "HOOK-CONFIG-INVALID: " + relative,
+                           "repair JSON/UTF-8 encoding without discarding local settings")
+        for command in walk(config):
+            if "py=$(python3" in command:
+                return _result("hook launchers", FAIL, "HOOK-SHELL: Bash-only command in " + relative,
+                               "refresh the pack; inspect custom wrappers separately")
+            configured = configured or "run-hook.sh" in command
+    if not configured:
+        return _result("hook launchers", WARN, "portable pack launcher not configured", "refresh the pack")
+    git = shutil.which("git")
+    if not git or not os.path.isfile(os.path.join(root, "docs", "ai-forward-pack", "hooks", "run-hook.sh")):
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-MISSING: Git or run-hook.sh absent",
+                       "install Git and Python 3; refresh the complete hook bundle")
+    try:
+        result = subprocess.run(
+            [git, "-c", "alias.aif-hook=!sh", "aif-hook",
+             "docs/ai-forward-pack/hooks/run-hook.sh", "reread-guard.py", "--help"],
+            cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-FAILED: launcher probe could not finish",
+                       "check Git's shell and Python installations")
+    if result.returncode != 0 or "usage:" not in result.stdout.lower():
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-FAILED: hook help did not execute",
+                       "check Git's shell, Python, and the installed hook bundle")
+    return _result("hook launchers", PASS,
+                   "Git launcher executed the Python hook; native event enforcement is not qualified here")
 
 
 def check_block(root, fname):
@@ -243,6 +432,180 @@ def check_graph(root):
 
 
 
+def _git_lines(root, *args):
+    """git output lines, or None when git is unavailable or root is not a checkout."""
+    try:
+        proc = subprocess.run(["git", "-C", root, *args], capture_output=True, text=True,
+                              encoding="utf-8", timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if proc.returncode not in (0, 1):
+        return None
+    return proc.returncode, [line for line in proc.stdout.splitlines() if line.strip()]
+
+
+def _jsonl_rows(path):
+    rows = []
+    try:
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(row, dict):
+                    rows.append(row)
+    except OSError:
+        return rows
+    return rows
+
+
+def check_mail(root):
+    """The message layer's invariants (design-message-layer section 9; D10).
+
+    mail dir         FAIL when anything under .agents/mail/ is tracked (bodies would reach git)
+    ledger tracking  FAIL when .agents/log/ is ignored (D10 tracks the ledgers by default)
+    mail twins       FAIL naming every state-changing mail id with no {"type":"mail"} ledger twin
+    doorbells        one line per harness from .agents/harness-status.json; absent -> "not recorded"
+    """
+    results = []
+    agents = os.path.join(root, ".agents")
+    tracked = _git_lines(root, "ls-files", "--", ".agents/mail")
+    if tracked is None:
+        results.append(_result("mail dir", PASS, "not a git checkout here (nothing can be tracked)"))
+    elif tracked[1]:
+        results.append(_result("mail dir", FAIL, "tracked: " + ", ".join(tracked[1][:3]),
+                               "git rm --cached -r .agents/mail && add `.agents/mail/` to .gitignore "
+                               "(mail bodies are machine-local; pack-apply writes the line)"))
+    else:
+        results.append(_result("mail dir", PASS, ".agents/mail/ is not tracked"))
+    ignored = _git_lines(root, "check-ignore", "-q", "--", ".agents/log/probe.jsonl")
+    if ignored is None:
+        results.append(_result("ledger tracking", PASS, "not a git checkout here (nothing is ignored)"))
+    elif ignored[0] == 0:
+        results.append(_result("ledger tracking", FAIL,
+                               ".agents/log/ is ignored - D10 tracks the coord ledgers by default so git "
+                               "carries the mail twins across machines",
+                               "add `!.agents/log/` after the `.agents/*` line in .gitignore (D10; pack-apply writes it)"))
+    else:
+        results.append(_result("ledger tracking", PASS, ".agents/log/ is tracked (D10)"))
+    mail_dir = os.path.join(agents, "mail")
+    inbox_only = {"note", "ack", "nack"}
+    if not os.path.isdir(mail_dir):
+        results.append(_result("mail twins", PASS, "no inboxes present (nothing to check)"))
+    else:
+        twins = set()
+        log_dir = os.path.join(agents, "log")
+        if os.path.isdir(log_dir):
+            for name in sorted(os.listdir(log_dir)):
+                if name.endswith(".jsonl"):
+                    for row in _jsonl_rows(os.path.join(log_dir, name)):
+                        if row.get("type") == "mail" and row.get("mail_id"):
+                            twins.add(row["mail_id"])
+        missing = []
+        for name in sorted(os.listdir(mail_dir)):
+            if not name.endswith(".jsonl"):
+                continue
+            for row in _jsonl_rows(os.path.join(mail_dir, name)):
+                kind = row.get("kind")
+                if kind and kind not in inbox_only and row.get("id") and row["id"] not in twins:
+                    missing.append("{0} ({1})".format(row["id"], kind))
+        if missing:
+            results.append(_result("mail twins", FAIL,
+                                   "{0} state-changing mail(s) with no ledger twin: {1}".format(
+                                       len(missing), ", ".join(missing[:3])),
+                                   "re-issue the twin through coord-mail.py (append_mail is the only writer) "
+                                   "or check that .agents/log/ was not deleted"))
+        else:
+            results.append(_result("mail twins", PASS, "every delegate/ruling/... has its ledger twin"))
+    status_path = os.path.join(agents, "harness-status.json")
+    if not os.path.isfile(status_path):
+        results.append(_result("doorbells", PASS, "not recorded (run coord-mail.py dispatch to probe a harness)"))
+    else:
+        try:
+            with open(status_path, encoding="utf-8") as handle:
+                data = json.load(handle)
+        except (OSError, ValueError) as exc:
+            data = None
+            results.append(_result("doorbells", FAIL, "harness-status.json unreadable ({0})".format(exc),
+                                   "delete .agents/harness-status.json and re-run coord-mail.py dispatch"))
+        if isinstance(data, dict):
+            parts = []
+            for harness in sorted(data):
+                row = data[harness] if isinstance(data[harness], dict) else {}
+                parts.append("{0}: {1} ({2}, {3})".format(harness, row.get("status", "unsupported"),
+                                                          row.get("version") or "version not recorded",
+                                                          row.get("date") or "undated"))
+            results.append(_result("doorbells", PASS, "; ".join(parts) or "no harness recorded"))
+    return results
+
+
+def check_requests(root):
+    """Typed seam requests (spec-typed-seam-requests): FAIL on a request past its deadline with
+    no recorded outcome; WARN on stale acks and untyped rows; `not recorded` with no store.
+    One reader: coord-core.py's request_doctor_lines, loaded beside this file."""
+    core_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "coord-core.py")
+    if not os.path.isfile(core_path):
+        return _result("requests", PASS, "not recorded (coord-core.py is not installed beside pack-doctor.py)")
+    import importlib.util
+    import time
+    spec = importlib.util.spec_from_file_location("coord_core_for_doctor", core_path)
+    core = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(core)
+    except Exception as exc:  # a broken coord-core is a finding here, not a crash
+        return _result("requests", FAIL, "coord-core.py could not be loaded ({0})".format(exc),
+                       "re-run pack-apply.py to restore pack/scripts/coord-core.py")
+    lines, problems = core.request_doctor_lines(os.path.join(root, ".agents"), root, time.time())
+    flagged = [re.sub(r"^requests\s+", "", line.strip()) for line in lines
+               if "WARN" in line or "FAIL" in line or "NOT CHECKED" in line]
+    detail = "; ".join(flagged) if flagged else lines[0].split(None, 1)[1]
+    if problems:
+        return _result("requests", FAIL, detail,
+                       "run `coord request expire` - every open request past its deadline records its fallback")
+    if flagged:
+        return _result("requests", WARN, detail,
+                       "re-ack against the current blob; re-add untyped requests with --deadline and --fallback")
+    return _result("requests", PASS, detail)
+
+
+def check_heartbeat(root):
+    """Progress liveness (spec-liveness-and-track, P3): who beats, how fresh, how many stalled -
+    or `not recorded` when no heartbeat row exists (CTX-H: an uninstalled control looks like a
+    quiet fleet). One reader: coord-core.py's heartbeat_doctor_line, loaded beside this file."""
+    core_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "coord-core.py")
+    if not os.path.isfile(core_path):
+        return _result("heartbeat", PASS, "not recorded (coord-core.py is not installed beside pack-doctor.py)")
+    import importlib.util
+    import time
+    spec = importlib.util.spec_from_file_location("coord_core_for_heartbeat_doctor", core_path)
+    core = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(core)
+    except Exception as exc:  # a broken coord-core is a finding here, not a crash
+        return _result("heartbeat", FAIL, "coord-core.py could not be loaded ({0})".format(exc),
+                       "re-run pack-apply.py to restore pack/scripts/coord-core.py")
+    line, problem = core.heartbeat_doctor_line(os.path.join(root, ".agents"), time.time())
+    detail = re.sub(r"^heartbeat\s+", "", line.strip())
+    if problem:
+        return _result("heartbeat", FAIL, detail, "repair the unreadable ledger row named above")
+    return _result("heartbeat", PASS, detail)
+
+
+def _command_head(command):
+    """The first word of a registry command: a quoted path as one token, else up to the
+    first space. `"C:\\Program Files\\Python\\python.exe" x.py` -> the path; `python3 x.py`
+    -> `python3`."""
+    text = (command or "").strip()
+    if text.startswith('"'):
+        end = text.find('"', 1)
+        return text[1:end] if end > 0 else text[1:]
+    return text.split(None, 1)[0] if text else ""
+
+
 def check_coordination(root):
     """Is the coordination layer switched ON in this repo? (CTX-H)
 
@@ -272,7 +635,7 @@ def check_coordination(root):
                        "every path is treated as `authored` and nothing is regenerated",
                        "python docs/ai-forward-pack/scripts/coord-core.py classify init")
 
-    entries, bad = 0, ""
+    entries, bad, derived = 0, "", []
     try:
         for lineno, raw in enumerate(
                 open(registry, encoding="utf-8").read().splitlines(), start=1):
@@ -282,11 +645,13 @@ def check_coordination(root):
             if ":" not in line:
                 bad = "line {0}: expected `pattern: class [command]`".format(lineno)
                 break
-            klass = line.split(":", 1)[1].strip().split(None, 1)
-            klass = klass[0] if klass else ""
+            parts = line.split(":", 1)[1].strip().split(None, 1)
+            klass = parts[0] if parts else ""
             if klass not in ("authored", "derived", "register"):
                 bad = "line {0}: unknown class {1!r}".format(lineno, klass)
                 break
+            if klass == "derived" and len(parts) > 1:
+                derived.append((lineno, parts[1].strip()))
             entries += 1
     except OSError as e:
         return _result(name, FAIL, f"registry unreadable ({e})",
@@ -296,7 +661,32 @@ def check_coordination(root):
         return _result(name, FAIL, f"registry does not parse - {bad}",
                        "fix .agents/artifacts.yml, or regenerate with `coord classify init --force`")
 
+    # PLAT-B: a registry whose derived command cannot run HERE must FAIL, not parse-and-pass.
+    # A Windows `python.exe` path written by `classify init` on one machine passed this check
+    # on macOS for a week while `coord regen` failed with "command not found". The token
+    # `python3`/`python` is resolved at run time by coord-core, so it always resolves; any
+    # other first word must exist as a file or on PATH.
+    unresolved = []
+    for lineno, command in derived:
+        head = _command_head(command)
+        if head in ("python3", "python", "py"):
+            continue
+        if os.path.isabs(head) or os.sep in head or "/" in head:
+            ok = os.path.exists(head)
+        else:
+            ok = shutil.which(head) is not None
+        if not ok:
+            unresolved.append("line {0}: {1!r}".format(lineno, head))
+    if unresolved:
+        return _result(name, FAIL,
+                       "{0} derived command(s) name an interpreter or tool that does not "
+                       "exist on this machine - {1}".format(len(unresolved), "; ".join(unresolved)),
+                       "the registry travels with the repo and must carry the portable token "
+                       "`python3`, never one machine's path: run `coord classify init --force` "
+                       "(it now writes the token) and commit .agents/artifacts.yml")
+
     declared = set()
+    eol_rule = False
     ga = os.path.join(root, ".gitattributes")
     if os.path.exists(ga):
         try:
@@ -305,8 +695,23 @@ def check_coordination(root):
                     value = line.rsplit("merge=", 1)[1].strip()
                     if value.startswith("coord-"):
                         declared.add(value)
+                if re.search(r"\beol=lf\b", line) and not line.lstrip().startswith("#"):
+                    eol_rule = True
         except OSError:
             pass
+    if declared and not eol_rule:
+        # PLAT-A (P3): every LF-writer in the pack and the byte-identity of the derived-file
+        # merge rest on the working tree being LF on every OS. That is only true when
+        # .gitattributes says so; a Windows clone with core.autocrlf=true and no `eol=lf`
+        # rule checks the ledgers out CRLF, and a union merge then keeps a CRLF line and
+        # its LF twin as two entries. The pack ships the rule via pack-apply; a repo that
+        # declares the coord merge drivers without it has half the mechanism.
+        return _result(name, FAIL,
+                       ".gitattributes declares {0} but no `eol=lf` rule - the ledgers and derived "
+                       "files these drivers merge by byte identity would check out CRLF on a Windows "
+                       "clone with core.autocrlf=true".format(", ".join(sorted(declared))),
+                       "add `* text=auto eol=lf` to .gitattributes (pack-apply appends it), then "
+                       "`git add --renormalize .` once")
     if declared:
         registered = set()
         try:
@@ -448,15 +853,23 @@ def run(root):
         check_node_runner(),
         check_surface(root, ".claude", [".claude/knowledge", ".claude/skills", ".claude/agents"]),
         check_surface(root, ".github", [".github/instructions", ".github/prompts", ".github/agents"]),
+        check_surface(root, ".grok", [".grok/skills", ".grok/agents", ".grok/hooks", ".grok/rules"]),
+        check_surface(root, ".agents", [".agents/skills", ".agents/rules", ".agents/hooks.json"]),
+        check_codex(root),
+        check_muse(root),
         check_block(root, "CLAUDE.md"),
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),
         check_hooks(root),
+        check_hook_launchers(root),
         check_claude_settings(root),
         check_copilot_settings(),
         check_graph(root),
         check_coordination(root),
     ]
+    checks.extend(check_mail(root))
+    checks.append(check_requests(root))
+    checks.append(check_heartbeat(root))
     return checks
 
 

@@ -5,7 +5,22 @@ Project conventions live here. The AI-Forward Pack's reasoning stack is wired in
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack
 
-*Knowledge docs are cited below by their Copilot path (`.github/instructions/<name>.instructions.md`). In Claude Code the same document is `.claude/knowledge/<name>.md` — `CLAUDE.md` is `@AGENTS.md` plus a short addendum that says so (INSTALL 1.1).*
+**Codex:** read `docs/ai-forward-pack/codex.md` at grounding. Skills are in
+`.agents/skills/<name>/SKILL.md`; invoke `$collectknowledge`, `$specify`, or `$<name>`.
+The pack's `/name` notation denotes that skill, not a registered Codex slash command.
+Read the foundation and relevant standards from `.claude/knowledge/` as directed by
+that guide; Copilot's `applyTo` files are not automatically loaded by Codex.
+
+**Muse:** read `docs/ai-forward-pack/muse-surface.md` at grounding. Muse loads
+this `AGENTS.md` (it takes precedence over `CLAUDE.md` here) and discovers skills
+from the shared `.agents/skills/<name>/SKILL.md`; invoke by loading the skill
+(`read_skill <name>`). The pack's `/name` notation denotes that skill, not a
+registered Muse slash command. Read the foundation and relevant standards from
+`.claude/knowledge/` as directed by that guide; Copilot's `applyTo` files are
+not automatically loaded by Muse, and Muse has no native pack hooks — the
+surface doc names the manual steps that replace them.
+
+*Knowledge docs are cited below by their Copilot path (`.github/instructions/<name>.instructions.md`). In Claude Code the same document is `.claude/knowledge/<name>.md` — `CLAUDE.md` is `@AGENTS.md` plus a short addendum that says so (INSTALL 1.1). In Grok Build the same document is `.claude/knowledge/<name>.md` (shared; do not wrap it into `.grok/rules/`). Skills are `.grok/skills/<name>/SKILL.md`; personas are `.grok/agents/<name>.md`, spawned with `spawn_subagent` using the persona `name` as `subagent_type`. The Grok path map is `.grok/rules/grok-surface.md` (INSTALL 1.7). In Antigravity (agy) the same document is `.claude/knowledge/<name>.md` (read on-demand via `view_file`); skills are `.agents/skills/<name>/SKILL.md` (and `.agents/skills.json`); personas are enacted inline, spawned via `invoke_subagent` (`self`), or registered via `define_subagent`. The Antigravity path map is `.agents/rules/agy-surface.md` (INSTALL 1.8).*
 
 This repository uses the **Agent Knowledge Pack** and the **AI-Forward Pack**. Honor them on
 every non-trivial task.
@@ -48,16 +63,27 @@ every non-trivial task.
   a backfill never guesses. `.github/instructions/domain-and-data-modelling.instructions.md`
   (DM1–DM18); evidence in `docs/knowledge/domain-and-data-modelling/`; the **Data & Persistence
   Architect** holds the veto.
-- **A new session starts in a new worktree.** Any session that will **write** to the repo begins
-  by creating and entering its **own git worktree on its own branch** — two agents in one checkout
-  share an index, a HEAD and one set of generated artifacts, so a stash in one silently reaches
-  into the other's uncommitted work and nothing fails loudly. Working in the primary checkout is
-  the **recorded exception**, not the default. More trees are fine when the work needs them; each
-  follows the same lifecycle. **Cleanup is the half that rots**, so it is fail-safe: a tree is
-  removable only when it is not primary, not your cwd, **clean including untracked**, carries no
-  commit that exists nowhere else, and is unheld — anything else is *reported, never removed*, and
-  deletion is opt-in (`--remove`). `coord worktree new|list|cleanup`;
+- **Isolate on concurrent-writer risk, not on session-newness.** Create and enter an own git
+  worktree, on its own branch, only when another live agent/session or the pack's coordination
+  runner might write the same checkout — two writers sharing one checkout is how a stash in one
+  silently reaches into the other's uncommitted work. With **no** such risk — the checkout was
+  provisioned for this task, or the prompt names it — work in place; that's the default, no
+  exception needed (WT1b). Staying in a shared checkout under a real risk is the recorded exception
+  (WT4). **A worktree used for a requested change is not done until it reaches the checkout the
+  requester named**, merged or applied — or is handed back explicitly as not delivered (WT1c). More
+  trees are fine when the work needs them; each follows the same lifecycle. **Cleanup is the half
+  that rots**, so it is fail-safe: a tree is removable only when it is not primary, not your cwd,
+  **clean including untracked**, carries no commit that exists nowhere else, and is unheld —
+  anything else is *reported, never removed*, and deletion is opt-in (`--remove`).
+  `coord worktree new|list|cleanup`;
   `.github/instructions/session-worktree-discipline.instructions.md` (WT1–WT12).
+- **Agent coordination (the Owner / Coordinator / Sub-Agent doctrine):** seats and the capability floor,
+  the two control relationships, the invariants each traceable to a measurement, the protocol objects
+  (session card, delegation contract, seam request, decision request → ruling, leader designation, join
+  state, mail, board), the kick ladder, and the three stages every skill cites — **CO-S0 compile first,
+  CO-S1 declare the seat, CO-S2 a stop is a message** — plus **CO-L** leadership by designation in a git
+  ref. The tree comes before the first spawn (CO15). `.github/instructions/agent-coordination.instructions.md`
+  (CO1–CO17, CO-S0–CO-S2, CO-L); `coord leader|mail|board|request`.
 - **Continuous improvement (a primary directive):** every bug you create, every mistaken
   assumption, and every correction you receive is captured — as a **class, not an instance** — in
   `docs/lessons/defect-classes.md`, and converted into a **control** that fails when the shape
@@ -150,13 +176,16 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (27):** the prompts in `.github/prompts/` — twenty-three reasoning workflows
-  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design-slice`, `ui-design`,
+- **Workflows (29):** the prompts in `.github/prompts/` — twenty-four reasoning workflows
+  (`collectknowledge`, `adddomainexperts`, `create-proposal`, `specify`, `define-architecture`, `design-slice`, `ui-design`,
   `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `code-hygiene`, `migrate`,
   `updatepack`, `addpacktorepo`, `extendaibundle`, `optimize-graph`, `dream`, `apply-learnings`, `session-profiler`,
   `prepare-for-coordination`, `execute-with-coordination`),
-  the `auditlog` lens over the audit & change log, the `also` turn-control utility, plus two prompt-log utilities, `prompts` and
+  the `auditlog` lens over the audit & change log, the `also` turn-control utility, the `compile` prompt compiler (CO-S0), plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
+- **Human-facing artifact views:** whenever a skill creates or materially updates Markdown for
+  people, it also refreshes the sibling HTML view with
+  `docs/ai-forward-pack/scripts/render-markdown.py` (V19). Markdown remains canonical.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
   (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
   copies the chosen prompt to the clipboard to paste-and-edit. Engine:

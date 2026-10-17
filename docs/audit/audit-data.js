@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-26T15:17:53Z",
+  "generated": "2026-10-17T18:54:13Z",
   "audit": [
     {
       "actor": null,
@@ -20840,6 +20840,127 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M43ZQFYJV86EEVP9JNFB5JQP",
+      "shortname": "updatepack-r97",
+      "datetime": "2026-10-04T17:35:01Z",
+      "session": "copilot-d2401d49",
+      "prompt": "/updatepack",
+      "summary": "70 -> 97 (2026.09.27.1); apply rows: 190 ADD, 151 UNCHANGED, 88 UPDATE, 15 MERGE, 3 KEEP, 3 SKIP, 3 BASELINE; 2 conflicts reconciled; commit not performed because user unavailable to confirm",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Update the installed AI-Forward Pack using the local source clone",
+      "done_when": "Source and target revisions are read, source pack-apply has applied revision 97, conflicts are reconciled, gates pass, and commit decision is offered",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-04T17:32:25Z",
+      "duration_seconds": 156.0
+    },
+    {
+      "id": "al-01M55D5V3PMWXXKTKFVYYMRKFQ",
+      "shortname": "$updatepack",
+      "datetime": "2026-10-17T17:04:59Z",
+      "session": "codex-updatepack-20261017",
+      "prompt": "$updatepack",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M55DKYRA3CN2REVE5MHB430X",
+      "shortname": "optimize-graph-updatepack-r102",
+      "datetime": "2026-10-17T17:12:41Z",
+      "session": "codex-updatepack-20261017",
+      "prompt": "$updatepack",
+      "summary": "Six-node sequential plan executed; zero delegated agents; all installation floors retained; seven local correction passes recorded in proof.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/updatepack-r102-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Update the installed AI-Forward Pack while preserving repository-local work",
+      "done_when": "Revision 102 is applied, conflicts are reconciled, and installation checks pass",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-17T17:04:59Z",
+      "duration_seconds": 462.0
+    },
+    {
+      "id": "al-01M55DKZ4PRCB8QW8NXE5CGRAN",
+      "shortname": "updatepack-r102",
+      "datetime": "2026-10-17T17:12:42Z",
+      "session": "codex-updatepack-20261017",
+      "prompt": "$updatepack",
+      "summary": "97 -> 102 (2026.10.14.2); 2 ADD, 15 UPDATE, 20 MERGE, 6 conflicts reconciled; absorbed identity hooks retired; doctor 0 FAIL/4 WARN/20 PASS; four focused tests pass; repeated apply changes zero existing bytes; commit not performed.",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/updatepack-r102-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Update the installed AI-Forward Pack using the local source clone",
+      "done_when": "Source map applied, local deviations preserved, conflict staging empty, checks read, and commit decision offered",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-17T17:04:59Z",
+      "duration_seconds": 463.0
+    },
+    {
+      "id": "al-01M55KCMEH1AR53WJ5FAYNJ424",
+      "shortname": "yes stage, commit and push",
+      "datetime": "2026-10-17T18:53:33Z",
+      "session": "codex-updatepack-publish-20261017",
+      "prompt": "yes stage, commit and push",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M55KDV0ZNYCKSKKCY6MJTAGC",
+      "shortname": "updatepack-r102-publication-prepared",
+      "datetime": "2026-10-17T18:54:13Z",
+      "session": "codex-updatepack-publish-20261017",
+      "prompt": "yes stage, commit and push",
+      "summary": "Publication authorized. Remote main fast-forwarded over one non-overlapping manual-workflow commit. Stage the managed installation and update evidence, preserve unrelated site/Explorer changes, commit with the approved message, then push and read the remote ref.",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/updatepack-r102-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Publish the approved AI-Forward Pack revision 102 update",
+      "done_when": "The approved pack commit is on origin/main and the remote ref equals local HEAD",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-17T18:53:33Z",
+      "duration_seconds": 40.0
     }
   ],
   "changes": [
@@ -24786,5 +24907,6 @@ window.AUDIT_DATA = {
       },
       "audit_ref": "al-01M2K3B1MTTVRK7AYWG6VC9VSC"
     }
-  ]
+  ],
+  "messages": []
 };

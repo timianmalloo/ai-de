@@ -1,6 +1,7 @@
 ---
 name: specify
 description: Turn a prompt or idea into a crisp product specification with testable acceptance criteria. Gathers industry comparables and user evidence, names the core scenario and explicit non-goals, runs adversarial spec review. Use at the start of any non-trivial feature or product.
+runs_as: either
 ---
 
 # Skill: /specify
@@ -10,7 +11,7 @@ Produce a **specification** — the *what* and *why*, never the *how* — that i
 **Spine:** runs the Rigor Protocol (`knowledge/rigor-protocol.md`) on the *problem*. **Authority:** the **Specification Standards** (`knowledge/specification-standards.md`, S1–S10) define the spec's **three layers** — Functional (what & why), UX (how it *works*), UI (how it *looks*) — their bottom-up dependency, and their separate owners; the **Domain & Data Modelling Standard** (`domain-and-data-modelling.md`, DM1/DM4) governs the **conceptual domain model** that Part A must carry whenever a concept is introduced or changed — *the model is the highest-priority decision and is taken before the UX and UI layers*; the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20) governs the UI layer's excellence, and the **UI Archetype Grammar** (`ui-archetype-grammar.md` + `ui-archetype-catalog.md`) selects the UI's archetype as a determinism control. **Mode:** Peer Mode for authoring, Adversary Mode at the gate (`knowledge/collaborative-personas.md`).
 
 ## Grounding (first action)
-Load what already exists for this problem and treat it as the **authoritative source of truth** (Rigor Protocol Stage 0; BoK §III.1): any existing spec for this area (`docs/specs/`), the domain knowledge bases (`docs/knowledge/`), and the project's governance docs. Don't re-spec something already specified without reconciling against it; if your new framing conflicts with an existing spec or a knowledge base, **surface the conflict** rather than quietly overriding it. Prefer **graph traversal** for this grounding (`knowledge-visualization.md` V15): start from this task's artifact(s) in the knowledge graph and follow the typed edges 1–2 hops (upstream `implements`/`refines`/`depends-on`, downstream `tested-by`/`documents`, and `uses-term` into the glossary), citing the traversal path; a missing edge, stale node, or orphan found here is a finding to surface. Skip this only if the user explicitly tells you not to consult prior artifacts.
+Consume the compiled prompt when one is in hand (CO-S0, `knowledge/agent-coordination.md`; `/compile`): its goal state is the turn's goal state and its Not-in-scope is the interdiction — derive nothing from raw prose that a compiled prompt already fixed. Load what already exists for this problem and treat it as the **authoritative source of truth** (Rigor Protocol Stage 0; BoK §III.1): any existing spec for this area (`docs/specs/`), the domain knowledge bases (`docs/knowledge/`), and the project's governance docs. Don't re-spec something already specified without reconciling against it; if your new framing conflicts with an existing spec or a knowledge base, **surface the conflict** rather than quietly overriding it. Prefer **graph traversal** for this grounding (`knowledge-visualization.md` V15): start from this task's artifact(s) in the knowledge graph and follow the typed edges 1–2 hops (upstream `implements`/`refines`/`depends-on`, downstream `tested-by`/`documents`, and `uses-term` into the glossary), citing the traversal path; a missing edge, stale node, or orphan found here is a finding to surface. Skip this only if the user explicitly tells you not to consult prior artifacts.
 
 ## Input
 A prompt, an idea, a problem statement, or a backlog item. May be one sentence. The skill's job is to expand it into a frame, narrow it with evidence, and converge on a testable spec.
@@ -20,6 +21,11 @@ A prompt, an idea, a problem statement, or a backlog item. May be one sentence. 
 - **Adversaries (attack the spec at the gate, bottom-up):** **The Simplifier** (scope, gold-plating — soft veto), **The Test Architect** (functional criteria verifiable — hard veto on unverifiable claims), **Data & Persistence Architect** (is the conceptual model right, are the aggregate boundaries drawn by invariants, is the grain declarable — veto on an unmodelled concept), **UX Researcher / IA** (UX layer: flow integrity, IA, findability, unhappy-path coverage — **UX-specification veto**, if user-facing), **UX & Accessibility** (UI layer: state completeness, tokens, WCAG 2.2 AA — veto, if visual UI), **Security & Identity Architect** (mandatory if identity/PII/data — hard veto).
 
 ## Flow (Rigor Protocol, specialized to the problem)
+
+**Decision interrogation.** Read `knowledge/decision-interrogation.md`. During Stages 1-2, use its
+serial dialogue before settling any consequential scope, user-need, UX-flow, or UI-archetype choice
+that evidence cannot decide. Before handoff, run DI6. If questions remain, show the
+Question / Needed for / Recommendation table first, then ask one question at a time.
 
 **Stage 0 — Interdict the rush.** Do not propose a solution, a UI, or an architecture. If the input already contains a solution, extract the *underlying problem* it is trying to solve and spec that. (Anti-pattern: solution masquerading as requirement.)
 

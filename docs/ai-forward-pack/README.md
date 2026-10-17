@@ -2,9 +2,13 @@
 
 *A repository-droppable extension that turns the **Agent Knowledge Pack** into a working swarm: collaborating peers that author, adversarial personas that review, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence at every step.*
 
-Works with **Claude Code**, **GitHub Copilot**, or **both**. Install into any GitHub repo.
+Works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Antigravity**, **Codex**, or any combination. Install into any GitHub repo.
 
 ---
+
+**Codex users:** invoke `$collectknowledge` or `$specify` (CLI/IDE: `/skills` or `$`).
+Skills live in `.agents/skills/`; `AGENTS.md` supplies project instructions.
+See the [Codex setup and troubleshooting guide](adapters/codex/codex.md).
 
 ## Why this pack exists
 
@@ -16,7 +20,7 @@ It adds three things and nothing you have to relearn:
 2. **The dual-mode persona model** — collaborating peers plus the rule for moving between collaboration and adversarial review (`knowledge/collaborative-personas.md`), including three new peer-first roles your all-adversary catalog lacks.
 3. **The Spike Protocol** — read-the-code and run-a-PoC discipline for unfamiliar APIs, SDKs, and MCP servers (`knowledge/spike-protocol.md`), so designs rest on established contracts rather than guessed semantics.
 
-On top of these sit **twenty-seven skills** that any developer can invoke — **six delivery workflows** that carry a piece of work from idea to shipped code (including `/ui-design`, the UI craft skill), **eight supporting skills** (domain knowledge, persona tailoring, execution-graph planning, documentation, brownfield adoption, whole-repo forensic review, characterization-first migration, and code-hygiene review/fix), **three pack-lifecycle skills** that manage the pack itself (install, update, and extend), **two utility skills** — `/auditlog`, the command-line lens over the project's durable **audit & change log**, and `/also`, which appends a late addition to the prior prompt without derailing the work in flight — and **two prompt-log utilities** (`/prompts` and `/searchprompts`) for reusing prior prompts.
+On top of these sit **twenty-nine skills** that any developer can invoke — **seven delivery workflows** that carry a piece of work from idea exploration to shipped code (including `/create-proposal` and `/ui-design`), **eight supporting skills** (domain knowledge, persona tailoring, execution-graph planning, documentation, brownfield adoption, whole-repo forensic review, characterization-first migration, and code-hygiene review/fix), **three pack-lifecycle skills** that manage the pack itself (install, update, and extend), **three utility skills** — `/auditlog`, the command-line lens over the project's durable **audit & change log**, `/also`, which appends a late addition to the prior prompt without derailing the work in flight, and `/compile`, which turns the operator's prose into the harness-specific starting prompt without adding scope (stage CO-S0) — and **two prompt-log utilities** (`/prompts` and `/searchprompts`) for reusing prior prompts.
 
 ---
 
@@ -96,7 +100,7 @@ ai-forward-pack/
 │  └─ + 7 vendored Agent-Knowledge-Pack foundation docs (so the bundle is self-contained):
 │       body-of-knowledge · rules-of-the-road · persona-catalog · layered-optimized-architecture ·
 │       engineering-governance · testing-strategy · csharp-style-guide
-├─ commands/                         ← the twenty-seven skills (SKILL.md + reference/ each)
+├─ commands/                         ← the twenty-nine skills (SKILL.md + reference/ each)
 │  ├─ specify/  define-architecture/  design/  implement/  investigate/
 │  ├─ collectknowledge/              ← deep domain research before design → docs/knowledge/
 │  ├─ adddomainexperts/              ← tailors the roster to your project's domain
@@ -109,7 +113,9 @@ ai-forward-pack/
 │  ├─ audit-explorer.html (for /auditlog — the searchable timeline viewer)
 │  └─ documentation-bundle + doc-viewer.html (for /document)
 ├─ adapters/
-│  ├─ INSTALL.md                     ← manual wiring for Claude Code, Copilot, or both
+│  ├─ INSTALL.md                     ← manual wiring for Claude Code, Copilot, Grok Build, Antigravity, or any combination
+│  ├─ grok/grok-surface.md           ← Grok Build path map (deployed to .grok/rules/)
+│  ├─ antigravity/agy-surface.md     ← Antigravity path map (deployed to .agents/rules/)
 │  ├─ claude-code/agents/            ← 11 agents: 3 peers + 4 governance adversaries + 4 UI/app & docs lenses
 │  └─ copilot/
 │     ├─ agents/                     ← the 11 upgraded adversaries (emit the §8 verdict shape)
@@ -118,7 +124,7 @@ ai-forward-pack/
    └─ finance-repo/                  ← a worked /adddomainexperts result (3 domain experts)
 ```
 
-> Deploy **all 23 agents to both tools** (the 12 claude-code-sourced lenses plus the 11 upgraded adversaries), every skill as a Claude skill *and* a Copilot prompt, and the knowledge docs as Claude knowledge *and* Copilot `applyTo:"**"` instructions — the deployment map is `adapters/INSTALL.md`.
+> Deploy **all 23 agents to every host** (the 12 claude-code-sourced lenses plus the 11 upgraded adversaries), every skill as a Claude skill, a Copilot prompt, a Grok project skill (`.grok/skills/`), and an Antigravity skill (`.agents/skills/`), and the knowledge docs as Claude knowledge *and* Copilot `applyTo:"**"` instructions (Grok and Antigravity read the shared `.claude/knowledge/` copies) — the deployment map is `adapters/INSTALL.md`.
 
 ---
 
@@ -130,7 +136,9 @@ Both tools share one model: **knowledge** = always-on reference, **skills** = wo
 
 - **Claude Code:** `CLAUDE.md` + `.claude/{knowledge,skills,agents,commands}/`. Skills auto-apply by description; spikes run under `spikes/`.
 - **GitHub Copilot:** `AGENTS.md` + `.github/{instructions,prompts,agents}/`, using `applyTo` globs to scope instructions (C# style on `**/*.cs`, the Rigor Protocol on `**`). Composes with the GitHub Spec Kit if you use it.
-- **Both:** keep knowledge and templates as one source of truth in `docs/`; each tool's skills reference the same files, so the protocol and personas stay identical.
+- **Grok Build:** `AGENTS.md` (native project rules) + `.grok/{skills,agents,hooks,rules}/`. Personas spawn with `spawn_subagent` (`subagent_type` = persona `name`). Knowledge is the shared `.claude/knowledge/` copy — not wrapped into `.grok/rules/` (CTX-B). Project hooks need folder trust (`/hooks-trust`).
+- **Antigravity (agy):** `AGENTS.md` (native project rules) + `.agents/{skills,hooks.json,rules,skills.json}`. Auto-discovers skills from `.agents/skills/`. Hooks enforce re-read guard and session start. Knowledge is the shared `.claude/knowledge/` copy.
+- **Several hosts:** keep knowledge and templates as one source of truth in `docs/`; each host's skills reference the same files, so the protocol and personas stay identical.
 
 **Smallest viable install:** the Rules of the Road, the Rigor Protocol and Collaborating Personas, the `/specify` and `/implement` skills, and the orchestrator + product-strategist + domain-researcher + test-architect agents. That alone gives you the rush-interdicting spine, the peer/adversary switch, and a spec-to-tested-code loop.
 
@@ -138,6 +146,6 @@ Both tools share one model: **knowledge** = always-on reference, **skills** = wo
 
 ## How it fits the Agent Knowledge Pack
 
-This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the twenty-seven skills that put them to work.
+This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the twenty-nine skills that put them to work.
 
 New here? **`OVERVIEW.md`** is the practical start — how to install, what's inside, and how to use the skills. Then `research-synthesis.md` for the *why* behind every choice, `knowledge/rigor-protocol.md` for the *how*, and `adapters/INSTALL.md` to wire it in by hand.

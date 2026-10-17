@@ -26,6 +26,8 @@ The governing idea: **a coding session's reasoning is the most valuable thing it
 
 **AL0.1 — All writes go through the script bundle.** The audit and change logs are written **only** via `docs/ai-forward-pack/scripts/audit-log.py` (`append`, `change`, `import`), never by hand-appending JSON or generating an ad-hoc script at prompt time — exactly as graph mechanics go only through `docs-graph.py` (V18). The script assigns the id, stamps the time, escapes the content for the viewer, and re-renders in one step.
 
+**AL0.2 — The log degrades to a local area until the repo opts in, and never invents a git identity (classes PK-03, PK-07).** The default `--root` writes to `docs/audit/` only when that directory **already exists** — the repo's own signal that it opted into the Audit Mandate writing into its product tree (measured: 11 of 54 pack-on cells in grid-1 and 23 of 138 in grid-3 seeded `docs/audit/`, and often `docs/docs-index.js`, into a repo that never asked, breaking one cell's own test). A repo with no `docs/audit/` yet gets the pack's own local, already-tracked-by-default area (`.agents/log/`, D10) instead; an explicit `--root` is a direct ask and is honoured exactly as given, unchanged. **In that fallback a write keeps only the JSONL** (amended 2026-10-14, Owner decision on bench B15): `append`, `change` and `import` under `.agents/log/audit/` write `audit-log.jsonl` / `change-log.jsonl` and do **not** render `index.html`, `audit-data.js` or `audit-log.md` — measured, one pack-on append left 510 lines in a fresh fallback tree, 509 of them those views, in a repo that never asked for a viewer. `audit-log.py render` there is an explicit ask and still renders; a repo with `docs/audit/` keeps its views on every write. The same opt-in rule governs `docs-graph.py derive`'s `docs/docs-index.js`. **Neither the script nor the agent calling it may run `git config user.*`** to force a blocked commit through: if a commit fails for a missing identity, the change is left uncommitted and the gap is reported — never papered over with an invented author (4 of 54, then 4 of 54 again, pack-on cells did this; no pack-off cell ever did).
+
 ---
 
 ## 1. The audit-log entry schema
@@ -90,10 +92,7 @@ This persists the stamp keyed by session; the closing `append` (AL5) then record
 **AL5 — Append an audit entry as the last action.** Every skill, as part of its **last action** (alongside the Discoverability Mandate, V10), **MUST** append an audit-log entry recording the run:
 
 ```bash
-python3 docs/ai-forward-pack/scripts/audit-log.py append \
-  --shortname "<skill>-<subject>" --session "<id>" --skill <skill> --kind skill \
-  --tool "<assistant>" --prompt "<the user prompt, verbatim>" \
-  --summary "<what the run produced>" --artifact docs/<...> --tag <keyword> [--git]
+python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "<skill>-<subject>" --session "<id>" --skill <skill> --kind skill --tool "<assistant>" --prompt "<the user prompt, verbatim>" --summary "<what the run produced>" --artifact docs/<...> --tag <keyword> [--git]
 ```
 
 The duration is picked up from the AL4a marker automatically; nothing extra is passed here.
@@ -105,10 +104,7 @@ This is the activity-history sibling of writing frontmatter + syncing the index:
 **AL5b — A substantive interactive turn logs its goal-state (the PACK-O corpus).** Because only skill runs are auto-logged (AL5), the corpus is otherwise blind to interactive work — exactly where defect class **PACK-O** lives. So a **substantive interactive (non-skill) turn** — one that changed the repo or the plan (AL3's bar) — **SHOULD** append an entry at close recording its **full prompt**, its **`goal`** and **`done_when`**, and its summary:
 
 ```bash
-python3 docs/ai-forward-pack/scripts/audit-log.py append \
-  --shortname "<subject>" --session "<id>" --kind manual --tool "<assistant>" \
-  --prompt "<the full prompt, verbatim>" --goal "<the goal>" \
-  --done-when "<the terminal condition>" --summary "<what the turn produced>"
+python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "<subject>" --session "<id>" --kind manual --tool "<assistant>" --prompt "<the full prompt, verbatim>" --goal "<the goal>" --done-when "<the terminal condition>" --summary "<what the turn produced>"
 ```
 
 Trivial and purely conversational turns are exempt (AL3). This is the **logging half of the rung-2 control for PACK-O**: presence (`done_when` recorded or not) is mechanical, and `/dream`'s PACK-O miner reads it; satisfaction (summary vs goal) is surfaced for human review, never auto-judged. Timing is default-on via AL4a. No secrets/PII (AL4).
@@ -141,10 +137,7 @@ The change log is the **curated** subset: not every action, but every action tha
 **CL1 — The four design-shaping skills capture a change by default.** `/collectknowledge`, `/define-architecture`, `/design-slice`, and `/migrate` **MUST**, when they produce or alter a load-bearing decision, append a change-log entry capturing the **prompt** that drove it and a **summary** of the result, via:
 
 ```bash
-python3 docs/ai-forward-pack/scripts/audit-log.py change \
-  --title "<the decision>" --kind <architecture|design|knowledge|migration> --skill <skill> \
-  --session "<id>" --prompt "<driving prompt>" --summary "<the decision/result>" \
-  --rationale "<why, one line>" --artifact docs/<...> --git-before "<sha captured at grounding>"
+python3 docs/ai-forward-pack/scripts/audit-log.py change --title "<the decision>" --kind <architecture|design|knowledge|migration> --skill <skill> --session "<id>" --prompt "<driving prompt>" --summary "<the decision/result>" --rationale "<why, one line>" --artifact docs/<...> --git-before "<sha captured at grounding>"
 ```
 
 These four are singled out because their entire purpose is to *make or change a design decision* — the knowledge most expensive to lose. Other skills (`/specify`, `/investigate`, `/adopt`) **SHOULD** add a change entry when they cross the same bar (a settled spec, a root cause that reshapes the design, an adopted architecture); `/implement` does so when a decision was made mid-build rather than merely executed.
@@ -166,7 +159,7 @@ A discerned change is **promoted** to the change log with `audit-log.py change` 
 
 **AL8 — Entries link to artifacts (the join).** An entry's `artifacts` are repo-relative paths that, where they are graph artifacts, **are** graph links — so the activity log and the artifact graph are one connected knowledge base: from a design node you can find the run that produced it, and from a run you can reach the artifact and its neighbors. Grounding (V15) may consult the audit log for *recent activity on the artifacts in scope* as part of loading prior context.
 
-**AL9 — The audit log is the durable counterpart to the ephemeral session store.** A coding assistant's session store (its turn/event history) is **per-session, private, and not committed**; a different or future session cannot read it. The audit log is the **committed, durable, shared** projection of that activity, keyed by `session`, so the history **compounds**: every new session reads `docs/audit/` (and the change log) at grounding and inherits what prior sessions prompted, did, and decided. Where a session export is available, `audit-log.py import --file <export.json>` ingests its turns into the audit log (mapping `prompt`/`summary`/`session`/`datetime`), bridging the ephemeral store into the durable record — but the primary mechanism is each skill appending as it goes (AL5), so the log stays current without any export step.
+**AL9 — The audit log is the durable counterpart to the ephemeral session store.** A coding assistant's session store (its turn/event history) is **per-session, private, and not committed**; a different or future session cannot read it. The audit log is the **committed, durable, shared** projection of that activity, keyed by `session`, so the history **compounds**: every new session reads `docs/audit/` (and the change log) at grounding and inherits what prior sessions prompted, did, and decided. Where a session export is available, `audit-log.py import --file <export.json>` ingests its turns into the audit log (mapping `prompt`/`summary`/`session`/`datetime`), bridging the ephemeral store into the durable record — but the primary mechanism is each skill appending as it goes (AL5), so the log stays current without any export step. The durable record is the JSONL; the views are projections of it (AL0). So in the AL0.2 fallback (`.agents/log/audit/`) the record is still committed and still compounds, but it is the JSONL alone — read it with `audit-log.py list|search|get` or `/auditlog`, or run `audit-log.py render` to build the viewer on demand (amended 2026-10-14, Owner decision on bench B15).
 
 **AL10 — Read the history at grounding.** A skill's grounding step (its first action) **SHOULD**, alongside the V15 graph traversal, glance at the recent audit/change history for the artifacts in scope (`audit-log.py list` / `search --keyword`) so prior decisions and prior attempts inform the work — the activity-history half of "ground in what the repo already knows" (Rigor Protocol Stage 0).
 
@@ -174,7 +167,7 @@ A discerned change is **promoted** to the change log with `audit-log.py change` 
 
 ## 5. The viewer and the CLI
 
-**AL11 — The viewer is a timeline with search and a toggle.** `docs/audit/index.html` (from `templates/audit-explorer.template.html`) renders the bundle: a **default reverse-chronological timeline** grouped by day with a short description per action, each row **expandable** to the full prompt (with a **copy-prompt** button), summary, artifacts, tags, outcome, and — for changes — the git before/after and commits. The top bar **searches by keyword, session, and date range**, and a **toggle switches between Full history (audit) and Changes (the meaningful-change timeline)**. It loads only `audit-data.js`, works over `file://`, and uses dependency-free browser DOM APIs — no remote runtime or CDN trust boundary. A missing, invalid, or timed-out data file becomes an explicit alert rather than a success-shaped empty history. It is self-bootstrapped: any `append`/`change`/`render` instantiates it from the template if missing.
+**AL11 — The viewer is a timeline with search and a toggle.** `docs/audit/index.html` (from `templates/audit-explorer.template.html`) renders the bundle: a **default reverse-chronological timeline** grouped by day with a short description per action, each row **expandable** to the full prompt (with a **copy-prompt** button), summary, artifacts, tags, outcome, and — for changes — the git before/after and commits. The top bar **searches by keyword, session, and date range**, and a **toggle switches between Full history (audit) and Changes (the meaningful-change timeline)**. It loads only `audit-data.js`, works over `file://`, and uses dependency-free browser DOM APIs — no remote runtime or CDN trust boundary. A missing, invalid, or timed-out data file becomes an explicit alert rather than a success-shaped empty history. It is self-bootstrapped: any `append`/`change`/`render` instantiates it from the template if missing — except that in the AL0.2 fallback only `render` does (AL0.2, amended 2026-10-14).
 
 **AL12 — The `/auditlog` CLI skill.** `/auditlog` is the command-line lens over the bundle: **list** the last *n* entries (`audit-log.py list --n`), **search** by session/date/keyword (`search`), **get** one entry to **re-run** (`get --id <al-NNNN> --field prompt` emits the prompt to copy or pipe), toggle the **change** view (`--kind change`), open the viewer, and **suggest** unlogged meaningful changes (`suggest`). It is a reader/dispatcher over `audit-log.py`; it adds no behavior of its own and does not log its own browsing.
 
@@ -185,8 +178,9 @@ A discerned change is **promoted** to the change log with `audit-log.py change` 
 ## 6. Self-verification checklist
 
 - [ ] Every skill run appended an audit entry with the five required fields + `kind`/`skill`/`tool`/`artifacts` (AL1–AL2, AL5).
-- [ ] The entry was written via `audit-log.py` (not hand-appended), and `audit-data.js`/`index.html` were re-rendered (AL0.1, AL11).
+- [ ] The entry was written via `audit-log.py` (not hand-appended), and `audit-data.js`/`index.html` were re-rendered — in `docs/audit/`; the AL0.2 fallback keeps the JSONL alone (AL0.1, AL0.2, AL11).
 - [ ] No secret or PII entered either log (AL4).
+- [ ] `docs/audit/` was created only because it already existed or `--root` was given explicitly — never seeded unasked into a repo that had not opted in; no git identity was invented to force a commit (AL0.2).
 - [ ] The four design-shaping skills appended a change entry with `prompt`, `summary`, `rationale`, and git before/after (CL1–CL2).
 - [ ] Other meaningful changes were discerned and promoted, not left implicit (CL3).
 - [ ] The bundle is a graph node (`docs/audit/audit-log.md` with frontmatter + a typed link); entries link artifacts (AL7–AL8).

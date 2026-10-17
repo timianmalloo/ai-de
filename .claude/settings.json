@@ -8,11 +8,10 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read",
         "hooks": [
           {
             "type": "command",
-            "command": "python docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event PreToolUse",
             "timeout": 10
           }
         ]
@@ -23,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event UserPromptSubmit",
             "timeout": 10
           }
         ]
@@ -34,7 +33,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python docs/ai-forward-pack/hooks/session-start.py --host claude",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event SessionStart",
             "timeout": 15
           }
         ]
@@ -45,8 +44,41 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python docs/ai-forward-pack/hooks/session-start.py --host claude",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event SubagentStart",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event PostToolUse",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event Stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host claude --event SubagentStop",
+            "timeout": 10
           }
         ]
       }

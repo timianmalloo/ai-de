@@ -43,7 +43,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 
 REL_REGISTRY = ["implements","refines","depends-on","supersedes","tested-by","documents","uses-term","relates-to"]
-TYPES = ["knowledge","glossary","spec","architecture","adr","design","design-language","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"]
+TYPES = ["knowledge","glossary","spec","architecture","adr","design","design-language","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index","plan"]
 REQUIRED = ["id","title","type","status","summary"]
 EXCLUDE_DIRS = {"ai-forward-pack","_site","node_modules",".git"}
 TODAY = datetime.date.today().isoformat()
@@ -336,11 +336,13 @@ def _atomic_write_text(path, text):
     directory = os.path.dirname(destination)
     os.makedirs(directory, exist_ok=True)
     existing_mode = _reject_unsafe_destination(destination)
+    # No text=True: the fd is reopened below with an explicit encoding and newline="\n".
+    # On Windows text=True would set O_TEXT on the descriptor and translate "\n" to CRLF
+    # underneath that newline="" contract; elsewhere the flag does nothing at all.
     descriptor, temporary = tempfile.mkstemp(
         prefix=".docs-graph-",
         suffix=".tmp",
         dir=directory,
-        text=True,
     )
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as output:
@@ -574,6 +576,15 @@ class _TitleParser(HTMLParser):
 
 
 def _surface_title(path, relative_to_root):
+    normalized = relative_to_root.replace("\\", "/").lower()
+    explicit = {
+        "_site/index.html": "AI-Forward Documentation",
+        "_site/bundle.html": "AI-Forward Bundle View",
+        "portal/index.html": "AI-Forward Portal",
+        "mockups/documentation-portal.html": "Portal Mockup",
+    }
+    if normalized in explicit:
+        return explicit[normalized]
     try:
         source, opened = _open_verified_binary(path)
         with source:
@@ -1022,6 +1033,19 @@ def _frontmatter_snapshot(artifact):
     }
 
 
+def _opted_into_docs_explorer(root, dst):
+    """pack-onoff-analysis.html #3 (class PK-03, F-6): docs-index.js is a generated pack
+    artifact; it must not appear, unasked, in a repo that never opted into the Docs
+    Explorer. 'Opted in' is read from what is ALREADY on disk, independent of this call --
+    the destination file itself, or docs/index.html (the Explorer shell a skill
+    instantiates before calling derive). A repo with neither has not opted in; `derive`
+    then refuses to seed the FIRST one and says so, rather than creating docs/ in a product
+    tree nobody asked to put it in."""
+    if os.path.exists(dst):
+        return True
+    return os.path.exists(os.path.join(root, "index.html"))
+
+
 def cmd_derive(args):
     arts, problems = scan(
         args.root,
@@ -1109,17 +1133,28 @@ def cmd_derive(args):
             4,
         )
     dst = args.out or os.path.join(args.root, "docs-index.js")
+    # Explicit --root or --out is a direct ask (sandboxed tests and callers that name their
+    # own location both count) and bypasses the opt-in check below; only the DEFAULT -- no
+    # flag, the documented skill invocation -- is guarded.
+    root_explicit = "--root" in sys.argv[1:]
+    if not args.out and not root_explicit and not _opted_into_docs_explorer(args.root, dst):
+        print("docs-graph derive: skipped writing {0} -- the repo has not opted into the "
+              "Docs Explorer (neither it nor {1} exists yet). Pass --out to write it "
+              "anyway, or instantiate docs/index.html first "
+              "(pack-onoff-analysis.html #3, class PK-03).".format(
+                  dst, os.path.join(args.root, "index.html")), file=sys.stderr)
+        return 0
     for a in arts:
         current, _ = _read_source_bounded(a["_fs_path"], a["id"])
         if sha256_text(normalized_source(current)) != source_snapshots[a["_fs_path"]]:
             raise _source_changed_error(a["id"])
     destination_directory = os.path.dirname(os.path.abspath(dst))
     os.makedirs(destination_directory, exist_ok=True)
+    # No text=True — see _atomic_write_text: the fd carries its own encoding and newline.
     fd, temporary = tempfile.mkstemp(
         prefix=".docs-index-",
         suffix=".tmp",
         dir=destination_directory,
-        text=True,
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as index_file:

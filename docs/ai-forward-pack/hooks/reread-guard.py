@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""reread-guard.py — the re-read guard hook (defect class CTX-D), for Claude Code and Copilot CLI.
+"""reread-guard.py — the re-read guard hook (defect class CTX-D), for Claude Code, Copilot CLI, Grok Build, and Antigravity (agy).
 
 The shape it catches, measured on a profiled session: the same file viewed four times in three
 minutes (140 KB re-entering the context), a 43 KB paged tool output viewed whole twice, and a
@@ -8,17 +8,24 @@ request. A prose rule ("check whether you already have it") is a memoir (CI6). T
 control: it runs at the pre-tool-use seam, counts identical reads per turn, and speaks up on the
 third — a WARNING to the model, never a block, because a genuine third read exists.
 
-Host adapters (one script, two payloads — established from the hosts' own contracts):
+Host adapters (one script, four payloads — established from the hosts' own contracts):
   Claude Code   stdin {"hook_event_name","session_id","tool_name","tool_input":{"file_path"}}
                 warn: exit 0 + {"hookSpecificOutput":{"hookEventName":"PreToolUse","systemMessage":...}}
   Copilot CLI   stdin {"sessionId","toolName","toolArgs":{"path","view_range"}} (one call per invocation)
                 warn: exit 0 + {"additionalContext": ...}   (never exit 2 on preToolUse: that denies)
+  Grok Build    stdin camelCase with Claude aliases: {"hookEventName"/"hook_event_name",
+                "sessionId"/"session_id","toolName"/"tool_name",
+                "toolInput":{"target_file"|"file_path"|"path"}}
+                warn: exit 0 + {"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":...}}
+                (`Read` in a matcher aliases to `read_file`; the script accepts both tool names.)
+  Antigravity   stdin {"toolCall":{"name":"view_file","args":{"AbsolutePath"}},"conversationId"}
+                warn: exit 0 + {"decision":"allow","reason":...}
 The turn boundary is the prompt-submit event (UserPromptSubmit / userPromptSubmitted), which
 resets the counter. State lives in a per-session file under the OS temp dir. Every failure
 path is fail-OPEN: a broken guard must never cost a tool call (a hook that blocks by accident
 is worse than no hook).
 
-Usage (from the host's hook config):  reread-guard.py --host claude|copilot [--threshold 3]
+Usage (from the host's hook config):  reread-guard.py --host claude|copilot|grok|agy [--threshold 3]
 """
 import argparse
 import json
@@ -27,8 +34,20 @@ import re
 import sys
 import tempfile
 
+# The host pipes a JSON payload in and reads a JSON line out. On Windows both ends default
+# to the console code page, so a non-ASCII path arrives mojibake or raises (DC-211/PLAT-A).
+# Every arm is fail-open: a guard that cannot reconfigure still runs.
+for _stream, _kw in ((sys.stdin, {"encoding": "utf-8", "errors": "replace"}),
+                     (sys.stdout, {"encoding": "utf-8", "errors": "replace"}),
+                     (sys.stderr, {"encoding": "utf-8", "errors": "replace"})):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(**_kw)
+        except (ValueError, OSError, UnicodeError):
+            pass
+
 PAGED_OUTPUT_RX = re.compile(r"copilot-tool-output-[0-9a-f-]+\.txt$", re.I)
-READ_TOOLS = {"claude": {"Read"}, "copilot": {"view"}}
+READ_TOOLS = {"claude": {"Read"}, "copilot": {"view"}, "grok": {"read_file", "Read"}, "agy": {"view_file"}}
 
 
 def state_path(session):
@@ -48,7 +67,7 @@ def load(path):
 def save(path, data):
     try:
         tmp = path + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as fh:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(data, fh)
         os.replace(tmp, path)
     except OSError:
@@ -70,6 +89,23 @@ def evaluate(host, payload, threshold=3, state=None):
         args = payload.get("tool_input") or {}
         path = args.get("file_path") or args.get("path") or ""
         ranged = bool(args.get("offset") or args.get("limit"))
+    elif host == "grok":
+        event = payload.get("hook_event_name") or payload.get("hookEventName") or ""
+        if event in ("UserPromptSubmit", "user_prompt_submit"):
+            return {}, None
+        tool = payload.get("tool_name") or payload.get("toolName") or ""
+        args = payload.get("tool_input") or payload.get("toolInput") or {}
+        path = args.get("target_file") or args.get("file_path") or args.get("path") or ""
+        ranged = bool(args.get("offset") or args.get("limit"))
+    elif host == "agy":
+        event = payload.get("hook_event_name") or payload.get("hookEventName") or ""
+        if event in ("UserPromptSubmit", "user_prompt_submit", "PreInvocation"):
+            return {}, None
+        tool_call = payload.get("toolCall") or {}
+        tool = tool_call.get("name") or payload.get("tool_name") or ""
+        args = tool_call.get("args") or payload.get("tool_input") or {}
+        path = args.get("AbsolutePath") or args.get("path") or args.get("file_path") or ""
+        ranged = bool(args.get("StartLine") or args.get("EndLine"))
     else:
         if "prompt" in payload and "toolName" not in payload:  # userPromptSubmitted
             return {}, None
@@ -97,17 +133,25 @@ def evaluate(host, payload, threshold=3, state=None):
 
 
 def emit(host, warning):
+    if host == "agy":
+        payload = {"decision": "allow"}
+        if warning:
+            payload["reason"] = warning
+        print(json.dumps(payload))
+        return
     if not warning:
         return
     if host == "claude":
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "systemMessage": warning}}))
+    elif host == "grok":
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "additionalContext": warning}}))
     else:
         print(json.dumps({"additionalContext": warning}))
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--host", choices=["claude", "copilot"], required=True)
+    ap.add_argument("--host", choices=["claude", "copilot", "grok", "agy"], required=True)
     ap.add_argument("--threshold", type=int, default=3)
     args = ap.parse_args(argv)
     try:
@@ -117,7 +161,7 @@ def main(argv=None):
         return 0  # fail open
     if not isinstance(payload, dict):
         return 0
-    session = payload.get("session_id") or payload.get("sessionId") or "unknown"
+    session = payload.get("conversationId") or payload.get("session_id") or payload.get("sessionId") or "unknown"
     path = state_path(session)
     state, warning = evaluate(args.host, payload, args.threshold, load(path))
     save(path, state)

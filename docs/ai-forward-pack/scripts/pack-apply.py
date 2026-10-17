@@ -17,12 +17,17 @@ What it does, per artifact family (pack-owned names only - repo-local files are 
                  load: skill|reference; the STALE copy in the other Copilot location is removed
                  (CTX-E: a doc re-scoped to on-demand must stop attaching).
   skills      -> .claude/skills/<name>/ (the whole directory: SKILL.md + reference/*.md);
-                 .github/prompts/<name>.prompt.md
-  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped)
+                 .github/prompts/<name>.prompt.md;
+                 .grok/skills/<name>/ (same files; Grok Build native, wins over Claude-compat scan)
+  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped);
+                 .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped)
   bundle      -> docs/ai-forward-pack/{templates,scripts,hooks,README,OVERVIEW,research-synthesis,
                  INSTALL,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json
-                 (hooks merged, showThinkingSummaries set); .gitignore lines; docs/index.html only if
-                 absent; docs/docs-index.js NEVER (V10)
+                 (hooks merged, showThinkingSummaries set); .grok/hooks/ai-forward.json;
+                 .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines;
+                 docs/index.html and docs/docs-index.js NEVER created or overwritten by
+                 install — a content-creating skill instantiates the Explorer shell, as its
+                 last action, once it has real content to show (V10; AL0.2, PK-03)
   front doors -> AGENTS.md: the managed block replaced wholesale between markers (appended if absent).
                  CLAUDE.md: converted to `@AGENTS.md` + the addendum block (CTX-B); the old file is
                  backed up under docs/ai-forward-pack/retired/, and every paragraph that is NOT in
@@ -59,6 +64,154 @@ for _stream in (sys.stdout, sys.stderr):
             pass
 
 MANIFEST = "FOUNDATION.md"
+
+
+def read_hook_settings(path):
+    """Decode policy-bearing configuration strictly; absence alone is an empty install."""
+    if os.path.islink(path):
+        raise ValueError("symlink hook target")
+    try:
+        with open(path, encoding="utf-8", newline="") as handle:
+            return handle.read()
+    except FileNotFoundError:
+        return None
+
+
+# B15 (hook cost): revision 100 shipped one launcher command per pack hook; one dispatcher
+# command per host event replaces them. These are the source-managed names and commands it
+# retires. A refresh that left them would run every hook twice.
+RETIRED_HOOK_SCRIPTS = ("reread-guard", "mail-doorbell", "heartbeat", "git-identity-guard",
+                        "owner-review-gate", "session-start")
+RETIRED_AGY_SECTIONS = ("reread-guard", "session-start", "mail-doorbell", "heartbeat", "owner-review-gate")
+
+
+def merge_named_hook_bundles(source_text, current_text=None):
+    """Refresh source-owned names and retain project-owned names; reject invalid JSON."""
+    source = json.loads(source_text)
+    current = json.loads(current_text) if current_text is not None else {}
+    for value in (source, current):
+        if not isinstance(value, dict) or any(not isinstance(section, dict) for section in value.values()):
+            raise ValueError("Named hook bundles must be objects of objects")
+    _refresh_legacy_ownership(current)
+    for name in RETIRED_AGY_SECTIONS:
+        if name not in source:
+            current.pop(name, None)
+    current.update(source)
+    return json.dumps(current, indent=2) + "\n"
+
+
+def _refresh_legacy_ownership(value):
+    """Migrate only the complete previously emitted ownership command, not wrappers."""
+    prefix = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
+              "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
+              'root=$(git rev-parse --show-toplevel) || exit 2; '
+              'exec "$py" "$root/docs/ai-forward-pack/scripts/coord-core.py" hook --host ')
+    launcher = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+    if isinstance(value, dict):
+        command = value.get("command")
+        for host in ("claude", "copilot", "codex", "grok", "agy"):
+            if command == prefix + host and not value.get("args"):
+                caller = "" if host == "agy" else "--caller-cwd "
+                value["command"] = launcher + caller + "../scripts/coord-core.py hook --host " + host
+                break
+        stop = prefix.replace('scripts/coord-core.py" hook --host ',
+                              'hooks/owner-review-gate.py" --host ') + "codex --event Stop"
+        if command == stop and not value.get("args"):
+            value["command"] = launcher + "owner-review-gate.py --host codex --event Stop"
+        for item in value.values():
+            _refresh_legacy_ownership(item)
+    elif isinstance(value, list):
+        for item in value:
+            _refresh_legacy_ownership(item)
+
+
+def merge_hook_ownership(current_text):
+    """Refresh existing native opt-ins only; never create or enable an ownership hook."""
+    config = json.loads(merge_claude_settings('{"hooks":{}}', current_text))
+    _refresh_legacy_ownership(config)
+    return json.dumps(config, indent=2) + "\n"
+
+
+def merge_claude_settings(source_text, current_text=None):
+    """Replace complete shipped commands, never custom wrappers or permission settings."""
+    source = json.loads(source_text)
+    current = json.loads(current_text.lstrip("\ufeff")) if current_text is not None else {}
+    for config in (source, current):
+        if not isinstance(config, dict) or not isinstance(config.get("hooks", {}), dict):
+            raise ValueError("Settings and hooks must be objects")
+        for entries in config.get("hooks", {}).values():
+            if not isinstance(entries, list):
+                raise ValueError("Hook events must be arrays")
+            for entry in entries:
+                if not isinstance(entry, dict) or not isinstance(entry.get("hooks"), list):
+                    raise ValueError("Hook entries must contain handler arrays")
+                if "matcher" in entry and not isinstance(entry["matcher"], str):
+                    raise ValueError("Hook matcher must be a string")
+                for handler in entry["hooks"]:
+                    if not isinstance(handler, dict):
+                        raise ValueError("Hook handlers must be objects")
+                    if handler.get("type") == "command" and not isinstance(handler.get("command"), str):
+                        raise ValueError("Command handlers require a command string")
+                    if "command" in handler and not isinstance(handler["command"], str):
+                        raise ValueError("Hook commands must be strings")
+    prefix = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
+              "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); ")
+    launcher = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+    ownership = launcher + "--caller-cwd ../scripts/coord-core.py hook --host claude"
+    ownership_old = {
+        prefix + '"$py" "' + path + '" hook'
+        for path in ("pack/scripts/coord-core.py", "docs/ai-forward-pack/scripts/coord-core.py")
+    }
+    ownership_old.add(prefix + 'root=$(git rev-parse --show-toplevel) || exit 2; '
+                      'exec "$py" "$root/docs/ai-forward-pack/scripts/coord-core.py" hook --host claude')
+    hooks = current.setdefault("hooks", {})
+    ships_dispatcher = any("run-hook.sh dispatch.py --host claude" in handler.get("command", "")
+                           for entries in source.get("hooks", {}).values()
+                           for entry in entries for handler in entry["hooks"])
+    if ships_dispatcher:
+        # B15: the exact per-hook commands revision 100 (and its older spellings) shipped are
+        # retired; a custom wrapper never matches exactly and survives.
+        retired = re.compile("(?:" + re.escape(launcher) + "|(?:" + re.escape(prefix + '"$py" ') +
+                             "|python )docs/ai-forward-pack/hooks/)(?:" + "|".join(RETIRED_HOOK_SCRIPTS) +
+                             r")\.py --host claude(?: --event \w+)?")
+        for event in list(hooks):
+            kept = []
+            for entry in hooks[event]:
+                handlers = [h for h in entry["hooks"]
+                            if h.get("args") or not retired.fullmatch(str(h.get("command", "")))]
+                if handlers or not entry["hooks"]:
+                    kept.append(dict(entry, hooks=handlers))
+            hooks[event] = kept
+    for event, entries in source.get("hooks", {}).items():
+        replacements = {}
+        for entry in entries:
+            for handler in entry["hooks"]:
+                command = handler.get("command", "")
+                match = re.fullmatch(re.escape(launcher) + r"([a-z-]+\.py) (--host claude(?: --event \w+)?)", command)
+                if match:
+                    script, args = match.groups()
+                    target = "docs/ai-forward-pack/hooks/" + script
+                    for old in (prefix + '"$py" ' + target + " " + args,
+                                "python " + target + " " + args):
+                        replacements[old] = command
+        if event == "PreToolUse":
+            replacements.update({old: ownership for old in ownership_old})
+        have = hooks.setdefault(event, [])
+        for entry in have:
+            for handler in entry["hooks"]:
+                old = handler.get("command")
+                if old in replacements and not handler.get("args"):
+                    handler["command"] = replacements[old]
+        existing = {handler.get("command") for entry in have for handler in entry["hooks"]}
+        for entry in entries:
+            if not any(handler.get("command") in existing for handler in entry["hooks"]):
+                have.append(entry)
+                existing.update(handler.get("command") for handler in entry["hooks"])
+    for key, value in source.items():
+        if key != "hooks":
+            current.setdefault(key, value)
+    return json.dumps(current, indent=2) + "\n"
+
 BEGIN = "<!-- AI-FORWARD-PACK:BEGIN"
 END = "<!-- AI-FORWARD-PACK:END -->"
 IMPORT_LINE = "@AGENTS.md"
@@ -75,7 +228,13 @@ IMPORT_LINE = "@AGENTS.md"
 # counts, so it exits 0 for a re-included path and inverts the answer (measured).
 GITIGNORE_LINES = ["*.jsonl.lock", "spikes/", "docs/audit/.run-starts.json",
                    "docs/audit/.run-starts.json.tmp",
-                   ".agents/*", "!.agents/artifacts.yml"]
+                   ".agents/*", "!.agents/artifacts.yml", "!.agents/log/",
+                   "!.agents/skills*", "!.agents/hooks.json", "!.agents/rules*",
+                   ".agents/mail/"]
+# D10 (ratified 2026-09-19): the coord ledgers `.agents/log/` are TRACKED by default - git is the
+# durable and cross-machine path for state-changing mail (their body-less twins). The mail
+# inboxes `.agents/mail/` are machine-local and carry bodies, so they are ignored by an EXPLICIT
+# line that holds even when the `.agents/*` blanket is withheld below.
 
 # A .gitignore is LAST-MATCH-WINS, so a blanket appended below an existing rule silently
 # reverses it. Measured 2026-09-09 in a consuming repo: line 495 recorded "spikes/ is NOT
@@ -111,7 +270,22 @@ CONDITIONAL_GITIGNORE = {
 # A `!` line exists only to punch through its blanket. Withhold the blanket and the
 # exception is a negation with nothing to negate -- inert, and it tells a reader the
 # opposite of the KEEP row that withheld the blanket.
-GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
+GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml", "!.agents/log/")}
+
+# PLAT-A (P3): the pack writes LF everywhere and merges derived files by byte identity; both
+# rest on the working tree being LF on every OS, which only .gitattributes can promise.
+GITATTRIBUTES_LINES = ["* text=auto eol=lf"]
+EDITORCONFIG_TEXT = (
+    "# AI-Forward Pack (INSTALL 2, revision 75): the editor-level twin of .gitattributes eol=lf,\n"
+    "# so a Windows editor does not re-introduce CRLF between commits. Yours to extend.\n"
+    "root = true\n"
+    "\n"
+    "[*]\n"
+    "charset = utf-8\n"
+    "end_of_line = lf\n"
+    "insert_final_newline = true\n"
+    "trim_trailing_whitespace = false\n"
+)
 
 DECLINE_MARKER = "# pack-apply: decline "
 
@@ -223,7 +397,7 @@ class Applier(object):
 
         `--project` still wins. Without it this used the target directory's basename, which
         stamps a WORKTREE folder into the target's committed `docs/index.html` and `AGENTS.md`
-        whenever the install is run from a worktree -- which WT1 requires it to be.
+        whenever the install is run from a worktree -- which WT1 often makes it.
         """
         here = os.path.dirname(os.path.abspath(__file__))
         if here not in sys.path:
@@ -419,20 +593,51 @@ class Applier(object):
     def skills(self):
         cdir = os.path.join(self.pack, "commands")
         pdir = os.path.join(self.pack, "adapters", "copilot", "prompts")
+        inventory = {}
         for name in sorted(os.listdir(cdir)):
             sdir = os.path.join(cdir, name)
             if not os.path.isfile(os.path.join(sdir, "SKILL.md")):
                 continue
+            inventory[name] = []
             for base, _dirs, files in os.walk(sdir):
                 for f in sorted(files):
                     src = os.path.join(base, f)
                     rel_in_skill = os.path.relpath(src, sdir)
-                    dest = os.path.join(self.target, ".claude", "skills", name, rel_in_skill)
-                    self.place("skills", "commands/{0}/{1}".format(name, rel_in_skill.replace("\\", "/")), dest, read(src))
+                    inventory[name].append(rel_in_skill.replace("\\", "/"))
+                    rel_skill = "commands/{0}/{1}".format(name, rel_in_skill.replace("\\", "/"))
+                    text = read(src)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".claude", "skills", name, rel_in_skill), text)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".grok", "skills", name, rel_in_skill), text)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".agents", "skills", name, rel_in_skill), text)
             prompt = os.path.join(pdir, name + ".prompt.md")
             if os.path.isfile(prompt):
                 self.place("skills", "adapters/copilot/prompts/{0}.prompt.md".format(name),
                            os.path.join(self.target, ".github", "prompts", name + ".prompt.md"), read(prompt))
+        inventory = {name: sorted(files) for name, files in inventory.items()}
+        # This is derived data, not an authored pack file with a git merge base.
+        # Always regenerate stale inventory; preserve local skills by leaving
+        # their directories alone, not by merging them into the pack manifest.
+        manifest = os.path.join(self.target, "docs", "ai-forward-pack", "codex-skills.json")
+        try:
+            current_inventory = json.loads(read(manifest) or "null")
+        except ValueError:
+            current_inventory = None
+        if current_inventory == inventory:
+            self.row("bundle", self.rel(manifest), "UNCHANGED", "ok")
+        else:
+            action = "UPDATE" if os.path.exists(manifest) else "ADD"
+            self._write(manifest, json.dumps(inventory, indent=2) + "\n")
+            self.row("bundle", self.rel(manifest), action,
+                     "ok", "derived pack skill inventory regenerated from commands/")
+        self.place("bundle", "adapters/codex/codex.md",
+                   os.path.join(self.target, "docs", "ai-forward-pack", "codex.md"),
+                   read(os.path.join(self.pack, "adapters", "codex", "codex.md")))
+        self.place("bundle", "adapters/muse/muse-surface.md",
+                   os.path.join(self.target, "docs", "ai-forward-pack", "muse-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "muse", "muse-surface.md")))
 
     def agents(self):
         cc = os.path.join(self.pack, "adapters", "claude-code", "agents")
@@ -443,12 +648,18 @@ class Applier(object):
                 self.place("agents", "adapters/claude-code/agents/" + name, os.path.join(self.target, ".claude", "agents", name), text)
                 self.place("agents", "adapters/claude-code/agents/" + name,
                            os.path.join(self.target, ".github", "agents", name[:-3] + ".agent.md"), strip_tools(text), "tools: stripped")
+                self.place("agents", "adapters/claude-code/agents/" + name,
+                           os.path.join(self.target, ".grok", "agents", grok_agent_filename(name)),
+                           strip_tools(text), "tools: stripped; Grok type name")
         for name in sorted(os.listdir(cop)):
             if name.endswith("_agent.md"):
                 text = read(os.path.join(cop, name))
                 self.place("agents", "adapters/copilot/agents/" + name, os.path.join(self.target, ".claude", "agents", name), text)
                 self.place("agents", "adapters/copilot/agents/" + name,
                            os.path.join(self.target, ".github", "agents", name[:-len("_agent.md")] + ".agent.md"), text, "renamed .agent.md")
+                self.place("agents", "adapters/copilot/agents/" + name,
+                           os.path.join(self.target, ".grok", "agents", grok_agent_filename(name)),
+                           strip_tools(text), "tools: stripped; Grok type name")
 
     def bundle(self):
         dp = os.path.join(self.target, "docs", "ai-forward-pack")
@@ -466,51 +677,91 @@ class Applier(object):
         for f in ("README.md", "OVERVIEW.md", "research-synthesis.md", "context-budget.json"):
             self.place("bundle", f, os.path.join(dp, f), read(os.path.join(self.pack, f)))
         hooks = os.path.join(self.pack, "adapters", "hooks")
-        for f in ("reread-guard.py", "session-start.py", "README.md"):
+        for f in ("dispatch.py", "reread-guard.py", "session-start.py", "mail-doorbell.py", "heartbeat.py", "coord_identity.py",
+                  "owner-review-gate.py", "git-identity-guard.py", "run-hook.sh", "copilot.ai-forward-hooks.json",
+                  "README.md"):
             self.place("hooks", "adapters/hooks/" + f, os.path.join(dp, "hooks", f), read(os.path.join(hooks, f)))
         self.place("hooks", "adapters/hooks/copilot.ai-forward-hooks.json",
                    os.path.join(self.target, ".github", "hooks", "ai-forward.json"), read(os.path.join(hooks, "copilot.ai-forward-hooks.json")))
+        self.place("hooks", "adapters/hooks/grok.ai-forward-hooks.json",
+                   os.path.join(self.target, ".grok", "hooks", "ai-forward.json"),
+                   read(os.path.join(hooks, "grok.ai-forward-hooks.json")))
+        agy_target = os.path.join(self.target, ".agents", "hooks.json")
+        try:
+            current_hooks = read_hook_settings(agy_target)
+            if os.path.islink(agy_target):
+                raise ValueError("symlink hook target")
+            merged_hooks = merge_named_hook_bundles(read(os.path.join(hooks, "agy.ai-forward-hooks.json")), current_hooks)
+            if merged_hooks != current_hooks:
+                self._write(agy_target, merged_hooks)
+            self.row("hooks", ".agents/hooks.json", "UNCHANGED" if merged_hooks == current_hooks else "MERGE", "ok")
+        except (OSError, ValueError):
+            self.row("hooks", ".agents/hooks.json", "CONFLICT", "fail", "invalid named bundles; existing file retained")
+        self.place("hooks", "adapters/grok/grok-surface.md",
+                   os.path.join(self.target, ".grok", "rules", "grok-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "grok", "grok-surface.md")))
+        self.place("hooks", "adapters/antigravity/agy-surface.md",
+                   os.path.join(self.target, ".agents", "rules", "agy-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "antigravity", "agy-surface.md")))
+        skills_json = json.dumps({"entries": [{"path": ".agents/skills"}, {"path": ".claude/skills"}]}, indent=2) + "\n"
+        self.place("bundle", ".agents/skills.json",
+                   os.path.join(self.target, ".agents", "skills.json"), skills_json)
         self._settings(read(os.path.join(hooks, "claude-code.settings.hooks.json")))
+        optional = [os.path.join(self.target, ".codex", "hooks.json")]
+        grok_hooks = os.path.join(self.target, ".grok", "hooks")
+        if os.path.isdir(grok_hooks):
+            optional.extend(os.path.join(grok_hooks, name) for name in sorted(os.listdir(grok_hooks))
+                            if name.endswith(".json"))
+        for target in optional:
+            relative = os.path.relpath(target, self.target).replace("\\", "/")
+            try:
+                current = read_hook_settings(target)
+                if current is None:
+                    continue
+                merged = merge_hook_ownership(current)
+            except (OSError, ValueError, TypeError):
+                self.row("hooks", relative, "CONFLICT", "fail", "invalid native hooks; existing file retained")
+                continue
+            if merged != current:
+                self._write(target, merged)
+            self.row("hooks", relative, "UNCHANGED" if merged == current else "MERGE", "ok",
+                     "existing opt-ins only; native review remains required")
         self._gitignore()
+        self._gitattributes()
+        self._editorconfig()
+        # docs/index.html is the SAME signal docs-graph.py's `_opted_into_docs_explorer`
+        # reads as "this repo wants the Docs Explorer" before `derive` will write
+        # docs/docs-index.js (AL0.2/V10). Instantiating it here, at bare install, would
+        # satisfy that signal for every repo the installer ever touches -- with zero
+        # content under docs/ -- so the next bare `derive` (every shipped skill calls it
+        # bare) would seed docs-index.js unasked (PK-03, measured in grid-4: the shell
+        # present pre-task, docs-index.js added outside the task's declared scope). The
+        # shell is instantiated only by a content-creating skill, as ITS last action
+        # (V10 step 3), once it has real content to show -- never by install.
         explorer = os.path.join(self.target, "docs", "index.html")
-        if not os.path.isfile(explorer):
-            tpl = read(os.path.join(self.pack, "templates", "docs-explorer.template.html")) or ""
-            self._write(explorer, tpl.replace("__PROJECT__", self._project_name()))
-            self.row("bundle", "docs/index.html", "ADD", "ok", "Docs Explorer instantiated (one-time)")
-        else:
+        if os.path.isfile(explorer):
             self.row("bundle", "docs/index.html", "SKIP", "ok", "exists - never overwritten")
+        else:
+            self.row("bundle", "docs/index.html", "SKIP", "ok",
+                     "never created by install - a content-creating skill instantiates it "
+                     "once it has real content to show (V10)")
         self.row("bundle", "docs/docs-index.js", "SKIP", "ok", "never created or overwritten (V10)")
 
     def _settings(self, snippet_text):
         dest = os.path.join(self.target, ".claude", "settings.json")
         try:
-            snippet = json.loads(snippet_text or "{}")
-        except ValueError:
-            self.row("hooks", ".claude/settings.json", "ERROR", "fail", "pack snippet is not valid JSON")
+            current_text = read_hook_settings(dest)
+            merged = merge_claude_settings(snippet_text, current_text)
+        except (OSError, ValueError, TypeError):
+            self.row("hooks", ".claude/settings.json", "CONFLICT", "fail",
+                     "HOOK-SETTINGS-INVALID: existing settings retained; inspect JSON and nested hook shapes")
             return
-        current_text = read(dest)
-        try:
-            current = json.loads(current_text) if current_text else {}
-        except ValueError:
-            self.row("hooks", ".claude/settings.json", "CONFLICT", "fail", "existing settings.json is not valid JSON - merge by hand")
-            return
-        merged = json.loads(json.dumps(current))
-        hooks = merged.setdefault("hooks", {})
-        for event, entries in (snippet.get("hooks") or {}).items():
-            have = hooks.setdefault(event, [])
-            for entry in entries:
-                wanted = {h.get("command") for h in entry.get("hooks", [])}
-                if not any(wanted & {h.get("command") for h in e.get("hooks", [])} for e in have):
-                    have.append(entry)
-        for k, v in snippet.items():
-            if k != "hooks" and k not in merged:
-                merged[k] = v
-        if merged == current:
+        if merged == current_text:
             self.row("hooks", ".claude/settings.json", "UNCHANGED", "ok")
             return
-        self._write(dest, json.dumps(merged, indent=2) + "\n")
+        self._write(dest, merged)
         self.row("hooks", ".claude/settings.json", "ADD" if current_text is None else "MERGE", "ok",
-                 "hooks + showThinkingSummaries merged; other keys untouched")
+                 "exact shipped hooks refreshed; custom hooks and settings retained; BOM-free UTF-8")
 
     def _tracked_under(self, path):
         """Which files does the TARGET repo track under this path? None = cannot tell.
@@ -521,7 +772,8 @@ class Applier(object):
         """
         try:
             proc = subprocess.run(["git", "ls-files", "--", path], cwd=self.target,
-                                  capture_output=True, text=True, timeout=20)
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=20)
         except (OSError, subprocess.SubprocessError):
             return None
         if proc.returncode != 0:
@@ -585,6 +837,44 @@ class Applier(object):
         text += "\n# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed\n" + "\n".join(missing) + "\n"
         self._write(dest, text)
         self.row("bundle", ".gitignore", "UPDATE", "ok", "added " + ", ".join(missing))
+
+    def _gitattributes(self):
+        """Ship the line-ending policy every LF-writer in the pack rests on (PLAT-A, P3).
+
+        The coord merge drivers merge derived files and append-only ledgers by byte identity,
+        and every script writes LF on purpose - none of which holds on a Windows clone with
+        core.autocrlf=true unless .gitattributes says `eol=lf`. This repo happened to carry
+        the rule; a consuming repo need not, and the pack installed nothing. Lines are
+        APPENDED when missing and never rewritten or removed: a repo's own attributes are
+        its own (the same stance as `_gitignore`).
+        """
+        dest = os.path.join(self.target, ".gitattributes")
+        current = read(dest) or ""
+        have = {" ".join(l.split()) for l in norm_nl(current).splitlines()}
+        missing = [line for line in GITATTRIBUTES_LINES if " ".join(line.split()) not in have]
+        if not missing:
+            self.row("bundle", ".gitattributes", "UNCHANGED", "ok")
+            return
+        text = norm_nl(current)
+        if text and not text.endswith("\n"):
+            text += "\n"
+        text += ("\n# AI-Forward Pack (INSTALL 2, revision 75): text is LF on every OS, so the ledgers and\n"
+                 "# derived files the coord merge drivers compare by byte identity mean the same thing\n"
+                 "# on Windows and macOS. Run `git add --renormalize .` once after adding this.\n"
+                 + "\n".join(missing) + "\n")
+        self._write(dest, text)
+        self.row("bundle", ".gitattributes", "UPDATE", "ok", "added " + ", ".join(missing))
+
+    def _editorconfig(self):
+        """Create .editorconfig once (LF, UTF-8, final newline) and never overwrite it - an
+        editor-level twin of the git filter, so a Windows editor does not re-introduce CRLF
+        into the working tree between commits (XT-10)."""
+        dest = os.path.join(self.target, ".editorconfig")
+        if os.path.exists(dest):
+            self.row("bundle", ".editorconfig", "SKIP", "ok", "exists - never overwritten")
+            return
+        self._write(dest, EDITORCONFIG_TEXT)
+        self.row("bundle", ".editorconfig", "ADD", "ok", "LF, UTF-8, final newline")
 
     # ---- front doors
     def front_doors(self):
@@ -688,7 +978,9 @@ class Applier(object):
         script = os.path.join(self.target, "docs", "ai-forward-pack", "scripts", "context-budget.py")
         for args in (["gate", "--update-baseline"], ["prefix", "--update-baseline"], ["skills", "--update-baseline"]):
             try:
-                p = subprocess.run([sys.executable, script] + args, cwd=self.target, capture_output=True, text=True, timeout=120)
+                p = subprocess.run([sys.executable, script] + args, cwd=self.target,
+                                   capture_output=True, text=True, encoding="utf-8",
+                                   errors="replace", timeout=120)
                 self.row("meta", "context-budget {0}".format(args[0]), "BASELINE", "ok" if p.returncode == 0 else "fail",
                          (p.stdout.strip().splitlines() or [""])[-1][:120])
             except (OSError, subprocess.SubprocessError) as exc:
@@ -729,6 +1021,13 @@ class Applier(object):
 
 
 # --------------------------------------------------------------------------- pure helpers
+def grok_agent_filename(name):
+    """Grok spawn_subagent types are the persona `name`, not the pack's `_agent` source suffix."""
+    if name.endswith("_agent.md"):
+        return name[:-len("_agent.md")] + ".md"
+    return name
+
+
 def strip_tools(text):
     """Drop the frontmatter `tools:` line and its indented continuation (INSTALL 1.2)."""
     out, in_tools = [], False

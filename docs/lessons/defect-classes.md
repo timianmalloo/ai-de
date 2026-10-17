@@ -5632,6 +5632,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node. (automated control)
 - **Boundary:** Applies to any new .md graph node; type must be one of the known TYPES.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p1)
+- **Metadata completeness recurrence (2026-10-17):** the revision-102 update evidence omitted the required `summary` field. Class: authoring metadata without checking the complete schema. Sweep: `docs-graph.py validate` scanned 543 artifacts and named exactly this new document. Derive: keep the validator's required-key schema authoritative. Prevent: the same validator was observed red on the missing field; the field was then supplied. The scope includes required-key omissions as well as unknown types. Evidence: `docs/proof/updatepack-r102-20261017.md`.
+
+### PACK-DISPATCH-MERGE — A text merge retains a handler absorbed by a dispatcher
+
+- **Class:** a local handler addition is absent from an old merge base and reappears beside a new upstream dispatcher that already performs its function. Textual merging succeeds while event work is duplicated.
+- **Sweep:** revision 97 to 102 left the direct git identity guard in `.github/hooks/ai-forward.json`, `.grok/hooks/ai-forward.json` and `docs/ai-forward-pack/hooks/copilot.ai-forward-hooks.json`. Claude settings and Antigravity settings had no duplicate guard.
+- **Derive:** use the dispatcher as the sole producer of each managed event's hook chain. Remove only the absorbed direct registrations; the guard itself stays in the dispatcher's plan.
+- **Control:** `python tools/test-pack-deviations.py` fails if any of the three native files still registers that direct guard, and separately executes the dispatcher for Claude, Grok and Copilot with an identity-write payload to require its exit-2 refusal. The duplicate-registration check was observed failing on all three files before removal, then all four test methods passed. The same control preserves the local audit `append --supersedes` contract and checks JSONL-only fallback behavior in temporary directories.
+- **Status:** `controlled` — executable red-to-green control; no claim about live host lifecycle qualification.
+- **Evidence:** `docs/proof/updatepack-r102-20261017.md`.
 
 ### PACK-E-AN-AMBIGUOUS- - PACK-E · An ambiguous proper noun resolved inside my own frame
 - **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)

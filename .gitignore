@@ -563,3 +563,9 @@ docs/.smart-env/
 # the shape AGENTS.md counts as 111 episodes with 1 observation. The exclusion is on the DIRECTORY,
 # so the negation must re-include the directory, not the files inside it.
 !.agents/log/
+
+# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed
+!.agents/skills*
+!.agents/hooks.json
+!.agents/rules*
+.agents/mail/
