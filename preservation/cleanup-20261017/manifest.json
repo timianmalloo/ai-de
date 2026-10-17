@@ -1,0 +1,45 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "c7f6caf9fdacc0c97eb123d7f1a3aadd7c29ea9d",
+  "original_branch": "refs/heads/atlas/live-reader-inventory-repair",
+  "archive_sha256": "c5c33b7d031974f569ebbd32f4684c3445cbd8618abbe198ba84ef0e9f120e45",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 108727,
+      "sha256": "c5c33b7d031974f569ebbd32f4684c3445cbd8618abbe198ba84ef0e9f120e45"
+    }
+  ],
+  "files": [
+    {
+      "path": ".e-repair-results/e-repair-final.patch",
+      "bytes": 58954,
+      "sha256": "d04713031f69bc835539bdc0c5b9180cd0870da2d76b1ac5bbfc985b99321b11"
+    },
+    {
+      "path": ".e-repair-results/e-repair-green3-20260912.trx",
+      "bytes": 156287,
+      "sha256": "b211ba3d61650a0c292a72ccf967c846bbdbb33e4e516d2b2153f35a5a3aaa49"
+    },
+    {
+      "path": ".e-repair-results/e-repair-proposal.patch",
+      "bytes": 58110,
+      "sha256": "4b92be26f5fd85dcef3f6cb3c4dd3eac6f33c07418e6541053c4c8db5d607d6f"
+    },
+    {
+      "path": ".e-repair-results/e-repair-red-executed-20260912.trx",
+      "bytes": 138367,
+      "sha256": "920cefa249daeb7a1ca9a2ad0f5e6b7f2ad067445f8000c28db7f78042bd8bab"
+    },
+    {
+      "path": ".e-repair-results/e-repair-turn16-all95-20260912.trx",
+      "bytes": 147013,
+      "sha256": "8ff1f24521aa12cae46008bbef53eef2d144e6eb864ae21a7eb324048639e054"
+    },
+    {
+      "path": ".e-repair-results/e-repair-turn16-exact3-20260912.trx",
+      "bytes": 6115,
+      "sha256": "5e2dbb52d2e10fd03dbcdb5ef117627b24f18a722cac0fdef65a2787e62669b5"
+    }
+  ]
+}

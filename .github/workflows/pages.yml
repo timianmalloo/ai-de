@@ -19,16 +19,8 @@
 name: pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'site/**'
-      - 'docs/**'
-      - 'src/**'
-      - 'tools/api-reference.py'
-      - 'tools/build-doc-viewer.py'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
+
 
 permissions:
   contents: read
