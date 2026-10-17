@@ -15,7 +15,8 @@ links:
   - { to: threat-model-ai-native-ide, rel: depends-on }
   - { to: design-phase-1-walking-skeleton, rel: refines }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The blueprint for Phase 2's three interlocking components — a real Roslyn extractor, a ConPTY
   terminal runtime, and the in-process-to-daemon split with its IPC auth and upgrade path. Surfaces

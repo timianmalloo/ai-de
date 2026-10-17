@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.App.Cli</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.App.Cli.md</div><h1>API: <code>AiDe.App.Cli</code></h1>
+<p><strong>3 public types · 4 public members · 71% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>CliEntry</code></h2>
+<p><em>class</em> — <code>CliEntry.cs</code></p>
+<p>The compile step&#x27;s CLI verbs — <code>aide compile fold</code> and <code>aide session purge</code> — reached from the same process the shell runs in, without a window (ADR-0033 rule 2&#x27;s third <code>Project()</code> site; ADR-0034 rule 6&#x27;s deletion command).</p>
+<p><strong>Remarks.</strong> <strong>Exit codes are the contract</strong>, as the headless conductor&#x27;s are: <strong>0</strong> done, <strong>3</strong> refused or did not complete (the reason is in the output file), <strong>64</strong> the arguments were wrong. <strong>The output is a file, always</strong>: a <code>WinExe</code> has no console to print to, so every verb writes what it did to <code>--out</code> (a default under the temp directory when none is given) and echoes it to the console when one happens to be attached.</p>
+<p><strong>The dispatch line in `App.OnStartup` is the Design lane&#x27;s</strong> (a seam request, recorded in the Proof Pack): <code>if (Cli.CliEntry.IsRequested(args)) { … RunAsync … }</code> beside the conductor&#x27;s. Until it lands the verbs are reachable headlessly (the tests) and not from the shell&#x27;s process arguments.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsRequested(IReadOnlyList&lt;string&gt; args)</code></td><td>Whether these process arguments name one of the compile step&#x27;s verbs.</td></tr><tr><td><code>Task&lt;int&gt; RunAsync(IReadOnlyList&lt;string&gt; args, TextWriter? console = null, Func&lt;string, bool&gt;? confirm = null)</code></td><td>Runs the verb. Returns the exit code; the output file&#x27;s path is written to  when given.</td></tr></tbody></table>
+<h3><code>Task&lt;int&gt; RunAsync(IReadOnlyList&lt;string&gt; args, TextWriter? console = null, Func&lt;string, bool&gt;? confirm = null)</code></h3>
+<p>Runs the verb. Returns the exit code; the output file&#x27;s path is written to  when given.</p>
+<ul><li><strong>`args`</strong> — The process arguments, verb first.</li><li><strong>`console`</strong> — Where to echo the output, or null.</li><li><strong>`confirm`</strong> — The purge&#x27;s confirmation prompt (the plan&#x27;s text in, yes/no out); null means <code>--yes</code> is required.</li></ul>
+<h2><code>CompileFold</code></h2>
+<p><em>class</em> — <code>CompileFold.cs</code></p>
+<p><code>aide compile fold --workspace &lt;root&gt; --session &lt;id&gt; [--out &lt;file&gt;]</code>: recomputes <code>Project(Fold(rows))</code> from the store&#x27;s own rows and emits the fold and every envelope&#x27;s projection beside the <code>projection_sha</code> its <code>submitted</code> row recorded — P-D2&#x27;s rebuild, computed by the product&#x27;s one <code>Project()</code> (its third named call site), never by a second fold in Python (ADR-0033 &quot;Alternatives considered&quot;).</p>
+<p><strong>Remarks.</strong> The reader opens the file only when no writer holds it (<code>FileShare.None</code>): a composer with the session open is a visible refusal (exit 3), never a partial fold. The rebuild has no held attachment bodies, so the projection&#x27;s <code>prompt</code> is absent here — <code>text_sha256</code> is the send&#x27;s witness, <code>projection_sha</code> the rebuild&#x27;s.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int Run(IReadOnlyList&lt;string&gt; args, TextWriter? console)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>PurgeHistoryVerb</code></h2>
+<p><em>class</em> — <code>PurgeHistoryVerb.cs</code></p>
+<p><code>aide session purge &lt;id&gt; --workspace &lt;root&gt; [--yes] [--out &lt;file&gt;]</code>: deletes the session&#x27;s <code>envelope-events.jsonl</code> and nothing else (US-D13; ADR-0034 rule 6). The confirmation prints the session&#x27;s name, id, workspace root, the resolved file path, the envelope count and the newest <code>at</code> — an identity, never a count alone (DC-120).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int Run(IReadOnlyList&lt;string&gt; args, TextWriter? console, Func&lt;string, bool&gt;? confirm)</code></td><td><strong>(gap)</strong></td></tr></tbody></table></main></body></html>

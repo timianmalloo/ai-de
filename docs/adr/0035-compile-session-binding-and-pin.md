@@ -17,7 +17,8 @@ links:
   - { to: adr-0027-acp-lane-separate-shape, rel: relates-to }
   - { to: note-addendum-c-council-rulings, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The compile call reuses the agent plane's pieces (EngineCatalog, ProviderRegistry, AcpEngineProcess,
   AcpPeer, AcpLaneClient, SpawnContract.Authorize) in a second, smaller composition — CompileCallHost —

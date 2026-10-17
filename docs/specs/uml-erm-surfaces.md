@@ -14,7 +14,8 @@ links:
   - { to: kb-diagram-generation, rel: implements }
   - { to: conceptual-model-ai-native-ide, rel: relates-to }
 review-by: 2027-02-27
-review-suggested: []
+review-suggested:
+  - { by: kb-uml-mde-and-4gl, on: 2026-10-17, reason: "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact" }
 summary: >-
   Specifies first-class UML and ERM surfaces generated as read-only views of the repo graph —
   C4/class/component/sequence UML and crow's-foot ER diagrams — with notation validity enforced,

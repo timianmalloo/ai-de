@@ -25,6 +25,8 @@ summary: >-
   (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints) with grain
   (path, kind), no folder_dim, T5c omit off the wire; UV-1 then admits one Architecture
   SurfaceKind and a WPF TreeView. Status draft — N10 review is later.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 <!--

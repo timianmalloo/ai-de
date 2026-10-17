@@ -10,7 +10,8 @@ links:
   - { to: design-phase-1-walking-skeleton, rel: documents }
   - { to: architecture, rel: relates-to }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   One row per correctness claim for the Phase-1 walking skeleton, each with its test, its oracle, and
   whether the test was observed failing before its control existed. Records the three council-veto

@@ -16,6 +16,8 @@ summary: >-
   committed file and validated against extracted symbols. Folder convention is rejected on measured
   grounds: the obvious candidate in a real repository has 31 folders that are UI features, not
   contexts.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0016: Bounded contexts are declared, never inferred

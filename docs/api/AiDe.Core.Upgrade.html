@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Upgrade</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Upgrade.md</div><h1>API: <code>AiDe.Core.Upgrade</code></h1>
+<p><strong>13 public types · 18 public members · 90% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>InstalledVersion</code></h2>
+<p><em>record</em> — <code>DaemonInstallation.cs</code></p>
+<p>One daemon build on disk.</p>
+<h2><code>DaemonInstallation</code></h2>
+<p><em>class</em> — <code>DaemonInstallation.cs</code></p>
+<p>Side-by-side daemon builds, and the pointer that says which one runs.</p>
+<p><strong>Remarks.</strong> <strong>Side-by-side is what makes rollback possible at all.</strong> An installer that overwrote the previous build would leave nothing to go back to: the store could be restored from its snapshot and there would be no binary able to read it. Keeping the old directory is cheap; recreating it after a failed upgrade means downloading a build during an incident.</p>
+<p><strong>Repointing is one small atomic write, and it is the commit point.</strong> Everything before it — unpacking, migrating, gating — is reversible by doing nothing. A pointer file replaced by rename means a process reading it during an upgrade sees the old version or the new one, never a partial name, and never a directory that is still being written.</p>
+<p><strong>Pruning never removes the current build or the one before it.</strong> The previous build is not history — it is the rollback target, and reclaiming its disk is trading an incident&#x27;s recovery path for a few megabytes.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string VersionsDirectory { get; } = Path.Combine(root, &quot;versions&quot;)</code></td><td>Where builds live, one directory per version.</td></tr><tr><td><code>string? Current</code></td><td>The version currently pointed at, or <code>null</code> before the first install.</td></tr><tr><td><code>IReadOnlyList&lt;InstalledVersion&gt; Installed</code></td><td>Every build on disk, newest name last.</td></tr><tr><td><code>string DirectoryFor(string version)</code></td><td>The directory a version lives in, whether or not it exists yet.</td></tr><tr><td><code>InstalledVersion Install(string version, string sourceDirectory)</code></td><td>Places a build beside the others. Does <strong>not</strong> make it current.</td></tr><tr><td><code>void Repoint(string version)</code></td><td>Makes  the one that runs. The commit point.</td></tr><tr><td><code>IReadOnlyList&lt;string&gt; Prune(int keep)</code></td><td>Removes old builds, keeping the newest  plus whatever is current.</td></tr></tbody></table>
+<h3><code>string? Current</code></h3>
+<p>The version currently pointed at, or <code>null</code> before the first install.</p>
+<p><strong>Remarks.</strong> Null rather than a guess. &quot;Nothing is installed yet&quot; and &quot;the pointer names something that is gone&quot; are both states a supervisor must handle, and inventing a plausible version here would send it to launch a directory that may not exist.</p>
+<h3><code>InstalledVersion Install(string version, string sourceDirectory)</code></h3>
+<p>Places a build beside the others. Does <strong>not</strong> make it current.</p>
+<p><strong>Remarks.</strong> Installing and repointing are separate because everything between them is where an upgrade decides whether to keep going. A combined step would make the commit happen before the gate had a chance to refuse.</p>
+<h3><code>IReadOnlyList&lt;string&gt; Prune(int keep)</code></h3>
+<p>Removes old builds, keeping the newest  plus whatever is current.</p>
+<p><strong>Remarks.</strong> The current build is protected explicitly rather than by relying on it being among the newest: after a rollback the current version is an <em>older</em> one, which is precisely when a naive &quot;keep the newest N&quot; would delete the build that is running.</p>
+<h2><code>HealthCheck</code></h2>
+<p><em>record</em> — <code>HealthGate.cs</code></p>
+<p>One named check and what it found.</p>
+<p><strong>Remarks.</strong> The detail is not decoration. &quot;The upgrade failed&quot; is not actionable; &quot;expected schema v4, found v3&quot; is, and it is the difference between a rollback someone can explain and one they can only observe.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>HealthCheck Pass(string name, string detail)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>HealthCheck Fail(string name, string detail)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>HealthGateResult</code></h2>
+<p><em>record</em> — <code>HealthGate.cs</code></p>
+<p>A gate run: whether it passed, what it ran, and how long it took.</p>
+<h2><code>GateStep</code></h2>
+<p><em>record</em> — <code>HealthGate.cs</code></p>
+<p>One check the gate will run.</p>
+<h2><code>HealthGate</code></h2>
+<p><em>class</em> — <code>HealthGate.cs</code></p>
+<p>The fast subset that decides whether a freshly migrated store may be kept.</p>
+<p><strong>Remarks.</strong> <strong>Fast is the specification, not an aspiration.</strong> Full restore/replay equality is asynchronous verification — P1-PERF measured a 50k-edge replay against a 15-minute RTO while this gate has a 60-second budget. Putting the slow check inside the fast gate is the contradiction the council review caught in the v1 architecture, so the budget is <strong>enforced</strong>: a gate that merely documented one would pass a fifteen-minute replay and the contradiction would be back.</p>
+<p><strong>It stops at the first failure.</strong> Later checks assume earlier ones held — an integrity sample over a store whose schema check just failed reports nonsense — so continuing produces a cascade whose first entry is the only real one.</p>
+<p><strong>It reports what it ran.</strong> A gate&#x27;s green result is evidence that the gate passed, not that its contents passed. Naming every check is what makes the difference inspectable rather than a matter of trust.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>HealthGateResult Run(IReadOnlyList&lt;GateStep&gt; steps)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>MigrationState</code></h2>
+<p><em>enum</em> — <code>MigrationJournal.cs</code></p>
+<p>Where a migration had got to when it was last written down.</p>
+<h2><code>MigrationRecord</code></h2>
+<p><em>record</em> — <code>MigrationJournal.cs</code></p>
+<p>One migration, as recorded on disk.</p>
+<h2><code>MigrationJournal</code></h2>
+<p><em>class</em> — <code>MigrationJournal.cs</code></p>
+<p>The durable note that says whether a migration is in flight.</p>
+<p><strong>Remarks.</strong> <strong>It exists for the case where nothing gets to run.</strong> Power loss, a kill, a bug that takes the process out mid-migration: no cleanup handler fires, no finally block completes. What survives is what was already on disk, so recovery has to be something the <em>next</em> start can do from a file — and that file has to be written before the risky part, not after.</p>
+<p><strong>Written by atomic replace, never in place.</strong> A journal updated in place can be found half-written by exactly the crash it exists to survive. Writing a temporary file and renaming it means a reader sees either the old record or the new one, never a torn one.</p>
+<p><strong>Readers must share delete for that to hold on Windows</strong>, which is the part that is easy to get wrong: a rename over a file another handle has open fails unless that handle opened with <code>Delete</code>. With the ordinary <code>File.ReadAllText</code>, a concurrent reader does not see a torn file — it makes the <em>writer</em> throw instead.</p>
+<p><strong>Latest state only, not a log.</strong> The journal answers one question — &quot;is a migration in flight?&quot; — and an append-only file would turn that read into a parse, with the recovery path depending on correctly interpreting a history.</p>
+<p><strong>A torn or unreadable journal reads as &quot;nothing in flight&quot;.</strong> The alternative is that the recovery path is the thing that crashes after a crash. That is a deliberate bias: an unreadable journal means we cannot prove a migration was running, and proceeding as though one was would restore a snapshot over a store that may be fine.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>MigrationRecord? Read()</code></td><td>The current record, or <code>null</code> when there is nothing to recover.</td></tr><tr><td><code>void Begin(string migrationId, int fromSchema, int toSchema, string snapshotPath)</code></td><td>Records that a migration is about to run. Call before touching the store.</td></tr><tr><td><code>void Complete()</code></td><td>Records that the migration finished and its gate passed.</td></tr><tr><td><code>void RolledBack()</code></td><td>Records that the migration was undone.</td></tr></tbody></table>
+<h2><code>StoreSnapshot</code></h2>
+<p><em>class</em> — <code>UpgradeCoordinator.cs</code></p>
+<p>Copies the store aside so a migration can be undone.</p>
+<p><strong>Remarks.</strong> <strong>Copied, never moved.</strong> Renaming the store into place as a snapshot would leave a window in which no store exists at all — which is the one state a crash must never find, and the exact instant this whole mechanism is defending.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Capture(string storePath, string directory)</code></td><td>Copies  into .</td></tr><tr><td><code>void Restore(string snapshotPath, string storePath)</code></td><td>Puts a snapshot back.</td></tr></tbody></table>
+<h2><code>UpgradeResult</code></h2>
+<p><em>record</em> — <code>UpgradeCoordinator.cs</code></p>
+<p>What an upgrade attempt did.</p>
+<h2><code>RecoveryResult</code></h2>
+<p><em>record</em> — <code>UpgradeCoordinator.cs</code></p>
+<p>What a startup recovery found.</p>
+<h2><code>UpgradeCoordinator</code></h2>
+<p><em>class</em> — <code>UpgradeCoordinator.cs</code></p>
+<p>The upgrade choreography: snapshot, migrate, gate, and either keep it or put it back.</p>
+<p><strong>Remarks.</strong> <strong>The ordering is the design.</strong> An upgrade that fails halfway is worse than one that never started: a store migrated to a schema the running binary cannot read is a workspace nobody can open, with the user&#x27;s evidence inside it. So the snapshot is taken before anything changes, the journal is written before the migration runs, and the point of no return — deleting the snapshot — comes only after the gate has passed.</p>
+<p><strong>Rollback is not &quot;do not migrate&quot;.</strong> It is &quot;undo a migration that already happened&quot;, which is why a snapshot exists at all rather than a decision to proceed.</p>
+<p><strong>Recovery is a separate entry point</strong> (<code>RecoverIfIncomplete</code>) because the case it handles is the one where this class never got to finish. Nothing in the failure path can be relied on to run at the moment of a power loss, so the next start reads the journal and completes the sentence.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>UpgradeResult Run(</code></td><td>Runs one migration behind its gate.</td></tr><tr><td><code>RecoveryResult RecoverIfIncomplete(string storePath, string workDirectory)</code></td><td>Undoes a migration that was interrupted before it could finish.</td></tr></tbody></table>
+<h3><code>RecoveryResult RecoverIfIncomplete(string storePath, string workDirectory)</code></h3>
+<p>Undoes a migration that was interrupted before it could finish.</p>
+<p><strong>Remarks.</strong> Called at startup, before the store is opened. A journal in <code>Started</code> means a process died between &quot;about to migrate&quot; and &quot;migrated and verified&quot; — so the store may be anything, and the only thing known to be good is the snapshot.</p></main></body></html>

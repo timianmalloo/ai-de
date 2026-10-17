@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Ipc</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Ipc.md</div><h1>API: <code>AiDe.Core.Ipc</code></h1>
+<p><strong>51 public types · 124 public members · 64% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>Capability</code></h2>
+<p><em>record</em> — <code>CapabilityRegistry.cs</code></p>
+<p>A capability the daemon issued, and everything it is bound to.</p>
+<h2><code>CapabilityCheck</code></h2>
+<p><em>record</em> — <code>CapabilityRegistry.cs</code></p>
+<p>Why a capability check failed, or that it passed.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>CapabilityCheck Valid = new(true, null, null)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>CapabilityCheck Fail(string code, string reason)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>CapabilityRegistry</code></h2>
+<p><em>class</em> — <code>CapabilityRegistry.cs</code></p>
+<p>Issues, validates and revokes the capabilities that authorize commands on the IPC boundary.</p>
+<p><strong>Remarks.</strong> <strong>In memory only, and deliberately so.</strong> A capability that outlived the daemon would authorize a caller against a process that no longer exists, and persisting it would create a file whose theft is equivalent to the authority itself. Restarting the daemon revokes everything, which is the correct blast radius.</p>
+<p><strong>Bound to four things, checked in a fixed order</strong> — connection, process, workspace, epoch. Each closes a distinct attack: replaying a token on a second connection; a different process on the same connection; reaching another workspace&#x27;s daemon; and acting against state that has since been replaced. Binding to fewer would make the token a bearer secret, which is what capability-based authorization exists to avoid.</p>
+<p>Comparison is <strong>constant-time</strong>. Token lookup by dictionary is not, so the token is found by key and then verified by <code>FixedTimeEquals</code> — the dictionary hit only says a record exists, never that the caller&#x27;s bytes matched it.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int Count</code></td><td>How many capabilities are live — for the health surface, not for authorization.</td></tr><tr><td><code>Capability Issue(IpcPeer peer, string workspaceId, long epoch)</code></td><td>Issues a capability bound to this peer, workspace and epoch.</td></tr><tr><td><code>CapabilityCheck Validate(</code></td><td>Validates a presented token against the live connection and the command it accompanies.</td></tr><tr><td><code>bool Revoke(string token)</code></td><td>Revokes one capability. Idempotent: revoking twice is not an error.</td></tr><tr><td><code>int RevokeConnection(string connectionId)</code></td><td>Revokes everything issued to a connection — what a disconnect must trigger.</td></tr></tbody></table>
+<h3><code>CapabilityCheck Validate(</code></h3>
+<p>Validates a presented token against the live connection and the command it accompanies.</p>
+<p><strong>Remarks.</strong> Returns a typed reason rather than a bool. Which check failed is the difference between &quot;your session ended&quot; and &quot;that token belongs to another workspace&quot;, and an operator who only sees &quot;denied&quot; cannot tell an expired shell from an attack.</p>
+<h2><code>DaemonEndpoint</code></h2>
+<p><em>class</em> — <code>DaemonEndpoint.cs</code></p>
+<p>The daemon&#x27;s side of the boundary: handshake, authorization, dispatch to an operation.</p>
+<p><strong>Remarks.</strong> Transport-free on purpose. Everything security-relevant here — version acceptance, capability binding, the order the checks run in — is decided without a socket, so it can be tested without one. The named-pipe layer&#x27;s only job is to establish who the peer is and hand bytes across; if that layer were also making authorization decisions, those decisions would only be testable by standing up a pipe.</p>
+<p><strong>Check order is load-bearing:</strong> version, then envelope shape, then workspace, then capability, then epoch. Each stage assumes the previous one held, and reordering them leaks information — validating a capability before checking the workspace would tell an unauthorized caller whether a token is live on a workspace it has no business naming.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>DaemonEndpoint(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string WorkspaceId { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Register(string operation, Func&lt;IpcRequest, IpcPeer, IpcResponse&gt; handler)</code></td><td>Registers an operation. Unregistered operations are rejected, never guessed at.</td></tr><tr><td><code>IpcResponse OpenWorkspace(IpcRequest request, IpcPeer peer)</code></td><td>The opening exchange: agree a version and issue a capability, in that order.</td></tr><tr><td><code>IpcResponse Invoke(IpcRequest request, IpcPeer peer)</code></td><td>Handles a command: every gate, in order, before any operation runs.</td></tr></tbody></table>
+<h3><code>IpcResponse OpenWorkspace(IpcRequest request, IpcPeer peer)</code></h3>
+<p>The opening exchange: agree a version and issue a capability, in that order.</p>
+<p><strong>Remarks.</strong> Version is settled BEFORE a capability exists, so a peer speaking an unsupported protocol never obtains authority — not even briefly. The reverse order would hand out a token and then discover the holder cannot be understood.</p>
+<h2><code>IWorkspaceCommands</code></h2>
+<p><em>interface</em> — <code>IWorkspaceCommands.cs</code></p>
+<p>The workspace&#x27;s write surface, however it is reached.</p>
+<p><strong>Remarks.</strong> <strong>Separate from `IWorkspaceQueries` because reads and writes are not the same kind of thing.</strong> A read can be repeated freely; a write bumps a generation and commits a snapshot, carries an idempotency key, and is judged against the epoch fence. Folding them into one interface would put a name on the seam (&quot;queries&quot;) that half its members contradict, and would make every read-only consumer hold a handle that can also mutate.</p>
+<p>Both hosting modes satisfy it — the in-process core and the daemon client — for the same reason the read seam exists: ADR-0009 keeps both, and a UI written against one of them is a UI that has to be rewritten to get the other.</p>
+<h2><code>IndexSummary</code></h2>
+<p><em>record</em> — <code>IWorkspaceCommands.cs</code></p>
+<p>What an index run found, as the shell reports it.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Describe()</code></td><td>One sentence for the announcement channel, including what was NOT seen.</td></tr><tr><td><code>string NotAnalysed()</code></td><td>What was not analysed, as ONE clause — a count and the sharpest example, never the list.</td></tr></tbody></table>
+<h3><code>string NotAnalysed()</code></h3>
+<p>What was not analysed, as ONE clause — a count and the sharpest example, never the list.</p>
+<p><strong>Remarks.</strong> <strong>The status line is a line.</strong> This clause used to be every disclosure joined with commas. Folding them by class took it from 108 to 28, which is a better list and still not a status message: on a real index it filled roughly four fifths of the window and pushed the graph into a strip along the top.</p>
+<p><strong>Which one to name is the whole design.</strong> A count alone (&quot;28 boundaries&quot;) tells a reader nothing about whether to care. So the clause names the disclosure with the largest count, which is where the most unread repository is — and, because gaps sort before boundaries when counts tie, prefers a thing the product MEANT to read and could not over a thing it never intended to read (DC-050).</p>
+<p>The full list is still in the result, unchanged, for a surface that can hold it.</p>
+<h2><code>LocalWorkspaceCommands</code></h2>
+<p><em>class</em> — <code>IWorkspaceCommands.cs</code></p>
+<p>The write surface applied by a core in this process.</p>
+<p><strong>Remarks.</strong> Takes the refresh as a delegate rather than a <code>WorkspaceCore</code> so that what the in-process mode reports — a completed count, or a failure with its reason — is decided in one place and testable without a store.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Task&lt;IndexSummary&gt; IndexSolutionAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;ScopeRefreshStatus&gt; RefreshScopeAsync(</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IWorkspaceDispatch</code></h2>
+<p><em>interface</em> — <code>IWorkspaceDispatch.cs</code></p>
+<p>The two durable phases of prompt dispatch, as a caller sees them.</p>
+<p><strong>Remarks.</strong> Separate from <code>IWorkspaceCommands</code> because it is a different obligation: a workspace can answer projections and re-index without being able to record a dispatch, and a shell that cannot dispatch should discover that by the capability being absent rather than by a call failing.</p>
+<p><strong>The side effect is deliberately not here.</strong> Writing to the terminal is the shell&#x27;s job — it owns the process (D1) — so this interface covers only what must be durable, and <code>BeginAndWriteAsync</code> is what orders the three steps.</p>
+<h2><code>IpcClient</code></h2>
+<p><em>class</em> — <code>IpcClient.cs</code></p>
+<p>The shell&#x27;s side of the boundary.</p>
+<p><strong>Remarks.</strong> <strong>Holds the capability and nothing else.</strong> The token exists only in memory here and is attached to every request; it is never written anywhere, because a capability on disk is a file whose theft equals the authority it carries.</p>
+<p><strong>Serialises its own requests.</strong> A pipe is one stream, so two overlapping writes would interleave frames and the daemon would resynchronise on data that was never a length prefix. One outstanding exchange at a time is not a limitation to work around — it is what makes the framing sound.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsOpen</code></td><td>The capability this connection holds, once a workspace has been opened.</td></tr><tr><td><code>long Epoch { get; private set; }</code></td><td>The epoch the daemon reported at handshake, which every request is judged against.</td></tr><tr><td><code>Task&lt;IpcClient&gt; ConnectAsync(</code></td><td>Connects to the daemon serving .</td></tr><tr><td><code>Task&lt;IpcResponse&gt; OpenWorkspaceAsync(</code></td><td>Performs the handshake and keeps the capability it returns.</td></tr><tr><td><code>Task&lt;IpcResponse&gt; InvokeAsync(</code></td><td>Invokes an operation, attaching the held capability.</td></tr><tr><td><code>ValueTask DisposeAsync()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>Task&lt;IpcResponse&gt; OpenWorkspaceAsync(</code></h3>
+<p>Performs the handshake and keeps the capability it returns.</p>
+<p><strong>Remarks.</strong> The token is stored rather than handed back so a caller cannot accidentally log it, put it in a span, or pass it somewhere it outlives the connection it is bound to.</p>
+<h2><code>IpcErrorCodes</code></h2>
+<p><em>class</em> — <code>IpcContract.cs</code></p>
+<p>Stable, catalogued failure codes for the IPC boundary.</p>
+<p><strong>Remarks.</strong> Stable strings rather than an enum&#x27;s numbers because they cross a process boundary and appear in operator-facing output. A renumbered enum silently changes what a log line means; a renamed string breaks a test.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string UnsupportedVersion = &quot;ipc.unsupported_version&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string MalformedEnvelope = &quot;ipc.malformed_envelope&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string CapabilityUnknown = &quot;ipc.capability_unknown&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string CapabilityRevoked = &quot;ipc.capability_revoked&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string CapabilityWrongConnection = &quot;ipc.capability_wrong_connection&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string CapabilityWrongProcess = &quot;ipc.capability_wrong_process&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string WorkspaceMismatch = &quot;ipc.workspace_mismatch&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string EpochStale = &quot;ipc.epoch_stale&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string NotAuthorized = &quot;ipc.not_authorized&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string WorkspaceLocked = &quot;ipc.workspace_locked&quot;</code></td><td>Another daemon already serves this workspace.</td></tr><tr><td><code>string TransportClosed = &quot;ipc.transport_closed&quot;</code></td><td>The daemon went away without answering. A transport fact, deliberately NOT an authorization one: reporting a vanished daemon as &quot;not authorized&quot; sends every investigation to the wrong place, and it briefly did exactly…</td></tr><tr><td><code>string PayloadTooLarge = &quot;ipc.payload_too_large&quot;</code></td><td>The response is larger than one frame can carry.</td></tr><tr><td><code>string CommandUnknown = &quot;ipc.command_unknown&quot;</code></td><td>This daemon has no record of the command being asked about.</td></tr></tbody></table>
+<h3><code>string PayloadTooLarge = &quot;ipc.payload_too_large&quot;</code></h3>
+<p>The response is larger than one frame can carry.</p>
+<p><strong>Remarks.</strong> INV-0003. Without this code an oversized response threw out of the write path, the serve loop did not catch that exception type, and the connection closed with no reply — which the client can only report as <code>TransportClosed</code>. &quot;The daemon vanished&quot; and &quot;the answer is too big to send&quot; need different things from a user, and rendering the second as the first sends them to look at the daemon.</p>
+<h3><code>string CommandUnknown = &quot;ipc.command_unknown&quot;</code></h3>
+<p>This daemon has no record of the command being asked about.</p>
+<p><strong>Remarks.</strong> Distinct from a failure of the command itself: &quot;I never started that, or no longer remember it&quot; is information a caller acts on differently from &quot;it ran and did not work&quot;.</p>
+<h2><code>IpcVersion</code></h2>
+<p><em>class</em> — <code>IpcContract.cs</code></p>
+<p>Which IPC majors this build speaks.</p>
+<p><strong>Remarks.</strong> Two majors, never one. During an upgrade a new shell may meet an old daemon or the reverse, and a single-version boundary makes every upgrade a synchronised restart of both — which is exactly what the rollback path cannot rely on.</p>
+<p><strong>Never negotiated down silently.</strong> An unsupported version is rejected with <code>UnsupportedVersion</code>. Silent downgrade is how a peer ends up speaking a protocol neither side chose, and the failure appears far from its cause.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int Current = 3</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int Previous = 2</code></td><td>The one previous major still accepted, so an upgrade need not be simultaneous.</td></tr><tr><td><code>bool IsSupported(int major)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;int&gt; Supported</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>int Current = 3</code></h3>
+<p><strong>Remarks.</strong> <strong>3 carries the payload as JSON, not as a string containing JSON.</strong> Through 2 a payload was serialised and the resulting TEXT was placed in a string field, so the transport re-escaped every quote in it — MEASURED at 1.56-1.57x, which is how a 727,244-byte graph became 1,137,104 bytes on the wire and was refused (DC-047). A peer speaking 2 is still understood, because <code>IpcPayload</code> reads either form.</p>
+<h2><code>IpcPayload</code></h2>
+<p><em>class</em> — <code>IpcContract.cs</code></p>
+<p>Reading a payload, in either encoding a peer might have sent.</p>
+<p><strong>Remarks.</strong> From version 3 a payload IS JSON: the envelope carries the value itself, so nothing is escaped twice and the bytes measured are the bytes sent. Through version 2 the payload was a string holding JSON text, which the envelope then re-escaped — the encoding that made a graph inside its byte budget too large for the frame it was budgeted against (DC-047).</p>
+<p><strong>Read tolerantly, write one way.</strong> A JSON string where a value is expected is a version-2 peer, and its text is parsed rather than rejected — that is what keeps <code>Previous</code> a real guarantee instead of a comment. Writing only ever produces the new form: two encodings on the write side is how a wire format ends up with no single answer to &quot;what does this look like&quot;.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>T? Read&lt;T&gt;(System.Text.Json.JsonElement? payload, System.Text.Json.JsonSerializerOptions options)</code></td><td>The payload as , or default when there is none.</td></tr><tr><td><code>System.Text.Json.JsonElement From&lt;T&gt;(T value, System.Text.Json.JsonSerializerOptions options)</code></td><td>A value as a payload. Always the current encoding.</td></tr></tbody></table>
+<h3><code>T? Read&lt;T&gt;(System.Text.Json.JsonElement? payload, System.Text.Json.JsonSerializerOptions options)</code></h3>
+<p>The payload as , or default when there is none.</p>
+<p><strong>Throws `JsonException`.</strong> The payload is not valid JSON for T.</p>
+<h2><code>IpcRequest</code></h2>
+<p><em>record</em> — <code>IpcContract.cs</code></p>
+<p>One request across the boundary.</p>
+<p><strong>Remarks.</strong> carries the architecture&#x27;s idempotency semantics unchanged — the same id is the same command, and a retry after an unknown outcome must return the existing receipt rather than acting twice. Phase 1 simply had a shorter path to the same contract.</p>
+<h2><code>IpcResponse</code></h2>
+<p><em>record</em> — <code>IpcContract.cs</code></p>
+<p>One reply. Either  with a payload, or an error code and reason.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IpcResponse Success(System.Text.Json.JsonElement? payload = null)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IpcResponse Success&lt;T&gt;(T result, System.Text.Json.JsonSerializerOptions options)</code></td><td>The common case: a result object, carried as JSON rather than as text about JSON.</td></tr><tr><td><code>IpcResponse Error(string code, string reason)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IpcResponse UnsupportedVersion(int requested)</code></td><td>A version rejection, which uniquely carries what this build DOES speak.</td></tr></tbody></table>
+<h3><code>IpcResponse UnsupportedVersion(int requested)</code></h3>
+<p>A version rejection, which uniquely carries what this build DOES speak.</p>
+<p><strong>Remarks.</strong> Returning the supported set turns &quot;we disagree&quot; into something a peer can act on: the bootstrap can decide to upgrade, roll back, or stop. A bare rejection leaves it guessing, and guessing across a version boundary is how a downgrade loop starts.</p>
+<h2><code>IpcOpenResult</code></h2>
+<p><em>record</em> — <code>IpcContract.cs</code></p>
+<p>What a successful handshake returns.</p>
+<p><strong>Remarks.</strong> <strong>The epoch is here because there is nowhere else it can come from.</strong> Every command states the epoch it was authored against and the daemon rejects a mismatch — which leaves a shell that has just connected unable to ask for the epoch, because asking is itself a command subject to the fence. Returning it from the handshake is the only ordering that terminates.</p>
+<p>The alternative — exempting an <code>epoch</code> operation from the fence — would put a hole in the check to work around an ordering problem, and holes in fences are how the next thing gets exempted too.</p>
+<h2><code>IpcPeer</code></h2>
+<p><em>record</em> — <code>IpcContract.cs</code></p>
+<p>Who is on the other end of a connection, as established by the transport.</p>
+<p><strong>Remarks.</strong> Built by the transport from the authenticated connection, never from anything the caller sends. A peer that could name its own identity could name someone else&#x27;s, which is the whole point of binding a capability to the connection rather than to a claim.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>CallerPrincipal ToPrincipal()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IpcFraming</code></h2>
+<p><em>class</em> — <code>IpcFraming.cs</code></p>
+<p>Turns a byte stream into discrete messages: a four-byte big-endian length, then UTF-8.</p>
+<p><strong>Remarks.</strong> <strong>This is where the boundary&#x27;s hostile-input surface begins.</strong> Everything above assumes it is handed one whole request at a time, and every one of those assumptions is exactly as true as this layer. The length prefix is chosen by the peer, so allocating what it asks for would be a remote memory exhaustion written in one line — the cap is checked <em>before</em> any buffer exists.</p>
+<p><strong>A short read is not an error.</strong> A peer hanging up is how every connection ends, so an incomplete frame reads as <code>null</code> — &quot;no message&quot; — rather than throwing. Only a frame that is actively malformed (a length that is negative or beyond the cap) is a protocol violation, because only that requires a peer to have sent something no correct implementation sends.</p>
+<p><strong>Big-endian</strong> because it is the network order every wire format uses, and a boundary is no place to depend on both ends having the same architecture.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int MaxFrameBytes = 1024 * 1024</code></td><td>The largest frame either side will send or accept.</td></tr><tr><td><code>Task WriteAsync(Stream stream, string message, CancellationToken cancellationToken)</code></td><td>Writes one framed message.</td></tr><tr><td><code>Task&lt;string?&gt; ReadAsync(Stream stream, CancellationToken cancellationToken)</code></td><td>Reads one framed message, or <code>null</code> when the stream ends.</td></tr></tbody></table>
+<h3><code>int MaxFrameBytes = 1024 * 1024</code></h3>
+<p>The largest frame either side will send or accept.</p>
+<p><strong>Remarks.</strong> A cap in the hundreds of megabytes would satisfy every round-trip test and defend against nothing, so this is deliberately close to what real traffic needs.</p>
+<p><strong>The upgrade trigger FIRED, and the answer was none of the options this marker listed.</strong> INV-0003: the whole-graph response for a real repository was 1,522,284 bytes, the write threw, and the connection closed with no reply. The marker offered two ways out — a bigger frame, or a data lane — and the correct one was a third: the operation did not legitimately need to carry more. A 2,815-node hairball was never a useful answer, the surface spec had always said so (US-K2), and the resolution was to bound every response BELOW this cap and add an aggregated overview. Recorded because a marker that names two exits invites you to take one of them.</p>
+<p><strong>And its original premise was already false when audited.</strong> It said &quot;a control lane carries envelopes, not payloads: the largest legitimate message is a command with a small JSON body&quot;. MEASURED on real repositories, ordinary responses are an evidence page at 659,164 bytes, a graph at 475,223 and an overview at 345,507. This lane has carried payloads for some time; the sentence describing it had not been re-read since it was true.</p>
+<p><code>simplify: one flat cap rather than per-operation limits; ceiling 1 MiB; upgrade trigger = a response that is BOUNDED, USEFUL and still over the cap — which is the case the bounded projections have not produced yet, and the only one that would justify a data lane.</code></p>
+<h3><code>Task WriteAsync(Stream stream, string message, CancellationToken cancellationToken)</code></h3>
+<p>Writes one framed message.</p>
+<p><strong>Throws `ArgumentException`.</strong> The message exceeds <code>MaxFrameBytes</code>.</p>
+<h3><code>Task&lt;string?&gt; ReadAsync(Stream stream, CancellationToken cancellationToken)</code></h3>
+<p>Reads one framed message, or <code>null</code> when the stream ends.</p>
+<p><strong>Throws `InvalidDataException`.</strong> The length prefix is negative or above the cap.</p>
+<h2><code>IpcPipeName</code></h2>
+<p><em>class</em> — <code>IpcPipe.cs</code></p>
+<p>The pipe name for a workspace, derived rather than configured.</p>
+<p><strong>Remarks.</strong> Both ends must agree without talking first, so the name is a pure function of the workspace path. Deriving it also keeps the path <strong>out of the name</strong>: pipe names are enumerable by any process on the machine, and a name like <code>aide.C__Users_someone_clients_acme</code> would disclose what a user is working on to anything that can list a directory.</p>
+<p>Hashed lowercase-invariant because Windows paths are case-insensitive: the same workspace reached as <code>C:\Work</code> and <code>c:\work</code> must be one daemon, not two racing for one store.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string ForWorkspace(string workspacePath)</code></td><td>The pipe name serving .</td></tr></tbody></table>
+<h2><code>WorkspaceLock</code></h2>
+<p><em>class</em> — <code>IpcPipe.cs</code></p>
+<p>One daemon per workspace, enforced by the operating system rather than by convention.</p>
+<p><strong>Remarks.</strong> Two daemons on one workspace would be two writers to one store, each believing it owns the epoch. Nothing above this notices — both would work perfectly, and the damage would appear later as a fact store whose history has two authors. So the lock is taken <strong>before</strong> anything is opened, and a daemon that cannot take it exits rather than degrading.</p>
+<p>A named mutex rather than a lock file, because the kernel releases it when the holder dies however it dies. A lock file outlives a killed process and needs staleness heuristics — which are guesses about whether another process is alive, and wrong guesses here mean either a permanently unopenable workspace or two writers.</p>
+<p><strong>Local, not Global.</strong> The scope of the invariant is one user&#x27;s session; a machine-wide name would let one user&#x27;s daemon block another&#x27;s, which is a denial of service reachable by opening a folder.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool TryAcquire(string workspacePath, out WorkspaceLock? held)</code></td><td>Takes the lock, or reports that another daemon already holds it.</td></tr><tr><td><code>void Dispose()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IpcPipeFactory</code></h2>
+<p><em>class</em> — <code>IpcPipe.cs</code></p>
+<p>Creates pipe endpoints that only the workspace owner can reach.</p>
+<p><strong>Remarks.</strong> <strong>The ACL is the first of two controls, not the only one.</strong> It stops another user&#x27;s process from connecting at all. The server still derives the peer&#x27;s SID after connecting and checks it, because defence that exists only in an access-control list is defence that disappears the moment someone constructs a pipe by a different route — and because a control nothing verifies is a control nobody notices losing.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>NamedPipeServerStream CreateServer(string pipeName, int maxInstances)</code></td><td>A server instance whose ACL admits only the current user.</td></tr><tr><td><code>NamedPipeClientStream CreateClient(string pipeName)</code></td><td>A client end for .</td></tr><tr><td><code>string OwnerSid()</code></td><td>The SID of the user this process runs as — the workspace owner.</td></tr><tr><td><code>IpcPeer PeerOf(NamedPipeServerStream pipe, string connectionId)</code></td><td>Who is on the other end, established from the connection itself.</td></tr></tbody></table>
+<h3><code>NamedPipeClientStream CreateClient(string pipeName)</code></h3>
+<p>A client end for .</p>
+<p><strong>Remarks.</strong> <code>CurrentUserOnly</code> is the client-side half, and it defends the opposite direction from the server&#x27;s ACL: the ACL stops another user reaching our daemon, while this stops us reaching <em>theirs</em>. Without it another user could create a pipe of the expected name first and harvest whatever a shell sent to what it believed was its own daemon.</p>
+<p>It appears only on this end because the framework refuses to combine it with the explicit server ACL — they are two spellings of one intent, and the server&#x27;s is the one a test can read back.</p>
+<h3><code>IpcPeer PeerOf(NamedPipeServerStream pipe, string connectionId)</code></h3>
+<p>Who is on the other end, established from the connection itself.</p>
+<p><strong>Remarks.</strong> Both values come from the kernel, never from anything the peer sent. A peer that could state its own identity could state someone else&#x27;s, which is the entire reason a capability binds to the connection rather than to a claim.</p>
+<h2><code>IpcMessage</code></h2>
+<p><em>record</em> — <code>IpcServer.cs</code></p>
+<p>What the wire carries: which exchange this is, and its envelope.</p>
+<p><strong>Remarks.</strong> The kind is separate from the operation because <code>open</code> is the exchange that <em>grants</em> authority and every other one <em>spends</em> it. Making it just another operation name would put the one unauthenticated entry point in the same table as the authorized ones, one typo away from being reachable without a capability.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Open = &quot;open&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Invoke = &quot;invoke&quot;</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IpcServerOptions</code></h2>
+<p><em>record</em> — <code>IpcServer.cs</code></p>
+<p>Bounds on what one daemon will accept.</p>
+<p><strong>Remarks.</strong> Every value is a refusal threshold rather than a tuning knob: each one is the point past which the daemon stops serving rather than degrading, because a boundary that queues without limit has simply moved the failure somewhere less visible.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>TimeSpan Response</code></td><td>How long a single response may take to write before the connection is abandoned.</td></tr><tr><td><code>TimeSpan Idle</code></td><td>How long the daemon lingers after its last client leaves.</td></tr><tr><td><code>TimeSpan Startup</code></td><td>How long the daemon waits for its first client before concluding it was orphaned.</td></tr></tbody></table>
+<h3><code>TimeSpan Response</code></h3>
+<p>How long a single response may take to write before the connection is abandoned.</p>
+<p><strong>Remarks.</strong> A client that pipelines requests and never reads its responses fills the pipe&#x27;s buffer; the daemon then blocks writing, stops reading, and that listener is held for as long as the client cares to hold it. With a fixed listener pool, enough such clients make the daemon unreachable to honest shells. This bounds how long one of them can occupy a listener.</p>
+<h3><code>TimeSpan Idle</code></h3>
+<p>How long the daemon lingers after its last client leaves.</p>
+<p><strong>Remarks.</strong> Long enough to survive a shell restarting — otherwise every restart pays a cold start and loses warm state — and short enough that a forgotten daemon is not resident indefinitely.</p>
+<h2><code>IpcServer</code></h2>
+<p><em>class</em> — <code>IpcServer.cs</code></p>
+<p>The named-pipe transport: establishes who the peer is, and hands bytes to the endpoint.</p>
+<p><strong>Remarks.</strong> <strong>This layer decides nothing about authorization.</strong> Version acceptance, capability binding and the order of the checks all live in <code>DaemonEndpoint</code>, which is why they were testable long before this existed. What belongs here is only what cannot be known without a connection: who the peer is, how many of them there are, and how fast they are asking.</p>
+<p><strong>Identity is established twice, on purpose.</strong> The pipe&#x27;s ACL admits only the owner, and then the peer&#x27;s SID is derived from the connection and checked again. The ACL is not redundant with the check, nor the check with the ACL: an ACL stops the connection existing, and the check is what a test can observe — a control that nothing verifies is one nobody notices losing.</p>
+<p><strong>The daemon exits when nobody needs it.</strong> A workspace daemon outliving every shell is an orphan holding a store lock, and the user has no way to see it or reason about it. So <code>RunAsync</code> returns — rather than looping forever — once the grace period passes with no client attached.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IpcServer(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int ActiveConnections</code></td><td>Connections currently attached.</td></tr><tr><td><code>int ServedConnections</code></td><td>Connections accepted over this server&#x27;s life. Never decreases.</td></tr><tr><td><code>long IdentityRefusals { get; private set; }</code></td><td>Connections closed because the peer was not the workspace owner.</td></tr><tr><td><code>long StalledConnections { get; private set; }</code></td><td>Connections abandoned because the peer stopped reading its responses.</td></tr><tr><td><code>Task RunAsync(CancellationToken cancellationToken)</code></td><td>Serves until cancelled, or until the idle grace passes with no client.</td></tr></tbody></table>
+<h3><code>IpcServer(</code></h3>
+<ul><li><strong>`expectedOwnerSid`</strong> — The SID a peer must present. Defaults to this process&#x27;s own user, which is the only correct value in production.</li></ul>
+<p><strong>Remarks.</strong> <strong>Why the owner is injectable at all.</strong> The check that a peer&#x27;s SID matches the workspace owner cannot fire in a single-user test environment: the ACL admits only this user, so every peer a test can produce is already the right one. A mutation run confirmed it — the check could be deleted outright and nothing failed, which makes it an untested control, and an untested control is not a control.</p>
+<p>Varying the <em>expected</em> value tests the decision honestly without needing a second user account: a server told to expect a different owner must refuse the connection it gets. The alternative was to leave the branch permanently unexercised and say so in a comment, which is how a security check quietly becomes decoration.</p>
+<h2><code>ScopeRefreshState</code></h2>
+<p><em>enum</em> — <code>ScopeRefreshService.cs</code></p>
+<p>Where a scope refresh has got to.</p>
+<h2><code>ScopeRefreshStatus</code></h2>
+<p><em>record</em> — <code>ScopeRefreshService.cs</code></p>
+<p>What a caller learns about a refresh.</p>
+<p><strong>Remarks.</strong> <code>Failure</code> is populated on <code>Failed</code> and states why. A refresh that failed silently would leave the last good snapshot rendering with nothing to say it is now stale — which is the &quot;clean empty success over rotting evidence&quot; this product exists to avoid.</p>
+<h2><code>RefreshMetrics</code></h2>
+<p><em>record</em> — <code>ScopeRefreshService.cs</code></p>
+<p>What every refresh so far has cost, and how often they happen.</p>
+<p><strong>Remarks.</strong> <strong>This exists to answer a question a design decision is blocked on.</strong> <code>docs/notes/note-20260830-sub-scope-incrementality.md</code> weighs four ways to make re-indexing incremental below the scope, and refuses to pick one, because the thing that decides it has never been measured: whether re-indexing is an occasional on-demand cost or something a user waits on constantly. Optimising a 1.2s operation that runs when asked is a different proposition from optimising one that runs on every save.</p>
+<p><strong>No rate is computed here.</strong> &quot;Refreshes per hour&quot; from two samples is a number with no error bar that will be quoted as if it had one. The raw facts — how many, first, last — let a reader compute it when there is enough of it to mean something, and notice when there is not.</p>
+<h2><code>RefreshMetricsRequest</code></h2>
+<p><em>record</em> — <code>ScopeRefreshService.cs</code></p>
+<p>Asking the daemon what refreshing has cost so far.</p>
+<h2><code>RefreshRequest</code></h2>
+<p><em>record</em> — <code>ScopeRefreshService.cs</code></p>
+<p>Asking the daemon to re-index a scope.</p>
+<h2><code>RefreshStatusRequest</code></h2>
+<p><em>record</em> — <code>ScopeRefreshService.cs</code></p>
+<p>Asking how a previously started refresh is doing.</p>
+<h2><code>ScopeRefreshService</code></h2>
+<p><em>class</em> — <code>ScopeRefreshService.cs</code></p>
+<p>Re-indexing a scope, across the boundary.</p>
+<p><strong>Remarks.</strong> <strong>Started and polled, never awaited on the wire.</strong> A scope has a 60-second budget and the IPC lane serves one request at a time per connection — so a refresh that answered only when it finished would hold that connection for a minute, and the daemon&#x27;s response-write timeout would abandon it long before. The control lane carries <em>commands</em>; a command that starts long work returns as soon as the work is started.</p>
+<p><strong>The command id is the idempotency key</strong>, exactly as the architecture&#x27;s command protocol specifies. Re-sending the same id returns the same job rather than starting a second extraction — which matters most in the case it exists for: a client that did not see the reply and retried. Two extractions of one scope would both bump the generation and the loser&#x27;s work would be discarded, having cost a full budget.</p>
+<p><strong>Nothing here re-implements ingestion.</strong> The generation fence, the incomplete-result handling and the snapshot commit all stay in <code>WorkspaceCore</code>; this decides only what crossing the boundary means.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ScopeRefreshService(Func&lt;string, string, CancellationToken, Task&lt;int&gt;&gt; refresh)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int TrackedJobs</code></td><td>Jobs currently held, running or finished.</td></tr><tr><td><code>ScopeRefreshStatus Start(string commandId, string scopeId, string artifactRevision)</code></td><td>Starts a refresh, or returns the job this command id already started.</td></tr><tr><td><code>ScopeRefreshStatus? Status(string commandId)</code></td><td>How a refresh is doing, or <code>null</code> if this daemon has no record of it.</td></tr><tr><td><code>RefreshMetrics Metrics()</code></td><td>What refreshing has cost so far, on the normal path with no flag to remember.</td></tr><tr><td><code>void Register(DaemonEndpoint endpoint)</code></td><td>Registers refresh and its status query on the endpoint.</td></tr></tbody></table>
+<h3><code>ScopeRefreshService(Func&lt;string, string, CancellationToken, Task&lt;int&gt;&gt; refresh)</code></h3>
+<ul><li><strong>`refresh`</strong> — Runs the extraction and returns the assertion count. Injected rather than taking a <code>WorkspaceCore</code> so the boundary&#x27;s behaviour — idempotency, retention, what a failure looks like — is testable without standing up a store and an extractor.</li></ul>
+<h3><code>ScopeRefreshStatus? Status(string commandId)</code></h3>
+<p>How a refresh is doing, or <code>null</code> if this daemon has no record of it.</p>
+<p><strong>Remarks.</strong> Null rather than a synthesised &quot;unknown&quot; state: a job this daemon never started, or one it has since evicted, are both &quot;I cannot tell you&quot;, and inventing a status would let a caller wait for a result that is never coming.</p>
+<h2><code>Operations</code></h2>
+<p><em>class</em> — <code>ScopeRefreshService.cs</code></p>
+<p>The operation names, so both ends spell them the same way.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Refresh = &quot;refresh&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string RefreshStatus = &quot;refresh.status&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string RefreshMetrics = &quot;refresh.metrics&quot;</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>DaemonUnavailableException</code></h2>
+<p><em>class</em> — <code>ShellBootstrap.cs</code></p>
+<p>Why a shell could not reach a daemon.</p>
+<h2><code>ShellBootstrap</code></h2>
+<p><em>class</em> — <code>ShellBootstrap.cs</code></p>
+<p>Gets the shell a daemon: reach the one that is running, or start one and wait for it.</p>
+<p><strong>Remarks.</strong> <strong>Connect first, launch second, and that order is the whole design.</strong> A workspace has at most one daemon — enforced by <code>WorkspaceLock</code> — so launching first would mean the second shell on a workspace starts a process whose only job is to discover it is redundant and exit. Trying the pipe costs a few milliseconds and is right in the common case.</p>
+<p><strong>Launching is racy on purpose, and safe because of the lock.</strong> Two shells opening the same workspace at the same instant will both fail to connect and both launch; one takes the workspace lock and serves, the other exits with a stable code. Serialising that with a lock of our own would put a second mechanism in front of the one that already decides this correctly.</p>
+<p><strong>Failure is reported, never degraded into a silent fallback to in-process.</strong> A shell that quietly ran the core itself when the daemon would not start would work — and would have abandoned the trust boundary, the workspace lock and the epoch fence without saying so. The caller is told, and decides.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Task&lt;WorkspaceClient&gt; ConnectOrLaunchAsync(</code></td><td>Connects to the workspace&#x27;s daemon, starting one if none answers.</td></tr></tbody></table>
+<h3><code>Task&lt;WorkspaceClient&gt; ConnectOrLaunchAsync(</code></h3>
+<p>Connects to the workspace&#x27;s daemon, starting one if none answers.</p>
+<ul><li><strong>`workspacePath`</strong> — The workspace root. Determines the pipe name and the lock.</li><li><strong>`daemonExecutable`</strong> — The daemon build to launch if none is running.</li><li><strong>`dataDirectory`</strong> — Where a launched daemon should keep this workspace&#x27;s state. Null leaves it to the daemon&#x27;s machine-wide default — which is right for the shell and wrong for anything that must not write into the user&#x27;s profile, such as a test.</li></ul>
+<h2><code>IpcRequestException</code></h2>
+<p><em>class</em> — <code>WorkspaceClient.cs</code></p>
+<p>Raised when the daemon refuses a request, carrying the boundary&#x27;s stable code.</p>
+<p><strong>Remarks.</strong> An exception rather than a nullable result because these are not outcomes a caller chooses between — a stale epoch, a revoked capability and an unsupported version are all &quot;this request did not happen, and you must decide what to do about it&quot;. The code is on the exception so a caller can decide without parsing prose.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Code { get; } = code</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WorkspaceClient</code></h2>
+<p><em>class</em> — <code>WorkspaceClient.cs</code></p>
+<p>The core&#x27;s read surface, over the boundary, in the same shapes the in-process caller uses.</p>
+<p><strong>Remarks.</strong> <strong>The result types are the core&#x27;s own</strong> — <code>DescribeResult</code> and its siblings — rather than a parallel set of wire types. A second definition of one result is two things to keep in step, and the first divergence would appear as a field that is present in process and missing across the pipe.</p>
+<p><strong>The epoch is carried, not assumed.</strong> Every request states which epoch it was authored against, and the daemon rejects a mismatch. That is the fence that stops a command reasoning about state that has since been replaced, and a client that quietly resent the daemon&#x27;s current epoch would defeat it while appearing to work.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>long Epoch</code></td><td>The epoch this client is bound to.</td></tr><tr><td><code>Task&lt;WorkspaceClient&gt; ConnectAsync(</code></td><td>Connects, handshakes, and returns a client ready to query.</td></tr><tr><td><code>Task&lt;DescribeResult&gt; DescribeAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;ImpactResult&gt; ImpactAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;DispatchBeginResult&gt; DispatchBeginAsync(</code></td><td>Phase 1 of a dispatch, answered by the daemon that owns the store.</td></tr><tr><td><code>Task&lt;DispatchReceipt&gt; DispatchFinalizeAsync(</code></td><td>Phase 2 of a dispatch. Idempotent: a retried finalize returns the existing receipt.</td></tr><tr><td><code>Task&lt;RefreshMetrics&gt; RefreshMetricsAsync(CancellationToken cancellationToken)</code></td><td>What re-indexing has cost in this daemon so far.</td></tr><tr><td><code>Task&lt;WorkspaceOverview&gt; OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;PathResult&gt; PathsAsync(PathQuery query, CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;WorkspaceGraph&gt; GraphAsync(GraphQuery query, CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;EvidencePage&gt; EvidenceAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;FindResult&gt; FindAsync(string term, int maxResults, CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;ContentSearchResult&gt; SearchContentAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;InteractionResult&gt; InteractionAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;KnowledgeResult&gt; KnowledgeAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;NodeContent&gt; NodeContentAsync(string nodeId, CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;SolutionTreeResult&gt; SolutionTreeAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;EntryPointsResult&gt; EntryPointsAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;ScopeRefreshStatus&gt; RefreshScopeAsync(</code></td><td>Asks the daemon to re-index a scope, and waits for it to finish.</td></tr><tr><td><code>Task&lt;IndexSummary&gt; IndexSolutionAsync(</code></td><td>Re-reads the daemon&#x27;s epoch, for a caller recovering from a stale-epoch rejection.</td></tr><tr><td><code>Task&lt;long&gt; EpochAsync(CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;long&gt; RefreshEpochAsync(CancellationToken cancellationToken)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ValueTask DisposeAsync()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>Task&lt;WorkspaceClient&gt; ConnectAsync(</code></h3>
+<p>Connects, handshakes, and returns a client ready to query.</p>
+<p><strong>Remarks.</strong> The epoch comes from the handshake rather than from the caller: the daemon owns the store and is the only party that knows it. A caller-supplied epoch would be a guess, and the fence exists precisely to catch guesses.</p>
+<h3><code>Task&lt;RefreshMetrics&gt; RefreshMetricsAsync(CancellationToken cancellationToken)</code></h3>
+<p>What re-indexing has cost in this daemon so far.</p>
+<p><strong>Remarks.</strong> The measurement the sub-scope-incrementality decision is blocked on: whether a re-index is an occasional cost a user asks for, or something they wait on constantly.</p>
+<h3><code>Task&lt;ScopeRefreshStatus&gt; RefreshScopeAsync(</code></h3>
+<p>Asks the daemon to re-index a scope, and waits for it to finish.</p>
+<p><strong>Remarks.</strong> <strong>Start-then-poll, because the wire cannot hold a 60-second operation.</strong> The lane serves one request at a time per connection, so a refresh that answered only on completion would occupy that connection for the whole budget — and the daemon&#x27;s response-write timeout would abandon it first.</p>
+<p><strong>One command id for the whole exchange.</strong> It is the idempotency key: if the start reply is lost and the caller retries, the daemon returns the job it already has rather than extracting the scope twice.</p>
+<h2><code>DescribeRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>The four read projections, as they travel across the boundary.</p>
+<p><strong>Remarks.</strong> Explicit request records rather than loose strings: the operation name and its arguments arrive as one payload from a process we do not control, and a positional or free-form encoding would have to be validated by hand at every call site.</p>
+<h2><code>ImpactRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>FindRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>SearchContentRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Ask for lines of workspace files containing a term.</p>
+<h2><code>InteractionRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Ask for one caller&#x27;s outgoing calls in order.</p>
+<h2><code>EvidenceRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Asks for one page of every current assertion.</p>
+<h2><code>OverviewRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Asks for the workspace as groups rather than nodes.</p>
+<h2><code>PathsRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Asks how one node reaches another.</p>
+<h2><code>GraphRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Asks for the graph — all of it, or the part the filters name.</p>
+<h2><code>KnowledgeRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>NodeContentRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>One node, for the reader that selected it (ADR-0018 node-content-reader-contract).</p>
+<h2><code>DispatchBeginRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Phase 1 of a dispatch: make the attempt durable before any byte leaves the shell.</p>
+<h2><code>DispatchFinalizeRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Phase 2 of a dispatch: record the outcome the shell observed.</p>
+<h2><code>IndexSolutionRequest</code></h2>
+<p><em>record</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Index every C# scope in the workspace.</p>
+<p><strong>Remarks.</strong> Additive with a default, so a client built before this field still decodes and still means &quot;use the cache&quot; — which is the safe reading of an absent flag. It exists because an operator must always be able to say &quot;I do not believe the cache&quot;, and until it was reachable that sentence had no button behind it.</p>
+<h2><code>DaemonOperations</code></h2>
+<p><em>class</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Operations every daemon answers, whatever workspace it serves.</p>
+<p><strong>Remarks.</strong> Separate from the projections because they are about the <em>daemon</em> rather than the workspace&#x27;s contents: a shell needs them to establish that it is talking to a live peer and which epoch its commands will be judged against, before it has anything to ask.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Ping = &quot;ping&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Epoch = &quot;epoch&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Register(DaemonEndpoint endpoint, Func&lt;long&gt; epoch)</code></td><td>Registers them against a live epoch source.</td></tr></tbody></table>
+<h2><code>WorkspaceOperations</code></h2>
+<p><em>class</em> — <code>WorkspaceOperations.cs</code></p>
+<p>Puts the core&#x27;s read surface behind the daemon endpoint.</p>
+<p><strong>Remarks.</strong> <strong>This is what the process split was for.</strong> Until now the boundary existed and almost nothing crossed it: the daemon answered <code>ping</code> while the shell called the core in-process, so the trust boundary was real and unused. Every day that persists, new code is written against the in-process path and has to be moved later.</p>
+<p><strong>Read projections only, and that is the whole surface today.</strong> Dispatch — writing to a terminal, staging a prompt — carries the two-phase receipt semantics of ADR-0010, and moving it across is a separate piece of work with its own failure modes. Naming that here is better than registering a handler that half-implements it.</p>
+<p><strong>The projections are already bounded</strong> (<code>ProjectionService</code> clamps every limit and reports what it omitted), which is what makes them safe to expose to a caller who chooses the numbers. Nothing here re-validates: doing so would create a second definition of the bound, and two definitions of one quantity is a defect signature.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Describe = &quot;describe&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Impact = &quot;impact&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Find = &quot;find&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string SearchContent = &quot;search-content&quot;</code></td><td>Lines in the workspace&#x27;s own files that contain a term.</td></tr><tr><td><code>string Interaction = &quot;interaction&quot;</code></td><td>One caller&#x27;s outgoing calls, in call order — a sequence diagram&#x27;s feed.</td></tr><tr><td><code>string Knowledge = &quot;knowledge&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string NodeContent = &quot;nodeContent&quot;</code></td><td>One node&#x27;s content, on demand (ADR-0018 node-content-reader-contract).</td></tr><tr><td><code>string Evidence = &quot;evidence&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Graph = &quot;graph&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Paths = &quot;paths&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Overview = &quot;overview&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string SolutionTree = &quot;solution-tree&quot;</code></td><td>Census join of disk-now folders and indexed file-artifacts (ADR-0038).</td></tr><tr><td><code>string EntryPoints = &quot;entry-points&quot;</code></td><td>D-1 entry-point listing (unclassified until classifier exists).</td></tr><tr><td><code>string DispatchBegin = &quot;dispatch.begin&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string DispatchFinalize = &quot;dispatch.finalize&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string IndexSolution = &quot;index.solution&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>JsonSerializerOptions Wire { get; } = new(JsonSerializerDefaults.Web)</code></td><td>How every payload on this boundary is encoded.</td></tr><tr><td><code>void Register(DaemonEndpoint endpoint, ProjectionService projections)</code></td><td>Registers the read projections on .</td></tr><tr><td><code>void RegisterDispatch(DaemonEndpoint endpoint, BoundaryDispatcher dispatcher)</code></td><td>Registers the two durable phases of prompt dispatch (ADR-0010) on .</td></tr><tr><td><code>void RegisterIndex(DaemonEndpoint endpoint, Func&lt;string, bool, CancellationToken, Task&lt;IndexSummary&gt;&gt; index)</code></td><td>Turns a domain refusal into a stable error response instead of letting it escape.  Registers the workspace-wide C# index on .</td></tr></tbody></table>
+<h3><code>string SearchContent = &quot;search-content&quot;</code></h3>
+<p>Lines in the workspace&#x27;s own files that contain a term.</p>
+<p><strong>Remarks.</strong> Separate from <code>Find</code> because it answers a different question and costs a different amount: Find reads the store, this opens files. A client should be able to offer the cheap one on every keystroke and the expensive one on demand.</p>
+<h3><code>JsonSerializerOptions Wire { get; } = new(JsonSerializerDefaults.Web)</code></h3>
+<p>How every payload on this boundary is encoded.</p>
+<p><strong>Remarks.</strong> <strong>Enums travel as strings.</strong> By number, adding a member in the middle of an enum silently renumbers the ones after it — and with a dual-major handshake designed so an old shell may meet a new daemon, that is a wire break with no error and no symptom except wrong answers. A name costs a few bytes and cannot be renumbered.</p>
+<h3><code>void RegisterDispatch(DaemonEndpoint endpoint, BoundaryDispatcher dispatcher)</code></h3>
+<p>Registers the two durable phases of prompt dispatch (ADR-0010) on .</p>
+<p><strong>Remarks.</strong> Separate from the projection registration because these are the first WRITES on the read endpoint, and because a daemon can legitimately serve projections without them.</p>
+<h3><code>void RegisterIndex(DaemonEndpoint endpoint, Func&lt;string, bool, CancellationToken, Task&lt;IndexSummary&gt;&gt; index)</code></h3>
+<p>Turns a domain refusal into a stable error response instead of letting it escape.</p>
+<p>Registers the workspace-wide C# index on .</p>
+<p><strong>Remarks.</strong> <strong>Found by a test, and it was worse than it looked.</strong> A stale-epoch dispatch threw a <code>WorkspaceStoreException</code> out of the handler, past <code>Handle{TRequest}</code> — which deliberately guards only decoding — and out of the server&#x27;s listen loop. One client holding a stale epoch would have taken the daemon down for <em>every</em> shell attached to the workspace.</p>
+<p><strong>Why the distinction matters and is not a widening of the catch.</strong> <code>Handle</code>&#x27;s rule stands: a projection that throws is a defect in us and must not be swallowed. But a stale epoch is not a defect — it is the expected answer when the core was replaced under a caller, and the design requires it to come back as a stable denial code. Only <code>WorkspaceStoreException</code> is mapped, because it is the type that carries one; everything else still escapes.</p></main></body></html>

@@ -1,0 +1,8 @@
+{
+  "artifacts_checked": 15,
+  "invalid_source_references": 0,
+  "html_companions": true,
+  "embedded_mockup_matches": true,
+  "production_test_ci_edits": false,
+  "mockup_sha256": "758a6e97fb871d656c0fc6cf915548fd681deba00de9eeaa63d92535c339ce89"
+}

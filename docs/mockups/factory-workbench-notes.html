@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Factory Workbench</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from factory-workbench.md</div><h1>Direction before screens</h1>
+<p>Audience: the technically expert owner coordinating several changes and arriving with uncertainty about what is complete, what is true, and where their judgment is needed. Job: accept intent, understand a change&#x27;s evidence, and make the next bounded decision without reading every log. <strong>The product remains a local desktop workbench.</strong> This HTML is a portable review artifact, not a proposed browser product or proof of native WPF accessibility.</p>
+<p>Adjectives: calm rather than noisy; precise rather than reassuring; connected rather than fragmented. References: current AI-DE&#x27;s graph/tree and source drill-down; VS Code&#x27;s separate plan acceptance; Antigravity&#x27;s reviewable artifacts; Junie&#x27;s guided review narrative; CodeRabbit&#x27;s immutable snapshots. The source ledger is in the companion research. Borrow tasks and interactions, not vendor branding.</p>
+<p>Archetype Signature: <code>KeyboardVelocity { Type:OLTP; Arch:SPA; Layout:MasterDetail; Density:Compact; Nav:Sidebar+CommandPalette; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Session; Feedback:Confirmed; Motion:None; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; }</code>. Read-only architecture and graph lenses additionally use a bounded visual DSS; accepting a review decision remains serial. No bento dashboard or decorative whole-repository hairball.</p>
+<p>Type: existing Segoe UI/Cascadia tokens keep the artifact recognizable as a Windows workbench. Color: existing dark/light semantic tokens; confidence and urgency always have words. Space: compact rows with a single selected object, stable detail area, and an optional evidence drawer. Anti-goals: model-output progress percentages, six competing top-level applications, a permanently open terminal, automatic approval based on coverage/confidence, or spec rewriting to erase drift.</p>
+<h2>Domain model before UI</h2>
+<p>Proposed bounded contexts: Intent (WorkItem, SpecRevision, AcceptanceCriterion), Delivery (ChangeSet, Run), Assurance (Assessment, Finding, EvidenceLink), and Decisions (ReviewDecision). Existing workspace/entity identities are references, not duplicated models. WorkItem is a small aggregate whose invariant is that acceptance names one exact spec revision and the required evidence; assessment and decision aggregates pin base/head/content identity and never mutate a prior verdict.</p>
+<p>Grain: one evidence-link row is one producer&#x27;s claim linking one exact criterion revision to one production/test artifact version; one run-result row is one test attempt in one environment; one decision event is one actor&#x27;s disposition at one baseline. Append-only facts carry changes; stable entities are dimensions. Derive status, coverage and attention from those facts. Counts are additive only within a defined disjoint population; durations across parallel runs are non-additive for wall time; pass/flake/coverage rates are non-additive and retain numerator, denominator and window. Changes to a criterion&#x27;s meaning create a new revision. Content changes invalidate relevant evidence and decisions; a mockup&#x27;s authority is exploratory until explicitly selected or approved.</p>
+<h2>Surface and hard-state inventory</h2>
+<p>Three destinations share project, scope and selection: Factory; Review; Understand. Six demonstrations: spec-first work/progress, PR review, test worthiness, graph/code understanding, architecture review, and rigor backlog. PR and Tests are Review lenses; architecture is an Understand lens. Code and execution are subordinate evidence, not separate primary destinations.</p>
+<p>Every destination renders ready, loading, empty, error, stale, partial, and untrusted-output states. The harness varies persona, viewport, theme, state and reduced motion. Stale evidence blocks decision recording. Sample action buttons alter local demonstration state only; no provider calls, Git operations or production approval occur. The mockup includes keyboard focus, accessible names, a diagram table alternative, zoom and context drill-down, and visible omission counts.</p>
+<p>UI triggers: dense desktop analysis and AI uncertainty states apply. The artifact is HTML, so native DPI, UI Automation, WPF keyboard, windowing and packaging proof remain unverified and belong to later implementation. Existing DESIGN.md is reused; no production token or shell change is made.</p>
+<h2>Interactive artifact</h2>
+<p><a href="factory-workbench.html">Open the factory workbench</a>.</p>
+<p>Verification and independent critique are recorded in the final Proof Pack. The design is an exploration, not accepted requirements or a promise that the proposed backends exist.</p>
+<h2>PR questions addition</h2>
+<p>The reviewer can ask arbitrary questions, use retry/recovery/test examples, inspect answer evidence, ask follow-ups and retain unresolved concerns as proposed review/test-gap records. Answers are pinned fixture demonstrations, never live model claims. Stale input blocks a new answer; source absence is not evidence of author intent.</p>
+<h2>Authoring expansion and bounded plan</h2>
+<p>A1 inspect existing editor/history/wiring → A2 versioned draft model → A3 rich document/stack/preview fixture and migration proposal → A4 independent review and interaction checks. This append stays at TierT2/fan-out3 and does not reopen the completed forensic/source review. Factory now includes Prompt editor: contenteditable rich text, bold/emphasis, acceptance/code blocks, block movement, exact replace preview/undo, context chips, back/forward with scratch preservation, saved revision/branch, comparison and canonical Markdown preview. No true multi-cursor engine, model compilation, production persistence or Send is claimed. The user addition was retained verbatim in the audit driving text.</p></main></body></html>

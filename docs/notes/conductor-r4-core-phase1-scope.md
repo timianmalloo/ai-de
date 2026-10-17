@@ -15,6 +15,8 @@ summary: >-
   grok-build lane, but grok-build parity is R11, which the spec assigns to Phase 4.
   The Owner ruled what "R4(core)" means in Phase 1 so no Phase-4 work is pulled forward
   and no R4 criterion is silently dropped.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Decision note — R4-core scope for Conductor Phase 1

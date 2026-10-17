@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Facts</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Facts.md</div><h1>API: <code>AiDe.Core.Facts</code></h1>
+<p><strong>14 public types · 10 public members · 96% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>DisclosureKind</code></h2>
+<p><em>enum</em> — <code>DisclosureKinds.cs</code></p>
+<p>Whether a disclosure describes a decision or a defect.</p>
+<h2><code>DisclosureKinds</code></h2>
+<p><em>class</em> — <code>DisclosureKinds.cs</code></p>
+<p>Which disclosures are boundaries and which are gaps, stated once.</p>
+<p><strong>Remarks.</strong> <strong>Why this is a list and not a rule about names.</strong> The convention is real — <code>-not-indexed</code> and <code>-not-analysed</code> tend to be boundaries, <code>-missing</code> and <code>-not-resolved</code> tend to be gaps — and it is a convention, not a guarantee. <code>schema-changed-by-raw-sql-not-read</code> reads like a boundary and is a gap: the schema can be quietly wrong. A suffix rule would classify it confidently and wrongly, which is worse than a list somebody has to maintain, because the list has a test that fails when it goes stale.</p>
+<p><strong>Why the distinction earns its own type.</strong> Conflating the two has cost this project twice, both measured. Python disclosed 246 &quot;unresolved&quot; imports that were all standard library — a boundary reported as a gap — and it was ranked the largest coverage hole in any extractor on the strength of the number. TypeScript&#x27;s equivalent was 83% invented facts. Both are DC-050, and the fix each time was to say which kind it was.</p>
+<p>A surface that can show only one line should show a gap; a panel listing everything should separate them. Neither should have to infer it from a name.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>DisclosureKind KindOf(string disclosure)</code></td><td>The kind of a disclosure, by class name or by a whole folded line.</td></tr><tr><td><code>bool IsClassified(string disclosureClass)</code></td><td>Whether this disclosure has been classified at all.</td></tr></tbody></table>
+<h3><code>DisclosureKind KindOf(string disclosure)</code></h3>
+<p>The kind of a disclosure, by class name or by a whole folded line.</p>
+<p><strong>Remarks.</strong> An unknown name is a <code>Gap</code>, deliberately. A disclosure nobody has classified is more likely to be new than to be harmless, and the cost of the two mistakes is not symmetric: a boundary shown as a gap wastes a reader&#x27;s attention once, while a gap shown as a boundary is a defect filed under &quot;working as intended&quot;. <code>EveryDisclosureHasAKind</code> exists so this default stays a safety net rather than a habit.</p>
+<h2><code>DisclosureSummary</code></h2>
+<p><em>class</em> — <code>DisclosureSummary.cs</code></p>
+<p>Folds per-scope disclosures into one line per class, with the counts added up.</p>
+<p><strong>Remarks.</strong> <strong>Every disclosure was right and the list was unusable.</strong> A disclosure is emitted per scope, conditional, and carrying its own count — which is the rule this codebase arrived at after several defects, and it is correct. Nobody said what happens when 39 knowledge scopes each emit the same two. MEASURED on TheTerrace after a real index: <strong>178 disclosure strings, 108 distinct, for 28 actual classes</strong> — <code>knowledge-headings-not-analysed</code> alone appeared 39 times, each with a different number, so <code>Distinct()</code> could not merge any of them.</p>
+<p>The result filled the user&#x27;s window: roughly sixty lines of near-identical text, with the one finding that mattered — 109 prose links naming a file that is not there — buried in the middle of it. <strong>A boundary stated 39 times is noise, and noise is where a real signal goes to hide.</strong> That is this codebase&#x27;s own lesson about disclosures, arrived at from the other direction: it has spent a lot of effort making sure they fire, and none on what a reader does with sixty of them.</p>
+<p><strong>The counts are summed, not the lines deduplicated.</strong> &quot;914 headings in one scope&quot; and &quot;4,471 headings across the workspace&quot; are different facts, and only the second answers &quot;how much of this repository is unread&quot;. The explanatory half of the sentence is kept from the first occurrence, because every scope emits the same template.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;string&gt; Fold(IEnumerable&lt;string&gt; disclosures)</code></td><td>One line per disclosure class, counts summed across every scope that raised it.</td></tr><tr><td><code>long CountIn(string folded)</code></td><td>The count a folded disclosure carries, or zero when it names no number.</td></tr></tbody></table>
+<h3><code>long CountIn(string folded)</code></h3>
+<p>The count a folded disclosure carries, or zero when it names no number.</p>
+<p><strong>Remarks.</strong> Exposed so a caller choosing WHICH disclosure to show does not re-parse the sentence this class just built — two readers of one format is how the two halves of a rule drift apart.</p>
+<h2><code>SessionProcessingClass</code></h2>
+<p><em>enum</em> — <code>Dispatch.cs</code></p>
+<p>The declared downstream processing posture of an agent session. Authorization for every MCP tool call is bound to this (ADR-0011): the transport says who connected, this says where the bytes go next.</p>
+<h2><code>CallerKind</code></h2>
+<p><em>enum</em> — <code>Dispatch.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>CallerPrincipal</code></h2>
+<p><em>record</em> — <code>Dispatch.cs</code></p>
+<p>A stable principal, server-derived from the authenticated connection and invariant across reconnects and core epochs. Never read from a command payload, and never connection-scoped — a connection-scoped identity would void receipt dedup across the crash window it exists for.</p>
+<h2><code>DispatchState</code></h2>
+<p><em>enum</em> — <code>Dispatch.cs</code></p>
+<p>The folded state of one dispatch key. <code>Pending</code> is durable and written <em>before</em> the terminal write; recovery resolves an unresolved attempt to <code>DeliveryUnknown</code>.</p>
+<h2><code>DispatchReceipt</code></h2>
+<p><em>record</em> — <code>Dispatch.cs</code></p>
+<p>The folded receipt for one dispatch key, derived from its attempt and outcome events.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool BlocksReExecution</code></td><td>True when a retry may not re-execute. Every state qualifies once an attempt exists — that is the point of the write-ahead record.</td></tr></tbody></table>
+<h2><code>PtyWriteResult</code></h2>
+<p><em>enum</em> — <code>Dispatch.cs</code></p>
+<p>What a terminal write actually proved.</p>
+<h2><code>EvidenceOrigin</code></h2>
+<p><em>enum</em> — <code>EvidenceAssertion.cs</code></p>
+<p>How the evidence was acquired. Never collapsed with <code>VerificationStatus</code>.</p>
+<h2><code>VerificationStatus</code></h2>
+<p><em>enum</em> — <code>EvidenceAssertion.cs</code></p>
+<p>How well the evidence is established. Deliberately separate from <code>EvidenceOrigin</code>: the spec forbids collapsing acquisition and validation into one confidence word.</p>
+<h2><code>Provenance</code></h2>
+<p><em>record</em> — <code>EvidenceAssertion.cs</code></p>
+<p>Where an assertion came from, so a claim can always be traced back to an artifact.</p>
+<h2><code>EvidenceAssertion</code></h2>
+<p><em>record</em> — <code>EvidenceAssertion.cs</code></p>
+<p>The fact grain: one row is exactly one assertion by one extractor about one normalized (subject, predicate, object) relation at one artifact revision.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string AssertionId { get; } = ComputeId(</code></td><td>Deterministic identity: re-extracting an unchanged artifact yields the same id, so a replay is idempotent rather than a duplicate. Computed, never supplied.</td></tr></tbody></table>
+<h2><code>EvidencePredicates</code></h2>
+<p><em>class</em> — <code>EvidencePredicates.cs</code></p>
+<p>Which predicates carry a VALUE and which carry a reference to another node.</p>
+<p><strong>Remarks.</strong> The fact grain deliberately does not distinguish them — every row is (subject, predicate, object), and an attribute genuinely IS a relation to a value. What must not follow is that every value becomes something a user can navigate to.</p>
+<p><strong>Found by indexing a real repository.</strong> <code>api_version</code> put <code>2020-02-02</code> in the graph and <code>resource_name_expression</code> put <code>&#x27;${namePrefix}-acs&#x27;</code> there, so dates and unevaluated strings ranked alongside types as things to explore.</p>
+<p><strong>One list, used by every reader.</strong> The first version of this fix lived only in the ingest path, and search kept returning the junk because search reads the assertions directly rather than the node table — two places deciding the same thing, one of them wrong.</p>
+<p>An explicit list rather than a naming convention: a convention silently misclassifies the first predicate that does not follow it, and a misclassification here puts junk in the graph instead of failing.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlySet&lt;string&gt; Attributes { get; } = new HashSet&lt;string&gt;(StringComparer.Ordinal)</code></td><td>Predicates whose object is a value, not a node.</td></tr><tr><td><code>IReadOnlySet&lt;string&gt; Identity { get; } = new HashSet&lt;string&gt;(StringComparer.Ordinal)</code></td><td>The few facts that say WHAT A NODE IS, as opposed to what it is connected to.</td></tr><tr><td><code>string IdentitySqlList { get; } =</code></td><td>The SQL literal list for <code>Identity</code>, generated from the same set.</td></tr><tr><td><code>string SqlList { get; } =</code></td><td>The SQL literal list for an <code>IN</code> clause. Built from the same set.</td></tr></tbody></table>
+<h3><code>IReadOnlySet&lt;string&gt; Identity { get; } = new HashSet&lt;string&gt;(StringComparer.Ordinal)</code></h3>
+<p>The few facts that say WHAT A NODE IS, as opposed to what it is connected to.</p>
+<p><strong>Remarks.</strong> <strong>Why a bounded read needs this.</strong> A node&#x27;s facts are capped, and they were ordered alphabetically — so a node with more relations than the cap lost its own type, owner and class to its own links. MEASURED: 12 of 877 knowledge documents were already over the 50-row ceiling before anything was added to them, and simulating headings pushed nearly every structured document over. <code>adr-0015-erasure-ledger-durable-model</code> would have returned 44 headings and none of <code>has_type</code>, <code>node_class</code>, <code>owned_by</code>, <code>refines</code> or <code>review_by</code>.</p>
+<p><strong>Deliberately not &quot;all attributes&quot;.</strong> <code>has_member</code> is an attribute and a type can carry forty of them; putting the whole attribute set first would replace one flood with another. This is the small, fixed set that answers &quot;what is this thing&quot; — everything else, attribute or relation, competes on equal terms behind it.</p>
+<h3><code>string SqlList { get; } =</code></h3>
+<p>The SQL literal list for an <code>IN</code> clause. Built from the same set.</p>
+<p><strong>Remarks.</strong> Generated rather than typed a second time: a hand-written copy in a query is exactly how the two halves of this rule drift apart, which is the defect that produced it.</p></main></body></html>

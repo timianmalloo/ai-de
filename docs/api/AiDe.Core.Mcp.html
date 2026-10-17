@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Mcp</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Mcp.md</div><h1>API: <code>AiDe.Core.Mcp</code></h1>
+<p><strong>6 public types · 8 public members · 50% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>McpErrorCodes</code></h2>
+<p><em>class</em> — <code>McpToolGateway.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string EgressDenied = &quot;AIDE-MCP-EGRESS-DENIED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string CrossWorkspace = &quot;AIDE-AUTH-CROSS-WORKSPACE&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LimitExceeded = &quot;AIDE-MCP-LIMIT-EXCEEDED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string NotFound = &quot;AIDE-MCP-NOT-FOUND&quot;</code></td><td>The tool ran and its subject does not exist — distinct from a tool that refused.</td></tr></tbody></table>
+<h3><code>string NotFound = &quot;AIDE-MCP-NOT-FOUND&quot;</code></h3>
+<p>The tool ran and its subject does not exist — distinct from a tool that refused.</p>
+<p><strong>Remarks.</strong> An absent subject must not come back as an empty payload. An empty standing reads as &quot;you have no rank and no reasons&quot;, which is a claim about the agent rather than about the lookup (DC-087) — and the same is true of an empty description or an empty result set.</p>
+<h2><code>McpCallerContext</code></h2>
+<p><em>record</em> — <code>McpToolGateway.cs</code></p>
+<p>Identifies the calling agent session, including where its bytes go next.</p>
+<h2><code>ToolAuthorization</code></h2>
+<p><em>enum</em> — <code>McpToolGateway.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>McpToolResult</code></h2>
+<p><em>record</em> — <code>McpToolGateway.cs</code></p>
+<p>A tool result that knows whether it was reduced, and why.</p>
+<h2><code>McpToolGateway</code></h2>
+<p><em>class</em> — <code>McpToolGateway.cs</code></p>
+<p>The MCP boundary. Every tool call is authorized against the calling session&#x27;s declared processing class before any workspace content is assembled (ADR-0011).</p>
+<p><strong>Remarks.</strong> Pattern: Policy-Bound Egress. Loopback binding answers &quot;who connected&quot;, not &quot;where do these bytes go next&quot; — an externally-processing agent runs locally and forwards to its provider, so a transport control cannot close that path. Authorization therefore follows the session class, and an unknown class fails closed exactly like an external one.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ToolAuthorization Authorize(McpCallerContext caller, string toolName)</code></td><td>The deterministic (T0) authorization decision. A model never influences this — it runs before any content is read.  Authorizes a tool call. Bound to session identity and workspace, never to a processing class.</td></tr><tr><td><code>McpToolResult Describe(McpCallerContext caller, string nodeId, int maxNeighbors)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>McpToolResult Find(McpCallerContext caller, string term, int maxResults)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>McpToolResult Standing(McpCallerContext caller, string episodeId)</code></td><td>The agent&#x27;s own standing for one episode: rank where comparable, trend, and one evidence-backed reason per dimension (US-16).</td></tr></tbody></table>
+<h3><code>ToolAuthorization Authorize(McpCallerContext caller, string toolName)</code></h3>
+<p>The deterministic (T0) authorization decision. A model never influences this — it runs before any content is read.</p>
+<p>Authorizes a tool call. Bound to session identity and workspace, never to a processing class.</p>
+<p><strong>Remarks.</strong> <strong>ADR-0022 supersedes ADR-0011 here.</strong> This used to deny writes and reduce reads for a session declared <code>ExternalProcessing</code>, on the reasoning that a provider-backed agent would exfiltrate workspace content. The threat model does not survive contact with the product&#x27;s shape: an agent in AI-DE has a TERMINAL in the workspace — since <code>c235611</code>, in its own worktree of it — and can <code>cat</code>, <code>grep</code> and <code>find</code> anything the user can. Denying it the same content through a tool removed no capability it did not already have and only made the enlightened path weaker than the shell beside it.</p>
+<p>A control that constrains the polite interface while the impolite one is wide open is not a boundary; it is a tax on the well-behaved. The owner overruled the Security hard veto on exactly that reasoning, and ADR-0022 records the decision and its residual risk.</p>
+<p><strong>THE CONDITION THAT REVIVES THE GATE, named so it is discoverable rather than remembered:</strong> this argument rests entirely on the agent already having a shell in the tree. A remote agent, a sandboxed agent, or any agent granted MCP access <em>without</em> a terminal is a genuinely different case, and a processing-class gate is the right control for it. If AI-DE ever hosts one, reopen ADR-0022 before extending this method.</p>
+<p>What authorization still does is enforced elsewhere and deliberately not here: the workspace check in <code>Guarded</code> (a caller may not read another workspace), the result bounds every tool applies, and — for writes, when they exist — session capability verification, which is what stops knowing an id being enough to post as it.</p>
+<h3><code>McpToolResult Standing(McpCallerContext caller, string episodeId)</code></h3>
+<p>The agent&#x27;s own standing for one episode: rank where comparable, trend, and one evidence-backed reason per dimension (US-16).</p>
+<p><strong>Remarks.</strong> <strong>A PULL, deliberately.</strong> US-16 says the agent receives its standing each turn, and the obvious reading is a push. A push would put the scorer&#x27;s output into the agent&#x27;s context every turn whether or not it asked — and ADR-0019 advisory-evaluator-calibration&#x27;s anti-Goodhart section is precisely about what an agent is shown regarding its own scoring. An agent that asks has chosen to look.</p>
+<p><strong>Guarded like every other tool</strong>, which is the reason it lives here rather than on a new seam: it inherits the workspace check, the authorization gate and the minimum-metadata degradation rather than restating any of them. A standing is an evaluation of the caller, so a tool that skipped the cross-workspace check would let one workspace read another&#x27;s scoring.</p>
+<p><strong>An unknown episode is an error, not an empty standing.</strong> An empty one reads as &quot;you have no rank and no reasons&quot; — a claim about the agent rather than about the lookup (DC-087).</p>
+<h2><code>MinimumMetadata</code></h2>
+<p><em>record</em> — <code>McpToolGateway.cs</code></p>
+<p>What a non-LocalOnly caller is allowed to learn: that there is data, not what it says.</p></main></body></html>

@@ -11,7 +11,8 @@ links:
   - { to: architecture, rel: documents }
   - { to: proof-pack-phase-1-walking-skeleton, rel: relates-to }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The measured Phase-1 performance run that promotes the architecture's Inferred targets to Verified:
   refresh, describe, impact, find, knowledge, query plans, and restore RTO on the 50,000-edge corpus —

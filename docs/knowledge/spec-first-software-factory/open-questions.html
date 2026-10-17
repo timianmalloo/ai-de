@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open Questions</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from open-questions.md</div><h1>Open questions</h1>
+<p>The local desktop constraint is resolved. These are proposal decisions to settle during <code>/specify</code>, not unanswered blockers to producing this exploration.</p>
+<table><thead><tr><th>Question</th><th>Needed for</th><th>Recommendation / evidence gap</th></tr></thead><tbody><tr><td>Which accepted spec is authoritative when documents disagree?</td><td>Drift baseline</td><td>Explicit authority/revision selection; never newest filename alone</td></tr><tr><td>Who may accept which human-review obligations?</td><td>Decision policy</td><td>Named lenses and explicit override reason; no model-score gate</td></tr><tr><td>What local outcome record justifies lighter review?</td><td>Calibration</td><td>Pilot with historical incidents and conservative sampling; no universal target found</td></tr><tr><td>Which languages have trustworthy symbol/test links?</td><td>Product scope</td><td>Start with C# and typed evidence; disclose unsupported paths</td></tr><tr><td>Which external providers may receive source/review packets?</td><td>Privacy and integration</td><td>Opt-in per boundary with scope/cost; local UI is not local inference</td></tr><tr><td>Which flaky-test runner/history formats come first?</td><td>Test ingestion</td><td>Preserve first attempts, retries, environment and observation window</td></tr><tr><td>How is semantic redundancy established safely?</td><td>Test efficiency</td><td>Investigation suggestions with counterexamples; never automatic deletion</td></tr><tr><td>Which native gestures and accessibility requirements survive the new shell?</td><td>Desktop implementation</td><td>UIA, keyboard, HighContrast, DPI and large-repo proof before release</td></tr></tbody></table>
+<h2>Strongest counter-evidence</h2>
+<p><strong>Verified, scoped:</strong> model-pair effects can reverse; industrial review gains may be proxy metrics; review golden corpora are incomplete; properties can encode the same wrong assumption as code; screenshots cannot validate semantics; artifact summaries go stale. Read the limitations in <a href="https://arxiv.org/html/2607.21656v1">cross-model study</a>, <a href="https://arxiv.org/html/2601.01129v2">RovoDev</a>, <a href="https://github.com/review-bench/ReviewBench">ReviewBench</a>, <a href="https://kiro.dev/docs/specs/correctness/">Kiro</a>, <a href="https://playwright.dev/docs/test-snapshots">visual testing</a>, <a href="https://docs.sourcery.ai/reviews/anatomy-of-a-review/">Sourcery re-review</a>.</p>
+<p><strong>Flagged:</strong> the developer-response preprint has an internal chronology inconsistency; Cursor&#x27;s review trigger docs conflict; vendor UX was not exercised live; no comparable benchmark establishes the efficacy or review-time savings of the proposed local AI-DE combination. Popularity numbers are not ranked because a defensible independent ranking was not established.</p>
+<h2>Corrections to inherited research</h2>
+<p>The August UML/MDE research&#x27;s flagged absence of LLM/MDE literature must not be repeated as a current universal claim. Newer spec-grounded testing and convergence work is adjacent evidence, not a direct proof of full UML-to-code semantic equivalence. The current inventory also corrects stale comments about AI-DE search/sequence and default daemon use, while preserving genuinely historical architecture sections. See the forensic report for exact code locations.</p></main></body></html>

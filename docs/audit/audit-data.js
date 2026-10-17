@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-17T18:54:13Z",
+  "generated": "2026-10-17T20:00:54Z",
   "audit": [
     {
       "actor": null,
@@ -20961,6 +20961,278 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-17T18:53:33Z",
       "duration_seconds": 40.0
+    },
+    {
+      "id": "al-01M55MDMJ9KPZW4WS24DPE58KN",
+      "shortname": "ok do the following things:",
+      "datetime": "2026-10-17T19:11:34Z",
+      "session": "prompt-compile",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "shortname": "compile-ok do the following things:",
+      "datetime": "2026-10-17T19:12:30Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session codex-factory-evolution-20261017 --skill <skill>\nGoal state\nGoal: Assess AI-DE, establish the evidence base, and propose its evolution into a local desktop spec-first software factory.\nDone when: Whole-solution forensic review with an inventory of built versus still-to-be-built capabilities.; Sourced research covering all five requested topic areas.; Interactive HTML proposal and new interactive mockups of the six requested factory experiences.\nNot in scope: Implementing the proposed evolution or treating the proposal as accepted requirements.\nTier: T2\nFan-out cap: 3\nContext ceiling: Bounded packets and source extracts; full artifacts carry durable evidence.\nMain-line budget: Complete all three requested skill outputs; no production changes; stop only after proof or a concrete external blocker.\nTrace\n| clause | trace |\n|---|---|\n| done_when: Whole-solution forensic review with an inventory of built versus still-to-be-built capabilities. | phrase: forensicreview of the whole solution and inventory of built vs. still to be built |\n| done_when: Sourced research covering all five requested topic areas. | phrase: collectknowledge do deep-research on the following topics |\n| done_when: Interactive HTML proposal and new interactive mockups of the six requested factory experiences. | phrase: give me an interactive html proposal |\n| not_in_scope: Implementing the proposed evolution or treating the proposal as accepted requirements. | phrase: create-proposal |\nReferences\n- coverage/worthiness: unresolved (not found)\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 3\ntransient_retry: One retry for a transient web failure; use another primary source if unavailable.\nper_branch_exit: Every assigned question has cited evidence or an explicit gap.\njoin_rule: All assigned topic coverage required; unresolved claims are Flagged, never filled in.\ncontainment: Read-only checkout; return findings to the coordinator; no production writes.\ntermination: Assigned question checklist exhausted.\ndeadline: One bounded research pass of at most 35 tool calls per branch.\nfallback: Report unresolved source or code questions; coordinator resolves before synthesis.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M55MDMJ9KPZW4WS24DPE58KN\nraw sha256: 215d88a4e34cb93bedafa8d59582596c746807622043efc0ce1788110e654dda\ncompiler model: GPT-6\nengine seconds: 0.008\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M55MDMJ9KPZW4WS24DPE58KN for codex v1: 4 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Whole-solution forensic review with an inventory of built versus still-to-be-built capabilities.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "forensicreview of the whole solution and inventory of built vs. still to be built"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "Sourced research covering all five requested topic areas.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "collectknowledge do deep-research on the following topics"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "Interactive HTML proposal and new interactive mockups of the six requested factory experiences.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "give me an interactive html proposal"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "Implementing the proposed evolution or treating the proposal as accepted requirements.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "create-proposal"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 3,
+          "transient_retry": "One retry for a transient web failure; use another primary source if unavailable.",
+          "per_branch_exit": "Every assigned question has cited evidence or an explicit gap.",
+          "join_rule": "All assigned topic coverage required; unresolved claims are Flagged, never filled in.",
+          "containment": "Read-only checkout; return findings to the coordinator; no production writes.",
+          "termination": "Assigned question checklist exhausted.",
+          "deadline": "One bounded research pass of at most 35 tool calls per branch.",
+          "fallback": "Report unresolved source or code questions; coordinator resolves before synthesis."
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Assess AI-DE, establish the evidence base, and propose its evolution into a local desktop spec-first software factory.",
+          "done_when": [
+            "Whole-solution forensic review with an inventory of built versus still-to-be-built capabilities.",
+            "Sourced research covering all five requested topic areas.",
+            "Interactive HTML proposal and new interactive mockups of the six requested factory experiences."
+          ],
+          "not_in_scope": [
+            "Implementing the proposed evolution or treating the proposal as accepted requirements."
+          ],
+          "tier": "T2",
+          "fan_out_cap": 3,
+          "context_ceiling": "Bounded packets and source extracts; full artifacts carry durable evidence.",
+          "main_line_budget": "Complete all three requested skill outputs; no production changes; stop only after proof or a concrete external blocker."
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "GPT-6",
+          "engine_seconds": 0.008,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M55MDMJ9KPZW4WS24DPE58KN",
+        "raw_sha256": "215d88a4e34cb93bedafa8d59582596c746807622043efc0ce1788110e654dda",
+        "raw_text_normalised": false,
+        "references": [
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "coverage/worthiness"
+          }
+        ],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M55Q7YC2CGH685M1GKMRC8RC",
+      "shortname": "compile-factory-evolution",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Compiled original request; gate passed, dispatchable true; desktop and later additions retained in the driving text. Elapsed marker windows overlap the parent task, not isolated compile CPU cost.",
+      "kind": "skill",
+      "skill": "compile",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/factory-evolution-20261017.md",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T0",
+      "fan_out": 0,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55Q7YFS1FWX2TCSAMD0TQZ5",
+      "shortname": "optimize-graph-factory-evolution",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Ten base nodes plus four bounded authoring-addition nodes; three read-only advisors, one checkout writer; all proof floors retained and rework recorded.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/factory-evolution-20261017.md",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55Q7YKEMFN0XXGTTVMJP3PG",
+      "shortname": "forensicreview-ai-de-rev102",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Whole solution recovered;49 capability rows plus17 nested authoring details;11 proposed findings including2 executed P1 reproductions. Review complete; product readiness remains BLOCK for sole current-change assurance.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev102.md",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55Q7YQ2RJK8EH5JR2QJEGD6",
+      "shortname": "collectknowledge-local-software-factory",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Eight knowledge artifacts,42 primary-source entries/supplements; five areas plus conversational PRs and authoring; no universal human-review threshold invented.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/spec-first-software-factory/index.md",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55Q7YTTD8J9EJP4AZEKX050",
+      "shortname": "ui-design-local-factory",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Direction/model before screens; three destinations, six journeys plus rich authoring;12 CUA regressions pass, independent exploratory UI review passed; native qualification remains unverified.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/factory-workbench.html",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M55Q7YYDBJF3EBEZKVNZY64G",
+      "shortname": "create-proposal-local-software-factory",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Exploratory local desktop factory proposal with two real alternatives, embedded/standalone working mockup, PR questions, rich editor/prompt stack, staged migration and explicit specify questions.",
+      "kind": "skill",
+      "skill": "create-proposal",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/local-software-factory-interactive.html",
+        "docs/proof/factory-evolution-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M55MFB0WED3AJZHVH3F17NQD",
+      "goal": "Assess AI-DE and propose its local desktop spec-first factory evolution",
+      "done_when": "Review, built inventory, sourced research, interactive proposal, PR questions and rich authoring mockup are saved, linked and verified",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-17T19:11:17Z",
+      "duration_seconds": 2977.0
     }
   ],
   "changes": [
@@ -24906,6 +25178,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2K3B1MTTVRK7AYWG6VC9VSC"
+    },
+    {
+      "id": "cl-01M55Q7Z3PM7TYHPM04MAVFH15",
+      "datetime": "2026-10-17T20:00:54Z",
+      "session": "codex-factory-evolution-20261017",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Evidence-grounded local software factory research",
+      "prompt": "ok do the following things:\n- $forensicreview of the whole solution and inventory of built vs. still to be built\n- $collectknowledge do deep-research on the following topics:\n  1: Agentic Code Review, the latest in the industry, popular repos and from anthropic with respect to code-review and ultra-review, Agent-guided-code-review experiences, Thresholds and Limits for when a human should code review. Think of how when a human must be in the loop we can provide the right summaries and experiences to guide the points of review as opposed to living in a world of sifting through all the code and diffs etc\n  2: Agentic Drift Analysis, the latest in terms of analyzing what was implemented and comparing against the initial spec and architecture and against the test coverage with the ability to identify where tests may not be covering the right considerations and where the impl drifts from the spec, PoC's, mockups or architecture\n  3: Code summarization: research the best ways to summarize what was implemented in a turn with pointers to graphical representatinons (e.g. sequence diagrams, class diagrams, ERM diagrams etc and how to ground what was implemented both in the production code and test code to the spec and the architecture)) \n  4: Research the latest in the UX's from Copilot, Chat GPT, Grok, Antigravity and Claude as well as the latest from folks like Cursor and Jetbrains... specifically thinking about how to up-level from code-centric to spec-centric, graph-centric and factory-centric coding experiences\n  5: Compare the current implemenation, specs and mockups in the AI-DE project and think about how we would evolve the experience to simplify the user interaction BUT maximize productivity for: Spec-driven-development, PR Analysis, Code base understanding, Progress understanding, Test coverage/worthiness analysis and overall architecture review\n- $create-proposal give me an interactive html proposal on how to fully evolve (and simplify AI-DE) along the lines of what we collected in the collect-knowledge step with new interactive mockups that go from a CLI-centric experience to a factory-experience that is closer to what one would do in Claude Code, Antigravity, Copilot etc but with the focus on: \n   - A spec-first-opinionated-software-factory aligned with my AI-Forward approach to coding\n   - the right visualization surfaces to understand the entire code base, navigate at scale and zoom in to code when needed (building on the UML paradigm and Graph paradigm)\n   - A PR review experience where we can understand PR's through agentic analysis and identify what a human must review and then make that review as productive as possible\n   - A Test review experience where we can understand the test coverage (for a PR, a component area or the whole repo) and assess gaps, redundancy, efficiency issues and pass rates ... including reporting on flaky tests etc\n   - An arch review experience to facilitate understanding the whole repo\n   - A rigor experience that creates backlogs of identified resilience, compliance, privacy, performance and security risks that should be reviewed and considered\n\n\nUser clarification/addition:\nit should remain a local desktop workbench\n\n\nUser clarification/addition:\nalso - in the PR experience (when a human is in the loop) we should allow the human to ask questions of the PR (like... did they think of x, or how is y implemented)\n\n\nUser clarification/addition:\nalso for the authoring / prompting experience\nmoving away from a CLI experience to a prompt editor experience should allow us to think of richer things we can do:\n- rich text editing - like multi-edit style editing\n- a prompt stack that i can go back and forth in\n- what else should we consider\nroll this into the thinking and the proposal and mockup and think about how we would get there from here (i.e. really depart from a cli-centric experience in the tool)",
+      "summary": "Risk-directed review, typed drift, test worthiness and grounded summaries inform an exploratory local work-centered factory with rich authoring.",
+      "rationale": "Separate accepted intent, evidence, assessments and decisions; preserve the desktop and existing compiler/authority instead of rebuilding a CLI shell.",
+      "artifacts": [
+        "docs/knowledge/spec-first-software-factory/index.md",
+        "docs/proposals/local-software-factory.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "9f13ca7a13c16eb1a7b4e3bd4027c20c640b6545",
+        "after": "9f13ca7a13c16eb1a7b4e3bd4027c20c640b6545",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
     }
   ],
   "messages": []

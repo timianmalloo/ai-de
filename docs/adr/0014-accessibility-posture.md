@@ -18,6 +18,8 @@ summary: >-
   accessibility work is retained because it is built and passing; it stops being a gate, and every
   artifact that asserted the obligation is corrected so the repository does not claim conformance it
   is not pursuing.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0014: Accessibility is best-effort, not a conformance target, and holds no veto

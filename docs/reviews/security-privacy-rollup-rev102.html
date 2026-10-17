@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Security Privacy Rollup Rev102</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from security-privacy-rollup-rev102.md</div><h1>Current evidence rollup</h1>
+<p>This source-level rollup complements the historical threat/privacy designs. It is not a full penetration test, native package audit or assertion of regulatory compliance. No applicable external compliance profile was supplied; selecting one remains a proposed product decision.</p>
+<table><thead><tr><th>Boundary / data</th><th>Located control</th><th>Residual / next proof</th></tr></thead><tbody><tr><td>Untrusted repository project XML</td><td>CSharpProjectReader reads project data rather than executing repository targets/generators</td><td>Language/extraction fidelity and hostile-input coverage remain bounded</td></tr><tr><td>Workspace authority and local peer</td><td>IpcPipe owner ACL / CurrentUserOnly; per-workspace daemon lock; capability and frame contracts</td><td>No fresh adversarial pipe suite executed; FR-002 serialized-size defect reproduced</td></tr><tr><td>Durable workspace facts</td><td>Single writer, epoch/generation checks, immutable fact triggers</td><td>FR-001 stale same-revision reuse undermines current-content trust despite immutable storage</td></tr><tr><td>Embedded knowledge HTML</td><td>HtmlSandboxPolicy disables script, host objects, messages, navigation and network</td><td>Native WebView2 containment proof not re-run here</td></tr><tr><td>External ACP/provider lane</td><td>Host-owned account/target/permissions and typed send/compile boundaries</td><td>Local UI does not imply local inference; FR-007 settings-loaded connectors need actual tool qualification</td></tr><tr><td>Prompt and attachment retention</td><td>Separate envelope/event/draft stores; attachment bytes excluded by draft-store contract</td><td>Unsent session-draft persistence primitive is not yet composed; retention and expansion policies need explicit specification</td></tr><tr><td>Watcher/episode observations</td><td>Attributed registrar/query paths, evidence pointers and bounded scoring semantics</td><td>Forgeable/advisory records are not semantic proof; FR-006 retry state can lose imported evidence</td></tr><tr><td>Package/release provenance</td><td>Current NuGet query reports no vulnerable packages</td><td>FR-008 lock/pin contract mismatch; no full JS/SBOM/signing/rollback rehearsal</td></tr><tr><td>Proposed PR questions and rich authoring</td><td>Fixture-only local state, explicit unknowns, version/scope retention, canonical preview, no enabled Send</td><td>Prototype is not authorization enforcement or native runtime qualification</td></tr></tbody></table>
+<p>Sources are the production files named in the forensic report and authoring inventory. Core&#x27;s former processing-class MCP gate was deliberately superseded by ADR-0022; this review does not label that intentional design choice an accidental authorization regression. The shipped stdio tool list is separate from the internal graph gateway. No external provider, PR integration or telemetry receiver was connected during this review.</p></main></body></html>

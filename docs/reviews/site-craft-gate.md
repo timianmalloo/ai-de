@@ -13,6 +13,8 @@ review-by: 2027-03-02
 summary: >-
   The deterministic craft detector run over site/, its 21 findings, what was changed, and the one
   finding accepted with a reason — plus the two gaps the detector cannot see and neither can I.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Craft-gate review — the public site

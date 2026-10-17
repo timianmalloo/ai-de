@@ -16,6 +16,8 @@ summary: >-
   Phase 3 joins C# evidence to infrastructure and schema evidence. Grounded in a real repository
   rather than the phase plan: its schema is EF Core migrations, not DDL files, so the planned "DDL
   parser" would have found nothing. Three components, one of which the phase plan did not have.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Design: Phase 3 — architecture, data and infrastructure joins

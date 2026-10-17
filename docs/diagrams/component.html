@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Component</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from component.md</div><h1>Recovered component and container map — 2026-10-17</h1>
+<p>Current composition at <code>9f13ca7a</code>, replacing the prior diagram&#x27;s stale claim that the shell defaults to in-process Core. Diagram scope is deployable/container and major component boundaries, not an exhaustive call graph. All solid edges below are <strong>Verified source composition</strong>; provider network behavior is a boundary whose live policy remains separately qualified.</p>
+<pre><code class="language-mermaid">flowchart TB
+ Operator[Local operator] --&gt; App[AiDe.App — WPF / AvalonDock]
+ App --&gt; Client[Local pipe client and shell view models]
+ Client --&gt; Daemon[AiDe.Daemon — workspace lock and owner-scoped pipe]
+ Daemon --&gt; Core[AiDe.Core — workspace authority]
+ Repo[Repository files — untrusted input] --&gt; Extract[Static extractors]
+ Extract --&gt; Core
+ Core --&gt; Store[(workspace.db: assertions and snapshots)]
+ Core --&gt; Query[Bounded projections]
+ Query --&gt; Client
+ App --&gt; Session[Conversation / composer / compile / run]
+ Session --&gt; Envelope[Append-only compilation envelopes]
+ Session --&gt; Harness[ACP / ConPTY harness process]
+ Harness --&gt; Provider[Optional inference / remote services]
+ App --&gt; Watcher[Watcher / board / episode scoring]
+ Watcher --&gt; WatchDb[(watcher.db and contract records)]
+ Harness --&gt; Stdio[AiDe.Mcp — stdio coordination tools]
+ Stdio --&gt; WatchDb
+ Client --&gt; Views[Graph / tree / evidence / static UML / source]</code></pre>
+<table><thead><tr><th>Claim</th><th>Confidence and observed source</th></tr></thead><tbody><tr><td>Shell&#x27;s normal daemon path</td><td>Verified — <code>MainWindowViewModel.cs:252</code>, <code>ShellBootstrap.ConnectOrLaunchAsync</code></td></tr><tr><td>One workspace authority/store</td><td>Verified — <code>AiDe.Daemon/Program.cs</code>, <code>WorkspaceCore.Open</code>, <code>WorkspaceStore</code></td></tr><tr><td>Extractor set</td><td>Verified — <code>WorkspaceExtractors.Default</code>: C#, Python, TypeScript, Bicep, EF, SQL, knowledge plus fixture fallback</td></tr><tr><td>Native/hosted surface composition</td><td>Verified — <code>SurfaceContentFactory.Kinds</code> and <code>WorkbenchShell</code> selection/query wiring</td></tr><tr><td>ACP/compile/ConPTY and watcher are distinct paths</td><td>Verified — App conductor/session roots and <code>WatcherHost</code></td></tr><tr><td>Stdio graph gateway availability</td><td>Verified distinction — <code>AiDe.Mcp/Tools.Schema</code> exposes identity/board/episode, not Core graph tools</td></tr><tr><td>Provider runtime safety and fidelity</td><td>Flagged for version-bound live qualification; local desktop does not mean local inference</td></tr></tbody></table>
+<p>Freshness and byte-bound defects are in FR-001/002. A graph whose source revision is stale is not promoted to current truth by this diagram. Full user-visible factory/PR/test/risk workflows remain proposed; see the build inventory rather than extrapolating from a registered control.</p></main></body></html>

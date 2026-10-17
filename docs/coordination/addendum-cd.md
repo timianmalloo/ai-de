@@ -31,6 +31,8 @@ summary: >-
   the census controls), a three-node serial spine (F5 merge, INV-0009 merge, the settings and
   sentinels commit) and a width cap of 3. Seven candidate tracks struck for not clearing the
   multiplier. Layer state measured, not assumed; one registry gap repaired.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Coordination plan - Addenda C and D

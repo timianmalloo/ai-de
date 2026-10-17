@@ -16,6 +16,8 @@ summary: >-
   container of a within-zone stack or editor-group split, replacing the cross-zone
   proportional split tree whose single-child collapse relocated unrelated panes (DC-063).
   Splits are scoped inside a zone; moving a pane changes only source and destination.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0021: Named absolute dock zones replace the proportional split tree

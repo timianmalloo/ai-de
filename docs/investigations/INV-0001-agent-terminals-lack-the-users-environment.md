@@ -14,6 +14,8 @@ summary: >-
   AI-DE: the machine's PATH is 22,297 characters and cmd.exe silently drops a variable that large,
   so every .cmd shim starts with an empty PATH — inside and outside the product. What was ours is
   that the terminal rendered the broken environment as a healthy one.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # INV-0001 — Agent terminals lack the user's PATH and profile

@@ -12,6 +12,8 @@ review-by: 2026-11-29
 summary: >-
   Who owns which files, which interfaces are the seam between them, and how a change to that seam is
   agreed. Written by the core session so the design session can disagree with something concrete.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Two sessions, one repository

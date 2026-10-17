@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Workbench</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Workbench.md</div><h1>API: <code>AiDe.Core.Workbench</code></h1>
+<p><strong>78 public types · 152 public members · 59% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>AgentWorktree</code></h2>
+<p><em>class</em> — <code>AgentWorktree.cs</code></p>
+<p>Where an agent session&#x27;s own git worktree goes, and what its branch is called.</p>
+<p><strong>Remarks.</strong> <strong>Why an agent gets its own tree.</strong> Two agents in one checkout share an index, a HEAD and one set of build outputs, so one agent&#x27;s staging silently reaches into another&#x27;s uncommitted work and nothing fails loudly. Working in the primary checkout is the recorded exception, not the default.</p>
+<p><strong>Pure, so the decisions are testable without git.</strong> The names and the path are the part with judgement in them; running <code>git worktree add</code> is mechanical and lives with the caller that owns process launching.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string ShortId(string sessionId)</code></td><td>The eight characters the Sessions row also shows.</td></tr><tr><td><code>string Slug(string harness)</code></td><td>A harness name reduced to something a git ref and a directory both accept.</td></tr></tbody></table>
+<h3><code>string Slug(string harness)</code></h3>
+<p>A harness name reduced to something a git ref and a directory both accept.</p>
+<p><strong>Remarks.</strong> &quot;Claude Code&quot; becomes &quot;claude-code&quot;. Lower-cased because half of git&#x27;s ref rules are case-sensitive and half of Windows&#x27; path rules are not, and a name that differs only by case between the two is a bug waiting for the first person who types it.</p>
+<h2><code>Plan</code></h2>
+<p><em>record</em> — <code>AgentWorktree.cs</code></p>
+<p>Everything about one agent session&#x27;s tree, derived from its identity.</p>
+<h2><code>CanvasFocusOutcome</code></h2>
+<p><em>enum</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>Why a focus transition ended the way it did.</p>
+<h2><code>CanvasFocusDirection</code></h2>
+<p><em>enum</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>Which way focus left the canvas.</p>
+<h2><code>CanvasFocusResult</code></h2>
+<p><em>record</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>The result of one focus transition, including the text the user hears on a refusal.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool Succeeded</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>ICanvasFocusTarget</code></h2>
+<p><em>interface</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>The canvas, as the focus router needs to see it. Implemented over the WPF <code>HwndHost</code>.</p>
+<p><strong>Remarks.</strong> This is a seam rather than a direct dependency because the mechanism is Win32 and the policy is not: what should happen when the canvas is not ready, or is hidden behind the snapshot swap, is decidable without a window — and a rule that can only be tested with a real WebView2 running is a rule that stops being tested.</p>
+<h2><code>IHostFocusScope</code></h2>
+<p><em>interface</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>The host&#x27;s WPF focus, as the router needs to see it.</p>
+<h2><code>CanvasFocusRouter</code></h2>
+<p><em>class</em> — <code>CanvasFocusRouter.cs</code></p>
+<p>Routes focus across the canvas boundary in <strong>both</strong> directions, explicitly.</p>
+<p><strong>Remarks.</strong> Neither crossing happens by WPF traversal, because traversal does not work here: spike S4 measured <code>Focus()</code> refused and Tab never landing on the canvas in <em>both</em> hosting modes, so this is a property of hosting a browser rather than of the mode ADR-0015 chose.</p>
+<p><strong>Every refusal is announced.</strong> A focus command that silently does nothing is indistinguishable from a broken key (defect class <strong>DC-011</strong>), and this command has two ordinary reasons to refuse — a canvas that has not been created yet, and one hidden behind the snapshot swap.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsInsideCanvas { get; private set; }</code></td><td>Whether focus is currently believed to be inside the canvas.</td></tr><tr><td><code>object? PreEntryFocus</code></td><td>The pre-entry focus target, exposed so a test can assert it was recorded.</td></tr><tr><td><code>CanvasFocusResult Enter()</code></td><td><code>workbench.focusCanvas</code> — WPF to canvas.</td></tr><tr><td><code>CanvasFocusResult Leave(CanvasFocusDirection direction)</code></td><td>A <code>focus.leave</code> message from the canvas page — canvas to WPF.</td></tr></tbody></table>
+<h3><code>CanvasFocusResult Leave(CanvasFocusDirection direction)</code></h3>
+<p>A <code>focus.leave</code> message from the canvas page — canvas to WPF.</p>
+<p><strong>Remarks.</strong> The page traps Tab on its last focusable element and Shift+Tab on its first, and posts here. <strong>These handlers are the only way out</strong>, so a page that forgets them is a keyboard trap — which is why this is a contract on the page and not a nicety.</p>
+<p>Acting on this message moves focus and grants nothing, so a message forged by page content rather than the boundary handler has no privileged effect.</p>
+<h2><code>struct</code></h2>
+<p><em>record</em> — <code>DropTargetResolver.cs</code></p>
+<p>A rectangle in window coordinates. Deliberately not <code>System.Windows.Rect</code> — this layer stays free of WPF so the drop logic is testable headlessly and survives a shell change.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double Right</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double Bottom</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool Contains(LayoutPoint p)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>struct</code></h2>
+<p><em>record</em> — <code>DropTargetResolver.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double Right</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double Bottom</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool Contains(LayoutPoint p)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>struct</code></h2>
+<p><em>record</em> — <code>DropTargetResolver.cs</code></p>
+<p>A pane as the resolver sees it: its id, its bounds, and where its tab strip is.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double Right</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double Bottom</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool Contains(LayoutPoint p)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>DropTargetResolver</code></h2>
+<p><em>class</em> — <code>DropTargetResolver.cs</code></p>
+<p>Turns a pointer position into the <code>DropTarget</code> a drop would use.</p>
+<p><strong>Remarks.</strong> This is the other half of SC 2.5.7. The keyboard already produces a <code>DropTarget</code>; this makes the pointer produce one too, so both paths converge on the same <code>LayoutOperation</code> and the equivalence test compares two real paths rather than one path against itself.</p>
+<p>It is also what makes &quot;show the destination before release&quot; honest: the preview and the commit call <strong>this same function</strong>, so they cannot disagree. A preview computed one way and a drop applied another is the classic source of &quot;it docked somewhere else than the highlight showed&quot;.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double EdgeFraction = 0.25</code></td><td>Share of the pane&#x27;s smaller dimension treated as an edge band.</td></tr><tr><td><code>double MaxEdgeBand = 80</code></td><td>Upper bound on the edge band, so a huge pane does not get an absurd split zone.</td></tr><tr><td><code>double MinEdgeBand = 16</code></td><td>Lower bound, so a tiny pane still has a usable split zone.</td></tr><tr><td><code>DropTarget? Resolve(IReadOnlyList&lt;PaneHitBox&gt; panes, LayoutPoint pointer, bool isLocked = false)</code></td><td>Resolves the destination for a pointer at .</td></tr><tr><td><code>LayoutRect PreviewFor(PaneHitBox pane, DropTarget target)</code></td><td>The rectangle to highlight for a destination — what the user sees before releasing.</td></tr><tr><td><code>string Describe(DropTarget target, string paneTitle)</code></td><td>The text announced while a keyboard move hovers this destination.</td></tr></tbody></table>
+<h3><code>DropTarget? Resolve(IReadOnlyList&lt;PaneHitBox&gt; panes, LayoutPoint pointer, bool isLocked = false)</code></h3>
+<p>Resolves the destination for a pointer at .</p>
+<ul><li><strong>`panes`</strong> — Candidate panes, in hit-test order (topmost first).</li><li><strong>`pointer`</strong> — Pointer position in the same coordinate space as the pane bounds.</li><li><strong>`isLocked`</strong> — When the layout is locked, no destination is offered at all.</li></ul>
+<p><strong>Returns.</strong> The destination, or  when the layout is locked. A pointer outside every pane resolves to <code>Float</code> — dragging a surface out of the window is how every exemplar creates a floating pane, so &quot;no pane here&quot; is a real destination, not a miss.</p>
+<h3><code>LayoutRect PreviewFor(PaneHitBox pane, DropTarget target)</code></h3>
+<p>The rectangle to highlight for a destination — what the user sees before releasing.</p>
+<p><strong>Remarks.</strong> Derived from the same target the drop will apply, so the highlight cannot promise one destination while the drop performs another.</p>
+<h2><code>LayoutMigration</code></h2>
+<p><em>record</em> — <code>LayoutMigrations.cs</code></p>
+<p>One step up the schema ladder: transforms a layout written at <code>FromVersion</code> into the shape the next version expects.</p>
+<p><strong>Remarks.</strong> Migrations operate on the <strong>DTO</strong>, not the domain model, deliberately. A migration&#x27;s whole job is to read a shape the current domain model can no longer represent; running it through today&#x27;s types would defeat the purpose, because those types are exactly what changed.</p>
+<h2><code>LayoutMigrations</code></h2>
+<p><em>class</em> — <code>LayoutMigrations.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;LayoutMigration&gt; Default { get; } =</code></td><td>The shipped migration chain.</td></tr><tr><td><code>LayoutDto AddSurfaceBeside(LayoutDto dto, string anchorSurfaceId, SurfaceDto surface)</code></td><td>Adds a surface into whichever stack already holds .</td></tr><tr><td><code>LayoutDto RenameSurface(LayoutDto dto, string oldId, string newId)</code></td><td>Rewrites one surface id throughout a layout, preserving its position and tab order.</td></tr><tr><td><code>LayoutDto RemoveSurface(LayoutDto dto, string surfaceId)</code></td><td>Drops a surface the current release no longer ships, healing the tree around it.</td></tr></tbody></table>
+<h3><code>IReadOnlyList&lt;LayoutMigration&gt; Default { get; } =</code></h3>
+<p>The shipped migration chain.</p>
+<p><strong>Remarks.</strong> The mechanism shipped from day one, because a migration hook added after the first breaking change is added too late for every layout already on disk. Its first entry was a worked EXAMPLE — a rename that never happened in the product — which meant the chain looked exercised while doing nothing, and the first real release that added a surface reached existing users only if they knew to reset their layout. That example now lives in the test that documents it; this is the real chain.</p>
+<h3><code>LayoutDto AddSurfaceBeside(LayoutDto dto, string anchorSurfaceId, SurfaceDto surface)</code></h3>
+<p>Adds a surface into whichever stack already holds .</p>
+<p><strong>Remarks.</strong> <strong>Beside an anchor rather than at a fixed path.</strong> The saved tree is the user&#x27;s, not the default&#x27;s: a stack id computed from the shipped layout may not exist in theirs at all.</p>
+<p><strong>A missing anchor means the migration does nothing.</strong> If the user closed the pane this one belongs beside, they have said something about that area of the workbench, and re-opening it under a new name is not an upgrade. A surface already present is left alone, so the step is safe to re-run.</p>
+<h2><code>Orientation</code></h2>
+<p><em>enum</em> — <code>LayoutModel.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>StackState</code></h2>
+<p><em>enum</em> — <code>LayoutModel.cs</code></p>
+<p>How a stack is currently presented. Only <code>Floating</code> may overlap.</p>
+<h2><code>Surface</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p>One thing the user works in. Its identity and state are independent of where it is docked.</p>
+<h2><code>LayoutNode</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>SplitNode</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p>Divides its region among 2..n children by weights that always sum to 1.</p>
+<p><strong>Remarks.</strong> A split with fewer than two children is not representable: the operations collapse it into its remaining child. That is what makes &quot;no empty region&quot; structural rather than a rule someone has to remember.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>SplitNode(string id, Orientation orientation,</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Orientation Orientation { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;LayoutNode&gt; Children { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;double&gt; Weights { get; init; }</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>StackNode</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p>A leaf region holding 1..n surfaces navigated by tabs.</p>
+<p><strong>Remarks.</strong> A stack with zero surfaces is not constructible. Removing the last surface destroys the stack instead of emptying it — an empty region can never persist because it can never exist.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double DefaultMinimum = 120</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>StackNode(string id, ImmutableList&lt;Surface&gt; surfaces, int activeIndex = 0,</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;Surface&gt; Surfaces { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int ActiveIndex { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>StackState State { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double MinWidth { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double MinHeight { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>LayoutRect? FloatingBounds { get; init; }</code></td><td>Where a floating pane sits, in virtual-screen coordinates. Null while docked.</td></tr><tr><td><code>Surface Active</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>LayoutRect? FloatingBounds { get; init; }</code></h3>
+<p>Where a floating pane sits, in virtual-screen coordinates. Null while docked.</p>
+<p><strong>Remarks.</strong> Stored because US-9 requires a floating pane to return to the display it was on. Without it the off-screen guard has nothing to test and a restored floating pane would land wherever the shell happened to put it.</p>
+<h2><code>DropKind</code></h2>
+<p><em>enum</em> — <code>LayoutModel.cs</code></p>
+<p>Where a move will land. Computed and shown to the user <em>before</em> the move commits.</p>
+<h2><code>DropTarget</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>Layout</code></h2>
+<p><em>record</em> — <code>LayoutModel.cs</code></p>
+<p>The whole arrangement: a docked tree plus the floating stacks held outside it.</p>
+<p><strong>Remarks.</strong> Floating stacks live outside the tree deliberately. A tree of proportional splits structurally cannot express an overlap — which is exactly the tiling invariant — so anything permitted to overlap must not be in it.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Layout Default()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;LayoutNode&gt; Walk()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;StackNode&gt; AllStacks()</code></td><td>Every stack, docked or floating.</td></tr><tr><td><code>StackNode? FindStackOf(string surfaceId)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void AssertInvariant()</code></td><td>The tiling invariant, checked after every operation rather than asserted once in prose: no empty stack, no under-filled split, weights summing to one, and unique ids.</td></tr><tr><td><code>string Shape()</code></td><td>Structural equality ignoring generated ids — the oracle for keyboard/pointer equivalence.</td></tr></tbody></table>
+<h2><code>LayoutErrorCodes</code></h2>
+<p><em>class</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string MinSize = &quot;AIDE-LAYOUT-MIN-SIZE&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Locked = &quot;AIDE-LAYOUT-LOCKED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string InvalidTarget = &quot;AIDE-LAYOUT-INVALID-TARGET&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string SurfaceUnknown = &quot;AIDE-LAYOUT-SURFACE-UNKNOWN&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Unreadable = &quot;AIDE-LAYOUT-UNREADABLE&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string VersionUnsupported = &quot;AIDE-LAYOUT-VERSION-UNSUPPORTED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string PartialRestore = &quot;AIDE-LAYOUT-PARTIAL-RESTORE&quot;</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>LayoutOperation</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p>One arrangement change. <strong>Both the pointer and the keyboard produce these</strong> — that is what makes &quot;the keyboard path and the drag path produce the same result&quot; (SC 2.5.7) a testable property rather than a hope.</p>
+<h2><code>MoveSurface</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ResizeSplit</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>SetStackState</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ActivateSurface</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ReorderSurface</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>CloseSurface</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>AddSurface</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p>Adds a new surface as a tab in an existing stack.</p>
+<p><strong>Remarks.</strong> Into a STACK rather than a new pane: a second terminal is another tab beside the first, not a second region competing for the same space. The caller names the stack so the choice of where stays with whoever knows why.</p>
+<h2><code>ResetToDefault</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>LayoutResult</code></h2>
+<p><em>record</em> — <code>LayoutService.cs</code></p>
+<p>The outcome of an <code>Apply</code>. Carries the announcement, so an operation that mutates the layout without telling assistive technology is not expressible (SC 4.1.3).</p>
+<h2><code>ILayoutService</code></h2>
+<p><em>interface</em> — <code>LayoutService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>LayoutService</code></h2>
+<p><em>class</em> — <code>LayoutService.cs</code></p>
+<p>The single mutation path for the workbench arrangement.</p>
+<p><strong>Remarks.</strong> Pattern: Command + immutable aggregate. Every gesture — pointer drag, keyboard command, palette entry — is funnelled through <code>Apply</code>, which validates, applies, re-checks the tiling invariant and produces the announcement. Refusals are values, not exceptions: hitting a minimum size is an ordinary outcome the UI reports, not an error path.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Layout Current { get; private set; } = initial ?? Layout.Default()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool IsLocked { get; set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Restore(Layout layout)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>LayoutResult Apply(LayoutOperation operation)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>LayoutEnvelope</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p>The owned persistence envelope (ADR-0013). The payload is ours, not the docking library&#x27;s, because <code>LayoutRootDto</code> ships no version field — without an envelope there is no way to tell &quot;written by an older build&quot; from &quot;corrupt&quot;, and both would surface as the same failure.</p>
+<h2><code>LayoutDto</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p>Serializable projection of the layout tree. Deliberately dumb: no behaviour, no invariants.</p>
+<h2><code>NodeDto</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>SurfaceDto</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>SurfaceAvailability</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p>What the application can currently provide, as the restore&#x27;s reconciliation asks it.</p>
+<p><strong>Remarks.</strong> <strong>Ids alone were wrong.</strong> The shell passed the surface ids present in the DEFAULT layout, so anything created at runtime — an agent terminal, whose id is <code>agent:claude#&lt;guid&gt;</code> — was unknown at restore and dropped as &quot;no longer available&quot;. The user was told their agent pane was gone, every launch, because the check asked the wrong question.</p>
+<p><strong>The right question is whether content can be BUILT for it</strong>, which is a property of the surface&#x27;s kind. Ids are still honoured for the fixed surfaces. A surface whose kind this build no longer has is still dropped and still reported — the control keeps firing for the case it was written for.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>SurfaceAvailability OfIds(IReadOnlySet&lt;string&gt; ids)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool CanProvide(Surface surface)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>RestoreResult</code></h2>
+<p><em>record</em> — <code>LayoutStore.cs</code></p>
+<p>What a restore actually managed to do — never a silent success.</p>
+<h2><code>LayoutStore</code></h2>
+<p><em>class</em> — <code>LayoutStore.cs</code></p>
+<p>Reads and writes the workbench layout for one workspace.</p>
+<p><strong>Remarks.</strong> The contract US-9 sets is that a layout which cannot be honoured <strong>degrades to the default arrangement and says so, preserving the original file</strong> — never to a broken window and never to a silently dropped surface.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int CurrentSchemaVersion = 4</code></td><td>Bumped to 2 when the Joins pane was added.</td></tr><tr><td><code>string BackupPath</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Save(Layout layout)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>RestoreResult Load(</code></td><td>Restores the layout, reconciling it against the surfaces that actually exist and the displays that are actually connected.</td></tr><tr><td><code>RestoreResult Load(</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>int CurrentSchemaVersion = 4</code></h3>
+<p>Bumped to 2 when the Joins pane was added.</p>
+<p><strong>Remarks.</strong> The version is what makes a shipped surface reach a user who has already arranged their workbench. Adding a pane to <code>Default</code> alone reaches only people with no saved layout, which is nobody who has used the product.</p>
+<h3><code>RestoreResult Load(</code></h3>
+<p>Restores the layout, reconciling it against the surfaces that actually exist and the displays that are actually connected.</p>
+<ul><li><strong>`availableSurfaces`</strong> — Surface ids the application can currently provide.</li><li><strong>`displayIsConnected`</strong> — Whether a floating pane&#x27;s display is still present.</li></ul>
+<h2><code>PerspectiveBody</code></h2>
+<p><em>enum</em> — <code>Perspectives.cs</code></p>
+<p>What fills the body region while a perspective is active (Addendum C §A6).</p>
+<h2><code>Perspective</code></h2>
+<p><em>record</em> — <code>Perspectives.cs</code></p>
+<p>One perspective — the use case the whole tool is in (Addendum C, Ruling 50). A row of data, never a class with behaviour: the shell projects it, the rail lists it, the catalog derives its command from it.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Gesture</code></td><td>The bound single-stroke gesture, spelled from the row (US-C10; <code>Ctrl+</code> the rail digit).</td></tr></tbody></table>
+<h2><code>PerspectiveSet</code></h2>
+<p><em>class</em> — <code>Perspectives.cs</code></p>
+<p>The closed Perspective set (ADR-0030, amended by Ruling 84): four rows in rail order, and the order a kind-open the active perspective does not admit is routed in. Pure data; constructible in any test.</p>
+<p><strong>Remarks.</strong> <strong>Why a static row set and not an enum.</strong> An enum in the App beside the presenter was the shape before this (<code>ShellViewMode</code>, two values). The perspective commands must be catalog rows in Core, derived from the set — or the catalog carries a hand-listed copy that a new perspective would silently miss. Rows in Core let the catalog, the rail, the menu radio, the palette and the routed open all read ONE definition — Ruling 84&#x27;s fourth row (Coordination) was exactly that: one row here, and every derived surface followed. <strong>Tests</strong> is a reserved name with no row (Ruling 54): adding it is adding a row here, and every derived surface follows.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Perspective Coding { get; } = new(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Perspective Explore { get; } = new(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Perspective Architecture { get; } = new(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Perspective Coordination { get; } = new(</code></td><td>Host C (Ruling 84; the operator&#x27;s UC5 — observe the fleet): the Loomkeeper watcher&#x27;s bench. A docking host like Coding and Architecture, never a full-window composite (ADR-0031&#x27;s rejected alternative); the five Loomke…</td></tr><tr><td><code>IReadOnlyList&lt;Perspective&gt; All { get; } = [Coding, Explore, Architecture, Coordination]</code></td><td>The rows, in rail order: Coding · Explore · Architecture · Coordination.</td></tr><tr><td><code>Perspective Initial</code></td><td>The perspective the shell starts in (US-C1).</td></tr><tr><td><code>IReadOnlyList&lt;Perspective&gt; RoutingOrder { get; } = [Architecture, Coding, Coordination]</code></td><td>Where a kind-open the active perspective does not admit is routed (US-C3): the first of these that admits the kind. Architecture before Coding because the requester is always a reading surface, so the reading host win…</td></tr><tr><td><code>Perspective? ByCommandId(string commandId)</code></td><td>The row whose command has this id, or null — the one lookup the controller needs.</td></tr></tbody></table>
+<h2><code>KindRule</code></h2>
+<p><em>record</em> — <code>SurfaceAdmission.cs</code></p>
+<p>One kind&#x27;s admission row: which perspectives admit it, and whether a host holds at most one.</p>
+<h2><code>DropReason</code></h2>
+<p><em>enum</em> — <code>SurfaceAdmission.cs</code></p>
+<p>Why a surface was dropped from a host&#x27;s arrangement (ADR-0032 rule 2).</p>
+<h2><code>DroppedSurface</code></h2>
+<p><em>record</em> — <code>SurfaceAdmission.cs</code></p>
+<p>A surface the admission filter removed, with the reason and the perspective that admits its kind (null for a duplicate, or a kind no perspective admits).</p>
+<h2><code>AdmissionFilter</code></h2>
+<p><em>record</em> — <code>SurfaceAdmission.cs</code></p>
+<p>What <code>Filter</code> produced: the admitted arrangement and every drop.</p>
+<h2><code>SurfaceAdmission</code></h2>
+<p><em>class</em> — <code>SurfaceAdmission.cs</code></p>
+<p>The Perspective Layout aggregate&#x27;s invariant as data (ADR-0030 rule 2; ADR-0031 rule 3; ADR-0032 rule 2): the kinds one host perspective admits, which of them are one-instance, and — for the report — which perspective admits a kind this host refuses.</p>
+<p><strong>Remarks.</strong> <strong>Enforced by the host&#x27;s layout service, never by the store.</strong> The store filters by <em>availability</em> and stays perspective-blind so one class serves every slot; admissibility is the host&#x27;s invariant and is applied wherever the host&#x27;s arrangement is set — an add, a restore, a reset (ADR-0032, alternatives).</p>
+<p><strong>Rows, not a switch.</strong> The rules are the App&#x27;s kind table (its <code>Perspectives</code> and <code>Instances</code> columns) handed down as data, so a kind added as a row is admitted, refused and reported with no edit here.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string RefusalCode = &quot;AIDE-LAYOUT-KIND-NOT-ADMITTED&quot;</code></td><td>The stable code a host&#x27;s service refuses an inadmissible surface with (ADR-0031 rule 3; US-C3 b1). Beside <code>LayoutErrorCodes</code>&#x27; family, named here because the rule is this type&#x27;s.</td></tr><tr><td><code>string OneInstanceCode = &quot;AIDE-LAYOUT-ONE-INSTANCE&quot;</code></td><td>The stable code a host&#x27;s service refuses a second surface of a one-instance kind with.</td></tr><tr><td><code>SurfaceAdmission(Perspective perspective, IReadOnlyDictionary&lt;string, KindRule&gt; rules)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>SurfaceAdmission Unrestricted { get; } = new()</code></td><td>Admits every kind, any number of times — the behaviour every caller had before perspectives (the legacy tree path, and every test that constructs a bare service). Never the shell&#x27;s.</td></tr><tr><td><code>Perspective Perspective { get; }</code></td><td>The perspective whose host this admission guards.</td></tr><tr><td><code>bool IsUnrestricted { get; }</code></td><td>True for <code>Unrestricted</code> only.</td></tr><tr><td><code>bool Admits(string kind)</code></td><td>Whether this host admits a surface of .</td></tr><tr><td><code>bool IsOneInstance(string kind)</code></td><td>Whether a host holds at most one surface of .</td></tr><tr><td><code>Perspective? AdmittedBy(string kind)</code></td><td>The perspective that admits  — the first of <code>RoutingOrder</code> that does — or null for a kind no perspective admits. What the drop report names, and where a routed open lands (US-C3).</td></tr><tr><td><code>AdmissionFilter Filter(WorkbenchLayout layout)</code></td><td>Removes from  every surface this host does not admit and every second instance of a one-instance kind, in zone order (Left · Right · Bottom · Center, then the floating stacks), reporting each drop. A stack left empty …</td></tr></tbody></table>
+<h2><code>TreeToZones</code></h2>
+<p><em>class</em> — <code>TreeToZones.cs</code></p>
+<p>Converts a legacy proportional split-tree <code>Layout</code> into a <code>WorkbenchLayout</code> of named zones. The Expand step of the ADR-0021 migration: existing saved <code>layout.json</code> trees are read through this so no surface is lost and every surface lands in a deterministic zone (AC-F9).</p>
+<p><strong>Remarks.</strong> Pure and deterministic — the same tree always yields the same zones, which is what lets a golden <code>layout.json</code> fixture pin the conversion. Each tree stack is classified <em>as a unit</em> so its tab grouping survives the move (the graph&#x27;s document tabs stay together in the Center rather than scattering). Stacks that map to the same zone are concatenated. Floating stacks carry over unchanged.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>WorkbenchLayout Convert(Layout tree)</code></td><td>Converts a tree layout to zones, losing no surface.</td></tr></tbody></table>
+<h2><code>CommandScope</code></h2>
+<p><em>record</em> — <code>WorkbenchCommands.cs</code></p>
+<p>Where a command is offered: the rule that decides, per perspective, whether the menu and the palette list it (Addendum C §B3 rule 2; ADR-0030).</p>
+<p><strong>Remarks.</strong> <strong>What the command NEEDS, never which perspectives list it.</strong> A perspective list on a command row would be a second home for a fact the perspective rows and the kind rows already hold (ADR-0030, alternatives). What a row can honestly state is its precondition — a docking host to operate on, a graph canvas to focus, a surface kind the perspective must admit — and <code>PerspectiveMenu</code> evaluates that against the active perspective&#x27;s body and allow-list. Adding a perspective needs no edit here; adding a command states its precondition once.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>CommandScope Global { get; } = new(CommandScopeKind.Global)</code></td><td>Offered in every perspective: entry verbs, workspace verbs, the perspective radio, the status line.</td></tr><tr><td><code>CommandScope DockHost { get; } = new(CommandScopeKind.DockHost)</code></td><td>Offered iff the active body is a docking host: every layout operation.</td></tr><tr><td><code>CommandScope Admits(string surfaceKind)</code></td><td>Offered iff the active perspective admits  — the command acts on such a surface.</td></tr></tbody></table>
+<h2><code>CommandScopeKind</code></h2>
+<p><em>enum</em> — <code>WorkbenchCommands.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>WorkbenchCommand</code></h2>
+<p><em>record</em> — <code>WorkbenchCommands.cs</code></p>
+<p>One keyboard-reachable command, as the command palette lists it.</p>
+<p><strong>Remarks.</strong> This catalog is the machine-checkable form of SC 2.5.7: every operation reachable by dragging must have a keyboard equivalent. Because both the palette and the conformance test read the same list, an operation added without a command fails the suite instead of shipping mouse-only.</p>
+<p><strong>Placement is a Core decision.</strong> Adding a command and putting it in a menu is one atomic change — the menu builder derives its grouping from  and , so there is no second list in the App to keep in step (Ruling 55b).</p>
+<h2><code>WorkbenchCommandCatalog</code></h2>
+<p><em>class</em> — <code>WorkbenchCommands.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;WorkbenchCommand&gt; All { get; } =</code></td><td>The commands, grouped by menu in menu order — which is the order the menu and the palette offer them. Gestures follow Windows/Fluent conventions and deliberately avoid the Alt+&lt;letter&gt; menu-mnemonic space.</td></tr><tr><td><code>IEnumerable&lt;WorkbenchCommand&gt; Search(IEnumerable&lt;WorkbenchCommand&gt; commands, string term)</code></td><td>The rows of  whose title or hint contains ; all of them for a blank term.</td></tr></tbody></table>
+<h3><code>IReadOnlyList&lt;WorkbenchCommand&gt; All { get; } =</code></h3>
+<p>The commands, grouped by menu in menu order — which is the order the menu and the palette offer them. Gestures follow Windows/Fluent conventions and deliberately avoid the Alt+&lt;letter&gt; menu-mnemonic space.</p>
+<p><strong>Remarks.</strong> <strong>Not here: the &quot;New/Show &lt;Title&gt;&quot; openers for surface kinds.</strong> Those are derived from the App&#x27;s kind rows and their allow-lists (ADR-0030 rule 3) — a row per kind carrying both a Core command and an App kind would be two rows that must agree, which is the defect Ruling 22 removed for kinds. <code>terminal.new</code> and <code>session.new</code> stay: they are entry verbs (US-C11), offered in File in every perspective and routed to Coding.</p>
+<h2><code>KeyboardResizeSession</code></h2>
+<p><em>class</em> — <code>WorkbenchCommands.cs</code></p>
+<p>The keyboard resize interaction, modelled after Eclipse&#x27;s <code>Alt+-</code> → Size → arrows — the only keyboard resize proven in any of the four exemplars.</p>
+<p><strong>Remarks.</strong> It is a small explicit state machine rather than a stream of resize operations because the user must be able to <strong>see which edge is selected</strong> before moving it, and to <strong>cancel back to where they started</strong>. Adjustments are applied live so the effect is visible, and Cancel restores the layout captured on entry.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsActive { get; private set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string? SplitId { get; private set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int EdgeIndex { get; private set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>double Step { get; init; } = 0.02</code></td><td>The step per arrow press, as a share of the split. Matches the mockup&#x27;s declared increments.</td></tr><tr><td><code>string Begin(string splitId, int edgeIndex, string edgeLabel)</code></td><td>Enters resize mode on an edge and announces which edge is selected.</td></tr><tr><td><code>LayoutResult Adjust(int direction)</code></td><td>Applies one arrow press. A refusal (minimum size) keeps the session open.</td></tr><tr><td><code>string Commit()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Cancel()</code></td><td>Abandons the resize and puts the layout back exactly as it was on entry.</td></tr><tr><td><code>string Describe()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>ZoneBackedLayoutService</code></h2>
+<p><em>class</em> — <code>ZoneBackedLayoutService.cs</code></p>
+<p>An <code>ILayoutService</code> whose real state is a <code>WorkbenchLayout</code> of named zones, projected to a fixed-shape <code>Layout</code> tree for the existing adapter/persistence to render (ADR-0021). Every tree-shaped operation is translated to a zone-scoped one, so an operation on one pane changes only the zone(s) it names — the frame cannot &quot;flip&quot; (defect class DC-063). This is the Strangler that lets the layout logic become zone-based without touching the adapter, controller, persistence or shell wiring, all of which speak <code>ILayoutService</code>.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ZoneBackedLayoutService(WorkbenchLayout? initial = null)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ZoneBackedLayoutService(SurfaceAdmission admission, WorkbenchLayout? initial = null)</code></td><td>A host&#x27;s service:  is the perspective&#x27;s allow-list and one-instance rule, enforced at open, restore and reset (ADR-0031 rule 3). The initial arrangement — , else the default — is filtered by the same rule, so the host…</td></tr><tr><td><code>IReadOnlyList&lt;DroppedSurface&gt; DefaultDropped { get; }</code></td><td>What the seed default dropped to satisfy this host&#x27;s invariant — non-empty only while the one <code>Default</code> seeds a kind or a duplicate a perspective refuses (today: Architecture drops the second <code>view</code>). The shell record…</td></tr><tr><td><code>SurfaceAdmission Admission { get; }</code></td><td>The allow-list this host enforces; <code>Unrestricted</code> for a bare service.</td></tr><tr><td><code>WorkbenchLayout Zones</code></td><td>The zone model — the real source of truth behind the projected tree.</td></tr><tr><td><code>WorkbenchLayout DefaultLayout()</code></td><td>The arrangement this host starts from and resets to: the default, holding only admitted kinds and at most one of each one-instance kind.</td></tr><tr><td><code>ZoneRestoreReport RestoreZones(WorkbenchLayout zones)</code></td><td>Replaces the whole zone arrangement (persistence restore), dropping what this host does not admit and reporting each drop (ADR-0032 rule 2). Zero surfaces left → the default is applied and the report says so; the host…</td></tr><tr><td><code>Layout Current</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool IsLocked { get; set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Restore(Layout layout)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>bool ReconcileFromView(Layout layout)</code></td><td>Reconciles a native drag from the VIEW&#x27;s fixed-frame tree by POSITION only. Returns true when it mapped confidently and applied; returns <strong>false without touching the model</strong> when it cannot — so an unmappable drag reve…</td></tr><tr><td><code>LayoutResult Apply(LayoutOperation operation)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>WorkbenchLayout DefaultLayout()</code></h3>
+<p>The arrangement this host starts from and resets to: the default, holding only admitted kinds and at most one of each one-instance kind.</p>
+<p><strong>Remarks.</strong> SH-3: seeded from THIS host&#x27;s own §B4 table (<code>SeedDefault</code>), not the old combined seed filtered down — the source of the &quot;Domain wired to the Evidence list&quot; and &quot;Explore/ Provenance/Contexts/Joins stacked as sibling tabs&quot; defects a shared, generic seed produced. Still run through <code>Filter</code>: defensive, and what applies the one-instance rule for a caller that mutates the seed before this runs.</p>
+<h2><code>ZoneRestoreReport</code></h2>
+<p><em>record</em> — <code>ZoneBackedLayoutService.cs</code></p>
+<p>What a zone restore did to the arrangement it was given: every drop, and whether the default was applied because nothing admissible was left.</p>
+<h2><code>ZoneId</code></h2>
+<p><em>enum</em> — <code>ZoneLayout.cs</code></p>
+<p>The four named, absolute regions of the workbench frame. Unlike the proportional split tree (<code>Layout</code>), these are <strong>stable containers</strong>: the frame never restructures, so an operation on a pane can only change the zone(s) that pane belongs to — never relocate or reorient an unrelated pane (defect class DC-063). See <code>adr-0021-named-dock-zones</code>.</p>
+<h2><code>ZoneContent</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>What a zone holds: either a single tab stack or, within the Center, a split into editor groups.</p>
+<p><strong>Remarks.</strong> The load-bearing rule is that a <code>ZoneSplit</code>&#x27;s children never leave the zone — a split is <em>scoped to its zone</em>. That is what keeps the top-level frame from being a tree: there is no operation that restructures the relationship <em>between</em> zones. A zone with no content is represented by a null <code>Content</code> (a rail for a tool zone; a placeholder for the Center), not by an empty stack — an empty <code>ZoneStack</code> is not constructible.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IEnumerable&lt;Surface&gt; Surfaces()</code></td><td>Every surface this content holds, in tab/traversal order.</td></tr></tbody></table>
+<h2><code>ZoneStack</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>A tab stack of one or more surfaces. The unit v1 tool zones are built from.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ZoneStack(ImmutableList&lt;Surface&gt; surfaces, int activeIndex = 0)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;Surface&gt; Tabs { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int ActiveIndex { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Surface Active</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;Surface&gt; Surfaces()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>ZoneSplit</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>A split into editor groups, scoped to its zone (Center only in v1). Its children are themselves zone content, so a group can be a stack or a nested split — but always inside this zone.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ZoneSplit(Orientation orientation, ImmutableList&lt;ZoneContent&gt; children, ImmutableList&lt;double&gt; weights)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Orientation Orientation { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;ZoneContent&gt; Children { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ImmutableList&lt;double&gt; Weights { get; init; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;Surface&gt; Surfaces()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>ZoneState</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>One zone&#x27;s state: what it holds, its cross-axis size relative to the Center, and whether it is collapsed to a rail. The Center is never collapsed and its <code>Extent</code> is ignored (it takes the remaining space).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double DefaultExtent = 0.22</code></td><td>Default cross-axis extent for a tool zone, as a proportion of the frame.</td></tr><tr><td><code>bool IsEmpty</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;Surface&gt; Surfaces()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>MaximizeMemo</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>The arrangement to restore a maximized zone or pane back to.</p>
+<h2><code>WorkbenchLayout</code></h2>
+<p><em>record</em> — <code>ZoneLayout.cs</code></p>
+<p>The whole workbench arrangement as named zones: a fixed frame plus the floating stacks held outside it. Replaces the proportional split tree (<code>Layout</code>).</p>
+<p><strong>Remarks.</strong> All four zones are <strong>always present</strong> in <code>Zones</code> — an empty zone has null content, it is never removed. That is what makes &quot;the Center is always there&quot; and &quot;moving a pane cannot delete a zone&quot; structural rather than rules to remember. Floating stacks live outside the frame, unchanged from the tree model (only docked layout changes in ADR-0021).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>double CodingLeftExtent = 1.3 / 2.3</code></td><td>Coding&#x27;s Left extent (Ruling 83 condition 1; DESIGN.md&#x27;s errata row): the Left is <strong>1.3 of the Center</strong> — the mockup&#x27;s <code>minmax(0,1.3fr) minmax(0,1fr)</code> — spelled as the zone&#x27;s share of the columns row (1.3 ⁄ 2.3), whic…</td></tr><tr><td><code>WorkbenchLayout Default()</code></td><td>The default arrangement: graph document in the Center, a terminal in the Bottom.</td></tr><tr><td><code>WorkbenchLayout Default(Perspective perspective)</code></td><td>The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host&#x27;s OWN table, never the combined seed <code>Default()</code> filtered down (the trap <code>ZoneBackedLayoutService</code> named: filtering one shared s…</td></tr><tr><td><code>double ArchitectureLeftExtent = 0.22</code></td><td>Architecture&#x27;s Left extent (Ruling 94 condition 1): the value the operator&#x27;s own saved slot holds — <code>0.22</code>, read from their <code>layout.architecture.zones.json</code> — which is also <code>DefaultExtent</code>. Named so the number is the …</td></tr><tr><td><code>WorkbenchLayout Empty()</code></td><td>An empty frame — all four zones present, none with content. Used by the converter as a base.</td></tr><tr><td><code>ZoneState Zone(ZoneId id)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IEnumerable&lt;Surface&gt; AllSurfaces()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ZoneId? FindZoneOf(string surfaceId)</code></td><td>The zone currently holding , or null if it is floating/absent.</td></tr><tr><td><code>WorkbenchLayout WithZone(ZoneState zone)</code></td><td>Replaces one zone&#x27;s state, leaving the other three byte-identical (the containment primitive).</td></tr><tr><td><code>void AssertInvariant()</code></td><td>The frame invariant, checked after every operation: the four zones exist, the Center is never collapsed, no surface appears twice, and no stack is empty.</td></tr><tr><td><code>string Shape()</code></td><td>Structural signature ignoring extents — the oracle for &quot;which zone holds what, in what order&quot;. Two layouts with the same shape are the same arrangement of panes.</td></tr></tbody></table>
+<h3><code>WorkbenchLayout Default(Perspective perspective)</code></h3>
+<p>The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host&#x27;s OWN table, never the combined seed <code>Default()</code> filtered down (the trap <code>ZoneBackedLayoutService</code> named: filtering one shared seed re-points &quot;Domain&quot; at the Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).</p>
+<p><strong>Remarks.</strong> Coding, Architecture and Coordination have a docking host (<code>DockHost</code>); Explore&#x27;s full-window body has no zone layout and no caller ever asks this for it (<code>DockHost.Create</code> refuses a non-host perspective first) — so anything other than Architecture or Coordination falls back to Coding&#x27;s table, which is the only other member of the closed set this method is ever actually asked for.</p>
+<h2><code>ZoneLayoutResult</code></h2>
+<p><em>record</em> — <code>ZoneLayoutService.cs</code></p>
+<p>The outcome of a zone-layout operation, carrying the accessibility announcement (SC 4.1.3).</p>
+<h2><code>ZoneLayoutService</code></h2>
+<p><em>class</em> — <code>ZoneLayoutService.cs</code></p>
+<p>The zone-scoped layout operations. Every operation names a <code>ZoneId</code>, and its effect is confined to that zone (and, for a move, the destination zone) — the other zones come through reference-identical via <code>WithZone</code>. That confinement is the structural remedy for DC-063: there is no operation that restructures the relationship between zones.</p>
+<p><strong>Remarks.</strong> Pure functions over an immutable <code>WorkbenchLayout</code>; no shell/UI dependency.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ZoneLayoutResult MovePane(</code></td><td>Moves a surface into , changing only its source and destination zones.</td></tr><tr><td><code>ZoneLayoutResult OpenPane(WorkbenchLayout layout, Surface surface, ZoneId target)</code></td><td>Opens a new surface as the active tab of  — destination-local.</td></tr><tr><td><code>ZoneLayoutResult ClosePane(WorkbenchLayout layout, string surfaceId)</code></td><td>Closes a surface, changing only its own zone. The Center never disappears (becomes empty).</td></tr><tr><td><code>ZoneLayoutResult Activate(WorkbenchLayout layout, string surfaceId)</code></td><td>Activates a surface&#x27;s tab in whichever zone holds it.</td></tr><tr><td><code>ZoneLayoutResult CollapseZone(WorkbenchLayout layout, ZoneId zoneId)</code></td><td>Collapses a tool zone to its rail; its panes are retained (AC-F4). The Center refuses.</td></tr><tr><td><code>ZoneLayoutResult ExpandZone(WorkbenchLayout layout, ZoneId zoneId)</code></td><td>Re-expands a collapsed tool zone, restoring the same panes and active tab.</td></tr><tr><td><code>ZoneLayoutResult ResizeZone(WorkbenchLayout layout, ZoneId zoneId, double extent)</code></td><td>Resizes a tool zone. Only that zone changes size; the Center absorbs the difference (AC-F6).</td></tr><tr><td><code>ZoneLayoutResult Maximize(WorkbenchLayout layout, ZoneId zoneId)</code></td><td>Maximizes a zone (others collapse to rails), snapshotting the arrangement for an exact restore.</td></tr><tr><td><code>ZoneLayoutResult Restore(WorkbenchLayout layout)</code></td><td>Restores the arrangement captured at the last <code>Maximize</code> — exactly (AC-F5).</td></tr></tbody></table>
+<h2><code>ZoneEnvelope</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneLayoutDto</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneStateDto</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneContentDto</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneStackDto</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneSurfaceDto</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<h2><code>ZoneLoadRefusal</code></h2>
+<p><em>enum</em> — <code>ZoneLayoutStore.cs</code></p>
+<p>Why <code>Read</code> returned no layout (ADR-0032 rule 4). <code>None</code> when it returned one.</p>
+<h2><code>ZoneLoadResult</code></h2>
+<p><em>record</em> — <code>ZoneLayoutStore.cs</code></p>
+<p>What a read produced: the layout, or null with the reason.</p>
+<h2><code>ZoneLayoutStore</code></h2>
+<p><em>class</em> — <code>ZoneLayoutStore.cs</code></p>
+<p>Saves and restores a <code>WorkbenchLayout</code> of named zones as JSON (ADR-0021 dz-persist), preserving what the projected tree cannot: collapsed-zone content, per-zone extent, and exact placement. Restore filters out surfaces the app can no longer provide, so a saved terminal whose process is gone (or a surface kind the build dropped) does not resurrect — an empty zone simply becomes a placeholder, never a broken pane.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int CurrentSchemaVersion = 1</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string FilePath</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string TempPath</code></td><td>The sibling a save is written to before it replaces the file: <code>&lt;file&gt;.tmp</code>.</td></tr><tr><td><code>void Save(WorkbenchLayout layout, string? backupPath = null)</code></td><td>Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to <code>TempPath</code> and then moved over the destination in one step, so the file the product reads is never a torn write: a crash before the …</td></tr><tr><td><code>ZoneLoadResult Read(IReadOnlySet&lt;string&gt; availableSurfaces, IReadOnlySet&lt;string&gt; restorableKinds)</code></td><td>Loads the saved zone layout, dropping surfaces that are no longer available, and, when nothing is returned, says why (ADR-0032 rule 4): no file · a newer schema than this build reads · a corrupt file (unreadable JSON,…</td></tr></tbody></table>
+<h3><code>void Save(WorkbenchLayout layout, string? backupPath = null)</code></h3>
+<p>Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to <code>TempPath</code> and then moved over the destination in one step, so the file the product reads is never a torn write: a crash before the move leaves the original, and a stale temp file is overwritten by the next save.</p>
+<ul><li><strong>`backupPath`</strong> — When given and the destination exists, the SAME call that replaces the original preserves it there (<code>Replace(string, string, string?)</code>): the pre-perspective bytes, or a refused file, are kept by the write that would otherwise lose them. A backup that cannot be created fails the save and leaves the destination untouched — the caller reports it; the original is never written over on a best-effort promise.</li></ul>
+<h2><code>ZonesToTree</code></h2>
+<p><em>class</em> — <code>ZonesToTree.cs</code></p>
+<p>Projects a <code>WorkbenchLayout</code> of named zones into a <strong>fixed-shape</strong> legacy <code>Layout</code> tree, so the existing AvalonDock adapter, persistence and controller render zones without change (the Strangler-Fig step of ADR-0021). The projected tree is always the same frame — <code>Vertical[ Horizontal[left, center, right], bottom ]</code> — so rendering it can never &quot;flip&quot;: closing or opening a pane changes only which surfaces a zone&#x27;s pane holds, never the frame.</p>
+<p><strong>Remarks.</strong> Node ids are deterministic per zone (<code>zone-left</code>, <code>zone-center</code>, …) so the projection is stable across renders. Collapsed tool zones are omitted from the tree (their content is retained in the zone model — the rail visual is a later phase). An empty Center still renders, via a synthetic welcome placeholder, because the Center is never absent (AC-F3).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string CenterStackId = &quot;zone-center&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LeftStackId = &quot;zone-left&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string RightStackId = &quot;zone-right&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string BottomStackId = &quot;zone-bottom&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string ColumnsSplitId = &quot;frame-cols&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string RootSplitId = &quot;frame-root&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Surface WelcomePlaceholder = new(&quot;welcome&quot;, &quot;welcome&quot;, &quot;Welcome&quot;)</code></td><td>The surface shown when the Center has no documents (kept out of the zone model itself).</td></tr><tr><td><code>Layout ToTree(WorkbenchLayout zones)</code></td><td>Builds the fixed-shape tree for the current zones.</td></tr><tr><td><code>string StackIdOf(ZoneId zone)</code></td><td>The projected stack id a zone renders as — the inverse of <code>ZoneOfStackId</code>; what an open names to land in a zone.</td></tr><tr><td><code>ZoneId? ZoneOfStackId(string stackId)</code></td><td>Which zone a projected stack id belongs to, or null for an unknown id.</td></tr></tbody></table></main></body></html>

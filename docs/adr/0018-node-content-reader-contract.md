@@ -21,6 +21,7 @@ summary: >-
   every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.
 review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0018 node-content-reader-contract: The reader fetches node content on demand via a bounded Core query

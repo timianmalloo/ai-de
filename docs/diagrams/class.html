@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Class</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from class.md</div><h1>Recovered class and durable-data model</h1>
+<p>Current source-level model, <strong>Verified</strong> against <code>WorkspaceCore</code>, <code>EvidenceAssertion</code>, <code>WorkspaceStore</code>, <code>ProjectionService</code> and <code>WorkEpisode</code>. This is a selected explanatory slice, not an exhaustive inventory of public classes. Native class-association inference has the separate FR-004 ambiguity/ownership caveat.</p>
+<pre><code class="language-mermaid">classDiagram
+ class WorkspaceCore {
+  +string WorkspaceId
+  +string RootPath
+  +RefreshScopeAsync()
+  +IndexCSharpAsync()
+ }
+ class WorkspaceStore {
+  +long CoreEpoch
+  +BeginRead()
+  +BeginWrite()
+ }
+ class ProjectionService {
+  +Graph()
+  +EntryPoints()
+  +SearchContent()
+ }
+ class EvidenceAssertion {
+  +string ScopeId
+  +string ArtifactRevision
+  +string Subject
+  +string Predicate
+  +string Object
+  +EvidenceOrigin Origin
+  +VerificationStatus Status
+ }
+ class Provenance {
+  +string ArtifactPathId
+  +string SourceLocation
+  +string ExtractorId
+  +string ExtractorVersion
+ }
+ class WorkEpisode {
+  +string EpisodeId
+  +string SessionId
+  +Goal Goal
+  +DoneCondition DoneWhen
+  +EpisodeOutcome Outcome
+ }
+ WorkspaceCore *-- WorkspaceStore
+ WorkspaceCore --&gt; ProjectionService
+ ProjectionService --&gt; WorkspaceStore
+ EvidenceAssertion *-- Provenance</code></pre>
+<h2>Durable grain and history</h2>
+<p>One fact is one extractor&#x27;s normalized subject/predicate/object assertion at one artifact revision. <code>WorkspaceSchema.cs</code> contains dimensions (<code>workspace_dim</code>, <code>node_dim</code>, <code>session_dim</code>), append-only scope/receipt/dispatch/prompt facts and an explicitly rebuildable <code>claim_current_cache</code>. Update/delete triggers protect immutable tables. Scope generation and core epoch gate commits. Separate watcher observations and session/envelope journals are not merged into the code-fact schema by assumption.</p>
+<p>The proposed factory WorkItem/Criterion/Assessment/Decision model is <strong>Inferred future design</strong> in the proposal, not a recovered class or a new implemented table. Source/test facts do not establish semantic acceptance solely because they can be linked.</p></main></body></html>

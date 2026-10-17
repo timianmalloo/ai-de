@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.App</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.App.md</div><h1>API: <code>AiDe.App</code></h1>
+<p><strong>2 public types · 3 public members · 20% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>App</code></h2>
+<p><em>class</em> — <code>App.xaml.cs</code></p>
+<p>Interaction logic for App.xaml — and the one place an unhandled failure is recorded.</p>
+<p><strong>Remarks.</strong> <strong>Why this class stopped being empty.</strong> The shell crashed on &quot;New Claude Code session&quot; and left no evidence anywhere: no Windows Error Reporting entry, no Application event-log record, and nothing in the workbench log, which recorded only layout mutations. The user could report only that the executable closed, and the investigation had to start from a screenshot of the terminal.</p>
+<p><strong>The three routes a .NET UI app can die by</strong>, all wired, because catching only the first would leave two silent paths and a false sense that crashes are now recorded:</p>
+<p><strong>Dispatcher</strong> — an exception on the UI thread, which is where a click handler runs. <strong>AppDomain</strong> — a background thread, which the dispatcher never sees. <strong>UnobservedTaskException</strong> — a discarded <code>Task</code> whose fault nobody awaited; it arrives at finalization, long after the gesture.</p>
+<p><strong>The process is still allowed to fail.</strong> <code>e.Handled</code> stays false: surviving an unhandled exception would leave the shell running in a state nothing designed for, and a tool that keeps going after an invariant broke tells the user less than one that stops. This changes what is KNOWN about a crash, not whether it happens.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>void OnStartup(StartupEventArgs e)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>MainWindow</code></h2>
+<p><em>class</em> — <code>MainWindow.xaml.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>MainWindow()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void OnSourceInitialized(EventArgs e)</code></td><td><strong>(gap)</strong></td></tr></tbody></table></main></body></html>

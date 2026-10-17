@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Dispatch</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Dispatch.md</div><h1>API: <code>AiDe.Core.Dispatch</code></h1>
+<p><strong>12 public types · 17 public members · 76% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>DispatchBeginResult</code></h2>
+<p><em>record</em> — <code>BoundaryDispatcher.cs</code></p>
+<p>The write-ahead half of a dispatch, as answered by whoever owns the store.</p>
+<h2><code>BoundaryDispatcher</code></h2>
+<p><em>class</em> — <code>BoundaryDispatcher.cs</code></p>
+<p>The durable half of dispatch, split so it can be answered across the daemon boundary.</p>
+<p><strong>Remarks.</strong> <strong>Why this split exists.</strong> D1 settled that terminal processes live in the shell while the store lives in the daemon, so the two halves of a two-phase delivery are now in <em>different processes</em>: only the shell can write to the pty, and only the daemon can make the attempt durable. <code>DispatchService</code> does both in one call and remains correct in-process; this is the same choreography with the side effect lifted out.</p>
+<p><strong>The crash window got bigger, which makes the write-ahead matter more, not less.</strong> In-process the window between &quot;attempt recorded&quot; and &quot;outcome recorded&quot; was a pty write. Across the boundary it is a pty write plus two IPC round trips plus the possibility that the shell dies while the daemon lives. Every one of those leaves a <code>Pending</code> row, which <code>SweepPendingToUnknown</code> resolves to an honest <code>DeliveryUnknown</code> rather than a missing row a retry would read as &quot;never sent&quot;.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>DispatchBeginResult Begin(DispatchCommand command)</code></td><td>Phase 1 — make the attempt durable. Runs where the STORE is.</td></tr><tr><td><code>DispatchReceipt Finalize(string dispatchKey, DispatchState state, string? errorCode)</code></td><td>Phase 2 — record the outcome of the side effect the caller performed. Runs where the STORE is.</td></tr><tr><td><code>(DispatchState State, string? ErrorCode) Outcome(PtyWriteResult result)</code></td><td>Maps a pty result onto the durable outcome. One place, so both hosting modes agree.</td></tr><tr><td><code>Task&lt;DispatchReceipt&gt; BeginAndWriteAsync(</code></td><td>The caller&#x27;s side of the choreography: begin, write to the session it owns, finalize.</td></tr></tbody></table>
+<h3><code>DispatchBeginResult Begin(DispatchCommand command)</code></h3>
+<p>Phase 1 — make the attempt durable. Runs where the STORE is.</p>
+<p><strong>Remarks.</strong> The session-binding check deliberately does <strong>not</strong> happen here: this process has no session to check against. It is the caller&#x27;s obligation, asserted in <code>BeginAndWriteAsync</code> before this is ever called, because a check performed against a value the caller also supplied would prove nothing.</p>
+<h3><code>DispatchReceipt Finalize(string dispatchKey, DispatchState state, string? errorCode)</code></h3>
+<p>Phase 2 — record the outcome of the side effect the caller performed. Runs where the STORE is.</p>
+<p><strong>Remarks.</strong> Finalizing a key that has already been finalized is a no-op returning the existing receipt, not an error: a retried finalize after a lost reply must not turn a delivered prompt into a failure.</p>
+<h3><code>Task&lt;DispatchReceipt&gt; BeginAndWriteAsync(</code></h3>
+<p>The caller&#x27;s side of the choreography: begin, write to the session it owns, finalize.</p>
+<ul><li><strong>`readiness`</strong> — Whether the session is known to be waiting for input. <strong>Refused unless `Ready`</strong>, and refused BEFORE anything is made durable.</li></ul>
+<p><strong>Remarks.</strong> Written once, here, and given the two durable phases as delegates — so the shell talking to a daemon and a core talking to itself run <strong>the same ordering</strong>. A second copy of this sequence for the remote case is how the two modes would drift into disagreeing about when the attempt becomes durable.</p>
+<h2><code>DispatchErrorCodes</code></h2>
+<p><em>class</em> — <code>DispatchService.cs</code></p>
+<p><em>No doc comment on this type.</em> <strong>(gap)</strong></p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string GenerationChanged = &quot;AIDE-DISPATCH-GENERATION-CHANGED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string DeliveryUnknown = &quot;AIDE-DISPATCH-DELIVERY-UNKNOWN&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string EpochStale = &quot;AIDE-AUTH-EPOCH-STALE&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string SessionUnknown = &quot;AIDE-DISPATCH-SESSION-UNKNOWN&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string WriteFailed = &quot;AIDE-DISPATCH-WRITE-FAILED&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string SessionNotReady = &quot;AIDE-DISPATCH-SESSION-NOT-READY&quot;</code></td><td>The session does not report readiness, or reports that it is not ready.</td></tr></tbody></table>
+<h3><code>string SessionNotReady = &quot;AIDE-DISPATCH-SESSION-NOT-READY&quot;</code></h3>
+<p>The session does not report readiness, or reports that it is not ready.</p>
+<p><strong>Remarks.</strong> A refusal, not a failure: nothing was attempted and no receipt exists, so a retry once the session is ready is a first attempt rather than a duplicate.</p>
+<h2><code>DispatchCommand</code></h2>
+<p><em>record</em> — <code>DispatchService.cs</code></p>
+<p>A user-confirmed request to transfer one immutable prompt revision to one session.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string DispatchKey { get; } = Convert.ToHexStringLower(</code></td><td>Derived from <code>CommandId</code>, so the command and dispatch idempotency namespaces are one. Two namespaces would let a retry miss the receipt it was meant to find.</td></tr></tbody></table>
+<h2><code>DispatchService</code></h2>
+<p><em>class</em> — <code>DispatchService.cs</code></p>
+<p>Prompt delivery under a write-ahead two-phase receipt (ADR-0010).</p>
+<p><strong>Remarks.</strong> Pattern: Write-Ahead Receipt / Two-Phase Delivery (LOA P8 — idempotency at side-effect boundaries). A terminal cannot atomically acknowledge a write and persist a store receipt, so recording the receipt <em>after</em> the write leaves a crash window in which no receipt exists: the state reads <code>NotRecorded</code>, a protocol-conformant retry treats it as never-sent, and a duplicate consequential prompt lands in the agent session. Committing the attempt first turns that window into an honest <code>DeliveryUnknown</code> instead.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Task&lt;DispatchReceipt&gt; DispatchAsync(</code></td><td>Returns the existing receipt if this dispatch key was ever attempted — including a still <code>Pending</code> one — and otherwise performs the two-phase delivery. Never re-executes.</td></tr><tr><td><code>int SweepPendingToUnknown()</code></td><td>Recovery. Resolves every attempt that never recorded an outcome to <code>DeliveryUnknown</code>. Run at core startup — this is what converts a crash window into an honest state instead of a missing row that a retry would read as…</td></tr><tr><td><code>DispatchReceipt? ReadReceipt(string dispatchKey)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>struct</code></h2>
+<p><em>record</em> — <code>ITerminalSession.cs</code></p>
+<p>One read of the session&#x27;s output, and whether anything was dropped to produce it.</p>
+<p><strong>Remarks.</strong> <code>Truncated</code> rides on the chunk rather than being a session-level flag on purpose: it says &quot;bytes were dropped immediately before this chunk&quot;, which is where a renderer needs to draw its gap marker. A session-level flag would say only that loss happened at some point, which cannot be rendered anywhere in particular.</p>
+<h2><code>SessionActivity</code></h2>
+<p><em>enum</em> — <code>ITerminalSession.cs</code></p>
+<p>Advisory session state. Never agent acceptance (ADR-0007) — a terminal cannot tell us an agent agreed to anything, only that a process is or is not producing output.</p>
+<h2><code>SessionExit</code></h2>
+<p><em>record</em> — <code>ITerminalSession.cs</code></p>
+<p>How a session ended. <code>ExitCode</code> is null when the process was killed.</p>
+<h2><code>ITerminalSession</code></h2>
+<p><em>interface</em> — <code>ITerminalSession.cs</code></p>
+<p>The terminal seam. Phase 1 substitutes a fixture session; Phase 2 substitutes a real ConPTY runtime behind this same contract, so the swap is a substitution rather than a redesign.</p>
+<p><strong>Remarks.</strong> <strong>Phase-2 amendment.</strong> The Phase-1 shape was <strong>write-only</strong>, because the fixture recorded bytes and returned and nothing ever needed to read. A real terminal&#x27;s output is the entire point — the renderer subscribes to it, the OSC parser reads it, and the resource budget is defined over it. <code>WriteAsync</code> and the generation fence are unchanged, so the write-ahead dispatch built on them is untouched.</p>
+<p><strong>Output is pull-based, not an event.</strong> An event would let a fast-producing process drive unbounded work on whatever thread raised it — exactly the sustained-1 MiB/s case the architecture budgets for. A bounded channel makes backpressure representable and truncation a <em>state</em> rather than a crash.</p>
+<p>Every implementation must satisfy the shared conformance suite (D7). With two implementations in play, tests written against the fake prove something about the fake unless that suite exists.</p>
+<h2><code>SessionReadiness</code></h2>
+<p><em>enum</em> — <code>SessionReadiness.cs</code></p>
+<p>Whether a session can be given a prompt right now.</p>
+<p><strong>Remarks.</strong> Deliberately three-valued. &quot;Not ready&quot; and &quot;we cannot tell&quot; are different situations with different correct responses, and collapsing them is how a prompt gets sent into a dialog box.</p>
+<h2><code>ReadinessEvidence</code></h2>
+<p><em>enum</em> — <code>SessionReadiness.cs</code></p>
+<p>How a session&#x27;s readiness was established. Not all evidence is equal.</p>
+<h2><code>SessionReadinessPolicy</code></h2>
+<p><em>class</em> — <code>SessionReadiness.cs</code></p>
+<p>Establishes whether a session is ready for a prompt, from evidence rather than from hope.</p>
+<p><strong>Remarks.</strong> <strong>ADR-0007 already requires readiness evidence</strong> before an adapter may claim agent acceptance. What was missing was the other half: what to do when there is none. Until this, a prompt was written and reported <code>PtyWriteAccepted</code> regardless — which is true about the bytes and misleading about the outcome.</p>
+<p><strong>Shell integration is the only readiness evidence that exists today.</strong> OSC 133 with the session nonce is what makes <code>Ready</code> a claim rather than a guess; a session without it has an activity value derived from output timing, which is not the same thing and must not be treated as one.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>SessionReadiness Evaluate(ITerminalSession session, bool hasReadinessEvidence)</code></td><td>Readiness for , given whether its shell integration is active.</td></tr><tr><td><code>SessionReadiness Evaluate(ITerminalSession session, ReadinessEvidence evidence)</code></td><td>Readiness for , given what kind of evidence exists.</td></tr><tr><td><code>string Explain(SessionReadiness readiness)</code></td><td>The sentence a user is shown when a dispatch is refused.</td></tr></tbody></table>
+<h3><code>SessionReadiness Evaluate(ITerminalSession session, bool hasReadinessEvidence)</code></h3>
+<p>Readiness for , given whether its shell integration is active.</p>
+<ul><li><strong>`hasReadinessEvidence`</strong> — True only when something authenticates the session&#x27;s own claim about its state — today, the OSC 133 nonce. Derived output timing does not count: a quiet agent mid-thought looks exactly like an idle one.</li></ul>
+<h3><code>string Explain(SessionReadiness readiness)</code></h3>
+<p>The sentence a user is shown when a dispatch is refused.</p>
+<p><strong>Remarks.</strong> Each case says what would change it. &quot;Not ready&quot; resolves by waiting; &quot;unknown&quot; does not, and telling a user to wait for something that will never happen is worse than telling them why.</p></main></body></html>

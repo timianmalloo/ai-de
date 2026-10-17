@@ -19,6 +19,8 @@ summary: >-
   every live terminal. Secondary: the only create command is "New agent terminal", which names the
   tab after the first agent on PATH ("claude"), so a plain terminal is mislabelled and no
   plain-terminal action exists. Report only — no code changed.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # INV-0002 — Opening a second terminal kills the running one

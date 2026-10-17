@@ -21,7 +21,8 @@ links:
   - { to: adr-0019-advisory-evaluator-calibration, rel: depends-on }
   - { to: adr-0020-trusted-registrar-harness-model-identity, rel: depends-on }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   Top-level architecture for Loomkeeper, the local agentic watcher subsystem. It observes many
   terminal-agent sessions across repositories by composing the existing AI-DE fact store, derived

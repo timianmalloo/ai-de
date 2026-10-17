@@ -12,7 +12,8 @@ links:
   - { to: inv-0002-terminal-rebuild-kills-sessions, rel: depends-on }
   - { to: architecture, rel: relates-to }
 review-by: 2027-02-27
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   Specifies correct behaviour for multiple concurrent terminal sessions: a first-class "New terminal"
   (plain shell) action distinct from "New agent terminal"; sessions that are never destroyed except

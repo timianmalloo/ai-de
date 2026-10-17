@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Data And Constants</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from data-and-constants.md</div><h1>Thresholds and measures</h1>
+<h2>What the evidence does and does not establish</h2>
+<p><strong>Flagged gap:</strong> no universal safe human-review cutoff was established. A diff-size limit is an operational bound; a model confidence filter is a workflow heuristic; code coverage measures execution, not obligation completeness. These are not interchangeable. Anthropic internal risk tiers are one organization&#x27;s policy, not a standard to import unchanged. <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">Internal practice</a>, <a href="https://raw.githubusercontent.com/anthropics/claude-code/main/plugins/code-review/README.md">plugin filter</a>, <a href="https://code.claude.com/docs/en/ultrareview">ultrareview limits</a>.</p>
+<p><strong>Verified operating snapshot:</strong> current ultrareview docs describe default limits of 500 changed files and 8,000 changed lines, subject to the actual refusal&#x27;s effective limits. They are not proposed review safety limits for AI-DE. No monetary estimate is used in the proposal.</p>
+<h2>Conservative initial AI-DE policy — Inferred, to specify later</h2>
+<table><thead><tr><th>Trigger</th><th>Human obligation</th></tr></thead><tbody><tr><td>Credentials, authorization, private-data boundary, destructive migration, release authority</td><td>Named security/data/privacy/release reviewer</td></tr><tr><td>New domain invariant or architecture precedent</td><td>Domain/architecture decision with scenario evidence</td></tr><tr><td>Changed accepted criterion, ambiguous intent, contradictory baseline</td><td>Resolve the intent question before acceptance</td></tr><tr><td>Missing, stale, partial or unsupported analysis</td><td>Show incomplete assessment; retain review obligation</td></tr><tr><td>Large or coupled change</td><td>Split guided semantic units; expose uncovered diff and dependencies</td></tr><tr><td>Routine, reversible, known pattern with complete evidence</td><td>Eligible for a lighter tier only after local outcome calibration</td></tr></tbody></table>
+<p>Cold start: keep human change acceptance. Do not make an AI score a permission grant.</p>
+<h2>Definitions and denominator rules — proposed</h2>
+<table><thead><tr><th>Measure</th><th>Numerator / denominator / scope</th><th>Interpretation</th></tr></thead><tbody><tr><td>Requirement evidence coverage</td><td>Criteria with reviewed meaningful oracles / applicable criteria at one spec version</td><td>Link presence alone does not establish meaningful evidence</td></tr><tr><td>Branch coverage</td><td>Executed instrumented branches / eligible branches, exclusions retained</td><td>Not semantic completeness</td></tr><tr><td>Mutation strength</td><td>Raw killed/survived/timeout/invalid counts and selected population</td><td>Equivalent mutants require disposition; preserve runner formula</td></tr><tr><td>First-pass rate</td><td>Tests passed on attempt one / tests attempted once in window/environment</td><td>Do not include retry recovery in numerator</td></tr><tr><td>Retry-recovered rate</td><td>First-failed then recovered tests / tests eligible for retry</td><td>Classification, not a causal flake probability</td></tr><tr><td>Review attention</td><td>Active human time plus waiting time, rounds and dispositions</td><td>Pair with escapes/reverts/recovery outcomes</td></tr><tr><td>Efficiency</td><td>Wall time, CPU and cost per run plus repeated setup</td><td>Parallel durations cannot be summed as wall time</td></tr></tbody></table>
+<p>Counts are additive only over disjoint populations; rates are non-additive. Missing denominator or window means <strong>not recorded</strong>, not zero. Flake quarantine does not erase failures. Never auto-delete tests merely because coverage overlaps: platform/boundary checks may be purposeful. <a href="https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/">Mutation semantics</a>, <a href="https://playwright.dev/docs/test-retries">retry semantics</a>.</p>
+<h2>Local measured baseline, not factory coverage</h2>
+<p>At review baseline <code>9f13ca7a</code>, the normal App build succeeded with zero warnings/errors. One selected Core test slice passed 57/57, with no skips. The NuGet advisory query found no vulnerable packages in its current sources. This is not a full test/coverage run, native UI proof, all vulnerability assurance or a factory acceptance result. Focused forensic probes separately reproduced dirty-edit staleness and an oversized entry-point response.</p></main></body></html>

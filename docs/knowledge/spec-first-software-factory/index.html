@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Index</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from index.md</div><h1>Research synthesis — 17 October 2026</h1>
+<p>The canonical framing is <strong>change assurance and work orchestration</strong>, not an autonomous-code chat dashboard. The user&#x27;s constraint is explicit: AI-DE remains a local desktop workbench. This base covers all five requested topics and extends, rather than replaces, existing shell, code-graph, UML/MDE and operational/test-dashboard research.</p>
+<h2>Headline findings</h2>
+<ol><li><strong>Verified, documented:</strong> review tools now combine contextual analysis, finding verification,</li></ol>
+<p>semantic summaries and retained snapshots. Anthropic&#x27;s public service, local review, ultrareview and open plugin are separate mechanisms; their permissions and scores must not be conflated. <a href="https://code.claude.com/docs/en/code-review">Claude service</a>, <a href="https://code.claude.com/docs/en/ultrareview">ultrareview</a>, <a href="https://raw.githubusercontent.com/anthropics/claude-code/main/plugins/code-review/README.md">plugin</a>.</p>
+<ol><li><strong>Verified, documented:</strong> human approvals are product/policy-specific. Anthropic&#x27;s service</li></ol>
+<p>does not approve PRs; current Copilot docs describe optional approvals in public preview. <strong>Inferred:</strong> AI-DE should distinguish assessment, policy obligation and human decision. <a href="https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review">Copilot</a>.</p>
+<ol><li><strong>Flagged gap:</strong> no validated universal line-count, confidence or coverage cutoff for removing</li></ol>
+<p>human review was established. <strong>Inferred:</strong> route human attention by consequence, uncertainty, missing proof and reversibility; calibrate lighter policy against the repository&#x27;s own outcomes. <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">Anthropic internal practice</a>.</p>
+<ol><li><strong>Verified, documented:</strong> artifact consistency, implementation convergence and test oracle quality</li></ol>
+<p>are different problems. <strong>Inferred:</strong> use a multi-dimensional drift matrix, never one reassuring alignment score. <a href="https://github.github.com/spec-kit/reference/agentic-sdd.html">Spec Kit</a>, <a href="https://kiro.dev/docs/specs/correctness/">Kiro</a>.</p>
+<ol><li><strong>Inferred from sources and local code:</strong> the missing factory layer is a versioned intent/evidence</li></ol>
+<p>model joining existing sessions, graph facts, tests, assessments and decisions. Rebuilding AI-DE&#x27;s already implemented daemon, terminal and diagram substrate would miss the main opportunity.</p>
+<h2>Five requested areas and deliverable map</h2>
+<table><thead><tr><th>Area</th><th>Research result</th><th>Local implication</th></tr></thead><tbody><tr><td>Agentic code review and human escalation</td><td>Distinct review mechanisms; review snapshot and guided decisions</td><td>Human decision packet with complete-diff escape hatch and omitted-scope disclosure</td></tr><tr><td>Drift and test gaps</td><td>Separate intent, architecture, contract, UX, visual and proof drift</td><td>Obligation graph and typed dispositions, not automatic spec rewriting</td></tr><tr><td>Turn/code summarization</td><td>Behavioral delta plus source/test/run identities; diagrams answer different questions</td><td>Immutable episode summary with criterion-to-code-to-assertion-to-run trace</td></tr><tr><td>Copilot, ChatGPT, Grok, Antigravity, Claude, Cursor, JetBrains</td><td>Plans, goal supervision, artifacts, walkthroughs and progressive disclosure</td><td>Adopt interactions while keeping the desktop/data/execution boundary explicit</td></tr><tr><td>AI-DE comparison and evolution</td><td>Existing graph/session foundations; absent integrated assurance workflows</td><td>Three destinations with six contextual journeys and shared evidence</td></tr></tbody></table>
+<h2>Confidence and method</h2>
+<p><strong>Verified</strong> means an opened primary source documents a feature or a directly inspected/executed local artifact establishes a claim. It does not certify vendor efficacy. <strong>Inferred</strong> marks design proposals. <strong>Flagged</strong> marks weak, conflicting, untested or dated evidence. Vendor telemetry and research preprints are not independent proof of AI-DE outcomes. Sources were accessed 2026-10-17; fast-moving documents have a one-month review window. No native deep-research tool was available; three bounded advisory tracks used primary-page reads, local reconstruction and disconfirmation.</p>
+<h2>Design implications — hypotheses, not accepted requirements</h2>
+<p>Make work items and review decisions primary; keep sessions subordinate. Separate acceptance of intent, tool authorization and acceptance of a change. Pin every assessment to spec/architecture/ base/head/working-tree identity. Preserve unknown, partial and stale states. Keep code and logs accessible, and disclose the full coverage of a guided review. Start human review conservatively; avoid uncalibrated numerical safety claims. The proposal explores these implications.</p>
+<p>Read <a href="state-of-the-art.md">state of the art</a>, <a href="comparables.md">comparables</a>, <a href="references.md">reference contracts</a>, <a href="data-and-constants.md">measures</a>, <a href="glossary.md">glossary</a>, <a href="open-questions.md">open questions</a>, and the <a href="sources.md">full source ledger</a>.</p></main></body></html>

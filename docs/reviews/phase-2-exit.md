@@ -15,6 +15,8 @@ summary: >-
   Phase 2's three components are built and measured. Every capability the phase promised is
   demonstrable, four gates are green over 541 tests, and the three performance budgets are met with
   large headroom. Five residual risks are carried into Phase 3, three of them by explicit decision.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Phase-2 exit review

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Index</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from index.md</div><h1>AI-DE documentation — map of content</h1>
+<p>This is a <strong>route</strong>, not an inventory. The complete, typed, machine-navigable form of everything below is the <strong>[Docs Explorer](index.html)</strong> — the complete artifact graph with links, health and review state. Start here if you are a person; start there if you are looking for something specific.</p>
+<p>The public presence over this material is the <strong>project site</strong>, authored in <code>site/</code> and published to the repository&#x27;s GitHub Pages URL by <code>.github/workflows/pages.yml</code>, which serves <code>site/</code> at the root and this folder at <code>/docs/</code>.</p>
+<h2>If you have five minutes</h2>
+<table><thead><tr><th>Read</th><th>Why</th></tr></thead><tbody><tr><td><a href="architecture.md">Architecture</a></td><td>The component map, trust boundaries, command protocol and delivery semantics — the document everything else refines.</td></tr><tr><td><a href="diagrams/component.md">Component diagram</a></td><td>What actually depends on what, read from the composition roots.</td></tr><tr><td><a href="design/conceptual-model.md">Conceptual domain model</a></td><td>Bounded contexts, aggregate invariants, and the declared grain of every fact.</td></tr></tbody></table>
+<h2>If you are here for the ideas</h2>
+<p><strong>The repository as a model.</strong> A repository is indexed into one append-only fact store, and every view is a rebuildable projection over it. Code is one surface of fifteen.</p>
+<ul><li><a href="specs/ai-native-ide.md">Spec — AI-native IDE</a> · <a href="specs/ai-native-ide.html">rendered</a></li><li><a href="specs/editor-surfaces.md">Spec — editor surfaces</a> · <a href="specs/knowledge-exploration.md">knowledge exploration</a> · <a href="specs/uml-erm-surfaces.md">UML/ERM surfaces</a></li><li><a href="diagrams/layers.md">Layered architecture — capability tiers</a></li><li><a href="adr/0001-derived-evidence-views.md">ADR-0001 — derived evidence views</a> · <a href="adr/0002-workspace-fact-store.md">ADR-0002 — workspace fact store</a></li></ul>
+<p><strong>Collaboration you can score.</strong> Several harnesses and models in one repository, coordinating on a board, compared on evidence, and remembered in a ledger.</p>
+<ul><li><a href="specs/agentic-watcher-substrate.md">Spec — Loomkeeper, the agentic watcher substrate</a> · <a href="specs/agentic-watcher-substrate.html">rendered</a></li><li><a href="architecture/loomkeeper.md">Architecture — Loomkeeper</a></li><li>Designs: <a href="design/watcher-weave-score.md">Weave score</a> · <a href="design/watcher-message-board.md">message board</a> · <a href="design/watcher-board-leaderboard-surfaces.md">board and leaderboard surfaces</a> · <a href="design/watcher-scoring-service.md">scoring service</a> · <a href="design/watcher-score-dispute.md">score dispute</a></li><li><a href="design/watcher-daydream-dream-seam.md">Daydream and the seam to the offline Dream</a> — the online half of continuous improvement, what crosses to the batch pass, how a retraction propagates, and why the pack&#x27;s script stays an optional integration rather than a runtime dependency. <strong>Proposed; nothing built.</strong></li><li><a href="adr/0020-trusted-registrar-harness-model-identity.md">ADR-0020 trusted-registrar-harness-model-identity — trusted registrar, harness and model identity</a> · <a href="adr/0019-advisory-evaluator-calibration.md">ADR-0019 advisory-evaluator-calibration — advisory evaluator calibration</a></li><li><a href="collaboration/session-contracts.md">Session contracts</a> — the single ownership register for concurrent agent sessions.</li></ul>
+<h2>If you are going to change the code</h2>
+<table><thead><tr><th>Read</th><th>Why</th></tr></thead><tbody><tr><td><a href="_site/index.html">API reference</a></td><td>The public C# surface with its own doc comments. 1,733 public symbols; members without a comment are listed as gaps.</td></tr><tr><td><a href="diagrams/class.md">Class diagram</a> · <a href="diagrams/sequence.md">sequence diagrams</a></td><td>The scoring types, and the two flows the product turns on.</td></tr><tr><td><a href="lessons/defect-classes.md">Defect classes</a></td><td>81 classes of mistake this project has produced, each converted into a test or a gate. The cheapest hour you can spend here.</td></tr><tr><td><a href="../.claude/knowledge/testing-strategy.md">Testing strategy</a></td><td>What counts as proof.</td></tr><tr><td><a href="audit/index.html">Audit &amp;amp; change ledger</a></td><td>What was done, why, and by which prompt.</td></tr></tbody></table>
+<h2>If you are auditing it</h2>
+<ul><li><a href="security/threat-model.md">Threat model</a> · <a href="security/privacy-review.md">privacy review</a></li><li><a href="proof/">Proof packs</a> — one per design, recording what was actually executed.</li><li><a href="investigations/">Investigations</a> — the ones that changed a decision.</li><li><a href="measurements/">Measurements</a> — numbers that were taken rather than reasoned about.</li></ul>
+<h2>How this documentation stays honest</h2>
+<p>Every artifact under <code>docs/</code> carries typed YAML frontmatter, and <code>docs/docs-index.js</code> is <strong>derived</strong> from it — never hand-edited. A pull request fails if the derived index disagrees with the frontmatter it came from, if a typed link dangles, or if an artifact&#x27;s <code>review-by</code> date has passed. The freshness gate is <code>docs-graph.py freshness</code>; the graph validator is <code>docs-graph.py validate</code>.</p>
+<p>The API reference and the four diagram families are regenerated by <code>/document</code>; coverage and confidence for the last run are in <a href="_meta.json">`_meta.json`</a>.</p>
+<h2>October 2026 assessment and factory exploration</h2>
+<p><a href="reviews/built-inventory-rev102.md">Current built/remaining inventory</a>, <a href="reviews/forensic-review-rev102.md">forensic review</a>, <a href="backlog/forensic-review-rev102.md">proposed remediation backlog</a>, <a href="knowledge/spec-first-software-factory/index.md">research synthesis</a>, and <a href="proposals/local-software-factory-interactive.html">interactive local factory proposal</a>. These are evidence and exploratory proposals, not accepted implementation requirements.</p></main></body></html>

@@ -9,7 +9,8 @@ tags: [glossary, mda, uml, dsl, ubiquitous-language]
 links:
   - { to: kb-uml-mde-and-4gl, rel: refines }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: kb-uml-mde-and-4gl, on: 2026-10-17, reason: "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact" }
 summary: >-
   Precise definitions for the modelling vocabulary — CIM/PIM/PSM, MOF, XMI, OCL, fUML, Alf,
   4GL, round-trip, language workbench — so the history is discussed in its own terms.

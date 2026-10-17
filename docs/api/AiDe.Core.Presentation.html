@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core.Presentation</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.Presentation.md</div><h1>API: <code>AiDe.Core.Presentation</code></h1>
+<p><strong>32 public types · 87 public members · 66% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>CanvasNode</code></h2>
+<p><em>record</em> — <code>CanvasGraphViewModel.cs</code></p>
+<p>One node as the canvas draws it.</p>
+<p>One node as the canvas draws it.</p>
+<p><strong>Remarks.</strong> <strong>The count is on the node because a dot standing for 240 types is only honest while the 240 is on it.</strong> Without it the overview renders a group exactly like a single type, and the picture says the workspace is small rather than that the view is summarised. Defaulted to 1, so every existing construction means what it always meant.</p>
+<h2><code>CanvasEdge</code></h2>
+<p><em>record</em> — <code>CanvasGraphViewModel.cs</code></p>
+<p>One edge as the canvas draws it.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsJoin</code></td><td>True for a join across artifact types — code to schema, schema to infrastructure.</td></tr><tr><td><code>bool IsInferred</code></td><td>True when the claim is a convention rather than a declaration.</td></tr></tbody></table>
+<h3><code>bool IsJoin</code></h3>
+<p>True for a join across artifact types — code to schema, schema to infrastructure.</p>
+<p><strong>Remarks.</strong> Drawn differently because it is a different KIND of claim. An edge inside one artifact was resolved by a compiler; a join between two was resolved by a convention or a literal match, and it looks more authoritative than it is precisely because it spans more.</p>
+<h2><code>CanvasGraph</code></h2>
+<p><em>record</em> — <code>CanvasGraphViewModel.cs</code></p>
+<p>What the canvas renders, including what it could not show.</p>
+<h2><code>CanvasGraphViewModel</code></h2>
+<p><em>class</em> — <code>CanvasGraphViewModel.cs</code></p>
+<p>Builds the canvas&#x27;s view from the same read surface every other pane uses.</p>
+<p><strong>Remarks.</strong> <strong>In Core, with no WPF and no browser.</strong> The canvas is a rendering of a projection, and what it shows is decidable — and testable — without a window. Putting this in the WPF layer would make &quot;does the graph show the right nodes&quot; a question only answerable by looking at one.</p>
+<p><strong>Every empty case gets its own message.</strong> &quot;No workspace&quot;, &quot;nothing indexed yet&quot; and &quot;a node with no neighbours&quot; are three different situations with three different next actions, and a blank canvas for all three tells the user nothing (<strong>DC-011</strong>).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int OverviewNodeCap = 1_500</code></td><td>The graph around , or around whatever Find offers first.  How many nodes the canvas asks for when nothing is focused.  Nodes in the default overview, before it says what it left out.</td></tr><tr><td><code>Task&lt;CanvasGraph&gt; LoadAsync(</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;CanvasGraph&gt; OverviewAsync(int depth = 3, CancellationToken cancellationToken = default)</code></td><td>The workspace as GROUPS rather than nodes — the source for a semantic-zoom render.</td></tr><tr><td><code>Task&lt;CanvasGraph&gt; GroupAsync(string groupId, CancellationToken cancellationToken = default)</code></td><td>The member nodes of one overview group — the drill-down from a cluster (semantic zoom) to the real nodes it stands for.</td></tr><tr><td><code>Task&lt;CanvasGraph&gt; RouteAsync(</code></td><td>The declared context a node belongs to, or null.  How one node reaches another, rendered as the same graph the canvas already draws.</td></tr><tr><td><code>Func&lt;string, string?&gt; ContextLookup { get; set; } = _</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string? ContextFilter { get; set; }</code></td><td>When set, only nodes in this context are drawn.</td></tr><tr><td><code>bool ExcludeKnowledge { get; set; }</code></td><td>When true, every <code>GraphQuery</code> this view model issues excludes knowledge nodes (Ruling 53; US-C8): the Architecture canvas&#x27;s kind-filtered second instance — code, data and architecture/infrastructure only — expressed a…</td></tr><tr><td><code>IReadOnlyList&lt;string&gt;? KindFilter { get; set; }</code></td><td>When set, every <code>GraphQuery</code> this view model issues keeps only these <code>has_type</code> values (Ruling 54&#x27;s class-diagram scaling fix, patterns-expert review): the SAME allow-list the diagram itself draws (`ClassHierarchyMode…</td></tr></tbody></table>
+<h3><code>int OverviewNodeCap = 1_500</code></h3>
+<p>The graph around , or around whatever Find offers first.</p>
+<p>How many nodes the canvas asks for when nothing is focused.</p>
+<p>Nodes in the default overview, before it says what it left out.</p>
+<p><strong>Remarks.</strong> The projection&#x27;s own ceiling, so the canvas asks for everything the read surface will give. A lower number here omitted 813 of TheTerrace&#x27;s 2,813 nodes — a limit the SURFACE imposed on itself while the store and the projection were both willing. How much of it to draw at once is a rendering decision and belongs with the renderer; withholding it here would make that decision on the renderer&#x27;s behalf and hide the rest.</p>
+<p><strong>Derived from a measurement, and from the spec.</strong> MEASURED on a real repository: the whole graph serialises to <strong>1,522,284 bytes</strong> against a 1 MiB frame — so the previous default could not be delivered at all (INV-0003), and the user saw &quot;the daemon closed the connection&quot;. Declared-only nodes are ~294 bytes each including their edges, so a frame holds roughly 3,500 of them; this cap keeps real headroom under that.</p>
+<p><strong>But the size is the smaller reason.</strong> <code>docs/specs/knowledge-exploration.md</code> US-K2 says the whole graph is never rendered at once, and a 2,815-node hairball is unreadable even when it fits. The fix for &quot;one arbitrary alphabetical node&quot; was a bounded overview of MEANINGFUL nodes; loading everything over-corrected past it. What is dropped is counted and reported, which is the part that makes a bounded view honest rather than a smaller lie.</p>
+<h3><code>Task&lt;CanvasGraph&gt; OverviewAsync(int depth = 3, CancellationToken cancellationToken = default)</code></h3>
+<p>The workspace as GROUPS rather than nodes — the source for a semantic-zoom render.</p>
+<ul><li><strong>`depth`</strong> — How many identifier segments to group by. Higher is finer.</li></ul>
+<p><strong>Remarks.</strong> <strong>Why this exists beside the node graph.</strong> The bounded default draws 1,500 of a workspace&#x27;s declared nodes and says what it dropped, which is honest and is still a hairball. A group view answers the question the first look actually asks — <em>what is in here</em> — and the node view answers the second.</p>
+<p><strong>Each group is a node carrying its size.</strong> The canvas already knows how to draw nodes and edges, so an overview arrives as the same shape with <code>Count</code> set — rather than as a second payload with a second renderer that would then disagree with this one about what a node is.</p>
+<p><strong>Grouping is the projection&#x27;s, not this method&#x27;s.</strong> <code>GraphOverview.GroupFor</code> is public precisely so a caller that drills into a group computes the same membership the overview did; two definitions of &quot;which group is this node in&quot; is the defect signature this codebase has paid for repeatedly (DC-022).</p>
+<h3><code>Task&lt;CanvasGraph&gt; GroupAsync(string groupId, CancellationToken cancellationToken = default)</code></h3>
+<p>The member nodes of one overview group — the drill-down from a cluster (semantic zoom) to the real nodes it stands for.</p>
+<p><strong>Remarks.</strong> <strong>Membership is the projection&#x27;s, via `GraphQuery.GroupId`.</strong> The group whose super-node the canvas drew carried its id; asked to open it, this hands that id straight back to <code>GraphAsync</code>, which keeps only the nodes <code>GraphOverview.GroupFor</code> assigns to it. So &quot;which nodes are in this group&quot; has one definition, shared by the overview that drew the group and the drill-down that opens it (the DC-022 trap this avoids).</p>
+<p><strong>RootId is the group id.</strong> The result is a rooted view, so the canvas keeps Back and Overview live — a group opened with no way back is the keyboard trap the canvas exists to avoid.</p>
+<h3><code>Task&lt;CanvasGraph&gt; RouteAsync(</code></h3>
+<p>The declared context a node belongs to, or null.</p>
+<p>How one node reaches another, rendered as the same graph the canvas already draws.</p>
+<p><strong>Remarks.</strong> Null is a real answer and is drawn as such: a node in no context is uncovered, not unimportant, and colouring it as though it belonged somewhere would be the inference ADR-0016 refuses.</p>
+<p><strong>Deliberately returns `CanvasGraph` rather than a route type.</strong> A route IS a subgraph, and giving it its own shape would mean a second renderer, a second set of bindings and a second place for the two sessions to disagree about what a node looks like. The design session binds what it already binds; only the caption changes.</p>
+<p><strong>The caption carries the weakest link.</strong> A route drawn without it looks like a fact about the code, when one inferred edge anywhere along it makes the whole claim inferred.</p>
+<p><strong>Every empty case says which one it is.</strong> &quot;No workspace&quot;, &quot;that node is not in the graph&quot; and &quot;there is no route within eight edges&quot; are three different situations with three different next actions (DC-011).</p>
+<h3><code>string? ContextFilter { get; set; }</code></h3>
+<p>When set, only nodes in this context are drawn.</p>
+<p><strong>Remarks.</strong> The ROOT is kept even when it is outside the filter, and labelled as such. Dropping it would leave a graph with no anchor and no way back — a filter that can strip the thing you were looking at is one nobody trusts twice.</p>
+<h2><code>PaneState</code></h2>
+<p><em>enum</em> — <code>EvidencePaneViewModel.cs</code></p>
+<p>The complete state set for the evidence surface. Loading, Empty and Error are first-class here because they are the states the urge to complete skips — and an unavailable result rendered as a clean empty one is the specific dishonesty this product exists to avoid.</p>
+<h2><code>ConfidenceBadge</code></h2>
+<p><em>record</em> — <code>EvidencePaneViewModel.cs</code></p>
+<p>A confidence badge that never relies on colour. Glyph and text carry the meaning; colour is the third signal, so the badge still reads correctly in high-contrast mode and for a colour-blind operator (WCAG 2.2 AA, &quot;not colour alone&quot;).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>ConfidenceBadge For(VerificationStatus status)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ConfidenceBadge NotRecorded { get; } =</code></td><td>The badge for a row whose confidence was never established.</td></tr><tr><td><code>string AccessibleName</code></td><td>What a screen reader announces. Never just the colour name.</td></tr></tbody></table>
+<h3><code>ConfidenceBadge NotRecorded { get; } =</code></h3>
+<p>The badge for a row whose confidence was never established.</p>
+<p><strong>Remarks.</strong> <strong>Not a `VerificationStatus`, deliberately.</strong> The three statuses are claims the extractor made about an assertion. &quot;The projection this row came from does not carry one&quot; is a different kind of fact, and folding it into <code>Unverified</code> would state an extractor&#x27;s finding that no extractor made.</p>
+<p>DESIGN.md&#x27;s status language names this state: question glyph, the words <em>Not recorded</em>, <code>{colors.unverified}</code> — <em>&quot;evidence is absent or untrustworthy&quot;</em>. The design language&#x27;s own third principle is that absence is a state and never renders as a clean success.</p>
+<h2><code>EvidenceRow</code></h2>
+<p><em>record</em> — <code>EvidencePaneViewModel.cs</code></p>
+<p>One row of the accessible evidence list — the permanent keyboard/screen-reader surface.</p>
+<p><strong>Remarks.</strong> The pane lists search results, and a search now matches attribute VALUES as well as identity. A row that came back because one of its members matched is <strong>correct</strong> and reads as a wrong result until it says so — the same defect fixed on the search surface, found here by enumerating client records rather than by anybody noticing the pane.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string ListLine</code></td><td>The one line a list shows: the label, its kind, and why it matched.</td></tr><tr><td><code>string AccessibleName</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>string ListLine</code></h3>
+<p>The one line a list shows: the label, its kind, and why it matched.</p>
+<p><strong>Remarks.</strong> Composed HERE rather than in the pane, so the visible text and the accessible name are built from the same fields and cannot drift apart — the chip&#x27;s two rendering paths drifting is what made the same false claim twice in one surface.</p>
+<h2><code>ProvenanceSection</code></h2>
+<p><em>record</em> — <code>EvidencePaneViewModel.cs</code></p>
+<p>One section of the provenance pane, in the spec&#x27;s fixed evidence order.</p>
+<h2><code>EvidencePaneViewModel</code></h2>
+<p><em>class</em> — <code>EvidencePaneViewModel.cs</code></p>
+<p>The Phase-1 evidence surface: a filterable list plus a provenance pane.</p>
+<p><strong>Remarks.</strong> This is not a fallback for a graph canvas — it is the accessibility equivalent the spec requires to exist permanently, exposing the same selected-node identity, provenance, navigation actions and result-limit state as the Phase-2 canvas will.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>PaneState State { get; private set; } = PaneState.Loading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;EvidenceRow&gt; Rows { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string? SelectedNodeId { get; private set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;ProvenanceSection&gt; Provenance { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string? SelectedDetailLine { get; private set; }</code></td><td>The selected row&#x27;s provenance as ONE muted line for the row itself (Ruling 94): confidence · origin · extractor and version · rev, one entry per distinct triple among the node&#x27;s neighbours, or <code>not recorded</code> when it h…</td></tr><tr><td><code>string StatusMessage { get; private set; } = &quot;Loading evidence…&quot;</code></td><td>The one string the operator reads when something is off. Always states evidence, never reassurance.</td></tr><tr><td><code>string? SourceRevision { get; private set; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LiveAnnouncement { get; private set; } = string.Empty</code></td><td>Announced through a live region, so state changes reach a screen reader without motion.</td></tr><tr><td><code>Task LoadAsync(string searchTerm = &quot;&quot;, CancellationToken cancellationToken = default)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void MarkStale(string reason)</code></td><td>Marks the view stale without discarding it — the last successful revision still renders.</td></tr><tr><td><code>void Filter(string term)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task SelectAsync(string nodeId, CancellationToken cancellationToken = default)</code></td><td>Selects a node and builds its provenance in the spec&#x27;s fixed order: what it is → confidence/provenance → related nodes → source location → actions.</td></tr><tr><td><code>string EmptySelectionMessage</code></td><td>Empty-pane copy, shown before anything is selected — spec §C4, verbatim (US-C6).</td></tr></tbody></table>
+<h2><code>WatcherBoardRow</code></h2>
+<p><em>record</em> — <code>WatcherBoardPaneViewModel.cs</code></p>
+<p>One row of the Message Board surface (US-4): a per-repository post rendered as a dense, scannable, screen-reader-complete line. <code>Content</code> is <strong>quarantined untrusted data</strong> - it is shown to the operator but never treated as instruction; an injection-shaped post is marked with a visible flag (US-4 #5), a redacted post shows a tombstone, and neither is silently blank.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string RedactedText = &quot;[redacted]&quot;</code></td><td>The literal shown for a post whose content was redacted (spec line 210).</td></tr><tr><td><code>string FlagPrefix = &quot;⚠ flagged · &quot;</code></td><td>The prefix a flagged post carries so it reads as untrusted, not as a directive (US-4 #5).</td></tr><tr><td><code>string DisplayLabel</code></td><td>The dense one-line label (G6 density). Untrusted content is prefixed, never blank.</td></tr><tr><td><code>string AccessibleName</code></td><td>The full row a screen reader announces (WCAG 2.2 AA).</td></tr><tr><td><code>WatcherBoardRow From(BoardMessage message)</code></td><td>Builds an honest row: a tombstone shows [redacted], never the (now null) content.</td></tr></tbody></table>
+<h2><code>IWatcherBoardQuery</code></h2>
+<p><em>interface</em> — <code>WatcherBoardPaneViewModel.cs</code></p>
+<p>The read seam the Board pane consumes. A null query means no watcher store is wired.</p>
+<h2><code>WatcherBoardQuery</code></h2>
+<p><em>class</em> — <code>WatcherBoardPaneViewModel.cs</code></p>
+<p>Folds the observation store&#x27;s cross-repo board into the pane&#x27;s read (US-4). Order preserved.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;BoardMessage&gt; GetMessages()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WatcherBoardPaneViewModel</code></h2>
+<p><em>class</em> — <code>WatcherBoardPaneViewModel.cs</code></p>
+<p>The Loomkeeper Message Board surface view model - the compute reader for shared agent communication (US-4). Renders posts across repositories with quarantined untrusted content shown but never as instruction, injection flags visible, and redactions as tombstones. Synchronous load (a local store fold), so it degrades to an explicit state and never strands on &quot;Loading…&quot; (DC-011).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>PaneState State { get; private set; } = PaneState.Loading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;WatcherBoardRow&gt; Rows { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string StatusMessage { get; private set; } = &quot;Loading board…&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LiveAnnouncement { get; private set; } = string.Empty</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Load()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WatcherDaydreamRow</code></h2>
+<p><em>record</em> — <code>WatcherDaydreamPaneViewModel.cs</code></p>
+<p>One row of the Daydreams surface (US-9): a pattern, where it stands, and what is stopping it.</p>
+<p><strong>Remarks.</strong> <strong>The block reason is part of the row, not a tooltip.</strong> A candidate that cannot be promoted has to say <em>which</em> prerequisite is missing where it is read. &quot;Promotion disabled&quot; with the reason a click away is the empty state DC-087 registered — a surface stating a condition it never explains.</p>
+<p><strong>No content from an agent appears here.</strong> A signature is built from typed values only, so unlike the Message Board there is no quarantined prose to render and no injection flag to show. The rows are describable entirely from the store&#x27;s own vocabulary.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string DisplayLabel</code></td><td>The dense one-line label (G6 density).</td></tr><tr><td><code>string AccessibleName</code></td><td>The full row a screen reader announces (WCAG 2.2 AA).</td></tr><tr><td><code>WatcherDaydreamRow From(DaydreamCandidate candidate)</code></td><td>Builds a row, naming the pattern from its typed parts rather than any prose.</td></tr><tr><td><code>string StageOf(DaydreamState state)</code></td><td>The three stages the spec&#x27;s Daydreams tab shows: Observations, Candidates, Promoted.</td></tr></tbody></table>
+<h3><code>string StageOf(DaydreamState state)</code></h3>
+<p>The three stages the spec&#x27;s Daydreams tab shows: Observations, Candidates, Promoted.</p>
+<p><strong>Remarks.</strong> Disconfirmed, Deferred and Rejected stay under <strong>Candidates</strong> rather than being hidden or given a fourth stage. A refuted candidate is the most informative thing on this surface — it is the system having done the disconfirming work and reported the answer nobody wanted — and moving it out of sight would leave a reader looking at only the proposals that survived.</p>
+<h2><code>IWatcherDaydreamQuery</code></h2>
+<p><em>interface</em> — <code>WatcherDaydreamPaneViewModel.cs</code></p>
+<p>The read seam the Daydreams pane consumes. A null query means no watcher store is wired.</p>
+<h2><code>WatcherDaydreamQuery</code></h2>
+<p><em>class</em> — <code>WatcherDaydreamPaneViewModel.cs</code></p>
+<p>Folds the repository&#x27;s Daydream record into the pane&#x27;s read (US-9).</p>
+<p><strong>Remarks.</strong> The fold runs here rather than in the view model, so the pane renders a decision it did not make. Every state — including whether promotion is possible — comes from <code>DaydreamFold</code>, which is where the acceptance criteria are tested.</p>
+<p><strong>The repository is the record, not the store.</strong> This read used to fold <code>IWatcherObservationStore</code>&#x27;s <code>daydream_*_fact</code> tables. Those tables still exist — deleting a shipped migration is worse than leaving one unused — but they are no longer authoritative, and nothing reads them. Two definitions of one quantity is a defect signature (DM7), so there is deliberately no parallel copy to fall back to. (<code>design-watcher-daydream-dream-seam</code> §4a.)</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string? Unavailable</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>int UnreadableLines</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string? ReachFinding</code></td><td>The probe&#x27;s finding, or <code>null</code> when no probe is wired.</td></tr><tr><td><code>IReadOnlyList&lt;DaydreamCandidate&gt; GetCandidates()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>string? ReachFinding</code></h3>
+<p>The probe&#x27;s finding, or <code>null</code> when no probe is wired.</p>
+<p><strong>Remarks.</strong> Optional so a host with no scored episodes to compare against gets no finding rather than a fabricated one — an absent probe must never render as &quot;nothing to report&quot;, which is the distinction the probe exists to make in the first place.</p>
+<h2><code>WatcherDaydreamPaneViewModel</code></h2>
+<p><em>class</em> — <code>WatcherDaydreamPaneViewModel.cs</code></p>
+<p>The Loomkeeper Daydreams surface view model (US-9) — three stages, each with an honest empty state, and promotion visible only where it is actually possible.</p>
+<p><strong>Remarks.</strong> Synchronous load (a local store fold), so it degrades to an explicit state and never strands on &quot;Loading…&quot; (DC-011).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;string&gt; Stages { get; } = [&quot;Observations&quot;, &quot;Candidates&quot;, &quot;Promoted&quot;]</code></td><td>The stages in reading order, so an empty one is still shown and named.</td></tr><tr><td><code>PaneState State { get; private set; } = PaneState.Loading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;WatcherDaydreamRow&gt; Rows { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string StatusMessage { get; private set; } = &quot;Loading daydreams…&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LiveAnnouncement { get; private set; } = string.Empty</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;WatcherDaydreamRow&gt; RowsFor(string stage)</code></td><td>Rows for one stage, in reading order. An empty stage returns an empty list.</td></tr><tr><td><code>string EmptyStateFor(string stage)</code></td><td>What to show under a stage with nothing in it.</td></tr><tr><td><code>void Load()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h3><code>string EmptyStateFor(string stage)</code></h3>
+<p>What to show under a stage with nothing in it.</p>
+<p><strong>Remarks.</strong> Each names only what it has looked at. &quot;Nothing to show&quot; is complete; &quot;nothing to show because X&quot; is a claim, and a surface that has not checked X is not entitled to make it (DC-087). None of these mentions the extractor, the scorer, or any subsystem this pane does not read.</p>
+<h2><code>WatcherLeaderboardRow</code></h2>
+<p><em>record</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>One row of the Leaderboard surface (US-14): a facet cell within one (task class, score schema) segment. A cell below the cohort minimum or one that resolves to a single operator renders <strong>Not Comparable</strong> with its reason, never a rank (US-14/US-10 - a single operator is not de-anonymised off a public board). Comparable cells carry rank, cohort and median Weave. There is deliberately no single optimisable scalar the operator can chase (US-16).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string NotComparableText = &quot;Not Comparable&quot;</code></td><td>The literal a non-comparable cell shows in place of a rank (US-10/US-14).</td></tr><tr><td><code>string RankText</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string MedianText</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string DisplayLabel</code></td><td>The dense one-line label (G6 density).</td></tr><tr><td><code>string AccessibleName</code></td><td>The full row a screen reader announces (WCAG 2.2 AA).</td></tr><tr><td><code>WatcherLeaderboardRow From(Leaderboard board, LeaderboardCell cell)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IWatcherLeaderboardQuery</code></h2>
+<p><em>interface</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>The read seam the Leaderboard pane consumes. A null query means no watcher store is wired.</p>
+<h2><code>WatcherLeaderboardQuery</code></h2>
+<p><em>class</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>Folds the store&#x27;s materialised scored episodes into the leaderboard&#x27;s read (US-14).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;ScoredEpisode&gt; GetScoredEpisodes()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>IWatcherDisputeQuery</code></h2>
+<p><em>interface</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>The read seam for the derived Disputed state (US-16). A null query means disputes are not shown.</p>
+<h2><code>WatcherDisputeQuery</code></h2>
+<p><em>class</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>Folds the store&#x27;s append-only disputes into the disputed-episode set (US-16 / rule 12).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlySet&lt;string&gt; DisputedEpisodeIds()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WatcherLeaderboardPaneViewModel</code></h2>
+<p><em>class</em> — <code>WatcherLeaderboardPaneViewModel.cs</code></p>
+<p>The Loomkeeper Leaderboard surface view model - the comparative view of agent effectiveness (US-14). It discovers the distinct (task class, score schema) segments present in the scored episodes and composes one leaderboard per segment through <code>LeaderboardComposer</code> (never comparing across segments - rule 11), flattening the cells into honest rows: a rank where comparable, &quot;Not Comparable&quot; with a reason where the cohort is too small or single-operator (US-10). Synchronous load; degrades to an explicit state (DC-011).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>PaneState State { get; private set; } = PaneState.Loading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;WatcherLeaderboardRow&gt; Rows { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string StatusMessage { get; private set; } = &quot;Loading leaderboard…&quot;</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string LiveAnnouncement { get; private set; } = string.Empty</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>void Load()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>LivenessBadge</code></h2>
+<p><em>record</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>A liveness badge that never relies on colour. Glyph and text carry the meaning; colour is the third signal (token), so the badge reads correctly in high-contrast and for a colour-blind operator (WCAG 2.2 AA, &quot;not colour alone&quot; - mirrors <code>ConfidenceBadge</code>).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>LivenessBadge For(LivenessState state)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string AccessibleName</code></td><td>What a screen reader announces. Never just the colour name.</td></tr></tbody></table>
+<h2><code>WatcherSessionText</code></h2>
+<p><em>class</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>The literal shown when a dimension was never observed - honest, never blank (spec US-13).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string NotRecorded = &quot;Not Recorded&quot;</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WatcherSessionRow</code></h2>
+<p><em>record</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>One session row of the Sessions surface - a dense, scannable, screen-reader-complete line. An absent harness or model renders <code>NotRecorded</code>, never blank and never a guess.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string ShortId</code></td><td>A short, stable handle for one session — the thing that tells two otherwise identical rows apart.</td></tr><tr><td><code>string Location</code></td><td>Repository and branch, separated so a branch name cannot be mistaken for a path.</td></tr><tr><td><code>string DisputedText = &quot;⚠ Disputed&quot;</code></td><td>The prefix a session with a disputed episode carries (US-16 discoverability, no colour-alone).</td></tr><tr><td><code>string DisplayLabel</code></td><td>The dense one-line label (G6 Multi-Panel Data Terminal density).</td></tr><tr><td><code>string AccessibleName</code></td><td>The full row a screen reader announces (WCAG 2.2 AA).</td></tr><tr><td><code>WatcherSessionRow From(WatcherSessionSnapshot snapshot)</code></td><td>Builds an honest row from a snapshot: null harness/model become Not Recorded.</td></tr></tbody></table>
+<h3><code>string ShortId</code></h3>
+<p>A short, stable handle for one session — the thing that tells two otherwise identical rows apart.</p>
+<p><strong>Remarks.</strong> Reported from the running product: three live sessions rendered as three IDENTICAL strings, because every visible field (agent, repository, branch) was the same for all of them. Nothing on the surface said WHICH session a row was, and the session id was on the record the whole time without being shown.</p>
+<p>Eight characters, not the whole id. A full <code>Guid.ToString(&quot;n&quot;)</code> is 32 characters of noise that pushes the readable part off the line — and the job here is discrimination between the handful of sessions on screen, not global uniqueness, which the id itself still carries.</p>
+<h3><code>string Location</code></h3>
+<p>Repository and branch, separated so a branch name cannot be mistaken for a path.</p>
+<p><strong>Remarks.</strong> This used to be <code>{Repository}/{Worktree}</code>, which rendered <code>TheTerrace/docs/fix-broken-design-links</code> — read, reasonably, as a directory path, and the reporter asked why sessions were not at the repository root. They were: that is the repo <code>TheTerrace</code> on branch <code>docs/fix-broken-design-links</code>.</p>
+<p>A <code>/</code> separator collides with the dominant branch-naming convention — <code>docs/</code>, <code>feature/</code>, <code>fix/</code> — so the ambiguity was not an edge case but the common case. <code>@</code> cannot appear alone in a git ref, so it can never be confused for part of either side.</p>
+<h3><code>string AccessibleName</code></h3>
+<p>The full row a screen reader announces (WCAG 2.2 AA).</p>
+<p><strong>Remarks.</strong> Spoken as &quot;on branch&quot; rather than read as <code>@</code>: the symbol removes a VISUAL ambiguity and would introduce an audible one, since a screen reader says &quot;at&quot; and a listener has no way to know it separates two fields.</p>
+<h2><code>WatcherSessionSnapshot</code></h2>
+<p><em>record</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>A point-in-time read of one session: its binding, computed liveness, span count, and Disputed state.</p>
+<h2><code>IWatcherSessionsQuery</code></h2>
+<p><em>interface</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>The read seam the Sessions pane consumes. A null pane query means no watcher store is wired.</p>
+<h2><code>WatcherSessionsQuery</code></h2>
+<p><em>class</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>Folds the observation store + liveness into session snapshots - the deterministic compute reader (DM7: liveness is computed here, never stored). Ordered by the store&#x27;s own enumeration (repo, worktree, session), which the pane preserves.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;WatcherSessionSnapshot&gt; GetSessions()</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>WatcherSessionsPaneViewModel</code></h2>
+<p><em>class</em> — <code>WatcherSessionsPaneViewModel.cs</code></p>
+<p>The Loomkeeper Sessions surface view model - the compute reader that closes the Phase-1 change-surface. It renders observed sessions honestly: Not Recorded for an unproven harness/model, a no-colour-alone liveness badge, and the full state set. Mirrors <code>EvidencePaneViewModel</code>, but its load is <strong>synchronous</strong> (a local store fold, no I/O) - so it can never strand on a &quot;Loading…&quot; message the way an async construction-time binding did (DC-011).</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>PaneState State { get; private set; } = PaneState.Loading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;WatcherSessionRow&gt; Rows { get; private set; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string StatusMessage { get; private set; } = &quot;Loading sessions…&quot;</code></td><td>The one string the operator reads - always evidence, never reassurance.</td></tr><tr><td><code>string LiveAnnouncement { get; private set; } = string.Empty</code></td><td>Announced through a live region so a state change reaches a screen reader without motion.</td></tr><tr><td><code>void Load()</code></td><td>Loads the sessions synchronously. Degrades to an explicit state, never a blank success.</td></tr></tbody></table>
+<h2><code>WorkspaceDiagnostics</code></h2>
+<p><em>record</em> — <code>WorkspaceDiagnosticsViewModel.cs</code></p>
+<p>What the operator can see about the daemon behind the shell.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string Describe()</code></td><td>One paragraph for the announcement channel and the diagnostics pane.</td></tr></tbody></table>
+<h2><code>WorkspaceDiagnosticsViewModel</code></h2>
+<p><em>class</em> — <code>WorkspaceDiagnosticsViewModel.cs</code></p>
+<p>Reads the daemon&#x27;s operational state so the shell can show it.</p>
+<p><strong>Remarks.</strong> <strong>Read-only, deliberately.</strong> Upgrade and rollback are choreographed against a store that a running binary may not be able to read halfway through — the ordering (snapshot, journal, migrate, gate, commit) exists precisely because a half-finished upgrade is worse than one that never started. A button that starts that from inside the app being upgraded is not a convenience; this surfaces the state and names what a rollback would do, and the act itself stays with the Bootstrap.</p>
+<p><strong>The MCP tool list is the registered set, not a guess.</strong> It is read from the gateway so a tool added without appearing here would be a discrepancy rather than a documentation lag.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>WorkspaceDiagnostics Read()</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>IReadOnlyList&lt;string&gt; McpToolGatewayNames { get; } =</code></td><td>The tools the MCP gateway exposes. Local-only and read-only by ADR-0004.</td></tr></tbody></table>
+<h3><code>IReadOnlyList&lt;string&gt; McpToolGatewayNames { get; } =</code></h3>
+<p>The tools the MCP gateway exposes. Local-only and read-only by ADR-0004.</p>
+<p><strong>Remarks.</strong> <strong>Derived from the gateway, not restated.</strong> This was a hand-written <code>[&quot;describe&quot;, &quot;impact&quot;, &quot;find&quot;, &quot;knowledge&quot;]</code> and it was wrong in both directions: <code>impact</code> and <code>knowledge</code> are daemon IPC operations and have never been gateway tools, while <code>standing</code> — added for US-16 — was missing. An operator reading the diagnostics was told about two tools that do not exist and not told about one that does.</p>
+<p>A second authority on what a component exposes disagrees with it eventually; this one disagreed on three of five entries. Reflected over the methods that actually return an <code>McpToolResult</code>, so a tool added tomorrow appears here without anyone remembering this list exists (DC-021).</p></main></body></html>

@@ -9,7 +9,8 @@ tags: [sources, citations, omg]
 links:
   - { to: kb-uml-mde-and-4gl, rel: refines }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: kb-uml-mde-and-4gl, on: 2026-10-17, reason: "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact" }
 summary: >-
   The access-dated source list behind the UML/MDE/4GL knowledge base, keyed [S1]..[S21],
   distinguishing OMG primary specs from commentary and noting where evidence is absent.

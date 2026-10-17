@@ -1,0 +1,86 @@
+{
+  "source": "Rendered CSS tokens read through approved CUA loopback preview; WCAG sRGB luminance calculation",
+  "scope": "Seven shared text/semantic pairings in dark and light; not a full rendered/native accessibility certification",
+  "results": [
+    {
+      "theme": "dark",
+      "pairs": [
+        {
+          "ink": "text",
+          "bg": "surface",
+          "ratio": 14.98
+        },
+        {
+          "ink": "muted",
+          "bg": "raised",
+          "ratio": 6.48
+        },
+        {
+          "ink": "accent",
+          "bg": "surface",
+          "ratio": 6.33
+        },
+        {
+          "ink": "good",
+          "bg": "raised",
+          "ratio": 6.96
+        },
+        {
+          "ink": "warn",
+          "bg": "raised",
+          "ratio": 7.48
+        },
+        {
+          "ink": "danger",
+          "bg": "raised",
+          "ratio": 5.67
+        },
+        {
+          "ink": "disabled",
+          "bg": "surface",
+          "ratio": 5.07
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "pairs": [
+        {
+          "ink": "text",
+          "bg": "surface",
+          "ratio": 15.29
+        },
+        {
+          "ink": "muted",
+          "bg": "raised",
+          "ratio": 6.39
+        },
+        {
+          "ink": "accent",
+          "bg": "surface",
+          "ratio": 5.74
+        },
+        {
+          "ink": "good",
+          "bg": "raised",
+          "ratio": 5.91
+        },
+        {
+          "ink": "warn",
+          "bg": "raised",
+          "ratio": 6.36
+        },
+        {
+          "ink": "danger",
+          "bg": "raised",
+          "ratio": 6.47
+        },
+        {
+          "ink": "disabled",
+          "bg": "surface",
+          "ratio": 5.14
+        }
+      ]
+    }
+  ]
+}

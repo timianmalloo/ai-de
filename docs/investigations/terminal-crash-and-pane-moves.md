@@ -18,6 +18,8 @@ summary: >-
   (its own "reads between writes" invariant is false). (2) PANE MOVES: the layout is a tree of
   proportional splits, not absolute docks; removing a pane collapses a single-child split into its
   child, which relocates unrelated panes. This report is the diagnosis + phased plan; NO fix applied.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Investigation — terminal render crash + pane-move relocation

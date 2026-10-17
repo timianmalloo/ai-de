@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.App.Viewmodels</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.App.ViewModels.md</div><h1>API: <code>AiDe.App.ViewModels</code></h1>
+<p><strong>1 public types · 14 public members · 60% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>MainWindowViewModel</code></h2>
+<p><em>class</em> — <code>MainWindowViewModel.cs</code></p>
+<p>The Phase-1 workspace surface: an accessible evidence list bound to a provenance pane, over the in-process authority core (ADR-0009).</p>
+<p><strong>Remarks.</strong> This view model is the reachability proof (E10): the walking skeleton is only walking if a user can actually reach the evidence from the window they open. The list is not a fallback for the Phase-2 canvas — it is the permanent keyboard and screen-reader equivalent.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>MainWindowViewModel()</code></td><td>First-run / design-time construction: no workspace open yet.</td></tr><tr><td><code>MainWindowViewModel(WorkspaceCore core)</code></td><td>Opens over the in-process core (ADR-0009&#x27;s first hosting mode).</td></tr><tr><td><code>MainWindowViewModel(</code></td><td>Opens over any read surface — in this process or a daemon&#x27;s.</td></tr><tr><td><code>event PropertyChangedEventHandler? PropertyChanged</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string WindowTitle</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string Heading</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ObservableCollection&lt;EvidenceRow&gt; Rows { get; } = []</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>EvidenceRow? SelectedRow</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string StatusMessage</code></td><td>The status strip. Always states evidence — which revision, what is stale, what failed.</td></tr><tr><td><code>string ProvenanceText</code></td><td>The provenance pane content, in the spec&#x27;s fixed evidence order.</td></tr><tr><td><code>IReadOnlyList&lt;string&gt; GettingStartedSteps { get; } =</code></td><td>First-run guidance, shown before a workspace is opened.</td></tr><tr><td><code>Task RefreshAsync(CancellationToken cancellationToken = default)</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>Task&lt;MainWindowViewModel&gt; OpenDefaultAsync(CancellationToken cancellationToken = default)</code></td><td>Opens the workspace the app was launched against, over its daemon.</td></tr><tr><td><code>Task&lt;MainWindowViewModel&gt; OpenAsync(</code></td><td>Opens the workspace rooted at , launching its daemon if needed.</td></tr></tbody></table>
+<h3><code>MainWindowViewModel(</code></h3>
+<p>Opens over any read surface — in this process or a daemon&#x27;s.</p>
+<ul><li><strong>`incidents`</strong> — Health incidents, when they are reachable. Null across the boundary: the incident sidecar is not part of the read surface that crosses it yet, and reporting &quot;no incidents&quot; when the question cannot be asked would be exactly the clean-empty-success this product exists to avoid — so the strip omits the clause instead of asserting a zero.</li></ul>
+<h3><code>Task&lt;MainWindowViewModel&gt; OpenDefaultAsync(CancellationToken cancellationToken = default)</code></h3>
+<p>Opens the workspace the app was launched against, over its daemon.</p>
+<p><strong>Remarks.</strong> <strong>This is where the process split stops being a test and starts being the product.</strong> The shell asks <code>ShellBootstrap</code> for a daemon — reaching the one already serving the workspace, or starting one — and every projection it renders is then answered across the trust boundary.</p>
+<p><strong>A daemon that will not start is shown, not worked around.</strong> Falling back to the in-process core would work, and would silently abandon the boundary, the workspace lock and the epoch fence at the moment they were most obviously needed. The user gets the first-run surface and a message saying what failed (<strong>DC-011</strong>: a silent degradation is indistinguishable from a broken feature).</p>
+<p>Absent a configured root the app shows its first-run state rather than inventing a workspace.</p>
+<h3><code>Task&lt;MainWindowViewModel&gt; OpenAsync(</code></h3>
+<p>Opens the workspace rooted at , launching its daemon if needed.</p>
+<p><strong>Remarks.</strong> Split out from <code>OpenDefaultAsync</code> so a workspace can be CHOSEN rather than only inherited from an environment variable. Until this existed the daemon path was reachable only by setting AIDE_WORKSPACE_ROOT before launch, which made every command that needs a workspace — indexing especially — untestable by anyone who did not already know that.</p></main></body></html>

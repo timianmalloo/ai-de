@@ -18,6 +18,8 @@ summary: >-
   the connection closes without a response, and the client reports transport_closed. This is the
   IpcFraming `simplify:` marker's upgrade trigger firing. Core-owned (IPC / daemon / graph
   projection). Report only — handed off to the Core session.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # INV-0003 — Graph load fails with ipc.transport_closed on a large repo

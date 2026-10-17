@@ -14,7 +14,8 @@ links:
   - { to: adr-0019-advisory-evaluator-calibration, rel: relates-to }
   - { to: note-addendum-c-council-rulings, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The agentic compile is the one model-backed capability Addenda C and D add. It ships behind an eval
   gate realised as deployment gates the product reads: no agentic rung is selectable without the P-D5

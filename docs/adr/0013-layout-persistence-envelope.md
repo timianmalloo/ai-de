@@ -19,6 +19,7 @@ summary: >-
   layout that cannot be read degrades to the default arrangement while the original file is kept.
 review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0013: Persist the workbench layout in an owned versioned envelope, outside the fact store

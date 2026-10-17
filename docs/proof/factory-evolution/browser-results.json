@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-17",
+  "surface": "factory-workbench.html",
+  "transport": "User-approved loopback HTTP, artifact-only allowlist",
+  "runner": "CUA Chrome; retained browser-checks.js sequence; fresh artifact load",
+  "results": [
+    {
+      "name": "Unsupported PR question is not invented",
+      "passed": true
+    },
+    {
+      "name": "Old answer retains original scope",
+      "passed": true
+    },
+    {
+      "name": "Evidence closes to its opener",
+      "passed": true
+    },
+    {
+      "name": "Stale answer cannot run",
+      "passed": true
+    },
+    {
+      "name": "Sequence uses four lifelines and five ordered interactions",
+      "passed": true
+    },
+    {
+      "name": "ERM and accessible table agree",
+      "passed": true
+    },
+    {
+      "name": "Formatted-boundary preview counts one match",
+      "passed": true
+    },
+    {
+      "name": "Apply uses the same formatted-boundary match",
+      "passed": true
+    },
+    {
+      "name": "Editor operation exposes undo",
+      "passed": true
+    },
+    {
+      "name": "Undo restores original phrase",
+      "passed": true
+    },
+    {
+      "name": "Back and forward retain scratch draft",
+      "passed": true
+    },
+    {
+      "name": "No send is enabled by editing or navigation",
+      "passed": true
+    }
+  ],
+  "additional_observations": [
+    "All seven ready/loading/empty/error/stale/partial/untrusted states kept frame and content rendered",
+    "PR follow-up retained parent Q-1 and original change scope",
+    "Proposal direction comparison and local notes worked; embedded srcdoc mockup rendered",
+    "Prompt save/branch produced P-04/P-05 without enabling Send",
+    "Independent reviewer checked desktop and 800px Light harness"
+  ],
+  "mockup_sha256": "758a6e97fb871d656c0fc6cf915548fd681deba00de9eeaa63d92535c339ce89",
+  "final_exact_version_rerun": {
+    "passed": 12,
+    "all_passed": true
+  }
+}

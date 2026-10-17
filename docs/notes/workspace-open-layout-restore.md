@@ -14,6 +14,8 @@ summary: >-
   "adding a workspace reset my panes" — especially when the saved layout is degenerate (had lost the
   graph). Shipped a conservative guard (keep the current layout when the restore would drop the graph
   it has) and recorded the open product fork: per-workspace restore vs keep-current-on-open.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Workspace-open layout restore semantics

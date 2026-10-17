@@ -16,6 +16,8 @@ summary: >-
   absolute dock zones (Left / Right / Bottom / Center) so that moving a pane can only
   change the zones it belongs to — never relocate or reorient an unrelated pane. Zones
   resize, collapse to a rail, and maximize reversibly; splits are scoped inside a zone.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Named Dock Zones — workbench layout specification

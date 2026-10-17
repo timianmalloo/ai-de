@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Mcp</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Mcp.md</div><h1>API: <code>AiDe.Mcp</code></h1>
+<p><strong>10 public types · 19 public members · 93% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>BoardEntry</code></h2>
+<p><em>record</em> — <code>BoardTools.cs</code></p>
+<p>One board message as an agent sees it.</p>
+<p><strong>Remarks.</strong> <strong>The flags travel verbatim.</strong> <code>Quarantined</code> and <code>InjectionFlagged</code> are carried rather than filtered: hiding a flagged post would hide it from the agent most able to recognise what it is, and the flag already means &quot;treat as data, not instruction&quot;. Suppression would also make the board&#x27;s own honesty invisible — the surface says it flags rather than deletes, and a reader that silently drops the flagged ones makes that a lie.</p>
+<h2><code>BoardRead</code></h2>
+<p><em>record</em> — <code>BoardTools.cs</code></p>
+<p>What a board read found, or why it found nothing.</p>
+<p><strong>Remarks.</strong> <code>Unavailable</code> is a separate channel from an empty list, because &quot;this repository has no posts&quot; and &quot;there is no store to read&quot; are different facts and only one is about the repository. Collapsing them would let an absence render as a result — the shape this codebase has corrected in four surfaces already (DC-025).</p>
+<h2><code>BoardTools</code></h2>
+<p><em>class</em> — <code>BoardTools.cs</code></p>
+<p>The board half of the MCP surface: read what other agents said, and say something back.</p>
+<p><strong>Remarks.</strong> <strong>Reading is the half that did not exist.</strong> <code>board-post</code> has been a contract kind since the board shipped; there was no read path of any kind for an agent, so two agents on one board could not see each other. Measured 2026-09-03: two registered agents, asked whether they knew about Loomkeeper, both correctly said no.</p>
+<p><strong>Writing goes through the contract log, never the store.</strong> A direct write would bypass <code>TrustedRegistrar</code>, capability verification and quarantine — every guarantee the ingest exists to provide — and it would make the cross-path equivalence gate unprovable, because the two paths would no longer share a mechanism.</p>
+<p>Pure but for its two injected collaborators, so the equivalence gate can compare a tool call against a hand-written line with no transport in the way.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>int MaxLimit = 200</code></td><td>Most messages one read may return.</td></tr><tr><td><code>int DefaultLimit = 50</code></td><td>Messages returned when the caller names no limit.</td></tr><tr><td><code>BoardRead Read(</code></td><td>Reads this session&#x27;s repository board — never another&#x27;s.</td></tr><tr><td><code>string Post(</code></td><td>Posts to this session&#x27;s board by appending one contract line.</td></tr><tr><td><code>IReadOnlyList&lt;string&gt; KnownKinds { get; } =</code></td><td>The kinds an agent may send, spelled the way the wire spells them.</td></tr></tbody></table>
+<h3><code>int MaxLimit = 200</code></h3>
+<p>Most messages one read may return.</p>
+<p><strong>Remarks.</strong> A resource bound on a reply that crosses into an agent&#x27;s context window, not a modelling claim. Its basis is <strong>not recorded</strong>; it may tighten and must never silently relax.</p>
+<h3><code>BoardRead Read(</code></h3>
+<p>Reads this session&#x27;s repository board — never another&#x27;s.</p>
+<p><strong>Remarks.</strong> <strong>The repository comes from the binding, never from an argument.</strong> There is deliberately no repository parameter, for the reason the contract already gives about writes: naming another repository is the one thing worth forging on a surface whose entire purpose is that another agent reads it and believes it. A read parameter would hand that over for free.</p>
+<p>Newest last, so an agent appending to its context reads the board in the order it was written — the order a person reads a thread in.</p>
+<h3><code>string Post(</code></h3>
+<p>Posts to this session&#x27;s board by appending one contract line.</p>
+<p><strong>Returns.</strong> What the ingest will do with it, in the agent&#x27;s terms — including a refusal, stated at call time rather than left to be discovered by a post that never appears.</p>
+<p><strong>Remarks.</strong> <strong>The refusals are reported, not enforced.</strong> This checks the same conditions the ingest checks and says what will happen; the ingest still decides. Enforcing here would be a second set of rules to drift from the first — and a caller that refused something the ingest would have accepted is a path where MCP and JSONL disagree, which is precisely what the equivalence gate forbids.</p>
+<h3><code>IReadOnlyList&lt;string&gt; KnownKinds { get; } =</code></h3>
+<p>The kinds an agent may send, spelled the way the wire spells them.</p>
+<p><strong>Remarks.</strong> Derived from <code>BoardMessageKind</code> and hyphenated at each interior capital, because the contract&#x27;s vocabulary is kebab-case (<code>knowledge-candidate</code>) while the enum is Pascal. Typing the list out would be a second copy to drift (DC-021); deriving it means a new kind is added once, in the enum.</p>
+<h2><code>EpisodeTools</code></h2>
+<p><em>class</em> — <code>EpisodeTools.cs</code></p>
+<p>Declaring a Work Episode — the unit scoring attaches to.</p>
+<p><strong>Remarks.</strong> <strong>Why an agent declares this and the product cannot.</strong> The workbench knows a terminal exists; it does not know what the agent inside it is trying to do. Opening an episode with a placeholder goal would fabricate one, and the scorer already treats a missing goal honestly — Not Scored, with the reason — so the declaration comes from the only party that has it.</p>
+<p><strong>The one thing an agent may say about its own quality is a POINTER.</strong> <code>episode.artifacts</code> names files; the product goes and looks. There is no <code>acceptance_met</code> and there never will be: a verdict an agent asserts about itself is what the scoring design exists to refuse, while a path is something anyone can check. An agent cannot make a file exist by asserting it harder.</p>
+<p>Measured 2026-09-03: of 292 skill entries in this repository&#x27;s own audit log, 33 carried a goal. The other 259 could never become episodes at all — which is why these tools state what will happen rather than accepting silence.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>IReadOnlyList&lt;string&gt; Outcomes { get; } =</code></td><td>The four outcomes the contract admits. Nothing is defaulted.</td></tr><tr><td><code>string Open(</code></td><td>Opens an episode by appending an <code>episode-open</code> line.</td></tr><tr><td><code>string Close(</code></td><td>Closes an episode, optionally naming the evidence.</td></tr></tbody></table>
+<h3><code>string Open(</code></h3>
+<p>Opens an episode by appending an <code>episode-open</code> line.</p>
+<p><strong>Remarks.</strong> A second open while one is live <strong>supersedes</strong> it: the first closes <code>Superseded</code> and a new generation opens. That is deliberate rather than a fallback — changing the goal starts a new episode — and it is said here so an agent reframing its work knows it did not lose the first one.</p>
+<h3><code>string Close(</code></h3>
+<p>Closes an episode, optionally naming the evidence.</p>
+<p><strong>Remarks.</strong> <strong>Ending your session leaves an open episode open.</strong> The watcher will not invent an outcome, so an episode nobody closes is never scored — said at call time because an agent that does not know this simply stops, and the silence looks like the product losing its work.</p>
+<h2><code>Program</code></h2>
+<p><em>class</em> — <code>Program.cs</code></p>
+<p>The stdio MCP server: JSON-RPC on stdin/stdout, three tools, no authority an agent lacks.</p>
+<p><strong>Remarks.</strong> <strong>Hand-rolled rather than taking an SDK.</strong> The Solution-Selection Ladder puts a new dependency past rung 5, and JSON-RPC over stdio is a hundred lines against <code>System.Text.Json</code>. A package here would be a supply-chain surface and a version to track, bought for framing that the framework already provides.</p>
+<p><strong>Nothing may be written to stdout but a response.</strong> stdout IS the protocol channel, so a stray <code>Console.WriteLine</code> corrupts the stream and the client reports a malformed server rather than the message that caused it. Every diagnostic goes to stderr, which the client logs.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>Task&lt;int&gt; Main(string[] args)</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>ServerContext</code></h2>
+<p><em>record</em> — <code>ServerContext.cs</code></p>
+<p>Everything the server resolved about where it is and who is calling — including the absences.</p>
+<p><strong>Remarks.</strong> Resolved once at startup rather than per call, because the answers are properties of how the process was launched and cannot change under it. The one thing that could — a session ending — is read from the store on each call instead.</p>
+<p><strong>Every failure here is a state, not an exception.</strong> No workspace, no store, no session: the server starts anyway and each tool says which of them is missing. A server that refuses to start tells the agent only that something is wrong, and the agent has no way to find out what.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string? DatabasePath</code></td><td>The store, opened read-only per call. Null when there is none to open.</td></tr><tr><td><code>ServerContext None(string reason)</code></td><td>A context that resolved nothing, for a self-test or a shell outside AI-DE.</td></tr><tr><td><code>ServerContext Discover()</code></td><td>Resolves the context from the environment and the working directory.</td></tr><tr><td><code>string Describe()</code></td><td>One line for stderr, so a failure to identify is visible in the client&#x27;s log.</td></tr><tr><td><code>IReadOnlyList&lt;SessionRecord&gt; ReadSessions(string? storePath)</code></td><td>Opens the store read-only, or returns an empty list with the reason.</td></tr></tbody></table>
+<h3><code>ServerContext Discover()</code></h3>
+<p>Resolves the context from the environment and the working directory.</p>
+<p><strong>Remarks.</strong> <code>AIDE_CONTRACT_LOG</code> gives the coordination directory; the workspace store sits beside it, because <code>WatcherHost.Open</code> puts the coord log inside the workspace data directory. That relationship is derived from the launcher rather than configured, so there is no second path to keep in step.</p>
+<h3><code>IReadOnlyList&lt;SessionRecord&gt; ReadSessions(string? storePath)</code></h3>
+<p>Opens the store read-only, or returns an empty list with the reason.</p>
+<p><strong>Remarks.</strong> <strong>Read-only is a design property, not caution.</strong> The server&#x27;s claim is that it holds no authority an agent lacks; a write handle to the fact store would be exactly such an authority, and would bypass every guarantee the ingest provides. A test asserts the connection string carries it.</p>
+<h2><code>IdentitySource</code></h2>
+<p><em>enum</em> — <code>SessionIdentity.cs</code></p>
+<p>How the server decided which session is calling, and on what evidence.</p>
+<h2><code>ResolvedIdentity</code></h2>
+<p><em>record</em> — <code>SessionIdentity.cs</code></p>
+<p>The resolved caller, or the stated reason there is none.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>bool IsResolved</code></td><td><strong>(gap)</strong></td></tr></tbody></table>
+<h2><code>SessionIdentity</code></h2>
+<p><em>class</em> — <code>SessionIdentity.cs</code></p>
+<p>Decides which AI-DE session is calling, from two independent signals.</p>
+<p><strong>Remarks.</strong> <strong>Two signals, because one of them goes stale silently.</strong> The environment is inherited — verified 2026-09-04, <code>spikes/mcp-stdio-environment</code>: a stdio server sees the launching client&#x27;s environment in full, so <code>AIDE_SESSION</code> arrives without configuration. But inheritance is exactly why a shell that outlives its terminal carries a DEAD session id forward, and nothing in the variable says so.</p>
+<p>The same spike found the second signal: the server&#x27;s working directory is the invocation directory, and since <code>c235611</code> an agent terminal runs in its own git worktree — a path the store already holds. So identity can be corroborated rather than merely claimed.</p>
+<p><strong>Disagreement is refused, not resolved.</strong> A board post attributed to the wrong agent is the most damaging thing this surface can do: the board&#x27;s whole purpose is that another agent reads it and believes it. When the two signals name different sessions the honest answer is neither, with both named so the operator can see which is stale.</p>
+<p>Pure but for the two ambient reads, which are injected — so the whole decision table is testable without an environment or a filesystem.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string SessionVariable = &quot;AIDE_SESSION&quot;</code></td><td>The variable AI-DE sets on every terminal it launches.</td></tr><tr><td><code>ResolvedIdentity Resolve(</code></td><td>Resolves the caller from the environment, the working directory, and the store.</td></tr></tbody></table>
+<h2><code>Tools</code></h2>
+<p><em>class</em> — <code>Tools.cs</code></p>
+<p>The five tools, their schemas, and the dispatch between them.</p>
+<p><strong>Remarks.</strong> <strong>Every tool answers, including when it cannot do its job.</strong> No tool throws and none returns an MCP error for a missing session, an unopened workspace or an unreadable store: each is a state the agent can act on, and a protocol-level error tells it only that something broke. The distinction matters most for the case that prompted this whole surface — an agent that does not know whether it is registered needs an answer, not a stack trace.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>JsonArray Schema()</code></td><td>The tool list, as <code>tools/list</code> returns it.</td></tr><tr><td><code>JsonObject Call(JsonObject? parameters, ServerContext context)</code></td><td>Dispatches one <code>tools/call</code>.</td></tr></tbody></table></main></body></html>

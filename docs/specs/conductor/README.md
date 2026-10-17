@@ -16,6 +16,8 @@ links:
   - { to: note-conductor-spec-errata-session-thread, rel: relates-to }
   - { to: note-conductor-spec-errata-template-control, rel: relates-to }
 review-by: 2026-12-09
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # AI-DE Conductor — specification inputs

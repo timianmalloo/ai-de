@@ -7,6 +7,7 @@ owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, ai-native-ide, wpf, workspace-daemon, code-knowledge-graph, mcp]
 links:
+  - { to: forensic-review-rev102, rel: relates-to }
   - { to: spec-ai-native-ide, rel: implements }
   - { to: knowledge-hub, rel: depends-on }
   - { to: audit-log, rel: relates-to }
@@ -63,6 +64,30 @@ summary: >-
 ---
 
 # Architecture: AI-DE
+
+
+## Current implementation recovery — 2026-10-17
+
+This section is the current-state reading aid at commit `9f13ca7a`; the dated target-design
+and historical baseline sections below retain their original intent. **Verified from composition:**
+normal shell opening connects to or launches the workspace daemon (`MainWindowViewModel.cs:252`).
+The desktop is WPF/AvalonDock; local named-pipe queries reach Core's extraction, SQLite fact store
+and projections. App also hosts ACP/session composition, ConPTY and watcher surfaces. Separate
+stdio MCP supplies identity, board and episode tools; internal Core graph gateway methods are not
+the shipped stdio tool list. Current provider execution/inference is a separate trust boundary.
+
+Read the [recovered component map](diagrams/component.md), [sequence paths](diagrams/sequence.md),
+[class/data model](diagrams/class.md), [capability layers](diagrams/layers.md),
+[49-row build inventory](reviews/built-inventory-rev102.md) and
+[forensic assessment](reviews/forensic-review-rev102.md) before interpreting a historical phase label.
+
+**Verified limitations:** same-revision dirty edits can keep old graph facts even on force refresh;
+entry-point results can exceed the transport byte limit despite row clamping. Independent periodic
+freshness probing is a tested primitive without production composition. Static sequences are
+type-level call scenarios, not observed runtime traces. Crow's-foot ER/C4 product surfaces, PR/test
+assurance and a spec-first factory are remaining work, not claims promoted by their mockups.
+The proposed evolution is exploratory and does not change this architecture by implication.
+
 
 - **Status:** In review
 - **Tier:** T2

@@ -16,6 +16,8 @@ summary: >-
   batch importer. The Owner ruled the phrase is intent, not an instruction: the governed
   source enters through the live IngestHost path, and no IEpisodeSource interface is
   invented in Phase 1.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Decision note — spec §6.2 "same source seam" read as the live `IngestHost` path

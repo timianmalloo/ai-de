@@ -16,6 +16,8 @@ summary: >-
   idle — and it invalidated regardless of whether the pane was visible. Fixed with event-driven,
   coalesced, visibility-gated invalidation. This note is also the systemic framework for redraw
   isolation across the app.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Investigation — redraw isolation and UI jitter

@@ -13,7 +13,8 @@ links:
   - { to: kb-uml-mde-and-4gl, rel: documents }
   - { to: kb-domain-modeling-and-erm, rel: documents }
 review-by: 2027-02-27
-review-suggested: []
+review-suggested:
+  - { by: kb-uml-mde-and-4gl, on: 2026-10-17, reason: "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact" }
 summary: >-
   The three subject-matter expert lenses added to AI-DE's persona swarm — knowledge-graph
   visualization/UX, modern WPF styling, and UML/ERM modelling — each with its lens, seam against the

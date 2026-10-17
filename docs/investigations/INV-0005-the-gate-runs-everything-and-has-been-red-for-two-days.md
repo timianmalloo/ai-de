@@ -16,6 +16,8 @@ summary: >-
   a wall-clock frame-budget assertion fails deterministically on CI hardware, and because it sits
   before every other gate, 26 gates have not executed on any run since 2026-09-04 — 38 of the last
   40 Build runs are red.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Investigation: INV-0005 — the gate runs everything, in the wrong order, and has been red for two days

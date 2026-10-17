@@ -30,6 +30,7 @@ summary: >-
   discharged by spikes/second-dock-host-unparent.
 review-suggested:
   - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0017 primary-view-mode: Full-window surfaces are a primary view mode (body-content swap)

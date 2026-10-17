@@ -7,103 +7,55 @@ owner: "@timianmalloo"
 phase: "0"
 tags: [diagram, component, c4, architecture]
 links:
+  - { to: forensic-review-rev102, rel: relates-to }
   - { to: architecture, rel: documents }
   - { to: diagram-layers, rel: relates-to }
 review-by: 2027-09-02
 summary: >-
   The real assembly and namespace dependency edges of AI-DE, read from the composition roots rather
   than from the architecture prose, with the external systems at the boundary.
+review-suggested: []
 ---
 
-# Component diagram — AI-DE
+# Recovered component and container map — 2026-10-17
 
-Every edge below was read from a composition root or a `using` list, not from the architecture
-document. Where the architecture names a component that Phase 1 satisfies in-process, the diagram
-shows what the code actually does today and the note says what the boundary becomes.
+Current composition at `9f13ca7a`, replacing the prior diagram's stale claim that the shell
+defaults to in-process Core. Diagram scope is deployable/container and major component boundaries,
+not an exhaustive call graph. All solid edges below are **Verified source composition**; provider
+network behavior is a boundary whose live policy remains separately qualified.
 
 ```mermaid
 flowchart TB
-  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2
-  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
-  classDef core fill:#1A1F26,stroke:#2A313B,color:#E4E9EF
-
-  subgraph shell["AiDe.App — WPF shell"]
-    WorkbenchShell["WorkbenchShell<br/>composition + watcher loop"]
-    SurfaceFactory["SurfaceContentFactory<br/>15 surface kinds"]
-    MainMenu["MainMenuBuilder<br/>derives menu from the command catalog"]
-  end
-
-  subgraph corelib["AiDe.Core"]
-    WorkspaceCore["WorkspaceCore<br/>in-process authority core"]
-    Store["Store<br/>WorkspaceStore · schema · reader/writer"]
-    Extraction["Extraction<br/>7 extractor families"]
-    Projections["ProjectionService<br/>graph · paths · content · search · joins"]
-    Dispatch["DispatchService<br/>prompt delivery receipts"]
-    Mcp["McpToolGateway<br/>bounded read tools"]
-    Health["HealthIncidentSidecar"]
-    Ipc["Ipc<br/>pipe · framing · capability registry"]
-    Terminal["Terminal<br/>ConPTY sessions"]
-    Watcher["WatcherHost<br/>registrar · ingest · board · scoring"]
-    Upgrade["Upgrade<br/>preflight and rollback state"]
-  end
-
-  Daemon["AiDe.Daemon<br/>one process · one workspace · one pipe"]
-
-  Repo[("Repository files")]
-  Sqlite[("SQLite<br/>workspace store")]
-  WatcherDb[("SQLite<br/>watcher observations")]
-  Agent["Agent process<br/>any harness"]
-  Otlp["OTLP HTTP receiver<br/>loopback, optional"]
-
-  WorkbenchShell --> SurfaceFactory
-  WorkbenchShell --> MainMenu
-  WorkbenchShell --> WorkspaceCore
-  WorkbenchShell --> Watcher
-  SurfaceFactory --> Projections
-  SurfaceFactory --> Terminal
-  SurfaceFactory --> Watcher
-
-  WorkspaceCore --> Store
-  WorkspaceCore --> Extraction
-  WorkspaceCore --> Projections
-  WorkspaceCore --> Dispatch
-  WorkspaceCore --> Mcp
-  WorkspaceCore --> Health
-  Mcp --> Projections
-  Projections --> Store
-  Extraction --> Store
-  Dispatch --> Store
-
-  Daemon --> WorkspaceCore
-  Daemon --> Ipc
-  Daemon --> Upgrade
-  Ipc --> WorkspaceCore
-
-  Extraction -.reads.-> Repo
-  Store -.writes.-> Sqlite
-  Watcher -.writes.-> WatcherDb
-  Terminal -.ConPTY.-> Agent
-  Agent -.coordination log / OTLP.-> Otlp
-  Otlp -.spans.-> Watcher
-  Agent -.contract log.-> Watcher
-
-  class shell,WorkbenchShell,SurfaceFactory,MainMenu app
-  class Repo,Sqlite,WatcherDb,Agent,Otlp ext
+ Operator[Local operator] --> App[AiDe.App — WPF / AvalonDock]
+ App --> Client[Local pipe client and shell view models]
+ Client --> Daemon[AiDe.Daemon — workspace lock and owner-scoped pipe]
+ Daemon --> Core[AiDe.Core — workspace authority]
+ Repo[Repository files — untrusted input] --> Extract[Static extractors]
+ Extract --> Core
+ Core --> Store[(workspace.db: assertions and snapshots)]
+ Core --> Query[Bounded projections]
+ Query --> Client
+ App --> Session[Conversation / composer / compile / run]
+ Session --> Envelope[Append-only compilation envelopes]
+ Session --> Harness[ACP / ConPTY harness process]
+ Harness --> Provider[Optional inference / remote services]
+ App --> Watcher[Watcher / board / episode scoring]
+ Watcher --> WatchDb[(watcher.db and contract records)]
+ Harness --> Stdio[AiDe.Mcp — stdio coordination tools]
+ Stdio --> WatchDb
+ Client --> Views[Graph / tree / evidence / static UML / source]
 ```
 
-## Boundary notes
+| Claim | Confidence and observed source |
+|---|---|
+| Shell's normal daemon path | Verified — `MainWindowViewModel.cs:252`, `ShellBootstrap.ConnectOrLaunchAsync` |
+| One workspace authority/store | Verified — `AiDe.Daemon/Program.cs`, `WorkspaceCore.Open`, `WorkspaceStore` |
+| Extractor set | Verified — `WorkspaceExtractors.Default`: C#, Python, TypeScript, Bicep, EF, SQL, knowledge plus fixture fallback |
+| Native/hosted surface composition | Verified — `SurfaceContentFactory.Kinds` and `WorkbenchShell` selection/query wiring |
+| ACP/compile/ConPTY and watcher are distinct paths | Verified — App conductor/session roots and `WatcherHost` |
+| Stdio graph gateway availability | Verified distinction — `AiDe.Mcp/Tools.Schema` exposes identity/board/episode, not Core graph tools |
+| Provider runtime safety and fidelity | Flagged for version-bound live qualification; local desktop does not mean local inference |
 
-| Edge | What it is today | What it becomes |
-|---|---|---|
-| `AiDe.App` → `WorkspaceCore` | A direct in-process call. `CallerPrincipal` is simply true. | An authenticated local pipe to `AiDe.Daemon`, with the principal established by the transport from the connection and never from anything the caller sends (ADR-0009). |
-| `AiDe.Daemon` startup | Takes the workspace lock **before** a pipe exists. | Unchanged — the order is the startup contract. A daemon that served first and discovered second would already have published an endpoint, and two daemons on one workspace are two writers to one store. |
-| `Extraction` → repository | In-process adapters, one per language family. | A versioned process/JSON boundary only when an extractor needs language or runtime isolation. |
-| `WatcherHost` hosting | In the **same process** as the read surfaces, deliberately: liveness compares monotonic ticks, which are process-relative. | Unchanged while liveness is exact by construction. |
-
-## Confidence
-
-| Claim | Label | Basis |
-|---|---|---|
-| Assembly and namespace edges | Verified | `WorkspaceCore` constructor, `AiDe.Daemon/Program.cs` using list, `SurfaceContentFactory` constructor parameters, `WatcherHost` fields. |
-| External systems at the boundary | Verified | `SqliteWatcherObservationStore`, `WorkspaceSchema`, `ConPtyInterop`, `OtlpReceiver`. |
-| The Phase-2 daemon split | Verified as *intent* | Stated in ADR-0009 and in the `AiDe.Daemon` doc comment; the process exists and the split is not yet the shell's default path. |
+Freshness and byte-bound defects are in FR-001/002. A graph whose source revision is stale is not
+promoted to current truth by this diagram. Full user-visible factory/PR/test/risk workflows remain
+proposed; see the build inventory rather than extrapolating from a registered control.

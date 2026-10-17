@@ -18,6 +18,7 @@ summary: >-
   operations including resize) and a versioned layout envelope, both specified here.
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0012: Adopt AvalonDock for the workbench shell, with an owned accessibility layer

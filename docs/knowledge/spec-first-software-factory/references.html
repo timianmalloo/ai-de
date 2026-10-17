@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>References</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from references.md</div><h1>Reference model — proposed, Inferred</h1>
+<p>Do not store a second definition of a quantity already derivable from facts. The following is a research-grounded proposal, not a schema migration or accepted architecture.</p>
+<table><thead><tr><th>Object / grain</th><th>Required identity and evidence</th><th>Invariant</th></tr></thead><tbody><tr><td>Work item / one accepted outcome</td><td>Workspace, outcome, exact spec revision</td><td>Accepted intent is distinct from execution permission</td></tr><tr><td>Criterion revision / one obligation meaning</td><td>Stable criterion id + content version + authority</td><td>Meaning changes append a revision; history is preserved</td></tr><tr><td>Change set / one base→head/content comparison</td><td>Repo/worktree/base/head/uncommitted content hash</td><td>A commit id alone does not identify dirty content</td></tr><tr><td>Evidence link / one producer&#x27;s versioned relation</td><td>Criterion→code/test/run, producer/version, confidence, location</td><td>An inferred link is not a proven oracle</td></tr><tr><td>Test attempt / one test in one environment</td><td>Run/execution identity, test identity, attempt, runner/version, environment/window, result, duration</td><td>Retry recovery never overwrites first failure</td></tr><tr><td>Assessment / one analyzer at one baseline</td><td>Scope, inspected/omitted files, failures, cost, findings</td><td>Partial analysis cannot become a clean whole-scope result</td></tr><tr><td>Review decision / one actor&#x27;s disposition</td><td>Exact head/spec/architecture/policy version, reason</td><td>Changed relevant baseline makes the decision stale</td></tr></tbody></table>
+<p>Version pinning and retained snapshots have documented prior art in <a href="https://docs.coderabbit.ai/change-stack/snapshots">CodeRabbit snapshots</a> and <a href="https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review">Copilot approvals</a>. Explicit spec authority is grounded in <a href="https://github.github.com/spec-kit/concepts/spec-persistence.html">Spec Kit persistence</a>.</p>
+<h2>Baseline and drift disposition</h2>
+<p>Expected artifact may be accepted spec, architectural constraint, selected mockup, or exploratory PoC. Preserve its authority. Observed artifact may be parsed code/schema, a run or rendered state. An agent comparison records the gap, never silently replaces expected with observed. Dispositions: implementation defect; approved requirement change; obsolete baseline; missing test; ambiguous intent; incomplete evidence. These must lead to distinct next actions.</p>
+<h2>Security, privacy and local desktop boundary</h2>
+<p>The source store and normal execution stay local. Optional provider inference and cloud review are explicit egress boundaries, including upload scope, policy, cost and retained evidence. Treat repository docs, diffs, test logs and external reviewer text as untrusted input, not instructions. Approve intent, authorize an action and approve a change in separate controls. A read-only plan does not imply shell/tool containment. <a href="https://docs.x.ai/build/features/plan-mode">Grok caveat</a>, <a href="https://code.claude.com/docs/en/ultrareview">ultrareview cloud boundary</a>, <a href="https://code.visualstudio.com/docs/agents/run/planning">VS Code planning</a>.</p>
+<h2>Operator questions and emitting sources — proposed</h2>
+<p>How long/how costly? Run timestamps, token/cost provider receipts, plus unknown when absent. What was inspected? Analyzer manifest with scope, omissions and errors. Why is a human needed? Policy evaluation plus finding/decision record. What changed since approval? Baseline identity comparison. Was behavior proved? Criterion, assertion and executed-run records. How often does it fail? First-attempt result history with environment/window denominators. Never synthesize a plausible zero for a missing measurement.</p></main></body></html>

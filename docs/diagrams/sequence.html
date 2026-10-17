@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sequence</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from sequence.md</div><h1>Recovered sequence paths and failure boundaries</h1>
+<p>Source-recovered scenarios at <code>9f13ca7a</code>. These diagrams describe production control flow, not a captured runtime trace. <strong>Verified</strong> arrows cite the composition below; defects are drawn as actual missing protections, not idealized checks.</p>
+<pre><code class="language-mermaid">sequenceDiagram
+ participant User as Operator
+ participant UI as Desktop shell
+ participant Boot as ShellBootstrap
+ participant D as Workspace daemon
+ participant Q as Core projections
+ User-&gt;&gt;UI: Open local workspace
+ UI-&gt;&gt;Boot: ConnectOrLaunchAsync
+ Boot-&gt;&gt;D: Owner-scoped pipe handshake
+ D--&gt;&gt;UI: Workspace query/command client
+ UI-&gt;&gt;D: Bounded graph or source query
+ D-&gt;&gt;Q: Query current stored evidence
+ Q--&gt;&gt;D: Rows, provenance and disclosures
+ Note over Q,D: FR-002: entry-point row cap does not enforce serialized bytes
+ D--&gt;&gt;UI: Framed response, or explicit transport failure</code></pre>
+<pre><code class="language-mermaid">sequenceDiagram
+ participant Repo as Repository content
+ participant Index as IndexCSharpAsync
+ participant Refresh as RefreshScopeAsync
+ participant Store as Snapshot store
+ Repo-&gt;&gt;Index: Content changed, same supplied revision
+ Index-&gt;&gt;Index: Fingerprint changed or force=true
+ Index-&gt;&gt;Refresh: Refresh scope with supplied revision
+ Refresh-&gt;&gt;Store: Read latest committed revision
+ Store--&gt;&gt;Refresh: Same revision, nonempty snapshot
+ Refresh--&gt;&gt;Index: Complete, zero assertions (reused)
+ Index--&gt;&gt;Repo: Reports scope indexed; old symbol remains
+ Note over Repo,Store: FR-001 reproduced; changed-revision control refreshes correctly</code></pre>
+<pre><code class="language-mermaid">sequenceDiagram
+ participant Operator as Human operator
+ participant Composer as Conversation and composer
+ participant Compiler as Compile / typed validation
+ participant Journal as Envelope events
+ participant Agent as ACP or terminal lane
+ Operator-&gt;&gt;Composer: Draft goal and context
+ Composer-&gt;&gt;Compiler: Deterministic or explicitly gated model compilation
+ Compiler-&gt;&gt;Journal: Append compilation provenance
+ Compiler--&gt;&gt;Operator: Reviewable typed result
+ Operator-&gt;&gt;Agent: Deliberate send through chosen lane
+ Agent--&gt;&gt;Composer: Streamed result / receipt / failure
+ Note over Agent: External provider/tool capabilities need separate qualification</code></pre>
+<p>Sources: <code>MainWindowViewModel.cs:252</code>, <code>WorkspaceCore.cs:154–160,402–498</code>, <code>ProjectionService.cs:704–730</code>, <code>EnvelopeStore</code>, App composer/conductor and <code>BoundaryDispatcher</code>. Two-phase terminal dispatch and ACP streaming have different receipt semantics; no diagram claims one common exactly-once guarantee. Periodic independent freshness requeue is not composed today. The product&#x27;s static sequence viewer draws type-level call-site scenarios; runtime/method-level causality is still to build. Registration/episode flows are described in the watcher spec and API bundle; they are not evidence that a session without environment registration is scored.</p></main></body></html>

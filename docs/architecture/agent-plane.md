@@ -28,6 +28,7 @@ links:
 review-by: 2027-03-09
 review-suggested:
   - { by: adr-0035-compile-session-binding-and-pin, on: 2026-09-11, reason: "the compile call composes the plane's pieces apart from the run root; the lane pin (Ruling 71) is the only tool control because the operator keeps Bash(git push:*)" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   AgentPlane is the governed half of the Conductor: it spawns an ACP-speaking coding engine into a
   provisioned worktree, holds the bidirectional protocol session, maps its wire traffic onto one

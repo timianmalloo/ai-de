@@ -15,6 +15,8 @@ summary: >-
   under the glyphs clipped ("Coordinate" -> "ordina"). Fix (landed): icon-only rail with tooltip +
   accessible name — the VS Code / JetBrains idiom — 44px targets, and a softened borderless active
   pill. Registered UX-F (a caption clipped by its own container).
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # UI review — activity rail (elevate mode)

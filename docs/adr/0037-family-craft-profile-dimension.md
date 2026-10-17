@@ -14,7 +14,8 @@ links:
   - { to: adr-0036-compile-mode-ladder-deployment-gates, rel: relates-to }
   - { to: note-addendum-c-council-rulings, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   How to make a prompt effective on one model family is a versioned, sourced document the pack owns
   — `.claude/knowledge/craft-profiles/<family>@<version>.md` (Copilot: `.github/knowledge/`) — one

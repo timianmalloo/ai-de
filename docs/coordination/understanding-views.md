@@ -18,6 +18,8 @@ summary: >-
   ui-design → design-slice → implement → join) for a single admitted view.
   Two read-only tracks may run after the ruling. Seven parallel implementers
   and a D-5/D-6 code track are struck. Atlas files stay with the Copilot fleet.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Coordination plan - Addendum C deferred understanding views

@@ -20,6 +20,8 @@ summary: >-
   views. Ruling 54 admits one view at a time. Owner rules first. Spec, architecture,
   spike, UX, design, implement, join follow for that view only. D-5/D-6 stay
   deferred until the compile ladder can host a deriver.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Execution graph — Addendum C deferred understanding views

@@ -9,7 +9,8 @@ tags: [open-questions, failure-modes, disconfirming, mda-critique]
 links:
   - { to: kb-uml-mde-and-4gl, rel: refines }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: kb-uml-mde-and-4gl, on: 2026-10-17, reason: "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact" }
 summary: >-
   The five structural forces that have defeated every models-are-the-product generation since
   the 1970s, assessed one by one against the code-derived-views variant — the most important

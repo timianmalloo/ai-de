@@ -14,6 +14,8 @@ summary: >-
   the status strip (Grid.Row Auto) hosts a wrapping, uncapped TextBlock, and the re-index announcement
   is IndexResult.Describe() — a 200+ disclosure sentence. Fixed by making the strip a single ellipsised
   line with the full text on hover and still read in full by assistive tech.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # UI review — workbench status strip / re-index diagnostics

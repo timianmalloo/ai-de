@@ -1,0 +1,273 @@
+{
+  "source_commit": "9f13ca7a13c16eb1a7b4e3bd4027c20c640b6545",
+  "build": {
+    "command": "dotnet build src/AiDe.App/AiDe.App.csproj --no-restore --configuration Debug --verbosity minimal",
+    "observed_exit": 0,
+    "warnings": 0,
+    "errors": 0,
+    "assemblies": [
+      "Core",
+      "Daemon",
+      "Mcp",
+      "App"
+    ]
+  },
+  "test": {
+    "scope": "Selected Core filter, not whole suite",
+    "outcome": "Completed",
+    "counters": {
+      "total": 57,
+      "executed": 57,
+      "passed": 57,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "tests": [
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.AnOperatorTaskClassRowWithTheSameValueChangesTheProjectionSha",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ACallThroughAnInterfaceIsAnEdgeToTheInterface",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.TheRuntimeIsCountedAndNotDrawn",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"fan_out_cap\", vary: Func`2 { Method = Args <Members>b__5_4(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ADynamicCallIsNotAnEdge",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.AnUnknownEngineYieldsFamilyNotRecordedNeverAnException",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.ThePreCompileRunTwiceYieldsByteIdenticalMechanicalPayloads",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.TheShaMovesWithEveryMemberOfItsDomainAndWithNothingElse",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"budget\", vary: Func`2 { Method = Args <Members>b__5_5(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.ANewSessionWithNothingChosenProjectsFreeFormWithSourceSessionDefault_AndAPerPromptChoiceReachesThatPromptOnly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.AStaleEpochIsRefusedByTheDaemon_AndRecordsNoAttempt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.AFoldWithNoOpenedRowOrNoTaskClassRowIsIncomplete",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"not_in_scope\", vary: Func`2 { Method = Args <Members>b__5_2(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ADelegateInvocationIsNotAnEdge",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ACallOutsideAnyTypeIsCounted",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.TheRenderAndTheSubmitReadOneProjection",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.Listing_DoesNotCarryE1ObservationIds",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ReflectionIsCountedAndNotDrawn",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ABoundaryAndAGapAreDifferentSentences",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"source_text\", vary: Func`2 { Method = Args <Members>b__5_7(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.Cap_DisclosesOmittedCount",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.TextThatMerelyLooksLikeACallIsNotAnEdge",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"task_class_source\", vary: Func`2 { Method = Args <Members>b__5_11(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.QueryJson_HasOnlyMaxRowsOnTheWire",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.HasMember_MainIsCli_WithoutGraphNodeId",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"goal\", vary: Func`2 { Method = Args <Members>b__5_0(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.TheEdgeCarriesTheCallSite",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.AnExtensionMethodIsAnEdgeToTheClassThatDeclaresIt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ACallThatDidNotBindIsNotAnEdge",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ACallIsNotADeclaredDependency",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.ASessionWithNoCapProjectsSubscriptionBoundedAndTheCompiledBlockCarriesNeitherNumeral",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.AGenericCalleeIsNamedTheWayTheGraphNamesIt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.ACapProjectsExactlyAndAFoldWhoseCeilingsRowLacksTheMemberIsIncomplete",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.EachDisclosureIsSilentWhenThereIsNothingToDisclose",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.TheSessionBindingIsCheckedBeforeAnythingIsMadeDurable",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"attachments\", vary: Func`2 { Method = Args <Members>b__5_9(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"exclusive\", vary: Func`2 { Method = Args <Members>b__5_6(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.ARetriedDispatch_DoesNotWriteToTheTerminalTwice",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ACallInsideALambdaBelongsToTheTypeItIsWrittenIn",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"done_when\", vary: Func`2 { Method = Args <Members>b__5_1(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.Catalog_NamesEntryPointsDistinctFromSolutionTree",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.HasMentionAndPatternsShareOneRegexInstance",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.CallsIsARelationAndNotAnAttribute",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.AShellThatDiesAfterBegin_LeavesPending_WhichRecoveryResolvesToDeliveryUnknown",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"tier\", vary: Func`2 { Method = Args <Members>b__5_3(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"family_profile\", vary: Func`2 { Method = Args <Members>b__5_8(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.ADomainRefusalFromAnyOperation_IsRefused_AndTheDaemonSurvivesToAnswerTheNext",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.HasTypeNodes_AreUnclassified_NeverSilentDrop",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.AMechanicalStructureRowWithNoTemplateWriterReadsNotRecorded",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.ADispatchOverThePipe_ProducesTheSameReceiptAsInProcess",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.BoundaryDispatchTests.ARetriedFinalize_DoesNotOverwriteADeliveredOutcome",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.GeneratedSourceIsNotReadForCalls",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.EntryPointsProjectionTests.KindFromDisplay_ApiUxCli_ElseUnclassified",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.PromptCompilation.TheProjectionIsTheOneProducerTests.EachMemberOfTheShaDomainMovesTheShaAlone(member: \"task_class\", vary: Func`2 { Method = Args <Members>b__5_10(Args), Target = <>c { } })",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.ATypeCallingItselfIsNotAnEdgeAndIsCounted",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.AnOverloadThatDidNotResolveIsNotAnEdge",
+        "outcome": "Passed"
+      },
+      {
+        "name": "AiDe.Core.Tests.CallEdgeTests.OneTypeCallingAnotherIsAnEdge",
+        "outcome": "Passed"
+      }
+    ]
+  },
+  "nuget_advisory_query": {
+    "command": "dotnet list AiDe.sln package --vulnerable --include-transitive --no-restore",
+    "observed_exit": 0,
+    "reported_vulnerabilities": 0,
+    "limit": "Current configured advisory sources only; not complete security assurance"
+  }
+}

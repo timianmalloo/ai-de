@@ -1,0 +1,54 @@
+{
+  "freshness": {
+    "initial": {
+      "ScopesFound": 1,
+      "ScopesIndexed": 1,
+      "Assertions": 5,
+      "Failed": [],
+      "Disclosures": [
+        "generated-code-not-analysed",
+        "packages-not-restored"
+      ],
+      "Contexts": null,
+      "ScopesReused": 0
+    },
+    "second": {
+      "ScopesFound": 1,
+      "ScopesIndexed": 1,
+      "Assertions": 0,
+      "Failed": [],
+      "Disclosures": [],
+      "Contexts": null,
+      "ScopesReused": 0
+    },
+    "third": {
+      "ScopesFound": 1,
+      "ScopesIndexed": 1,
+      "Assertions": 5,
+      "Failed": [],
+      "Disclosures": [
+        "generated-code-not-analysed",
+        "packages-not-restored"
+      ],
+      "Contexts": null,
+      "ScopesReused": 0
+    },
+    "before": [
+      "Probe.BeforeEdit"
+    ],
+    "after": [
+      "Probe.BeforeEdit"
+    ],
+    "control": [
+      "Probe.AfterEdit"
+    ],
+    "dirtyEditVisible": false,
+    "changedRevisionVisible": true
+  },
+  "framing": {
+    "rows": 1254,
+    "serializedPayloadBytes": 5165696,
+    "maximumFrameBytes": 1048576,
+    "payloadFitsFrame": false
+  }
+}

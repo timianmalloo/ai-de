@@ -13,7 +13,8 @@ links:
   - { to: note-addendum-c-council-rulings, rel: relates-to }
   - { to: architecture, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The brief offered twelve candidate tracks. Classifying the artifacts removed the generated files
   from contention; the remaining contention is one file, ComposerSendGate.cs, which three candidate

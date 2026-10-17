@@ -20,7 +20,8 @@ window.DOCS_INDEX = {
     "api",
     "source",
     "doc",
-    "index"
+    "index",
+    "plan"
   ],
   "relationRegistry": [
     "implements",
@@ -689,6 +690,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The dockable workbench is built on AvalonDock 5.0.0 (MS-PL, net10.0-windows), whose layout serialization is best-in-class — but which ships zero UI Automation peers and a mouse-only splitter. Adoption is conditional on an owned accessibility layer (command-driven layout operations including resize) and a versioned layout envelope, both specified here.",
@@ -715,7 +721,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "52761971b212e0d6feaa59f3d3290061fd324ea5d6e15b2c44b1563d286b8a09"
+      "sourceSha256": "353e89efa105d94827c5686cc1bbd8f1614824484df900f76f4468dda925b2a5"
     },
     {
       "id": "adr-0013-layout-persistence-envelope",
@@ -731,6 +737,11 @@ window.DOCS_INDEX = {
           "by": "adr-0017-primary-view-mode",
           "on": "2026-09-11",
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "Workbench layouts are user preference, not evidence. They are stored per workspace beside the fact store — never inside it — wrapped in an owned {schemaVersion, appVersion, payload} envelope, and a layout that cannot be read degrades to the default arrangement while the original file is kept.",
@@ -764,7 +775,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9973788d32d21e9c0fb179531bc7a987672eb2092e10556b73a3af2911095bef"
+      "sourceSha256": "7f58c618d2c8a79e9bc53a616ac064c1b619883d79d07a7153be0eaf658e6d57"
     },
     {
       "id": "adr-0014-accessibility-posture",
@@ -775,7 +786,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The product owner has decided AI-DE is not optimising for accessibility. WCAG 2.2 AA is withdrawn as a conformance obligation and the UX & Accessibility lens no longer holds a hard veto. Existing accessibility work is retained because it is built and passing; it stops being a gate, and every artifact that asserted the obligation is corrected so the repository does not claim conformance it is not pursuing.",
       "tags": [
         "architecture",
@@ -803,7 +820,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c42124967dc05136d8ccee32a1d6a142fe9e8c73ad3343fac28aa30ed9ba6fbc"
+      "sourceSha256": "a051ffe108e7ed7e3f5ce2e875d05da8f954dc24d56f4b0fae376a07a1929e9d"
     },
     {
       "id": "adr-0015-canvas-hosting-and-overlay-strategy",
@@ -814,7 +831,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Spike S4 met ADR-0008's reversal trigger: the windowed WebView2 cannot be drawn over, and the composition control that can kills the process when its pane is floated. ADR-0008 is not reversed. The canvas keeps the windowed control, moves its own chrome into the web content, and hides behind a pixel-aligned still frame for the moments shell chrome must cross it.",
       "tags": [
         "architecture",
@@ -844,7 +867,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "885e741f87ce2d8e0e7838669d2a4d259932b306a7154119187eff60f2de56d5"
+      "sourceSha256": "7c92214995d9111063b3ee18d55f32fbc8dc7029d386b3a66d93dbe243c65b0f"
     },
     {
       "id": "adr-0016-bounded-context-declaration",
@@ -855,7 +878,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "A bounded context is a modelling decision with no evidence in a repository, so it is declared in a committed file and validated against extracted symbols. Folder convention is rejected on measured grounds: the obvious candidate in a real repository has 31 folders that are UI features, not contexts.",
       "tags": [
         "architecture",
@@ -879,7 +908,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1981ce647e3374d9e9985742d0b503122434c27855aff21b480b4a4bc0f188cc"
+      "sourceSha256": "29bcd212028af7cb9b90ba4883463b167a6ac2b061ad2fd149cce9caf826395a"
     },
     {
       "id": "adr-0017-primary-view-mode",
@@ -895,6 +924,11 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt. AMENDED 2026-09-11 (Ruling 52): the closed set is the Perspective set (Coding · Explore · Architecture); a mode's body may itself be a docking host; the Inferred second-host clause is discharged by spikes/second-dock-host-unparent.",
@@ -953,7 +987,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32ac5ff8e05da9f6880e1b73f7d5b6b69ed1cfe20a651a95bb3df07c5dabcc02"
+      "sourceSha256": "659e3a751be957a92194f59054b1345e247810a11ef51a4bf337f2ebbb72c87d"
     },
     {
       "id": "adr-0018-node-content-reader-contract",
@@ -969,6 +1003,11 @@ window.DOCS_INDEX = {
           "by": "adr-0017-primary-view-mode",
           "on": "2026-09-11",
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the graph payload deliberately does not carry. It is fetched on demand for the one selected node via a new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.",
@@ -1007,7 +1046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "551503a75c681f0e0ddc3e5c4d4a0fcb965270a8aa0fcff53e423bf4b490cf24"
+      "sourceSha256": "0ab492399f67a6fc06a022dc5f7ae57670c6807289d85efe420a9189b5f39dcd"
     },
     {
       "id": "adr-0019-advisory-evaluator-calibration",
@@ -1092,7 +1131,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Adopts a fixed frame of named absolute dock zones (Left/Right/Bottom/Center), each a container of a within-zone stack or editor-group split, replacing the cross-zone proportional split tree whose single-child collapse relocated unrelated panes (DC-063). Splits are scoped inside a zone; moving a pane changes only source and destination.",
       "tags": [
         "workbench",
@@ -1116,7 +1161,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e5c3f2c93a80886ef7f10800277ea20756361e8f917d645c625873630a3dbc76"
+      "sourceSha256": "3846b90f4aaa8360b5136ff33f61415c7b90d94033332bc4f398c89601d40e15"
     },
     {
       "id": "adr-0022-mcp-authorization-is-not-an-exfiltration-control",
@@ -1439,6 +1484,11 @@ window.DOCS_INDEX = {
           "by": "adr-0017-primary-view-mode",
           "on": "2026-09-11",
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "Perspectives are three data rows in Core (id, order, body kind, gesture) with a fixed routing order; each App surface-kind descriptor row gains an explicit, non-empty allow-list column; the rail, the View menu's perspective radio, the derived \"New/Show <Title>\" entries, the palette rows and a routed kind-open are all computed from the join of those two row sets — never a second hand-written list. Rejected: a per-command Modes column on the catalog, a per-perspective tuple list, a switch arm.",
@@ -1482,7 +1532,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "96823534bb430d7c4930b0b048a8995bca85c1ca7f70198d41f08b5aaebc5940"
+      "sourceSha256": "11ff692292ed8da1d28ec6aa0119b6068df93ee2680a1937646f50e9b094d731"
     },
     {
       "id": "adr-0031-second-docking-host",
@@ -1498,6 +1548,11 @@ window.DOCS_INDEX = {
           "by": "adr-0017-primary-view-mode",
           "on": "2026-09-11",
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The Architecture perspective's body is a second AvalonDock DockingManager with its own ZoneBackedLayoutService, WorkbenchAdapter, WorkbenchController, ZoneRails and LayoutPersistence — the DockHost unit WorkbenchShell composes today for Coding, extracted and composed twice — under the ADR-0017 presenter, sharing one SurfaceContentFactory, one command catalog, one announcer and one palette. The Owner's residual (one WorkbenchController or two) is decided: one per host; a shell-level PerspectiveShell routes commands to the active host. Verified by spikes/second-dock-host-unparent.",
@@ -1545,7 +1600,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "33ae5326b25834d6a938a2fed03059a966b8ab3fb21496108305655aa46d3a3c"
+      "sourceSha256": "06fa6989bee8fe45d3d60e29f4d84b53de26001ec9908e393ff58e379bc2804c"
     },
     {
       "id": "adr-0032-perspective-layout-slots",
@@ -1566,6 +1621,11 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The ADR-0013 amendment Ruling 52 named, decided: each host perspective persists its zone layout in its own file of the existing ZoneEnvelope schema 1 — Coding keeps today's file unchanged, Architecture gets a sibling — so there is no schema bump and no in-place migration; a restore drops a surface whose kind the perspective does not admit and reports it by caption, kind and the perspective that admits it; a one-time .pre-perspectives.bak precedes the first rewriting save; a newer schema or a corrupt file is refused with a report. Rejected: a slots map with a schema bump; named layouts; an Explore slot.",
@@ -1610,7 +1670,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7dccba54581ab9a49b842914bc7d20ba64f99af27f57d7c0f480a0605ecb5269"
+      "sourceSha256": "0c8358348c765b971d36abcc7c8c0306ef2a935d326569a32f168b2943ec9606"
     },
     {
       "id": "adr-0033-prompt-compilation-bounded-context",
@@ -1621,7 +1681,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-d",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The compile step is a new bounded context, AiDe.Core/Compilation, whose one seam is Compile(typed text, settings, context) → compiled envelope, and whose one projection Project(Fold(events)) is the sole function that assembles the CT19 block, the lease and the prompt for ComposerSendGate.Send — GovernedRunRequest, SpawnContract.Validate, LeaseDerivation and TemplateCompiler are unchanged. The operator's two decisions of 2026-09-11 are reflected: budget is an optional cap projected onto the unchanged RunBudget as a declared subscription-bounded value when absent; the session's default task class is the explicit value free-form, changeable per prompt, with no refusal for a missing class. Rejected: a compile inside the composer's WPF surface; a second request type for the run; a nullable budget in the contract.",
       "tags": [
         "architecture",
@@ -1672,7 +1738,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46dee4b0310967bfd1eeffbd1d7ce8df394d7cca6aed3849446c21bdad3371f5"
+      "sourceSha256": "d378a2bea4b3e0d7c097da4fa9cb35b0782d2c8d5f7c6f974c573d79f378cf19"
     },
     {
       "id": "adr-0034-envelope-event-store",
@@ -1688,6 +1754,11 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "Promotes note-addendum-d-envelope-store (its own promotion rule) to the durable-representation ADR for Prompt Compilation: one row in <workspace>/.aide/sessions/<id>/envelope-events.jsonl is one event on one envelope keyed (envelope_id, seq); the writer is one EnvelopeStore in Core opened FileShare.None by the session document that owns the composer; prev_sha chains the raw previous line; the eval corpus and the Proof Pack summary are rebuildable projections; expand-only schema evolution; aide session purge deletes the file only, and Addendum A's session deletion cascades to it by directory containment. Rejected: SQLite, one row per turn, a stored lease, a redactor, a shared cross-session file.",
@@ -1733,7 +1804,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "369d92ba4caa7d7d9ec46d4817c8b8f793ad345982a9bcf30dbc63b42899d53f"
+      "sourceSha256": "9d57e7d34b17ecbd67cbc76bdb8cb81b51494f97b87dca6ab76e0c7b2bc238bb"
     },
     {
       "id": "adr-0035-compile-session-binding-and-pin",
@@ -1744,7 +1815,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-d",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The compile call reuses the agent plane's pieces (EngineCatalog, ProviderRegistry, AcpEngineProcess, AcpPeer, AcpLaneClient, SpawnContract.Authorize) in a second, smaller composition — CompileCallHost — that never provisions a worktree, opens an episode, constructs a GovernedRunRequest or scores; it pins the session's tools to none through Ruling 71's typed session/new tools argument — a sealed two-value type (_meta.claudeCode.options.tools: [] primary, the settings deny belt, disallowedTools braces, mcpServers: []; disableBuiltInTools dropped as dead) on a pinned triple (adapter sha, SDK version, CLI binary sha), and is distinguished in the composition-root ledger by opening compile-call.compose, not governed-run.compose. Rejected: a separate assist provider, a compile-specific settings.json, trusting the reject-all handler, an in-process SDK call.",
       "tags": [
         "architecture",
@@ -1795,7 +1872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a11a65b6ab7e66d31e5f2a5cc4f0400d7476cc0cf2a5c0ed4f17f3db89c13043"
+      "sourceSha256": "cf5109ee4ecdf8501354f6e02e50c285c96b891c7a043026dd48a479f506c09c"
     },
     {
       "id": "adr-0036-compile-mode-ladder-deployment-gates",
@@ -1806,7 +1883,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-d",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The agentic compile is the one model-backed capability Addenda C and D add. It ships behind an eval gate realised as deployment gates the product reads: no agentic rung is selectable without the P-D5 artifact (adapter sha equal to the installed adapter's); agentic-advisory projects no derived text and feeds the corpus; agentic (Send confirms derived rows) opens only when the holdout report meets §A14.4's fixed floors; the A6 prompt-version ring re-runs on any (contract, prompt_sha, profile.sha) change; the drift detector re-runs the golden set. Rejected: a feature flag, a build-time switch, thresholds judged on the sample they were set from.",
       "tags": [
         "architecture",
@@ -1844,7 +1927,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b337312b60e56ed174735817f1c38e51dbbc7858476feafa0050568d2909d4f8"
+      "sourceSha256": "3aaee3c74717009a69c59eb42b869c468587d209d7502dc33066fb5e7352679a"
     },
     {
       "id": "adr-0037-family-craft-profile-dimension",
@@ -1855,7 +1938,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-d",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "How to make a prompt effective on one model family is a versioned, sourced document the pack owns — `.claude/knowledge/craft-profiles/<family>@<version>.md` (Copilot: `.github/knowledge/`) — one immutable file per version, never overwritten; the pre-compile selects the family from EngineCatalog.Find(engineId).Provider and the current version (max semver present, one per family), pins (family, version, sha) on the envelope, and in v1 applies the profile as a deterministic template (preamble + suffix, a labelled block in the sent bytes); a content change without a version bump fails the sha test; the pack's deployment map is append-only for this set. Rejected: one file per family overwritten in place; a profile in the workspace; a model rewrite of the framing.",
       "tags": [
         "architecture",
@@ -1894,7 +1983,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "92658f5a21220d232e56dd004be03f4e3f4e03482e87ff9c6408730016e864d7"
+      "sourceSha256": "4ad031fb908beb5614e90167ef5253e87c07cc38c299b29d74b5c728318466b3"
     },
     {
       "id": "adr-0038-d0-solution-tree-census-and-kind",
@@ -1905,7 +1994,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery). File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points; UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC. Status accepted after N6 Security and Tech Lead re-review (conductor recorded).",
       "tags": [
         "architecture",
@@ -1956,7 +2051,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b5a123e86a10cc8f903d389150dc2deb41c42d3a5948574250313e7277af2265"
+      "sourceSha256": "3d0725d2ce0af935709df9b8f78d72e4acf7f3307ada869ad138efcfd17fb2d0"
     },
     {
       "id": "api-aide-app",
@@ -2675,6 +2770,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
+        {
           "to": "spec-ai-native-ide",
           "rel": "implements"
         },
@@ -2845,7 +2944,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[UnanalysedLanguages.Skip] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
         }
       ],
-      "sourceSha256": "62e13cac0ca2cfe5eb93879e785c48a690d0458e0fa4bdf698e68bda5b888875"
+      "sourceSha256": "3ed47a542f90825e1e36c9550851494c41a4ba6238fb8b9fd1ff45f35087cbeb"
     },
     {
       "id": "architecture-agent-plane",
@@ -2861,6 +2960,11 @@ window.DOCS_INDEX = {
           "by": "adr-0035-compile-session-binding-and-pin",
           "on": "2026-09-11",
           "reason": "the compile call composes the plane's pieces apart from the run root; the lane pin (Ruling 71) is the only tool control because the operator keeps Bash(git push:*)"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "AgentPlane is the governed half of the Conductor: it spawns an ACP-speaking coding engine into a provisioned worktree, holds the bidirectional protocol session, maps its wire traffic onto one run-event envelope, enforces a fail-closed spend and lease boundary, and closes the episode into the existing Watcher's unchanged scorer as a second, distinguishable cohort. Phase 1 only: claude-code, one launch path, zero terminal hosting, one governed run proven end to end.",
@@ -2953,7 +3057,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef plane fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef watcher fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n  classDef frozen fill:#0D1014,stroke:#D8A650,stroke-dasharray:4 3,color:#D8A650\n\n  subgraph app[\"AiDe.App / Conductor — the one composition root\"]\n    ConductorEntry[\"ConductorEntry<br/>headless launcher: run file → result file\"]\n    GovernedRunHost[\"GovernedRunHost.RunAsync<br/>catalog → process → handshake →<br/>observed auth → authorize → worktree →<br/>episode → prompt → seams → close → score\"]\n  end\n\n  subgraph plane[\"AiDe.Core/AgentPlane — new\"]\n    EngineCatalog[\"EngineCatalog<br/>3 data rows, 1 launch path, 3 named refusals\"]\n    ProviderRegistry[\"ProviderRegistry<br/>accounts, observed health, ObservedAuthLabel\"]\n    GoalBlock[\"GoalBlock / SpawnContract<br/>6-field goal + fail-closed auth gate\"]\n    AcpEngineProcess[\"AcpEngineProcess<br/>child spawn, env inspection, tree reap\"]\n    AcpPeer[\"AcpPeer<br/>NDJSON framing, correlation, backpressure\"]\n    AcpLaneClient[\"AcpLaneClient<br/>handshake · session · prompt · permission\"]\n    AcpRunEventMapper[\"AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper\"]\n    WorktreeProvisioner[\"WorktreeProvisioner<br/>namespaced branch, coord install inside it\"]\n    GovernedSessionSource[\"GovernedLaneSource<br/>opens/closes the episode\"]\n    LeaseAndSeams[\"Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked\"]\n    LaneCohort[\"LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass\"]\n    TerminalHostingLedger[\"TerminalHostingLedger<br/>counts terminal.start; oracle for == 0\"]\n    RunTriage[\"RunTriage<br/>Stage-0: skip plan/council for T0/T1\"]\n  end\n\n  subgraph watcher[\"AiDe.Core/Watcher — existing, unchanged semantics\"]\n    IngestHost[\"IngestHost<br/>OpenEpisode / DeclareArtifacts / CloseEpisode\"]\n    Registrar[\"ITrustedRegistrar\"]\n    ClosedScoring[\"ClosedEpisodeScoring\"]\n    ScoringService[\"ScoringService / WeaveScorer<br/>R4-core: byte-unchanged\"]\n    Store[\"SqliteWatcherObservationStore<br/>v6: + mode TEXT NULL, expand-only\"]\n  end\n\n  subgraph frozen[\"AiDe.Core/Terminal — frozen for Phase 1\"]\n    ITerminalSession[\"ITerminalSession<br/>Output never persisted\"]\n    ConPty[\"ConPtyTerminalSession<br/>emits terminal.start on aide.terminal.runtime\"]\n  end\n\n  Adapter[\"claude-agent-acp adapter<br/>node process, wraps Claude Code Agent SDK\"]\n  Repo[(\"Repository + worktrees\")]\n\n  ConductorEntry --> GovernedRunHost\n  GovernedRunHost --> EngineCatalog\n  GovernedRunHost --> ProviderRegistry\n  GovernedRunHost --> AcpEngineProcess\n  AcpEngineProcess --> AcpPeer\n  AcpPeer --> AcpLaneClient\n  GovernedRunHost --> AcpLaneClient\n  GovernedRunHost --> GoalBlock\n  GovernedRunHost --> WorktreeProvisioner\n  GovernedRunHost --> GovernedSessionSource\n  GovernedRunHost --> TerminalHostingLedger\n  GovernedRunHost --> LaneCohort\n  AcpLaneClient --> AcpRunEventMapper\n  AcpRunEventMapper --> LeaseAndSeams\n  GovernedSessionSource --> IngestHost\n  IngestHost --> Registrar\n  LaneCohort --> ClosedScoring\n  ClosedScoring --> ScoringService\n  LaneCohort -.writes mode.-> Store\n  ScoringService --> Store\n\n  AcpEngineProcess -.spawns.-> Adapter\n  AcpLaneClient -.stdio ACP.-> Adapter\n  WorktreeProvisioner -.git worktree add.-> Repo\n  TerminalHostingLedger -.listens, never calls.-> ConPty\n\n  class app,ConductorEntry,GovernedRunHost app\n  class plane,EngineCatalog,ProviderRegistry,GoalBlock,AcpEngineProcess,AcpPeer,AcpLaneClient,AcpRunEventMapper,WorktreeProvisioner,GovernedSessionSource,LeaseAndSeams,LaneCohort,TerminalHostingLedger,RunTriage plane\n  class watcher,IngestHost,Registrar,ClosedScoring,ScoringService,Store watcher\n  class frozen,ITerminalSession,ConPty frozen\n  class Adapter,Repo ext"
         }
       ],
-      "sourceSha256": "3578e4c25494391bbfc37d503326d32ffed5d7767cfcfcbdc856b3991d662642"
+      "sourceSha256": "6c43a513c59dee777a6a55255193fa9855181d56074e9cfed00b128d89a3e596"
     },
     {
       "id": "architecture-loomkeeper",
@@ -2964,7 +3068,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "discovery",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Top-level architecture for Loomkeeper, the local agentic watcher subsystem. It observes many terminal-agent sessions across repositories by composing the existing AI-DE fact store, derived views, delivery semantics, session adapter, and egress governance, and adds a trusted registrar, harness/model attribution, a calibrated advisory evaluator, a leaderboard, per-turn standing feedback, and a human-gated Daydream learning loop - local-only by default.",
       "tags": [
         "loomkeeper",
@@ -3030,7 +3140,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "379b24209d0ac4ce0eda4e2ba6feb0d8fa47d0d8863780cce5b05e98db2803a0"
+      "sourceSha256": "8f1d6c6fb7ed02e099f065aafa4a213b1d37bfbbe499274bfef5333668f303ec"
     },
     {
       "id": "architecture-pinned-contracts",
@@ -4736,7 +4846,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-09",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The spec says GovernedSessionSource \"implements the same source seam as AuditLogEpisodeSource\", but no such seam exists — AuditLogEpisodeSource is a static batch importer. The Owner ruled the phrase is intent, not an instruction: the governed source enters through the live IngestHost path, and no IEpisodeSource interface is invented in Phase 1.",
       "tags": [
         "conductor",
@@ -4756,7 +4872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0bcfb55ab5073a76f04666b822627bd2087a49aecf43cf0b4dd3a6b1039ac545"
+      "sourceSha256": "731946d58f211bbf3c5fd8af20f1d5beb946932e56a0d1fdd3ac65a93af542d5"
     },
     {
       "id": "note-conductor-latency-slo-not-assertion",
@@ -4966,7 +5082,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-09",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Spec R4 requires a run containing both a governed claude-code lane and an observed grok-build lane, but grok-build parity is R11, which the spec assigns to Phase 4. The Owner ruled what \"R4(core)\" means in Phase 1 so no Phase-4 work is pulled forward and no R4 criterion is silently dropped.",
       "tags": [
         "conductor",
@@ -4986,7 +5108,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1bd178fc1b3ab1758d876b7042a7ad085fd161ca50d642c445d1671a93f8bd6c"
+      "sourceSha256": "0a66d88ec97d07a3e80277f4f585e8d66ac4dac91b53f955c67560e17612661a"
     },
     {
       "id": "note-conductor-spec-errata-lane-rename",
@@ -5379,7 +5501,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-c",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The brief offered twelve candidate tracks. Classifying the artifacts removed the generated files from contention; the remaining contention is one file, ComposerSendGate.cs, which three candidate tracks would author in one wave. The boundary fix is one Conversation lane (C-0 → C-3 → D-1 → D-2 → D-3's code) beside one Shell lane (C-1a → C-1b → C-2), width 3 with a side slot. The third code lane was GO5-admissible and still refused on the lexicographic objective; the cut is recorded with its re-plan trigger. Two layer findings — a registered derived artifact with no merge attribute, and a per-repository regen marker tracked in one checkout — are written as classes, ready to append when the conductor allocates their ids at the join.",
       "tags": [
         "decision-note",
@@ -5413,7 +5541,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb392aa7f5b15309836d03bf982cd53380260250580bfdab8cb6dac0dde2147a"
+      "sourceSha256": "9a2d82c66097bfdff1253ad83f9e4a2dab51a2c6d30ed9a4ddcc55357cce2578"
     },
     {
       "id": "note-cv1-f6-and-the-announcer-until-the-shell-lane-lands-them",
@@ -6037,6 +6165,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8e2e4db6c4c49cb38d954f376fd14ed1fa5c400c812ed7a1abd09dff9b3b60da"
+    },
+    {
+      "id": "note-factory-evolution-direction",
+      "path": "docs/notes/factory-evolution-direction.md",
+      "title": "Factory exploration: accepted constraints and deferred decisions",
+      "type": "decision-note",
+      "status": "exploratory",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Records the user's local-desktop constraint and PR-question/rich-authoring additions, while keeping the recommended work-centered direction exploratory.",
+      "tags": [
+        "factory",
+        "desktop",
+        "authoring",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-factory-workbench",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "be875a6f8b3a7b39369b05c76b42195bb69346d60f285fe700d3cd7614c1e000"
     },
     {
       "id": "note-front-door-council-rulings",
@@ -6785,7 +6943,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The class diagram now renders variable-height, three-compartment UML classifier boxes (name / attributes / operations) sized to each type's members, with «interface» stereotypes, italic interface names, monospace member lines, and correct generalization/realization arrowheads. This note records the remaining UML class-diagram fidelity gaps and the design + Core data contract for a UML sequence-diagram surface.",
       "tags": [
         "uml",
@@ -6801,7 +6965,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
+      "sourceSha256": "b8b40efc53140ecf36a7b2f8681041d50f0704fe39b746f2e4fc8729b387dbbb"
     },
     {
       "id": "note-understanding-views-n1-inventory",
@@ -7516,7 +7680,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Opening a workspace restores its per-workspace saved layout (US-9), which the user experiences as \"adding a workspace reset my panes\" — especially when the saved layout is degenerate (had lost the graph). Shipped a conservative guard (keep the current layout when the restore would drop the graph it has) and recorded the open product fork: per-workspace restore vs keep-current-on-open.",
       "tags": [
         "layout",
@@ -7531,7 +7701,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0bea1f643446253c62355f55fb690fcedf1e92b84bbfd32c0ecb54b903f34932"
+      "sourceSha256": "ccca7b3957ebc98edb39bdf90e05ffc3b843d0ece7039beeea0b628a2498c54d"
     },
     {
       "id": "note-zone-strangler-approach",
@@ -7762,6 +7932,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The implementable blueprint for AI-DE's Phase-1 walking skeleton: the SQLite fact schema and its enforced immutability control, the in-process authority core with command receipts and the write-ahead two-phase dispatch, the bounded describe/impact/knowledge projections, the stdio MCP gateway with processing-class egress binding, the health sidecar and freshness prober, and the accessible evidence/provenance pane.",
@@ -7813,7 +7988,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "86cc87c1bf8f24df9729ad0af66bd0a0351ffb39fdccb777319e7683eed5cdd5"
+      "sourceSha256": "7c229f21be7c623955d684c9d6557f17069b242ed56856ef8cfe7fab3d13924d"
     },
     {
       "id": "design-phase-1b-workbench",
@@ -7829,6 +8004,11 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "The implementable blueprint for the dockable workbench: an owned, headless layout model (tree → stack → surface) that both the pointer and the keyboard mutate through one command set, an AvalonDock adapter that renders it, and a versioned envelope that persists it.",
@@ -7863,7 +8043,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4909156d64a7433f912fef1cf1a1e64b08336dd7e6c8757924b570da3152747b"
+      "sourceSha256": "134cfc25a1ff68b1ccdea58abd3f68b0dc2a48cf7eb01da6b20a2186186a6df4"
     },
     {
       "id": "design-phase-2-real-code-and-terminal",
@@ -7874,7 +8054,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The blueprint for Phase 2's three interlocking components — a real Roslyn extractor, a ConPTY terminal runtime, and the in-process-to-daemon split with its IPC auth and upgrade path. Surfaces two contract gaps in seams Phase 1 declared substitutable, and gates implementation behind four named spikes.",
       "tags": [
         "design",
@@ -7916,7 +8102,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7bc863996e870a105ef018e1946ded1589b22b4b50702c83b94a29477296bbef"
+      "sourceSha256": "e0167ebcb8da3e7c84943decd22501e22ea1410826c25b26373a5877db58f130"
     },
     {
       "id": "design-phase-3-architecture-data-infra",
@@ -7927,7 +8113,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Phase 3 joins C# evidence to infrastructure and schema evidence. Grounded in a real repository rather than the phase plan: its schema is EF Core migrations, not DDL files, so the planned \"DDL parser\" would have found nothing. Three components, one of which the phase plan did not have.",
       "tags": [
         "design",
@@ -7956,7 +8148,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+      "sourceSha256": "73361a85d07522f2772f4e93c51c90d9862192b29bbb26a48b3dbff8a1578304"
     },
     {
       "id": "design-session-thread-itemscontrol",
@@ -8059,7 +8251,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Walking-skeleton design for D-0: UV-0 adds one Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints) with grain (path, kind), no folder_dim, T5c omit off the wire; UV-1 then admits one Architecture SurfaceKind and a WPF TreeView. Status draft — N10 review is later.",
       "tags": [
         "design",
@@ -8124,7 +8322,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a9c28834b798483b3cf4f88dff797d02dfdc6cd86254ef2c6896f2c564532728"
+      "sourceSha256": "84c32dfa0e299701d9f2f1a7887a1b7b05dee57c6375d7bff8142d37cf7e8481"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -9313,6 +9511,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "71819e58949cf27b8efd509901f9d19ca6e787cb2fbec6d274a59b8b8fd5e003"
     },
     {
+      "id": "authoring-inventory-rev102",
+      "path": "docs/reviews/authoring-inventory-rev102.md",
+      "title": "Authoring mechanisms and integration gaps — revision 102",
+      "type": "doc",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Seventeen detailed authoring rows distinguish the current CodeMirror and compiler mechanisms from unconnected catalogs/context/persistence and the proposed prompt-stack experience.",
+      "tags": [
+        "authoring",
+        "prompts",
+        "inventory",
+        "editor"
+      ],
+      "links": [
+        {
+          "to": "built-inventory-rev102",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bd56f10783c9d0f25cc48b2dbbf5105df00ac9e519a2424ba09c62913d9d6988"
+    },
+    {
       "id": "backlog-watcher-telemetry",
       "path": "docs/backlog/watcher-telemetry.md",
       "title": "Watcher telemetry — backlog",
@@ -9345,6 +9573,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
+    },
+    {
+      "id": "built-inventory-rev102",
+      "path": "docs/reviews/built-inventory-rev102.md",
+      "title": "AI-DE built and remaining inventory — revision 102",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "AI-DE built and remaining inventory — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
+      "tags": [
+        "forensic-review",
+        "inventory",
+        "architecture",
+        "factory"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5772dbf3ba47d0c0ca32496b35317108b8c3f7ca1e3330fac9f9f2a95af0f993"
     },
     {
       "id": "coord-audit-gate-self-test",
@@ -9412,7 +9674,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-c",
       "reviewBy": "2026-10-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Two code lanes (Shell; Conversation), three side tracks (a design slice, the P-D5 wire spike, the census controls), a three-node serial spine (F5 merge, INV-0009 merge, the settings and sentinels commit) and a width cap of 3. Seven candidate tracks struck for not clearing the multiplier. Layer state measured, not assumed; one registry gap repaired.",
       "tags": [
         "coordination",
@@ -9497,7 +9765,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
+      "sourceSha256": "a66f888c0ddbc39af440904869c2b5b127e89360e1768cf2a05e3612d76df5a3"
     },
     {
       "id": "coordination-understanding-views",
@@ -9508,7 +9776,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-14",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Owner rules first; then one serial spine (specify → architecture → spike → ui-design → design-slice → implement → join) for a single admitted view. Two read-only tracks may run after the ruling. Seven parallel implementers and a D-5/D-6 code track are struck. Atlas files stay with the Copilot fleet.",
       "tags": [
         "coordination",
@@ -9545,7 +9819,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5249e9f953f707bf64185f3404afc011ab4e92f5232cd934f3fb315df8839fb0"
+      "sourceSha256": "c215f23360a4a5d6ccfaa82ddf184f344590156ad8a7a790e9be73299bd232a2"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -9591,7 +9865,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-24",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The project's register of defect classes — the recurring shapes of things that go wrong here, what each one survives, and the control that now fails when the shape recurs. Seeded from the ten-persona architecture review and the Phase-1 build.",
       "tags": [
         "lessons",
@@ -9609,7 +9889,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "65dc8f3fbe4a3a85ab8b59eb5b041c1f8b421e4d1f56793e17e7ebf8f236d8fd"
+      "sourceSha256": "46ff5f0517e393f8b462bd370a9aed786d3a3a707577512c3370a9989ccaa8c6"
     },
     {
       "id": "design-session-profiler",
@@ -9663,6 +9943,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -9678,11 +9962,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "class",
-          "title": "Class diagram — scoring and coordination",
-          "mermaid": "classDiagram\n  direction LR\n\n  class WeaveScorer {\n    +Score(WorkEpisode, DeterministicEpisodeSignals, TimeProvider) Scorecard\n    +Score(WorkEpisode, DeterministicEpisodeSignals, ScoreSchema, TimeProvider) Scorecard\n    ~ComposeScoredCard(...) Scorecard\n    note: pure and model-free\n  }\n\n  class ScoreSchema {\n    +string Version\n    +IReadOnlyList~DimensionWeight~ Dimensions\n    +int TotalWeight\n    +ScoreSchema Weave1$\n  }\n\n  class DimensionWeight {\n    +ScoreDimension Dimension\n    +int Weight\n    +AssessmentPosture Posture\n  }\n\n  class DimensionAssessment {\n    +ScoreDimension Dimension\n    +int Weight\n    +int? Rubric0to4\n    +double? EarnedPoints\n    +AssessmentPosture Posture\n    +string Rationale\n  }\n\n  class Scorecard {\n    +string EpisodeId\n    +string SchemaVersion\n    +WeaveVerdict Verdict\n    +IReadOnlyList~DimensionAssessment~ Assessments\n    +IReadOnlyList~FloorDomain~ TrippedFloors\n    +EvidenceCoverage? Coverage\n    +string Headline\n    +DateTimeOffset EvaluatedAt\n  }\n\n  class EvidenceCoverage {\n    +int Observed\n    +int Required\n  }\n\n  class DeterministicEpisodeSignals {\n    +bool HasVerificationPath\n    +bool? AcceptanceCriteriaMet\n    +bool RequiredVerificationExecuted\n    +bool RegressionPresent\n    +IReadOnlySet~FloorDomain~ UnresolvedFloorBlockers\n    +int ActionsAfterDoneCondition\n    +bool PrematureCompletion\n    +bool CoverageCalibrated\n  }\n\n  class ScoredEpisode {\n    +string EpisodeId\n    +string? Harness\n    +string? Model\n    +string OperatorId\n    +string TaskClass\n    +Scorecard Scorecard\n    +double Weave\n    +double? CoverageRatio\n    +bool IsScoreable\n  }\n\n  class LeaderboardComposer {\n    +Compose(episodes, taskClass, schemaVersion, cohortMinimum) Leaderboard\n  }\n\n  class Leaderboard {\n    +string TaskClass\n    +string SchemaVersion\n    +IReadOnlyList~LeaderboardCell~ Cells\n    +Cell(LeaderboardFacet, string) LeaderboardCell\n  }\n\n  class LeaderboardCell {\n    +LeaderboardFacet Facet\n    +string Label\n    +int Cohort\n    +double? MedianWeave\n    +double? Coverage\n    +int? Rank\n    +bool Comparable\n    +string? NotComparableReason\n  }\n\n  class AgentStanding {\n    +int? Rank\n    +int? Cohort\n    +int Trend\n    +bool RankComparable\n    +IReadOnlyList~DimensionReason~ Reasons\n    note: no aggregate scalar, by design\n  }\n\n  WeaveScorer ..> ScoreSchema : reads\n  WeaveScorer ..> DeterministicEpisodeSignals : consumes\n  WeaveScorer --> Scorecard : produces\n  ScoreSchema *-- DimensionWeight\n  Scorecard *-- DimensionAssessment\n  Scorecard o-- EvidenceCoverage\n  ScoredEpisode *-- Scorecard\n  LeaderboardComposer ..> ScoredEpisode : segments\n  LeaderboardComposer --> Leaderboard : composes\n  Leaderboard *-- LeaderboardCell\n  StandingComposer ..> Leaderboard : reads\n  StandingComposer --> AgentStanding : produces"
+          "title": "Recovered class and durable-data model",
+          "mermaid": "classDiagram\n class WorkspaceCore {\n  +string WorkspaceId\n  +string RootPath\n  +RefreshScopeAsync()\n  +IndexCSharpAsync()\n }\n class WorkspaceStore {\n  +long CoreEpoch\n  +BeginRead()\n  +BeginWrite()\n }\n class ProjectionService {\n  +Graph()\n  +EntryPoints()\n  +SearchContent()\n }\n class EvidenceAssertion {\n  +string ScopeId\n  +string ArtifactRevision\n  +string Subject\n  +string Predicate\n  +string Object\n  +EvidenceOrigin Origin\n  +VerificationStatus Status\n }\n class Provenance {\n  +string ArtifactPathId\n  +string SourceLocation\n  +string ExtractorId\n  +string ExtractorVersion\n }\n class WorkEpisode {\n  +string EpisodeId\n  +string SessionId\n  +Goal Goal\n  +DoneCondition DoneWhen\n  +EpisodeOutcome Outcome\n }\n WorkspaceCore *-- WorkspaceStore\n WorkspaceCore --> ProjectionService\n ProjectionService --> WorkspaceStore\n EvidenceAssertion *-- Provenance"
         }
       ],
-      "sourceSha256": "08abcea16c2e2df99bf62aef8aa5726d4857353d53a31fc4ea75c2c5e825c584"
+      "sourceSha256": "e06f96c54ea6a9ff0c9cefe53e47a1be047e2084ca1a81f1d6b49d247047eeea"
     },
     {
       "id": "diagram-component",
@@ -9703,6 +9987,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -9714,11 +10002,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Component diagram — AI-DE",
-          "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef core fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n\n  subgraph shell[\"AiDe.App — WPF shell\"]\n    WorkbenchShell[\"WorkbenchShell<br/>composition + watcher loop\"]\n    SurfaceFactory[\"SurfaceContentFactory<br/>15 surface kinds\"]\n    MainMenu[\"MainMenuBuilder<br/>derives menu from the command catalog\"]\n  end\n\n  subgraph corelib[\"AiDe.Core\"]\n    WorkspaceCore[\"WorkspaceCore<br/>in-process authority core\"]\n    Store[\"Store<br/>WorkspaceStore · schema · reader/writer\"]\n    Extraction[\"Extraction<br/>7 extractor families\"]\n    Projections[\"ProjectionService<br/>graph · paths · content · search · joins\"]\n    Dispatch[\"DispatchService<br/>prompt delivery receipts\"]\n    Mcp[\"McpToolGateway<br/>bounded read tools\"]\n    Health[\"HealthIncidentSidecar\"]\n    Ipc[\"Ipc<br/>pipe · framing · capability registry\"]\n    Terminal[\"Terminal<br/>ConPTY sessions\"]\n    Watcher[\"WatcherHost<br/>registrar · ingest · board · scoring\"]\n    Upgrade[\"Upgrade<br/>preflight and rollback state\"]\n  end\n\n  Daemon[\"AiDe.Daemon<br/>one process · one workspace · one pipe\"]\n\n  Repo[(\"Repository files\")]\n  Sqlite[(\"SQLite<br/>workspace store\")]\n  WatcherDb[(\"SQLite<br/>watcher observations\")]\n  Agent[\"Agent process<br/>any harness\"]\n  Otlp[\"OTLP HTTP receiver<br/>loopback, optional\"]\n\n  WorkbenchShell --> SurfaceFactory\n  WorkbenchShell --> MainMenu\n  WorkbenchShell --> WorkspaceCore\n  WorkbenchShell --> Watcher\n  SurfaceFactory --> Projections\n  SurfaceFactory --> Terminal\n  SurfaceFactory --> Watcher\n\n  WorkspaceCore --> Store\n  WorkspaceCore --> Extraction\n  WorkspaceCore --> Projections\n  WorkspaceCore --> Dispatch\n  WorkspaceCore --> Mcp\n  WorkspaceCore --> Health\n  Mcp --> Projections\n  Projections --> Store\n  Extraction --> Store\n  Dispatch --> Store\n\n  Daemon --> WorkspaceCore\n  Daemon --> Ipc\n  Daemon --> Upgrade\n  Ipc --> WorkspaceCore\n\n  Extraction -.reads.-> Repo\n  Store -.writes.-> Sqlite\n  Watcher -.writes.-> WatcherDb\n  Terminal -.ConPTY.-> Agent\n  Agent -.coordination log / OTLP.-> Otlp\n  Otlp -.spans.-> Watcher\n  Agent -.contract log.-> Watcher\n\n  class shell,WorkbenchShell,SurfaceFactory,MainMenu app\n  class Repo,Sqlite,WatcherDb,Agent,Otlp ext"
+          "title": "Recovered component and container map — 2026-10-17",
+          "mermaid": "flowchart TB\n Operator[Local operator] --> App[AiDe.App — WPF / AvalonDock]\n App --> Client[Local pipe client and shell view models]\n Client --> Daemon[AiDe.Daemon — workspace lock and owner-scoped pipe]\n Daemon --> Core[AiDe.Core — workspace authority]\n Repo[Repository files — untrusted input] --> Extract[Static extractors]\n Extract --> Core\n Core --> Store[(workspace.db: assertions and snapshots)]\n Core --> Query[Bounded projections]\n Query --> Client\n App --> Session[Conversation / composer / compile / run]\n Session --> Envelope[Append-only compilation envelopes]\n Session --> Harness[ACP / ConPTY harness process]\n Harness --> Provider[Optional inference / remote services]\n App --> Watcher[Watcher / board / episode scoring]\n Watcher --> WatchDb[(watcher.db and contract records)]\n Harness --> Stdio[AiDe.Mcp — stdio coordination tools]\n Stdio --> WatchDb\n Client --> Views[Graph / tree / evidence / static UML / source]"
         }
       ],
-      "sourceSha256": "5bd9c5b4e30711a6b057c1177fa03cc9e8d3ff972b0f4901b4a055c9bffff5b3"
+      "sourceSha256": "20760608492c91d2a6e144f79f356e3c208fabcf86a68d8b08832b4fc548efd8"
     },
     {
       "id": "diagram-layers",
@@ -9740,6 +10028,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -9751,11 +10043,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Layered architecture — capability tiers",
-          "mermaid": "flowchart TB\n  classDef t0 fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef t12 fill:#1A1F26,stroke:#D8A650,color:#E4E9EF,stroke-dasharray:4 3\n  classDef t3 fill:#1A1F26,stroke:#98A3B2,color:#98A3B2,stroke-dasharray:4 3\n  classDef gate fill:#0D1014,stroke:#E07A6F,color:#E07A6F\n\n  subgraph T3[\"T3 — cognition, opt-in and disclosed\"]\n    Explain[\"Agent explanation / synthesis<br/>bounded, cited, budgeted\"]\n  end\n\n  subgraph T12[\"T1 / T2 — later, only on a measured need\"]\n    Rank[\"Local reorder-only ranking<br/>within a T0-selected, T0-truncated set\"]\n  end\n\n  Gate{{\"Capability gate<br/>governs everything above T0\"}}\n\n  subgraph T0[\"T0 — deterministic floor\"]\n    Identity[\"Workspace membership · path validation<br/>session binding · dispatch receipts\"]\n    Facts[\"Extractor scope replacement · evidence ingestion<br/>fact constraints · impact traversal\"]\n    Render[\"Layout · filtering · diagram rendering<br/>accessibility alternatives\"]\n    Tools[\"MCP tool schema validation · authorization<br/>result truncation and byte-bounding\"]\n    Score[\"Weave scoring · leaderboard composition<br/>liveness · coordination fold\"]\n  end\n\n  Explain --> Gate\n  Rank --> Gate\n  Gate --> T0\n  Explain -. \"may never mutate facts<br/>or dispatch prompts\" .-> Facts\n\n  class Identity,Facts,Render,Tools,Score t0\n  class Rank t12\n  class Explain t3\n  class Gate gate"
+          "title": "Recovered capability layers and authority",
+          "mermaid": "flowchart TB\n UI[WPF shell: selection, conversation, diagrams, evidence]\n Query[Deterministic bounded queries and rendering models]\n Authority[Daemon/Core: extraction, snapshots, receipts and immutable store]\n Agent[External ACP/terminal harness and optional model compilation]\n Review[Proposed future agent assessments]\n UI --> Query --> Authority\n UI --> Agent\n Review -. proposed evidence only .-> UI"
         }
       ],
-      "sourceSha256": "70f8d4f6f7b2979c7bcfe2fcc1efdece5f8476b3601600521101cd648474fc69"
+      "sourceSha256": "e8b021b11e983466bb57465fd8d8cf61b400311cbbeb34ebdf4490c3bd1a5832"
     },
     {
       "id": "diagram-sequence",
@@ -9777,6 +10069,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -9792,16 +10088,21 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "sequence",
-          "title": "1 — A repository change reaches a surface",
-          "mermaid": "sequenceDiagram\n  autonumber\n  participant FS as Repository\n  participant Sched as Ingestion scheduler\n  participant Ex as Extractor adapter\n  participant Store as Fact store (SQLite)\n  participant Proj as ProjectionService\n  participant UI as Surface\n\n  FS->>Sched: file/event signal\n  Sched->>Sched: debounce; pin artifact revision\n  Sched->>Ex: ExtractionRequest(scope, revision, trigger)\n  activate Ex\n  Ex->>Ex: parse — C# · TS · Python · Bicep · EF · SQL · knowledge\n  Ex-->>Sched: evidence assertions + scope snapshot\n  deactivate Ex\n\n  Sched->>Store: one writer transaction\n  activate Store\n  Note over Store: validates epoch, scope generation AND artifact revision;<br/>UPDATE/DELETE abort by trigger; no REPLACE/UPSERT\n  alt stale generation or revision\n    Store-->>Sched: rejected atomically\n  else accepted\n    Store->>Store: append facts; update labelled rebuildable projections\n  end\n  deactivate Store\n\n  UI->>Proj: bounded query (node / graph / search)\n  Proj->>Store: read connection, query_only=1\n  Store-->>Proj: rows\n  Proj-->>UI: result + limits, returned/omitted counts,<br/>source revision, provenance, confidence\n  Note over UI: renders Verified vs Inferred distinctly;<br/>an omitted count is shown, never swallowed"
+          "title": "Recovered sequence paths and failure boundaries",
+          "mermaid": "sequenceDiagram\n participant User as Operator\n participant UI as Desktop shell\n participant Boot as ShellBootstrap\n participant D as Workspace daemon\n participant Q as Core projections\n User->>UI: Open local workspace\n UI->>Boot: ConnectOrLaunchAsync\n Boot->>D: Owner-scoped pipe handshake\n D-->>UI: Workspace query/command client\n UI->>D: Bounded graph or source query\n D->>Q: Query current stored evidence\n Q-->>D: Rows, provenance and disclosures\n Note over Q,D: FR-002: entry-point row cap does not enforce serialized bytes\n D-->>UI: Framed response, or explicit transport failure"
         },
         {
           "kind": "sequence",
-          "title": "2 — A terminal becomes an attributed, scored session",
-          "mermaid": "sequenceDiagram\n  autonumber\n  actor User\n  participant Shell as WorkbenchShell\n  participant Term as ConPTY session\n  participant Agent as Agent (any harness)\n  participant Log as Coordination log\n  participant Host as WatcherHost\n  participant Reg as TrustedRegistrar\n  participant Scorer as WeaveScorer\n\n  User->>Shell: New Claude Code session (Ctrl+K, A)\n  Shell->>Term: start with AIDE_* environment\n  Note over Shell,Term: AIDE_SESSION · TERMINAL_ID · WORKSPACE · WORKTREE<br/>BRANCH · AGENT · HARNESS · CONTRACT_LOG\n  Term->>Agent: launch\n\n  Shell->>Host: Reconcile(identity)\n  Host->>Reg: Register(binding)\n  Reg-->>Host: RegisteredSession + capability\n  Note over Reg: harness present → Verified; absent → Asserted\n\n  loop while alive\n    Agent->>Log: heartbeat\n    Host->>Log: PumpOnce — re-reading is idempotent\n    Log-->>Host: events, parsed and ordered\n    Host->>Reg: Heartbeat(sessionId, capability)\n  end\n\n  Agent->>Log: update { harness, model }\n  Host->>Reg: UpdateHarnessAndModel(...)\n  alt capability does not match\n    Reg-->>Host: LK-0001 forgery rejected\n  else accepted\n    Reg->>Reg: merge harness/model only\n    Note over Reg: identity cannot be restated;<br/>trust never rises — the log is a forgeable file\n  end\n\n  Agent->>Log: session-end\n  Host->>Scorer: Score(episode, deterministic signals)\n  alt no goal / no done-condition / not closed / no verification path\n    Scorer-->>Host: Not Scored + the reason\n  else a hard floor tripped\n    Scorer-->>Host: Blocked — numeric headline suppressed\n  else\n    Scorer-->>Host: Partial or Scored + per-dimension evidence\n  end"
+          "title": "Recovered sequence paths and failure boundaries",
+          "mermaid": "sequenceDiagram\n participant Repo as Repository content\n participant Index as IndexCSharpAsync\n participant Refresh as RefreshScopeAsync\n participant Store as Snapshot store\n Repo->>Index: Content changed, same supplied revision\n Index->>Index: Fingerprint changed or force=true\n Index->>Refresh: Refresh scope with supplied revision\n Refresh->>Store: Read latest committed revision\n Store-->>Refresh: Same revision, nonempty snapshot\n Refresh-->>Index: Complete, zero assertions (reused)\n Index-->>Repo: Reports scope indexed; old symbol remains\n Note over Repo,Store: FR-001 reproduced; changed-revision control refreshes correctly"
+        },
+        {
+          "kind": "sequence",
+          "title": "Recovered sequence paths and failure boundaries",
+          "mermaid": "sequenceDiagram\n participant Operator as Human operator\n participant Composer as Conversation and composer\n participant Compiler as Compile / typed validation\n participant Journal as Envelope events\n participant Agent as ACP or terminal lane\n Operator->>Composer: Draft goal and context\n Composer->>Compiler: Deterministic or explicitly gated model compilation\n Compiler->>Journal: Append compilation provenance\n Compiler-->>Operator: Reviewable typed result\n Operator->>Agent: Deliberate send through chosen lane\n Agent-->>Composer: Streamed result / receipt / failure\n Note over Agent: External provider/tool capabilities need separate qualification"
         }
       ],
-      "sourceSha256": "3316f29bb297d1c61cb4b384b0b91496ca35b98f17708f59fccde456d15e7e61"
+      "sourceSha256": "9feeadcd91ab9c70e5b3667302bb5d5ed2e177a5801f137e974f120463abf8a7"
     },
     {
       "id": "docs-map-of-content",
@@ -9821,6 +10122,22 @@ window.DOCS_INDEX = {
         "navigation"
       ],
       "links": [
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "built-inventory-rev102",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev102",
+          "rel": "relates-to"
+        },
         {
           "to": "architecture",
           "rel": "documents"
@@ -9847,7 +10164,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9ef93d917274bbd16bfec3f5a910b86cc650b9d9bb2bd76966ea0573b2f874dd"
+      "sourceSha256": "b82e3609cc45857afb976434335ec212f7ac6a5bbb78821446381ad1d128a9be"
     },
     {
       "id": "domain-experts",
@@ -9858,7 +10175,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-27",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "The three subject-matter expert lenses added to AI-DE's persona swarm — knowledge-graph visualization/UX, modern WPF styling, and UML/ERM modelling — each with its lens, seam against the general personas, veto, and grounding bases, plus the candidates the gate rejected.",
       "tags": [
         "personas",
@@ -9892,7 +10215,77 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6168931fd44d94873de6f714eef265ce58b2f58cb01a70458db388ec1475e0b5"
+      "sourceSha256": "eddd76de3d8ea9b5498b57ed723cd15db1ddc51c8dcb2d2260267a68ac8932ee"
+    },
+    {
+      "id": "forensic-review-rev102",
+      "path": "docs/reviews/forensic-review-rev102.md",
+      "title": "Whole-solution forensic review — revision 102",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Whole-solution forensic review — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
+      "tags": [
+        "forensic-review",
+        "inventory",
+        "architecture",
+        "factory"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev102-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "built-inventory-rev102",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Recovered system map",
+          "mermaid": "flowchart LR\n Person[Local operator] --> App[WPF desktop workbench]\n App -->|owner-scoped pipe| Daemon[Workspace daemon]\n Daemon --> Core[Core extraction and projections]\n Repo[Untrusted repository files] --> Core\n Core --> Facts[(workspace.db)]\n App --> Watcher[Local watcher and episode readers]\n Watcher --> Observations[(watcher.db and records)]\n App --> Agents[ACP / terminal agent processes]\n Agents -->|optional external inference| Provider[Provider boundary]\n Agents --> MCP[Separate stdio identity/board/episode tools]\n MCP --> Observations"
+        }
+      ],
+      "sourceSha256": "6b9327ade4790d564858f8bb0823b61d30bfb033e7b75413329a9dbd4ef574fd"
+    },
+    {
+      "id": "forensic-review-rev102-backlog",
+      "path": "docs/backlog/forensic-review-rev102.md",
+      "title": "Forensic remediation backlog — revision 102",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Forensic remediation backlog — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
+      "tags": [
+        "forensic-review",
+        "inventory",
+        "architecture",
+        "factory"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e08f5c5160553e4dfa7578909e28925d019fb22ff4576695623dcba5db309fae"
     },
     {
       "id": "inv-0001-agent-terminal-environment",
@@ -9903,7 +10296,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-29",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "A reported loss of the user's PATH and profile in agent terminals. The verified cause is not in AI-DE: the machine's PATH is 22,297 characters and cmd.exe silently drops a variable that large, so every .cmd shim starts with an empty PATH — inside and outside the product. What was ours is that the terminal rendered the broken environment as a healthy one.",
       "tags": [
         "investigation",
@@ -9922,7 +10321,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ce843ed61cd48e6f0fa4875bbf9c221c2dd38e799ff2e96b773424f91be118c"
+      "sourceSha256": "9d6bb5b852b825ee7f73fac321fcec8067ff67d25c9a4c922ff7da10a86041fa"
     },
     {
       "id": "inv-0002-terminal-rebuild-kills-sessions",
@@ -9933,7 +10332,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-13",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Opening a second terminal terminated the first one — the running Copilot session was lost. The verified cause is that WorkbenchAdapter.Render() rebuilds the entire AvalonDock layout on every mutation, constructing a brand-new TerminalSurface (and a fresh ConPTY child) for surfaces that did not change. Because each ConPTY child runs inside a kill-on-close job, disposing the replaced surface terminates the live process. Any layout mutation — not just opening a terminal — destroys every live terminal. Secondary: the only create command is \"New agent terminal\", which names the tab after the first agent on PATH (\"claude\"), so a plain terminal is mislabelled and no plain-terminal action exists. Report only — no code changed.",
       "tags": [
         "investigation",
@@ -9958,7 +10363,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e22e926fdabc542ccafb5f87d2f99f870e512bc2516d4f2656a7293a90b2033"
+      "sourceSha256": "443769163b7d44a874584e0498d155df8d6cb6ce0fc2a7c3825d50b7ecf2f2af"
     },
     {
       "id": "inv-0003-graph-exceeds-ipc-frame-cap",
@@ -9969,7 +10374,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-13",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Opening TheTerrace as a workspace shows \"The graph could not be loaded: ipc.transport_closed: the daemon closed the connection without responding.\" Verified cause: the whole-graph response for a real repo (~2,813 nodes / 8,602 edges) exceeds the IPC frame cap (IpcFraming.MaxFrameBytes = 1 MiB), so IpcFraming.WriteAsync throws ArgumentException in the daemon's response path; the serve loop catches IOException and OperationCanceledException but NOT that ArgumentException, so it propagates, the connection closes without a response, and the client reports transport_closed. This is the IpcFraming `simplify:` marker's upgrade trigger firing. Core-owned (IPC / daemon / graph projection). Report only — handed off to the Core session.",
       "tags": [
         "investigation",
@@ -9991,7 +10402,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
+      "sourceSha256": "d2aa48b5a5edee58de1ce2326526155c6af133ba989784532281e1fbaf52f9bc"
     },
     {
       "id": "lens-code-doc-join",
@@ -10350,6 +10761,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "972566ded69ae803c0c7d0db809c589dc7e8c8dca6ce4594ccd2bbe0b3ae500b"
+    },
+    {
+      "id": "mockup-factory-workbench",
+      "path": "docs/mockups/factory-workbench.md",
+      "title": "Local software factory — interactive workbench exploration",
+      "type": "doc",
+      "status": "exploratory",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "An exploratory local desktop interaction model with three destinations, shared scope and evidence, and six working factory/review/understanding journeys; all sample metrics are explicitly synthetic.",
+      "tags": [
+        "mockup",
+        "desktop",
+        "factory",
+        "review",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "plan-factory-evolution-20261017",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "43f89b06e5d9fe1406ae7eb32f6ff29e4c78432e7617931c0f83144eb3f5ce2d"
     },
     {
       "id": "mockup-first-use-accounts",
@@ -10863,6 +11309,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "Self-contained, dependency-free mockup of the dockable workbench (US-9) with a review harness covering state, named layout, theme, viewport, reduced motion and the layout lock. Renders the hard states — drop target, keyboard move, keyboard resize, at-minimum, floating, collapsed, maximized, loading, empty, error, partial restore, unreadable layout and overflow.",
@@ -10888,7 +11339,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
+      "sourceSha256": "d433a17216ea2196ed71e36a3c3932e2d18539befef4f8318f84407605b79f82"
     },
     {
       "id": "note-addendum-c-council-rulings",
@@ -11005,7 +11456,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-c",
       "reviewBy": "2026-12-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The explicit hand-off from A1 (/define-architecture of Addenda C and D) to P1 (/prepare-for-coordination): every component the architecture names with the persona that owns its design, the seams between them (each a contract a mock can stand in for), the E7 surface list for the whole refactor, the ordered gates (spike → advisory → measured → agentic) with the prerequisites that have not landed, and the non-goals that must not become work.",
       "tags": [
         "addendum-c",
@@ -11071,7 +11528,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ee6e4bc28bebc9b2cd3474cdd6bf256708efffea345f7741fa2c7ba473fdac47"
+      "sourceSha256": "8511d52785983dfc0f160bc3da9e3033f68329ccd377d0b66fe89877f77860b7"
     },
     {
       "id": "note-addendum-d-compile-step-proposal",
@@ -11155,7 +11612,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The measured Phase-1 performance run that promotes the architecture's Inferred targets to Verified: refresh, describe, impact, find, knowledge, query plans, and restore RTO on the 50,000-edge corpus — plus the append-only growth curve, which shows the refresh budget failing after ~10 generations.",
       "tags": [
         "performance",
@@ -11178,7 +11641,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db224bf7106c094b4c7a3e4f54182436c18f5f3f712a52021fde24f07fc3dcef"
+      "sourceSha256": "8dd1469e935dd73445afdb800225265c76d2c249c5e17edf700a82f6de09004e"
     },
     {
       "id": "plan-addendum-c-modes",
@@ -11572,6 +12035,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
     },
     {
+      "id": "plan-factory-evolution-20261017",
+      "path": "docs/plans/factory-evolution-20261017.md",
+      "title": "AI-DE forensic review, factory research and interactive proposal plan",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Bounded execution graph for the whole-solution review, five-area primary-source research, and local desktop factory proposal with interactive mockups.",
+      "tags": [
+        "planning",
+        "forensic-review",
+        "research",
+        "factory"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-code-knowledge-graphs",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Goal and execution contract",
+          "mermaid": "flowchart LR\n G --> F & R & U & B\n F & R & U & B --> S\n S --> M --> A --> V --> C\n S --> A"
+        }
+      ],
+      "sourceSha256": "26276aaaf32e627d2f2a25e0579adbae129ee79dcf56d89ac57cc6ff8c89549a"
+    },
+    {
       "id": "plan-ownership-qualification",
       "path": "docs/plans/ownership-qualification.md",
       "title": "Qualify the landed ownership gate and close stale status",
@@ -11688,7 +12191,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2026-12-14",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Optimized execution graph for re-admitting Addendum C's deferred understanding views. Ruling 54 admits one view at a time. Owner rules first. Spec, architecture, spike, UX, design, implement, join follow for that view only. D-5/D-6 stay deferred until the compile ladder can host a deriver.",
       "tags": [
         "execution-graph",
@@ -11734,7 +12243,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  N0[N0 Owner ruling]\n  N1[N1 Current-state inventory]\n  N2[N2 Comparables research]\n  N3[N3 Specify admitted view]\n  N4[N4 Spec adversarial review]\n  N5[N5 Architecture + ADR]\n  N6[N6 Architecture council]\n  N7[N7 Spike unfamiliar contracts]\n  N8[N8 UX Part B + ui-design]\n  N9[N9 design-slice]\n  N10[N10 Design adversarial]\n  N11[N11 implement TDD]\n  N12[N12 Proof Pack review]\n  N13[N13 conductor-join]\n  N14[N14 Owner next-view or stop]\n  N0 --> N1\n  N0 --> N2\n  N1 --> N3\n  N2 --> N3\n  N3 --> N4\n  N4 --> N5\n  N5 --> N6\n  N6 --> N7\n  N7 --> N8\n  N8 --> N9\n  N9 --> N10\n  N10 --> N11\n  N11 --> N12\n  N12 --> N13\n  N13 --> N14"
         }
       ],
-      "sourceSha256": "9e61d57a0e9a194f671837afc66f920506b2d30c472c4b5bdb2a5cb396d4272c"
+      "sourceSha256": "cca029134893249980c7c8fc167bb959b8ec1dd726037889515b7febbdc42ac8"
     },
     {
       "id": "profile-addendum-cd",
@@ -11887,7 +12396,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "One row per correctness claim for the Phase-1 walking skeleton, each with its test, its oracle, and whether the test was observed failing before its control existed. Records the three council-veto mechanisms as red-observed, and states the residual risks Phase 1 does not close.",
       "tags": [
         "proof-pack",
@@ -11906,7 +12421,54 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "53589db37edd1ae7891d2712c10bf66202b5d612e7e29379183b50c60ee823ec"
+      "sourceSha256": "d2094e0df2e565108f5c185a6419d7c83d10a3bf97b56d28cb85aff3eb571af7"
+    },
+    {
+      "id": "proposal-local-software-factory",
+      "path": "docs/proposals/local-software-factory.md",
+      "title": "AI-DE: a local, spec-first software factory",
+      "type": "doc",
+      "status": "exploratory",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Exploratory evolution of AI-DE into a local desktop spec-first factory: work-centered delivery, scoped understanding and guided assurance over one versioned evidence model.",
+      "tags": [
+        "proposal",
+        "desktop",
+        "factory",
+        "spec-first",
+        "assurance"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev102",
+          "rel": "depends-on"
+        },
+        {
+          "to": "built-inventory-rev102",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-factory-workbench",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "efd84e4f1d3f7c4a90fd7dbd4c9ec44b53fd1476cd80b17468d171484e3cc25c"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -12027,7 +12589,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Phase 2's three components are built and measured. Every capability the phase promised is demonstrable, four gates are green over 541 tests, and the three performance budgets are met with large headroom. Five residual risks are carried into Phase 3, three of them by explicit decision.",
       "tags": [
         "review",
@@ -12049,7 +12617,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
+      "sourceSha256": "c0c4ede27fcce5000ff1ce6994552cd62f47aedaaae04cf62721a3933710285b"
     },
     {
       "id": "review-site-craft-gate",
@@ -12060,7 +12628,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-03-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The deterministic craft detector run over site/, its 21 findings, what was changed, and the one finding accepted with a reason — plus the two gaps the detector cannot see and neither can I.",
       "tags": [
         "review",
@@ -12080,7 +12654,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e7bdc4db38f5d414540e2b130d7f285d11d4ba842c279fcace67bd445512a100"
+      "sourceSha256": "60999b18155adc6304e9bcba4ecb4c1f8a992af0accc4babd92f302a594aaf3a"
     },
     {
       "id": "review-ui-activity-rail",
@@ -12091,7 +12665,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-27",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Review/elevate of the workbench activity rail. Measured defect: at a 56px column, 9px captions under the glyphs clipped (\"Coordinate\" -> \"ordina\"). Fix (landed): icon-only rail with tooltip + accessible name — the VS Code / JetBrains idiom — 44px targets, and a softened borderless active pill. Registered UX-F (a caption clipped by its own container).",
       "tags": [
         "ui-review",
@@ -12116,7 +12696,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fd6b4c07e2846f67caa6bda77ac88bb1c17067770990b372966d73c5abb417c4"
+      "sourceSha256": "5f73be42b13edaaa839793b2cfea9b51d9fe0b839d3a5286feaab6f723289b6a"
     },
     {
       "id": "review-ui-explore-graph-and-tree",
@@ -12209,6 +12789,11 @@ window.DOCS_INDEX = {
           "by": "mockup-graph-canvas",
           "on": "2026-08-30",
           "reason": "Graph canvas implemented to the target: 2D force layout + degree-sized dots + pan/zoom/fit landed (DC-036); realizes part of US-K11 — re-check spec/implementation alignment and the still-open semantic-zoom LOD item."
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
         }
       ],
       "summary": "Review of the graph canvas on TheTerrace after the scaling fix let it load. The graph renders as an unreadable pile of overlapping opaque cards: the 2D layout is a single ring (fine for ~15 neighbours, catastrophic for 50), nodes are heavy boxes that occlude each other and the edges, there is no force-spread, no zoom/pan, no level-of-detail, a fixed 440px stage, and a disclosure wall on top. Target UX (mockup): a force-directed node-link layout with dots-not-cards, labels-on-demand, zoom/pan, semantic-zoom clustering, search-first focus+context, and disclosures as a chip.",
@@ -12241,7 +12826,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21b5b5f58001a9d1721a76e7382333cf457ba63f7374a618e08ad92e46ee3d23"
+      "sourceSha256": "bc35c51e48f650307f3dfdf4ae786255ed92cdf5344fc9606a8a9807aae900e5"
     },
     {
       "id": "review-ui-mockups-craft-gate",
@@ -12286,7 +12871,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Review + elevate of the workbench status strip. Root cause of the \"wall of text eating the window\": the status strip (Grid.Row Auto) hosts a wrapping, uncapped TextBlock, and the re-index announcement is IndexResult.Describe() — a 200+ disclosure sentence. Fixed by making the strip a single ellipsised line with the full text on hover and still read in full by assistive tech.",
       "tags": [
         "ui-design",
@@ -12302,7 +12893,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2bec3a144c3dc7728bdc2e92e82044a5768b5645c2fa18d0544524270983def"
+      "sourceSha256": "76d351b947ebe9cea96bfb65017231ee22e8d16b8a02d814eb1aea325f70ccdf"
     },
     {
       "id": "review-ui-workbench",
@@ -12339,6 +12930,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e406470cb08fa582327a7446d316518989bc005e8edefdf38168fc902cf0ff75"
+    },
+    {
+      "id": "security-privacy-rollup-rev102",
+      "path": "docs/reviews/security-privacy-rollup-rev102.md",
+      "title": "Security, privacy and release evidence rollup — revision 102",
+      "type": "doc",
+      "status": "assessed-with-gaps",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Current inspected trust boundaries, privacy data paths and unresolved release/assurance evidence; no exploit or compliance certification is asserted.",
+      "tags": [
+        "security",
+        "privacy",
+        "release",
+        "forensic-review"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fdfb0bb9bfddb3dba9d1dd64fa7c8bd2a4947fc7e2132dfb30bc299a434431a3"
     },
     {
       "id": "seed-agent-coordination-spec",
@@ -12426,7 +13051,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-29",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Who owns which files, which interfaces are the seam between them, and how a change to that seam is agreed. Written by the core session so the design session can disagree with something concrete.",
       "tags": [
         "collaboration",
@@ -12445,7 +13076,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5c4126d8798dbb471b1f6e1a9aef4ae1ffde2ee79602248b4bd7f0f86fdcad9c"
+      "sourceSha256": "4a01980468da05fcc115a62dd927c6da568adb5b29a038538b4fb0e8058e2f82"
     },
     {
       "id": "session-profiles",
@@ -13113,7 +13744,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "A docs-only change runs a 20-minute Windows gate. Measured, the WPF/terminal suite everyone suspects is 2.3% of it and mutation replay is 51%. The larger finding is correctness, not cost: a wall-clock frame-budget assertion fails deterministically on CI hardware, and because it sits before every other gate, 26 gates have not executed on any run since 2026-09-04 — 38 of the last 40 Build runs are red.",
       "tags": [
         "ci",
@@ -13133,7 +13770,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a01e32f687b97e7a12aff7c27db2b494a70a5181e514285481f70040e7cf1d5c"
+      "sourceSha256": "5ac005cd7e06f0698144c905f8789b2fd69ff07d7c9ce6eaaa4045fbf914a64f"
     },
     {
       "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
@@ -13715,7 +14352,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "The whole window felt jittery and a background agent terminal writing output stole focus/activated its tab. Root cause: every TerminalView held a persistent CompositionTarget.Rendering subscription — a per-frame callback that runs for the life of the control and never lets WPF's render thread go idle — and it invalidated regardless of whether the pane was visible. Fixed with event-driven, coalesced, visibility-gated invalidation. This note is also the systemic framework for redraw isolation across the app.",
       "tags": [
         "performance",
@@ -13732,7 +14375,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0b5313c7f0ce996e387f26c5ffa4a5ba91e785db40974a220f8b5a5304862da"
+      "sourceSha256": "7380e496b5c6ad22739776e20c5ed8a7558711a733250605d77f63b532944a54"
     },
     {
       "id": "investigation-terminal-crash-and-pane-moves",
@@ -13743,7 +14386,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "2",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Two workbench-surface defects. (1) CRASH: TerminalView.DrawCursor reads screen[CursorRow,CursorColumn] and the indexer is unbounded; after writing the last column the cursor is at CursorColumn==Columns (deferred wrap), so at the bottom row the index equals the array length — IndexOutOfRangeException — compounded by the screen being mutated on a background thread while OnRender reads it on the UI thread (its own \"reads between writes\" invariant is false). (2) PANE MOVES: the layout is a tree of proportional splits, not absolute docks; removing a pane collapses a single-child split into its child, which relocates unrelated panes. This report is the diagnosis + phased plan; NO fix applied.",
       "tags": [
         "crash",
@@ -13765,7 +14414,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "62222cc3449b4071b25720b7581650dedbedd99f047bae9110ac8dc45fe623f0"
+      "sourceSha256": "f5eb4c2f77e19fdf485d9dd16b3328a1329f176b8ed94c1963081793954fb890"
     },
     {
       "id": "investigation-terminal-cursor-render-crash",
@@ -15671,6 +16320,188 @@ window.DOCS_INDEX = {
       "sourceSha256": "60b057ac873a207d260e689da3b421f27295567dd54e2382fd20a2852b809819"
     },
     {
+      "id": "kb-factory-comparables",
+      "path": "docs/knowledge/spec-first-software-factory/comparables.md",
+      "title": "Current developer UX and open review ecosystems",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Current developer UX and open review ecosystems: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e291feba60f17efe07c044c2822c566c63903c46643c828136dc4bcd14fde942"
+    },
+    {
+      "id": "kb-factory-data-and-constants",
+      "path": "docs/knowledge/spec-first-software-factory/data-and-constants.md",
+      "title": "Review policy, thresholds and measurement definitions",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Review policy, thresholds and measurement definitions: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "753a8342be8f8b0764952a454c1dbdaf61bd5e1faa98f33fecdf8a009af9bb34"
+    },
+    {
+      "id": "kb-factory-glossary",
+      "path": "docs/knowledge/spec-first-software-factory/glossary.md",
+      "title": "Factory and assurance glossary",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Factory and assurance glossary: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ac9fea689a2f0b03dba4c41b81d3c3562e101b6d497e61d00ec4a2d5c8d473a7"
+    },
+    {
+      "id": "kb-factory-open-questions",
+      "path": "docs/knowledge/spec-first-software-factory/open-questions.md",
+      "title": "Open questions, counter-evidence and research limits",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Open questions, counter-evidence and research limits: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a78ca879785f796da5ceca44f1b233a501e396d7b11b465dd034d2e63220f78c"
+    },
+    {
+      "id": "kb-factory-references",
+      "path": "docs/knowledge/spec-first-software-factory/references.md",
+      "title": "Reference contracts for intent and evidence",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Reference contracts for intent and evidence: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8800f8e2205e6887caf431a6ee69b0889f99f8ce64450f26d21a467d832341f8"
+    },
+    {
+      "id": "kb-factory-sources",
+      "path": "docs/knowledge/spec-first-software-factory/sources.md",
+      "title": "Primary source ledger and access dates",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Primary source ledger and access dates: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b3dea71845268f8ff916573fb29114b97260ce80465c77064696da8f0cf41fcd"
+    },
+    {
+      "id": "kb-factory-state-of-the-art",
+      "path": "docs/knowledge/spec-first-software-factory/state-of-the-art.md",
+      "title": "Agentic review, drift analysis and evidence summaries",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Agentic review, drift analysis and evidence summaries: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "159134901bea7e2797c0ea3ea7a51701fbdc599124e89fa48336fb87f1f95800"
+    },
+    {
       "id": "kb-graph-experience-and-visualization",
       "path": "docs/knowledge/graph-experience-and-visualization/index.md",
       "title": "Unified Graph Experience & Visualization — domain knowledge",
@@ -16507,6 +17338,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ecce5e0f66fd6cf2bb44d42c22a2f8ca5cae9337fb34bcd3622c8f24636f15ef"
     },
     {
+      "id": "kb-spec-first-software-factory",
+      "path": "docs/knowledge/spec-first-software-factory/index.md",
+      "title": "Spec-first local software factory — research synthesis",
+      "type": "knowledge",
+      "status": "researched",
+      "owner": "@timianmalloo",
+      "phase": "research",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "Spec-first local software factory — research synthesis: dated evidence, confidence and limitations for the local AI-DE workbench evolution.",
+      "tags": [
+        "agentic-review",
+        "spec-driven-development",
+        "factory",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "kb-code-knowledge-graphs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ecc0fbc5cf3a70ea36904d013377290ec7a462b0314746daf6e8edb57149050"
+    },
+    {
       "id": "kb-uml-comparables",
       "path": "docs/knowledge/uml-mde-and-4gl/comparables.md",
       "title": "UML, MDE & 4GL — comparable approaches across five decades",
@@ -16515,7 +17376,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "Every generation of the models-are-the-product idea, what its model-to-artifact mechanism was, where it succeeded, and why it failed — plus the narrow cases that worked and what they have in common.",
       "tags": [
         "comparables",
@@ -16532,7 +17399,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4beb3f598c80a6a02662f03193395077926d59dde6bb3b43bb763afe613c106d"
+      "sourceSha256": "1b6e6233a9a7c9daca86a116c912a6ae926f7431a6d2354d130bb0d439b6d25c"
     },
     {
       "id": "kb-uml-glossary",
@@ -16543,7 +17410,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "Precise definitions for the modelling vocabulary — CIM/PIM/PSM, MOF, XMI, OCL, fUML, Alf, 4GL, round-trip, language workbench — so the history is discussed in its own terms.",
       "tags": [
         "glossary",
@@ -16559,7 +17432,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1c772b237b1180b9e3d13aa7523925a39b1c84ff84b9c91cb2f6f6581575cb34"
+      "sourceSha256": "18bb086546e19c95f04a5e6bf1bafc7b5183fe1cab5c64ad01278eaac0a8d774"
     },
     {
       "id": "kb-uml-mde-and-4gl",
@@ -16604,7 +17477,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "The five structural forces that have defeated every models-are-the-product generation since the 1970s, assessed one by one against the code-derived-views variant — the most important disconfirming analysis in this knowledge base.",
       "tags": [
         "open-questions",
@@ -16619,7 +17498,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2e91e8b598bfbe5ddf4448828271e42eafd3ce3e3a30be08e916f084d895e92f"
+      "sourceSha256": "8010e91496244a16fc8038e97682d1c06d4c19bcdf2bbf2791133af24af03a78"
     },
     {
       "id": "kb-uml-references",
@@ -16630,7 +17509,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "OMG specification versions and dates read from omg.org, the empirical adoption studies with their sample sizes, the market figures, and the critiques with their exact quotations.",
       "tags": [
         "reference",
@@ -16645,7 +17530,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0766df860a86881a4836422edf8a47ab87b5c2c9b657c25e76a3f45da09e5b7"
+      "sourceSha256": "5d8f1e048e31260df5a0ad3327aa9c4c68edfbc6c942688d072f0ff38ca59589"
     },
     {
       "id": "kb-uml-sota",
@@ -16656,7 +17541,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "Where UML, the MDA stack, SysML v2, the Eclipse MDE tooling, generative design and the low-code successors of the 4GL actually stand today — with the spec dates that show the investment curve.",
       "tags": [
         "uml",
@@ -16674,7 +17565,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4b363a183a5fb0b788891727a9ab9bb4dc42890e462f734532ec5054e6d81fe4"
+      "sourceSha256": "7c79cdf1c5328f87dd334a80bc81d8e5ad54beea496b34dce1016aae1bc5eaae"
     },
     {
       "id": "kb-uml-sources",
@@ -16685,7 +17576,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "The access-dated source list behind the UML/MDE/4GL knowledge base, keyed [S1]..[S21], distinguishing OMG primary specs from commentary and noting where evidence is absent.",
       "tags": [
         "sources",
@@ -16699,7 +17596,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1fa02af1bdd314c93269bab55213440634a2cedd04077553c96c9aa663c95d49"
+      "sourceSha256": "2cc6067cecefd7127a47c46787acf241c29ab38c1975aad0588038f7029f573e"
     },
     {
       "id": "kb-wpf-modern-ui-styling",
@@ -18115,6 +19012,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "09ee52a234f4a67a0a0d4996bd19cc01cef5964c8a25fac19a540c80a5ce1aea"
     },
     {
+      "id": "proof-factory-evolution-20261017",
+      "path": "docs/proof/factory-evolution-20261017.md",
+      "title": "AI-DE factory exploration — review, research and interaction proof",
+      "type": "proof-pack",
+      "status": "verified-with-limits",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Measured build/test and forensic reproductions, independent source/UI reviews, and a retained 12-check Chrome regression sequence for the local factory proposal, PR questions and rich prompt authoring.",
+      "tags": [
+        "proof",
+        "forensic-review",
+        "research",
+        "proposal",
+        "authoring"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "built-inventory-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "authoring-inventory-rev102",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "documents"
+        },
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-factory-workbench",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9da6512a6971b1f6d15c0f7f3a21773c73ecb3007c43483baee750c35e98c861"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -19189,6 +20133,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "305365f383e220a689a6a688c2d326ef35a65d0b087a5e355256d9440d86569f"
+    },
+    {
+      "id": "proof-updatepack-r102-20261017",
+      "path": "docs/proof/updatepack-r102-20261017.md",
+      "title": "AI-Forward Pack revision 102 update evidence",
+      "type": "proof-pack",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-17",
+      "reviewSuggested": [],
+      "summary": "Revision 97 to 102 installation decisions, preserved deviations, action report and verification evidence.",
+      "tags": [
+        "ai-forward-pack",
+        "updatepack",
+        "installation"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-agents-gitignore-deviation",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Grounding and plan",
+          "mermaid": "flowchart LR\n  G --> P --> R --> A --> V --> C"
+        }
+      ],
+      "sourceSha256": "c048b30735cdfbdff54d93a64f1a0dfd1b829ecdc7bad3ed22335811c7acd7f6"
     },
     {
       "id": "proof-uv-0-solution-tree-core-query",
@@ -20560,7 +21535,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-09",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Provenance and authority for the Conductor spec v1.0 and mockups v2: what was ingested, its checksums, the decisions the spec locks, and the phasing that governs delivery.",
       "tags": [
         "conductor",
@@ -20601,7 +21582,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "430d21bd7fe77910ecf67996e2a698d0ea3826483f9b4037e8bd81c5707311c8"
+      "sourceSha256": "51c43b9fe4f1f445daa037aca6061b59693e48bb6712f262779936c04fde4b22"
     },
     {
       "id": "spec-editor-surfaces",
@@ -20738,7 +21719,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "phase-3",
       "reviewBy": "2027-03-03",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Specifies a Gemini CLI agent session on par with the Claude Code and GitHub Copilot sessions — launch parity, readiness detection, and enlistment for coordinated work through the existing harness-neutral contract log. The finding underneath it is that a harness is currently defined by agreement between three unrelated hard-coded maps, so a partial declaration fails silently; Gemini is an instance of an existing concept, not a new one. Every claim about Gemini CLI's actual behaviour is recorded as an assumption with the check that settles it, because it is not installed.",
       "tags": [
         "agent-session",
@@ -20770,7 +21757,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n    A[Terminal menu] --> B{Gemini CLI on PATH?}\n    B -- no --> C[Command shown unavailable, with the reason]\n    C --> C2[User installs Gemini CLI] --> A\n    B -- yes --> D[Pane opens, titled Gemini, session = starting]\n    D --> E{Readiness marker seen?}\n    E -- yes --> F[Session = ready]\n    E -- trust/consent prompt --> G[Session = needs attention]\n    G --> G2[User answers the prompt] --> E\n    E -- neither, timeout --> H[Session = started, readiness unknown]\n    H --> H2[Pane still usable; state is unknown, NOT ready]\n    F --> I{Agent registers over AIDE_CONTRACT_LOG?}\n    I -- yes --> J[Appears in Fleet, joins the board]\n    I -- no --> K[Terminal session only — observed as a terminal, not an agent]\n    J --> L[Declares episode → closes with artifacts → scored → standing]\n    J --> M[Closes with no artifacts → Not Scored, with the reason]"
         }
       ],
-      "sourceSha256": "e311ddcffddc7afc6df36320a7c923b12b1a10a2b65157313815969d3ce0a17b"
+      "sourceSha256": "1c3706bd0c04f1a55fa02c5aed04b2d5427f62cbd4cdb2b719da8581b0dacaae"
     },
     {
       "id": "spec-knowledge-exploration",
@@ -20871,7 +21858,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Replaces the proportional split-tree workbench layout with a fixed frame of named, absolute dock zones (Left / Right / Bottom / Center) so that moving a pane can only change the zones it belongs to — never relocate or reorient an unrelated pane. Zones resize, collapse to a rail, and maximize reversibly; splits are scoped inside a zone.",
       "tags": [
         "workbench",
@@ -20895,7 +21888,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d93ab927f8c6ecfc30efc60072890f7a19380d379ae694b81f943aeebd90de5"
+      "sourceSha256": "564f192317520d2e6c87be60d6fd1e72117189e2f5d7baacb17b8f8dea593a24"
     },
     {
       "id": "spec-terminal-sessions",
@@ -20906,7 +21899,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-27",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-17",
+          "reason": "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102"
+        }
+      ],
       "summary": "Specifies correct behaviour for multiple concurrent terminal sessions: a first-class \"New terminal\" (plain shell) action distinct from \"New agent terminal\"; sessions that are never destroyed except by explicit user intent (the fix for INV-0002 / DC-029, where any layout mutation killed every live terminal); and per-session identity, rename, tab colour, and ANSI colour-scheme customization. The domain model makes session-identity-preservation an aggregate invariant. Core owns the lifecycle fix and the \"New terminal\" command; Design owns the rename/colour/scheme UI.",
       "tags": [
         "terminal",
@@ -20952,7 +21951,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  V[Any layout mutation: open/close pane, split, restore, resize] --> W[Adapter reconciles by ContentId]\n  W --> X[Unchanged surfaces reuse their live content]\n  X --> Y[Every running session survives, identity + process intact]"
         }
       ],
-      "sourceSha256": "5c4a5d26f7afc3febf9e99a480650a6aadbbd2f836665ae40a3bc4941f617ce7"
+      "sourceSha256": "7e963873540288d9368ee01363d056abaed3a997ef2c77706e750d2eb3cdbea7"
     },
     {
       "id": "spec-uml-erm-surfaces",
@@ -20963,7 +21962,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-27",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-uml-mde-and-4gl",
+          "on": "2026-10-17",
+          "reason": "New factory research documents adjacent spec-grounded testing/convergence work; do not repeat the dated flagged absence-of-literature claim as current universal fact"
+        }
+      ],
       "summary": "Specifies first-class UML and ERM surfaces generated as read-only views of the repo graph — C4/class/component/sequence UML and crow's-foot ER diagrams — with notation validity enforced, the derived-view (never-editable) rule preserved, and polished visualization that composes with the knowledge exploration surface.",
       "tags": [
         "uml",
@@ -21008,7 +22013,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Open Model surface] --> B[Pick a view: C4 / UML class / UML component / ER]\n  B --> C{Scope}\n  C --> D[Select system / bounded context]\n  D --> E[Generate view from graph]\n  E --> F{Generation ok?}\n  F -->|yes| G[Notation-valid diagram renders]\n  F -->|no| H[Bounded error: 'could not generate' + reason; last-known marked stale]\n  G --> I{C4 level switch?}\n  I -->|context/container/component| E\n  G --> J{Drill?}\n  J -->|select element| K[Jump to node in knowledge explorer - node-walk]\n  G --> L{Attempt edit?}\n  L -->|yes| M[Read-only: 'this is a derived view; edit the source' + link to code]\n  G -->|too large at this level| N[Curation applied: 'showing curated view; N elements folded']"
         }
       ],
-      "sourceSha256": "6c93704c427bfade09fe56d333323118227d06b282a0fb2d6f9a841119e947cb"
+      "sourceSha256": "f6a123e97522d11f336d84ff12ab71c0d59c2e3540a893ce70ec7ca6670ba127"
     },
     {
       "id": "spec-understanding-views",
@@ -21169,7 +22174,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-site-index",
       "path": "docs/_site/index.html",
-      "title": "AI-DE — Documentation",
+      "title": "AI-Forward Documentation",
       "kind": "documentation",
       "description": "Open the generated documentation bundle."
     },
@@ -21274,6 +22279,21 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-workbench"
     },
     {
+      "id": "surface-proposals-local-software-factory-interactive",
+      "path": "docs/proposals/local-software-factory-interactive.html",
+      "title": "AI-DE · A local software factory",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-mockups-factory-workbench",
+      "path": "docs/mockups/factory-workbench.html",
+      "title": "AI-DE · Local factory exploration",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-factory-workbench"
+    },
+    {
       "id": "surface-mockups-explore-graph-and-tree",
       "path": "docs/mockups/explore-graph-and-tree.html",
       "title": "AI-DE — Explore: Graph and Tree",
@@ -21313,12 +22333,276 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-api-aide-app",
+      "path": "docs/api/AiDe.App.html",
+      "title": "Aide.App",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app"
+    },
+    {
+      "id": "surface-api-aide-app-cli",
+      "path": "docs/api/AiDe.App.Cli.html",
+      "title": "Aide.App.Cli",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-cli"
+    },
+    {
+      "id": "surface-api-aide-app-conductor",
+      "path": "docs/api/AiDe.App.Conductor.html",
+      "title": "Aide.App.Conductor",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-conductor"
+    },
+    {
+      "id": "surface-api-aide-app-viewmodels",
+      "path": "docs/api/AiDe.App.ViewModels.html",
+      "title": "Aide.App.Viewmodels",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-viewmodels"
+    },
+    {
+      "id": "surface-api-aide-app-workbench",
+      "path": "docs/api/AiDe.App.Workbench.html",
+      "title": "Aide.App.Workbench",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-workbench"
+    },
+    {
+      "id": "surface-api-aide-app-workbench-composer",
+      "path": "docs/api/AiDe.App.Workbench.Composer.html",
+      "title": "Aide.App.Workbench.Composer",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-workbench-composer"
+    },
+    {
+      "id": "surface-api-aide-app-workbench-sessions",
+      "path": "docs/api/AiDe.App.Workbench.Sessions.html",
+      "title": "Aide.App.Workbench.Sessions",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-app-workbench-sessions"
+    },
+    {
+      "id": "surface-api-aide-core",
+      "path": "docs/api/AiDe.Core.html",
+      "title": "Aide.Core",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core"
+    },
+    {
+      "id": "surface-api-aide-core-agentplane",
+      "path": "docs/api/AiDe.Core.AgentPlane.html",
+      "title": "Aide.Core.Agentplane",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-agentplane"
+    },
+    {
+      "id": "surface-api-aide-core-dispatch",
+      "path": "docs/api/AiDe.Core.Dispatch.html",
+      "title": "Aide.Core.Dispatch",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-dispatch"
+    },
+    {
+      "id": "surface-api-aide-core-extraction",
+      "path": "docs/api/AiDe.Core.Extraction.html",
+      "title": "Aide.Core.Extraction",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-extraction"
+    },
+    {
+      "id": "surface-api-aide-core-facts",
+      "path": "docs/api/AiDe.Core.Facts.html",
+      "title": "Aide.Core.Facts",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-facts"
+    },
+    {
+      "id": "surface-api-aide-core-health",
+      "path": "docs/api/AiDe.Core.Health.html",
+      "title": "Aide.Core.Health",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-health"
+    },
+    {
+      "id": "surface-api-aide-core-ipc",
+      "path": "docs/api/AiDe.Core.Ipc.html",
+      "title": "Aide.Core.Ipc",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-ipc"
+    },
+    {
+      "id": "surface-api-aide-core-mcp",
+      "path": "docs/api/AiDe.Core.Mcp.html",
+      "title": "Aide.Core.Mcp",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-mcp"
+    },
+    {
+      "id": "surface-api-aide-core-presentation",
+      "path": "docs/api/AiDe.Core.Presentation.html",
+      "title": "Aide.Core.Presentation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-presentation"
+    },
+    {
+      "id": "surface-api-aide-core-presentation-composer",
+      "path": "docs/api/AiDe.Core.Presentation.Composer.html",
+      "title": "Aide.Core.Presentation.Composer",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-presentation-composer"
+    },
+    {
+      "id": "surface-api-aide-core-presentation-sessions",
+      "path": "docs/api/AiDe.Core.Presentation.Sessions.html",
+      "title": "Aide.Core.Presentation.Sessions",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-presentation-sessions"
+    },
+    {
+      "id": "surface-api-aide-core-projections",
+      "path": "docs/api/AiDe.Core.Projections.html",
+      "title": "Aide.Core.Projections",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-projections"
+    },
+    {
+      "id": "surface-api-aide-core-promptcompilation",
+      "path": "docs/api/AiDe.Core.PromptCompilation.html",
+      "title": "Aide.Core.Promptcompilation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-promptcompilation"
+    },
+    {
+      "id": "surface-api-aide-core-sessions",
+      "path": "docs/api/AiDe.Core.Sessions.html",
+      "title": "Aide.Core.Sessions",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-sessions"
+    },
+    {
+      "id": "surface-api-aide-core-store",
+      "path": "docs/api/AiDe.Core.Store.html",
+      "title": "Aide.Core.Store",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-store"
+    },
+    {
+      "id": "surface-api-aide-core-terminal",
+      "path": "docs/api/AiDe.Core.Terminal.html",
+      "title": "Aide.Core.Terminal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-terminal"
+    },
+    {
+      "id": "surface-api-aide-core-upgrade",
+      "path": "docs/api/AiDe.Core.Upgrade.html",
+      "title": "Aide.Core.Upgrade",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-upgrade"
+    },
+    {
+      "id": "surface-api-aide-core-watcher",
+      "path": "docs/api/AiDe.Core.Watcher.html",
+      "title": "Aide.Core.Watcher",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-watcher"
+    },
+    {
+      "id": "surface-api-aide-core-workbench",
+      "path": "docs/api/AiDe.Core.Workbench.html",
+      "title": "Aide.Core.Workbench",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-core-workbench"
+    },
+    {
+      "id": "surface-api-aide-mcp",
+      "path": "docs/api/AiDe.Mcp.html",
+      "title": "Aide.Mcp",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "api-aide-mcp"
+    },
+    {
+      "id": "surface-architecture",
+      "path": "docs/architecture.html",
+      "title": "Architecture",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "architecture"
+    },
+    {
       "id": "surface-coordination-audit-gate-self-test",
       "path": "docs/coordination/audit-gate-self-test.html",
       "title": "Audit verifier self-test coordination",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "coord-audit-gate-self-test"
+    },
+    {
+      "id": "surface-reviews-authoring-inventory-rev102",
+      "path": "docs/reviews/authoring-inventory-rev102.html",
+      "title": "Authoring Inventory Rev102",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "authoring-inventory-rev102"
+    },
+    {
+      "id": "surface-reviews-built-inventory-rev102",
+      "path": "docs/reviews/built-inventory-rev102.html",
+      "title": "Built Inventory Rev102",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "built-inventory-rev102"
+    },
+    {
+      "id": "surface-diagrams-class",
+      "path": "docs/diagrams/class.html",
+      "title": "Class",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "diagram-class"
+    },
+    {
+      "id": "surface-knowledge-spec-first-software-factory-comparables",
+      "path": "docs/knowledge/spec-first-software-factory/comparables.html",
+      "title": "Comparables",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-comparables"
+    },
+    {
+      "id": "surface-diagrams-component",
+      "path": "docs/diagrams/component.html",
+      "title": "Component",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "diagram-component"
     },
     {
       "id": "surface-mockups-context-map-join",
@@ -21345,6 +22629,22 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-understanding-views"
     },
     {
+      "id": "surface-knowledge-spec-first-software-factory-data-and-constants",
+      "path": "docs/knowledge/spec-first-software-factory/data-and-constants.html",
+      "title": "Data And Constants",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-data-and-constants"
+    },
+    {
+      "id": "surface-lessons-defect-classes",
+      "path": "docs/lessons/defect-classes.html",
+      "title": "Defect Classes",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "defect-classes"
+    },
+    {
       "id": "surface-mockups-editor-surfaces",
       "path": "docs/mockups/editor-surfaces.html",
       "title": "Editor & content surfaces — mockup",
@@ -21353,12 +22653,82 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-editor-surfaces"
     },
     {
+      "id": "surface-plans-factory-evolution-20261017",
+      "path": "docs/plans/factory-evolution-20261017.html",
+      "title": "Factory Evolution 20261017",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "plan-factory-evolution-20261017"
+    },
+    {
+      "id": "surface-proof-factory-evolution-20261017",
+      "path": "docs/proof/factory-evolution-20261017.html",
+      "title": "Factory Evolution 20261017",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-factory-evolution-20261017"
+    },
+    {
+      "id": "surface-notes-factory-evolution-direction",
+      "path": "docs/notes/factory-evolution-direction.html",
+      "title": "Factory Evolution Direction",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "note-factory-evolution-direction"
+    },
+    {
+      "id": "surface-mockups-factory-workbench-notes",
+      "path": "docs/mockups/factory-workbench-notes.html",
+      "title": "Factory Workbench",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-backlog-forensic-review-rev102",
+      "path": "docs/backlog/forensic-review-rev102.html",
+      "title": "Forensic Review Rev102",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "forensic-review-rev102-backlog"
+    },
+    {
+      "id": "surface-reviews-forensic-review-rev102",
+      "path": "docs/reviews/forensic-review-rev102.html",
+      "title": "Forensic Review Rev102",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "forensic-review-rev102"
+    },
+    {
+      "id": "surface-knowledge-spec-first-software-factory-glossary",
+      "path": "docs/knowledge/spec-first-software-factory/glossary.html",
+      "title": "Glossary",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-glossary"
+    },
+    {
       "id": "surface-mockups-graph-canvas",
       "path": "docs/mockups/graph-canvas.html",
       "title": "Graph canvas — target UX",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-graph-canvas"
+    },
+    {
+      "id": "surface-knowledge-spec-first-software-factory-index",
+      "path": "docs/knowledge/spec-first-software-factory/index.html",
+      "title": "Index",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-spec-first-software-factory"
+    },
+    {
+      "id": "surface-map-of-content",
+      "path": "docs/map-of-content.html",
+      "title": "Index",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     },
     {
       "id": "surface-mockups-knowledge-explorer-mode",
@@ -21375,6 +22745,22 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-knowledge-explorer"
+    },
+    {
+      "id": "surface-diagrams-layers",
+      "path": "docs/diagrams/layers.html",
+      "title": "Layers",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "diagram-layers"
+    },
+    {
+      "id": "surface-proposals-local-software-factory",
+      "path": "docs/proposals/local-software-factory.html",
+      "title": "Local Software Factory",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-local-software-factory"
     },
     {
       "id": "surface-specs-agentic-watcher-substrate",
@@ -21401,6 +22787,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-named-dock-zones"
     },
     {
+      "id": "surface-knowledge-spec-first-software-factory-open-questions",
+      "path": "docs/knowledge/spec-first-software-factory/open-questions.html",
+      "title": "Open Questions",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-open-questions"
+    },
+    {
       "id": "surface-coordination-recursive-surface-ownership",
       "path": "docs/coordination/recursive-surface-ownership.html",
       "title": "Recursive surface ownership programme",
@@ -21409,13 +22803,61 @@ window.DOCS_INDEX = {
       "artifactId": "coord-recursive-surface-ownership"
     },
     {
+      "id": "surface-knowledge-spec-first-software-factory-references",
+      "path": "docs/knowledge/spec-first-software-factory/references.html",
+      "title": "References",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-references"
+    },
+    {
+      "id": "surface-reviews-security-privacy-rollup-rev102",
+      "path": "docs/reviews/security-privacy-rollup-rev102.html",
+      "title": "Security Privacy Rollup Rev102",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "security-privacy-rollup-rev102"
+    },
+    {
+      "id": "surface-diagrams-sequence",
+      "path": "docs/diagrams/sequence.html",
+      "title": "Sequence",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "diagram-sequence"
+    },
+    {
+      "id": "surface-knowledge-spec-first-software-factory-sources",
+      "path": "docs/knowledge/spec-first-software-factory/sources.html",
+      "title": "Sources",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-sources"
+    },
+    {
+      "id": "surface-knowledge-spec-first-software-factory-state-of-the-art",
+      "path": "docs/knowledge/spec-first-software-factory/state-of-the-art.html",
+      "title": "State Of The Art",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-factory-state-of-the-art"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-uml-erm-surfaces"
+    },
+    {
+      "id": "surface-proof-updatepack-r102-20261017",
+      "path": "docs/proof/updatepack-r102-20261017.html",
+      "title": "Updatepack R102 20261017",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-updatepack-r102-20261017"
     }
   ],
-  "graphSha256": "57a4bb621bf6d9a627dac6dfeb5448e253505c688ce01c5620569299f9792016"
+  "graphSha256": "e862d4bbb3cfae8346528fa047c95ef0543a3451a52a07fd291c5bb9ad3bc320"
 };

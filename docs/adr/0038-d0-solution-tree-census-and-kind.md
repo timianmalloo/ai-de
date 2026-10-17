@@ -23,6 +23,8 @@ summary: >-
   File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points;
   UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC.
   Status accepted after N6 Security and Tech Lead re-review (conductor recorded).
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0038: D-0 Solution tree — one Architecture kind, one query-time census, no second store

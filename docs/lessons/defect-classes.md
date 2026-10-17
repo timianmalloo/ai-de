@@ -13,6 +13,8 @@ summary: >-
   The project's register of defect classes — the recurring shapes of things that go wrong here, what
   each one survives, and the control that now fails when the shape recurs. Seeded from the ten-persona
   architecture review and the Phase-1 build.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Defect-class register
@@ -5633,6 +5635,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Boundary:** Applies to any new .md graph node; type must be one of the known TYPES.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p1)
 - **Metadata completeness recurrence (2026-10-17):** the revision-102 update evidence omitted the required `summary` field. Class: authoring metadata without checking the complete schema. Sweep: `docs-graph.py validate` scanned 543 artifacts and named exactly this new document. Derive: keep the validator's required-key schema authoritative. Prevent: the same validator was observed red on the missing field; the field was then supplied. The scope includes required-key omissions as well as unknown types. Evidence: `docs/proof/updatepack-r102-20261017.md`.
+- **Relation-registry recurrence (2026-10-17):** seven factory knowledge pages used the plausible but unregistered `part-of` relation. Class: authored metadata outruns the actual schema/registry. Sweep: the graph validator identified all seven. Derive: use the registered `relates-to` relation; no new relation semantics were invented. Control: `docs-graph.py validate` was observed red with seven V14 errors before correction, then re-run. This extends the metadata boundary to relation vocabulary as well as types and required fields. Evidence: `docs/proof/factory-evolution-20261017.md`.
 
 ### PACK-DISPATCH-MERGE — A text merge retains a handler absorbed by a dispatcher
 
@@ -5642,6 +5645,33 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** `python tools/test-pack-deviations.py` fails if any of the three native files still registers that direct guard, and separately executes the dispatcher for Claude, Grok and Copilot with an identity-write payload to require its exit-2 refusal. The duplicate-registration check was observed failing on all three files before removal, then all four test methods passed. The same control preserves the local audit `append --supersedes` contract and checks JSONL-only fallback behavior in temporary directories.
 - **Status:** `controlled` — executable red-to-green control; no claim about live host lifecycle qualification.
 - **Evidence:** `docs/proof/updatepack-r102-20261017.md`.
+
+### UI-PARALLEL-TRUTH — Two presentations of one meaning use different producers
+
+- **Class:** a diagram/table, answer/scope, or edit-preview/application pair appears consistent while independently computing the underlying identities or matches.
+- **Sweep:** the factory exploration had relabeled dependency diagrams with an unrelated accessible table, PR evidence that read the current rather than retained question scope, and a textContent-based match preview followed by per-text-node replacement. Independent review found all three shapes.
+- **Derive:** use a shared diagram model/table producer, retained question context, and one `scanAuthorText` match producer for preview and range application across formatted boundaries.
+- **Control:** `docs/proof/factory-evolution/browser-checks.js` checks distinct sequence/ERM semantics, matching table populations, pinned answer scope, unknown questions and the cross-format multi-edit. The reviewer observed preview1/apply0 for “unknown delivery state”; the retained live regression then observed preview1/apply1 and undo. Source/table and question-scope checks passed after correction; no earlier runtime-red claim is made for those source-reviewed cases.
+- **Status:** `controlled` for this exploration's automated browser sequence; not a claim that native production CI enforces the future feature.
+- **Evidence:** `docs/proof/factory-evolution-20261017.md`, `docs/proof/factory-evolution/browser-results.json`.
+
+### UI-EDITOR-CONTROL-LAG — A retained edit state never reaches its operation control
+
+- **Class:** an editor creates an undo checkpoint but leaves the rendered Undo control disabled until some unrelated render occurs.
+- **Sweep:** inspected formatting, block insertion, multi-edit and reset after the first rich-authoring interaction exposed the disabled control.
+- **Derive:** the shared checkpoint/draft synchronization updates the control, and reset clears the demonstration's authoring state.
+- **Control:** the retained browser sequence requires Undo enabled after a real multi-edit and verifies restoration of the original formatted-boundary phrase; it also checks draft preservation and no-send behavior. The disabled state was observed before the control synchronization fix.
+- **Status:** `controlled` for the HTML exploration's executed sequence; native editor selection/undo and restart behavior remain separate implementation proof.
+- **Evidence:** `docs/proof/factory-evolution-20261017.md`.
+
+### REVIEW-SOURCE-IDENTITY — A plausible citation path is written without resolving it
+
+- **Class:** a source path looks consistent with a namespace or type name but resolves to no actual file, making the evidence chain unverifiable.
+- **Sweep:** independent review found three paths in the capability inventory: query interfaces under Ipc instead of Projections and the compile host under Core instead of App. The final inventory resolves those paths against actual files; release-plan line references were also corrected by direct inspection.
+- **Derive:** retain actual repository paths from the file inventory rather than reconstructing directory names from symbols.
+- **Control:** `docs/proof/factory-evolution/check-artifacts.py` scans explicit source references in the episode's fifteen primary artifacts. Its self-test injects a nonexistent source and requires rejection; it separately accepts a real source.
+- **Status:** `controlled` for explicit paths in the bounded artifact corpus; abbreviated filenames and semantic claim support still require reviewer judgment.
+- **Evidence:** `docs/proof/factory-evolution-20261017.md`.
 
 ### PACK-E-AN-AMBIGUOUS- - PACK-E · An ambiguous proper noun resolved inside my own frame
 - **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)

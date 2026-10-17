@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aide.Core</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from AiDe.Core.md</div><h1>API: <code>AiDe.Core</code></h1>
+<p><strong>3 public types · 15 public members · 61% documented.</strong></p>
+<blockquote>Extracted from the source by <code>tools/api-reference.py</code>. Prose here is the code&#x27;s own</blockquote>
+<blockquote><code>///</code> comment, never written for the reference; a member with no comment is listed as a</blockquote>
+<blockquote>gap rather than given invented text. The extractor is a lexical reader, not a compiler:</blockquote>
+<blockquote>it does not resolve generics, partial classes across files, or conditional compilation.</blockquote>
+<h2><code>PathComparison</code></h2>
+<p><em>class</em> — <code>PathComparison.cs</code></p>
+<p>How two filesystem paths compare on the machine this is running on.</p>
+<p><strong>Remarks.</strong> <strong>One rule, named once, because spelling it inline is how it keeps going wrong.</strong> The same defect has now been fixed four times — INV-0005, <code>RepositoryIdentity.ToFileSystemPath</code>, <code>RepositoryCorrection</code>/<code>ProofPackVerifier</code>, and the three containment checks in <code>Extraction/</code> and <code>Projections/</code> — and every instance was the same line written from memory at a new call site. <code>WatcherIdentity</code> states the rule in prose (<em>&quot;THIS IS NOT A FILESYSTEM PATH&quot;</em>) and prose is a memoir, so this is the member every path comparison consults and <code>tools/verify-containment-comparisons.py</code> is the gate that refuses a fifth hand-written copy.</p>
+<p><strong>Case-insensitive ONLY on Windows.</strong> POSIX paths are case-sensitive: <code>/repo/Secrets</code> and <code>/repo/secrets</code> are two different directories, and folding the case there admits a path the rest of the system would never write. On Windows they are one directory, so folding is what the filesystem itself does and refusing it would be a claim about the caller&#x27;s typing rather than about the file.</p>
+<p><strong>Not a `FileSystemPath` type.</strong> That distinction was considered and rejected: the defects it was proposed for all operate on strings that genuinely ARE filesystem paths, so a wrapper type would not have caught any of them, and it would leave a permanent <code>.Value</code> escape hatch for the next one to live in. The bug is the comparison rule, so the fix is a comparison rule.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>StringComparison ForThisFileSystem</code></td><td>The <code>StringComparison</code> that matches this machine&#x27;s filesystem: ordinal everywhere, and case-insensitive additionally on Windows.</td></tr></tbody></table>
+<h3><code>StringComparison ForThisFileSystem</code></h3>
+<p>The <code>StringComparison</code> that matches this machine&#x27;s filesystem: ordinal everywhere, and case-insensitive additionally on Windows.</p>
+<p><strong>Remarks.</strong> A property rather than a <code>static readonly</code> field so it is evaluated per call rather than at type-initialisation. Nothing in this process changes operating system mid-run, but a cached platform answer is the shape that survives into a context where it is wrong, and the ternary costs nothing next to the string comparison it qualifies.</p>
+<h2><code>WorkspaceCore</code></h2>
+<p><em>class</em> — <code>WorkspaceCore.cs</code></p>
+<p>The in-process authority core (ADR-0009): the composition root the shell talks to in Phase 1 and the same contract a separate daemon exposes over IPC from Phase 2, so the split is a deployment substitution rather than a redesign.</p>
+<table><thead><tr><th>Member</th><th>Summary</th></tr></thead><tbody><tr><td><code>string WorkspaceId { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string RootPath { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>string DataDirectory { get; private set; } = string.Empty</code></td><td>Where workspace-local state lives. The layout file sits beside the fact store (ADR-0013).</td></tr><tr><td><code>WorkspaceStore Store { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>ProjectionService Projections { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>DispatchService Dispatch { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>McpToolGateway Mcp { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>HealthIncidentSidecar Incidents { get; }</code></td><td><strong>(gap)</strong></td></tr><tr><td><code>WorkspaceCore Open(string workspaceId, string rootPath, string dataDirectory, IExtractor? extractor = null)</code></td><td>Opens a workspace and runs recovery before serving anything. Sweeping first is deliberate: a caller must never be able to observe an unresolved attempt and read it as &quot;never sent&quot;.</td></tr><tr><td><code>Task&lt;ExtractionResult&gt; RefreshScopeAsync(</code></td><td>Extracts one scope and commits it as a complete snapshot. An incomplete extraction is recorded as a health incident and the previous snapshot stands — a failed refresh never empties the graph.</td></tr><tr><td><code>Task&lt;IndexResult&gt; IndexCSharpAsync(</code></td><td>Discovers every C# scope under the workspace root and refreshes each one.</td></tr><tr><td><code>IReadOnlyList&lt;(string ScopeId, int Generations)&gt; CheckCompactionNeeded(</code></td><td>Raises a health incident for any scope whose generation count has passed the compaction threshold.</td></tr><tr><td><code>string DatabasePath</code></td><td>The path compaction operates on. Compaction requires the store to be closed.</td></tr><tr><td><code>void Dispose()</code></td><td>Closes what this object opened — both stores.</td></tr></tbody></table>
+<h3><code>Task&lt;ExtractionResult&gt; RefreshScopeAsync(</code></h3>
+<p>Extracts one scope and commits it as a complete snapshot. An incomplete extraction is recorded as a health incident and the previous snapshot stands — a failed refresh never empties the graph.</p>
+<ul><li><strong>`rootPathOverride`</strong> — What the extractor should read, when it is not the workspace root. A C# scope is one PROJECT built for one framework, so the request must carry that project&#x27;s path — the workspace root names the repository, not the thing being extracted.</li></ul>
+<h3><code>Task&lt;IndexResult&gt; IndexCSharpAsync(</code></h3>
+<p>Discovers every C# scope under the workspace root and refreshes each one.</p>
+<ul><li><strong>`force`</strong> — Re-extract every scope even when its inputs are unchanged. The escape hatch for &quot;I do not believe the cache&quot;, which is a thing an operator must always be able to say.</li></ul>
+<p><strong>Remarks.</strong> <strong>Per scope, not per repository.</strong> Each project/framework pair gets its own budget, its own generation and its own snapshot, so one project that fails to load quarantines itself and leaves every other project&#x27;s evidence standing (<code>P2-EXT-02</code>).</p>
+<p><strong>The per-scope budget is enforced here.</strong> A 60-second cap per scope, from the design — applied with a linked token so a caller cancelling the whole index still stops everything, while one slow project cannot consume the entire run.</p>
+<h3><code>IReadOnlyList&lt;(string ScopeId, int Generations)&gt; CheckCompactionNeeded(</code></h3>
+<p>Raises a health incident for any scope whose generation count has passed the compaction threshold.</p>
+<p><strong>Remarks.</strong> P1-PERF measured refresh going over budget at roughly ten generations of the same scope. The growth is the append-only design working as intended, so the operator is told rather than the slowdown being absorbed silently — a workspace that has quietly become slow is the shape of problem people stop reporting and start working around.</p>
+<p>This reports; it does not compact. Compaction replaces the database file, so it belongs to a deliberate maintenance moment, not to a background timer that could fire mid-session.</p>
+<h3><code>void Dispose()</code></h3>
+<p>Closes what this object opened — both stores.</p>
+<p><strong>Remarks.</strong> The watcher store is disposed here because <code>Open</code> created it. Whoever opens a handle owns closing it, and the alternative — taking the store as a constructor parameter so the caller owns its lifetime — would move that ownership rather than remove it.</p>
+<h2><code>IndexResult</code></h2>
+<p><em>record</em> — <code>WorkspaceCore.cs</code></p>
+<p>The result of indexing a whole repository&#x27;s C# scopes.</p></main></body></html>

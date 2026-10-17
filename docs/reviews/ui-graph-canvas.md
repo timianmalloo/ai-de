@@ -20,6 +20,7 @@ summary: >-
   semantic-zoom clustering, search-first focus+context, and disclosures as a chip.
 review-suggested:
   - { by: mockup-graph-canvas, on: 2026-08-30, reason: "Graph canvas implemented to the target: 2D force layout + degree-sized dots + pan/zoom/fit landed (DC-036); realizes part of US-K11 — re-check spec/implementation alignment and the still-open semantic-zoom LOD item." }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # UI review — graph canvas (review / elevate mode)

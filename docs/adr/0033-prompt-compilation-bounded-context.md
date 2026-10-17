@@ -17,7 +17,8 @@ links:
   - { to: adr-0035-compile-session-binding-and-pin, rel: relates-to }
   - { to: adr-0028-mode-cohort-not-partition, rel: refines }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The compile step is a new bounded context, AiDe.Core/Compilation, whose one seam is
   Compile(typed text, settings, context) → compiled envelope, and whose one projection

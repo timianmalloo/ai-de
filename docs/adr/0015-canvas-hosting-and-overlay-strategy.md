@@ -17,6 +17,8 @@ summary: >-
   composition control that can kills the process when its pane is floated. ADR-0008 is not reversed.
   The canvas keeps the windowed control, moves its own chrome into the web content, and hides behind
   a pixel-aligned still frame for the moments shell chrome must cross it.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # ADR-0015: Host the graph canvas in the windowed WebView2 and yield it to WPF by snapshot swap

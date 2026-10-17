@@ -21,7 +21,8 @@ links:
   - { to: adr-0036-compile-mode-ladder-deployment-gates, rel: relates-to }
   - { to: adr-0037-family-craft-profile-dimension, rel: relates-to }
 review-by: 2026-12-11
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The explicit hand-off from A1 (/define-architecture of Addenda C and D) to P1
   (/prepare-for-coordination): every component the architecture names with the persona that owns

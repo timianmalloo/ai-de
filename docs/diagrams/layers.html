@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Layers</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from layers.md</div><h1>Recovered capability layers and authority</h1>
+<p>The diagram separates observed deterministic mechanics from optional model work. <strong>Verified source composition</strong> at <code>9f13ca7a</code>; future factory analysis is a proposal, not a currently shipped tier.</p>
+<pre><code class="language-mermaid">flowchart TB
+ UI[WPF shell: selection, conversation, diagrams, evidence]
+ Query[Deterministic bounded queries and rendering models]
+ Authority[Daemon/Core: extraction, snapshots, receipts and immutable store]
+ Agent[External ACP/terminal harness and optional model compilation]
+ Review[Proposed future agent assessments]
+ UI --&gt; Query --&gt; Authority
+ UI --&gt; Agent
+ Review -. proposed evidence only .-&gt; UI</code></pre>
+<table><thead><tr><th>Layer</th><th>Current authority / limitation</th></tr></thead><tbody><tr><td>Local fact authority</td><td>Parsed assertions, provenance, scope generations and source identity; FR-001 freshness defect remains</td></tr><tr><td>Projections / views</td><td>Deterministic derived selection with explicit omissions; FR-002 byte enforcement gap remains</td></tr><tr><td>Agent execution</td><td>Operator-selected provider/tool lane; bounded permissions must be qualified for actual offered capabilities</td></tr><tr><td>Compilation</td><td>Deterministic precompile plus optional gated agent call; envelopes retain provenance/history</td></tr><tr><td>Watcher / proof</td><td>Observation, pointers and scoring of bounded signals; not automatic semantic correctness</td></tr><tr><td>Proposed factory assurance</td><td>Agent claims remain assessments; policy and human decisions are separate retained records</td></tr></tbody></table>
+<p>No model-written summary becomes code truth or approval by presentation alone. Do not claim the entire product is incapable of source changes: agents in execution lanes can edit, while diagram and source viewers are read-only. Local storage and external inference are independent trust decisions.</p></main></body></html>

@@ -18,6 +18,8 @@ summary: >-
   agreement between three unrelated hard-coded maps, so a partial declaration fails silently; Gemini
   is an instance of an existing concept, not a new one. Every claim about Gemini CLI's actual
   behaviour is recorded as an assumption with the check that settles it, because it is not installed.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # A Gemini CLI agent session, on par with Claude Code and GitHub Copilot

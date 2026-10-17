@@ -15,6 +15,8 @@ summary: >-
   italic interface names, monospace member lines, and correct generalization/realization
   arrowheads. This note records the remaining UML class-diagram fidelity gaps and the design +
   Core data contract for a UML sequence-diagram surface.
+review-suggested:
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 ---
 
 # Full-fidelity UML class & sequence diagrams

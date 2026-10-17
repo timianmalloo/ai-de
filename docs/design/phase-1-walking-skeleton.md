@@ -19,6 +19,7 @@ links:
 review-by: 2027-02-26
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
+  - { by: architecture, on: 2026-10-17, reason: "2026-10-17 source recovery corrects default daemon composition and identifies freshness/bounds gaps; see forensic-review-rev102" }
 summary: >-
   The implementable blueprint for AI-DE's Phase-1 walking skeleton: the SQLite fact schema and its
   enforced immutability control, the in-process authority core with command receipts and the
