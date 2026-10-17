@@ -12274,7 +12274,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  I[Inventory and safety floor] --> P[Commit and push preservation]\n  P --> R[Remove clean linked worktrees]\n  R --> V[Read back disk and refs; publish proof]"
         }
       ],
-      "sourceSha256": "c853771059b3ee7156a70acb005a0b82b360b7aed9299ac0d4d7c31571105ecd"
+      "sourceSha256": "79530f89530a928a0105a3dcfbcefa079fb66eb7aa9b9dc59d57b6bc0e6611a1"
     },
     {
       "id": "profile-addendum-cd",
@@ -21126,6 +21126,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-worktree-cleanup-20261017",
+      "path": "docs/proof/worktree-cleanup-20261017.md",
+      "title": "AI-DE worktree preservation and retirement",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-17",
+      "reviewSuggested": [],
+      "summary": "All linked worktrees retired after remote recovery verification; only the primary checkout remains.",
+      "tags": [
+        "git",
+        "preservation",
+        "cleanup"
+      ],
+      "links": [
+        {
+          "to": "plan-worktree-cleanup-20261017",
+          "rel": "documents"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a1402719d5bccc16e32b6798e8e584fa694db6754d811019b1f750c0a050dcad"
+    },
+    {
       "id": "spec-addendum-c-perspectives",
       "path": "docs/specs/addendum-c-perspectives.md",
       "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
@@ -22896,7 +22925,15 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "plan-worktree-cleanup-20261017"
+    },
+    {
+      "id": "surface-proof-worktree-cleanup-20261017",
+      "path": "docs/proof/worktree-cleanup-20261017.html",
+      "title": "Worktree Cleanup 20261017",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "a93bee09dfff026ac08f7c847344df9ec0e78716365cc9951b4df2b849360812"
+  "graphSha256": "bfd07b4892f6063e5e640557d8c47cb5806bf6fffb8dc516e636d0ffcdf1196d"
 };

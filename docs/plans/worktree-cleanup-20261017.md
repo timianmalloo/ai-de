@@ -39,3 +39,13 @@ Naive and optimized shapes both have four dependent phases, modeled work 4 and s
 Adversarial checks: remote containment alone does not prove dirty files preserved; archives and content hashes provide that evidence. Git removal exit status alone does not prove disk absence; direct filesystem checks provide it. A pushed preservation branch is recovery evidence, not acceptance of its code. Existing generated evidence will be archived rather than mixed into main source.
 
 Actual measurements and recovery refs are recorded in the sibling cleanup proof at completion. Tokens and spend are not exposed by this runner and will be reported as not recorded.
+
+## Measured delivery
+
+Verified: all four planned phases completed; 34 linked trees retired, two orphan evidence folders relocated inside the primary checkout, and only the primary directory remains. Preservation used 32 new remote branches plus two existing remote branches. The supplemental ignored/orphan evidence is on the first preservation branch. The proof records each exact remote commit and original HEAD ancestry.
+
+Verified elapsed time from the initial inventory timestamp to final filesystem/ref readback: 647.8 seconds. This excludes the final documentation commit and push. Tokens and spend: not recorded. Agent fan-out remained zero; supplemental archive capture overlapped the main preservation stream on an already-completed, disjoint worktree. No cleanup began before all preservation streams and primary changes were pushed.
+
+Rework: one historical-workflow policy repair after the first push launched a Build run; it was cancelled and a negative/positive executable guard now precedes preservation pushes. Metadata validation and installed-shell discovery also required correction before their dependent steps proceeded. Safety floors remained present. No forced push, source merge, or loss of unique evidence was used to make cleanup pass.
+
+Evidence: [cleanup proof](../proof/worktree-cleanup-20261017.md) and [exact recovery inventory](../proof/worktree-cleanup-20261017.json). The closing commit publishes the final evidence and views; its verified remote identity is reported in the handoff. No product implementation is part of this task.

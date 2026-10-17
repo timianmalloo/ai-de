@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-17T21:02:39Z",
+  "generated": "2026-10-17T21:07:37Z",
   "audit": [
     {
       "actor": null,
@@ -21272,6 +21272,31 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-17T20:56:48Z",
       "duration_seconds": 272.0
+    },
+    {
+      "id": "al-01M55V2341ACNZE3DGYNZ5A5ZJ",
+      "shortname": "worktree-cleanup-20261017",
+      "datetime": "2026-10-17T21:07:36Z",
+      "session": "codex-cleanup-20261017",
+      "prompt": "commit and push all then clean up all of the AI-De worktrees so that the only thing left locally is the local checkout",
+      "summary": "Committed and pushed remaining primary changes and 32 preservation branches; verified all 34 original linked HEADs on remote refs. Archived 34,126 evidence files (2,212,478,935 source bytes), including ignored and orphan captures. Removed 34 linked worktrees with no refusals or orphaned directories; relocated two evidence-only folders into the primary checkout. Filesystem and Git inventory both show only C:/Projects/ai-de. Historical workflow run cancelled and policy guard verified negative/positive. Final proof/views publication follows.",
+      "kind": "command",
+      "skill": null,
+      "tool": "git",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/worktree-cleanup-20261017.md",
+        "docs/proof/worktree-cleanup-20261017.json",
+        "docs/plans/worktree-cleanup-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Commit and push all remaining work and retire all linked AI-DE worktrees.",
+      "done_when": "Remote recovery verified for each removed tree; only the primary checkout remains locally.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-17T21:01:20Z",
+      "duration_seconds": 376.0
     }
   ],
   "changes": [
