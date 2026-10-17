@@ -1,0 +1,35 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "bbca8d6edc495b150c502999fd0fcc69fa922c72",
+  "original_branch": "refs/heads/review/d0-atlas-independence-astra",
+  "archive_sha256": "f9784b27e2661ddf795ee28012cb6c9b12e5d8fb8d1c65340ab8d1aa991f6af2",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 12403,
+      "sha256": "f9784b27e2661ddf795ee28012cb6c9b12e5d8fb8d1c65340ab8d1aa991f6af2"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-review/Program.cs",
+      "bytes": 2973,
+      "sha256": "dac53a3ea75da58f43a0ebf2f400c11079145c0243eec27ea30fd876c1cd5374"
+    },
+    {
+      "path": ".artifacts/d0-review/ReviewSpike.csproj",
+      "bytes": 349,
+      "sha256": "2f41cecc8f2c2c89572731f72ad8d96d489ba8c001e84a08eaa42c442739490e"
+    },
+    {
+      "path": ".artifacts/d0-review/review-baseline.trx",
+      "bytes": 72157,
+      "sha256": "f2363ccfddbc556dcc24c31f97fa1584c4ef13589721bc58058a36552d1065b1"
+    },
+    {
+      "path": ".artifacts/d0-review/review-prompt.txt",
+      "bytes": 5304,
+      "sha256": "2f18324628ea738a70c0b39ccee138014e38bbed882d4bf71cd932a56aa12556"
+    }
+  ]
+}
