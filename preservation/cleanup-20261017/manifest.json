@@ -1,0 +1,185 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "1d46d651cd5b6356e05545115757ba7eb7ffbf45",
+  "original_branch": "refs/heads/review/atlas-p1-03-uia-transition",
+  "archive_sha256": "23b92b0d7fd8806c896564bb185e6eacf23acfb462b5fa29cfc9eec45cf1b353",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 29143,
+      "sha256": "23b92b0d7fd8806c896564bb185e6eacf23acfb462b5fa29cfc9eec45cf1b353"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-observer-controls/038ebf096f71460fbdfa877d6b3a350e/receipt.json",
+      "bytes": 565,
+      "sha256": "8a538a9481cdb77b47220e4d9e1f737e138a7d08fe8e9f0048c5320f437948c0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0632d53cec3d43088743ecf602532cfc/receipt.json",
+      "bytes": 855,
+      "sha256": "d7047eb292217048dad3a0ed33d9e3c06a3ada582e7bdf0d2deb4880a048db0b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/09a1ac72cd124e8c83e6b2f1a8d9e238/receipt.json",
+      "bytes": 565,
+      "sha256": "2843565b640ea36d33d2b82ee21bd351505a5541dfa25c3dcf385956eae4e040"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/0e459cf3bbee4d31bd6bb713e53c7db7/receipt.json",
+      "bytes": 2437,
+      "sha256": "286524d2dac43b76e64811a3d1e284515164e52b06989c2a32b94c5c835cc26e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/178f796735c0494f8accf347b3195de5/receipt.json",
+      "bytes": 855,
+      "sha256": "c6fe01c87174bb9fa8099d3333540ee38327db00e807a30ab7f2d858483c6504"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/17fdb14296f44e4bb21d42e3d70c9018/receipt.json",
+      "bytes": 565,
+      "sha256": "1ed57c11cd0bec0054487a3ded399f2d3505ae621aca7c9c19ce02fe417f7418"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/181e508b5f664313aab8da8792cffb2c/receipt.json",
+      "bytes": 3390,
+      "sha256": "c534e5a3220c68c9d48c2722822d208623a7db80b188a1b55b88bcbea01e322a"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/39a91bf04d4a44f3b56a776fde386896/receipt.json",
+      "bytes": 565,
+      "sha256": "4045334642c62c4c08be8c6a020db89192415a59bdb28a301300bf9d2571e8c3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/3e7668c9b027497898e684585266f4c8/receipt.json",
+      "bytes": 565,
+      "sha256": "134442c70a5189327468897e80f4e408e66d96e1d54bba332de3cd8408dd95d3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/46617f9273c849138795b8f58b3c6de5/receipt.json",
+      "bytes": 2436,
+      "sha256": "54b2a0274e5bb7b55882114810efb78243e3b943fe50fda274bb2092a8f0fc2c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4c703b98a01a4c5aa104485bd01ae923/receipt.json",
+      "bytes": 564,
+      "sha256": "e473325e493e7506316e00503a675d94996b49c8724366f338badff014080d8f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4d4b8380a95e4eacadb5c3701a18947c/receipt.json",
+      "bytes": 1003,
+      "sha256": "61f802807745e184cad3eb0313744dd1824b113546f5290d97490b0f8b1fa88b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/50163f0b311e482d9e3a05ab0be4f490/receipt.json",
+      "bytes": 2277,
+      "sha256": "46b244fab9984810ac8044671b72323dc95fab02418f851d1ec5e13a07888d60"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/541e4a9a04e144ebbd79e2cd4c4977d3/receipt.json",
+      "bytes": 563,
+      "sha256": "e3c99aea54448778de03adb88670acf8478811c602d281772dd0b08ff983a07f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/5a8173099dd54b51a5efe41f0c55e87b/receipt.json",
+      "bytes": 855,
+      "sha256": "8908ee1aa5bc013da8e906af5249ba96761db964b8225b02cf47c777b9fda041"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/63785e4186424ccbb5c619a68b1b8f9b/receipt.json",
+      "bytes": 2197,
+      "sha256": "e944ef0e0aab33b7b4119d19fa623abae85de509954ef2d5b4766c691596369e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/64505ba28a964317b7da5649030e7f25/receipt.json",
+      "bytes": 10769,
+      "sha256": "a37d1ababbe409504b9a13c594042eb70a2b9f52d67f645404db3f40de8b86a1"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7819c9e9633243098714d2835b0c032b/receipt.json",
+      "bytes": 564,
+      "sha256": "dd9300b40eb5c6392076e91ffeac12c057eab84a29a55fa9941026cfe66f9690"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/84e11bb1a99d430b953e4391df0745ab/receipt.json",
+      "bytes": 2074,
+      "sha256": "623db9551206f7b16dc7dd437556d6fcdcdff188553006f279e5dda00085138f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9141af62f8d44a37bcdd9c3a9de97001/receipt.json",
+      "bytes": 565,
+      "sha256": "277671cebe967cd0591c4264f999eacc678522aeb5d48979dbae0f7a29482548"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/93526400407946e9ba5eadfaf43d9b19/receipt.json",
+      "bytes": 1842,
+      "sha256": "5db3c43cbe21107a404d76971f8b60da83e3a4c2214ffcef50fbce72e330ebb8"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9a4256595a604c4ba961b64a41cfd97c/receipt.json",
+      "bytes": 5764,
+      "sha256": "c52aceb2789015592bf44196f04f286627e7221c1258e6eeddaa035c56ae9571"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/afc261e513564cb3b0059d3a69cb33b6/receipt.json",
+      "bytes": 564,
+      "sha256": "4aedcb39a77b888025ffbc84ed02a9dc2caf0fd9a9225f490921ee937f38033b"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b1f49640414542c5a9e89dabf266f813/receipt.json",
+      "bytes": 565,
+      "sha256": "21c0541957ff059a78132afe90f6ac58b0a4c69369e8c4ebec82c7714c7058d4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b4961dd808ae4eb787c9be608c902755/receipt.json",
+      "bytes": 565,
+      "sha256": "bd396e7c350d3ebab704dcc393353ae257c34e8406e07be02634e4f92129aaf4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/bc765f70746842e8b257742ce3f0f917/receipt.json",
+      "bytes": 564,
+      "sha256": "3edc163d9e626274164729c6d84f26e564f5c49c8069ed688cc67c097ceaad3c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/d059a0f7a66e4100a160704d5ad60237/receipt.json",
+      "bytes": 566,
+      "sha256": "d229d5278c04233515b4a12cf3122e8ecd9c0998da16c63abe66d27ae725e402"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/dd5d8c9558f04fb3b540cde82e7a0b69/receipt.json",
+      "bytes": 3396,
+      "sha256": "dbd5398663cdb121d46dae998bb31e96ec605aad13b9c8e571e0573e0574f90e"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/de9f247aa3a24f3290da192da46f3e96/receipt.json",
+      "bytes": 2950,
+      "sha256": "0e3ee80768fb6280f455e6842651b25b4b915bad8c5558a90dddf6b252bdebf9"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/df31aa9966084d0b99a4f8d5feb235f0/receipt.json",
+      "bytes": 2196,
+      "sha256": "202cd004b4dc1881f982239f948ae8e3c026524c13eb37b1793c3ba8a59ada58"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e999bde17fd640429a23b4d2ed33db82/receipt.json",
+      "bytes": 2892,
+      "sha256": "5151712dada02f19c4af975a17c98e128e7ff76a079e7ed8ee3bb38afbb1e176"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ee96b3a27b4f4f938ae9a36fff716440/receipt.json",
+      "bytes": 3510,
+      "sha256": "24b7557c157937d7dbc396f5e8e7694b2ba046e5d0b5a3d6dbf9f3301d5c30fb"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f04c1b5201d040bcafce76ef25e01d31/receipt.json",
+      "bytes": 3391,
+      "sha256": "75ff1be34aface98837b677e5e21f5d08f2595a5d9d59ef01d048b182cbfcf27"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f7541e72b8b94b50b0c38d643f5b8878/receipt.json",
+      "bytes": 564,
+      "sha256": "0835f66c51f0188317406d42306b321e68a0d21a3513cc858d0ede74bf4d1588"
+    }
+  ]
+}
