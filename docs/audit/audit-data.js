@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T00:16:29Z",
+  "generated": "2026-09-16T02:10:41Z",
   "audit": [
     {
       "actor": null,
@@ -23969,6 +23969,268 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-16T00:10:02Z",
       "duration_seconds": 386.0
+    },
+    {
+      "id": "al-01M2KVK5NMAJAQ5WGK9MVGD0CP",
+      "shortname": "d0-atlas-independence",
+      "datetime": "2026-09-16T00:59:12Z",
+      "session": "codex-d0-atlas-independence",
+      "prompt": "START FIRST in newly provisioned tree: set AGENT_SESSION=codex-d0-atlas-independence AGENT_NAME=codex-astra-d0-author PYTHONIOENCODING=utf-8 in each shell; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d0-atlas-independence --skill implement. Tree C:/Projects/ai-de-fix-d0-atlas-independence branch fix/d0-atlas-independence base247e6b4eaefb; Conductor created via coord lifecycle. Never EnterWorktree, no old-tree writes. BOUNDED AUTHOR unit, Astra justified semantic source boundary. Initial budget24 calls/30min/context ceiling400k, checkpoint at8 with spike/design findings; cap is defect signal, no wider scope. Goal replace ONLY obsolete global noAtlas assertion with nonempty direct static D0 boundary independence. Exact allowed source tests/AiDe.App.Tests/SolutionTreeProbeTests.cs; task proof docs/proof/d0-atlas-independence.md; ignored scratch/receipts; own audit via official writer only. No product files/projectfiles/baseline/shared register/derived writes; root joins audit and regens. Lease exact test/proof only for editing. Owner + independent Test/architecture plan CLEAR: complete types SolutionTreeSurface.cs and SolutionTreeProjection.cs (all bodies incl lambdas/localfunctions), exact D0 members of IWorkspaceQueries/LocalWorkspaceQueries/WorkspaceClient/WorkspaceOperations (solution-tree registrationlambda)/ProjectionService D0helpers/SurfaceContentFactory solution-tree row/builder/WorkbenchShell bind refresh populate retry activate ShowGraph D0helpers. Enumerate exact membernames+shared ports BEFORE implementing. Shared ports explicit projection/store/path/skip-policy, IPCframe/querydispatch, NodeContentAsync, graphreveal, WPF/BCL, registration/sharednavigation. Reject Core.Understanding semantic symbols/sourcepaths, missing/duplicate roots, unresolved selected references, emptycoverage, newly unaccounted D0helper edges outside roots/sharedports. Label DIRECT STATIC only, no arbitrarytransitive/runtimeproof. Inspect actualsharedhandoffs; indirectAtlas found escalates. Native/no-Atlas policy source untouched. User conflict grant + Owner interpretation D0 not implemented THROUGH Atlas, elsewhere coexistenceallowed, will be recorded by root. Installed Roslyn preferred; first SPIKE real-project compilation/binding contract before dependency. No newdeps. Return simpler alternative if semantic harness explodes; do not build generalizedanalyzer. Required red-first: currentfailedTRX preserved integration artifacts/atlas-five-gates/failed-slot-p1-01; meaningful mutated Atlasdirect/alias/lambda/localfunction/sharedseam reference fails, missingroot/unresolved/newhelper fails, unrelatedregistration/commentsstrings/sharedports pass; report exactpopulations. Preserve all other testmethods unchanged. Headless testfilter ONLY this new semanticprobe+syntheticfixtures, NEVER FactoryBuild/Sta/shown/fulltests without rootslot. Indepreview separate. Return commit/artifacts actualcounts risk, exactscope. Escalate toConductor nothuman. Read localinstructions, implementation/testingprotocol beforeedit; recordclass DC118 widthdrift (root will updatecentralregister).",
+      "summary": "Finite direct-static D0 boundary replaces obsolete global Atlas absence. Installed Roslyn spike; meaningful red mutations; final headless filter 20/20. Exact source/proof scope; independent review pending; Conductor owns audit union and DC118 register.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "docs/proof/d0-atlas-independence.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove direct static D0 independence while admitting unrelated Atlas coexistence",
+      "done_when": "Exact nonempty roots bind; adversarial cases reject; coexistence cases pass; frozen proof handed to independent reviewer",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T00:32:17Z",
+      "duration_seconds": 1615.0,
+      "git": {
+        "sha": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "short": "247e6b4ea",
+        "branch": "fix/d0-atlas-independence",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KW8XHQQ645B76MKVDCJEF9",
+      "shortname": "d0-atlas-independent-review",
+      "datetime": "2026-09-16T01:11:05Z",
+      "session": "codex-d0-atlas-review-astra",
+      "prompt": "You are independent Test Architect + architecture/Security reviewer for bounded AI-DE D0/Atlas integration guard repair. Repository constitution is AGENTS.md in your own tree; obey it and linked no-guessing/rigor/test protocols. START FIRST before grounding: use exec_command workdir C:/Projects/ai-de-review-d0-atlas-independence-astra; set AGENT_SESSION=codex-d0-atlas-review-astra AGENT_NAME=codex-astra-d0-review PYTHONIOENCODING=utf-8 each shell; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d0-atlas-review-astra --skill forensicreview. Conductor provisioned via coord-core lifecycle branch review/d0-atlas-independence-astra base 97a9e200b5a5b0047e2b42cae931ffd35db02bc0. Never EnterWorktree or make another tree/subagent. Publish own liveness; one session per checkout. Explicit user authorized conflict resolution and independent subagents. Main goal: clear integration failures then GHCP publishes; YOU never main/push/product edit.\nGOAL: independently verify finite direct-static D0 independence guard retains D0 behavior and admits Atlas coexistence. DONE: inspect real code/spec/ADR/raw red green/scope/shared ports and own meaningful headless verification; return CLEAR or precise BLOCK and committed review receipt. Tier T2; budget 16 tools/20 min checkpoint 10; ceiling 400k; budget exhaustion signals defect, no automatic expansion. Strong model selected for adversarial semantic scope and earlier Sol reviewer hit capacity BEFORE doing work (its tree remains clean 97). Input author commit 97a9e200b5a5b0047e2b42cae931ffd35db02bc0 ONLY changes tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, docs/proof/d0-atlas-independence.md, official audit append. Source byte SHA256 A5338A154CE836CE8D321F012F2C3637280293B33C304AAD12153275CDE3123E. Read author proof, parent plan/coord/proof at C:/Projects/ai-de-integration-atlas-five-gates HEAD 703bb3ced1c79931a03b7e2b4c2b4b257cd74e83 (read-only); normative Owner clarification cl-01M2KTRQJJ91B7YEVSSTSSNB70: D0 must NOT use Atlas as implementation; admitted Atlas may coexist, no peer-spec rewrite. Direct-static boundary NOT arbitrary transitive/runtime proof; actual indirect Atlas found is blocker.\nAPPROVED SCOPE: complete D0 files SolutionTreeSurface.cs and SolutionTreeProjection.cs incl all types/nested/lambdas/local functions; exact D0 members of IWorkspaceQueries/LocalWorkspaceQueries/WorkspaceClient/ProjectionService/WorkspaceOperations registration/SurfaceContentFactory row/WorkbenchShell fields+handlers+helpers. Explicit shared ports inspect actual handoffs. Reject missing/duplicate roots, Atlas namespace/sourcepath refs incl aliases/generics, unaccounted D0 helper edges, unresolved selected semantic refs and zero population. Installed Roslyn 4.14.0, real project source+built references, no new deps/general framework. Actual baseline 26 roots 3976 reference observations 58 shared symbols.\nAUTHOR EVIDENCE (read-only raw tree C:/Projects/ai-de-fix-d0-atlas-independence/.artifacts/d0-independence): obsolete-red.trx 1 fail; semantic-policy-red.trx 15/8 pass 7 fail; classification-mutant.trx 3 fail; conditional-red.trx 1 fail; semantic-frozen.trx 20/20 pass 0 skip. Root Conductor inspected these XMLs and source hash. Final 20=baseline 1+12 negative+4 positive+3 project classification. Other enum/FileRead/FactoryBuild/RepoRoot bodies claimed unchanged; verify. Conditional compilation discovered as gap: code now fails closed on conditional directives/disabled text ANYWHERE in all 8 boundary files, baseline none. Review this precise ceiling for scope/joint satisfiability; it must not become unjustified whole-file policy. Inspect partial/generated root coverage/new helper escape and method port identity; no inferred complete proof. Comment/string/unrelated Atlas registration positive cases present. Root found and corrected project classification using exact src ancestry instead of substring.\nALLOWED WRITES ONLY docs/proof/d0-atlas-independence-review.md (type:doc, ACTUAL graph ids), own liveness/official audit append, your own scratch/test outputs. NO author/source edits, shared lessons, primary files, project/baseline edits or hand-derived writes. No stashes/resets/cleanup other worktrees. Build own tree then HEADLESS filter ONLY FullyQualifiedName~SolutionTreeProbeTests.ProbeAtlas_ (all 20 cases). NO Factory/STA/shown/native/full App/Core; shared GUI needs separate fresh slot held by parent. May write bounded adversarial scratch in own tree but don't commit author code or weaken tests; original source must remain exact hash. A failure requires diagnosis, no retry-until-green.\nKNOWN DOCUMENT FIXES parent will make after official join: author proof has unsupported type:proof (needs doc); integration failure path incorrectly .artifacts/atlas-five-gates/... actual artifacts/atlas-five-gates/failed-slot-p1-01. Don't block source for these confirmed clerical fixes; record condition. Root native preflight/wrapper separate independent reviewer CLEAR already, out of your scope. Return review tip descendant of 97 with only review proof+own audit; exact run/TRXs/mutations/risks, triggered gate CLEAR/BLOCK, actual budget. Parent joins review tip once through official staging barrier, so no your source rebase/join. Escalate to /root; Owner handles genuine decisions.",
+      "summary": "Independent BLOCK on frozen 97a9e200: normal-build headless Atlas suite 20/20 passed, but paired reflection mutations demonstrate an unreviewed OpenKind(int) Atlas helper admitted by method-name-only ports and unrelated conditional factory member rejected. Exact veto-clear predicates and raw evidence paths in review receipt. Product and author source unchanged. First audit append rejected missing shortname before mutation; corrected explicitly. Parent owns repair and derived union.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-d0-review",
+      "artifacts": [
+        "docs/proof/d0-atlas-independence-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently verify finite direct-static D0 independence guard retains D0 behavior and admits Atlas coexistence.",
+      "done_when": "Return CLEAR or precise BLOCK supported by source/evidence and own meaningful headless verification, with committed review receipt.",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T01:03:44Z",
+      "duration_seconds": 441.0,
+      "git": {
+        "sha": "97a9e200b5a5b0047e2b42cae931ffd35db02bc0",
+        "short": "97a9e200b",
+        "branch": "review/d0-atlas-independence-astra",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KXHHRHP5ADFKG3S3TCDHGF",
+      "shortname": "d0-atlas-correction",
+      "datetime": "2026-09-16T01:33:16Z",
+      "session": "codex-d0-atlas-correction",
+      "prompt": "New bounded correction unit, Owner approved: 16 author calls /20min, checkpoint12. Original24/24 remains history. Worktree provisioned by Conductor: C:/Projects/ai-de-fix-d0-atlas-correction, branch fix/d0-atlas-correction, base bbca8d6edc495b150c502999fd0fcc69fa922c72 (author+independent BLOCK). Set AGENT_SESSION=codex-d0-atlas-correction, AGENT_NAME=codex-astra-d0-author on every relevant shell; audit start first. Read applicable instructions and committed docs/proof/d0-atlas-independence-review.md. Do not EnterWorktree, spawn, or touch other trees.\nObjective: clear FR-001 exact overload identity and FR-002 overbroad conditional refusal within finite direct-static D0 guard. Allowed authored paths ONLY tests/AiDe.App.Tests/SolutionTreeProbeTests.cs and docs/proof/d0-atlas-independence.md; own official audit/liveness and local .artifacts evidence. Parent owns central lesson/derived union. Acquire short exact leases for edits, release promptly. No product/project files or dependencies, no full/STA/native/shown tests, no source join/push.\nOwner required design: Every admitted shared symbol requires exact project/source authority plus Roslyn documentation ID of OriginalDefinition, including parameter/generic signature. Type/member names alone never membership. Missing/ambiguous/unmapped identity refuses; constructed type arguments still checked for Atlas. Check namespace-spelled System exemptions against actual source/assembly authority (hypothesis to verify: a source-defined System type could escape a namespace-only exemption). No general transitive analyzer. Conditional refusal limited to selected roots, enclosing conditions, or binding-affecting imports/aliases/relevant definitions/declarations, including inactive and Release-only paths. Permit provably unrelated conditional members outside boundary; no blanket8fileban or Debug-only binding. Spike installed Roslyn directive/disabled-text behavior before relying on it.\nRed-first permanent controls must include review's exact OpenKind(int) escape and unrelated conditional factory positive, all retained20, conditional root/enclosing/import-alias/Release adversaries. Reviewer scratch actual examples at C:/Projects/ai-de-review-d0-atlas-independence-astra/.artifacts/d0-review/Program.cs and spike.log. Do not run stale binaries; normal build filtered headless suite only. Inspect actual TRX/error contents; counts alone insufficient. Also correct proof frontmatter type proof->doc and integrated receipt path .artifacts/atlas-five-gates/failed-slot-p1-01 -> artifacts/atlas-five-gates/failed-slot-p1-01; disclose clerical edits.\nBefore implementation return brief design readback and spike result if it exposes ambiguity. Escalate consequential uncertainty to me/Owner, not guess. Exit: source frozen, red/green receipts and exact observed counters/hashes, own audit, commit only allowed paths/audit, release leases, report source pin and residual ceilings. Preserve prior BLOCK and raw evidence. No self-clear. Programme graph delta is already recorded before dispatch in integration tree docs/plans/atlas-five-gates.md section D0 independent BLOCK correction.",
+      "summary": "Original correction unit reached16/16 without commit: source37/37, exact symbol/source authority and scoped conditional coverage; receipt cp1252 encoding failure truncated proof. Parent granted separate two-call closure recovery. Original BLOCK and all red/green evidence preserved; no budget-compliant completion claim.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "docs/proof/d0-atlas-independence.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct exact shared declaration authority and conditional scope in direct-static D0 guard",
+      "done_when": "Red and green evidence inspected and source/proof frozen for independent review",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T01:16:28Z",
+      "duration_seconds": 1008.0,
+      "git": {
+        "sha": "bbca8d6edc495b150c502999fd0fcc69fa922c72",
+        "short": "bbca8d6ed",
+        "branch": "fix/d0-atlas-correction",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KXHHXG1E58B1EAJWXD9SB0",
+      "shortname": "d0-atlas-closure-recovery",
+      "datetime": "2026-09-16T01:33:17Z",
+      "session": "codex-d0-atlas-correction",
+      "prompt": "Owner admits TWO-CALL CLOSURE RECOVERY only. Reconstruct only your truncated proof from exact committed blob at bbca8d6edc495b150c502999fd0fcc69fa922c72, then apply original intended clericals + observed correction evidence. Explicit UTF-8 ATOMIC write (encode/write temp, verify then replace), preserving historical BLOCK and raw evidence. Verify complete proof content and unchanged source SHA0FBC79CDAF1944674A10B3488C32C5420185522382F01DB9D7A3B9CF495D9AE4 before own official audit and exact3-path commit. Acquire exact leases for proof/test while committing/recovering; release. No source changes or test reruns. Return full commit and proof readback/hash, counters, residual dirty generated/raw files. Capture16/16 original unit plus separate2-call recovery and encoding defect honestly; no original budget-compliance claim. Make own liveness visible in PRIMARY .agents/sessions/codex-d0-atlas-correction.md (coord resolves primary); an untracked similarly named file solely inside your author worktree is not the shared liveness channel. Do not alter any other's liveness or clean retained files. Conductor inspected actual37-green/13-width-red and zero-byte proof. Independent BLOCK stays in force.",
+      "summary": "Two-call Owner recovery reconstructed proof from exact bbca8d6e blob with atomic UTF-8 byte verification. Source hash unchanged; existing37/37 result retained without rerun. Original encoding defect/cap recorded. Exact source/proof/audit frozen for retained independent review; BLOCK remains.",
+      "kind": "skill",
+      "skill": "implement-recovery",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "docs/proof/d0-atlas-independence.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Recover truncated proof atomically and freeze already-tested source with audit",
+      "done_when": "Complete UTF-8 proof read back; source unchanged; exact commit and leases released",
+      "tier": "T2",
+      "main_calls": 2,
+      "main_budget": 2,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T01:32:18Z",
+      "duration_seconds": 59.0,
+      "git": {
+        "sha": "bbca8d6edc495b150c502999fd0fcc69fa922c72",
+        "short": "bbca8d6ed",
+        "branch": "fix/d0-atlas-correction",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KY68BTPJ4T0J3WDSPQXQ5K",
+      "shortname": "d0-atlas-independent-rereview",
+      "datetime": "2026-09-16T01:44:35Z",
+      "session": "codex-d0-atlas-rereview",
+      "prompt": "Start independent re-review in newly provisioned C:/Projects/ai-de-review-d0-atlas-correction, branch review/d0-atlas-correction, base921cc2291f291d2cb6f99de9297dba60b90f0d54. AGENT_SESSION=codex-d0-atlas-rereview; AGENT_NAME=codex-astra-d0-review. Astra retained for exact symbol/conditional semantics and adversarial gate review. Budget20 tool boundaries/25min, checkpoint12. First relevant shell audit start; use actual repo workflows/short exact leases/own PRIMARY liveness. No EnterWorktree, subagents, source/product edits, full/STA/native/shown tests, join or push.\nObjective: independent CLEAR/BLOCK of corrected finite direct-static D0 guard, resolving your original FR-001/FR-002 without scope widening. Inputs: frozen source921cc229; original review bbca8d6e already ancestor; corrected proof docs/proof/d0-atlas-independence.md (historical evidence preserved); prior scratch C:/Projects/ai-de-review-d0-atlas-independence-astra/.artifacts/d0-review. Parent Owner contract in C:/Projects/ai-de-integration-atlas-five-gates/docs/plans/atlas-five-gates.md D0 correction section/change cl-01M2KWRZ2TDFBQX9JTJK0B82SD.\nAllowed authoring: NEW docs/proof/d0-atlas-independence-rereview.md (type doc, valid linked metadata), own official audit and primary liveness, local scratch .artifacts. Retain original BLOCK receipt unchanged. Parent joins derived/audit union; preserve any generated dirty audit-data and raw scratch. No default-encoding writes: explicit UTF-8 atomic write for proof; author closure encountered a recorded cp1252 truncation, recovered exactly from committed blob, source unchanged.\nConductor has directly read final source diff, full CheckConditions body, actual reds28/24/4 and conditional-width13/11/2, final37/37/0skip (TRXSHA92f2168ef678e7b99d4e443406e7d4a199fdc5ea2052cc15825929d4f4bef3b3). Source bytesSHA0FBC79CDAF1944674A10B3488C32C5420185522382F01DB9D7A3B9CF495D9AE4; LF SHA4730db0143d47e56c51464ccb2f69cea8e9611955cec4c5fa2303bae92e49766. Author37 includes retained20; baseline26roots/3976refs/58ports; exact60 source/signature entries (two root-owner types). Raw correction logs in C:/Projects/ai-de-fix-d0-atlas-correction/.artifacts/d0-correction; proofSHA F7AACE09C6360C3EAE516392FC07B1E1E3F7935F2768732A52A155F329BF2883.\nRequired evidence: own normal-build filtered headless run and inspected actual TRX; independently execute original exact OpenKind(int) negative and unrelated conditional helper positive; evaluate source/assembly authority (source-defined System escape), complete OriginalDefinition docID/signatures and constructed arguments. Inspect all admitted relevant shared handoffs, completing prior review limits where finite contract requires it. Recheck root/enclosing/local/global aliases, inactive/Release branches, cross-file partial owner and unrelated same-name owner/registration positives; probe a discriminating uncovered edge if source inspection gives a concrete failure hypothesis. Do not broaden into generic transitive/runtime proof or arbitrary preprocess-satisfiability framework. A genuine dependency or missing finite boundary still BLOCKS. Preserve exact original enum/FileRead/FactoryBuild/RepoRoot bodies, product/spec unchanged.\nExit: committed independent receipt/audit with exact source tip/hashes, actual results and all triggered Test Architect/architecture-security/Simplifier outcomes, residual ceilings; review tip must contain author. Escalate precise finding to me with actual counterexample before repair. No self-clear by author/Owner. Final canonical full qualification and Release remain later under explicit slot.",
+      "summary": "Independent BLOCK retained on 921cc229. Own normal-build headless run 37/37 passed, zero skipped. Original OpenKind(int) and unrelated conditional helper counterexamples corrected. New inactive RELEASE extension changes selected D0 ToList binding from System.Linq.Enumerable to AiDe.App.Workbench.ReviewConditionalExtensions while inactive guard reports zero errors; identical extension in unimported namespace preserves binding and passes both states. Exact shared handoff bodies read, frozen source and original probe bodies verified unchanged. Receipt written via byte-verified UTF-8 atomic replacement. Scratch System.IO compile omission diagnosed before execution. Parent owns repair, derived union and canonical qualification.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-d0-review",
+      "artifacts": [
+        "docs/proof/d0-atlas-independence-rereview.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently CLEAR or BLOCK corrected finite direct-static D0 guard without widening the original FR-001/FR-002 contract.",
+      "done_when": "Commit independent receipt and audit supported by own normal-build TRX, original counterexamples, exact shared handoffs and a discriminating binding check.",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T01:34:56Z",
+      "duration_seconds": 579.0,
+      "git": {
+        "sha": "921cc2291f291d2cb6f99de9297dba60b90f0d54",
+        "short": "921cc2291",
+        "branch": "review/d0-atlas-correction",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KYT4WW5VBNRX771TK3TQGN",
+      "shortname": "d0-inactive-binding-spike",
+      "datetime": "2026-09-16T01:55:27Z",
+      "session": "codex-d0-inactive-binding-spike",
+      "prompt": "Owner admits DESIGN SPIKE ONLY,8 tool calls/15min, checkpoint6. New provisioned tree C:/Projects/ai-de-spike-d0-inactive-binding, branch spike/d0-inactive-binding, base3d2aa9001fe2afc9dd05c84dc698287acbdb00d0 (new independent BLOCK receipt descends from your921cc229). Set AGENT_SESSION=codex-d0-inactive-binding-spike; AGENT_NAME=codex-astra-d0-author; audit start first. No EnterWorktree, child agents, source correction, full/STA/native/shown tests, join or push. Use existing workflows/knowledge already grounded; read new committed docs/proof/d0-atlas-independence-rereview.md and current test. Scope recorded before dispatch in integration docs/plans/atlas-five-gates.md latest replan.\nGoal: measure whether installed Roslyn can satisfy finite inactive binding coverage and return smallest supported implementation CONTRACT before code correction. Root/Owner will decide after executable evidence. Existing37 remain the later implementation qualification floor; don't rerun the whole37 merely for this spike. FR-003: RELEASE-only ToList<T>(this IEnumerable<T>) in new namespace AiDe.App.Workbench owner, new file, defaults to zero errors; activation changes real selected ToList owner to ReviewConditionalExtensions and reports UNACCOUNTED. Same extension in unimported Review.Unrelated namespace leaves framework binding and passes. Exact executed code/log: C:/Projects/ai-de-review-d0-atlas-correction/.artifacts/d0-rereview/Program.cs and spike-qualified.log; read these, not method display-string inference. ReducedFrom identity was decisive.\nRequired spike predicates: expose inactive declarations AND binding context across relevant source-project dependencies; rebind selected D0 roots; compare exact ReducedFrom/OriginalDefinition identities including source/metadata authority; changed/ambiguous/unresolved bindings must be detected without rejecting unrelated conditional code. Preserve existing root/port conditional refusals. Test actual extension negative; unrelated namespace and incompatible receiver positives; focused import, overload and referenced-project binding examples. Do NOT choose handwritten extension namespace/receiver lookup approximation. Candidate approach is Roslyn semantic rebinding of exposed declarations, with proper Core->App source-project reference propagation measured before reliance; choose actual APIs only after spike proves their contracts. Flattened-all-branches is NOT configuration-complete by assertion: explicitly test/report masking/competing conditional declarations or record unexamined combinations and what contract they prevent. No preprocessor solver, generic transitive analyzer or MSBuild framework.\nAllowed authored repository path: docs/proof/d0-inactive-binding-spike.md (new task-specific proof, type doc and valid links); own official audit and PRIMARY liveness. Executable scratch source/project/logs under own .artifacts/d0-binding-spike, retain and hash in proof; no product/test/project edits. Exact short leases for proof, release promptly. Atomic explicit UTF-8 writes and byte readback; do not repeat the closure encoding fault. Do not discard automatic generated audit-data or raw artifacts. Exit: executable evidence with actual IDs/results/limitations, supported smallest implementation contract OR precise unsupported boundary, frozen proof/audit commit, unchanged test Git blob/LF hash4730db0143d47e56c51464ccb2f69cea8e9611955cec4c5fa2303bae92e49766, residual state and counts. Stop for Owner decision before any correction authoring.",
+      "summary": "Design spike complete as precise unsupported boundary: Roslyn rebinds14 real D0 variant cases with source-project propagation;9 masking rows prove flat-all plus singletons misses A+B ambiguity. Existing source unchanged, no37 rerun/correction. Snapshot identity drift documented. Owner decision required before implementation.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/d0-inactive-binding-spike.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Measure finite inactive binding coverage and return supported contract or precise unsupported boundary",
+      "done_when": "Actual semantic IDs, source propagation and masking limits recorded in frozen proof with unchanged source",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T01:47:17Z",
+      "duration_seconds": 490.0,
+      "git": {
+        "sha": "3d2aa9001fe2afc9dd05c84dc698287acbdb00d0",
+        "short": "3d2aa9001",
+        "branch": "spike/d0-inactive-binding",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KZP214VD2Q8A573G7PNANW",
+      "shortname": "d0-exhaustive-binding-candidate",
+      "datetime": "2026-09-16T02:10:41Z",
+      "session": "codex-d0-inactive-binding-spike",
+      "prompt": "Owner admits next DESIGN CANDIDATE ONLY:8 calls/15min, checkpoint6. Continue same isolated spike session/tree C:/Projects/ai-de-spike-d0-inactive-binding, session codex-d0-inactive-binding-spike, agent codex-astra-d0-author, base/frozen proof9206f940. This is continuation of same session, no new worktree/index sharing. Start a new audit marker for this run. Allowed paths unchanged: append/update your existing docs/proof/d0-inactive-binding-spike.md with history preserved; own audit/PRIMARY liveness; executable local .artifacts. No test/product/source project changes,37 rerun, joins/push/full/STA/native; no correction yet.\nDecision recorded BEFORE dispatch in parent docs/plans/atlas-five-gates.md subsequent-design section. Candidate: finite exhaustive assignment enumeration using Roslyn, not hand-written lookup/SAT/MSBuild framework. Requirements: census conditional symbols across ACTUAL compilation input/dependency closure, identity by(project,symbol), preserve Roslyn file-local #define/#undef behavior; calculate complete assignment population BEFORE choosing proposed ceiling; measure enumeration cost on actual corpus; rebuild affected source project references for EACH assignment, no staleCore metadata. Every assignment examined successfully OR specific incomplete-coverage refusal. Overflow, unsupported identity, unresolved binding can never produce green. Baseline permanently refusing a proposed ceiling is a limitation.\nResolve your15 source/metadata baseline identity discrepancies using compiler-grounded canonical identity and adversarial evidence: no blanket version stripping, no synthetic-symbol exemptions. Exact source/project authority and signatures remain. Consider complete builtin-operator signature/type authority if actual symbols support it; measure, do not assume. Compare baseline behavior after canonicalization and retain direct declaration identities. Required discriminators: measured A+B masking ambiguity (and all8 states), actual RELEASE extension, import/competing overload changes, unrelated namespace and incompatible receiver positives, Core->App propagation, existing root/port refusals. Clarify current fixture is a standalone composition counterexample, NOT an observed bypass of combined37-case guard.\nExit: frozen proof/audit with actual symbol census/population, measured wall cost, proposed fail-closed ceiling, identity contract and baseline results, exact executable hashes and unexamined boundaries. Return supported implementation contract OR precise remaining limitation to Owner. No implementation until Owner decides. Explicit UTF-8 atomic proof writes; preserve raw history and dirty generated views. Conductor read actual final.log CASE/MASK rows and exact masking source; no need rerun the earlier flattened demonstration absent new hypothesis.",
+      "summary": "Design candidate: actual346-tree census has0symbols/1assignment,1.471713s. Proposed ceiling8 measured7.794592s;16-state overflow refuses. Compiler BuiltinOperator signatures resolve15 baseline differences to0; adversarial identities preserved.28 real-corpus assignment visits plus8 standalone masking states; no37 rerun or source correction. Owner decision pending.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/d0-inactive-binding-spike.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Measure exhaustive finite assignment coverage, canonical identity and a fail-closed ceiling",
+      "done_when": "Actual census/cost, baseline and adversarial identities plus limits frozen for Owner decision",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T02:00:10Z",
+      "duration_seconds": 631.0,
+      "git": {
+        "sha": "9206f9407667a27f4dff26fade3f8e3efea568be",
+        "short": "9206f9407",
+        "branch": "spike/d0-inactive-binding",
+        "pushed": null
+      }
     }
   ],
   "changes": [

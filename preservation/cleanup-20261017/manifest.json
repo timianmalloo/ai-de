@@ -1,0 +1,85 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "b76581ae38bb1344457ef161326bb5bc861400a8",
+  "original_branch": "refs/heads/spike/d0-inactive-binding",
+  "archive_sha256": "b13fbac702e66e2d4c56061eee2b3051cd67d77b874a191170cd177b39f2c7c6",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 39586,
+      "sha256": "b13fbac702e66e2d4c56061eee2b3051cd67d77b874a191170cd177b39f2c7c6"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-binding-spike/Program.cs",
+      "bytes": 10627,
+      "sha256": "166f0ed205be1ac027bd0eb54e9764d378928e4191dd9d0f52687db1feda3b94"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/Spike.csproj",
+      "bytes": 342,
+      "sha256": "110881d5a08200525000e1bb2a9b68f438e92ddb045984ad57ae89dad5bb7ff1"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/Candidate.csproj",
+      "bytes": 345,
+      "sha256": "058898a6b0d26b5636bf2febd430abbddd9f7803da60adc8552d9099199960e4"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/Prefix.cs.txt",
+      "bytes": 7214,
+      "sha256": "4f2e370247b4009663919edeeef3745e6b371aa33980bcce5a552e0920e8c60c"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/Program.cs",
+      "bytes": 17887,
+      "sha256": "d39dd2067974e114142ea082f72a2f6eaea69c49ce8dd539160e614830f3e2c6"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/Tail.cs.txt",
+      "bytes": 7577,
+      "sha256": "1b599806806d6af16cd833935ad6a94c9b24744e323ae20834956ef56a86f82e"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/extend.py",
+      "bytes": 2219,
+      "sha256": "7c896373c68783d57a683d69ad2d73c70c0f4f3e97a859c90f84aca29c182c9b"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/fix.py",
+      "bytes": 1656,
+      "sha256": "80ce72e7deed4e2a5f2e6232abb207f445f00fbd7182f5ec44eae41b14a730d2"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/identity-control.py",
+      "bytes": 922,
+      "sha256": "170a77a6594685bee7c5b80d2ec9b33c21eb970b0ff7d0cf4427f7a8931a5476"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/prepare.py",
+      "bytes": 1374,
+      "sha256": "19c8e961457577c4adcfac5066fa0958cfc3a14dcbca1b0ebf705cd94b80a015"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/prompt.txt",
+      "bytes": 2817,
+      "sha256": "88a7992e6c23166f99ffb2ad95188071aa1d137a5bdca3af2d6ddb08d1259143"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/exhaustive/write-proof.py",
+      "bytes": 17262,
+      "sha256": "316884a4ff0e709e8b7740f7ffd434efda68d78f642878198f9b2f0323fda802"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/prompt.txt",
+      "bytes": 3519,
+      "sha256": "94a6df17453e20fbb97db560dc43b703e00c5978ae624028e0a9e16ab3c56591"
+    },
+    {
+      "path": ".artifacts/d0-binding-spike/write-proof.py",
+      "bytes": 15862,
+      "sha256": "ed3cabe487e2ef6963b68130f57d5a6798d61b5c78eec3e871b98fdef72c3b96"
+    }
+  ]
+}
