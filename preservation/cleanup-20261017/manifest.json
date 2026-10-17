@@ -1,0 +1,55 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "3d2aa9001fe2afc9dd05c84dc698287acbdb00d0",
+  "original_branch": "refs/heads/review/d0-atlas-correction",
+  "archive_sha256": "db055bff20ce8ce63691725ac9e58b02190a2fd9df8671a1b67522acbc1cd8b4",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 40941,
+      "sha256": "db055bff20ce8ce63691725ac9e58b02190a2fd9df8671a1b67522acbc1cd8b4"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/d0-rereview/Program.cs",
+      "bytes": 6298,
+      "sha256": "8844164fa629525b4c33216716c5e25f6513cdd99a46afff571fc66af7d7c01f"
+    },
+    {
+      "path": ".artifacts/d0-rereview/ReviewSpike.csproj",
+      "bytes": 349,
+      "sha256": "2f41cecc8f2c2c89572731f72ad8d96d489ba8c001e84a08eaa42c442739490e"
+    },
+    {
+      "path": ".artifacts/d0-rereview/handoffs.txt",
+      "bytes": 19270,
+      "sha256": "77c0a61b433dbe232a83ab676d7a79558bb4034bd805e1c9d264349d288507e6"
+    },
+    {
+      "path": ".artifacts/d0-rereview/receipt-checks.json",
+      "bytes": 379,
+      "sha256": "86bb8b59115a70f8aeedbccd4ed16d11b2d1dab865d8afde5a57f8e81591356e"
+    },
+    {
+      "path": ".artifacts/d0-rereview/receipt.md",
+      "bytes": 15782,
+      "sha256": "0f81d89f88028a7e2658ffc9fdc58043a73394100bd1544a69ad21df692faa45"
+    },
+    {
+      "path": ".artifacts/d0-rereview/rereview-baseline.trx",
+      "bytes": 251781,
+      "sha256": "a3779cd86cd31565a7faf8c9f5e7eef6799d1b5d5ed50ac99e1f989b49865893"
+    },
+    {
+      "path": ".artifacts/d0-rereview/review-prompt.txt",
+      "bytes": 3604,
+      "sha256": "e00fac0e11f33c498b63f14d2e2d1e7f180bbd49f9a9a5f7d6c61284d107a50f"
+    },
+    {
+      "path": ".artifacts/d0-rereview/write-receipt.py",
+      "bytes": 2177,
+      "sha256": "23fba7e3083b9ea1f572c47af68408e81496f29507d8e5ca1b539845065ae6bb"
+    }
+  ]
+}
