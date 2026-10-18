@@ -1,0 +1,442 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyOriginKindOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SchemaV2.ConstraintTests.TheAttemptKey_IsAPrimaryKey_ADuplicateAttemptIsRejected [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindAProfileVersionThatDoesNotExist [FAIL]
+[xUnit.net 00:00:00.49]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ARevisionCannotBranchFromAParentThatDoesNotExist [FAIL]
+[xUnit.net 00:00:00.51]     AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDispatchStateIsInTheVocabulary_SoNoEnumValueCanBeRejectedAtRuntime [FAIL]
+[xUnit.net 00:00:00.54]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ARetryCannotPointAtAnAttemptThatDoesNotExist [FAIL]
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Rejected, second: Interrupted) [FAIL]
+[xUnit.net 00:00:00.58]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Failed, second: ResponseComplete) [FAIL]
+[xUnit.net 00:00:00.62]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Interrupted, second: DeliveryUnknown) [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyOriginKindOutsideTheVocabularyIsRejected [59 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: journey_d"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyOriginKindOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 217
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.TheAttemptKey_IsAPrimaryKey_ADuplicateAttemptIsRejected [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.TheAttemptKey_IsAPrimaryKey_ADuplicateAttemptIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 45
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindAProfileVersionThatDoesNotExist [44 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindAProfileVersionThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 175
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ARevisionCannotBranchFromAParentThatDoesNotExist [36 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "AIDE-STORE-REFERENCE-VIOLATION"
+Actual:   "SQLite Error 1: 'table prompt_revision_fa"···
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.ARevisionCannotBranchFromAParentThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 139
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDispatchStateIsInTheVocabulary_SoNoEnumValueCanBeRejectedAtRuntime [28 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDispatchStateIsInTheVocabulary_SoNoEnumValueCanBeRejectedAtRuntime() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 236
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ARetryCannotPointAtAnAttemptThatDoesNotExist [22 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.ARetryCannotPointAtAnAttemptThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 147
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Rejected, second: Interrupted) [23 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(DispatchState first, DispatchState second) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 79
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Failed, second: ResponseComplete) [24 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(DispatchState first, DispatchState second) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 79
+   at InvokeStub_ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: Interrupted, second: DeliveryUnknown) [36 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(DispatchState first, DispatchState second) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 79
+   at InvokeStub_ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.66]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: ResponseComplete, second: Failed) [FAIL]
+[xUnit.net 00:00:00.69]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: DeliveryUnknown, second: Rejected) [FAIL]
+[xUnit.net 00:00:00.73]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnOutcomeStateOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:00.75]     AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDeliveryUnknownCauseInTheVocabularyIsAccepted [FAIL]
+[xUnit.net 00:00:00.78]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ACapabilityObservationKindIsOpenEnded [FAIL]
+[xUnit.net 00:00:00.81]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AQueuedAttemptCannotWaitOnAnAttemptThatDoesNotExist [FAIL]
+[xUnit.net 00:00:00.85]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookWithoutAnOwnerMustBeLegacy [FAIL]
+[xUnit.net 00:00:00.88]     AiDe.Core.Tests.SchemaV2.ConstraintTests.NonTerminalOutcomes_MayFollowEachOther_ButOnlyOneTerminalLands [FAIL]
+[xUnit.net 00:00:00.91]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AProfileObservationKindOutsideTheVocabularyIsRejected [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: ResponseComplete, second: Failed) [34 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(DispatchState first, DispatchState second) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 79
+   at InvokeStub_ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(first: DeliveryUnknown, second: Rejected) [39 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(DispatchState first, DispatchState second) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 79
+   at InvokeStub_ConstraintTests.AnAttemptHasAtMostOneTerminalOutcome(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnOutcomeStateOutsideTheVocabularyIsRejected [30 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnOutcomeStateOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 223
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDeliveryUnknownCauseInTheVocabularyIsAccepted [22 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.EveryDeliveryUnknownCauseInTheVocabularyIsAccepted() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 264
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ACapabilityObservationKindIsOpenEnded [27 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: harness_profile_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendHarnessProfile(HarnessProfileRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 146
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.ACapabilityObservationKindIsOpenEnded() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 332
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AQueuedAttemptCannotWaitOnAnAttemptThatDoesNotExist [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AQueuedAttemptCannotWaitOnAnAttemptThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 161
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookWithoutAnOwnerMustBeLegacy [35 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: notebook_"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookWithoutAnOwnerMustBeLegacy() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 199
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.NonTerminalOutcomes_MayFollowEachOther_ButOnlyOneTerminalLands [29 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.NonTerminalOutcomes_MayFollowEachOther_ButOnlyOneTerminalLands() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 94
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AProfileObservationKindOutsideTheVocabularyIsRejected [36 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: harness_profile_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendHarnessProfile(HarnessProfileRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 146
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AProfileObservationKindOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 317
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.95]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindThatBelongsToAnotherSubjectKindIsRejected [FAIL]
+[xUnit.net 00:00:00.98]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ARequestIsAnsweredOnce [FAIL]
+[xUnit.net 00:00:01.01]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:01.05]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyPurposeOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:01.07]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCanBeDispatchedOnlyOnce [FAIL]
+[xUnit.net 00:00:01.11]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnIntentAcceptanceMustReferenceANotebookRevision [FAIL]
+[xUnit.net 00:00:01.14]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAssessmentKindOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:01.18]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ADeliveryUnknownCauseOutsideTheVocabularyIsRejected [FAIL]
+[xUnit.net 00:00:01.21]     AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindARevisionThatDoesNotExist [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindThatBelongsToAnotherSubjectKindIsRejected [36 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: dispositi"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindThatBelongsToAnotherSubjectKindIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 290
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ARequestIsAnsweredOnce [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: permission_decision_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendPermissionDecision(PermissionDecisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 96
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.ARequestIsAnsweredOnce() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 113
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindOutsideTheVocabularyIsRejected [27 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: dispositi"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.ADispositionKindOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 280
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyPurposeOutsideTheVocabularyIsRejected [33 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: journey_d"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.AJourneyPurposeOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 209
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCanBeDispatchedOnlyOnce [27 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCanBeDispatchedOnlyOnce() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 57
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnIntentAcceptanceMustReferenceANotebookRevision [31 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: dispositi"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnIntentAcceptanceMustReferenceANotebookRevision() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 299
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAssessmentKindOutsideTheVocabularyIsRejected [33 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "SQLite Error 1: 'no such table: assessmen"···
+Not found: "CHECK constraint failed"
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAssessmentKindOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 308
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ADeliveryUnknownCauseOutsideTheVocabularyIsRejected [36 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.SeedAttempt(String key) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 26
+   at AiDe.Core.Tests.SchemaV2.ConstraintTests.ADeliveryUnknownCauseOutsideTheVocabularyIsRejected() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 252
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindARevisionThatDoesNotExist [35 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "AIDE-STORE-REFERENCE-VIOLATION"
+Actual:   "SQLite Error 1: 'table dispatch_attempt_f"···
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.AnAttemptCannotBindARevisionThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 129
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.25]     AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookCannotBeOwnedByAJourneyThatDoesNotExist [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookCannotBeOwnedByAJourneyThatDoesNotExist [38 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "AIDE-STORE-REFERENCE-VIOLATION"
+Actual:   "SQLite Error 1: 'no such table: notebook_"···
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.ConstraintTests.ANotebookCannotBeOwnedByAJourneyThatDoesNotExist() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 191
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    28, Passed:     0, Skipped:     0, Total:    28, Duration: 949 ms - AiDe.Core.Tests.dll (net10.0)

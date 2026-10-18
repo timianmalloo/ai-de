@@ -1,0 +1,14 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.SchemaV2.FreshVersusMigratedTests.AFreshStoreAndAMigratedOneHaveTheSameSqliteMaster [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.FreshVersusMigratedTests.AFreshStoreAndAMigratedOneHaveTheSameSqliteMaster [241 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: ["index ix_assertion_object on evidence_assertion_fa"···, "index ix_assertion_predicate on evidence_assertion"···, "index ix_assertion_subject on evidence_assertion_f"···, "index sqlite_autoindex_claim_current_cache_1 on cl"···, "index sqlite_autoindex_command_receipt_fact_1 on c"···, ···]
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.FreshVersusMigratedTests.AFreshStoreAndAMigratedOneHaveTheSameSqliteMaster() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 160
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 251 ms - AiDe.Core.Tests.dll (net10.0)
