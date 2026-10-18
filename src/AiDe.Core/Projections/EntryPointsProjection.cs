@@ -139,6 +139,7 @@ public static class EntryPointsListing
         }
 
         var cap = maxRows < 1 ? 1 : maxRows;
+        var budget = Math.Min(maxBytes, EntryPointsProjection.MaxRowBytes);
 
         // The row count is a count; the frame is bytes, and a row's size comes from repository
         // content (FR-002: 1,300 rows of 2,000-character identifiers measured 5,165,696 bytes).
@@ -149,7 +150,7 @@ public static class EntryPointsListing
         foreach (var row in built.Take(cap))
         {
             var cost = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(row, WireOptions).Length + 1;
-            if (rows.Count > 0 && bytes + cost > maxBytes) break;
+            if (rows.Count > 0 && bytes + cost > budget) break;
 
             rows.Add(row);
             bytes += cost;
