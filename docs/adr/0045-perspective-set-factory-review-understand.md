@@ -2,7 +2,7 @@
 id: adr-0045-perspective-set-factory-review-understand
 title: "ADR-0045 — The Perspective set becomes Factory · Review · Understand; feature children are admitted surface kinds; surface models are workspace-owned; layout slots migrate by stable id"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, shell, perspectives, docking, avalondock, layout, surfaces, workbench-loops]
@@ -33,7 +33,7 @@ review-suggested:
 
 # ADR-0045: Factory · Review · Understand as the Perspective set
 
-- **Status:** Proposed (council gate 2026-10-18) — **surfaces a drift** between ADR-0030's rows and
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed (council gate 2026-10-18) — **surfaces a drift** between ADR-0030's rows and
   the spec, resolved by supersession rather than silent contradiction
 - **Date:** 2026-10-18
 - **Deciders (Peer Mode):** Enterprise Architect (author), Tech Lead, UX Researcher/IA

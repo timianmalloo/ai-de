@@ -2,7 +2,7 @@
 id: adr-0041-execution-attempt-lifecycle
 title: "ADR-0041 — Execution attempt: deterministic key with insert-as-gate, host-asserted terminal outcomes, publish-side fan-out, and distinct queue / steer / stop / retry semantics"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, execution, attempt, run-event, idempotency, cancellation, queue, workbench-loops]
@@ -30,7 +30,7 @@ review-suggested:
 
 # ADR-0041: Execution attempt lifecycle, derived state and control semantics
 
-- **Status:** Proposed; council 2026-10-18 — Distributed Systems **VETO** on the first draft
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed; council 2026-10-18 — Distributed Systems **VETO** on the first draft
   (non-deterministic key; second relay reader), both cleared in this revision together with its
   conditions 3–13; SRE and Simplifier conditions folded in. Re-review recorded in
   `docs/architecture.md` §WL.14.

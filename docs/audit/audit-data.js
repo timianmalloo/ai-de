@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T21:37:01Z",
+  "generated": "2026-10-18T21:46:19Z",
   "audit": [
     {
       "actor": null,
@@ -21665,6 +21665,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d3ea7f65588d2a4b92594da13afb71cc980aed92",
         "short": "d3ea7f655",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M58FNNR7X236KPWVRRVXH58F",
+      "shortname": "accept-adr-0039-0045",
+      "datetime": "2026-10-18T21:46:18Z",
+      "session": "define-arch-20261018",
+      "prompt": "accept the seven ADRs and mark them accepted",
+      "summary": "Owner accepted ADR-0039..0045 (workbench loops); frontmatter status proposed -> accepted; architecture §WL status and gate record updated to record the ruling.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0039-workbench-records-durable-representation.md",
+        "docs/adr/0045-perspective-set-factory-review-understand.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:30:17Z",
+      "duration_seconds": 961.0,
+      "git": {
+        "sha": "ab87e146c540c38ee8b6e1c6703b9cc173f69199",
+        "short": "ab87e146c",
         "branch": "main",
         "pushed": true
       }

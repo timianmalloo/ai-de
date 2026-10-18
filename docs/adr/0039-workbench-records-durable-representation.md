@@ -2,7 +2,7 @@
 id: adr-0039-workbench-records-durable-representation
 title: "ADR-0039 — Workbench records: the spec's aggregates as interval-versioned dimensions, widened existing facts and derived folds in the workspace store"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, data-model, dimensions, facts, journey, notebook, attempt, assessment, workbench-loops]
@@ -32,7 +32,7 @@ review-suggested:
 
 # ADR-0039: Workbench records — widened facts, interval-versioned dimensions, derived folds
 
-- **Status:** Proposed; council 2026-10-18 — Data & Persistence PASS-WITH-CONDITIONS (conditions
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed; council 2026-10-18 — Data & Persistence PASS-WITH-CONDITIONS (conditions
   1–7, 10–12 folded in below), Simplifier PASS-WITH-CONDITIONS (merges 1–8 adopted), Distributed
   Systems conditions on keys/uniqueness adopted. See `docs/architecture.md` §WL.14.
 - **Date:** 2026-10-18 (revised the same day after the gate)

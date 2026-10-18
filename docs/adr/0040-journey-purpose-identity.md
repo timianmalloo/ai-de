@@ -2,7 +2,7 @@
 id: adr-0040-journey-purpose-identity
 title: "ADR-0040 — Journey purpose is a durable identity distinct from navigation, session and pane; bridges are explicit linked records"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, journey, work, investigation, bridge, acceptance, workbench-loops]
@@ -26,7 +26,7 @@ review-suggested:
 
 # ADR-0040: Journey purpose is a durable identity; bridges are explicit records
 
-- **Status:** Proposed (council gate 2026-10-18)
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed (council gate 2026-10-18)
 - **Date:** 2026-10-18
 - **Deciders (Peer Mode):** Enterprise Architect (author), Data & Persistence Architect, Tech Lead,
   UX Researcher/IA (consulted on the ownership rule)

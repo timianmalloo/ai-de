@@ -2,7 +2,7 @@
 id: adr-0043-notebook-editor-codemirror-canonical-source
 title: "ADR-0043 — The notebook editor is the existing CodeMirror 6 composer over one canonical Markdown source; rich view is a projection; deterministic assistance is T0 from Core, model suggestions a separate T3 layer"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, editor, codemirror, webview2, intellisense, notebook, workbench-loops]
@@ -30,7 +30,7 @@ review-suggested:
 
 # ADR-0043: The notebook editor — CodeMirror 6 over one canonical source
 
-- **Status:** Proposed (council gate 2026-10-18)
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed (council gate 2026-10-18)
 - **Date:** 2026-10-18
 - **Deciders (Peer Mode):** Tech Lead (author), Enterprise Architect, UX & Accessibility
   (consulted), Domain Researcher (editor evidence)

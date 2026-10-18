@@ -76,7 +76,7 @@ summary: >-
   Addenda C/D slices still exclude D-0; see §Understanding views / D-0. Amended 2026-10-18 for the
   workbench-loops evolution (§Workbench loops): two durable journeys, a notebook/attempt identity
   seam, native harness profile binding, a coordination read model, and the Perspective set re-rowed
-  to Factory · Review · Understand (ADR-0039–0045 proposed).
+  to Factory · Review · Understand (ADR-0039–0045 accepted by the owner 2026-10-18).
 ---
 
 # Architecture: AI-DE
@@ -102,7 +102,7 @@ entry-point results can exceed the transport byte limit despite row clamping. In
 freshness probing is a tested primitive without production composition. Static sequences are
 type-level call scenarios, not observed runtime traces. Crow's-foot ER/C4 product surfaces, PR/test
 assurance and a spec-first factory are remaining work, not claims promoted by their mockups.
-The 2026-10-18 evolution is defined in **§Workbench loops** below (ADR-0039–0045, proposed);
+The 2026-10-18 evolution is defined in **§Workbench loops** below (ADR-0039–0045, accepted 2026-10-18);
 until those ADRs are accepted and their slices land, the shipped composition is the one recovered here.
 
 
@@ -1236,7 +1236,7 @@ Residual: other walkers may still disagree (N7 widen optional); production folde
   [mockup v2](mockups/factory-workbench-v2.md), [research note](knowledge/workbench-loops-20261018.md),
   [direction note](notes/workbench-loops-direction.md), the 2026-10-18 source inventory (cited
   `file:line` below), and [`spikes/native-harness-presence`](../spikes/native-harness-presence/RESULT.md).
-- **Tier:** T2. **Status:** proposed — the council gate record is §WL.14.
+- **Tier:** T2. **Status:** accepted — ADR-0039…0045 accepted by the owner on 2026-10-18; the council gate record is §WL.14.
 - **Grounding traversal:** `spec-workbench-loops-ux` ← `proposal-workbench-loops` ←
   `kb-workbench-loops-20261018` / `note-workbench-loops-direction` (depends-on) → this document
   (implements) → ADR-0039…0045 (depends-on) → `architecture-agent-plane`, ADR-0010/0017/0027/0030–0034
@@ -1576,14 +1576,13 @@ acknowledgment, redaction fixture, migration/WAL round-trip, the constraint tabl
 oracle, `TurnState` never serialized, terminal uniqueness, `consumed` after the outcome row); WL-3's
 fingerprint-equality oracle and child-env observation; WL-4's budget enforcement (LOA C2 FAIL until
 then) and Steer-in-flight drain red; WL-5's `ExplanationCallHost` with tier annotation and receipt;
-Data's purge-with-inbound-origin test and index plan · ADRs remain **Proposed** until the Owner
-accepts them; authors did not self-clear.`
+Data's purge-with-inbound-origin test and index plan · authors did not self-clear · **owner ruling 2026-10-18: ADR-0039…0045 accepted** (@timianmalloo).`
 
 ### WL.15 Status and next action — Workbench loops
 
 | | |
 |---|---|
-| **Completed** | §WL.1–WL.14; ADR-0039…0045 (proposed; council PASS-WITH-CONDITIONS after two vetoes cleared on re-review); `spikes/native-harness-presence` (two runs; two self-updating CLIs observed); drift findings recorded; the drive prompt `docs/plans/workbench-loops-drive-prompt.md` |
+| **Completed** | §WL.1–WL.14; ADR-0039…0045 (accepted by the owner 2026-10-18; council PASS-WITH-CONDITIONS after two vetoes cleared on re-review); `spikes/native-harness-presence` (two runs; two self-updating CLIs observed); drift findings recorded; the drive prompt `docs/plans/workbench-loops-drive-prompt.md` |
 | **Remaining** | WL-0 → WL-1a (walking skeleton) ∥ WL-S → WL-1b → WL-1c → WL-2 ∥ WL-3 → WL-4 → WL-5 → WL-6 |
 | **Best next action** | `/design-slice` WL-1a — the revision ↔ attempt seam (widened facts + migration chain, `RunLogStore`, the ADR-0010 gate in `GovernedRunHost`, `AcpPeer.NotifyAsync`, the sweep) — with the crash-window and Stop-acknowledgment reds first; WL-S's A↔B↔C unparent spike runs in parallel |
 

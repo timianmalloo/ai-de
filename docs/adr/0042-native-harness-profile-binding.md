@@ -2,7 +2,7 @@
 id: adr-0042-native-harness-profile-binding
 title: "ADR-0042 — Native harness profile binding: harness-owned sign-in, separately observed readiness, per-attempt version fingerprint, sanitized child environment, no broker"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, security, identity, providers, subscriptions, acp, harness, workbench-loops]
@@ -30,7 +30,7 @@ review-suggested:
 
 # ADR-0042: Native harness profile binding
 
-- **Status:** Proposed (council gate 2026-10-18; Security hard-veto domain)
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed (council gate 2026-10-18; Security hard-veto domain)
 - **Date:** 2026-10-18
 - **Deciders (Peer Mode):** Security & Identity Architect (author), Domain Researcher (spike),
   Enterprise Architect, SRE

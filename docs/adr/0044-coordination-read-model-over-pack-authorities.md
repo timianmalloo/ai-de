@@ -2,7 +2,7 @@
 id: adr-0044-coordination-read-model-over-pack-authorities
 title: "ADR-0044 — Coordination is a read model over the pack's own authorities; commands go through the qualified runner; no C# coordination database"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "workbench-loops"
 tags: [architecture, coordination, read-model, ai-forward-pack, conductor, watcher, workbench-loops]
@@ -28,7 +28,7 @@ review-suggested:
 
 # ADR-0044: Coordination — a read model over pack authorities
 
-- **Status:** Proposed (council gate 2026-10-18)
+- **Status:** Accepted — owner ruling 2026-10-18 (@timianmalloo); council record follows. Previously Proposed (council gate 2026-10-18)
 - **Date:** 2026-10-18
 - **Deciders (Peer Mode):** Enterprise Architect (author), Distributed Systems Architect, Security &
   Identity Architect, SRE

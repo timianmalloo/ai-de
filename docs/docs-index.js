@@ -2058,7 +2058,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0039-workbench-records-durable-representation.md",
       "title": "ADR-0039 — Workbench records: the spec's aggregates as interval-versioned dimensions, widened existing facts and derived folds in the workspace store",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2120,14 +2120,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f7eff4500e10fc83a1f478d1e9862e54a1ef40852c2a49a9b420be88e94fdf46"
+      "sourceSha256": "a4cfa3b19c9b4a8160fa3266577ac5d59adb8390431bcbca7a2194ac57e651cc"
     },
     {
       "id": "adr-0040-journey-purpose-identity",
       "path": "docs/adr/0040-journey-purpose-identity.md",
       "title": "ADR-0040 — Journey purpose is a durable identity distinct from navigation, session and pane; bridges are explicit linked records",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2176,14 +2176,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6b1fb3079f571a5cdd7e937f17586eb2fd27b00a75b52996c83941de467f4e3f"
+      "sourceSha256": "f74b6f9528cc0ec4ff461ec877a5d98f4601c49d414a9089fc27ce87b6ebc680"
     },
     {
       "id": "adr-0041-execution-attempt-lifecycle",
       "path": "docs/adr/0041-execution-attempt-lifecycle.md",
       "title": "ADR-0041 — Execution attempt: deterministic key with insert-as-gate, host-asserted terminal outcomes, publish-side fan-out, and distinct queue / steer / stop / retry semantics",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2240,14 +2240,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "198d297d5a58d5922ad744a9dcaf7791a4a6e50667f60f53a3a81bb77442f184"
+      "sourceSha256": "2e737dcb3266350ac324afb67bfa699e57f4904d061a96f4d7b30abc34a44634"
     },
     {
       "id": "adr-0042-native-harness-profile-binding",
       "path": "docs/adr/0042-native-harness-profile-binding.md",
       "title": "ADR-0042 — Native harness profile binding: harness-owned sign-in, separately observed readiness, per-attempt version fingerprint, sanitized child environment, no broker",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2308,14 +2308,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4e285e54373803bb09c74bc8ff15725672f2a226ab9111d25731840db85e7f83"
+      "sourceSha256": "c2b606b66e94229dc38e0a9145c79f530821d64335c8724f74113c2b2709ae44"
     },
     {
       "id": "adr-0043-notebook-editor-codemirror-canonical-source",
       "path": "docs/adr/0043-notebook-editor-codemirror-canonical-source.md",
       "title": "ADR-0043 — The notebook editor is the existing CodeMirror 6 composer over one canonical Markdown source; rich view is a projection; deterministic assistance is T0 from Core, model suggestions a separate T3 layer",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2371,14 +2371,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f152fc3c7f38338b557b238b4544fdf15039cd5b2f772c4b74ea54dd2717f77"
+      "sourceSha256": "8430eee5d25273e2c63978d05220f867861dec0e5177810d92c1311520c9a231"
     },
     {
       "id": "adr-0044-coordination-read-model-over-pack-authorities",
       "path": "docs/adr/0044-coordination-read-model-over-pack-authorities.md",
       "title": "ADR-0044 — Coordination is a read model over the pack's own authorities; commands go through the qualified runner; no C# coordination database",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2430,14 +2430,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "49f69dce30634337060d0e64e514f3cbff5e3ad3dd3dae4fae6ea6467c28edb0"
+      "sourceSha256": "456fd9519d858ce0abac358404f55b09c2239d3721b8b84aeb3bb9ce9a3f2eff"
     },
     {
       "id": "adr-0045-perspective-set-factory-review-understand",
       "path": "docs/adr/0045-perspective-set-factory-review-understand.md",
       "title": "ADR-0045 — The Perspective set becomes Factory · Review · Understand; feature children are admitted surface kinds; surface models are workspace-owned; layout slots migrate by stable id",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "workbench-loops",
       "reviewBy": "2027-04-18",
@@ -2506,7 +2506,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9f77dbf5782ee6c90e19b014f47b740491b9163b4b0f819f1f27d4cd1192d536"
+      "sourceSha256": "9d0d63cd4fd3b42ecc382aabb8cd0a6cd626640041ad57b743741dc209e83ef6"
     },
     {
       "id": "api-aide-app",
@@ -3219,7 +3219,7 @@ window.DOCS_INDEX = {
           "reason": "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory"
         }
       ],
-      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0. Amended 2026-10-18 for the workbench-loops evolution (§Workbench loops): two durable journeys, a notebook/attempt identity seam, native harness profile binding, a coordination read model, and the Perspective set re-rowed to Factory · Review · Understand (ADR-0039–0045 proposed).",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0. Amended 2026-10-18 for the workbench-loops evolution (§Workbench loops): two durable journeys, a notebook/attempt identity seam, native harness profile binding, a coordination read model, and the Perspective set re-rowed to Factory · Review · Understand (ADR-0039–0045 accepted by the owner 2026-10-18).",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -3457,7 +3457,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650\n\n  subgraph shell[\"AiDe.App — shell (three DockHosts, ADR-0045)\"]\n    Rail[\"Left hierarchy: Factory · Review · Understand<br/>+ feature children (derived from kind rows)\"]\n    Notebook[\"NotebookSurface (CodeMirror 6 / WebView2)<br/>rich ⇄ source projections · completion · diagnostics<br/>(ADR-0043)\"]\n    Exec[\"ExecutionSurface<br/>attempt state fold · permissions · queue/steer/stop<br/>(ADR-0041)\"]\n    Viz[\"VisualizerSurface<br/>sequence · components · data · code · metadata\"]\n    Check[\"ChecklistSurface · ChangePacket · TestEvidence · RigorBacklog\"]\n    Conn[\"ConnectionsSurface<br/>six families · observed readiness · native sign-in\"]\n    Coord[\"CoordinationSurface<br/>graph · requests · recovery (read first)\"]\n    Term[\"TerminalSurface (explicit, secondary)\"]\n    Registry[\"SurfaceModelRegistry<br/>models keyed by object identity, workspace-owned\"]\n  end\n\n  subgraph core[\"AiDe.Core — authority and folds (T0)\"]\n    Records[\"Workbench records schema group<br/>journey · notebook_revision · execution_attempt ·<br/>permission_decision · evidence_link · disposition ·<br/>obligation · test_attempt · profile_observation (ADR-0039)\"]\n    Folds[\"Folds: AttemptState · AcceptanceEligibility ·<br/>Closure · Currentness · Readiness\"]\n    Compile[\"Compilation (ADR-0033/0034, unchanged)<br/>envelope · Project() · projection_sha\"]\n    Queries[\"IWorkspaceQueries (bounded)<br/>Find · Describe · SearchContent · Knowledge · Graph\"]\n    Assess[\"Assessment projections<br/>change packet · test worthiness · drift · rigor\"]\n    Profiles[\"HarnessProfileBinding (ADR-0042)<br/>probe → observations · sanitized env · fingerprint\"]\n    CoordRM[\"CoordinationReadModel (ADR-0044)<br/>refs · manifest · requests · board · watcher\"]\n  end\n\n  subgraph plane[\"Agent plane (existing) + transports\"]\n    Host[\"GovernedRunHost.RunAsync — the one run root\"]\n    Relay[\"RunEventRelay — single reader republished\"]\n    Mappers[\"Mappers: ACP (claude/codex adapters, copilot, grok) ·<br/>agy stream-json · muse exec JSONL → RunEvent (+raw frame)\"]\n  end\n\n  Store[(\"workspace.db (SQLite)<br/>+ run logs · envelope-events.jsonl\")]:::store\n  Pack[(\"AI-Forward pack: refs · .agents/ · runner · join\")]:::ext\n  Native[(\"Native harness CLIs + their credential stores\")]:::ext\n  Repo[(\"Repository · worktrees · PRs\")]:::ext\n\n  Rail --> Notebook & Exec & Viz & Check & Conn & Coord & Term\n  Notebook --> Registry\n  Exec --> Registry\n  Registry --> Records\n  Notebook -->|completion/hover| Queries\n  Notebook -->|prepare| Compile\n  Compile -->|projection_sha| Records\n  Exec -->|dispatch attempt| Host\n  Host --> Mappers --> Relay --> Exec\n  Relay --> Folds\n  Records --> Folds --> Exec & Check\n  Assess --> Records\n  Queries --> Viz\n  Repo --> Queries\n  Repo --> Assess\n  Conn --> Profiles --> Native\n  Host --> Native\n  Coord --> CoordRM --> Pack\n  Records --> Store\n  class shell,Rail,Notebook,Exec,Viz,Check,Conn,Coord,Term,Registry app\n  class core,Records,Folds,Compile,Queries,Assess,Profiles,CoordRM core\n  class plane,Host,Relay,Mappers app"
         }
       ],
-      "sourceSha256": "3fd80aa59220e9c44b90e0623cb8acedee2d365ce458ee6130af357e4932e526"
+      "sourceSha256": "abd00054d13466da756855afc2338a206b09003e2862365a788422b8f152efbb"
     },
     {
       "id": "architecture-agent-plane",
@@ -24054,5 +24054,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "981f3a1c01655d218bdd19bdac60a1315374b4d64415dc87002d40c97d46a9e1"
+  "graphSha256": "8b615d0d5276345c366f03e2e4ae47e44b0ac16e78aeb40444a69fe72cf7fc7e"
 };
