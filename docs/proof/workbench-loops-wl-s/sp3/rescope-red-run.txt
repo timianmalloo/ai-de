@@ -1,0 +1,43 @@
+# Runtime red after the src re-row and the first re-scope pass (tests/AiDe.App.Tests, the six seam-5 files excluded from compilation via DefaultItemExcludes; measurement only)
+Failed!  - Failed:     7, Passed:  1007, Skipped:     0, Total:  1014, Duration: 4 m 25 s - AiDe.App.Tests.dll (net10.0)
+
+  Failed AiDe.App.Tests.ShellContrastCensusTests.EveryTextPairingInTheComposedShellClearsItsFloor [5 ms]
+  Error Message:
+   the census did not walk the Ledger tab in Coordination's Center; the sites it saw: File | Edit | View | Window | Prompt | Help | AI-DE desktop workspace | Reset layout | Bottom  (1) | No session open. | New session | Ctrl+N | Or open a recent one from File → Recent sessi… | Welcome | No works
+  Failed AiDe.App.Tests.PerspectiveLayoutSlotTests.APreRuling94ArchitectureEnvelopeCarryingProvenance_RestoresWithTheInspectorDroppedAndReported_NamingTheRuling [14 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                                  ↓ (pos 49)
+Expected: ···" isn't available in Architecture — Proven"···
+Actual:   ···" isn't available in Understand — Provenan"···
+                                  ↑ (pos 49)
+  Failed AiDe.App.Tests.PerspectiveLayoutSlotTests.AnEnvelopeWithNothingCodingAdmits_RestoresTheDefault_AndSaysSo [13 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                                  ↓ (pos 31)
+Expected: ···"layout had no panes Coding can show, so C"···
+Actual:   ···"layout had no panes Factory can show, so "···
+                                  ↑ (pos 31)
+  Failed AiDe.App.Tests.PerspectiveLayoutSlotTests.TwoDiagnosticsPanesWithDistinctIds_KeepTheFirst_AndReportTheSecond [11 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "1 pane from your saved layout isn't avail"···
+Not found: "1 pane from your saved layout isn't avail"···
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [5 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "restore (22:33:53Z replay): applied-saved"···
+Not found: " dropped=10 zones="
+  Failed AiDe.App.Tests.CommandPaletteTests.ThePalette_ListsExactlyTheMenusCommands [22 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in collection
+                                                                     ↓ (pos 28)
+Collection: [···, "surface.show.leaderboard", "surface.show.ledger", "surface.show.daydreams", "workbench.floatPane", "workbench.collapsePane", ···]
+Found:      "surface.show.daydreams"
+  Failed AiDe.App.Tests.Perspectives.ZoneLayoutSlotsTests.RestoringAPreCCodingEnvelope_KeepsTheLoomkeeperKindsInFactory_AndReportsTheReadingKindsNamingUnderstand [11 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                    ↓ (pos 1)
+Expected: <generated>                     ["board", "ledger", "leaderboard", "sessions", "terminal"]
+Actual:   OrderedIterator<string, string> ["board", "leaderboard", "ledger", "sessions", "terminal"]
+                                                    ↑ (pos 1)
