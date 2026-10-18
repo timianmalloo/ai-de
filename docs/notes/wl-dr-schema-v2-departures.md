@@ -1,7 +1,7 @@
 ---
 id: note-wl-dr-schema-v2-departures
 title: "Decision request — T2 schema v2 departures from ADR-0039 (for Ruling 148)"
-type: note
+type: decision-note
 status: proposed
 owner: "@timianmalloo"
 tags: [decision, workbench-loops, schema, adr-0039]

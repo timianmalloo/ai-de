@@ -8191,6 +8191,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffa5f5177804a2f2fa7d086e9880a2357e6afd6d8c1aa256450743990cb508d1"
     },
     {
+      "id": "note-wl-dr-schema-v2-departures",
+      "path": "docs/notes/wl-dr-schema-v2-departures.md",
+      "title": "Decision request — T2 schema v2 departures from ADR-0039 (for Ruling 148)",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T2 (branch sp1-schema-v2, green 586a7eae) departed from ADR-0039 in six places. The Data & Persistence Architect's adversarial review (PASS-WITH-CONDITIONS, veto cleared) verified the evidence for each and added two Major findings outside the six. The Leader recommends accepting all six with the amendment text below and making the conditions merge conditions.",
+      "tags": [
+        "decision",
+        "workbench-loops",
+        "schema",
+        "adr-0039"
+      ],
+      "links": [
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e8b1c9fea1cb4abb989d4e19ccf9715c22ba7169adab21a5b52edc0f866e9814"
+    },
+    {
       "id": "note-workbench-loops-architecture-exhaust",
       "path": "docs/notes/workbench-loops-architecture-exhaust.md",
       "title": "Workbench-loops architecture run — session exhaust: drift found, calls made below ADR weight",
@@ -24164,5 +24194,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "3482b8a27defcd464a32f5875dbf697a8227f3653135f7fa61e377b5c28fcfca"
+  "graphSha256": "fc10f9ebd76d399f6db7de9554d797436ee7d4ffa4b15d6c68559afd6cde375e"
 };
