@@ -23,8 +23,8 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
 
 | Seat | Coord session id | How to reach it |
 |---|---|---|
-| **Owner** (Fable 5.1, rules and demos; never authors) | `wl-owner-20261018` | `SendMessage` to the local Claude Code session named **`ai-de-14`**; `coord mail send --to wl-owner-20261018`; `coord decide request --to wl-owner-20261018` |
-| **Leader** (you) | `wl-leader-20261018` | your process env already carries `AGENT_SESSION=wl-leader-20261018`, `AGENT_HOST=claude` |
+| **Owner** (Fable 5.1, rules and demos; never authors) | `wl-owner-20261018` | `coord board post --to wl-owner-20261018` and `coord mail send --to wl-owner-20261018` are the channel — the Owner reads the board; `coord decide request --to wl-owner-20261018` for rulings; `SendMessage` to the session named **`ai-de-14`** only if your tool set has it |
+| **Leader** (you) | `wl-leader-20261018` | you run as an Opus agent spawned by the Owner's session; the env is **not** pre-set, so prefix every coord, audit-log and git command with `AGENT_SESSION=wl-leader-20261018 AGENT_HOST=claude AGENT_WI=workbench-loops` (Bash form), and give every spawned track its own `AGENT_SESSION=<track-id>` the same way |
 
 ## Binding law — open these, do not quote from memory
 
@@ -81,8 +81,13 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
 
 ## Cadence to the Owner
 
-- **Every 15 minutes**: the drive prompt's table plus its four lines, posted with `coord board post` **and**
-  sent by `SendMessage` to `ai-de-14`. Renew the leader pin in the same step.
+- **Every 15 minutes**: the drive prompt's table plus its four lines, posted with `coord board post`
+  (and by `SendMessage` to `ai-de-14` if available). Renew the leader pin in the same step.
+- **Context ceiling (400k)**: you cannot `/compact` as a spawned agent. At the ceiling, or when you have
+  nothing to wait on but running tracks, **return to the Owner** with a hand-off: the plan path, every
+  track's state and worktree, open requests, and the exact resume line. The Owner respawns you with a
+  resume brief whose first line is the `audit-log.py start` marker; your worktrees, branches, board and
+  ledger survive the hand-off because they live in the repo, not in your context.
 - **Decision requests**: `coord decide request --to wl-owner-20261018 --deadline 1200 --fallback "<default>" …`
   with a recommendation, **and** a `SendMessage` to `ai-de-14` naming the request id. The Owner rules with
   `coord decide rule next`; you read the ruling back, you never apply a default early.
