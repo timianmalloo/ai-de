@@ -12170,7 +12170,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b109644c7950bd29a0f1fa330151c2368078a846886d6ffebced198d38831988"
+      "sourceSha256": "f1598df99f8cc48b3540526f9645371bf533eceec50e09f66cfcf4b2e88c403b"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -18874,7 +18874,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36a44fa46f51cd787b0f4a81bbb57575e12898c3a47d15a8706e335e63a9cd5f"
+      "sourceSha256": "e3473bd21bee1c37dd1d20903391df787ec4b37f4fb9456d783b7243fd01df87"
     },
     {
       "id": "plan-workbench-loops-drive-prompt",
@@ -24194,5 +24194,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "3302394217c260949025df016b020f8e9185222ab914d49eefbc6c31879ed164"
+  "graphSha256": "2c6a050ca836a51a83ab3c23f6617a392eb3db2ef6b6be7797376b4c3c687139"
 };

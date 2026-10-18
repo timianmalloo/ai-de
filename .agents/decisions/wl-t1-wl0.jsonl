@@ -14,3 +14,7 @@
 {"agent": "wl-t1-wl0", "at": 1792362831.256039, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0.md", "session": "wl-t1-wl0", "wi": ""}
 {"agent": "wl-t1-wl0", "at": 1792362831.8622322, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t1-wl0", "wi": ""}
 {"agent": "wl-t1-wl0", "at": 1792362831.890432, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365454.9824164, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/clamp-red.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365455.0069776, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-bounds-red.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365455.0310187, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-extractor-red.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365455.0592031, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs", "session": "wl-t1-wl0", "wi": ""}

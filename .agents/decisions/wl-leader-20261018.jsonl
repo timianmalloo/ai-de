@@ -53,3 +53,14 @@
 {"agent": "wl-leader-20261018", "at": 1792364287.3955615, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792364287.418594, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792364287.4412158, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.4359202, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.458527, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t12-census.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.480682, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t2-sp1.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.506104, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t4-sp3.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.5298243, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.5528636, "code": null, "kind": "allowed", "path": ".agents/log/wl-owner-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.5758939, "code": null, "kind": "allowed", "path": ".agents/log/wl-t12-census.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.6030533, "code": null, "kind": "allowed", "path": ".agents/log/wl-t2-sp1.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.629453, "code": null, "kind": "allowed", "path": ".agents/log/wl-t4-sp3.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.6531265, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365374.6744294, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "wl-leader-20261018", "wi": ""}

@@ -306,3 +306,33 @@ It does not buy speed on the critical path.
 | **Completed** | Grounding (cited above); layer measured; boundaries mapped from code; four reconciliations stated; 11 coding tracks + Q0 defined; spine named; seams and struck tracks recorded |
 | **Remaining** | Commit and push this plan; open T1–T4 trees and dispatch; Q0; 15-min reports; spine joins; WL-0 demo; wave 2 |
 | **Best next action** | Order of operations #2–#4: commit, then dispatch T1–T4 |
+
+## Changes since dispatch (Leader log — newest last)
+
+- **2026-10-18 22:29Z — Q0 verdicts.** Grok and Antigravity are observed-only (Harness qualification table). T7 goes to Grok.
+- **22:33Z — T4 seam granted** (`req-01M58HXY…`): NodeReaderView/ExplorerNodeMenu/NodeReaderEdgeRowLayoutTests/CanvasProbe.
+- **22:36Z — WL-0 accepted by the Owner on test evidence.** The GUI demo is owed and folds into the WL-1a real-lane demo.
+- **22:45Z — supporting track T12 `census-flake`** (Sonnet; `tests/Shared/ConsoleHostCensus.cs` + its three consumers'
+  messages). It retries only the census read, up to 3 attempts, and otherwise reports NOT CHECKED with the cause (Owner guards). Done 23:13Z: red `85bc92d0`, green `7cbf8000`.
+- **22:58Z — Ruling 148** (addendum-c register): ADR-0039 amended. T2's six departures are accepted, with merge conditions (a)–(h).
+  T2 rework session done 23:14Z: red `3ea879ef`, green `5af6bc43`. **Tracked obligations from Ruling 148, added to contracts:**
+  T8 records the **adoption actor** on a legacy-notebook adoption row. WL-5's first assessment producer lands the **per-kind
+  payload schema**.
+- **Ruling 149** (T4's `req-01M58M88…`): `ExplorerSurface` is deleted (ADR-0045 1(b)). **New WL-S backlog row (committed, not a
+  WL-6 follow-up):** a knowledge-inclusive representation as a **mode of the admitted canvas kind**, reached through the
+  representation selector, never a second graph surface. It has its own E2E check (red first). The attach point is the
+  `ExcludeKnowledge` seam at `WorkbenchShell.cs:1386`, recorded by T4, which does not build the mode. **WL-S does not close
+  until that check is green.** Owner: T11 (WL-S window), or a WL-S track the refreshed plan names. T4 and the WL-S close
+  state the interim in-app knowledge/spec corpus loss in user terms, with `docs/index.html` as the interim path.
+- **23:20Z — finding: main's verify-gate line was red before the drive.** `run-verify-gates` at `7e21707b` shows 14 FAIL
+  (audit-capture, derived-views, gate-self-tests, no-machine-paths, portable-text-io, preservation-workflow-policy,
+  project-coverage, ruling-citations, site-figures, subprocess-utf8, terminal-host-exit-paths, test-run, ui-craft-floor,
+  workbench-v2). The drive's commits added none (same set at `a790ccaa`). So `conductor-join.py` step 8 cannot pass any
+  join. DR `req-01M58MTQ…` (gate policy: recommendation A, a ratchet against the first parent, plus hygiene track T13). The
+  WL-0 join commit `cb0d6152` is held **local, unpushed**. The joined HEAD added two real reds
+  (`verify-bounds-are-enforced`, `verify-extractor-generation`), which went back to WL-0 as fix-forward T1b.
+- **23:22Z — DR `req-01M58MW8…`:** T2's three data-model choices from the rework (standing `journey-terminal-drafts`
+  owner for PTY drafts; `body_sha` equality test-asserted; forbidden payload keys incl. `state`/`status`).
+- **Pack defects logged as next steps (not drive work):** (1) the docs HTML surface cap at 100/100; (2)
+  `verify-ruling-citations.py` reads only `docs/notes/rulings.md` while the Owner's register is
+  `addendum-c-council-rulings.md`, so the two tools disagree about where the register lives (Owner, 2026-10-18).
