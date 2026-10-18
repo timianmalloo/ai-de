@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:17:27Z",
+  "generated": "2026-10-18T22:40:03Z",
   "audit": [
     {
       "actor": null,
@@ -22244,6 +22244,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:03:29Z",
       "duration_seconds": 831.0
+    },
+    {
+      "id": "al-01M58JR2M2VJHNYWY5H5HH77GH",
+      "shortname": "wl-t2-sp1",
+      "datetime": "2026-10-18T22:40:03Z",
+      "session": "wl-t2-sp1",
+      "prompt": "T2 sp1-schema-v2: land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API",
+      "summary": "WorkspaceSchema v2: shared V2 DDL (fresh = migrated), migration via UpgradeCoordinator with gate and rollback, WAL-safe snapshot, read-only on newer file, typed append/read API for 12 row types; 73 new tests red then green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/WorkspaceSchema.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "done_when": "golden migration round-trip incl WAL snapshot/restore, fresh-vs-migrated equality, DM11 test, one violation test per ADR-0039 s4 row, read-only-on-newer test, each red then green, dotnet test green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:23:41Z",
+      "duration_seconds": 982.0
     }
   ],
   "changes": [
