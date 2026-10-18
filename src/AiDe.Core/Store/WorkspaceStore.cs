@@ -17,6 +17,7 @@ public static class StoreErrorCodes
     public const string VersionOrderViolation = "AIDE-STORE-VERSION-ORDER-VIOLATION";
     public const string BodyHashRequired = "AIDE-STORE-BODY-HASH-REQUIRED";
     public const string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD";
+    public const string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>
@@ -99,10 +100,10 @@ public sealed class WorkspaceStore : IDisposable
         }
 
         int? migratedFrom = null;
-        var legacyNotebooks = 0;
+        WorkspaceSchema.MigrationCounts counts = default;
         if (fileVersion is { } from && from < WorkspaceSchema.Version)
         {
-            legacyNotebooks = Migrate(fullPath, workDirectory, from);
+            counts = Migrate(fullPath, workDirectory, from);
             migratedFrom = from;
         }
 
@@ -121,11 +122,12 @@ public sealed class WorkspaceStore : IDisposable
         var epoch = BumpEpoch(connection, created);
 
         var report = new StoreOpenReport(
-            WorkspaceSchema.Version, WorkspaceSchema.Version, ReadOnly: false, migratedFrom, legacyNotebooks,
+            WorkspaceSchema.Version, WorkspaceSchema.Version, ReadOnly: false, migratedFrom, counts.LegacyNotebooks,
             migratedFrom is { } m
-                ? $"migrated workspace store v{m} to v{WorkspaceSchema.Version}; {legacyNotebooks} pre-workbench "
+                ? $"migrated workspace store v{m} to v{WorkspaceSchema.Version}; {counts.LegacyNotebooks} pre-workbench "
                   + "notebook(s) are unassigned (legacy) until adopted"
-                : $"workspace store v{WorkspaceSchema.Version}");
+                : $"workspace store v{WorkspaceSchema.Version}",
+            counts.StandingJourneys);
         return new WorkspaceStore(connectionString, connection, epoch, report);
     }
 
@@ -170,12 +172,12 @@ public sealed class WorkspaceStore : IDisposable
     /// WAL-safe snapshot, journal, migrate, health gate, and either keep or put the snapshot back.
     /// Every connection here is closed before the coordinator may restore the file.
     /// </summary>
-    private static int Migrate(string path, string workDirectory, int from)
+    private static WorkspaceSchema.MigrationCounts Migrate(string path, string workDirectory, int from)
     {
-        var legacyNotebooks = 0;
+        WorkspaceSchema.MigrationCounts counts = default;
         var result = new UpgradeCoordinator(path, workDirectory).Run(
             $"workspace-v{from}-to-v{WorkspaceSchema.Version}", from, WorkspaceSchema.Version,
-            migrate: () => legacyNotebooks = ApplyMigrations(path, from),
+            migrate: () => counts = ApplyMigrations(path, from),
             gate: () => MigrationGate(path));
 
         if (!result.Upgraded)
@@ -185,10 +187,10 @@ public sealed class WorkspaceStore : IDisposable
                 + (result.Failure ?? "unknown failure"));
         }
 
-        return legacyNotebooks;
+        return counts;
     }
 
-    private static int ApplyMigrations(string path, int from)
+    private static WorkspaceSchema.MigrationCounts ApplyMigrations(string path, int from)
     {
         using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
         {
@@ -199,17 +201,20 @@ public sealed class WorkspaceStore : IDisposable
         Execute(connection, "PRAGMA recursive_triggers=ON;");
 
         var legacyNotebooks = 0;
+        var standingJourneys = 0;
         using var tx = connection.BeginTransaction();
         foreach (var (version, ddl, backfill) in WorkspaceSchema.Migrations.Where(m => m.Version > from).OrderBy(m => m.Version))
         {
             Execute(connection, ddl, tx);
-            legacyNotebooks += backfill(connection, tx);
+            var written = backfill(connection, tx);
+            legacyNotebooks += written.LegacyNotebooks;
+            standingJourneys += written.StandingJourneys;
             Execute(connection, "INSERT INTO schema_version (version, applied_at) VALUES ($v, $t);", tx,
                 ("$v", version), ("$t", Iso(DateTimeOffset.UtcNow)));
         }
 
         tx.Commit();
-        return legacyNotebooks;
+        return new WorkspaceSchema.MigrationCounts(legacyNotebooks, standingJourneys);
     }
 
     /// <summary>The fast checks that decide whether a migrated file may be kept.</summary>

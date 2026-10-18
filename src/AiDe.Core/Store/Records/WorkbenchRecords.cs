@@ -23,12 +23,14 @@ public static class WorkbenchVocabulary
         ["change-packet", "test-worthiness", "drift", "rigor"];
 
     /// <summary>
-    /// Keys an assessment payload may never carry, at any depth, in any letter case: each names a state
-    /// ADR-0039 section 3 derives (satisfaction, acceptance, currentness, closure, readiness). A payload holds
-    /// the producer's findings as asserted at the baseline. The per-kind payload schema lands with WL-5.
+    /// Keys an assessment payload may never carry, at any depth: exactly the fold-derived names of ADR-0039
+    /// section 3 (Ruling 150). The store trigger matches them ignoring letter case and the separators
+    /// <c>_</c>, <c>-</c> and space, so <c>hasEvidence</c> and <c>HAS-EVIDENCE</c> are <c>has_evidence</c>.
+    /// A payload holds the producer's findings as asserted at the baseline; a resource <c>state</c> is a finding.
+    /// WL-5's per-kind payload schema may tighten this list, never loosen it.
     /// </summary>
     public static readonly IReadOnlyList<string> ForbiddenPayloadKeys =
-        ["satisfied", "accepted", "stale", "current", "closed", "ready", "state", "status", "has_evidence", "eligible"];
+        ["satisfied", "satisfied_by", "accepted", "eligible", "closed", "current", "stale", "ready", "has_evidence", "proposed"];
 
     public static readonly IReadOnlyList<string> DispositionSubjectKinds =
         ["obligation", "assessment", "work", "investigation", "intent"];

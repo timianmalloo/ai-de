@@ -13,6 +13,7 @@ public sealed partial class StoreWriter
 
     public void AppendJourney(JourneyRow row)
     {
+        RequireNotReserved(row.JourneyId, "a journey cannot take the reserved id");
         var previous = ScalarRow($"SELECT version_no, purpose, origin_scope, origin_journey_id, origin_kind, origin_object_ids "
             + "FROM journey_dim WHERE journey_id = $id ORDER BY version_no DESC LIMIT 1;", ("$id", row.JourneyId));
         if (previous is not null)
@@ -23,7 +24,22 @@ public sealed partial class StoreWriter
                  ("origin_object_ids", previous[5], row.OriginObjectIds)]);
         }
 
-        var version = previous is null ? 1 : Convert.ToInt32(previous[0]) + 1;
+        InsertJourney(row, previous is null ? 1 : Convert.ToInt32(previous[0]) + 1);
+    }
+
+    /// <summary>Ruling 150: the standing terminal-drafts journey is written only by the PTY path and the migration.</summary>
+    private static void RequireNotReserved(string? journeyId, string what)
+    {
+        if (journeyId == WorkspaceSchema.TerminalJourneyId)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.ReservedJourney,
+                $"{what}: '{WorkspaceSchema.TerminalJourneyId}' is the standing owner of terminal drafts; "
+                + "a typed writer names a real journey");
+        }
+    }
+
+    private void InsertJourney(JourneyRow row, int version)
+    {
         Exec("""
             INSERT INTO journey_dim (journey_id, version_no, purpose, origin_scope, origin_journey_id,
                                      origin_kind, origin_object_ids, title, recorded_at, ingress_seq)
@@ -35,23 +51,30 @@ public sealed partial class StoreWriter
     }
 
     /// <remarks>
-    /// The owner is Type-0 except for the one legal transition: a legacy notebook (no owner) adopted
-    /// by an explicit user action, which is a new version row with <c>Legacy = false</c> and an owner.
+    /// The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
+    /// explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
+    /// a new version row with <c>Legacy = false</c> and an owner.
     /// </remarks>
     public void AppendNotebook(NotebookRow row)
     {
+        RequireNotReserved(row.OwnerJourneyId, "a notebook cannot default to the reserved owner");
         var previous = ScalarRow("SELECT version_no, owner_journey_id, legacy FROM notebook_dim "
             + "WHERE notebook_id = $id ORDER BY version_no DESC LIMIT 1;", ("$id", row.NotebookId));
         if (previous is not null)
         {
             var wasLegacy = Convert.ToInt64(previous[2]) == 1;
-            if (!(wasLegacy && previous[1] is null))
+            var adoptable = wasLegacy && previous[1] is null || previous[1] as string == WorkspaceSchema.TerminalJourneyId;
+            if (!adoptable)
             {
                 RequireSame("notebook_dim", row.NotebookId, [("owner_journey_id", previous[1], row.OwnerJourneyId)]);
             }
         }
 
-        var version = previous is null ? 1 : Convert.ToInt32(previous[0]) + 1;
+        InsertNotebook(row, previous is null ? 1 : Convert.ToInt32(previous[0]) + 1);
+    }
+
+    private void InsertNotebook(NotebookRow row, int version)
+    {
         Exec("""
             INSERT INTO notebook_dim (notebook_id, version_no, owner_journey_id, legacy, recorded_at, ingress_seq)
             VALUES ($id, $ver, $owner, $legacy, $at, $seq);

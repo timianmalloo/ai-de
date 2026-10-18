@@ -407,7 +407,7 @@ internal static class WorkspaceSchema
             BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-BODY-HASH-REQUIRED'); END;
         CREATE TRIGGER trg_assessment_payload_no_derived_state BEFORE INSERT ON assessment_fact
             WHEN CASE WHEN json_valid(NEW.payload)
-                      THEN EXISTS (SELECT 1 FROM json_tree(NEW.payload) WHERE lower(key) IN ('satisfied', 'accepted', 'stale', 'current', 'closed', 'ready', 'state', 'status', 'has_evidence', 'eligible'))
+                      THEN EXISTS (SELECT 1 FROM json_tree(NEW.payload) WHERE lower(replace(replace(replace(key, '_', ''), '-', ''), ' ', '')) IN ('satisfied', 'satisfiedby', 'accepted', 'eligible', 'closed', 'current', 'stale', 'ready', 'hasevidence', 'proposed'))
                       ELSE 1 END
             BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-DERIVED-STATE-IN-PAYLOAD'); END;
         CREATE TRIGGER trg_notebook_legacy_flag BEFORE INSERT ON notebook_dim
@@ -455,10 +455,47 @@ internal static class WorkspaceSchema
     /// The ordered migration chain over a v1 file: each entry's DDL (with the immutability triggers
     /// for its new tables) and a backfill that returns how many legacy notebooks it wrote.
     /// </summary>
-    internal static readonly (int Version, string Ddl, Func<SqliteConnection, SqliteTransaction, int> Backfill)[] Migrations =
+    internal static readonly (int Version, string Ddl, Func<SqliteConnection, SqliteTransaction, MigrationCounts> Backfill)[] Migrations =
     [
-        (2, V2Sql + TriggerSql(V2FactTables), BackfillLegacyNotebooks),
+        (2, V2Sql + TriggerSql(V2FactTables), BackfillV2),
     ];
+
+    /// <summary>The standing journey that owns notebooks created by the terminal (PTY) save path (Ruling 150).</summary>
+    internal const string TerminalJourneyId = "journey-terminal-drafts";
+
+    /// <summary>
+    /// The origin marker that tells the standing journey from a user-created one. It rides the existing
+    /// <c>origin_scope</c> JSON column, so the frozen v2 vocabulary (<c>origin_kind</c>) is unchanged.
+    /// </summary>
+    internal const string TerminalJourneyOriginScope = "{\"standing\":\"terminal-drafts\"}";
+
+    internal const string TerminalJourneyTitle = "Terminal drafts";
+
+    /// <summary>What a migration step wrote, for <see cref="StoreOpenReport"/>.</summary>
+    internal readonly record struct MigrationCounts(int LegacyNotebooks, int StandingJourneys);
+
+    private static MigrationCounts BackfillV2(SqliteConnection connection, SqliteTransaction tx) =>
+        new(BackfillLegacyNotebooks(connection, tx), CreateTerminalJourney(connection, tx));
+
+    /// <summary>Creates the standing terminal-drafts journey, once; a second run finds it and writes nothing.</summary>
+    private static int CreateTerminalJourney(SqliteConnection connection, SqliteTransaction tx)
+    {
+        if (WorkspaceStore.ExecuteScalar(connection, "SELECT 1 FROM journey_dim WHERE journey_id = $id LIMIT 1;", tx,
+                ("$id", TerminalJourneyId)) is not null)
+        {
+            return 0;
+        }
+
+        WorkspaceStore.Execute(connection, "UPDATE core_state SET ingress_seq = ingress_seq + 1 WHERE id = 1;", tx);
+        var seq = Convert.ToInt64(WorkspaceStore.ExecuteScalar(connection, "SELECT ingress_seq FROM core_state WHERE id = 1;", tx));
+        WorkspaceStore.Execute(connection, """
+            INSERT INTO journey_dim (journey_id, version_no, purpose, origin_scope, title, recorded_at, ingress_seq)
+            VALUES ($id, 1, 'work', $scope, $title, $at, $seq);
+            """, tx,
+            ("$id", TerminalJourneyId), ("$scope", TerminalJourneyOriginScope), ("$title", TerminalJourneyTitle),
+            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+        return 1;
+    }
 
     /// <summary>
     /// One notebook per pre-workbench draft, <c>legacy = 1</c>, no owner. The backfill writes nothing

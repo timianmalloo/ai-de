@@ -46,3 +46,22 @@ Decisions to read back. (1) The PTY `SavePromptRevision` now creates a non-legac
 hash; SQLite has no sha256 function, so the trigger cannot test equality itself, and the tests assert it for both writer paths.
 (3) The forbidden-key list includes `state` and `status`; WL-5's per-kind schema may refine it. (4) `StoreCompactor` is the
 (a) purge path; `TerminalStates` in `WorkspaceSchema` was removed as dead once the DDL became a literal.
+
+## Ruling 150 (the three landing choices)
+
+Red `801c47d3` · green: the commit that follows it. Tests are in `tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs`.
+`AiDe.Core.Tests`: 2909 passed, 1 skipped, 0 failed (`suite-green.txt`). `AiDe.App.Tests`: 1061 passed, 1 failed
+(`suite-app-green.txt`): `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held; SendInput would
+prove another window" - a desktop-focus limit of the probe, not a census read, and it does not touch the store.
+
+| Ruling 150 item | Test class (tests) | Red | Green |
+|---|---|---|---|
+| 1a. The migration creates `journey-terminal-drafts` exactly once (`purpose = work`, origin marker); `StoreOpenReport.StandingJourneysCreated` counts it; a reopen adds nothing; a fresh store marks the lazily created journey the same way | `Ruling150MigrationTests` (2) | `r150-1-red.txt` | `r150-1-green.txt` |
+| 1b. No non-PTY writer may use it: a typed notebook owned by it, and a typed journey claiming its id, are refused with `AIDE-STORE-RESERVED-JOURNEY` | `Ruling150StandingJourneyUseTests` (2 of 3) | `r150-1-red.txt` | `r150-1-green.txt` |
+| 1c. A later adoption re-owns a draft out of it (new notebook version, revisions stay) | `Ruling150StandingJourneyUseTests` (1 of 3) | `r150-1-red.txt` | `r150-1-green.txt` |
+| 3. Forbidden keys = ADR-0039 section 3 names, case- and separator-insensitive (`hasEvidence`, `HAS-EVIDENCE`, `has evidence`); `state`/`status` accepted; one test pins the list | `Ruling150PayloadGuardTests` (13) | `r150-3-red.txt` | `r150-3-green.txt` |
+
+Decisions to read back. (1) The origin marker is `origin_scope = {"standing":"terminal-drafts"}` on the existing JSON column, so
+the closed `origin_kind` vocabulary is unchanged. (2) The v2 DDL text did change (the payload trigger), so the frozen-DDL hash pin
+moved to `2a88fdad...`; v2 is not yet deployed. (3) The Type-0 owner guard now also lets a notebook owned by the standing journey
+change owner. (4) Item 2 (`body_sha`) is accepted with no change.

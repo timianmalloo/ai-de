@@ -383,7 +383,7 @@ public sealed class Ruling148FrozenDdlTests
         // New vocabulary or constraints belong in a v3 migration; this pin makes the edit loud.
         var ddl = WorkspaceSchema.Migrations.Single(m => m.Version == 2).Ddl.ReplaceLineEndings(((char)10).ToString());
 
-        Assert.Equal("a75cc353890a9d683dc33977bcdf4013b1e6e636c0163bd37538072797f55df2", Ruling148.Sha(ddl));
+        Assert.Equal("2a88fdad447c2eeb3fa656d35931f5316714585f65209eeb740723618d82d108", Ruling148.Sha(ddl));
     }
 
     [Fact]
@@ -394,7 +394,8 @@ public sealed class Ruling148FrozenDdlTests
             .Concat(WorkbenchVocabulary.JourneyOriginKinds).Concat(WorkbenchVocabulary.DeliveryUnknownCauses)
             .Concat(WorkbenchVocabulary.AssessmentKinds).Concat(WorkbenchVocabulary.DispositionSubjectKinds)
             .Concat(WorkbenchVocabulary.DispositionKindsBySubject.Values.SelectMany(v => v))
-            .Concat(WorkbenchVocabulary.ProfileObservationKinds).Concat(WorkbenchVocabulary.ForbiddenPayloadKeys)
+            .Concat(WorkbenchVocabulary.ProfileObservationKinds)
+            .Concat(WorkbenchVocabulary.ForbiddenPayloadKeys.Select(k => k.Replace("_", "")))
             .Concat(Enum.GetNames<DispatchState>());
 
         foreach (var value in live.Distinct())

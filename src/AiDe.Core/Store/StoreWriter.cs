@@ -142,12 +142,9 @@ public sealed partial class StoreWriter : IDisposable
     public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode) =>
         AppendOutcome(new OutcomeRow(dispatchKey, state, errorCode));
 
-    /// <summary>The standing journey that owns notebooks created by the terminal (PTY) save path.</summary>
-    internal const string TerminalJourneyId = "journey-terminal-drafts";
-
     /// <summary>
     /// The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it
-    /// under <see cref="TerminalJourneyId"/>: a non-legacy notebook with an owner, because a legacy row comes only
+    /// under <see cref="WorkspaceSchema.TerminalJourneyId"/>: a non-legacy notebook with an owner, because a legacy row comes only
     /// from the migration backfill (Ruling 148 c, d). The body hash is set here as on the typed path.
     /// </summary>
     public void SavePromptRevision(string draftId, int revisionNo, string body)
@@ -171,12 +168,13 @@ public sealed partial class StoreWriter : IDisposable
         }
 
         if (WorkspaceStore.ExecuteScalar(_connection, "SELECT 1 FROM journey_dim WHERE journey_id = $id LIMIT 1;",
-                _transaction, ("$id", TerminalJourneyId)) is null)
+                _transaction, ("$id", WorkspaceSchema.TerminalJourneyId)) is null)
         {
-            AppendJourney(new JourneyRow(TerminalJourneyId, "work", "Terminal drafts"));
+            InsertJourney(new JourneyRow(WorkspaceSchema.TerminalJourneyId, "work", WorkspaceSchema.TerminalJourneyTitle,
+                OriginScope: WorkspaceSchema.TerminalJourneyOriginScope), version: 1);
         }
 
-        AppendNotebook(new NotebookRow(draftId, TerminalJourneyId, Legacy: false));
+        InsertNotebook(new NotebookRow(draftId, WorkspaceSchema.TerminalJourneyId, Legacy: false), version: 1);
     }
 
     public void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)

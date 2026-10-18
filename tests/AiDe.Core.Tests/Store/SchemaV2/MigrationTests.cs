@@ -65,7 +65,9 @@ public sealed class MigrationGoldenTests : IDisposable
         Assert.Equal(2, SchemaV2Support.Count(after,
             "SELECT count(*) FROM notebook_dim WHERE legacy = 1 AND owner_journey_id IS NULL AND version_no = 1"));
         Assert.Equal(2, SchemaV2Support.Count(after, "SELECT count(DISTINCT notebook_id) FROM notebook_dim"));
-        Assert.Equal(0, SchemaV2Support.Count(after, "SELECT count(*) FROM journey_dim"));
+        // The only journey is the standing terminal-drafts owner (Ruling 150); the migration invents no other.
+        Assert.Equal(1, SchemaV2Support.Count(after, "SELECT count(*) FROM journey_dim WHERE journey_id = 'journey-terminal-drafts'"));
+        Assert.Equal(1, SchemaV2Support.Count(after, "SELECT count(*) FROM journey_dim"));
 
         // body_sha / parent_revision_no stay NULL = Not recorded; no new attempt/outcome column is guessed.
         Assert.Equal(0, SchemaV2Support.Count(after,
