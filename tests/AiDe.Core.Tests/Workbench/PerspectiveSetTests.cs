@@ -48,7 +48,7 @@ public sealed class PerspectiveSetTests
     [Fact]
     public void EachRowHasItsOwnLandingZone_FactoryLeftUntilTheNotebook_ReviewAndUnderstandCenter()
     {
-        Assert.Equal<ZoneId?>([ZoneId.Left, ZoneId.Center, ZoneId.Center], PerspectiveSet.All.Select(p => p.Landing));
+        Assert.Equal([ZoneId.Left, ZoneId.Center, ZoneId.Center], PerspectiveSet.All.Select(p => p.Landing));
     }
 
     // ADR-0045 §1(b): no row keeps a full-window body, and none can. The WL-S design's D5 deletes the

@@ -10,7 +10,7 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Tests.Shell;
 
 /// <summary>
-/// The Coding host as the product composes it (DC-135) — a real <see cref="WorkbenchShell"/> over
+/// The Factory host (Coding's, re-rowed by ADR-0045) as the product composes it (DC-135) — a real <see cref="WorkbenchShell"/> over
 /// no queries, its host A's root inside a frame cut like <c>MainWindow.xaml</c> (menu · title strip
 /// · a 56 px rail beside the body · status strip), shown off-screen at an outer size. The frame is a
 /// replica of the window's rows, not the window: <c>MainWindow</c> starts the shell and reaches a
@@ -50,7 +50,7 @@ internal static class ComposedCoding
         /// <summary>The live session document a surface renders, through the island the factory wraps it in.</summary>
         public SessionDocumentSurface Document(string surfaceId)
         {
-            var content = Shell.Coding.Adapter.ContentFor(surfaceId);
+            var content = Shell.Factory.Adapter.ContentFor(surfaceId);
             Assert.NotNull(content);
             var document = Visuals<SessionDocumentSurface>(content!).FirstOrDefault() ?? content as SessionDocumentSurface;
             Assert.True(document is not null, $"'{surfaceId}' renders no SessionDocumentSurface");
@@ -58,7 +58,7 @@ internal static class ComposedCoding
         }
 
         /// <summary>The Center's empty copy — the content behind the projection's placeholder — or null while the Center holds documents.</summary>
-        public FrameworkElement? CenterEmpty() => Shell.Coding.Adapter.ContentFor(ZonesToTree.WelcomePlaceholder.SurfaceId);
+        public FrameworkElement? CenterEmpty() => Shell.Factory.Adapter.ContentFor(ZonesToTree.WelcomePlaceholder.SurfaceId);
 
         public void Settle()
         {
@@ -90,13 +90,13 @@ internal static class ComposedCoding
         var bodyRow = new Grid();
         bodyRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(56) });
         bodyRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        var body = new ContentControl { Content = shell.Coding.Root };
+        var body = new ContentControl { Content = shell.Factory.Root };
         Grid.SetColumn(body, 1);
         bodyRow.Children.Add(body);
         Grid.SetRow(bodyRow, 2);
         frame.Children.Add(bodyRow);
 
-        var status = new TextBlock { Text = "Coding perspective", Margin = new Thickness(12, 6, 12, 6) };
+        var status = new TextBlock { Text = "Factory perspective", Margin = new Thickness(12, 6, 12, 6) };
         Grid.SetRow(status, 3);
         frame.Children.Add(status);
 
@@ -114,7 +114,7 @@ internal static class ComposedCoding
         window.Resources.MergedDictionaries.Add(ThemeProbe.AppTheme());
         window.Show();
         window.UpdateLayout();
-        shell.Coding.Adapter.Render();
+        shell.Factory.Adapter.Render();
         window.UpdateLayout();
 
         return new Frame(window, shell, body);

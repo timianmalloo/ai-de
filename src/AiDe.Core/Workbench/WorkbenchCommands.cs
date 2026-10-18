@@ -85,7 +85,7 @@ public static class WorkbenchCommandCatalog
     /// from the App's kind rows and their allow-lists (ADR-0030 rule 3) — a row per kind carrying
     /// both a Core command and an App kind would be two rows that must agree, which is the defect
     /// Ruling 22 removed for kinds. <c>terminal.new</c> and <c>session.new</c> stay: they are entry
-    /// verbs (US-C11), offered in File in every perspective and routed to Coding.
+    /// verbs (US-C11), offered in File in every perspective and routed to Factory.
     /// </remarks>
     public static IReadOnlyList<WorkbenchCommand> All { get; } =
     [
@@ -215,8 +215,7 @@ public static class WorkbenchCommandCatalog
         // It is here because WPF traversal cannot reach the canvas at all (spike S4), so without an
         // explicit command the graph is unreachable from the keyboard entirely. Offered where a
         // DOCKED canvas can be — the seam it focuses is bound to the workbench's canvas surface, so
-        // in Explore (whose graph has its own Tab cycle with the reader, DC-039) the row would
-        // answer "not ready" and is absent (PS-M3).
+        // it is offered only where the `canvas` kind is admitted (PS-M3).
         //
         // Ctrl+K, Shift+G: the unshifted G was announced for this AND for "New GitHub Copilot
         // session" (US-C10 b2's fourth collision); the harness row keeps its letter.

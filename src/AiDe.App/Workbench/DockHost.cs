@@ -9,8 +9,8 @@ namespace AiDe.App.Workbench;
 /// One docking host, composed as a unit (ADR-0031 rule 1): the manager, the adapter that projects
 /// the model into it, the zone service that IS the model, the controller that dispatches layout
 /// commands over that service, the collapse-to-rail strips, and — once a workspace attaches — the
-/// persistence of its own slot. <see cref="WorkbenchShell"/> composes it twice: host A (Coding,
-/// today's instances) and host B (Architecture).
+/// persistence of its own slot. <see cref="WorkbenchShell"/> composes it once per row of the
+/// closed Perspective set — Factory, Review and Understand (ADR-0045 §3).
 /// </summary>
 /// <remarks>
 /// <para><b>A positional record plus <see cref="Create"/> and <see cref="Dispose"/>, no behaviour</b>
@@ -61,11 +61,6 @@ public sealed record DockHost(
         ArgumentNullException.ThrowIfNull(content);
         ArgumentNullException.ThrowIfNull(announcer);
         ArgumentNullException.ThrowIfNull(expandZone);
-
-        if (row.Body != PerspectiveBody.DockHost)
-        {
-            throw new ArgumentException($"'{row.Id}' is a full-window perspective; it has no docking host", nameof(row));
-        }
 
         // ADR-0021: the layout is zone-based; the Strangler service projects zones to the tree the
         // adapter renders. ADR-0031 rule 3: its admission is the row's allow-list.

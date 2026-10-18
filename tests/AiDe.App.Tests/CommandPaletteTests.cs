@@ -48,9 +48,9 @@ public sealed class CommandPaletteTests
 
         Assert.Equal(PerspectiveMenu.For(PerspectiveSet.Initial).Commands.Select(c => c.Id), listed);
         Assert.Contains("session.new", listed);
-        Assert.Contains("surface.show.diagnostics", listed);      // reachable by construction (a Coding Show entry)
-        Assert.DoesNotContain("surface.show.daydreams", listed);   // Coordination's, not Coding's (Ruling 84)
-        Assert.DoesNotContain("surface.new.classdiagram", listed); // Architecture's, not Coding's
+        Assert.Contains("surface.show.diagnostics", listed);      // reachable by construction (a Factory Show entry)
+        Assert.Contains("surface.show.daydreams", listed);        // Factory → Coordination (ADR-0045 §1(b))
+        Assert.DoesNotContain("surface.new.classdiagram", listed); // Understand's, not Factory's
     }
 
     [Fact]

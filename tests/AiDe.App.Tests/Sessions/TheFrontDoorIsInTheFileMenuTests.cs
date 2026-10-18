@@ -42,7 +42,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         Assert.Single(WorkbenchCommandCatalog.All, c => c.Gesture == "Ctrl+N");
 
         var menu = new Menu();
-        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Coding));
+        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Factory));
 
         Assert.Contains(Items(menu), i => Equals(i.Header, command.Title));
     });
@@ -112,7 +112,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         Assert.Equal("Ctrl+K, T", terminal.Gesture);
 
         var menu = new Menu();
-        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Coding));
+        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Factory));
         Assert.Contains(Items(menu), i => Equals(i.Header, terminal.Title));
 
         // Every launchable harness still has its own command, derived from the profiles.
@@ -215,7 +215,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         MainMenuBuilder.Build(
             menu,
             new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()),
-            PerspectiveMenu.For(PerspectiveSet.Coding),
+            PerspectiveMenu.For(PerspectiveSet.Factory),
             recentSessions: [new RecentSessionEntry("s1", "payments extraction", @"C:\repo")],
             onOpenRecentSession: opened.Add);
 

@@ -61,21 +61,21 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
                      ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
                      ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
                      ("the thread's empty state", s => s.Text.StartsWith("Nothing has run yet.", StringComparison.Ordinal)),
-                     // Host C's surfaces (Ruling 84; DC-135 recurrence 3's control): the Loomkeeper
-                     // kinds are composed in Coordination now, so the census switches the presenter
-                     // there and walks its body — a walk that stays on host A measures none of them
-                     // and reads 0 failing over a smaller population.
-                     ("the Ledger tab in Coordination's Center", s => s.Surface == "tab: Ledger"),
-                     ("the Ledger pane's status text", s => s.Surface == "Ledger"),
-                     ("the Message board pane's status text", s => s.Surface == "Message board"),
-                     ("the Terminal sessions pane's status text", s => s.Surface == "Terminal sessions"),
-                     ("the status strip while Coordination is the body", s => s.Text == "Coordination perspective"),
-                     // Host B's, for the same reason (the seam request X-1 never took). Ruling 140
-                     // moved the Graph and the Tree into Architecture's default Center and moved
-                     // Contexts and Domain out of it, so these four are the DEFAULT half and the
-                     // ADMITTED half of the same perspective, anchored together on purpose.
-                     ("the Graph tab in Architecture's Center (Ruling 140's default, active)", s => s.Surface == "tab: Graph"),
-                     ("the Tree tab in Architecture's Center (Ruling 140's default)", s => s.Surface == "tab: Tree"),
+                     // The Loomkeeper kinds (ADR-0045 §1(b); DC-135 recurrence 3's control): admitted
+                     // under Factory → Coordination and in no default, so the census composes them in
+                     // Factory's Center (step 2, captioned "Census <kind>") and walks them there — a
+                     // walk that skipped them would read 0 failing over a smaller population.
+                     ("the Ledger tab in Factory's Center", s => s.Surface == "tab: Census ledger"),
+                     ("the Ledger pane's status text", s => s.Surface == "Census ledger"),
+                     ("the Message board pane's status text", s => s.Surface == "Census board"),
+                     ("the Terminal sessions pane's status text", s => s.Surface == "Census sessions"),
+                     ("the status strip while Understand is the body", s => s.Text == "Understand perspective"),
+                     // Understand's, for the same reason (the seam request X-1 never took). Ruling 140
+                     // moved the Graph and the Tree into its default Center and moved Contexts and
+                     // Domain out of it, so these four are the DEFAULT half and the ADMITTED half of
+                     // the same perspective, anchored together on purpose.
+                     ("the Graph tab in Understand's Center (Ruling 140's default, active)", s => s.Surface == "tab: Graph"),
+                     ("the Tree tab in Understand's Center (Ruling 140's default)", s => s.Surface == "tab: Tree"),
                      ("the Domain kind, admitted but no longer defaulted (Ruling 140)", s => s.Surface == "tab: Census classdiagram"),
                      ("the Contexts kind, admitted but no longer defaulted (Ruling 140)", s => s.Surface == "tab: Census contexts"),
                  })
@@ -94,7 +94,7 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         // set the probe reads — so a kind that stops being activated goes red instead of silently
         // leaving the census with the default that used to carry it.
         var unwalked = (
-            from row in PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost)
+            from row in PerspectiveSet.All
             from kind in SurfaceContentFactory.Kinds.Where(k => k.Perspectives.Contains(row))
             where !census.Log.Any(line => line.Contains("activate ", StringComparison.Ordinal)
                                           && line.Contains($"({kind.Kind}):", StringComparison.Ordinal))
@@ -108,13 +108,12 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));
 
-        // The landing, in the shown window (Ruling 84; spec §C5; the row's Landing zone): after the
-        // switch has settled, Coordination's body reports its Left zone's tab active and
-        // Architecture's its Center's — measured before the deferred entry focus as Provenance
-        // (the Right) and the Center's last-added tab (the last pane control to realize).
-        Assert.Contains(census.Log, l => l.StartsWith("coordination: ", StringComparison.Ordinal) && l.Contains("active after switch = sessions; zone = Left;", StringComparison.Ordinal));
-        Assert.Contains(census.Log, l => l.StartsWith("architecture: ", StringComparison.Ordinal) && l.Contains("; zone = Center;", StringComparison.Ordinal));
-        Assert.Contains(census.Log, l => l.StartsWith("coordination: announced 'Coordination perspective — ", StringComparison.Ordinal));
+        // The landing, in the shown window (spec §C5; the row's Landing zone): after the switch has
+        // settled, Understand's body reports its Center's tab active — measured before the deferred
+        // entry focus as the Center's last-added tab (the last pane control to realize) — and the
+        // switch to Review (no kind admitted until WL-5) announces its empty host.
+        Assert.Contains(census.Log, l => l.StartsWith("understand: ", StringComparison.Ordinal) && l.Contains("; zone = Center;", StringComparison.Ordinal));
+        Assert.Contains(census.Log, l => l.StartsWith("review: announced 'Review perspective — 0 panes.'", StringComparison.Ordinal));
 
         var failing = wpf.Where(s => !s.Clears).OrderBy(s => s.Ratio).ToList();
 

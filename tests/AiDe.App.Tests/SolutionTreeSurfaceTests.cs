@@ -554,19 +554,19 @@ public sealed class SolutionTreeSurfaceTests
     /// </remarks>
     private static SolutionTreeSurface ShowTheDefaultTree(WorkbenchShell shell)
     {
-        var tree = Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
+        var tree = Assert.Single(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
         Assert.Equal("tree", tree.SurfaceId);
 
         Assert.True(shell.Execute("surface.show.solution-tree"));
 
         var center = Assert.IsType<AiDe.Core.Workbench.ZoneStack>(
-            shell.Architecture.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
+            shell.Understand.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
         Assert.Equal(tree.SurfaceId, center.Active.SurfaceId);
-        Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
+        Assert.Single(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
 
         shell.BindSolutionTrees();
 
-        var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(tree.SurfaceId);
+        var surface = shell.Understand.Adapter.SurfaceContent<SolutionTreeSurface>(tree.SurfaceId);
         Assert.NotNull(surface);
         return surface!;
     }
@@ -591,14 +591,14 @@ public sealed class SolutionTreeSurfaceTests
                 ShowActivated = false,
             };
             var host = (ContentControl)window.Content;
-            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.DocumentOpening += h => mode.OnDocumentOpening(h);
             window.Show();
 
             try
             {
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Understand, "test");
                 var surface = ShowTheDefaultTree(shell);
                 Assert.Equal(1, queries.TreeCalls);
                 Assert.NotNull(queries.LastQuery);
@@ -635,14 +635,14 @@ public sealed class SolutionTreeSurfaceTests
                 ShowActivated = false,
             };
             var host = (ContentControl)window.Content;
-            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.DocumentOpening += h => mode.OnDocumentOpening(h);
             window.Show();
 
             try
             {
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Understand, "test");
                 var surface = ShowTheDefaultTree(shell);
                 ClickNamed(surface, "Show Graph");
 
@@ -650,10 +650,10 @@ public sealed class SolutionTreeSurfaceTests
                 // the one canvas rather than opening a second (Instances.One) — which is what the
                 // 'existing' in this test's name now means. The Tree was the active tab a line ago,
                 // so the Center's active tab is what tells a real show from a no-op.
-                var canvas = Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "canvas");
+                var canvas = Assert.Single(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "canvas");
                 Assert.Equal("graph", canvas.SurfaceId);
                 var center = Assert.IsType<AiDe.Core.Workbench.ZoneStack>(
-                    shell.Architecture.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
+                    shell.Understand.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
                 Assert.Equal("graph", center.Active.SurfaceId);
             }
             finally
@@ -663,8 +663,10 @@ public sealed class SolutionTreeSurfaceTests
         });
     }
 
+    // The tree is Understand's alone (ADR-0045 §2): switching to another perspective retains it in
+    // Understand's host and shows none in the other body.
     [Fact]
-    public void SwitchingToExplore_LeavesExplorerAsGraphAndReader()
+    public void SwitchingToReview_LeavesTheTreeInUnderstandsHost_AndShowsNoneInReview()
     {
         var queries = new RecordingTreeQueries { Result = StarDto() };
 
@@ -683,21 +685,21 @@ public sealed class SolutionTreeSurfaceTests
                 ShowActivated = false,
             };
             var host = (ContentControl)window.Content;
-            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid { Name = "ExploreBody" }, shell.Announcer);
+            var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.DocumentOpening += h => mode.OnDocumentOpening(h);
             window.Show();
 
             try
             {
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Understand, "test");
                 Assert.True(shell.Execute("surface.show.solution-tree"));
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Explore, "test");
-                Assert.IsType<Grid>(mode.ExplorerSurface);
-                Assert.Equal("ExploreBody", ((Grid)mode.ExplorerSurface!).Name);
-                Assert.IsNotType<SolutionTreeSurface>(mode.ExplorerSurface);
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Review, "test");
+                Assert.Same(shell.Review.Root, host.Content);
+                Assert.DoesNotContain(shell.Review.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
+                Assert.Contains(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
                 Assert.Same(
-                    AiDe.Core.Workbench.PerspectiveSet.Architecture,
+                    AiDe.Core.Workbench.PerspectiveSet.Understand,
                     Assert.Single(SurfaceContentFactory.Kinds.Single(k => k.Kind == "solution-tree").Perspectives));
             }
             finally
@@ -731,14 +733,14 @@ public sealed class SolutionTreeSurfaceTests
                 ShowActivated = false,
             };
             var host = (ContentControl)window.Content;
-            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.DocumentOpening += h => mode.OnDocumentOpening(h);
             window.Show();
 
             try
             {
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Understand, "test");
                 var surface = ShowTheDefaultTree(shell);
                 surface.Measure(new Size(480, 360));
                 surface.Arrange(new Rect(0, 0, 480, 360));
@@ -793,14 +795,14 @@ public sealed class SolutionTreeSurfaceTests
                 ShowActivated = false,
             };
             var host = (ContentControl)window.Content;
-            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.DocumentOpening += h => mode.OnDocumentOpening(h);
             window.Show();
 
             try
             {
-                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Understand, "test");
                 var surface = ShowTheDefaultTree(shell);
                 PumpUntil(() => queries.TreeCalls >= 1, timeoutMs: 2000);
 
@@ -839,7 +841,7 @@ public sealed class SolutionTreeSurfaceTests
     {
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == "solution-tree");
         Assert.Equal("Solution tree", row.Title);
-        Assert.Same(AiDe.Core.Workbench.PerspectiveSet.Architecture, Assert.Single(row.Perspectives));
+        Assert.Same(AiDe.Core.Workbench.PerspectiveSet.Understand, Assert.Single(row.Perspectives));
         Assert.Equal(SurfaceContentFactory.Instances.One, row.Instances);
         var entry = Assert.IsType<SurfaceContentFactory.SurfaceEntry.Derived>(row.Entry);
         Assert.Equal("_View", entry.Menu);

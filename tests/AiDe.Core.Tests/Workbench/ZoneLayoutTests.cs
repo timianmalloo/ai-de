@@ -18,7 +18,7 @@ public sealed class ZoneLayoutTests
     [Fact]
     public void CodingDefault_IsLeftEmpty_CenterEmpty_BottomOneTerminalCollapsed()
     {
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Coding);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Factory);
 
         var left = layout.Zone(ZoneId.Left);
         Assert.Null(left.Content);
@@ -52,7 +52,7 @@ public sealed class ZoneLayoutTests
     [Fact]
     public void ASessionOpeningIntoTheEmptyLeft_KeepsThe1Point3Cut_InTheProjectedColumns()
     {
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Coding);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Factory);
         var opened = ZoneLayoutService.OpenPane(layout, new Surface("session:s1", "session-document", "S1"), ZoneId.Left);
         Assert.True(opened.Applied);
 

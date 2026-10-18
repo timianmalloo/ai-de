@@ -34,7 +34,7 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         public DockHost? HostOverride { get; init; }
 
-        public DockHost Host => HostOverride ?? Shell.Architecture;
+        public DockHost Host => HostOverride ?? Shell.Understand;
 
         public WorkbenchAdapter Adapter => Host.Adapter;
 
@@ -81,16 +81,15 @@ public sealed class WorkbenchDragCompletedHookTests
     /// its old zone minutes after the drag, because nothing told it.
     /// </summary>
     [Theory]
-    [InlineData("architecture", "evidence", "graph", ZoneId.Right, ZoneId.Center, true)]
-    [InlineData("coordination", "sessions", "ledger", ZoneId.Left, ZoneId.Center, false)]
+    [InlineData("understand", "evidence", "graph", ZoneId.Right, ZoneId.Center, true)]
     public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(
         string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter,
         bool openEvidenceInTheRight)
     {
-        // Two of the three hosts here: the hook is wired per host (ADR-0031), so INV-0006 F1 is
-        // proven for host B and host C alike, each with a pair its own allow-list admits. Host A's
-        // default holds no pair (its Left is empty until a session opens, Ruling 83); its row is
-        // InCoding_TheSessionDraggedIntoTheCenterAndBack_… below, over a session it opens first.
+        // The hook is wired per host (ADR-0031), so INV-0006 F1 is proven here for Understand with a
+        // pair its own allow-list admits. Factory's default holds no pair (its Left is empty until a
+        // session opens, Ruling 83); its row is InCoding_TheSessionDraggedIntoTheCenterAndBack_…
+        // below, over a session it opens first. Review admits no kind until WL-5, so it holds no pair.
         //
         // Ruling 140 put host B in the same position as host A: its default populates the Center
         // alone, so this row opens Evidence in the Right and drags THAT into the Center. Still a
@@ -322,7 +321,7 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var (afterFirst, afterSecond, refusals, bottom) = WithRealizedWorkbench(h =>
         {
-            var host = h.Shell.Coding;
+            var host = h.Shell.Factory;
             var hh = h with { HostOverride = host };
             var records = new List<string>();
             var previous = WorkbenchDiagnostics.Sink;
@@ -374,7 +373,7 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var (announcement, refusals, shape, before, returned) = WithRealizedWorkbench(h =>
         {
-            var host = h.Shell.Coding;
+            var host = h.Shell.Factory;
             var records = new List<string>();
             var previous = WorkbenchDiagnostics.Sink;
             WorkbenchDiagnostics.Sink = records.Add;
@@ -465,7 +464,7 @@ public sealed class WorkbenchDragCompletedHookTests
                     // Rearrange, flush, and open the workspace again.
                     first.Service.Apply(new LayoutOperation.MoveSurface(
                         "board", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
-                    first.Coding.Persistence!.SaveNow();
+                    first.Factory.Persistence!.SaveNow();
 
                     lines.Clear();
                     using var second = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
@@ -531,17 +530,17 @@ public sealed class WorkbenchDragCompletedHookTests
                     ShowActivated = false,
                 };
                 window.Show();
-                Settle(window, shell.Architecture.Manager);
+                Settle(window, shell.Understand.Manager);
 
                 var harness = new Harness(shell, window);
                 OpenInTheRight(harness, Evidence());
                 DragDocumentIntoPane(harness, "evidence", "graph");
-                var afterDrag = shell.Architecture.Service.Zones.Shape();
-                shell.Architecture.Persistence!.SaveNow();
+                var afterDrag = shell.Understand.Service.Zones.Shape();
+                shell.Understand.Persistence!.SaveNow();
                 window.Close();
 
                 using var next = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
-                return (afterDrag, next.Architecture.Service.Zones.Shape());
+                return (afterDrag, next.Understand.Service.Zones.Shape());
             }, 60);
 
             Assert.Contains("Center:[evidence+graph", onScreen, StringComparison.Ordinal);   // Ruling 140: the graph's home is the Center

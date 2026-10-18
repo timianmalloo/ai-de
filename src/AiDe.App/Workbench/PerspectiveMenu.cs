@@ -30,7 +30,7 @@ public sealed record PerspectiveMenuGroup(
 /// &lt;Title&gt;" for a one-instance kind — under the menu the row names.</para>
 ///
 /// <para><b>Why one function and not a table in the builder.</b> The US-C4 mutation test appends a
-/// test-time kind row admitted only by Architecture and asserts its entry appears there and nowhere
+/// test-time kind row admitted only by Understand and asserts its entry appears there and nowhere
 /// else with no edit to the builder. A table cannot pass that; a join can.</para>
 ///
 /// <para><b>Structurally inapplicable is absent; transiently unavailable is disabled.</b> A command
@@ -202,7 +202,7 @@ public sealed class PerspectiveMenu
         scope.Kind switch
         {
             CommandScopeKind.Global => true,
-            CommandScopeKind.DockHost => perspective.Body == PerspectiveBody.DockHost,
+            CommandScopeKind.DockHost => true,   // every row is a docking host (ADR-0045 §1(b))
             CommandScopeKind.Admits => Admits(perspective, scope.SurfaceKind ?? string.Empty, kinds),
             _ => false,
         };

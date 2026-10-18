@@ -51,9 +51,9 @@ internal static class Program
                 ["--measure", var w, var h, ..] => Measure(
                     int.Parse(w), int.Parse(h), args.Length > 3 ? int.Parse(args[3]) : 0, dock: false),
 
-                // `--dock` sizes the Explorer itself rather than the window, because Windows clamps
+                // `--dock` sizes the canvas pane itself rather than the window, because Windows clamps
                 // a window to the work area and this machine's display is smaller than the operator's
-                // — measured: a requested 3840x2160 window came back as a 1709x1047 DIP Explorer.
+                // — measured: a requested 3840x2160 window came back as a 1709x1047 DIP pane.
                 ["--dock", var w, var h, ..] => Measure(
                     int.Parse(w), int.Parse(h), args.Length > 3 ? int.Parse(args[3]) : 0, dock: true),
 
@@ -215,8 +215,9 @@ internal static class Program
     }
 
     /// <summary>
-    /// <b>The P1 measurement</b> (Ruling 133's SRE condition, INV-0014 §1). Hosts the canvas in the
-    /// real <see cref="ExplorerSurface"/> at a given window size and reports the stage's extent
+    /// <b>The P1 measurement</b> (Ruling 133's SRE condition, INV-0014 §1). Hosts the canvas as the
+    /// window's pane at a given window size (the full-window Explorer that once wrapped it is retired,
+    /// ADR-0045 §1(b)) and reports the stage's extent
     /// against its pane's — the numbers the investigation took off a screenshot, taken off the
     /// product instead. It prints and exits <see cref="Ok"/>: the numbers are the evidence, and a
     /// pass/fail here would be the probe deciding the budget.
@@ -226,19 +227,18 @@ internal static class Program
         var canvas = new CanvasSurface("canvas-measure", "Graph");
         canvas.GraphSource = (_, _) => Task.FromResult(Graph(Math.Max(nodes, 3)));
 
-        var explorer = new ExplorerSurface(canvas, new NodeReaderView());
-        object content = explorer;
+        object content = canvas;
 
         if (dock)
         {
-            // The Explorer is laid out at the requested size inside an unconstraining panel, so the
+            // The canvas is laid out at the requested size inside an unconstraining panel, so the
             // dock can be larger than this display. The windowed WebView2's own HWND is sized to the
             // element, so the page's viewport is the dock's — the part off-screen is clipped by the
             // window, not shrunk.
-            explorer.Width = width;
-            explorer.Height = height;
+            canvas.Width = width;
+            canvas.Height = height;
             var host = new Canvas();
-            host.Children.Add(explorer);
+            host.Children.Add(canvas);
             content = host;
         }
 
@@ -256,7 +256,7 @@ internal static class Program
         var result = Crashed;
         window.Loaded += async (_, _) =>
         {
-            result = await MeasureAsync(window, canvas, explorer, width, height, nodes);
+            result = await MeasureAsync(window, canvas, width, height, nodes);
             window.Close();
         };
 
@@ -295,7 +295,7 @@ internal static class Program
     }
 
     private static async Task<int> MeasureAsync(
-        Window window, CanvasSurface canvas, ExplorerSurface explorer, int width, int height, int nodes)
+        Window window, CanvasSurface canvas, int width, int height, int nodes)
     {
         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(90);
         while (!canvas.Ready && DateTime.UtcNow < deadline)
@@ -336,10 +336,8 @@ internal static class Program
             + "dpr: window.devicePixelRatio,"
             + "nodes: document.querySelectorAll('.node').length})");
 
-        Console.Out.WriteLine($"window {width}x{height} | layout {explorer.Layout} | dpiScale {dpi.DpiScaleX}");
-        Console.Out.WriteLine(
-            $"pane (WPF DIPs) {canvas.ActualWidth:F1}x{canvas.ActualHeight:F1} | "
-            + $"explorer {explorer.ActualWidth:F1}x{explorer.ActualHeight:F1}");
+        Console.Out.WriteLine($"window {width}x{height} | dpiScale {dpi.DpiScaleX}");
+        Console.Out.WriteLine($"pane (WPF DIPs) {canvas.ActualWidth:F1}x{canvas.ActualHeight:F1}");
         Console.Out.WriteLine($"page {page}");
 
         // RULING 141(a): P6's proof is rendered in this slot. The page string test can only see the

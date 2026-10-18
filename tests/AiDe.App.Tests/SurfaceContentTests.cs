@@ -201,7 +201,7 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheJoinsSurfaceIsBuilt_AndIsReachableFromArchitecturesMenu()
+    public void TheJoinsSurfaceIsBuilt_AndIsReachableFromUnderstandsMenu()
     {
         // JoinProjection was written, tested, and never called by the running application. A
         // projection nobody can see is a control that cannot fire.
@@ -209,13 +209,13 @@ public sealed class SurfaceContentTests
             new SurfaceContentFactory(null).Create(new Surface("joins", "joins", "Joins")));
 
         Assert.IsType<JoinSurface>(Unwrap(content));
-        AssertReachableFromItsPerspectiveMenu("joins", PerspectiveSet.Architecture);
+        AssertReachableFromItsPerspectiveMenu("joins", PerspectiveSet.Understand);
 
         // Ruling 59's CONDITIONS: admitted, but left out of Architecture's DEFAULT pending the
         // attended real-content check (docs/proof/perspective-content.md) — a default tab that may
         // render empty is the Explore-pane defect Ruling 55d already removed.
         Assert.DoesNotContain(
-            WorkbenchLayout.Default(PerspectiveSet.Architecture).AllSurfaces(), s => s.Kind == "joins");
+            WorkbenchLayout.Default(PerspectiveSet.Understand).AllSurfaces(), s => s.Kind == "joins");
     }
 
     [Fact]
@@ -266,19 +266,18 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheSessionsSurface_IsInTheDefaultLayout()
+    public void TheLoomkeeperSurfaces_AreAdmittedUnderFactory_ButInNoDefaultLayout()
     {
-        // Ruling 84/§B4 (re-homing Ruling 60's placement): "Terminal sessions" is Coordination's
-        // Left zone — the master list the switch lands on — and no Loomkeeper kind is in Coding's
-        // default any more (Coding admits none).
-        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(),
-            s => s.Kind == "sessions");
-        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(),
-            s => s.Kind is "sessions" or "board" or "leaderboard" or "ledger" or "daydreams");
+        // ADR-0045 §1(b): the five Loomkeeper kinds are admitted under Factory → Coordination and
+        // opened from its View menu; no perspective's default carries one (Ruling 55d: never a
+        // fleet-view tab strip beside a session).
+        string[] loomkeeper = ["sessions", "board", "leaderboard", "ledger", "daydreams"];
+        Assert.All(loomkeeper, kind => Assert.True(PerspectiveMenu.Admits(PerspectiveSet.Factory, kind), kind));
+        Assert.All(PerspectiveSet.All, p => Assert.DoesNotContain(WorkbenchLayout.Default(p).AllSurfaces(), s => loomkeeper.Contains(s.Kind)));
     }
 
     [Fact]
-    public void TheBoardSurface_ShowsAPost_AndIsReachableFromCoordinationsMenu()
+    public void TheBoardSurface_ShowsAPost_AndIsReachableFromFactorysMenu()
     {
         // The Message Board surface (US-4) renders honestly and synchronously - one post reaches the
         // ListBox, and the status is not a Loading message (the load is a local fold).
@@ -297,11 +296,10 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("board", PerspectiveSet.Coordination);
+        AssertReachableFromItsPerspectiveMenu("board", PerspectiveSet.Factory);
 
-        // §B4 as amended (Ruling 84): a Coordination Center tab; never in Coding's default.
-        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "board");
-        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "board");
+        // ADR-0045 §1(b): admitted under Factory, never in its default (Ruling 55d).
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Factory).AllSurfaces(), s => s.Kind == "board");
     }
 
     [Fact]
@@ -320,7 +318,7 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheLeaderboardSurface_ShowsACell_AndIsReachableFromCoordinationsMenu()
+    public void TheLeaderboardSurface_ShowsACell_AndIsReachableFromFactorysMenu()
     {
         // The Leaderboard surface (US-14) renders honestly and synchronously - a comparable cohort
         // reaches the ListBox as at least one cell, and the status is not a Loading message.
@@ -344,13 +342,12 @@ public sealed class SurfaceContentTests
 
         Assert.True(view.ItemCount >= 1);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("leaderboard", PerspectiveSet.Coordination);
-        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "leaderboard");
-        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "leaderboard");
+        AssertReachableFromItsPerspectiveMenu("leaderboard", PerspectiveSet.Factory);
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Factory).AllSurfaces(), s => s.Kind == "leaderboard");
     }
 
     [Fact]
-    public void TheLedgerSurface_ShowsAnEpisode_AndIsReachableFromCoordinationsMenu()
+    public void TheLedgerSurface_ShowsAnEpisode_AndIsReachableFromFactorysMenu()
     {
         // The Ledger (US: "the ledger viewable too") renders honestly and synchronously — one recorded
         // work episode reaches the ListBox as a row, and the status is not a Loading message (the load
@@ -374,9 +371,8 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("ledger", PerspectiveSet.Coordination);
-        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "ledger");
-        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "ledger");
+        AssertReachableFromItsPerspectiveMenu("ledger", PerspectiveSet.Factory);
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Factory).AllSurfaces(), s => s.Kind == "ledger");
     }
 
     [Fact]

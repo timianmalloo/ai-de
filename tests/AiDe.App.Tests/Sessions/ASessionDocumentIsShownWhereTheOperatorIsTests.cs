@@ -19,11 +19,11 @@ namespace AiDe.App.Tests.Sessions;
 /// <para><b>Observed on <c>main</c> <c>1aadde84</c>, 2026-09-11, before any repair.</b>
 /// <see cref="ANewSessionRendersInTheOperatorsRestoredArrangement"/> — exit 0, <i>composer wpf
 /// loaded=1 … init-pushed=1, page fields=1</i>: the restored arrangement and Ruling 47's maximize do
-/// not stop the document rendering. <see cref="ANewSessionCreatedWhileExplorerIsTheBodyIsShown"/> —
+/// not stop the document rendering. <see cref="ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown"/> —
 /// <b>exit 30</b>, <i>"the new session's composer never entered a rendered visual tree: WPF raised no
 /// Loaded on it and its browser host never initialised"</i>, with the announcement reading <i>Session
 /// opened. Composer bound … Maximized the center</i> and the workbench root <i>loaded=False
-/// visible=False parent=(none)</i>. <see cref="ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened"/>
+/// visible=False parent=(none)</i>. <see cref="ANewSessionCreatedInAnotherHostLeavesItBecauseADocumentOpened"/>
 /// (in its earlier form, the diagnosis's necessity half) — exit 0: the same composer object,
 /// untouched, loaded and mounted its one message field the moment the workbench returned to the body; after Phase
 /// 1 that state is unreachable and the oracle asserts the trigger instead.
@@ -50,32 +50,33 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
 
         // NON-VACUITY: the replay reached the operator's arrangement (the probe exits 33 otherwise),
         // the prior document rendered unconfigured as the log shows, and the new one loaded.
-        // The operator's pre-perspective file drops its six Architecture surfaces — graph, domain,
-        // explore, provenance (a kind retired by Ruling 94, reported as such), contexts, joins — and,
-        // since Ruling 84, its four Loomkeeper surfaces
-        // — sessions, ledger, leaderboard, board — into the report when read into the Coding slot
-        // (ADR-0032 rule 2); the count is on the line, not inferred from the shape.
+        // The operator's pre-perspective file drops its six reading surfaces — graph, domain,
+        // explore, provenance (a kind retired by Ruling 94, reported as such), contexts, joins — into
+        // the report when read into the Factory slot (ADR-0032 rule 2); its four Loomkeeper surfaces —
+        // sessions, ledger, leaderboard, board — are kept, admitted under Factory since ADR-0045
+        // §1(b). The count is on the line, not inferred from the shape.
         Assert.Contains("restore (22:33:53Z replay): applied-saved=True", stdout, StringComparison.Ordinal);
-        Assert.Contains(" dropped=10 zones=", Line(stdout, "restore (22:33:53Z replay):"), StringComparison.Ordinal);
+        Assert.Contains(" dropped=6 zones=", Line(stdout, "restore (22:33:53Z replay):"), StringComparison.Ordinal);
         Assert.Contains("prior document (22:33:28Z replay): announced=", stdout, StringComparison.Ordinal);
         Assert.Contains(" configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot:", stdout, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
     }
 
     /// <summary>
-    /// <b>The operator's symptom.</b> Explorer is the body; File → New Session runs; the session must
-    /// be shown. On the unfixed product the document is added to a docking host that is not in any
-    /// visual tree, its composer is configured and never loaded, and the shell announces success.
+    /// <b>The operator's symptom.</b> Another body is on screen (then the full-window Explorer, retired
+    /// by ADR-0045; now the Understand host); File → New Session runs; the session must be shown. On
+    /// the unfixed product the document is added to a docking host that is not in any visual tree,
+    /// its composer is configured and never loaded, and the shell announces success.
     /// </summary>
     [Fact]
-    public void ANewSessionCreatedWhileExplorerIsTheBodyIsShown()
+    public void ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown()
     {
         var (exitCode, stdout, stderr) = ComposerHostIntegrationTests.RunProbe(
-            "--session-render --prior-document --explorer --sibling --height 720", Budget);
+            "--session-render --prior-document --away --sibling --height 720", Budget);
 
         Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        Assert.Contains("explorer (22:34:00Z replay): mode=explore explorer-graph initialising=1", stdout, StringComparison.Ordinal);
+        Assert.Contains("away (22:34:00Z replay): mode=understand ", stdout, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
 
         // THE CLASS: a sibling dock document opened by a catalog command in the same state.
@@ -85,7 +86,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     }
 
     /// <summary>
-    /// <b>The fix, named by its trigger.</b> New Session while Explorer is the body leaves Explorer
+    /// <b>The fix, named by its trigger.</b> New Session while another host is the body leaves it
     /// <i>because a document opened</i> — the <c>shell.mode</c> line the product wrote names
     /// <c>document-opening</c>, not the rail's toggle — and a later return to the workbench is a
     /// no-op: the composer loaded once, so nothing was re-parented (DC-138).
@@ -98,23 +99,23 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     /// asserts the mechanism that replaced it.
     /// </remarks>
     [Fact]
-    public void ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened()
+    public void ANewSessionCreatedInAnotherHostLeavesItBecauseADocumentOpened()
     {
         var (exitCode, stdout, stderr) = ComposerHostIntegrationTests.RunProbe(
-            "--session-render --prior-document --explorer --return-to-workbench --height 720", Budget);
+            "--session-render --prior-document --away --return-to-workbench --height 720", Budget);
 
         Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        Assert.Contains("explorer (22:34:00Z replay): mode=explore explorer-graph initialising=1", stdout, StringComparison.Ordinal);
+        Assert.Contains("away (22:34:00Z replay): mode=understand ", stdout, StringComparison.Ordinal);
 
         var after = Line(stdout, "after New Session:");
-        Assert.Contains("mode=coding last-mode-trigger=document-opening ", after, StringComparison.Ordinal);
+        Assert.Contains("mode=factory last-mode-trigger=document-opening ", after, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
 
         // The explicit return is a no-op: the same trigger on record, and not one more WPF Loaded on
         // the composer — nothing was re-parented by a body that was already the workbench.
         var returned = Line(stdout, "after returning to the workbench:");
-        Assert.Contains("mode=coding last-mode-trigger=document-opening ", returned, StringComparison.Ordinal);
+        Assert.Contains("mode=factory last-mode-trigger=document-opening ", returned, StringComparison.Ordinal);
         Assert.Equal(LoadedCount(after), LoadedCount(returned));
         AssertShown(stdout, "after returning to the workbench:");
     }

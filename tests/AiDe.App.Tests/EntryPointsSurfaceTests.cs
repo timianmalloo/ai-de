@@ -14,7 +14,7 @@ public sealed class EntryPointsSurfaceTests
     {
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == "entry-points");
         Assert.Equal("Entry-points", row.Title);
-        Assert.Same(AiDe.Core.Workbench.PerspectiveSet.Architecture, Assert.Single(row.Perspectives));
+        Assert.Same(AiDe.Core.Workbench.PerspectiveSet.Understand, Assert.Single(row.Perspectives));
         Assert.Equal(SurfaceContentFactory.Instances.One, row.Instances);
         var entry = Assert.IsType<SurfaceContentFactory.SurfaceEntry.Derived>(row.Entry);
         Assert.Equal("_View", entry.Menu);

@@ -68,7 +68,7 @@ public sealed class LayoutPersistence : IDisposable
         // preserves collapsed content and per-zone extents the projected tree cannot), to a sibling
         // file. The tree store stays wired for the legacy service and does no harm.
         // ADR-0032 rule 1: one zone-envelope file per HOST perspective, keyed by the service's own
-        // admission — a bare (unrestricted) service is the grandfathered Coding slot.
+        // admission — a bare (unrestricted) service is the grandfathered initial-host slot.
         if (service is ZoneBackedLayoutService zbs)
         {
             _zoneService = zbs;
@@ -80,30 +80,33 @@ public sealed class LayoutPersistence : IDisposable
     }
 
     /// <summary>
-    /// The zone-envelope file of one host perspective's slot (ADR-0032 rule 1): Coding's is today's
+    /// The zone-envelope file of one host perspective's slot (ADR-0032 rule 1): Factory's is today's
     /// <c>&lt;layout&gt;.zones.json</c> — the empty suffix is the grandfathering decision, so a
-    /// pre-Addendum-C file IS the Coding slot — and every other host perspective's is the sibling
-    /// <c>&lt;layout&gt;.&lt;perspective&gt;.zones.json</c>. The map is not uniform and lives only here.
-    /// A full-window perspective has no slot (Addendum C non-goal 5).
+    /// pre-Addendum-C file IS the initial host's slot, permanently (ADR-0045 §7's "slot coding →
+    /// factory" is met by identity) — and every other host perspective's is the sibling
+    /// <c>&lt;layout&gt;.&lt;suffix&gt;.zones.json</c>. The map is not uniform and lives only here.
     /// </summary>
     public static string SlotPathFor(string layoutFilePath, Perspective perspective)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(layoutFilePath);
         ArgumentNullException.ThrowIfNull(perspective);
 
-        if (perspective.Body != PerspectiveBody.DockHost)
-        {
-            throw new ArgumentException($"'{perspective.Id}' is a full-window perspective and has no layout slot", nameof(perspective));
-        }
-
         var dir = Path.GetDirectoryName(layoutFilePath) ?? string.Empty;
         var name = Path.GetFileNameWithoutExtension(layoutFilePath);
-        var suffix = perspective == PerspectiveSet.Coding ? string.Empty : "." + perspective.Id;
-        return Path.Combine(dir, name + suffix + ".zones.json");
+        return Path.Combine(dir, name + SlotSuffix(perspective) + ".zones.json");
     }
 
-    /// <summary>The perspective whose slot this persists; <see cref="PerspectiveSet.Coding"/> for the legacy tree path.</summary>
-    public Perspective Perspective => _zoneService?.Admission.Perspective ?? PerspectiveSet.Coding;
+    // simplify: a time-boxed legacy persistence-key alias (the WL-S design's §7): Understand reads and
+    // writes Architecture's file so today's saved arrangement restores with no drop. Ceiling: T11.
+    // Upgrade trigger: T11's slot migration renames `.architecture` to `.understand` (read the new
+    // name, fall back to the old, write the new, one-time .bak) and deletes this arm.
+    private static string SlotSuffix(Perspective perspective) =>
+        perspective == PerspectiveSet.Initial ? string.Empty
+        : perspective == PerspectiveSet.Understand ? ".architecture"
+        : "." + perspective.Id;
+
+    /// <summary>The perspective whose slot this persists; <see cref="PerspectiveSet.Initial"/> for the legacy tree path.</summary>
+    public Perspective Perspective => _zoneService?.Admission.Perspective ?? PerspectiveSet.Initial;
 
     /// <summary>
     /// What the last <see cref="Restore"/> dropped from this slot (ADR-0032 rule 2) — by surface,
@@ -292,8 +295,8 @@ public sealed class LayoutPersistence : IDisposable
             : $"{report.Dropped.Count} panes from your saved layout aren't available in {Perspective.Title}";
 
         // Where the dropped panes live, by the perspective that admits them, with its bound gesture
-        // (DESIGN.md's drop-with-report form after Ruling 84: a pre-C Coding envelope names
-        // Coordination for the Loomkeeper kinds, Architecture for the graph kinds). One admitting
+        // (DESIGN.md's drop-with-report form: an envelope read into Factory names Understand for
+        // the graph kinds). One admitting
         // perspective is the common case and reads as spec §C4's sentence — the list, then where
         // they live; two or more list each pane ONCE under its perspective, gesture first, so the
         // operator learns which gesture reaches which pane without hearing every caption twice

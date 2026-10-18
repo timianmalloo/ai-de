@@ -162,7 +162,7 @@ public sealed class PerspectiveMenuTests
     // US-C10 b1, the window half: Bind installs the bindings at the host the window passes, one per
     // gesture, routed to the perspective's own command id.
     [Fact]
-    public void Bind_InstallsEightPerspectiveKeyBindings_AtWindowScope() => OnSta(() =>
+    public void Bind_InstallsSixPerspectiveKeyBindings_AtWindowScope() => OnSta(() =>
     {
         var host = new Grid();
         new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()).Bind(host);
@@ -173,7 +173,7 @@ public sealed class PerspectiveMenuTests
             .ToList();
 
         Assert.Equal(2 * PerspectiveSet.All.Count, perspectiveBindings.Count);   // the number row and the keypad, per row
-        Assert.Equal(8, perspectiveBindings.Count);
+        Assert.Equal(6, perspectiveBindings.Count);
         foreach (var perspective in PerspectiveSet.All)
         {
             Assert.Contains((perspective.CommandId, Key.D0 + perspective.Order, ModifierKeys.Control), perspectiveBindings);
@@ -183,56 +183,55 @@ public sealed class PerspectiveMenuTests
 
     // ── ADR-0030 rule 2 / US-C3 b5: the allow-list column ─────────────────────────────────
 
-    // The non-empty-set build test: every kind row names at least one admitting perspective, none
-    // names one whose body is not a host, none names a perspective twice. An empty set is an
-    // unreachable surface — the contexts/joins/daydreams defect the inventory found.
+    // The non-empty-set build test: every kind row names at least one admitting perspective of the
+    // closed set, none names a perspective twice. An empty set is an unreachable surface — the
+    // contexts/joins/daydreams defect the inventory found. (Every row is a docking host since
+    // ADR-0045 §1(b), so no row can name a full-window one.)
     [Fact]
-    public void EveryKindRowAdmitsAtLeastOneHostPerspective_AndNeverAFullWindowOne()
+    public void EveryKindRowAdmitsAtLeastOnePerspective_OfTheClosedSet()
     {
         Assert.True(SurfaceContentFactory.Kinds.Count >= 18, "the kind list shrank — this test would be checking less than the product has");
 
         foreach (var row in SurfaceContentFactory.Kinds)
         {
             Assert.True(row.Perspectives.Count > 0, $"kind '{row.Kind}' admits no perspective: unreachable by omission (US-C3 b5)");
-            Assert.All(row.Perspectives, p => Assert.Equal(PerspectiveBody.DockHost, p.Body));
             Assert.Equal(row.Perspectives.Count, row.Perspectives.Distinct().Count());
             Assert.All(row.Perspectives, p => Assert.Contains(p, PerspectiveSet.All));
             Assert.False(string.IsNullOrWhiteSpace(row.Title), row.Kind);
             Assert.False(string.IsNullOrWhiteSpace(row.Summary), row.Kind);
         }
 
-        Assert.DoesNotContain(SurfaceContentFactory.Kinds, k => k.Perspectives.Contains(PerspectiveSet.Explore));
     }
 
-    // §A7's table as ruled (Rulings 59–61, amended by Ruling 84's fifth column): the kind ×
+    // §A7's table as ruled (Rulings 59–61), re-rowed by ADR-0045 (the WL-S design's §3): the kind ×
     // perspective matrix and the Instances column, literally. A row moved between perspectives
-    // fails here, by design — Ruling 60's condition was that the Loomkeeper kinds move as a set, in
-    // one ruling, and Ruling 84 is that ruling: all five to Coordination, none left in Coding.
+    // fails here, by design. The Loomkeeper five are Factory's (ADR-0045 §1(b)); Review admits no
+    // kind until WL-5 (D3).
     [Fact]
     public void TheAllowListsEqualTheSpecsTable()
     {
         var expected = new (string Kind, string[] Admitting, SurfaceContentFactory.Instances Instances)[]
         {
-            ("session-document", ["coding"], SurfaceContentFactory.Instances.Many),
-            ("console",          ["coding"], SurfaceContentFactory.Instances.Many),   // Ruling 89: the session's Console as a document
-            ("terminal",         ["coding"], SurfaceContentFactory.Instances.Many),
-            ("prompt",           ["coding"], SurfaceContentFactory.Instances.Many),
-            ("sessions",         ["coordination"], SurfaceContentFactory.Instances.One),
-            ("board",            ["coordination"], SurfaceContentFactory.Instances.One),
-            ("leaderboard",      ["coordination"], SurfaceContentFactory.Instances.One),
-            ("ledger",           ["coordination"], SurfaceContentFactory.Instances.One),
-            ("daydreams",        ["coordination"], SurfaceContentFactory.Instances.One),
-            ("search",           ["coding"], SurfaceContentFactory.Instances.Many),
-            ("codeviewer",       ["architecture", "coding"], SurfaceContentFactory.Instances.Many),
-            ("diagnostics",      ["coding"], SurfaceContentFactory.Instances.One),
-            ("canvas",           ["architecture"], SurfaceContentFactory.Instances.One),
-            ("view",             ["architecture"], SurfaceContentFactory.Instances.One),
-            ("classdiagram",     ["architecture"], SurfaceContentFactory.Instances.Many),
-            ("sequence",         ["architecture"], SurfaceContentFactory.Instances.Many),
-            ("contexts",         ["architecture"], SurfaceContentFactory.Instances.One),
-            ("joins",            ["architecture"], SurfaceContentFactory.Instances.One),
-            ("solution-tree",    ["architecture"], SurfaceContentFactory.Instances.One),
-            ("entry-points",     ["architecture"], SurfaceContentFactory.Instances.One),
+            ("session-document", ["factory"], SurfaceContentFactory.Instances.Many),
+            ("console",          ["factory"], SurfaceContentFactory.Instances.Many),   // Ruling 89: the session's Console as a document
+            ("terminal",         ["factory"], SurfaceContentFactory.Instances.Many),
+            ("prompt",           ["factory"], SurfaceContentFactory.Instances.Many),
+            ("sessions",         ["factory"], SurfaceContentFactory.Instances.One),
+            ("board",            ["factory"], SurfaceContentFactory.Instances.One),
+            ("leaderboard",      ["factory"], SurfaceContentFactory.Instances.One),
+            ("ledger",           ["factory"], SurfaceContentFactory.Instances.One),
+            ("daydreams",        ["factory"], SurfaceContentFactory.Instances.One),
+            ("search",           ["factory"], SurfaceContentFactory.Instances.Many),
+            ("codeviewer",       ["factory", "understand"], SurfaceContentFactory.Instances.Many),
+            ("diagnostics",      ["factory"], SurfaceContentFactory.Instances.One),
+            ("canvas",           ["understand"], SurfaceContentFactory.Instances.One),
+            ("view",             ["understand"], SurfaceContentFactory.Instances.One),
+            ("classdiagram",     ["understand"], SurfaceContentFactory.Instances.Many),
+            ("sequence",         ["understand"], SurfaceContentFactory.Instances.Many),
+            ("contexts",         ["understand"], SurfaceContentFactory.Instances.One),
+            ("joins",            ["understand"], SurfaceContentFactory.Instances.One),
+            ("solution-tree",    ["understand"], SurfaceContentFactory.Instances.One),
+            ("entry-points",     ["understand"], SurfaceContentFactory.Instances.One),
         };
 
         Assert.Equal(expected.Length, SurfaceContentFactory.Kinds.Count);
@@ -291,68 +290,62 @@ public sealed class PerspectiveMenuTests
     // carry the catalog's titles ("New session…" keeps its ellipsis — it opens a sheet); the derived
     // titles are "<Verb> <title>" in the catalog's own voice (US-C4's text: "New prompt draft",
     // "New sequence diagram"), where the table capitalised the noun; and "Focus graph canvas" is
-    // absent from Explore because the seam it runs is bound to a DOCKED canvas (PS-M3).
+    // offered only where the `canvas` kind is admitted, because the seam it runs is bound to a
+    // DOCKED canvas (PS-M3).
     [Fact]
     public void TheRenderedMenuEqualsTheSpecsLiteralTable_ForEveryPerspective() => OnSta(() =>
     {
-        // Coding: all six menus.
-        var (coding, _) = Render(PerspectiveSet.Coding);
-        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Prompt", "_Help"], Headers(coding));
+        string[] radio = ["Factory perspective", "Review perspective", "Understand perspective"];
+
+        // Factory: all six menus; its own derived rows, then the Factory → Coordination group last
+        // (the WL-S design's §3), with the ledger verb (Admits ledger) beside the tab verbs.
+        var (factory, _) = Render(PerspectiveSet.Factory);
+        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Prompt", "_Help"], Headers(factory));
         Assert.Equal(
             ["New session…", "New terminal", "New Claude Code session", "New GitHub Copilot session",
              "Open a repository as a workspace…", "Index C# projects in this workspace",
              "Re-index everything (ignore the cache)", "Re-index this workspace"],
-            Titles(coding, "_File"));
+            Titles(factory, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
+            [.. radio,
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
-             "Clear the status message",
+             "Raise score dispute on the latest scored episode", "Clear the status message",
              "Cycle session region", "Cycle session region backward", "Session console",
-             "New search", "New code viewer", "Show diagnostics"],
-            Titles(coding, "_View"));
-        Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(coding, "_Prompt"));
-        Assert.Equal(["Move pane…", "Resize pane…"], Titles(coding, "_Edit"));
+             "New search", "New code viewer", "Show diagnostics",
+             "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"],
+            Titles(factory, "_View"));
+        Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(factory, "_Prompt"));
+        Assert.Equal(["Move pane…", "Resize pane…"], Titles(factory, "_Edit"));
         Assert.Equal(
             ["Float pane", "Collapse pane", "Maximize pane", "Close surface", "Lock/unlock layout", "Reset workbench layout"],
-            Titles(coding, "_Window"));
-        Assert.Equal(["Diagnostics report"], Titles(coding, "_Help"));
+            Titles(factory, "_Window"));
+        Assert.Equal(["Diagnostics report"], Titles(factory, "_Help"));
 
-        // Explore: File · View · Help — not a host, so no Edit, no Window, no Prompt; no derived rows.
-        var (explore, _) = Render(PerspectiveSet.Explore);
-        Assert.Equal(["_File", "_View", "_Help"], Headers(explore));
-        Assert.Equal(Titles(coding, "_File"), Titles(explore, "_File"));
+        // Review: a host that admits no kind until WL-5 (D3) — File · Edit · View · Window · Help;
+        // no Prompt, no derived rows, only the host's own tab verbs.
+        var (review, _) = Render(PerspectiveSet.Review);
+        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(review));
+        Assert.Equal(Titles(factory, "_File"), Titles(review, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective", "Clear the status message"],
-            Titles(explore, "_View"));
+            [.. radio, "Next tab in pane", "Previous tab in pane", "Move tab left/right", "Clear the status message"],
+            Titles(review, "_View"));
+        Assert.Equal(Titles(factory, "_Edit"), Titles(review, "_Edit"));
+        Assert.Equal(Titles(factory, "_Window"), Titles(review, "_Window"));
 
-        // Architecture: all but Prompt; the reading kinds' derived rows in §B3's order.
-        var (architecture, _) = Render(PerspectiveSet.Architecture);
-        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(architecture));
-        Assert.Equal(Titles(coding, "_File"), Titles(architecture, "_File"));
+        // Understand: all but Prompt; the reading kinds' derived rows in §B3's order.
+        var (understand, _) = Render(PerspectiveSet.Understand);
+        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(understand));
+        Assert.Equal(Titles(factory, "_File"), Titles(understand, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
+            [.. radio,
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
              "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
              "Show contexts", "Show joins", "Show solution tree", "Show entry-points", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
-            Titles(architecture, "_View"));
-        Assert.Equal(Titles(coding, "_Edit"), Titles(architecture, "_Edit"));
-        Assert.Equal(Titles(coding, "_Window"), Titles(architecture, "_Window"));
-
-        // Coordination (Ruling 84; §B3 as amended): File · Edit · View · Window · Help — a host
-        // without Prompt; the ledger verb, then the five Loomkeeper Show entries in row order.
-        var (coordination, _) = Render(PerspectiveSet.Coordination);
-        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(coordination));
-        Assert.Equal(Titles(coding, "_File"), Titles(coordination, "_File"));
-        Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
-             "Next tab in pane", "Previous tab in pane", "Move tab left/right",
-             "Raise score dispute on the latest scored episode", "Clear the status message",
-             "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"],
-            Titles(coordination, "_View"));
-        Assert.Equal(Titles(coding, "_Edit"), Titles(coordination, "_Edit"));
-        Assert.Equal(Titles(coding, "_Window"), Titles(coordination, "_Window"));
-        Assert.Equal(["Diagnostics report"], Titles(coordination, "_Help"));
+            Titles(understand, "_View"));
+        Assert.Equal(Titles(factory, "_Edit"), Titles(understand, "_Edit"));
+        Assert.Equal(Titles(factory, "_Window"), Titles(understand, "_Window"));
+        Assert.Equal(["Diagnostics report"], Titles(understand, "_Help"));
     });
 
     // PS-M1 / US-C1 b3: the perspective entries are a radio group with the active one checked and
@@ -424,13 +417,12 @@ public sealed class PerspectiveMenuTests
     [Fact]
     public void ThePerspectiveItemsShowTheirBoundGesture_AndDerivedOpenersShowNone() => OnSta(() =>
     {
-        var (menu, _) = Render(PerspectiveSet.Coordination);   // the host whose View lists a derived Show (Ruling 84)
+        var (menu, _) = Render(PerspectiveSet.Factory);   // the host whose View lists the Loomkeeper Shows (ADR-0045 §1(b))
         var items = Items(menu).ToList();
 
-        Assert.Equal("Ctrl+1", items.Single(i => Equals(i.Header, "Coding perspective")).InputGestureText);
-        Assert.Equal("Ctrl+2", items.Single(i => Equals(i.Header, "Explore perspective")).InputGestureText);
-        Assert.Equal("Ctrl+3", items.Single(i => Equals(i.Header, "Architecture perspective")).InputGestureText);
-        Assert.Equal("Ctrl+4", items.Single(i => Equals(i.Header, "Coordination perspective")).InputGestureText);
+        Assert.Equal("Ctrl+1", items.Single(i => Equals(i.Header, "Factory perspective")).InputGestureText);
+        Assert.Equal("Ctrl+2", items.Single(i => Equals(i.Header, "Review perspective")).InputGestureText);
+        Assert.Equal("Ctrl+3", items.Single(i => Equals(i.Header, "Understand perspective")).InputGestureText);
         Assert.Equal("Ctrl+N", items.Single(i => Equals(i.Header, "New session…")).InputGestureText);
         Assert.Equal(string.Empty, items.Single(i => Equals(i.Header, "Show daydreams")).InputGestureText);
         Assert.Equal(string.Empty, items.Single(i => Equals(i.Header, "New terminal")).InputGestureText);   // Ctrl+K, T: announced, unbound
@@ -455,9 +447,9 @@ public sealed class PerspectiveMenuTests
                 palette.Visible.Select(c => c.Title));
         }
 
-        palette.Menu = PerspectiveMenu.For(PerspectiveSet.Coding);
+        palette.Menu = PerspectiveMenu.For(PerspectiveSet.Factory);
         Assert.DoesNotContain(palette.Visible, c => c.Id == "surface.new.classdiagram");   // the falsifier US-C4 names
-        palette.Menu = PerspectiveMenu.For(PerspectiveSet.Architecture);
+        palette.Menu = PerspectiveMenu.For(PerspectiveSet.Understand);
         Assert.Contains(palette.Visible, c => c.Id == "surface.new.classdiagram");
         Assert.DoesNotContain(palette.Visible, c => c.Id == "surface.new.prompt");
     });
@@ -473,16 +465,16 @@ public sealed class PerspectiveMenuTests
 
         try
         {
-            palette.Menu = PerspectiveMenu.For(PerspectiveSet.Coordination);   // the host whose View lists a derived Show (Ruling 84)
+            palette.Menu = PerspectiveMenu.For(PerspectiveSet.Factory);   // the host whose View lists the Loomkeeper Shows (ADR-0045 §1(b))
             palette.Open();
             palette.SearchBox.Text = "daydreams";
             palette.HandleKey(Key.Down);   // wraps onto the one row, announcing it
             Assert.StartsWith("Show daydreams. Shows the daydreams pane", announcer.Last, StringComparison.Ordinal);
             Assert.DoesNotContain("Ctrl", announcer.Last, StringComparison.Ordinal);
 
-            palette.SearchBox.Text = "Architecture perspective";
+            palette.SearchBox.Text = "Understand perspective";
             palette.HandleKey(Key.Down);
-            Assert.StartsWith("Architecture perspective. Ctrl+3. ", announcer.Last, StringComparison.Ordinal);
+            Assert.StartsWith("Understand perspective. Ctrl+3. ", announcer.Last, StringComparison.Ordinal);
 
             palette.SearchBox.Text = "New terminal";
             palette.HandleKey(Key.Down);
@@ -496,17 +488,17 @@ public sealed class PerspectiveMenuTests
 
     // ── US-C4: the mutation test ──────────────────────────────────────────────────────────
 
-    // A test-time kind row admitted only by Architecture is appended to the kinds list. Its "New
-    // <title>" entry appears in Architecture's View menu and palette and nowhere else — with NO edit
+    // A test-time kind row admitted only by Understand is appended to the kinds list. Its "New
+    // <title>" entry appears in Understand's View menu and palette and nowhere else — with NO edit
     // to the builder, the palette or the controller's switch. A per-perspective tuple list cannot
     // pass this; the join does.
     [Fact]
-    public void ATestTimeKindRowAdmittedOnlyByArchitecture_AppearsThereAndNowhereElse() => OnSta(() =>
+    public void ATestTimeKindRowAdmittedOnlyByUnderstand_AppearsThereAndNowhereElse() => OnSta(() =>
     {
         var row = new Kind(
             "testkind", "Test kind", "A kind that exists only in this test.",
             static (_, s) => new TextBlock { Text = s.Title },
-            Perspectives: [PerspectiveSet.Architecture],
+            Perspectives: [PerspectiveSet.Understand],
             SurfaceContentFactory.Instances.Many,
             new SurfaceContentFactory.SurfaceEntry.Derived("_View"));
         IReadOnlyList<Kind> kinds = [.. SurfaceContentFactory.Kinds, row];
@@ -520,7 +512,7 @@ public sealed class PerspectiveMenuTests
             var (menu, _) = Render(perspective, derived);
             palette.Menu = derived;
 
-            var expected = perspective == PerspectiveSet.Architecture;
+            var expected = perspective == PerspectiveSet.Understand;
             Assert.Equal(expected, Titles(menu, "_View").Contains("New test kind"));
             Assert.Equal(expected, palette.Visible.Any(c => c.Id == "surface.new.testkind"));
         }
@@ -532,20 +524,19 @@ public sealed class PerspectiveMenuTests
     // ── US-C3: the routing table ──────────────────────────────────────────────────────────
 
     [Theory]
-    [InlineData("codeviewer", "explore", "architecture")]     // the reading host wins a shared kind
-    [InlineData("codeviewer", "coding", "coding")]            // the active perspective admits it: stays
-    [InlineData("codeviewer", "architecture", "architecture")]
-    [InlineData("sequence", "coding", "architecture")]
-    [InlineData("sequence", "explore", "architecture")]
-    [InlineData("terminal", "architecture", "coding")]
-    [InlineData("terminal", "explore", "coding")]
-    [InlineData("daydreams", "architecture", "coordination")]   // Ruling 84: a Loomkeeper kind lands in Coordination
-    [InlineData("ledger", "coding", "coordination")]
-    [InlineData("sessions", "explore", "coordination")]
-    [InlineData("terminal", "coordination", "coding")]
-    [InlineData("canvas", "coordination", "architecture")]
-    [InlineData("canvas", "coding", "architecture")]
-    public void Resolve_RoutesAnInadmissibleKindOpen_ArchitectureThenCodingThenCoordination(string kind, string active, string expected)
+    [InlineData("codeviewer", "review", "understand")]        // the reading host wins a shared kind
+    [InlineData("codeviewer", "factory", "factory")]          // the active perspective admits it: stays
+    [InlineData("codeviewer", "understand", "understand")]
+    [InlineData("sequence", "factory", "understand")]
+    [InlineData("sequence", "review", "understand")]
+    [InlineData("terminal", "understand", "factory")]
+    [InlineData("terminal", "review", "factory")]
+    [InlineData("daydreams", "understand", "factory")]        // ADR-0045 §1(b): a Loomkeeper kind lands in Factory
+    [InlineData("ledger", "review", "factory")]
+    [InlineData("sessions", "factory", "factory")]
+    [InlineData("canvas", "review", "understand")]
+    [InlineData("canvas", "factory", "understand")]
+    public void Resolve_RoutesAnInadmissibleKindOpen_UnderstandThenReviewThenFactory(string kind, string active, string expected)
     {
         var resolved = PerspectiveMenu.Resolve(kind, ById(active));
 
@@ -584,7 +575,7 @@ public sealed class PerspectiveMenuTests
     [Fact]
     public void Resolve_ReturnsNullForAKindNoPerspectiveAdmits()
     {
-        Assert.Null(PerspectiveMenu.Resolve("no-such-kind", PerspectiveSet.Coding));
+        Assert.Null(PerspectiveMenu.Resolve("no-such-kind", PerspectiveSet.Factory));
     }
 
     // ── The derived opener ids are the controller's contract ──────────────────────────────
@@ -629,11 +620,11 @@ public sealed class PerspectiveMenuTests
 
     // The Test Architect's finding, as a control: with the window's own handler
     // (MainWindow.OnDocumentOpening → the presenter's rule — the document's host becomes the body
-    // only when it is not), Architecture's derived openers open in host B, leave Architecture
-    // active, raise no change and write no shell.mode line; from Explore a kind both hosts admit
-    // opens in the FIRST of the routing order — Architecture (US-C3 b3; ADR-0030) — and that host
-    // becomes the body; and a kind only Coding admits opens in host A and brings it on screen.
-    // RED before the guard: every open switched to Coding.
+    // only when it is not), Understand's derived openers open in its host, leave Understand active,
+    // raise no change and write no shell.mode line; from Review (which admits no kind) a kind two
+    // hosts admit opens in the FIRST of the routing order — Understand (US-C3 b3; ADR-0045) — and
+    // that host becomes the body; and a kind only Factory admits opens in host A and brings it on
+    // screen. RED before the guard: every open switched to the initial host.
     [Fact]
     public void ADerivedOpenerInAHostPerspective_DoesNotSwitchThePerspective_AndARoutedOpenLandsWhereItCanOpen()
     {
@@ -653,62 +644,62 @@ public sealed class PerspectiveMenuTests
                     Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false,
                 };
                 var host = (ContentControl)window.Content;
-                var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+                var mode = new PerspectiveShell(host, shell.Hosts, shell.Announcer);
                 shell.CommandRouter = mode.Execute;
                 shell.DocumentOpening += h => mode.OnDocumentOpening(h);   // the product's rule, not a copy
                 window.Show();
 
                 try
                 {
-                    mode.Activate(PerspectiveSet.Architecture, "test");
+                    mode.Activate(PerspectiveSet.Understand, "test");
                     var switches = 0;
                     mode.Changed += (_, _) => switches++;
                     var linesBefore = lines.Count(l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal));
 
                     Assert.True(shell.Execute("surface.new.classdiagram"));
                     Assert.Equal("Class diagram opened.", shell.Announcer.Last);
-                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
+                    Assert.Same(PerspectiveSet.Understand, mode.Active);
                     Assert.Equal(0, switches);
                     Assert.Equal(linesBefore, lines.Count(l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal)));
-                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
-                    Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
+                    Assert.Contains(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
+                    Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
 
-                    mode.Activate(PerspectiveSet.Explore, "test");
+                    mode.Activate(PerspectiveSet.Review, "test");
                     Assert.True(shell.Execute("surface.new.codeviewer"));
-                    Assert.Same(PerspectiveSet.Architecture, mode.Active);   // routed: the reading host wins a shared kind
-                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "codeviewer");
+                    Assert.Same(PerspectiveSet.Understand, mode.Active);   // routed: the reading host wins a shared kind
+                    Assert.Contains(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "codeviewer");
 
-                    mode.Activate(PerspectiveSet.Explore, "test");
+                    mode.Activate(PerspectiveSet.Review, "test");
                     Assert.True(shell.Execute("surface.new.prompt"));
-                    Assert.Same(PerspectiveSet.Coding, mode.Active);         // INV-0009: the document opens into a body on screen
-                    Assert.Contains(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "prompt");
+                    Assert.Same(PerspectiveSet.Factory, mode.Active);         // INV-0009: the document opens into a body on screen
+                    Assert.Contains(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "prompt");
 
-                    // Host → host: from Coding a kind only Architecture admits opens in host B and
+                    // Host → host: from Factory a kind only Understand admits opens in host B and
                     // brings host B on screen (US-C3 b3, through the composition root).
                     Assert.True(shell.Execute("surface.new.sequence"));
-                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
-                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
-                    Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
+                    Assert.Same(PerspectiveSet.Understand, mode.Active);
+                    Assert.Contains(shell.Understand.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
+                    Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
 
                     // Document first, then the switch (ADR-0031 rule 2; US-C5/US-C11's falsifier): with
                     // host A's layout locked, an entry verb's add is refused, the refusal is announced,
-                    // and the operator stays in Architecture — never switched to an empty Coding.
-                    shell.Coding.Service.IsLocked = true;
-                    var before = shell.Coding.Service.Zones.Shape();
+                    // and the operator stays in Understand — never switched to an empty Factory.
+                    shell.Factory.Service.IsLocked = true;
+                    var before = shell.Factory.Service.Zones.Shape();
                     Assert.True(shell.Execute("terminal.new"));
-                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
-                    Assert.Equal(before, shell.Coding.Service.Zones.Shape());
+                    Assert.Same(PerspectiveSet.Understand, mode.Active);
+                    Assert.Equal(before, shell.Factory.Service.Zones.Shape());
                     Assert.Contains("locked", shell.Announcer.Last, StringComparison.OrdinalIgnoreCase);
-                    shell.Coding.Service.IsLocked = false;
+                    shell.Factory.Service.IsLocked = false;
 
                     // The same rule on a derived opener's routed add: host B locked, a sequence diagram
-                    // asked for from Coding is refused there, and Coding stays the body.
-                    mode.Activate(PerspectiveSet.Coding, "test");
-                    shell.Architecture.Service.IsLocked = true;
+                    // asked for from Factory is refused there, and Factory stays the body.
+                    mode.Activate(PerspectiveSet.Factory, "test");
+                    shell.Understand.Service.IsLocked = true;
                     Assert.True(shell.Execute("surface.new.sequence"));
-                    Assert.Same(PerspectiveSet.Coding, mode.Active);
+                    Assert.Same(PerspectiveSet.Factory, mode.Active);
                     Assert.Contains("locked", shell.Announcer.Last, StringComparison.OrdinalIgnoreCase);
-                    shell.Architecture.Service.IsLocked = false;
+                    shell.Understand.Service.IsLocked = false;
                 }
                 finally
                 {

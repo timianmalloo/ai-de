@@ -38,6 +38,7 @@ summary: >-
 | §5 | Three hosts; the A↔B↔C unparent spike | T9 | spike exit 0 + `RESULT.md` |
 | §6 | Named default layouts per perspective — constrained, not designed | **unassigned** in the drive plan — a finding for the Leader | — |
 | §7 | Slot migration by stable id, `.bak`, drop report | T11 | golden round-trip |
+| §8 | Knowledge-inclusive canvas mode in Understand (Ruling 149) | **unassigned** — the Leader assigns it inside WL-S | its own E2E check; WL-S does not close without it |
 
 ## Responsibility
 
@@ -313,6 +314,22 @@ The slot file name is the only key: the envelope stores zones and surfaces, neve
   Golden round-trip test over today's saved files; an oracle case with Factory's Left holding a session
   and the folded `sessions` in the Center, landing on the session.
 
+## §8 — Knowledge-inclusive representation (WL-S backlog; Ruling 149)
+
+- **A committed WL-S row, not a WL-6 follow-up.** Understand's canvas admits the knowledge/spec corpus
+  as a **mode of the admitted `canvas` kind**, chosen through the existing representation selector
+  (ADR-0045 §2: "the visualizer is not a composite kind … linked selection … is the 'representation
+  selector' without a new surface") — never a second graph surface and never a new kind.
+- **Where it attaches:** the `ExcludeKnowledge` seam on the docked canvas's view model
+  (`WorkbenchShell.cs:1386`, `graph.ExcludeKnowledge = true`; the parameter on the existing
+  neighbourhood query). The mode toggles that parameter per canvas instance; no second store, no
+  second query.
+- **Its own E2E check:** in the running app, Understand → the canvas in its knowledge-inclusive mode
+  shows a known `docs/knowledge/` node with its typed edges, and switching the mode back hides it.
+  **WL-S does not close until that check is green.**
+- **Owner:** not built by T4 (Ruling 149 condition 3; T4's done-when is unchanged). The Leader assigns
+  it inside WL-S (T11's window is the natural home, beside §4).
+
 ## Patterns
 
 | Pattern | Where | Why (both reviewers) |
@@ -440,6 +457,17 @@ re-pinned.
 
 - §6 has no owning track (finding for the Leader).
 - The three-host memory budget is **Inferred** until T9 runs.
+- **Capability loss — you can no longer browse knowledge and spec documents as graph nodes inside the
+  app (Ruling 149).** The docked graph canvas sets `ExcludeKnowledge = true`
+  (`WorkbenchShell.cs:1386`; `GraphProjection.cs:93`: "never the knowledge/spec corpus Explore already
+  reads"); the full-window Explorer's graph was the one canvas that showed knowledge nodes, so
+  retiring it (ADR-0045 §1(b)) leaves no in-app view of them. ADR-0045's Consequences accepted losing
+  the full-window arrangement, not the corpus. **Interim path:** the Docs Explorer, `docs/index.html`
+  (hierarchy · graph · mind map), shows the same corpus. Ruling 149 accepts the loss bounded and owned
+  by WL-S — see §8.
+- **Found in implementation — the deletion cascades.** An orphan-type census over `src/AiDe.App` +
+  `src/AiDe.Core` (before vs after) shows `HtmlSandboxHost` and `NodeReaderContentState` orphaned once
+  `NodeReaderView` goes; seam request `req-01M58KFWAM77V2V21PBYKKA5F4`.
 - Seam requests: `req-01M58HXY8HGKDVTX393PN9TDP3` granted (orphans; `AiDe.sln` green at exit);
   `req-01M58J8YEG7EB3NP3C998SHB67` (two oracle test files) and `req-01M58JG10ZKHW75YME0P6G3DG2`
   (`ShellMode` parameters, `IconExplore`, `DESIGN.md`) pending at the design commit.

@@ -29,7 +29,7 @@ public sealed class TheArchitectureDefaultIsGraphAndTreeTests
     [Fact]
     public void CenterIsGraphThenTree_AndGraphIsActive()
     {
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Architecture);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Understand);
 
         var center = CenterOf(layout);
         Assert.Equal(["graph", "tree"], center.Tabs.Select(s => s.SurfaceId));
@@ -40,7 +40,7 @@ public sealed class TheArchitectureDefaultIsGraphAndTreeTests
     [Fact]
     public void TheTreeTabNamesTheSolutionTreeKind()
     {
-        var tree = CenterOf(WorkbenchLayout.Default(PerspectiveSet.Architecture))
+        var tree = CenterOf(WorkbenchLayout.Default(PerspectiveSet.Understand))
             .Tabs.Single(s => s.SurfaceId == "tree");
 
         Assert.Equal("solution-tree", tree.Kind);
@@ -57,7 +57,7 @@ public sealed class TheArchitectureDefaultIsGraphAndTreeTests
     [Fact]
     public void LeftIsEmptyAndCollapsed_SoTheGraphHasExactlyOneHome()
     {
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Architecture);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Understand);
 
         var left = layout.Zones[ZoneId.Left];
         Assert.Null(left.Content);
@@ -84,7 +84,7 @@ public sealed class TheArchitectureDefaultIsGraphAndTreeTests
     [Fact]
     public void ContextsAndDomainAreNotInTheDefault()
     {
-        var defaulted = WorkbenchLayout.Default(PerspectiveSet.Architecture).Zones.Values
+        var defaulted = WorkbenchLayout.Default(PerspectiveSet.Understand).Zones.Values
             .Select(z => z.Content)
             .OfType<ZoneStack>()
             .SelectMany(s => s.Tabs)

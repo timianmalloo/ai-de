@@ -89,8 +89,8 @@ public sealed class SurfaceContentFactory(
     /// <b>The allow-list column (Ruling 52c; ADR-0030 rule 2).</b> The perspectives that admit this
     /// kind into their body — an explicit, non-empty set on every row, no default: an empty set
     /// fails the build test, so an unreachable kind cannot be created by omission (US-C3 b5). The
-    /// membership is §A7's table as ruled (Rulings 59–61, 84). Explore admits no docked kind — its
-    /// body is not a host — so no row names it.
+    /// membership is §A7's table as ruled (Rulings 59–61), re-rowed by ADR-0045 (the WL-S design's
+    /// §3 — <c>KindAllowListsTests</c> pins the whole column).
     /// </param>
     /// <param name="Instances">One or many per host — "Show" or "New" (§A7).</param>
     /// <param name="Entry">Derived opener, or the catalog entry verb that is this kind's only door.</param>
@@ -128,18 +128,19 @@ public sealed class SurfaceContentFactory(
     /// both questions, and <c>SurfaceContentTests</c> walks it.</para>
     ///
     /// <para><b>Row order is menu order.</b> The derived "New/Show" entries of a perspective's View
-    /// menu follow this list (Addendum C §B3's expected table), so the Architecture kinds come
-    /// first in their menu's order, then Coordination's five, then Coding's, with the one shared
-    /// kind (<c>codeviewer</c>) where both tables put it — last.</para>
+    /// menu follow this list (Addendum C §B3's expected table), so the Understand kinds come first
+    /// in their menu's order, then Factory's own, with the one shared kind (<c>codeviewer</c>) last
+    /// of Understand's, then the Factory → Coordination group of five last of Factory's (the WL-S
+    /// design's §3).</para>
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
-        // ── Architecture: the reading host (UC3) ──────────────────────────────────────────────
+        // ── Understand: the reading host (UC3; ADR-0045 §2 — the visualizer's kinds) ─────────
 
         new("canvas", "Graph",
             "A windowed graph canvas over the workspace's code, data and architecture nodes.",
             static (_, s) => new CanvasSurface(s.SurfaceId, s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View"),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View"),
             Windowed: true),
 
         // The evidence list is a master WITH its detail (Ruling 94): the selected row's origin,
@@ -151,112 +152,76 @@ public sealed class SurfaceContentFactory(
         new("view", "Evidence",
             "The evidence list: every fact the workspace's daemon has indexed, searchable; select a row for its provenance.",
             static (f, s) => f.EvidenceMaster(s),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("classdiagram", "Class diagram",
             "The type hierarchy (classes and interfaces and their inheritance) of the open workspace.",
             static (_, s) => new ClassDiagramSurface(s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.Many, new SurfaceEntry.Derived("_View")),
 
         new("sequence", "Sequence diagram",
             "Participant lifelines and the ordered messages exchanged between them.",
             static (_, _) => new SequenceDiagramSurface(),
-            Perspectives: [PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.Many, new SurfaceEntry.Derived("_View")),
 
         new("contexts", "Contexts",
             "The bounded contexts as boxes, with the traffic that crosses between them.",
             static (_, s) => new ContextMapSurface(s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View")),
 
         // Admitted by Ruling 59 — it exists and renders; whether it renders real content against a
         // real workspace is SH-3's measurement, and decides only the DEFAULT layout, not the row.
         new("joins", "Joins",
             "Code, schema and infrastructure joins, each marked Verified or Inferred.",
             static (_, s) => new JoinSurface(s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View")),
 
-        // Pattern: Derived menu (ADR-0030). One Architecture kind; Instances.One → Show solution tree.
+        // Pattern: Derived menu (ADR-0030). One Understand kind; Instances.One → Show solution tree.
         new("solution-tree", "Solution tree",
             "Architecture-pane navigator of (path, kind) nodes over Core's census join.",
             static (_, s) => new SolutionTreeSurface(s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("entry-points", "Entry-points",
             "Indexed API, UX and CLI entry points, plus unclassified. Open Sequence is disabled until the mapper is frozen.",
             static (_, s) => new EntryPointsSurface(s.Title),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Understand], Instances.One, new SurfaceEntry.Derived("_View")),
 
-        // ── Coding: the agentic host (UC1) ────────────────────────────────────────────────────
+        // ── Factory: the agentic host (UC1) ───────────────────────────────────────────────────
 
         // Opened by the entry verb `terminal.new` (File, every perspective — US-C11), never by a
         // derived entry: two doors to one kind is the second list this arrangement exists to remove.
         new("terminal", "Terminal",
             "One live shell session.",
             static (_, s) => Terminal(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("terminal.new"),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("terminal.new"),
             Windowed: true),
 
-        // ── Coordination: the fleet bench (UC5; Ruling 84) ────────────────────────────────────
-
-        // The five Loomkeeper kinds, homed in Coordination AS A SET (Ruling 84; Ruling 60's own
-        // condition — "re-home the five as a set, in one ruling, if the operator names a fleet/
-        // observation use case"). Coding admits none of them: the operator's screenshots showed the
-        // four read as one tab strip beside a session, and their words were "a different left bar
-        // icon — coordination". Row order is the Coordination View group's order.
-        // "Terminal sessions", not "Sessions" — a session DOCUMENT is the product's object, and a
-        // watcher pane one word away from it was resolved by the reader, not the caption (§R row 17).
-        new("sessions", "Terminal sessions",
-            "The Loomkeeper watcher's live and inactive terminal sessions, with their harness and state.",
-            static (f, s) => f.Sessions(s),
-            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        new("board", "Message board",
-            "The Loomkeeper message board: what the observed sessions have said to each other.",
-            static (f, s) => f.Board(s),
-            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        new("leaderboard", "Leaderboard",
-            "The Loomkeeper scoring leaderboard over the observed sessions' episodes.",
-            static (f, s) => f.Leaderboard(s),
-            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        new("ledger", "Ledger",
-            "The append-only episode ledger: every scored episode with its evidence.",
-            static (f, s) => f.Ledger(s),
-            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        // Reachable from nowhere before the derived menu (no command, no default slot — Ruling 60);
-        // its entry exists by construction. Admitted by Coordination, not in its default (§B4).
-        new("daydreams", "Daydreams",
-            "Observed patterns and candidate lessons the watcher has noticed across episodes.",
-            static (f, s) => f.Daydreams(s),
-            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        // ── Coding, continued ─────────────────────────────────────────────────────────────────
+        // ── Factory, continued ────────────────────────────────────────────────────────────────
 
         // Under the Prompt menu, beside "Dispatch prompt…" (§B3 rule 3's one exception besides terminal).
         new("prompt", "Prompt draft",
             "A staged prompt draft: compose a prompt and transfer it to a ready terminal session.",
             static (_, s) => new PromptDraftSurface(s.SurfaceId, s.Title),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Derived("_Prompt")),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Derived("_Prompt")),
 
-        // A scaffold with no index wired (Ruling 59 keeps it out of Architecture); openable in Coding today.
+        // A scaffold with no index wired (Ruling 59 keeps it out of the reading host); openable in Factory today.
         new("search", "Search",
             "A breadth search: one query over the whole workspace \u2014 types, members, files and graph nodes.",
             static (f, _) => f.SearchPane(),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Derived("_View")),
 
-        // The one shared kind: "what did the agent change" in Coding; "View source" from a node in
-        // Architecture, where it must not leave the reading host (Ruling 59; US-C3).
+        // The one shared kind: "what did the agent change" in Factory; "View source" from a node in
+        // Understand, where it must not leave the reading host (Ruling 59; US-C3).
         new("codeviewer", "Code viewer",
             "A read-only source view with syntax highlighting.",
             static (_, s) => new CodeViewerView(s.Title),
-            Perspectives: [PerspectiveSet.Coding, PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Factory, PerspectiveSet.Understand], Instances.Many, new SurfaceEntry.Derived("_View")),
 
         new("diagnostics", "Diagnostics",
             "The last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
             static (_, s) => new DiagnosticsSurface(s.Title),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View")),
 
         // The session document (R13 b3, R16). "session-document", never "session" (Ruling 18): the
         // "sessions" row above is the Loomkeeper watcher pane, and a kind one letter away from it
@@ -265,7 +230,7 @@ public sealed class SurfaceContentFactory(
         new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, "Session",
             "One session: its composer and its canvas.",
             static (f, s) => f.SessionDocument(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.new"),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("session.new"),
             // Ruling 83: a new session docks in the Left, docked, never maximized; the operator's
             // own words and gesture ("new sessions should default into the left dock").
             Zone: ZoneId.Left),
@@ -279,7 +244,49 @@ public sealed class SurfaceContentFactory(
         new(AiDe.App.Workbench.Sessions.ConsoleDocumentHost.Kind, "Console",
             "One session's Console: every wire frame, one row per message.",
             static (f, s) => f.ConsoleDocument(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.console"),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("session.console"),
+            Zone: ZoneId.Center),
+
+        // ── Factory → Coordination: the fleet's panes (ADR-0045 §1(b)) ────────────────────────
+
+        // The five Loomkeeper kinds, admitted under Factory AS A GROUP: ADR-0045 §1(b) supersedes
+        // Ruling 84's isolated Coordination bench. Contiguous and last, so Factory's View menu lists
+        // its own kinds first and the fleet's after them, in this order. Each docks in the Center by
+        // its zone rule — never tabbed beside the session document in the Left, where the placement
+        // policy (which follows the active surface) would put it and it would take Factory's landing
+        // (SH-4.2; the WL-S design's §3). Admitted, not in Factory's default (Ruling 55d).
+        // "Terminal sessions", not "Sessions" — a session DOCUMENT is the product's object, and a
+        // watcher pane one word away from it was resolved by the reader, not the caption (§R row 17).
+        new("sessions", "Terminal sessions",
+            "The Loomkeeper watcher's live and inactive terminal sessions, with their harness and state.",
+            static (f, s) => f.Sessions(s),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Center),
+
+        new("board", "Message board",
+            "The Loomkeeper message board: what the observed sessions have said to each other.",
+            static (f, s) => f.Board(s),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Center),
+
+        new("leaderboard", "Leaderboard",
+            "The Loomkeeper scoring leaderboard over the observed sessions' episodes.",
+            static (f, s) => f.Leaderboard(s),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Center),
+
+        new("ledger", "Ledger",
+            "The append-only episode ledger: every scored episode with its evidence.",
+            static (f, s) => f.Ledger(s),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Center),
+
+        // Reachable from nowhere before the derived menu (no command, no default slot — Ruling 60);
+        // its entry exists by construction.
+        new("daydreams", "Daydreams",
+            "Observed patterns and candidate lessons the watcher has noticed across episodes.",
+            static (f, s) => f.Daydreams(s),
+            Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View"),
             Zone: ZoneId.Center),
     ];
 
