@@ -36,3 +36,13 @@
 {"agent": "wl-t2-sp1", "at": 1792365658.629895, "kind": "claim", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/MigrationTests.cs", "seq": 36, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t2-sp1", "at": 1792365658.8121588, "kind": "claim", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "seq": 37, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t2-sp1", "at": 1792365658.9886823, "kind": "claim", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "seq": 38, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792366251.7277155, "kind": "release", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "seq": 39, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366251.8306234, "kind": "release", "path": "src/AiDe.Core/Store/StoreWriter.cs", "seq": 40, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366251.9365828, "kind": "release", "path": "src/AiDe.Core/Store/WorkspaceSchema.cs", "seq": 41, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.0635376, "kind": "release", "path": "src/AiDe.Core/Store/Records/StoreWriter.Workbench.cs", "seq": 42, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.1749077, "kind": "release", "path": "src/AiDe.Core/Store/Records/WorkbenchRecords.cs", "seq": 43, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.2743082, "kind": "release", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling148Tests.cs", "seq": 44, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.3944497, "kind": "release", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/MigrationTests.cs", "seq": 45, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.5340142, "kind": "release", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "seq": 46, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"agent": "wl-t2-sp1", "at": 1792366252.645046, "kind": "release", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "seq": 47, "session": "wl-t2-sp1", "wi": "WI-0"}
+{"at": 1792366256.9897158, "from": "wl-t2-sp1", "kind": "done", "mail_id": "mail-01M58NN8TXANESQWJQZE8YN1TG", "ref": null, "session": "wl-t2-sp1", "to": "wl-leader-20261018", "type": "mail"}

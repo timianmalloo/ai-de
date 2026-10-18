@@ -2781,7 +2781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a8e3286b4ce13ef1d65b4b39b6e23273f1c46ef90d787eba532639b41f0c8cc5"
+      "sourceSha256": "f810bd140790624abe90275b6c1a7e2dfdd049108ae52172107dcf112e8a5685"
     },
     {
       "id": "api-aide-core-facts",
@@ -12170,7 +12170,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f1598df99f8cc48b3540526f9645371bf533eceec50e09f66cfcf4b2e88c403b"
+      "sourceSha256": "df9f7186bf898f02e6ecd9b0a9e418eecf45c050ffc91ac297c1622a58eed5c6"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22236,7 +22236,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "86bc474df898d16108ca39abc708184a0a7168a5c683c585b87f1e1d2942134e"
+      "sourceSha256": "f78b5f78940915ac886915e28a3bc54320d1447c2594d2e5853a90b3d0292118"
     },
     {
       "id": "proof-worktree-cleanup-20261017",
@@ -24194,5 +24194,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2c6a050ca836a51a83ab3c23f6617a392eb3db2ef6b6be7797376b4c3c687139"
+  "graphSha256": "b77ca148fd0af869d52dda7204ea518037a649cfc0079ed68a2f3c5bcedc1683"
 };

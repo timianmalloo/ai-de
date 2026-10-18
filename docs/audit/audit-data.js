@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:58:02Z",
+  "generated": "2026-10-18T23:38:51Z",
   "audit": [
     {
       "actor": null,
@@ -22427,12 +22427,65 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58KRZFV93J17SXVFY0CJYR5",
-      "shortname": "join-wl0-evidence",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-0.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-18T22:58:01Z",
-      "session": "wl-leader-20261018",
+      "done_when": "both regressions red then green, suite green, Proof Pack docs/proof/workbench-loops-wl-0.md",
+      "duration_seconds": 564.0,
+      "fan_out": 0,
+      "goal": "Fix FR-001 and FR-002 in Core so index answers are fresh and frame-bounded",
+      "id": "al-01M58KRZFV93J17SXVFY0CJYR5",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-wl0-evidence",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T22:48:37Z",
       "summary": "WL-0 landed: FR-001 working-tree digest in the stamped revision; FR-002 byte budget on entry-point rows; regressions red e10b29d7 then green e7aa167e; Owner accepted on test evidence (GUI demo owed, folded into WL-1a demo). First recount failed on the ConsoleHostCensus WMI flake (AppWindowCloseLeavesNoTerminalHostTests); retried with --continue. recount_seconds=562 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/EntryPointsProjection.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:20:01Z",
+      "done_when": "both gates exit 0, suite green",
+      "duration_seconds": 186.0,
+      "fan_out": 0,
+      "goal": "make two join gates green",
+      "id": "al-01M58N18D10H0YX6DDRTRPBCGH",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "WL-0 fix-forward: bounds clamp and extractor generation bump",
+      "session": "wl-t1-wl0",
+      "shortname": "wl-t1-wl0",
+      "skill": "implement",
+      "started_at": "2026-10-18T23:16:55Z",
+      "summary": "Clamped entry-points byte budget to MaxRowBytes with test; bumped ExtractorGeneration to 2026-10-18.1; both gates green",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M58P3Q95SWBP5T6R0T5ZEXND",
+      "shortname": "join-wl0-evidence-fix",
+      "datetime": "2026-10-18T23:38:50Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of wl0-evidence into main",
+      "summary": "WL-0 fix-forward: red 6141d6de, fix 0c2994e4 - MaxRowBytes now clamps a caller budget; ExtractorGeneration bumped for the SourceRevision change. Step 8 per Ruling 151 (finding-level ratchet vs origin/main a790ccaa). recount_seconds=543 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
@@ -22444,7 +22497,7 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "compiled": false,
       "goal": "Fix FR-001 and FR-002 in Core so index answers are fresh and frame-bounded",
-      "done_when": "both regressions red then green, suite green, Proof Pack docs/proof/workbench-loops-wl-0.md",
+      "done_when": "both regressions red then green, suite green, both join-caught gates green",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -22452,8 +22505,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-18T22:48:37Z",
-      "duration_seconds": 564.0
+      "started_at": "2026-10-18T23:29:46Z",
+      "duration_seconds": 544.0
     }
   ],
   "changes": [
@@ -26536,6 +26589,123 @@ window.AUDIT_DATA = {
       "kind": "decision-request",
       "ref": "req-01M58KREHTRS93NBAWG36JGNFP",
       "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58KT3E0KXN7TPAHZ22VF2JE",
+      "ts": "2026-10-18T22:58:38Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58KREHTRS93NBAWG36JGNFP",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58KZCV6KYEX5S13KAJJ6HNB",
+      "ts": "2026-10-18T23:01:31Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-leader-20261018",
+      "kind": "blocked",
+      "ref": null,
+      "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M58M72HP63VY4DTDJGZQ8JCD",
+      "ts": "2026-10-18T23:05:43Z",
+      "from": "wl-t12-census",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t12-census"
+    },
+    {
+      "id": "mail-01M58M8869H1EEVF7Y9B5770WR",
+      "ts": "2026-10-18T23:06:21Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58M88614J682GM6JXM4NKMA",
+      "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M58MD4VER693QBYJ5KVJZ606",
+      "ts": "2026-10-18T23:09:02Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-t4-sp3",
+      "kind": "ruling",
+      "ref": "req-01M58M88614J682GM6JXM4NKMA",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58MQWJ82HNF7NGYYDDYS0BT",
+      "ts": "2026-10-18T23:14:54Z",
+      "from": "wl-t2-sp1",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t2-sp1"
+    },
+    {
+      "id": "mail-01M58MTQWQATKXPQHA14S5TARS",
+      "ts": "2026-10-18T23:16:27Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58MTQWEHY7WSNFXM59QZ7H3",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58MW821JXS42JR0QB5N255R",
+      "ts": "2026-10-18T23:17:16Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58MW81RJP74K274EV8Q6B3M",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58MYSQCD3RQ79RX2SS8AADY",
+      "ts": "2026-10-18T23:18:40Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58MW81RJP74K274EV8Q6B3M",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58N1H26RB6DFME0Z5M1KV70",
+      "ts": "2026-10-18T23:20:10Z",
+      "from": "wl-t1-wl0",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t1-wl0"
+    },
+    {
+      "id": "mail-01M58NGB8BJ2ARG0PSY2DZH4SR",
+      "ts": "2026-10-18T23:28:15Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58MTQWEHY7WSNFXM59QZ7H3",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58NN8TXANESQWJQZE8YN1TG",
+      "ts": "2026-10-18T23:30:56Z",
+      "from": "wl-t2-sp1",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t2-sp1"
+    },
+    {
+      "id": "mail-01M58P3N4HT8EE043C2H7CYPE8",
+      "ts": "2026-10-18T23:38:48Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t4-sp3"
     }
   ]
 };

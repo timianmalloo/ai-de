@@ -3218,3 +3218,32 @@ Conditions:
 The change is fully reversible: git restores ExplorerSurface. The blast radius is a single operator.
 
 - request: req-01M58M88614J682GM6JXM4NKMA · ruled by: wl-owner-20261018 · at: 2026-10-18T23:09:02Z
+
+### Ruling 150 — T2's three Ruling-148 landing choices: the terminal-drafts journey is accepted as a marked standing owner; body_sha is test-asserted; the payload guard forbids exactly ADR-0039 section 3's fold-derived names
+
+(1) ACCEPT the standing journey journey-terminal-drafts as the owner of post-migration PTY drafts (StoreWriter.cs:146), with conditions:
+- It has purpose=work. The migration creates it exactly once, idempotently, and StoreOpenReport counts it.
+- It carries an origin marker, so readers and T8's binding can tell it from a user-created journey and a later adoption can re-own a draft into a real journey. No non-PTY writer may use it as a default; a test refuses that.
+- Ruling 148's amendment text for (3) and (4) is read as naming it.
+Requiring the PTY path to name a real journey is rejected for now: it needs the binding T8 owns.
+
+(2) ACCEPT. body_sha equality is asserted by tests on both writer paths, and the trigger refuses NULL and any value that is not 64 hex characters. SQLite has no sha256, and the tests satisfy Ruling 148 (d)'s single home.
+
+(3) ACCEPT the narrowing away from the generic keys state and status: a resource state is a legitimate finding. The recommended five-name list is too narrow, though. The forbidden set is ADR-0039 section 3's fold-derived names (lines 128-129, 151, 190): satisfied, satisfied_by, accepted, eligible, closed, current, stale, ready, has_evidence, proposed. Each is matched case- and separator-insensitively (hasEvidence, has-evidence). One test pins the list to that section, so adding a derived quantity to section 3 means extending the guard. WL-5's per-kind schema may tighten the list, never loosen it.
+
+- request: req-01M58MW81RJP74K274EV8Q6B3M · ruled by: wl-owner-20261018 · at: 2026-10-18T23:18:40Z
+
+### Ruling 151 — Gate policy for drive joins: a finding-level ratchet with the test-backed gates held strict, until hygiene track T13 makes the line green
+
+Option A, tightened. The Owner re-ran run-verify-gates at 7e21707b in a separate detached tree. 15 distinct gates FAIL there, the Leader's 14 plus verify-front-door-exit-evidence (12 findings), and verify-test-run failed for a different reason: it ran past 300 s, where the Leader's run produced no usable result file. So main was red before the drive (confirmed), and the failing set moves with the environment. A ratchet on gate names alone would let a real new failure hide behind a gate that was already red for another reason.
+
+Step 8 of conductor-join passes for a drive join when all of these hold:
+(1) Same run, same place. The first parent and the join head run the gate line back to back in the same environment, and both outputs are recorded in the join's audit entry.
+(2) Finding level. Every gate that fails at the head also fails at the first parent, and the head's findings for it are a subset of the parent's. A new finding inside an already-red gate is a new red. The diff of findings is recorded.
+(3) Test-backed gates are never ratcheted. verify-test-run, verify-terminal-host-exit-paths and verify-project-coverage cannot pass on 'it was red before', because a missing result or a timeout says nothing about the tests. For them, the join's own conductor recount, on full suites with result files kept, is the evidence. It must be green except for census reads reported NOT CHECKED with T12's cause.
+(4) The join adds no red. Any gate red at the head and green at the parent stops the join (WL-0's two reds are an example) and goes back to its track.
+
+T13, the hygiene track, is approved and owns the burn-down, each item red-first. Its list is the 15 gates above. For a gate that is pack-owned (under docs/ai-forward-pack/scripts, e.g. ruling-citations reading only rulings.md), T13 fixes the repo content the gate flags, or files the gate defect for the pack as a next step. It does not edit the pack's scripts locally.
+The ratchet ends when the line is green on main. From then on, step 8 is strict again. This ruling is reversible: it is a join policy only.
+
+- request: req-01M58MTQWEHY7WSNFXM59QZ7H3 · ruled by: wl-owner-20261018 · at: 2026-10-18T23:28:15Z
