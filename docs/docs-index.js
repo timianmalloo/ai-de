@@ -10494,7 +10494,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8f3ecee3b4b59aadeb4c87f8a9a3d84e95476a0e8c0d34b535137030ff4b0dc"
+      "sourceSha256": "a5b6341d865150654ed127dc395dab75246beb9b481d13ea247c8c962e9a3a4b"
     },
     {
       "id": "defect-classes",
@@ -18797,6 +18797,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "4ca22685db704bea072312d2a683d8e771a5c5ce2757822e8527e25b9087ab78"
     },
     {
+      "id": "coordination-workbench-loops",
+      "path": "docs/coordination/coordination-workbench-loops.md",
+      "title": "Coordination plan - workbench loops (WL-0 → WL-6)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The division of the workbench-loops drive: WL-0 plus a three-item serial spine (schema v2, RunEvent/TurnState vocabulary, Perspective re-row) run first as the only coding tracks; WL-1a then fans out into host, folds, redaction and binding tracks; WL-S, E-1 and later slices open as their interfaces land. Ten coding tracks in the first horizon, at most six at once; the honest multiplier is about 4×, not 6×.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "plan-workbench-loops-drive-prompt",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "81c4de20d13f53c310339f43616140137fbfbacdc8d1962ddac759bfc8e92a1e"
+    },
+    {
       "id": "plan-workbench-loops-drive-prompt",
       "path": "docs/plans/workbench-loops-drive-prompt.md",
       "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
@@ -24089,5 +24139,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "6a7df4a768dddcddcdac0c7ad071de44b78dd07ccbd679c10a1101f8082e3d42"
+  "graphSha256": "ba5143b003fb21592b5f5cb728be63839b4ad2cdcec7a97b32eb3ba2a29ea183"
 };

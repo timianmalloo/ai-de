@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T21:55:10Z",
+  "generated": "2026-10-18T22:17:27Z",
   "audit": [
     {
       "actor": null,
@@ -22198,6 +22198,52 @@ window.AUDIT_DATA = {
       "fan_out": 6,
       "started_at": "2026-10-18T21:49:44Z",
       "duration_seconds": 326.0
+    },
+    {
+      "id": "al-01M58GKTHJQWT6CM996ZN6RWBJ",
+      "shortname": "updatepack-r110",
+      "datetime": "2026-10-18T22:02:46Z",
+      "session": "wl-owner-20261018",
+      "prompt": "C:/Program Files/Git/updatepack - there may be an issue with the current pack where in new work trees it still asks for edit permissions so get the latest ai-forward fixes",
+      "summary": "102 -> 110; 19 UPDATE 16 MERGE 11 ADD 3 KEEP; 0 conflicts; WT-D/WT-E worktree permission fixes landed; commit 461c058b",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "pull latest AI-Forward fixes incl. worktree edit-permission fix",
+      "done_when": "revision 110 applied, pack-doctor 0 FAIL, pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:01:16Z",
+      "duration_seconds": 90.0
+    },
+    {
+      "id": "al-01M58HEG5ET4YCG1JYW3ZSG1JJ",
+      "shortname": "coordination-workbench-loops",
+      "datetime": "2026-10-18T22:17:20Z",
+      "session": "wl-leader-20261018",
+      "prompt": "You are the Leader. Read C:\\Projects\\ai-de\\docs\\coordination\\workbench-loops-leader-kickoff.md and follow it exactly, starting now.",
+      "summary": "Plan coordination-workbench-loops: 11 coding tracks + Q0 qualification; serial spine T2 schema v2, T3 RunEvent/TurnState vocabulary, T4 Perspective re-row (re-row moved onto the spine: shares SurfaceContentFactory.Kinds lines and WorkbenchShell with WL-1a binding); WL-0 T1 parallel; struck: WL-0 split, IPC spine, Agy WL-1a scaffolds, proof-pack writer tracks, registry class, E-1 in wave 1. Findings: HTML surface cap at 100/100 (md-only deviation), rulings.md absent (Ruling 1 collision risk), grok-4.7-build is the served alias of the grok-4.7 pin, Grok/Agy unsupported until Q0.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-workbench-loops.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M58FTCXG1K5J5BWC5X6MGVC2",
+      "edit_distance": 0.8904,
+      "goal": "Produce the workbench-loops coordination plan (track DAG, serial spine, per-track contracts, harness qualification) for the WL-0..WL-6 drive",
+      "done_when": "docs/coordination/coordination-workbench-loops.md committed with layer state, artifact classes, tracks, serial spine, seams, struck tracks and order of operations; reconciliations stated",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:03:29Z",
+      "duration_seconds": 831.0
     }
   ],
   "changes": [
