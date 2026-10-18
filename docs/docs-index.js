@@ -18844,7 +18844,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81c4de20d13f53c310339f43616140137fbfbacdc8d1962ddac759bfc8e92a1e"
+      "sourceSha256": "36a44fa46f51cd787b0f4a81bbb57575e12898c3a47d15a8706e335e63a9cd5f"
     },
     {
       "id": "plan-workbench-loops-drive-prompt",
@@ -24139,5 +24139,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "ba5143b003fb21592b5f5cb728be63839b4ad2cdcec7a97b32eb3ba2a29ea183"
+  "graphSha256": "23a0b3dd4c1d10cd5d3f6edc56a177ddac82910465cff5fbfaac8fc1518d8a29"
 };

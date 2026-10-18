@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:17:27Z",
+  "generated": "2026-10-18T22:25:04Z",
   "audit": [
     {
       "actor": null,
@@ -22244,6 +22244,163 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:03:29Z",
       "duration_seconds": 831.0
+    },
+    {
+      "id": "al-01M58HW7HTXD3KNX565NCGQ63R",
+      "shortname": "Goal: qualify this worker harness for the workbench-loops drive by writi…",
+      "datetime": "2026-10-18T22:24:50Z",
+      "session": "prompt-compile",
+      "prompt": "Goal: qualify this worker harness for the workbench-loops drive by writing one short qualification note in your own worktree\nDone when: the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD`; the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\"\nNot in scope: any other file; any source code; pushing; merging; network access beyond your model\nTier: T1\nFan-out cap: 0\nContext ceiling: 60000\nMain-line budget: 15 tool calls",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M58HWMXHFYMBAMAZF35J0Y98",
+      "shortname": "compile-Goal: qualify this worker harness for the workbench-loops drive by writi…",
+      "datetime": "2026-10-18T22:25:04Z",
+      "session": "wl-leader-20261018",
+      "prompt": "python3 docs/ai-forward-pack/scripts/audit-log.py start --session wl-leader-20261018 --skill compile\nGoal state\nGoal: qualify this worker harness for the workbench-loops drive by writing one short qualification note in your own worktree\nDone when: the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD`; the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\"\nNot in scope: any other file; any source code; pushing; merging; network access beyond your model\nTier: T1\nFan-out cap: 0\nContext ceiling: 60000\nMain-line budget: 15 tool calls\nTrace\n| clause | trace |\n|---|---|\n| done_when: the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD` | phrase: the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD` |\n| done_when: the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\" | phrase: the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\" |\n| not_in_scope: any other file | phrase: any other file |\n| not_in_scope: any source code | phrase: any source code |\n| not_in_scope: pushing | phrase: pushing |\n| not_in_scope: merging | phrase: merging |\n| not_in_scope: network access beyond your model | phrase: network access beyond your model |\nReferences\n- git rev-parse --abbrev-ref HEAD: unresolved (not found)\n- docs/notes/qualify-worker-wl.md: unresolved (not found)\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 1\ntransient_retry: One retry on a clean pre-prompt startup failure; a second failure records the harness unsupported.\nper_branch_exit: The note file is committed on the worker branch and the Leader reads it back.\njoin_rule: Never joined; the branch is tagged archive/q0-<harness> and kept.\ncontainment: The worker edits only docs/notes/qualify-worker-wl.md in its own worktree.\ntermination: The commit exists, or the deadline passes.\ndeadline: 1200 seconds from launch.\nfallback: Record the harness unsupported; its tracks run on Claude Code Sonnet.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M58HW7HTXD3KNX565NCGQ63R\nraw sha256: 2446626799661312f927eb510149fa9ed05b605b7f24e9d883819f9b54db14c6\ncompiler model: claude-opus-5-5\nengine seconds: 0.007\ntokens: not recorded\ngate: pass\ndispatchable: true\n",
+      "summary": "compiled al-01M58HW7HTXD3KNX565NCGQ63R for claude-code v1: 7 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD`",
+            "trace": {
+              "kind": "phrase",
+              "ref": "the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD`"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\"",
+            "trace": {
+              "kind": "phrase",
+              "ref": "the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\""
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "any other file",
+            "trace": {
+              "kind": "phrase",
+              "ref": "any other file"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "any source code",
+            "trace": {
+              "kind": "phrase",
+              "ref": "any source code"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "pushing",
+            "trace": {
+              "kind": "phrase",
+              "ref": "pushing"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "merging",
+            "trace": {
+              "kind": "phrase",
+              "ref": "merging"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "network access beyond your model",
+            "trace": {
+              "kind": "phrase",
+              "ref": "network access beyond your model"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 1,
+          "transient_retry": "One retry on a clean pre-prompt startup failure; a second failure records the harness unsupported.",
+          "per_branch_exit": "The note file is committed on the worker branch and the Leader reads it back.",
+          "join_rule": "Never joined; the branch is tagged archive/q0-<harness> and kept.",
+          "containment": "The worker edits only docs/notes/qualify-worker-wl.md in its own worktree.",
+          "termination": "The commit exists, or the deadline passes.",
+          "deadline": "1200 seconds from launch.",
+          "fallback": "Record the harness unsupported; its tracks run on Claude Code Sonnet."
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "context_ceiling": 60000,
+          "done_when": [
+            "the file docs/notes/qualify-worker-wl.md exists in your worktree with your harness name, your model id as you know it, the absolute path of your working directory and the output of `git rev-parse --abbrev-ref HEAD`",
+            "the file is committed on your branch with the message \"docs: qualify worker for workbench-loops\""
+          ],
+          "fan_out_cap": 0,
+          "goal": "qualify this worker harness for the workbench-loops drive by writing one short qualification note in your own worktree",
+          "main_line_budget": "15 tool calls",
+          "not_in_scope": [
+            "any other file",
+            "any source code",
+            "pushing",
+            "merging",
+            "network access beyond your model"
+          ],
+          "tier": "T1"
+        },
+        "graph_neighbours": [],
+        "harness": "claude-code",
+        "mode": "pass-through",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "claude-opus-5-5",
+          "engine_seconds": 0.007,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M58HW7HTXD3KNX565NCGQ63R",
+        "raw_sha256": "2446626799661312f927eb510149fa9ed05b605b7f24e9d883819f9b54db14c6",
+        "raw_text_normalised": false,
+        "references": [
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "git rev-parse --abbrev-ref HEAD"
+          },
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "docs/notes/qualify-worker-wl.md"
+          }
+        ],
+        "schema": "compiled-prompt/1",
+        "template": "claude-code",
+        "template_version": 1
+      },
+      "mode": "pass-through",
+      "dispatchable": true
     }
   ],
   "changes": [
