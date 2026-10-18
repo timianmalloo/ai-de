@@ -1,0 +1,21 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Sessions.TurnStateIsNeverSerializedTests.NoSourceFile_SerializesOrParsesTurnState [FAIL]
+  Failed AiDe.Core.Tests.Sessions.TurnStateIsNeverSerializedTests.NoSourceFile_SerializesOrParsesTurnState [43 ms]
+  Error Message:
+   TurnState is serialized or parsed by name in: AiDe.Core/PlantedTurnStateSerialization.cs
+  Stack Trace:
+     at AiDe.Core.Tests.Sessions.TurnStateIsNeverSerializedTests.NoSourceFile_SerializesOrParsesTurnState() in C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\Sessions\TurnStateIsNeverSerializedTests.cs:line 25
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 62 ms - AiDe.Core.Tests.dll (net10.0)
