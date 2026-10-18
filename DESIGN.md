@@ -267,9 +267,9 @@ for a workbench, and it is why the motion inventory is short by design rather th
 
 ### Copy (real, in-voice)
 
-- `Move Explore — use arrow keys to choose a destination, Enter to place, Escape to cancel`
+- `Move Graph — use arrow keys to choose a destination, Enter to place, Escape to cancel`
 - `Resize: left edge of Terminal. Arrow keys adjust. Enter to commit.`
-- `Explore moved to the right region.` *(announcement, focus unchanged)*
+- `Graph moved to the right region.` *(announcement, focus unchanged)*
 - `Minimum size reached.`
 - `Layout is locked. Unlock to rearrange panes.`
 - `Layout "Review" applied — pane geometry and open surfaces.`
@@ -643,7 +643,7 @@ staged, sending, streaming, refused / wrong answer, error with recovery, overflo
 - `Draft staged, not sent`
 - `This session has no blocks yet.`
 - `Console is the only canvas mode in this phase.`
-- `Explorer: graph and reader`
+- `Understand: the graph and the tree`
 - `Nothing has run yet. Send the first message and the merged stream appears here.`
 - `Block b3 is waiting on a ready agent backend. The draft is preserved and was not sent.`
 - `A session opens without a ready backend; a run needs one.`
@@ -672,7 +672,7 @@ declares the **light values** of every role. Its acceptance test is the runtime 
 
 **Who, and in what state.** The operator: one technical lead, one screen, three jobs on one repository,
 serially, many times a day. They arrive **in flow** (a terminal live, a console streaming, a permission
-request due) and never browsing. Eighty percent of their time is in Coding, talking to a session.
+request due) and never browsing. Eighty percent of their time is in Factory, talking to a session.
 
 **The job.** Be in **one use case at a time** with the surfaces, the menu and the default arrangement
 fitted to it: **J1** drive agentic coding by talking to a session as in a chat; **J2** walk the graph;
@@ -682,8 +682,8 @@ switch must feel like *turning to a different bench in the same workshop*: insta
 **Archetype.** The shell's signature is the frontmatter's `PerspectiveShell { … Arch:HubAndSpoke … }`
 (spec §C1): the rail is the hub, each perspective a spoke; **the spokes are read in parallel** (three
 destinations always visible with their state) **and entered serially** (exactly one body). Verified
-against the shape of each task inside it: the Coding and Architecture hosts are parallel-reading
-`MultiPanelWorkstation`s; Explore is the explorer's own Spatial-Canvas × Master-Detail; **the composer
+against the shape of each task inside it: the Factory and Understand hosts are parallel-reading
+`MultiPanelWorkstation`s; Review is an empty host until WL-5 admits its first kind (design D3); **the composer
 is serial entry and takes D1 · Generative Stream Thread as its nearest row** (`Feedback:Generative`,
 U13–U15 adopted; `Layout:StreamingThread` not adopted: the thread is the session document, composer
 beside canvas, not an auto-scrolling column); the New Session sheet is one short form, `Pacing:UserDriven`
@@ -762,9 +762,9 @@ meet at the shell's startup width (P-12):
 
 | Rule | Statement |
 |---|---|
-| *(composition, active signal)* | The rail's composition (New session above the divider; Coding · Explore · Architecture; Tests reserved and absent) and the active signal (the 3px bar plus the accent glyph; the pill is decorative) are spec §B2 and §C3 and are not restated here. |
+| *(composition, active signal)* | The rail's composition (New session above the divider; Factory · Review · Understand; Tests reserved and absent) and the active signal (the 3px bar plus the accent glyph; the pill is decorative) are spec §B2 and §C3 and are not restated here. |
 | **PS-R2** | The destinations are a **single-selection group with manual activation**: one selected item; **Up/Down move focus only** (nothing switches, nothing announces); **Space, Enter, the bound gesture, or a click switch**; Tab leaves the rail (roving tab-stop); activating the selected item is a no-op that emits nothing. Exposed to UIA as a vertical **tab list** (`TabItem` with `SelectionItemPattern`, `IsSelected` = active), not as radio buttons: a WPF `RadioButton` group selects on arrow, which would switch perspective on the first Down and make the *opening* state ("focus stays on the trigger") impossible. Deviation from spec §C4's "radio-group item", recorded with this rationale; the View menu keeps `menuitemradio`. |
-| **PS-R4** | Every rail glyph is a registry entry (`IconAdd`, `IconExplore`, and two new ones, `IconCoding` and `IconArchitecture`, drawn on the `{icon.md}` grid at `{icon.stroke}`), never inline path data. The tooltip is *"Coding — Ctrl+1"* with the keystroke **rendered from the bound `KeyGesture`'s display string**; no bound gesture, no keystroke shown. |
+| **PS-R4** | Every rail glyph is a registry entry (`IconAdd`, and three new ones, `IconFactory`, `IconReview` and `IconUnderstand`, drawn on the `{icon.md}` grid at `{icon.stroke}`), never inline path data. The tooltip is *"Factory — Ctrl+1"* with the keystroke **rendered from the bound `KeyGesture`'s display string**; no bound gesture, no keystroke shown. |
 | **PS-R5** | **The rail follows the body; it never leads it.** The selection has one writer — the presenter's change event — so a destination can never read as selected while its body is not on screen; every other path a list selects on (a page key, a right-click, typeahead, the UIA `Select()`, a programmatic selection) is reverted and becomes an activation request; Tab enters the group on the selected destination and its container is never a one-stop (`TabNavigation=Once`) group. The window title reads *"<workspace> — <Perspective> — AI-DE"* and the status strip names *"<Perspective> perspective"* after every switch (spec §C6); the switch itself is one `shell.mode` line (from · to · trigger · `first_entry` · `outcome` · `error_code`) and, at the new body's first layout pass, one `shell.mode.shown` line with `duration_ms` (US-C12). |
 
 | Rail item state | Ink | Ground | Extra signal |
@@ -773,8 +773,8 @@ meet at the shell's startup width (P-12):
 | hover | `{colors.text}` | `{colors.surface-raised}` | tooltip |
 | focus | as rest/hover | as rest/hover | 2px `{colors.focus}` **outer** ring (`{colors.focus}` on the accent-filled New session item is 1.5:1, so the ring is never inset there) |
 | **selected (active)** | `{colors.accent}` | `{colors.surface-raised}` | 3px `{colors.accent}` bar, `aria-selected` / `IsSelected` exposed (SelectionItemPattern) |
-| **opening** (first entry) | `{colors.text-muted}` | `{colors.surface-raised}` | progress ring on the glyph; status *"Opening Architecture…"*; focus stays on the trigger |
-| **error** (body failed to build) | `{colors.text-muted}` | `{colors.surface-sunken}` | `{colors.danger}` badge glyph; tooltip and `ItemStatus`: *"Couldn't open Architecture: <reason>. Activate to try again."* |
+| **opening** (first entry) | `{colors.text-muted}` | `{colors.surface-raised}` | progress ring on the glyph; status *"Opening Understand…"*; focus stays on the trigger |
+| **error** (body failed to build) | `{colors.text-muted}` | `{colors.surface-sunken}` | `{colors.danger}` badge glyph; tooltip and `ItemStatus`: *"Couldn't open Understand: <reason>. Activate to try again."* |
 | disabled | *does not exist* | none | AR3: a destination that cannot be entered is removed |
 | **New session** rest / hover / focus / pressed | `{colors.accent-contrast}` | `{colors.accent}` (hover: same, `brightness 1.12`) | never disabled: with no workspace the chooser interposes |
 
@@ -805,7 +805,7 @@ named a ground without naming its ink, or an ink without its ground.
 
 | Rule | Statement |
 |---|---|
-| **PS-M1** | Top-level names are **File · Edit · View · Window · Prompt · Help**. Five are the code's names, kept; the sixth was the code's *Terminal*, renamed **Prompt** because, with `terminal.new` and the harness rows moved to File as entry verbs (US-C11), it holds only *Dispatch prompt…* and *New prompt draft* — a Terminal menu with no terminal verb teaches the operator to distrust the menu. The earlier *Graph · Model · Agents* set is retired: the derivation rule (spec §B3) places every allow-list entry under **View**, so a Model menu would need a second placement rule, and harness sessions are entry verbs under File, so an Agents menu would offer what File already does (`docs/notes/addendum-c-design-menu-names.md`). Which menus each perspective has is spec §B3 (Coding: all six; Explore: File · View · Help; Architecture: all but Prompt). |
+| **PS-M1** | Top-level names are **File · Edit · View · Window · Prompt · Help**. Five are the code's names, kept; the sixth was the code's *Terminal*, renamed **Prompt** because, with `terminal.new` and the harness rows moved to File as entry verbs (US-C11), it holds only *Dispatch prompt…* and *New prompt draft* — a Terminal menu with no terminal verb teaches the operator to distrust the menu. The earlier *Graph · Model · Agents* set is retired: the derivation rule (spec §B3) places every allow-list entry under **View**, so a Model menu would need a second placement rule, and harness sessions are entry verbs under File, so an Agents menu would offer what File already does (`docs/notes/addendum-c-design-menu-names.md`). Which menus each perspective has is spec §B3 (derived from each perspective's rows by `PerspectiveMenu.For`, never stored per perspective). |
 | **PS-M3** | Structurally inapplicable → **absent**; transiently unavailable → **disabled with a reason** on hover — and a disabled row never takes the hover ground (its ink fails 4.5:1 on `float-chrome`). New session is never disabled. The File menu's harness rows sit under a group caption *Terminal sessions*, so the two nouns the operator meets there (a *session* document; a Claude Code *terminal session*) are told apart by the group, not by the row title the profiles derive. |
 | **PS-M4** | An item shows a keystroke only when one is **bound**, rendered from the binding's display string. An unbound chord (`Ctrl+K, X`) is shown and spoken nowhere until a chord handler exists. The palette row for such a command reads its title alone. |
 
@@ -824,12 +824,12 @@ named a ground without naming its ink, or an ink without its ground.
 that did not happen. The active bar and glyph change over `{motion.fast}`. **The announcement is a
 mechanism, not an ordering:** the shell raises a UIA notification
 (`AutomationPeer.RaiseNotificationEvent(ActionCompleted, ImportantAll, "<Perspective> perspective…")`)
-**before** it calls `Focus()` on the new body's first focusable (Coding: the active document's editor, else
-the Left zone's active tab; Explore: the search box, never the canvas; Architecture: the Center's active
+**before** it calls `Focus()` on the new body's first focusable (Factory: the active document's editor, else
+the Left zone's active tab; Understand: the Center's active
 tab), and each body carries the constant name *"<Perspective> perspective body"* so the focus move is a
 second carrier. A polite live region beside an immediate focus move is exactly the case where a screen
 reader speaks the target first and drops the text; P-9 is the falsifier. A routed kind-open announces
-*"Opened Class diagram in Architecture"*; its failure announces the failure string and moves nothing.
+*"Opened Class diagram in Understand"*; its failure announces the failure string and moves nothing.
 The window title reads *"<workspace> — <Perspective> — AI-DE"*. The status strip's **message is the live
 region** (`role=status` on the text, not on the strip, so the health chip and the Dismiss control never
 announce); a long report wraps to two lines and is focusable, never trapped in a tooltip; the count chip
@@ -947,18 +947,18 @@ Under reduced motion every row is 0ms and every announcement still fires.
 
 ### Copy added by this section
 
-- `Coding — Ctrl+1` · `Explore — graph & reader — Ctrl+2` · `Architecture — Ctrl+3` *(tooltips; the keystroke from the binding)*
-- `Coding perspective` · `Explore perspective` · `Architecture perspective` *(accessible names)*
-- `Architecture perspective — 4 panes` · `Opened Class diagram in Architecture` · `Coding perspective — session payments extraction opened` *(announcements)*
-- `Opening Architecture…` · `Opening Architecture… (still building).`
-- `Couldn't open Architecture — the graph service did not answer in 10 s. Activate to try again.`
-- `Couldn't open Class diagram — Architecture failed to open: the graph service did not answer in 10 s.`
+- `Factory — Ctrl+1` · `Review — Ctrl+2` · `Understand — Ctrl+3` *(tooltips; the keystroke from the binding)*
+- `Factory perspective` · `Review perspective` · `Understand perspective` *(accessible names)*
+- `Understand perspective — 4 panes` · `Opened Class diagram in Understand` · `Factory perspective — session payments extraction opened` *(announcements)*
+- `Opening Understand…` · `Opening Understand… (still building).`
+- `Couldn't open Understand — the graph service did not answer in 10 s. Activate to try again.`
+- `Couldn't open Class diagram — Understand failed to open: the graph service did not answer in 10 s.`
 - `No session open.` · `Or open a recent one from File → Recent sessions.`
 - `No view open.` · `Or open Domain, Contexts or Joins from the View menu.`
 - `Select an evidence row to see its provenance.` · `Nothing indexed yet. Run Index from the File menu.` · `This row's provenance couldn't be read.`
-- `3 panes from your saved layout aren't available in Coding — Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
-- `1 pane from your saved layout isn't available in Coding — Graph. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
-- `Your saved layout had no panes Coding can show, so Coding opened with its default layout.`
+- `3 panes from your saved layout aren't available in Factory — Domain (class diagram), Graph, Contexts. Understand opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
+- `1 pane from your saved layout isn't available in Factory — Graph. Understand opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
+- `Your saved layout had no panes Factory can show, so Factory opened with its default layout.`
 - `What should this session do? Mention the files it may write as @path.` *(editor placeholder)*
 - `Goal · Done when · Not in scope — will appear as you write`
 - `fill in, or add an assist provider in settings`
@@ -1006,10 +1006,12 @@ send row is pinned).
 | *Nested cards* and *cramped padding* on the 28px strips | The front-door section's two recorded deviations, unchanged. |
 | A hovered accent fill is `brightness(1.12)`, not a token | The value is derived from `{colors.accent}` and clears 8.24 / 5.22:1 with `accent-contrast`; the WPF slice uses the Fluent accent-light brush. Recorded so the non-token ground is a decision. |
 | The composer's editor is a WebView2 page and the census cannot walk it yet | Reported as *not measured*, never as a pass (§C7). The mockup's live audit measures the design's pairs; the page's real pairs are measured when the census walks the DOM. |
-| `IconCoding` and `IconArchitecture` are resources of `MainWindow.xaml`, not of `App.xaml`'s registry (PS-R4) | The Shell lane's SH-2 slice does not own `App.xaml`; the two geometries are keyed resources resolved by the rail exactly as registry entries are, and move to the registry by a two-line seam request. Recorded so the split registry is a decision, not drift. |
-| The drop-with-report sentence's second half reads *"<Perspective> admits them; open them from its View menu."* rather than spec §C4's *"Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu."* | The spec's sentence names §B4's Architecture default, which lands with SH-3 (`WorkbenchLayout.Default(perspective)`); until it does, naming the admitting perspective is the true sentence. The first half (count, captions, kinds, plural forms) is the spec's verbatim. |
-| The rail's **opening** state (progress ring on the glyph, *"Opening Architecture…"*, focus held on the trigger) is not built | Both hosts are composed at construction and every body is retained, so a switch is synchronous and the state has no interval to show; focus stays on the trigger until the body's first layout pass by construction (`PerspectiveShell.EntryFocus` runs on `Loaded`). The row stays in the table for the day a body builds asynchronously; the spec's owner strikes or keeps it (US-C1's rationale for manual activation is unaffected). |
+| `IconFactory` and `IconUnderstand` are resources of `MainWindow.xaml`, not of `App.xaml`'s registry (PS-R4) | The Shell lane's SH-2 slice does not own `App.xaml`; the two geometries are keyed resources resolved by the rail exactly as registry entries are, and move to the registry by a two-line seam request. Recorded so the split registry is a decision, not drift. |
+| The drop-with-report sentence's second half reads *"<Perspective> admits them; open them from its View menu."* rather than spec §C4's *"Understand opens with Graph, Domain, Contexts and Joins; open anything else from its View menu."* | The spec's sentence names §B4's Understand default, which lands with SH-3 (`WorkbenchLayout.Default(perspective)`); until it does, naming the admitting perspective is the true sentence. The first half (count, captions, kinds, plural forms) is the spec's verbatim. |
+| The rail's **opening** state (progress ring on the glyph, *"Opening Understand…"*, focus held on the trigger) is not built | Both hosts are composed at construction and every body is retained, so a switch is synchronous and the state has no interval to show; focus stays on the trigger until the body's first layout pass by construction (`PerspectiveShell.EntryFocus` runs on `Loaded`). The row stays in the table for the day a body builds asynchronously; the spec's owner strikes or keeps it (US-C1's rationale for manual activation is unaffected). |
 | The switch is two log lines (`shell.mode`, then `shell.mode.shown`), not US-C12's one | The switch line is written synchronously — INV-0009's readers and the headless presenter tests depend on it — and the stop edge (the body's first `Loaded`) is asynchronous and absent in a headless run. Two lines joined by `mode` and `trigger` keep the duration measured, never modelled, and never make the synchronous line wait. |
+
+> **Superseded in naming (WL-S, ADR-0045 §1).** The errata below are a dated record and keep the rows of their day: Coding is now Factory, Architecture is Understand, Explore was retired, and Coordination was folded into Factory. See `docs/design/workbench-loops-wl-s.md`.
 
 ### Errata after Rulings 83–84 (2026-09-13, node D3): a fourth perspective, and Coding's default re-cut
 
@@ -1248,7 +1250,7 @@ cap the operator enforced with its count, never a plausible number.
 
 | Row above | Was | Now (the ruling, and D3's rendering of it) |
 |---|---|---|
-| Direction brief — constraints, *"the maximized Center stack (Ruling 47)"* | the session takes the whole tree | The session document is **docked in Coding's Left zone** (Ruling 83; the shell section's errata); `Ctrl+K, Z` is the on-demand whole tree. The contract below is measured at 1440 × 900 with the session **docked at Left, extent 1.3** — the 96ch measure must still fit (Ruling 83 condition 1). |
+| Direction brief — constraints, *"the maximized Center stack (Ruling 47)"* | the session takes the whole tree | The session document is **docked in Factory's Left zone** (Ruling 83; the shell section's errata); `Ctrl+K, Z` is the on-demand whole tree. The contract below is measured at 1440 × 900 with the session **docked at Left, extent 1.3** — the 96ch measure must still fit (Ruling 83 condition 1). |
 | *"Not chunky"* — editor share (the front-door row this section inherits) | ≥ 45 % of the zone height; never below 130px | **Derived from the thread's need (Ruling 80).** **0 turns:** the thread is its two-line caption and the editor takes the rest of the body — no vertical scrollbar before the operator types. **≥ 1 turn:** the editor **rests at 280px** and scrolls only past it; the thread takes the remainder. **130px is the floor** under a small window — **one constant**, `ComposerSurface.EditorFloor`, read by the host and pushed to the page (`composer.html`'s own `min-height: 110px` is a second definition of one floor, DM-A: the page reads the pushed value). `SessionDocumentSurface.ComposerShare` retires. |
 | "Chat-like" — the editor's top edge | equal at 1, 5 and 40 turns, read in one pass | Equal at 1, 5 and 40 turns; **at 0 turns the editor's bottom edge is the composer's and its height is `body − header − caption − chrome`**; one audit pass reads all four. |
 | "Chat-like" — editor height | ≥ 130px, ≤ 280px then scrolls | **280px at rest with turns** (≥ 130 only when the window cannot give 280); **fills the body at 0 turns**; a scrollbar appears only when the text exceeds the rest height. |
@@ -1266,13 +1268,13 @@ cap the operator enforced with its count, never a plausible number.
 
 ---
 
-## Solution tree (D-0, Architecture navigator)
+## Solution tree (D-0, Understand navigator)
 
 N8 `/ui-design` create. Mockup: `docs/mockups/solution-tree.html`. Spec: `spec-understanding-views` Part B/C. Toolkit: WPF `TreeView` (`docs/spikes/d0-tree-toolkit/RESULT.md`). **No new colour token.** Unindexed uses `{colors.unverified}`. HTML is direction; native PASS is the proof pack.
 
 ### Direction brief (DX5)
 
-**Who and state.** Architect / reviewer already in Architecture, expert, keyboard-first, distrusts a clean empty pane. Same person arriving from Coding is looking for a navigator beside the graph, not a second Explorer.
+**Who and state.** Architect / reviewer already in Understand, expert, keyboard-first, distrusts a clean empty pane. Same person arriving from Factory is looking for a navigator beside the graph, not a second Explorer.
 
 **Job-to-be-done.** See what the index covered, what it did not, and jump to the file or the graph without taking silence for coverage.
 
@@ -1286,11 +1288,11 @@ Verified against the task: browsing the tree is serial (one focused row); readin
 
 **Three adjectives.** Dense, not cramped. Honest, not optimistic. Calm, not ornamental.
 
-**Named references.** JetBrains Rider Project tool window: unindexed as a labelled state, never a silent hide (pattern; not yellow-as-only-signal). VS Code Explorer `files.exclude`: omission without a glyph — **do not copy** (skip-listed dirs have no row; chrome carries the count). Windows File Explorer / WPF `TreeView`: Tree/TreeItem, arrows, 16px expander slot. AI-DE Architecture host: tokens, 28px compact rows, confidence as glyph + word + colour.
+**Named references.** JetBrains Rider Project tool window: unindexed as a labelled state, never a silent hide (pattern; not yellow-as-only-signal). VS Code Explorer `files.exclude`: omission without a glyph — **do not copy** (skip-listed dirs have no row; chrome carries the count). Windows File Explorer / WPF `TreeView`: Tree/TreeItem, arrows, 16px expander slot. AI-DE Understand host: tokens, 28px compact rows, confidence as glyph + word + colour.
 
 **Anti-goals.** Not Explorer. Not Atlas. Not a file-manager toolbar. Not a `bin` row, greyed or otherwise. Not colour-only Unindexed. Not `{colors.inferred}` or `{colors.stale}` for Unindexed. Not 44px rail rows. Not a skeleton that looks like a complete tree.
 
-**Constraints.** Native WPF on Windows; compact 28px rows, 24×24 minimum hit, `{icon.sm}` 16px inside the row; WCAG 2.2 AA; dual-activate Enter = View source, Ctrl+Enter = Reveal in graph; tree focused so Coding's composer chord is not stolen.
+**Constraints.** Native WPF on Windows; compact 28px rows, 24×24 minimum hit, `{icon.sm}` 16px inside the row; WCAG 2.2 AA; dual-activate Enter = View source, Ctrl+Enter = Reveal in graph; tree focused so Factory's composer chord is not stolen.
 
 ### Personality (DX6)
 

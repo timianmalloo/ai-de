@@ -404,22 +404,16 @@ public static class WorkbenchDiagnostics
     /// </remarks>
     /// <param name="from">The perspective that was active.</param>
     /// <param name="to">The perspective asked for.</param>
-    /// <param name="trigger">What asked: a catalog command id, <c>rail</c>, <c>escape</c>, <c>document-opening</c>, a replay step.</param>
-    /// <param name="firstEntry">True when the target body was built by this switch (US-C12).</param>
-    /// <param name="outcome"><c>switched</c> · <c>failed</c> (the body could not be built; <paramref name="to"/> is not active) · <c>refused</c> (a host command with no host; nothing changed).</param>
-    /// <param name="errorCode">The stable code of a failure or refusal; null on success (E7: the IO failure-rate axis).</param>
+    /// <param name="trigger">What asked: a catalog command id, <c>rail</c>, <c>document-opening</c>, a replay step.</param>
     public static void ShellMode(
-        AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger,
-        bool firstEntry, string outcome, string? errorCode)
+        AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)
     {
         using var activity = Source.StartActivity("workbench.shell.mode");
         activity?.SetTag("workbench.mode", to.Id);
         activity?.SetTag("workbench.mode.from", from.Id);
         activity?.SetTag("workbench.trigger", trigger);
-        activity?.SetTag("outcome", outcome);
-        activity?.SetTag("error.code", errorCode);
 
-        // The perspective's stable id (`coding` · `explore` · `architecture`), never its title: a
+        // The perspective's stable id (`factory` · `review` · `understand`), never its title: a
         // reader greps the log for the row, and a caption can be re-worded without re-keying history.
         Write(new
         {
@@ -428,9 +422,6 @@ public static class WorkbenchDiagnostics
             mode = to.Id,
             from = from.Id,
             trigger,
-            first_entry = firstEntry,
-            outcome,
-            error_code = errorCode,
         });
     }
 

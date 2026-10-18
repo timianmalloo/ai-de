@@ -80,7 +80,6 @@
             draw from one set. Defined here, before the templates that reference them, so the
             StaticResource lookups resolve. Extend here; never inline a glyph character.
         -->
-        <Geometry x:Key="IconExplore">M3 6.5a1.5 1.5 0 0 1 1.5-1.5h3.5l1.5 1.5h7a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-13a1.5 1.5 0 0 1-1.5-1.5z</Geometry>
         <Geometry x:Key="IconGraph">M6 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM18 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM9 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM8 7l8 1.5M8 16l1-6.5</Geometry>
         <Geometry x:Key="IconCoordinate">M6 4a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM17 15a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM6 7.6v4.4a3 3 0 0 0 3 3h6</Geometry>
         <Geometry x:Key="IconCompose">M4 20h4l9.5-9.5a2 2 0 0 0-3-3L5 16.5zM14 6.5l3 3</Geometry>

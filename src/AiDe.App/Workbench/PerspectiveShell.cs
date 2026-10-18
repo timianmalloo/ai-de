@@ -174,7 +174,7 @@ public sealed class PerspectiveShell
         var body = _hosts[perspective].Root;
 
         Active = perspective;
-        WorkbenchDiagnostics.ShellMode(from, perspective, trigger, firstEntry: false, outcome: "switched", errorCode: null);
+        WorkbenchDiagnostics.ShellMode(from, perspective, trigger);
 
         // The stop edge of the switch (US-C12): the new body's first Loaded after the presenter set
         // its content. Loaded fires on every re-attach of a retained body, so it is the edge for
