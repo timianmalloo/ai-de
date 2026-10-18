@@ -86,7 +86,7 @@ public static class ConsoleHostCensus
         }
 
         var cause = "";
-        for (var attempt = 1; attempt <= Math.Min(attempts, 1); attempt++)
+        for (var attempt = 1; attempt <= attempts; attempt++)
         {
             if (attempt > 1)
             {
