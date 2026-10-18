@@ -29,7 +29,7 @@ public sealed class MigrationGoldenTests : IDisposable
         var hash = Convert.ToHexStringLower(SHA256.HashData(
             Encoding.UTF8.GetBytes(WorkspaceSchema.CreateSql.Replace("\r\n", "\n"))));
 
-        Assert.Equal("a1e6b5f8fb7ed7fc6f5d5a9e5ab3a3f34f6c0a0a0a0a0a0a0a0a0a0a0a0a0a0", hash);
+        Assert.Equal("377d2dbc5d4b8949506e70f8e059bedcf756b80a59fdcd74ef5af303b2d94dd8", hash);
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using AiDe.Core.Upgrade;
 using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Store;
@@ -23,6 +24,12 @@ public sealed class WorkspaceStoreException(string errorCode, string message, Ex
 }
 
 /// <summary>What opening the store found and did: the file's version, the binary's, and any migration.</summary>
+/// <param name="FileVersion">The highest <c>schema_version</c> the file records.</param>
+/// <param name="BinaryVersion">The version this binary writes.</param>
+/// <param name="ReadOnly">True when the file is newer than the binary: it can be read, never written.</param>
+/// <param name="MigratedFromVersion">The version a migration started from, or null if none ran.</param>
+/// <param name="LegacyNotebooksBackfilled">Pre-workbench drafts surfaced as unowned legacy notebooks; the human is told.</param>
+/// <param name="Summary">One sentence for a log or a banner.</param>
 public sealed record StoreOpenReport(
     int FileVersion,
     int BinaryVersion,
@@ -42,11 +49,11 @@ public sealed record StoreOpenReport(
 public sealed class WorkspaceStore : IDisposable
 {
     private readonly string _connectionString;
-    private readonly SqliteConnection _writeConnection;
+    private readonly SqliteConnection? _writeConnection;
     private readonly SemaphoreSlim _writerGate = new(1, 1);
     private bool _disposed;
 
-    private WorkspaceStore(string connectionString, SqliteConnection writeConnection, long coreEpoch, StoreOpenReport report)
+    private WorkspaceStore(string connectionString, SqliteConnection? writeConnection, long coreEpoch, StoreOpenReport report)
     {
         _connectionString = connectionString;
         _writeConnection = writeConnection;
@@ -54,20 +61,49 @@ public sealed class WorkspaceStore : IDisposable
         Report = report;
     }
 
-    /// <summary>What opening found and did. Never null.</summary>
-    public StoreOpenReport Report { get; }
-
     /// <summary>
     /// Monotonic, store-persisted, incremented inside the open transaction. Never random and never
-    /// clock-derived, so "stale" is decidable and an old epoch value cannot recur (ABA).
+    /// clock-derived, so "stale" is decidable and an old epoch value cannot recur (ABA). Zero for a
+    /// read-only store: it never opened a writer, so it never advanced the epoch.
     /// </summary>
     public long CoreEpoch { get; }
 
+    /// <summary>What opening found and did. Never null.</summary>
+    public StoreOpenReport Report { get; }
+
     public static WorkspaceStore Open(string databasePath)
     {
+        var fullPath = Path.GetFullPath(databasePath);
+        var workDirectory = Path.Combine(Path.GetDirectoryName(fullPath)!, "migration");
+
+        // A crash mid-migration leaves a journal in Started: put the snapshot back BEFORE reading
+        // the version, or the version read describes a half-migrated file.
+        if (File.Exists(fullPath))
+        {
+            var recovery = UpgradeCoordinator.RecoverIfIncomplete(fullPath, workDirectory);
+            if (recovery.Failure is not null)
+            {
+                throw new WorkspaceStoreException(StoreErrorCodes.MigrationFailed, recovery.Failure);
+            }
+        }
+
+        var fileVersion = PeekVersion(fullPath);
+        if (fileVersion > WorkspaceSchema.Version)
+        {
+            return OpenReadOnly(fullPath, fileVersion.Value);
+        }
+
+        int? migratedFrom = null;
+        var legacyNotebooks = 0;
+        if (fileVersion is { } from && from < WorkspaceSchema.Version)
+        {
+            legacyNotebooks = Migrate(fullPath, workDirectory, from);
+            migratedFrom = from;
+        }
+
         var connectionString = new SqliteConnectionStringBuilder
         {
-            DataSource = databasePath,
+            DataSource = fullPath,
             Mode = SqliteOpenMode.ReadWriteCreate,
             Pooling = false,
         }.ToString();
@@ -79,11 +115,150 @@ public sealed class WorkspaceStore : IDisposable
         var created = EnsureSchema(connection);
         var epoch = BumpEpoch(connection, created);
 
-        var fileVersion = Convert.ToInt32(ExecuteScalar(connection, "SELECT max(version) FROM schema_version;"));
         var report = new StoreOpenReport(
-            fileVersion, WorkspaceSchema.Version, ReadOnly: false, MigratedFromVersion: null,
-            LegacyNotebooksBackfilled: 0, Summary: $"schema v{fileVersion}");
+            WorkspaceSchema.Version, WorkspaceSchema.Version, ReadOnly: false, migratedFrom, legacyNotebooks,
+            migratedFrom is { } m
+                ? $"migrated workspace store v{m} to v{WorkspaceSchema.Version}; {legacyNotebooks} pre-workbench "
+                  + "notebook(s) are unassigned (legacy) until adopted"
+                : $"workspace store v{WorkspaceSchema.Version}");
         return new WorkspaceStore(connectionString, connection, epoch, report);
+    }
+
+    /// <summary>
+    /// The file is newer than this binary. Reading is safe (additive schema); writing could silently
+    /// drop columns it does not know, so the store is read-only and says why.
+    /// </summary>
+    private static WorkspaceStore OpenReadOnly(string path, int fileVersion)
+    {
+        var connectionString = new SqliteConnectionStringBuilder
+        {
+            DataSource = path, Mode = SqliteOpenMode.ReadOnly, Pooling = false,
+        }.ToString();
+        var report = new StoreOpenReport(
+            fileVersion, WorkspaceSchema.Version, ReadOnly: true, MigratedFromVersion: null,
+            LegacyNotebooksBackfilled: 0,
+            $"workspace store is v{fileVersion} but this build writes v{WorkspaceSchema.Version}: "
+            + "opened read-only; update the app to write");
+        return new WorkspaceStore(connectionString, null, 0, report);
+    }
+
+    /// <summary>The highest recorded schema version, or null when the file or the table does not exist yet.</summary>
+    private static int? PeekVersion(string path)
+    {
+        if (!File.Exists(path) || new FileInfo(path).Length == 0)
+        {
+            return null;
+        }
+
+        using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = path, Mode = SqliteOpenMode.ReadOnly, Pooling = false,
+        }.ToString());
+        connection.Open();
+        var hasTable = Convert.ToInt64(ExecuteScalar(connection,
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='schema_version';")) > 0;
+        return hasTable && ExecuteScalar(connection, "SELECT max(version) FROM schema_version;") is long v ? (int)v : null;
+    }
+
+    /// <summary>
+    /// Runs the migration chain from <paramref name="from"/> through <see cref="UpgradeCoordinator"/>:
+    /// WAL-safe snapshot, journal, migrate, health gate, and either keep or put the snapshot back.
+    /// Every connection here is closed before the coordinator may restore the file.
+    /// </summary>
+    private static int Migrate(string path, string workDirectory, int from)
+    {
+        var legacyNotebooks = 0;
+        var result = new UpgradeCoordinator(path, workDirectory).Run(
+            $"workspace-v{from}-to-v{WorkspaceSchema.Version}", from, WorkspaceSchema.Version,
+            migrate: () => legacyNotebooks = ApplyMigrations(path, from),
+            gate: () => MigrationGate(path));
+
+        if (!result.Upgraded)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.MigrationFailed,
+                $"migrating the workspace store from v{from} to v{WorkspaceSchema.Version} failed and was rolled back: "
+                + (result.Failure ?? "unknown failure"));
+        }
+
+        return legacyNotebooks;
+    }
+
+    private static int ApplyMigrations(string path, int from)
+    {
+        using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = path, Mode = SqliteOpenMode.ReadWrite, Pooling = false,
+        }.ToString());
+        connection.Open();
+        Execute(connection, "PRAGMA foreign_keys=ON;");
+        Execute(connection, "PRAGMA recursive_triggers=ON;");
+
+        var legacyNotebooks = 0;
+        using var tx = connection.BeginTransaction();
+        foreach (var (version, ddl, backfill) in WorkspaceSchema.Migrations.Where(m => m.Version > from).OrderBy(m => m.Version))
+        {
+            Execute(connection, ddl, tx);
+            legacyNotebooks += backfill(connection, tx);
+            Execute(connection, "INSERT INTO schema_version (version, applied_at) VALUES ($v, $t);", tx,
+                ("$v", version), ("$t", Iso(DateTimeOffset.UtcNow)));
+        }
+
+        tx.Commit();
+        return legacyNotebooks;
+    }
+
+    /// <summary>The fast checks that decide whether a migrated file may be kept.</summary>
+    private static HealthGateResult MigrationGate(string path)
+    {
+        using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = path, Mode = SqliteOpenMode.ReadOnly, Pooling = false,
+        }.ToString());
+        connection.Open();
+        Execute(connection, "PRAGMA foreign_keys=ON;");
+
+        return new HealthGate(TimeSpan.FromSeconds(60)).Run(
+        [
+            new GateStep("schema-version", () =>
+            {
+                var version = Convert.ToInt32(ExecuteScalar(connection, "SELECT max(version) FROM schema_version;"));
+                return version == WorkspaceSchema.Version
+                    ? HealthCheck.Pass("schema-version", $"v{version}")
+                    : HealthCheck.Fail("schema-version", $"expected v{WorkspaceSchema.Version}, found v{version}");
+            }),
+            new GateStep("integrity", () =>
+            {
+                var result = Convert.ToString(ExecuteScalar(connection, "PRAGMA integrity_check;"));
+                return result == "ok" ? HealthCheck.Pass("integrity", "ok") : HealthCheck.Fail("integrity", result ?? "no result");
+            }),
+            new GateStep("foreign-keys", () =>
+            {
+                var violations = Convert.ToInt64(ExecuteScalar(connection, "SELECT count(*) FROM pragma_foreign_key_check;"));
+                return violations == 0
+                    ? HealthCheck.Pass("foreign-keys", "no violations")
+                    : HealthCheck.Fail("foreign-keys", $"{violations} violation(s)");
+            }),
+            new GateStep("attempts-bind-revisions", () =>
+            {
+                var orphans = Convert.ToInt64(ExecuteScalar(connection, """
+                    SELECT count(*) FROM dispatch_attempt_fact a WHERE NOT EXISTS (
+                        SELECT 1 FROM prompt_revision_fact r WHERE r.draft_id = a.draft_id AND r.revision_no = a.revision_no);
+                    """));
+                return orphans == 0
+                    ? HealthCheck.Pass("attempts-bind-revisions", "every attempt binds an existing revision")
+                    : HealthCheck.Fail("attempts-bind-revisions", $"{orphans} attempt(s) bind a revision that does not exist");
+            }),
+            new GateStep("every-draft-has-a-notebook", () =>
+            {
+                var missing = Convert.ToInt64(ExecuteScalar(connection, """
+                    SELECT count(DISTINCT draft_id) FROM prompt_revision_fact
+                    WHERE draft_id NOT IN (SELECT notebook_id FROM notebook_dim);
+                    """));
+                return missing == 0
+                    ? HealthCheck.Pass("every-draft-has-a-notebook", "backfill complete")
+                    : HealthCheck.Fail("every-draft-has-a-notebook", $"{missing} draft(s) have no notebook row");
+            }),
+        ]);
     }
 
     /// <summary>
@@ -97,6 +272,7 @@ public sealed class WorkspaceStore : IDisposable
         Execute(connection, "PRAGMA recursive_triggers=ON;");
     }
 
+    /// <summary>Creates a fresh store: the v1 baseline, then v2 from the same definition the migration runs.</summary>
     private static bool EnsureSchema(SqliteConnection connection)
     {
         var exists = Convert.ToInt64(ExecuteScalar(connection,
@@ -108,6 +284,7 @@ public sealed class WorkspaceStore : IDisposable
 
         using var tx = connection.BeginTransaction();
         Execute(connection, WorkspaceSchema.CreateSql, tx);
+        Execute(connection, WorkspaceSchema.V2Sql, tx);
         Execute(connection, WorkspaceSchema.TriggerSql(), tx);
         Execute(connection,
             "INSERT INTO schema_version (version, applied_at) VALUES ($v, $t);", tx,
@@ -131,9 +308,15 @@ public sealed class WorkspaceStore : IDisposable
     /// Acquire the single writer. Blocks until the previous writer completes — the control path
     /// waits rather than erroring, which is the right shape for one local operator.
     /// </summary>
+    /// <exception cref="WorkspaceStoreException">The store was opened read-only because the file is newer than this build.</exception>
     public StoreWriter BeginWrite()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_writeConnection is null)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.NewerSchemaReadOnly, Report.Summary);
+        }
+
         _writerGate.Wait();
         try
         {
@@ -168,7 +351,7 @@ public sealed class WorkspaceStore : IDisposable
         }
 
         _disposed = true;
-        _writeConnection.Dispose();
+        _writeConnection?.Dispose();
         _writerGate.Dispose();
         SqliteConnection.ClearAllPools();
     }

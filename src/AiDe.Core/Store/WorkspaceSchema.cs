@@ -1,12 +1,16 @@
+using AiDe.Core.Facts;
+using AiDe.Core.Store.Records;
+using Microsoft.Data.Sqlite;
+
 namespace AiDe.Core.Store;
 
 /// <summary>
-/// Schema v1 for one workspace. Dimensions hold stable identities, facts are append-only, and
+/// Schema for one workspace: the frozen v1 baseline (<see cref="CreateSql"/>) plus v2 (<see cref="V2Sql"/>). Dimensions hold stable identities, facts are append-only, and
 /// anything derived is a labelled rebuildable cache (the only tables without immutability triggers).
 /// </summary>
 internal static class WorkspaceSchema
 {
-    internal const int Version = 1;
+    internal const int Version = 2;
 
     /// <summary>
     /// Fact tables. Each gets BEFORE UPDATE / BEFORE DELETE aborts. Kept as a list so the trigger
@@ -23,8 +27,6 @@ internal static class WorkspaceSchema
         "dispatch_outcome_fact",
         "prompt_revision_fact",
     ];
-
-    internal static readonly string[] FactTables = V1FactTables;
 
     internal const string CreateSql = """
         CREATE TABLE schema_version (
@@ -191,6 +193,262 @@ internal static class WorkspaceSchema
             PRIMARY KEY (subject, predicate, object)
         );
         """;
+
+    /// <summary>The v2 fact and dimension tables; each gets the immutability triggers.</summary>
+    internal static readonly string[] V2FactTables =
+    [
+        "journey_dim",
+        "notebook_dim",
+        "harness_profile_dim",
+        "permission_decision_fact",
+        "evidence_link_fact",
+        "assessment_fact",
+        "checklist_obligation_fact",
+        "disposition_fact",
+        "profile_observation_fact",
+    ];
+
+    /// <summary>Every table that gets immutability triggers: v1 facts, then the v2 facts and dimensions.</summary>
+    internal static readonly string[] FactTables = [.. V1FactTables, .. V2FactTables];
+
+    /// <summary>Outcome states that end an attempt; at most one per attempt (ADR-0039 §3).</summary>
+    internal static readonly string[] TerminalStates =
+    [
+        nameof(DispatchState.ResponseComplete), nameof(DispatchState.Failed),
+        nameof(DispatchState.Interrupted), nameof(DispatchState.DeliveryUnknown), nameof(DispatchState.Rejected),
+    ];
+
+    private static string InList(IEnumerable<string> values) => string.Join(", ", values.Select(v => $"'{v}'"));
+
+    private static string DispositionCheck() =>
+        "(" + string.Join(" OR ", WorkbenchVocabulary.DispositionKindsBySubject.Select(p =>
+            $"(subject_kind = '{p.Key}' AND kind IN ({InList(p.Value)})"
+            + (p.Key == "intent" ? " AND notebook_id IS NOT NULL AND revision_no IS NOT NULL" : "") + ")")) + ")";
+
+    /// <summary>
+    /// Everything v2 adds, as ONE definition: the migration runs it over a v1 file and a fresh store
+    /// runs it after the v1 baseline, so a fresh and a migrated schema cannot drift. Additive only
+    /// (CREATE TABLE / ADD COLUMN / CREATE INDEX / CREATE TRIGGER); no copy and no contract step.
+    /// </summary>
+    /// <remarks>
+    /// SQLite cannot add a table CHECK or a composite FK with ALTER, and the ADR forbids the
+    /// copy-and-swap. So the widened v1 tables get single-column FKs and column CHECKs through
+    /// ADD COLUMN, and the constraints that need more - the <c>state</c> vocabulary and the
+    /// composite references (attempt to revision, revision to parent, notebook to journey) - are
+    /// BEFORE INSERT triggers. They abort with a stable code and behave as the CHECK/FK would.
+    /// </remarks>
+    internal static readonly string V2Sql = $"""
+        -- v2 dimensions: interval-versioned, no valid_to. A new version row supersedes the old one;
+        -- the latest version is max(ingress_seq) per key.
+        CREATE TABLE journey_dim (
+            journey_id        TEXT    NOT NULL,
+            version_no        INTEGER NOT NULL CHECK (version_no >= 1),
+            purpose           TEXT    NOT NULL CHECK (purpose IN ({InList(WorkbenchVocabulary.JourneyPurposes)})),
+            origin_scope      TEXT    NULL,
+            origin_journey_id TEXT    NULL,
+            origin_kind       TEXT    NULL CHECK (origin_kind IS NULL OR origin_kind IN ({InList(WorkbenchVocabulary.JourneyOriginKinds)})),
+            origin_object_ids TEXT    NULL,
+            title             TEXT    NOT NULL,
+            recorded_at       TEXT    NOT NULL,
+            ingress_seq       INTEGER NOT NULL,
+            PRIMARY KEY (journey_id, version_no)
+        );
+        CREATE INDEX ix_journey_latest ON journey_dim (journey_id, ingress_seq DESC);
+
+        CREATE TABLE notebook_dim (
+            notebook_id      TEXT    NOT NULL,
+            version_no       INTEGER NOT NULL CHECK (version_no >= 1),
+            owner_journey_id TEXT    NULL,
+            legacy           INTEGER NOT NULL DEFAULT 0 CHECK (legacy IN (0, 1)),
+            recorded_at      TEXT    NOT NULL,
+            ingress_seq      INTEGER NOT NULL,
+            PRIMARY KEY (notebook_id, version_no),
+            CHECK (legacy = 1 OR owner_journey_id IS NOT NULL)
+        );
+        CREATE INDEX ix_notebook_latest ON notebook_dim (notebook_id, ingress_seq DESC);
+
+        CREATE TABLE harness_profile_dim (
+            profile_key        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            profile_id         TEXT    NOT NULL,
+            version_no         INTEGER NOT NULL CHECK (version_no >= 1),
+            engine_id          TEXT    NOT NULL,
+            family             TEXT    NOT NULL,
+            native_home        TEXT    NOT NULL,
+            declared_account   TEXT    NULL,
+            operator_token_ref TEXT    NULL,
+            recorded_at        TEXT    NOT NULL,
+            ingress_seq        INTEGER NOT NULL,
+            UNIQUE (profile_id, version_no)
+        );
+        CREATE INDEX ix_harness_profile_latest ON harness_profile_dim (profile_id, ingress_seq DESC);
+
+        -- Grain: one decision on one permission request. The request is (session_id, run_id, seq).
+        CREATE TABLE permission_decision_fact (
+            session_id      TEXT    NOT NULL,
+            run_id          TEXT    NOT NULL,
+            seq             INTEGER NOT NULL,
+            action          TEXT    NOT NULL,
+            scope           TEXT    NOT NULL,
+            arguments_sha   TEXT    NOT NULL,
+            options_offered TEXT    NOT NULL,
+            option_chosen   TEXT    NOT NULL,
+            actor           TEXT    NOT NULL,
+            expires_at      TEXT    NULL,
+            recorded_at     TEXT    NOT NULL,
+            ingress_seq     INTEGER NOT NULL,
+            PRIMARY KEY (session_id, run_id, seq)
+        );
+
+        -- Grain: one link from one claim/criterion revision to one artifact or attempt.
+        CREATE TABLE evidence_link_fact (
+            link_id             TEXT    NOT NULL PRIMARY KEY,
+            subject_kind        TEXT    NOT NULL,
+            subject_id          TEXT    NOT NULL,
+            subject_revision    INTEGER NOT NULL,
+            artifact_ref        TEXT    NOT NULL,
+            producer            TEXT    NOT NULL,
+            baseline            TEXT    NOT NULL,
+            limitations         TEXT    NULL,
+            verification_status TEXT    NOT NULL,
+            recorded_at         TEXT    NOT NULL,
+            ingress_seq         INTEGER NOT NULL
+        );
+        CREATE INDEX ix_evidence_link_subject
+            ON evidence_link_fact (subject_kind, subject_id, subject_revision, ingress_seq);
+
+        -- Grain: one assessment of one scope at one baseline. A new baseline is a new row.
+        CREATE TABLE assessment_fact (
+            assessment_id TEXT    NOT NULL PRIMARY KEY,
+            kind          TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.AssessmentKinds)})),
+            scope         TEXT    NOT NULL,
+            baseline      TEXT    NOT NULL,
+            omissions     TEXT    NOT NULL,
+            payload       TEXT    NOT NULL,
+            recorded_at   TEXT    NOT NULL,
+            ingress_seq   INTEGER NOT NULL
+        );
+        CREATE INDEX ix_assessment_latest ON assessment_fact (kind, scope, ingress_seq DESC);
+
+        -- Grain: one obligation at one checklist revision. Existence is "proposed"; nothing else is stored.
+        CREATE TABLE checklist_obligation_fact (
+            obligation_id TEXT    NOT NULL,
+            checklist_id  TEXT    NOT NULL,
+            revision      INTEGER NOT NULL,
+            text          TEXT    NOT NULL,
+            mandatory     INTEGER NOT NULL CHECK (mandatory IN (0, 1)),
+            recorded_at   TEXT    NOT NULL,
+            ingress_seq   INTEGER NOT NULL,
+            PRIMARY KEY (checklist_id, revision, obligation_id)
+        );
+
+        -- Grain: one actor's disposition on one subject at one baseline. Satisfaction is never a disposition.
+        CREATE TABLE disposition_fact (
+            subject_kind TEXT    NOT NULL CHECK (subject_kind IN ({InList(WorkbenchVocabulary.DispositionSubjectKinds)})),
+            subject_id   TEXT    NOT NULL,
+            kind         TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.DispositionKindsBySubject.Values.SelectMany(v => v).Distinct())})),
+            actor        TEXT    NOT NULL,
+            reason       TEXT    NULL,
+            baseline     TEXT    NOT NULL,
+            notebook_id  TEXT    NULL,
+            revision_no  INTEGER NULL,
+            recorded_at  TEXT    NOT NULL,
+            ingress_seq  INTEGER NOT NULL,
+            PRIMARY KEY (subject_kind, subject_id, ingress_seq),
+            CHECK {DispositionCheck()}
+        );
+
+        -- Grain: one observation of one profile version. Absence is Not recorded.
+        CREATE TABLE profile_observation_fact (
+            profile_key INTEGER NOT NULL REFERENCES harness_profile_dim (profile_key),
+            kind        TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.ProfileObservationKinds)})
+                                                OR kind LIKE '{WorkbenchVocabulary.CapabilityObservationPrefix}%'),
+            value       TEXT    NOT NULL,
+            source      TEXT    NOT NULL,
+            observed_at TEXT    NOT NULL,
+            duration_ms INTEGER NULL,
+            exit_code   INTEGER NULL,
+            ingress_seq INTEGER NOT NULL,
+            PRIMARY KEY (profile_key, kind, ingress_seq)
+        );
+
+        -- Widened v1 tables.
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN projection_sha TEXT NULL;
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN route_fingerprint TEXT NULL;
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN profile_key INTEGER NULL REFERENCES harness_profile_dim (profile_key);
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN scope_snapshot TEXT NULL;
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN parent_dispatch_key TEXT NULL REFERENCES dispatch_attempt_fact (dispatch_key);
+        ALTER TABLE dispatch_attempt_fact ADD COLUMN queued_after_dispatch_key TEXT NULL REFERENCES dispatch_attempt_fact (dispatch_key);
+        CREATE INDEX ix_attempt_revision ON dispatch_attempt_fact (draft_id, revision_no);
+
+        ALTER TABLE dispatch_outcome_fact ADD COLUMN cause TEXT NULL
+            CHECK (cause IS NULL OR cause IN ({InList(WorkbenchVocabulary.DeliveryUnknownCauses)}));
+        ALTER TABLE dispatch_outcome_fact ADD COLUMN detail TEXT NULL;
+        CREATE UNIQUE INDEX ux_outcome_one_dispatched ON dispatch_outcome_fact (dispatch_key)
+            WHERE state = 'Dispatched';
+        CREATE UNIQUE INDEX ux_outcome_one_terminal ON dispatch_outcome_fact (dispatch_key)
+            WHERE state IN ({InList(TerminalStates)});
+
+        ALTER TABLE prompt_revision_fact ADD COLUMN parent_revision_no INTEGER NULL;
+        ALTER TABLE prompt_revision_fact ADD COLUMN body_sha TEXT NULL;
+
+        -- Constraints SQLite cannot ALTER in (see remarks).
+        CREATE TRIGGER trg_dispatch_outcome_state_vocab BEFORE INSERT ON dispatch_outcome_fact
+            WHEN NEW.state NOT IN ({InList(Enum.GetNames<DispatchState>())})
+            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.VocabularyViolation}'); END;
+        CREATE TRIGGER trg_dispatch_attempt_binds_revision BEFORE INSERT ON dispatch_attempt_fact
+            WHEN NOT EXISTS (SELECT 1 FROM prompt_revision_fact
+                             WHERE draft_id = NEW.draft_id AND revision_no = NEW.revision_no)
+            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+        CREATE TRIGGER trg_prompt_revision_parent_exists BEFORE INSERT ON prompt_revision_fact
+            WHEN NEW.parent_revision_no IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM prompt_revision_fact
+                WHERE draft_id = NEW.draft_id AND revision_no = NEW.parent_revision_no)
+            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+        CREATE TRIGGER trg_notebook_owner_exists BEFORE INSERT ON notebook_dim
+            WHEN NEW.owner_journey_id IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM journey_dim WHERE journey_id = NEW.owner_journey_id)
+            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+        """;
+
+    /// <summary>
+    /// The ordered migration chain over a v1 file: each entry's DDL (with the immutability triggers
+    /// for its new tables) and a backfill that returns how many legacy notebooks it wrote.
+    /// </summary>
+    internal static readonly (int Version, string Ddl, Func<SqliteConnection, SqliteTransaction, int> Backfill)[] Migrations =
+    [
+        (2, V2Sql + TriggerSql(V2FactTables), BackfillLegacyNotebooks),
+    ];
+
+    /// <summary>
+    /// One notebook per pre-workbench draft, <c>legacy = 1</c>, no owner. The backfill writes nothing
+    /// it cannot know: no kind, no owner, no body hash. Adoption is a later, explicit user action.
+    /// </summary>
+    private static int BackfillLegacyNotebooks(SqliteConnection connection, SqliteTransaction tx)
+    {
+        var drafts = new List<string>();
+        using (var select = connection.CreateCommand())
+        {
+            select.Transaction = tx;
+            select.CommandText = "SELECT DISTINCT draft_id FROM prompt_revision_fact ORDER BY draft_id;";
+            using var reader = select.ExecuteReader();
+            while (reader.Read())
+            {
+                drafts.Add(reader.GetString(0));
+            }
+        }
+
+        foreach (var draft in drafts)
+        {
+            WorkspaceStore.Execute(connection, "UPDATE core_state SET ingress_seq = ingress_seq + 1 WHERE id = 1;", tx);
+            var seq = Convert.ToInt64(WorkspaceStore.ExecuteScalar(connection, "SELECT ingress_seq FROM core_state WHERE id = 1;", tx));
+            WorkspaceStore.Execute(connection, """
+                INSERT INTO notebook_dim (notebook_id, version_no, owner_journey_id, legacy, recorded_at, ingress_seq)
+                VALUES ($id, 1, NULL, 1, $at, $seq);
+                """, tx, ("$id", draft), ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+        }
+
+        return drafts.Count;
+    }
 
     /// <summary>
     /// Immutability triggers. Correction is a superseding fact, never an in-place edit.
