@@ -1,1 +1,2 @@
 {"agent": "wl-leader-20261018", "at": 1792361857.2912552, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t2-sp1", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-sp1-schema-v2"}
+{"at": 1792363209.378166, "from": "wl-t2-sp1", "kind": "done", "mail_id": "mail-01M58JR8N2191BTAFP78KV01W7", "ref": null, "session": "wl-t2-sp1", "to": "wl-leader-20261018", "type": "mail"}

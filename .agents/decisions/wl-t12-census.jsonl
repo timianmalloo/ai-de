@@ -1,0 +1,4 @@
+{"agent": "wl-t12-census", "at": 1792364138.5966785, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-observed.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364138.622269, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-red.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364138.6469169, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364138.675015, "code": null, "kind": "allowed", "path": "tests/Shared/ConsoleHostCensus.cs", "session": "wl-t12-census", "wi": ""}

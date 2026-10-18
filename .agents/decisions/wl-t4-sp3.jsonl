@@ -1,0 +1,11 @@
+{"agent": "wl-t4-sp3", "at": 1792363076.8893921, "code": null, "kind": "allowed", "path": "docs/design/workbench-loops-wl-s.md", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363207.1653714, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/no-fullwindow-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363207.1958823, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/three-rows-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363207.2338858, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363207.6514034, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/kind-census-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363207.681935, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/KindAllowListsTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363208.0741453, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/sh41-factory-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363208.107395, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/PerspectiveShellTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363208.1431315, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/WorkbenchShellTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363208.6030061, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/slot-alias-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792363208.6330135, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs", "session": "wl-t4-sp3", "wi": ""}

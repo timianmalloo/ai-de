@@ -7,3 +7,20 @@
 {"agent": "wl-t3-sp2", "at": 1792362352.905206, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "seq": 7, "session": "wl-t3-sp2", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t3-sp2", "at": 1792362353.127774, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 8, "session": "wl-t3-sp2", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t3-sp2", "at": 1792362353.3749824, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 9, "session": "wl-t3-sp2", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792363512.3743272, "from": "wl-t3-sp2", "kind": "done", "mail_id": "mail-01M58K1GHPAF9HXSEH9WJKMQGP", "ref": null, "session": "wl-t3-sp2", "to": "wl-leader-20261018", "type": "mail"}
+{"agent": "wl-t3-sp2", "at": 1792363549.5749006, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 11, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363549.6598747, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 12, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363549.7449665, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "seq": 13, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363549.8551333, "kind": "release", "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs", "seq": 14, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363549.9405642, "kind": "release", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "seq": 15, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.0249135, "kind": "release", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 16, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.1122165, "kind": "release", "path": "src/AiDe.Core/Presentation/Sessions/SessionThread.cs", "seq": 17, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.1975465, "kind": "release", "path": "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs", "seq": 18, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.2808018, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/Thread/ASendWhileATurnRunsOffersWaitOrParallelTests.cs", "seq": 19, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.366343, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/Thread/TheThreadAnnouncesAndExposesRealPropertiesTests.cs", "seq": 20, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.4523904, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs", "seq": 21, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.5400417, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/RunEventVocabularyTests.cs", "seq": 22, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.628931, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheQueuedTurnIsOneTurnOfTheStreamTests.cs", "seq": 23, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.7173636, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheReadModelPublishesOneSnapshotPerAppliedEventTests.cs", "seq": 24, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.803025, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs", "seq": 25, "session": "wl-t3-sp2", "wi": "WI-0"}
+{"agent": "wl-t3-sp2", "at": 1792363550.8893147, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/TurnStateIsNeverSerializedTests.cs", "seq": 26, "session": "wl-t3-sp2", "wi": "WI-0"}
