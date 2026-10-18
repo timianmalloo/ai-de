@@ -59,14 +59,21 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         return dir?.FullName ?? throw new InvalidOperationException("AiDe.sln was not found above the test directory");
     }
 
-    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function; Coding's
-    // empty suffix is the grandfathering decision (a pre-C file IS the Coding slot); Explore has no file.
+    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function. The WL-S
+    // design's §7 "expand" step: the re-rowed ids read and write TODAY's files until T11's migration
+    // renames them — Factory is Coding's grandfathered empty suffix, Understand is Architecture's
+    // sibling, Review is new. Seen red before the alias: sp3/slot-alias-red.txt.
     [Fact]
-    public void SlotPathFor_GrandfathersCodingToTodaysFile_AndGivesArchitectureASibling()
+    public void SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew()
     {
-        Assert.Equal(Path.Combine(_dir, "layout.zones.json"), CodingSlot);
-        Assert.Equal(Path.Combine(_dir, "layout.architecture.zones.json"), ArchitectureSlot);
-        Assert.Throws<ArgumentException>(() => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Explore));
+        Assert.Equal(
+            [
+                Path.Combine(_dir, "layout.zones.json"),
+                Path.Combine(_dir, "layout.review.zones.json"),
+                Path.Combine(_dir, "layout.architecture.zones.json"),
+            ],
+            PerspectiveSet.All.Select(p => LayoutPersistence.SlotPathFor(LayoutPath, p)));
+        Assert.Equal(["factory", "review", "understand"], PerspectiveSet.All.Select(p => p.Id));
     }
 
     // Test 1 — the pre-C file's restore into Coding — lives in ZoneLayoutSlotsTests
