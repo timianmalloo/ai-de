@@ -1,0 +1,55 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.AFreshStore_MarksTheLazilyCreatedStandingJourneyTheSameWay [FAIL]
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.TheMigration_CreatesTheStandingJourneyExactlyOnce_MarkedAndCounted [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedJourney_ClaimingTheStandingId_IsRefused [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedNotebook_OwnedByTheStandingJourney_IsRefused [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.AFreshStore_MarksTheLazilyCreatedStandingJourneyTheSameWay [50 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   0
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.AFreshStore_MarksTheLazilyCreatedStandingJourneyTheSameWay() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 73
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.TheMigration_CreatesTheStandingJourneyExactlyOnce_MarkedAndCounted [71 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   0
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150MigrationTests.TheMigration_CreatesTheStandingJourneyExactlyOnce_MarkedAndCounted() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 44
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [10 ms]
+  Error Message:
+   AiDe.Core.Store.WorkspaceStoreException : notebook_dim 'pty-draft': 'owner_journey_id' is Type-0 and cannot change in a new version row
+  Stack Trace:
+     at AiDe.Core.Store.StoreWriter.RequireSame(String table, String key, ValueTuple`3[] columns) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 208
+   at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 50
+   at AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 117
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedJourney_ClaimingTheStandingId_IsRefused [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedJourney_ClaimingTheStandingId_IsRefused() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 105
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedNotebook_OwnedByTheStandingJourney_IsRefused [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ATypedNotebook_OwnedByTheStandingJourney_IsRefused() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 97
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     5, Passed:     0, Skipped:     0, Total:     5, Duration: 163 ms - AiDe.Core.Tests.dll (net10.0)

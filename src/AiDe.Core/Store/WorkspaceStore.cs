@@ -32,6 +32,7 @@ public sealed class WorkspaceStoreException(string errorCode, string message, Ex
 /// <param name="ReadOnly">True when the file is newer than the binary: it can be read, never written.</param>
 /// <param name="MigratedFromVersion">The version a migration started from, or null if none ran.</param>
 /// <param name="LegacyNotebooksBackfilled">Pre-workbench drafts surfaced as unowned legacy notebooks; the human is told.</param>
+/// <param name="StandingJourneysCreated">Standing journeys the migration created (the terminal-drafts owner, Ruling 150).</param>
 /// <param name="Summary">One sentence for a log or a banner.</param>
 public sealed record StoreOpenReport(
     int FileVersion,
@@ -39,7 +40,8 @@ public sealed record StoreOpenReport(
     bool ReadOnly,
     int? MigratedFromVersion,
     int LegacyNotebooksBackfilled,
-    string Summary);
+    string Summary,
+    int StandingJourneysCreated = 0);
 
 /// <summary>
 /// One workspace, one SQLite file. Owns the single writer, the core epoch, and the total fact order.
