@@ -13,7 +13,7 @@ internal static class WorkspaceSchema
     /// set cannot drift from the table set — adding a fact table without its trigger is the defect
     /// this loop prevents.
     /// </summary>
-    internal static readonly string[] FactTables =
+    internal static readonly string[] V1FactTables =
     [
         "evidence_assertion_fact",
         "scope_generation_desired_fact",
@@ -23,6 +23,8 @@ internal static class WorkspaceSchema
         "dispatch_outcome_fact",
         "prompt_revision_fact",
     ];
+
+    internal static readonly string[] FactTables = V1FactTables;
 
     internal const string CreateSql = """
         CREATE TABLE schema_version (
@@ -198,8 +200,10 @@ internal static class WorkspaceSchema
     /// and silently overwrites the row (spikes/sqlite-fact-store, case S4; S5 shows the pragma
     /// closes it). The single-writer core process is the real boundary; this is defense in depth.
     /// </summary>
-    internal static string TriggerSql() =>
-        string.Concat(FactTables.Select(t => $"""
+    internal static string TriggerSql() => TriggerSql(FactTables);
+
+    internal static string TriggerSql(IEnumerable<string> tables) =>
+        string.Concat(tables.Select(t => $"""
             CREATE TRIGGER trg_{t}_no_update BEFORE UPDATE ON {t}
                 BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-IMMUTABLE-VIOLATION'); END;
             CREATE TRIGGER trg_{t}_no_delete BEFORE DELETE ON {t}

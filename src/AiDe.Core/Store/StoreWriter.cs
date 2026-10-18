@@ -1,4 +1,5 @@
 using AiDe.Core.Facts;
+using AiDe.Core.Store.Records;
 using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Store;
@@ -12,7 +13,7 @@ namespace AiDe.Core.Store;
 /// INSERT OR REPLACE / UPSERT on a fact table: REPLACE is the documented bypass of the immutability
 /// triggers (spike S4), so forbidding it in the writer API is the control, and the pragma is the net.
 /// </remarks>
-public sealed class StoreWriter : IDisposable
+public sealed partial class StoreWriter : IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly SemaphoreSlim _gate;
@@ -131,29 +132,15 @@ public sealed class StoreWriter : IDisposable
         string dispatchKey, string workspaceId, long workspaceEpoch, string draftId, int revisionNo,
         string sessionId, long sessionGeneration)
     {
-        var seq = NextIngressSequence();
-        Exec("""
-            INSERT INTO dispatch_attempt_fact
-                (dispatch_key, workspace_id, workspace_epoch, draft_id, revision_no,
-                 session_id, session_generation, attempted_at, ingress_seq)
-            VALUES ($key, $ws, $epoch, $draft, $rev, $session, $gen, $at, $seq);
-            """,
-            ("$key", dispatchKey), ("$ws", workspaceId), ("$epoch", workspaceEpoch),
-            ("$draft", draftId), ("$rev", revisionNo), ("$session", sessionId), ("$gen", sessionGeneration),
-            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+        // PTY dispatches keep route_fingerprint = 'pty' (ADR-0039 §1).
+        AppendAttempt(new AttemptRow(
+            dispatchKey, workspaceId, workspaceEpoch, draftId, revisionNo, sessionId, sessionGeneration,
+            RouteFingerprint: "pty"));
     }
 
     /// <summary>Appends an outcome event. Never rewrites a prior row — a late acceptance appends.</summary>
-    public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)
-    {
-        var seq = NextIngressSequence();
-        Exec("""
-            INSERT INTO dispatch_outcome_fact (dispatch_key, ingress_seq, state, error_code, recorded_at)
-            VALUES ($key, $seq, $state, $err, $at);
-            """,
-            ("$key", dispatchKey), ("$seq", seq), ("$state", state.ToString()),
-            ("$err", errorCode), ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)));
-    }
+    public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode) =>
+        AppendOutcome(new OutcomeRow(dispatchKey, state, errorCode));
 
     public void SavePromptRevision(string draftId, int revisionNo, string body)
     {
@@ -236,6 +223,16 @@ public sealed class StoreWriter : IDisposable
         {
             throw new WorkspaceStoreException(StoreErrorCodes.ImmutableViolation,
                 "facts are append-only; correction is a superseding fact", ex);
+        }
+        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.VocabularyViolation, StringComparison.Ordinal))
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.VocabularyViolation,
+                "the value is not in the closed vocabulary of this column", ex);
+        }
+        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.ReferenceViolation, StringComparison.Ordinal))
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.ReferenceViolation,
+                "the row references a revision, parent or journey that does not exist", ex);
         }
     }
 

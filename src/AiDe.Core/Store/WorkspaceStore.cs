@@ -8,6 +8,11 @@ public static class StoreErrorCodes
     public const string ImmutableViolation = "AIDE-STORE-IMMUTABLE-VIOLATION";
     public const string ScopeGenerationStale = "AIDE-SCOPE-GENERATION-STALE";
     public const string EpochStale = "AIDE-AUTH-EPOCH-STALE";
+    public const string VocabularyViolation = "AIDE-STORE-VOCABULARY-VIOLATION";
+    public const string ReferenceViolation = "AIDE-STORE-REFERENCE-VIOLATION";
+    public const string Type0Violation = "AIDE-STORE-TYPE0-VIOLATION";
+    public const string NewerSchemaReadOnly = "AIDE-STORE-NEWER-SCHEMA-READ-ONLY";
+    public const string MigrationFailed = "AIDE-STORE-MIGRATION-FAILED";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>
@@ -16,6 +21,15 @@ public sealed class WorkspaceStoreException(string errorCode, string message, Ex
 {
     public string ErrorCode { get; } = errorCode;
 }
+
+/// <summary>What opening the store found and did: the file's version, the binary's, and any migration.</summary>
+public sealed record StoreOpenReport(
+    int FileVersion,
+    int BinaryVersion,
+    bool ReadOnly,
+    int? MigratedFromVersion,
+    int LegacyNotebooksBackfilled,
+    string Summary);
 
 /// <summary>
 /// One workspace, one SQLite file. Owns the single writer, the core epoch, and the total fact order.
@@ -32,12 +46,16 @@ public sealed class WorkspaceStore : IDisposable
     private readonly SemaphoreSlim _writerGate = new(1, 1);
     private bool _disposed;
 
-    private WorkspaceStore(string connectionString, SqliteConnection writeConnection, long coreEpoch)
+    private WorkspaceStore(string connectionString, SqliteConnection writeConnection, long coreEpoch, StoreOpenReport report)
     {
         _connectionString = connectionString;
         _writeConnection = writeConnection;
         CoreEpoch = coreEpoch;
+        Report = report;
     }
+
+    /// <summary>What opening found and did. Never null.</summary>
+    public StoreOpenReport Report { get; }
 
     /// <summary>
     /// Monotonic, store-persisted, incremented inside the open transaction. Never random and never
@@ -61,7 +79,11 @@ public sealed class WorkspaceStore : IDisposable
         var created = EnsureSchema(connection);
         var epoch = BumpEpoch(connection, created);
 
-        return new WorkspaceStore(connectionString, connection, epoch);
+        var fileVersion = Convert.ToInt32(ExecuteScalar(connection, "SELECT max(version) FROM schema_version;"));
+        var report = new StoreOpenReport(
+            fileVersion, WorkspaceSchema.Version, ReadOnly: false, MigratedFromVersion: null,
+            LegacyNotebooksBackfilled: 0, Summary: $"schema v{fileVersion}");
+        return new WorkspaceStore(connectionString, connection, epoch, report);
     }
 
     /// <summary>
