@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:40:03Z",
+  "generated": "2026-10-18T23:30:51Z",
   "audit": [
     {
       "actor": null,
@@ -22268,6 +22268,54 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:23:41Z",
       "duration_seconds": 982.0
+    },
+    {
+      "id": "al-01M58MQKRHGZ5YP9NJGVFCMAM9",
+      "shortname": "wl-t2-sp1",
+      "datetime": "2026-10-18T23:14:45Z",
+      "session": "wl-t2-sp1",
+      "prompt": "T2 rework: land Ruling 148 merge conditions (a)-(h) red first on sp1-schema-v2",
+      "summary": "All eight conditions landed red then green; Core 2891 passed, App 1062 passed",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land Ruling 148 merge conditions (a)-(h)",
+      "done_when": "each condition has a red-first refusing test, suites green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:59:36Z",
+      "duration_seconds": 909.0
+    },
+    {
+      "id": "al-01M58NN2Y8E7TFBSFVP9YNW46F",
+      "shortname": "wl-t2-sp1",
+      "datetime": "2026-10-18T23:30:50Z",
+      "session": "wl-t2-sp1",
+      "prompt": "T2 rework 2: Ruling 150 conditions on schema v2",
+      "summary": "Marked standing terminal-drafts journey (migration-created once, counted, PTY-only, re-ownable); payload guard = ADR-0039 s3 names, separator-insensitive, pinned",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land Ruling 150 items 1 and 3 with refusing tests",
+      "done_when": "each condition has a red then green test; Core and App suites green bar named env failures",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T23:19:29Z",
+      "duration_seconds": 681.0
     }
   ],
   "changes": [

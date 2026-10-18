@@ -49,7 +49,7 @@ hash; SQLite has no sha256 function, so the trigger cannot test equality itself,
 
 ## Ruling 150 (the three landing choices)
 
-Red `801c47d3` · green: the commit that follows it. Tests are in `tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs`.
+Red `801c47d3` · green `3c318f81`. Tests are in `tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs`.
 `AiDe.Core.Tests`: 2909 passed, 1 skipped, 0 failed (`suite-green.txt`). `AiDe.App.Tests`: 1061 passed, 1 failed
 (`suite-app-green.txt`): `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held; SendInput would
 prove another window" - a desktop-focus limit of the probe, not a census read, and it does not touch the store.
