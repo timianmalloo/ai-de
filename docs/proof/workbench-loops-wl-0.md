@@ -55,10 +55,11 @@ Build: `dotnet build src/AiDe.App/AiDe.App.csproj -c Release`, then run `src/AiD
 
 ## Flagged risks / residual unknowns
 Old snapshots carry no digest in their revision, so the first reindex after upgrade re-extracts every scope once (the extractor generation bump has the same effect).
+Accepted by the Owner as named (2026-10-18): the size+mtime digest residual, and a single entry-point row larger than 1 MiB (the one-row floor).
 
 ## Status & next action
 | | |
 |---|---|
 | **Completed** | FR-001 and FR-002 red-green, both suites green |
-| **Remaining** | Leader join; Owner demo after the shell seam |
+| **Remaining** | GUI demo of steps 2–4 owed to the user — **not observed**. The Owner reproduced red (`e10b29d7`) and green (`acaa4358`) by test only (2026-10-18). The GUI run is folded into the WL-1a real-lane demo after T4's shell seam joins; FR-001's shell path stays unobserved until then. |
 | **Best next action** | Leader re-runs the Core suite on the joined tree |
