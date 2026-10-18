@@ -62,3 +62,34 @@ perspective. Driven through UI Automation, no workspace open.
 `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, environmental ("foreground
 not held"; the probe needs the foreground for `SendInput`) — and that test passed alone on re-run.
 The App total is 1039; the pre-T4 count was not measured here (the join recounts the baseline).
+
+## Fix-forward
+
+The Leader granted seams 3 and 4 retroactively (`req-01M58JG10…`, `req-01M58KFWA…`). Commit `bb28e407`.
+
+1. **ShellMode.** `firstEntry`, `outcome` and `errorCode` removed, with the one-valued `first_entry`/`outcome`/`error_code`
+   wire fields and tags (design §5 retired them); the one caller, `PerspectiveShell.Activate`, simplified. `IconExplore`
+   deleted from `App.xaml`. Grep: no reference to `IconExplore`, `firstEntry`, or the old `ShellMode` shape remains in `src` or `tests`.
+2. **Orphans.** Grep before deleting: `HtmlSandboxHost` was used only by `HtmlSandboxIntegrationTests.cs` and the ComposerProbe
+   `--html-sandbox` step; `NodeReaderContentState` had no user at all. Deleted: both, `HtmlSandboxIntegrationTests.cs`,
+   `ComposerProbe/Program.HtmlSandbox.cs`, and the probe's dispatch. **New residual:** `HtmlSandboxPolicy.cs` and
+   `HtmlSandboxPolicyTests.cs` were used only by the host and now have no product user; outside the owned list, raised as a
+   seam request to the Leader.
+3. **DESIGN.md.** The live sections now name Factory · Review · Understand (rail, icons, copy, focus landings, tooltips,
+   Solution-tree prose); `IconCoding`/`IconArchitecture` read `IconFactory`/`IconUnderstand`, `IconReview` added to PS-R4;
+   the menu sentence points at `PerspectiveMenu.For` rather than a per-row list. The dated errata (Rulings 83–84 and after)
+   keep their rows of the day under a supersede note. Craft gate before/after: `craft-before.txt`, `craft-after.txt` are
+   identical (red on main with 11 pre-existing Major findings in `docs/mockups/`; none added).
+4. **Mutation reds.** Each test now has a red run against a deliberate, reverted mutation (never committed):
+
+| Test | Mutation | Red | Green |
+|---|---|---|---|
+| `PerspectiveRailTests.EscapeHasNoPerspectiveLevelRoute_…` | add `PerspectiveShell.Escape()` | `mutation-escape-red.txt` | `mutation-escape-green.txt` |
+| `CenterEmptyCopyTests.TheCopy_IsDerivedFromAdmission_…` | change Review's heading in `CenterEmptyState` | `mutation-centercopy-red.txt` | `mutation-centercopy-green.txt` |
+| `PerspectiveShellTests.TheLoomkeeperPanes_HaveAFocusTarget_…` | sessions pane `Focusable = false` | `mutation-focustarget-red.txt` | `mutation-focustarget-green.txt` |
+| `ZoneLayoutSlotsTests.ReviewPersistsToItsOwnFile_…` | Review shares Factory's slot file | `mutation-reviewslot-red.txt` | `mutation-reviewslot-green.txt` |
+
+Suite: `AiDe.sln` 0 errors, 0 warnings (`build-fixforward.txt`). `AiDe.Core.Tests` 2781 passed, 1 skipped, 0 failed
+(`suite-core-fixforward.txt`). `AiDe.App.Tests` 1037 passed, 1 failed (`suite-app-fixforward.txt`):
+`SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, environmental ("foreground not held"). Total
+1038 (was 1039; `HtmlSandboxIntegrationTests` deleted). Census NOT CHECKED: not reported by this run.

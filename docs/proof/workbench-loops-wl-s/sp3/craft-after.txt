@@ -1,0 +1,26 @@
+  gated   DESIGN.md: 0 finding(s), 0 at or above Major
+  gated   src/AiDe.App/Web: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/conversation-composer.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/explore-graph-and-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench-notes.html: 6 finding(s), 6 at or above Major
+  gated   docs/mockups/factory-workbench-v2.html: 3 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/first-use-accounts.html: 6 finding(s), 0 at or above Major
+  gated   docs/mockups/new-session-sheet.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/perspective-shell.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-conversation.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-front-door.html: 5 finding(s), 0 at or above Major
+  gated   docs/mockups/solution-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/workbench-design-language.html: 6 finding(s), 5 at or above Major
+verify-ui-craft-floor: FAILED - 11 finding(s) at or above the gated severity.
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `background rgb(32, 34, 31) on main "Rendered from factory-workbench.mdDirect" is outside DESIGN.md colors`
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `border-top rgb(61, 64, 58) on main "Rendered from factory-workbench.mdDirect" is outside DESIGN.md colors`
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `text color rgb(184, 182, 174) on div "Rendered from factory-workbench.md" is outside DESIGN.md colors`
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `text color rgb(242, 241, 235) on h1 "Direction before screens" is outside DESIGN.md colors`
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `background rgb(41, 44, 39) on code "KeyboardVelocity { Type:OLTP; Arch:SPA; " is outside DESIGN.md colors`
+  - docs/mockups/factory-workbench-notes.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `text color rgb(143, 176, 255) on a "Open the factory workbench" is outside DESIGN.md colors`
+  - docs/mockups/workbench-design-language.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `border-bottom rgb(227, 227, 227) on header "AI-DE · Design Languagecontrast = WCAG 2" is outside DESIGN.md colors`
+  - docs/mockups/workbench-design-language.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `text color rgb(102, 102, 102) on span "contrast = WCAG 2.1 · AA needs 4.5:1 (te" is outside DESIGN.md colors`
+  - docs/mockups/workbench-design-language.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `Undocumented color #0a7d33 is outside DESIGN.md colors`
+  - docs/mockups/workbench-design-language.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `Undocumented color #c0271e is outside DESIGN.md colors`
+  - docs/mockups/workbench-design-language.html: [Major] design-system-color (U3/U20) - Color outside DESIGN.md - `Undocumented color #0b0b0c is outside DESIGN.md colors`
