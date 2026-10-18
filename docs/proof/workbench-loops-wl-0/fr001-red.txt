@@ -1,0 +1,21 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl0-evidence\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl0-evidence\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl0-evidence\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl0-evidence\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl0-evidence\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl0-evidence\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl0-evidence\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Freshness.DirtyEditSurvivesReindexTests.ADirtyEditUnderAnUnchangedRevisionIsIndexedAndTheOldFactIsNotCurrent [FAIL]
+  Failed AiDe.Core.Tests.Freshness.DirtyEditSurvivesReindexTests.ADirtyEditUnderAnUnchangedRevisionIsIndexedAndTheOldFactIsNotCurrent [130 ms]
+  Error Message:
+   a forced index of a changed file must emit the new facts
+  Stack Trace:
+     at AiDe.Core.Tests.Freshness.DirtyEditSurvivesReindexTests.ADirtyEditUnderAnUnchangedRevisionIsIndexedAndTheOldFactIsNotCurrent() in C:\Projects\ai-de-wl0-evidence\tests\AiDe.Core.Tests\Freshness\DirtyEditSurvivesReindexTests.cs:line 56
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 140 ms - AiDe.Core.Tests.dll (net10.0)
+exit 1
