@@ -41,23 +41,23 @@ public sealed class CollapsedBottomTests
             {
                 using var frame = ComposedCoding.Show(1440, 900);
                 var shell = frame.Shell;
-                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Coding.Adapter.Render();
+                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+                shell.Factory.Adapter.Render();
                 frame.Settle();
-                var built = shell.Coding.Adapter.ContentFor("terminal-1");
+                var built = shell.Factory.Adapter.ContentFor("terminal-1");
                 Assert.NotNull(built);
                 Assert.Single(Records(lines, "terminal.start"));
 
-                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Collapsed)).Applied);
-                shell.Coding.Adapter.Render();
+                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Collapsed)).Applied);
+                shell.Factory.Adapter.Render();
                 frame.Settle();
-                Assert.Same(built, shell.Coding.Adapter.ContentFor("terminal-1"));   // parked, alive
+                Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));   // parked, alive
                 Assert.Empty(Records(lines, "terminal.stop"));
 
-                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Coding.Adapter.Render();
+                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+                shell.Factory.Adapter.Render();
                 frame.Settle();
-                Assert.Same(built, shell.Coding.Adapter.ContentFor("terminal-1"));
+                Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));
                 Assert.Single(Records(lines, "terminal.start"));
                 Assert.Empty(Records(lines, "terminal.stop"));
                 return 0;
@@ -86,19 +86,19 @@ public sealed class CollapsedBottomTests
             {
                 using var frame = ComposedCoding.Show(1440, 900);
                 var shell = frame.Shell;
-                Assert.True(shell.Coding.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
-                Assert.Equal(["terminal-1"], shell.Coding.Service.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId));
+                Assert.True(shell.Factory.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
+                Assert.Equal(["terminal-1"], shell.Factory.Service.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId));
 
                 // Not built: no content, no process.
-                Assert.Null(shell.Coding.Adapter.ContentFor("terminal-1"));
+                Assert.Null(shell.Factory.Adapter.ContentFor("terminal-1"));
                 Assert.Empty(TerminalStarts(lines));
-                Assert.True(shell.Coding.Rails.RailVisible(ZoneId.Bottom), "the collapsed Bottom shows no rail — the terminal is not one gesture away");
+                Assert.True(shell.Factory.Rails.RailVisible(ZoneId.Bottom), "the collapsed Bottom shows no rail — the terminal is not one gesture away");
 
                 // The gesture: the rail expands the zone; the terminal is built now, once.
-                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Coding.Adapter.Render();
+                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+                shell.Factory.Adapter.Render();
                 frame.Settle();
-                Assert.NotNull(shell.Coding.Adapter.ContentFor("terminal-1"));
+                Assert.NotNull(shell.Factory.Adapter.ContentFor("terminal-1"));
                 Assert.Single(TerminalStarts(lines));
                 return 0;
             }, 60);

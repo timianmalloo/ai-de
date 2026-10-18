@@ -468,9 +468,11 @@ re-pinned.
 - **Found in implementation — the deletion cascades.** An orphan-type census over `src/AiDe.App` +
   `src/AiDe.Core` (before vs after) shows `HtmlSandboxHost` and `NodeReaderContentState` orphaned once
   `NodeReaderView` goes; seam request `req-01M58KFWAM77V2V21PBYKKA5F4`.
-- Seam requests: `req-01M58HXY8HGKDVTX393PN9TDP3` granted (orphans; `AiDe.sln` green at exit);
-  `req-01M58J8YEG7EB3NP3C998SHB67` (two oracle test files) and `req-01M58JG10ZKHW75YME0P6G3DG2`
-  (`ShellMode` parameters, `IconExplore`, `DESIGN.md`) pending at the design commit.
+- Seam requests (outcomes in `docs/proof/workbench-loops-wl-s/sp3/README.md`): seam 1 granted; seams
+  2–5 expired unreceived and their recorded fallbacks were applied. Residuals left by fallback:
+  `WorkbenchDiagnostics.ShellMode` keeps its one-valued `firstEntry`/`outcome`/`errorCode` (constants
+  passed), `App.xaml`'s `IconExplore` is unread, `DESIGN.md` still names the old rows, and
+  `HtmlSandboxHost` / `NodeReaderContentState` have no product user.
 
 ## Status and next action
 
