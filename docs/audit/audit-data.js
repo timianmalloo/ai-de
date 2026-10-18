@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:17:27Z",
+  "generated": "2026-10-18T22:33:51Z",
   "audit": [
     {
       "actor": null,
@@ -22244,6 +22244,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:03:29Z",
       "duration_seconds": 831.0
+    },
+    {
+      "id": "al-01M58JCQH58A3VX41MS008B6V3",
+      "shortname": "wl-t1-wl0",
+      "datetime": "2026-10-18T22:33:51Z",
+      "session": "wl-t1-wl0",
+      "prompt": "Fix FR-001 and FR-002 in Core so index answers are fresh and frame-bounded",
+      "summary": "Content digest in stamped revision (FR-001); byte budget on entry-point rows (FR-002); red-green tests, suites green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-0.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Fix FR-001 and FR-002 in Core",
+      "done_when": "both regressions red-green, full suite green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:23:37Z",
+      "duration_seconds": 614.0
     }
   ],
   "changes": [
