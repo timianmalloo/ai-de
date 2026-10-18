@@ -2054,6 +2054,461 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d0725d2ce0af935709df9b8f78d72e4acf7f3307ada869ad138efcfd17fb2d0"
     },
     {
+      "id": "adr-0039-workbench-records-durable-representation",
+      "path": "docs/adr/0039-workbench-records-durable-representation.md",
+      "title": "ADR-0039 — Workbench records: the spec's aggregates as interval-versioned dimensions, widened existing facts and derived folds in the workspace store",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "The spec's nine aggregates persist in the existing per-workspace SQLite store by widening what is already there — the two-grain dispatch receipt becomes the execution attempt, prompt_revision_fact becomes the notebook revision — plus four new dimensions/facts (journey, notebook, permission decision, evidence link, assessment, disposition, obligation, harness profile, profile observation). Nothing derived is stored; terminal attempt outcomes are host-asserted rows, every other state is a fold over a per-attempt run log that WL-1 builds. Dimensions are interval-versioned like session_dim, so no row is ever updated in place. The first workspace.db migration chain, WAL-safe snapshot and a constraint table are part of the decision.",
+      "tags": [
+        "architecture",
+        "data-model",
+        "dimensions",
+        "facts",
+        "journey",
+        "notebook",
+        "attempt",
+        "assessment",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0010-two-phase-dispatch-receipt",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0042-native-harness-profile-binding",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f7eff4500e10fc83a1f478d1e9862e54a1ef40852c2a49a9b420be88e94fdf46"
+    },
+    {
+      "id": "adr-0040-journey-purpose-identity",
+      "path": "docs/adr/0040-journey-purpose-identity.md",
+      "title": "ADR-0040 — Journey purpose is a durable identity distinct from navigation, session and pane; bridges are explicit linked records",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        },
+        {
+          "by": "adr-0045-perspective-set-factory-review-understand",
+          "on": "2026-10-18",
+          "reason": "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory"
+        }
+      ],
+      "summary": "A journey (work or investigation) is its own dimension row with an immutable purpose; Factory, Review and Understand are perspectives, a session is a native execution context, a pane is a surface — none of them is the journey. Promotion and linked investigation are append-only link facts created only by explicit confirmation. Work acceptance and investigation conclusion are computed folds over obligations, evidence links and dispositions, never stored flags.",
+      "tags": [
+        "architecture",
+        "journey",
+        "work",
+        "investigation",
+        "bridge",
+        "acceptance",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-workbench-loops-direction",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6b1fb3079f571a5cdd7e937f17586eb2fd27b00a75b52996c83941de467f4e3f"
+    },
+    {
+      "id": "adr-0041-execution-attempt-lifecycle",
+      "path": "docs/adr/0041-execution-attempt-lifecycle.md",
+      "title": "ADR-0041 — Execution attempt: deterministic key with insert-as-gate, host-asserted terminal outcomes, publish-side fan-out, and distinct queue / steer / stop / retry semantics",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "An execution attempt is ADR-0010's dispatch receipt applied to the native-harness run: a deterministic dispatch key, an insert that is the gate, a Dispatched row written before the consequential prompt write, terminal outcomes written by the host from its own correlated reply, non-terminal states folded from a durable per-attempt run log, and a sweep with a stated predicate. The relay fans out at the publish side. Queue drains only after ResponseComplete; Steer goes through Prepare; Stop is a bounded native notification whose only acknowledgment is the harness's cancelled reply; Retry is a new linked attempt the user chooses.",
+      "tags": [
+        "architecture",
+        "execution",
+        "attempt",
+        "run-event",
+        "idempotency",
+        "cancellation",
+        "queue",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0010-two-phase-dispatch-receipt",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0027-acp-lane-separate-shape",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0042-native-harness-profile-binding",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "198d297d5a58d5922ad744a9dcaf7791a4a6e50667f60f53a3a81bb77442f184"
+    },
+    {
+      "id": "adr-0042-native-harness-profile-binding",
+      "path": "docs/adr/0042-native-harness-profile-binding.md",
+      "title": "ADR-0042 — Native harness profile binding: harness-owned sign-in, separately observed readiness, per-attempt version fingerprint, sanitized child environment, no broker",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "AI-DE runs the user's installed native harness with its own authenticated profile. Sign-in is the harness's flow, opened explicitly only when a probe says it is needed. Readiness is a set of separately observed facts (installed, authenticated, account, model, capability, version), never inferred from exit status or configuration. The child environment is sanitized so an inherited API key cannot change the billing route; credentials are never read, copied or stored. Six families, three transport shapes, one run-event envelope with raw frames retained.",
+      "tags": [
+        "architecture",
+        "security",
+        "identity",
+        "providers",
+        "subscriptions",
+        "acp",
+        "harness",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0027-acp-lane-separate-shape",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0024-credential-backed-grading-egress",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4e285e54373803bb09c74bc8ff15725672f2a226ab9111d25731840db85e7f83"
+    },
+    {
+      "id": "adr-0043-notebook-editor-codemirror-canonical-source",
+      "path": "docs/adr/0043-notebook-editor-codemirror-canonical-source.md",
+      "title": "ADR-0043 — The notebook editor is the existing CodeMirror 6 composer over one canonical Markdown source; rich view is a projection; deterministic assistance is T0 from Core, model suggestions a separate T3 layer",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "Both journeys author in the already-shipped CodeMirror 6 / WebView2 composer, extended into a continuous Markdown notebook whose only authoritative document is the source text; the rich projection is decoration, never a second document. Completion, hover and diagnostics come from Core's bounded queries (T0); model rewrites are an optional, previewed T3 layer. The page-to-host message protocol grows additively and the page still cannot send. A qualification spike on IME, clipboard, multi-selection, undo and 100k characters is the reversal trigger toward a schema-governed engine.",
+      "tags": [
+        "architecture",
+        "editor",
+        "codemirror",
+        "webview2",
+        "intellisense",
+        "notebook",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0025-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f152fc3c7f38338b557b238b4544fdf15039cd5b2f772c4b74ea54dd2717f77"
+    },
+    {
+      "id": "adr-0044-coordination-read-model-over-pack-authorities",
+      "path": "docs/adr/0044-coordination-read-model-over-pack-authorities.md",
+      "title": "ADR-0044 — Coordination is a read model over the pack's own authorities; commands go through the qualified runner; no C# coordination database",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "The coordination workspace projects the AI-Forward pack's git refs, request/mail/ruling stores, runner manifest and board — plus the Loomkeeper watcher's observations — into one Core read model with per-source freshness, relationship from the manifest (never from timestamps), and presence, progress and outcome as separate dimensions. Dispatch, enqueue, finish, cancel and join previews invoke the pack's runner and join scripts with a compiled audit id; AI-DE never writes a ref or mints a leader, ruling or acknowledgment. Projection ships before any command.",
+      "tags": [
+        "architecture",
+        "coordination",
+        "read-model",
+        "ai-forward-pack",
+        "conductor",
+        "watcher",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "49f69dce30634337060d0e64e514f3cbff5e3ad3dd3dae4fae6ea6467c28edb0"
+    },
+    {
+      "id": "adr-0045-perspective-set-factory-review-understand",
+      "path": "docs/adr/0045-perspective-set-factory-review-understand.md",
+      "title": "ADR-0045 — The Perspective set becomes Factory · Review · Understand; feature children are admitted surface kinds; surface models are workspace-owned; layout slots migrate by stable id",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
+      "summary": "The closed Perspective row set is re-rowed from Coding · Explore · Architecture · Coordination to the spec's Factory · Review · Understand, each a DockHost body; the mechanism of ADR-0017/0030/0031 (closed Core rows, allow-list column on surface kinds, derived menu/palette/rail, one layout slot per host) is kept and the rows are superseded. The Explorer full-window body becomes a dockable visualizer surface. Surface models (notebook, attempt, visualizer, checklist) are owned by a workspace registry keyed by object identity, so moving, hiding or closing a pane never disposes a model or stops a run. Old slots migrate by stable id with drop-with-report.",
+      "tags": [
+        "architecture",
+        "shell",
+        "perspectives",
+        "docking",
+        "avalondock",
+        "layout",
+        "surfaces",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "supersedes"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "supersedes"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-factory-workbench-v2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f77dbf5782ee6c90e19b014f47b740491b9163b4b0f819f1f27d4cd1192d536"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -2736,7 +3191,7 @@ window.DOCS_INDEX = {
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-03-15",
+      "reviewBy": "2027-04-18",
       "reviewSuggested": [
         {
           "by": "spec-ai-native-ide",
@@ -2757,9 +3212,14 @@ window.DOCS_INDEX = {
           "by": "adr-0038-d0-solution-tree-census-and-kind",
           "on": "2026-09-15",
           "reason": "ADR-0038 proposed: D-0 Solution tree kind + query-time census; Addenda C/D slices still exclude D-0"
+        },
+        {
+          "by": "adr-0045-perspective-set-factory-review-understand",
+          "on": "2026-10-18",
+          "reason": "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory"
         }
       ],
-      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0.",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0. Amended 2026-10-18 for the workbench-loops evolution (§Workbench loops): two durable journeys, a notebook/attempt identity seam, native harness profile binding, a coordination read model, and the Perspective set re-rowed to Factory · Review · Understand (ADR-0039–0045 proposed).",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -2920,6 +3380,54 @@ window.DOCS_INDEX = {
         {
           "to": "architecture-agent-plane",
           "rel": "relates-to"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-workbench-loops",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-workbench-loops-direction",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0042-native-harness-profile-binding",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0043-notebook-editor-codemirror-canonical-source",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0044-coordination-read-model-over-pack-authorities",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-workbench-loops-architecture-exhaust",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [
@@ -2942,9 +3450,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "UV.2 Chosen shape",
           "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[UnanalysedLanguages.Skip] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "WL.5 Component map and boundaries",
+          "mermaid": "flowchart TB\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650\n\n  subgraph shell[\"AiDe.App — shell (three DockHosts, ADR-0045)\"]\n    Rail[\"Left hierarchy: Factory · Review · Understand<br/>+ feature children (derived from kind rows)\"]\n    Notebook[\"NotebookSurface (CodeMirror 6 / WebView2)<br/>rich ⇄ source projections · completion · diagnostics<br/>(ADR-0043)\"]\n    Exec[\"ExecutionSurface<br/>attempt state fold · permissions · queue/steer/stop<br/>(ADR-0041)\"]\n    Viz[\"VisualizerSurface<br/>sequence · components · data · code · metadata\"]\n    Check[\"ChecklistSurface · ChangePacket · TestEvidence · RigorBacklog\"]\n    Conn[\"ConnectionsSurface<br/>six families · observed readiness · native sign-in\"]\n    Coord[\"CoordinationSurface<br/>graph · requests · recovery (read first)\"]\n    Term[\"TerminalSurface (explicit, secondary)\"]\n    Registry[\"SurfaceModelRegistry<br/>models keyed by object identity, workspace-owned\"]\n  end\n\n  subgraph core[\"AiDe.Core — authority and folds (T0)\"]\n    Records[\"Workbench records schema group<br/>journey · notebook_revision · execution_attempt ·<br/>permission_decision · evidence_link · disposition ·<br/>obligation · test_attempt · profile_observation (ADR-0039)\"]\n    Folds[\"Folds: AttemptState · AcceptanceEligibility ·<br/>Closure · Currentness · Readiness\"]\n    Compile[\"Compilation (ADR-0033/0034, unchanged)<br/>envelope · Project() · projection_sha\"]\n    Queries[\"IWorkspaceQueries (bounded)<br/>Find · Describe · SearchContent · Knowledge · Graph\"]\n    Assess[\"Assessment projections<br/>change packet · test worthiness · drift · rigor\"]\n    Profiles[\"HarnessProfileBinding (ADR-0042)<br/>probe → observations · sanitized env · fingerprint\"]\n    CoordRM[\"CoordinationReadModel (ADR-0044)<br/>refs · manifest · requests · board · watcher\"]\n  end\n\n  subgraph plane[\"Agent plane (existing) + transports\"]\n    Host[\"GovernedRunHost.RunAsync — the one run root\"]\n    Relay[\"RunEventRelay — single reader republished\"]\n    Mappers[\"Mappers: ACP (claude/codex adapters, copilot, grok) ·<br/>agy stream-json · muse exec JSONL → RunEvent (+raw frame)\"]\n  end\n\n  Store[(\"workspace.db (SQLite)<br/>+ run logs · envelope-events.jsonl\")]:::store\n  Pack[(\"AI-Forward pack: refs · .agents/ · runner · join\")]:::ext\n  Native[(\"Native harness CLIs + their credential stores\")]:::ext\n  Repo[(\"Repository · worktrees · PRs\")]:::ext\n\n  Rail --> Notebook & Exec & Viz & Check & Conn & Coord & Term\n  Notebook --> Registry\n  Exec --> Registry\n  Registry --> Records\n  Notebook -->|completion/hover| Queries\n  Notebook -->|prepare| Compile\n  Compile -->|projection_sha| Records\n  Exec -->|dispatch attempt| Host\n  Host --> Mappers --> Relay --> Exec\n  Relay --> Folds\n  Records --> Folds --> Exec & Check\n  Assess --> Records\n  Queries --> Viz\n  Repo --> Queries\n  Repo --> Assess\n  Conn --> Profiles --> Native\n  Host --> Native\n  Coord --> CoordRM --> Pack\n  Records --> Store\n  class shell,Rail,Notebook,Exec,Viz,Check,Conn,Coord,Term,Registry app\n  class core,Records,Folds,Compile,Queries,Assess,Profiles,CoordRM core\n  class plane,Host,Relay,Mappers app"
         }
       ],
-      "sourceSha256": "3ed47a542f90825e1e36c9550851494c41a4ba6238fb8b9fd1ff45f35087cbeb"
+      "sourceSha256": "3fd80aa59220e9c44b90e0623cb8acedee2d365ce458ee6130af357e4932e526"
     },
     {
       "id": "architecture-agent-plane",
@@ -7678,6 +8191,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffa5f5177804a2f2fa7d086e9880a2357e6afd6d8c1aa256450743990cb508d1"
     },
     {
+      "id": "note-workbench-loops-architecture-exhaust",
+      "path": "docs/notes/workbench-loops-architecture-exhaust.md",
+      "title": "Workbench-loops architecture run — session exhaust: drift found, calls made below ADR weight",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        },
+        {
+          "by": "adr-0045-perspective-set-factory-review-understand",
+          "on": "2026-10-18",
+          "reason": "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory"
+        }
+      ],
+      "summary": "Records what the 2026-10-18 /define-architecture run found that no ADR carries: four Perspective rows in code against ADR-0030's three, the stale IWorkspaceStore name, Grok already catalogued, Antigravity sign-in being interactive, Muse self-updating mid-session, and the calls made on council composition, slice re-cut and the strict default acceptance policy.",
+      "tags": [
+        "decision-note",
+        "architecture",
+        "workbench-loops",
+        "drift",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0042-native-harness-profile-binding",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6bdfb5a0aa092394393552e83a2cea9fcde1f85c86a5e3caf76631714e4ba48f"
+    },
+    {
       "id": "note-workbench-loops-direction",
       "path": "docs/notes/workbench-loops-direction.md",
       "title": "Work and system are equal entry paths",
@@ -9619,7 +10182,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "AI-DE built and remaining inventory — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
       "tags": [
         "forensic-review",
@@ -9642,7 +10211,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5772dbf3ba47d0c0ca32496b35317108b8c3f7ca1e3330fac9f9f2a95af0f993"
+      "sourceSha256": "fc066e46c177199898640ad9c6626f1b2da6d5bdcac8e110ea77e1932f3f1bf9"
     },
     {
       "id": "coord-audit-gate-self-test",
@@ -9968,7 +10537,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "The types behind the Weave score and the leaderboard, drawn from the declarations in WeaveScore.cs and Leaderboard.cs, including the two fields the design deliberately does not have.",
       "tags": [
         "diagram",
@@ -10002,7 +10577,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n class WorkspaceCore {\n  +string WorkspaceId\n  +string RootPath\n  +RefreshScopeAsync()\n  +IndexCSharpAsync()\n }\n class WorkspaceStore {\n  +long CoreEpoch\n  +BeginRead()\n  +BeginWrite()\n }\n class ProjectionService {\n  +Graph()\n  +EntryPoints()\n  +SearchContent()\n }\n class EvidenceAssertion {\n  +string ScopeId\n  +string ArtifactRevision\n  +string Subject\n  +string Predicate\n  +string Object\n  +EvidenceOrigin Origin\n  +VerificationStatus Status\n }\n class Provenance {\n  +string ArtifactPathId\n  +string SourceLocation\n  +string ExtractorId\n  +string ExtractorVersion\n }\n class WorkEpisode {\n  +string EpisodeId\n  +string SessionId\n  +Goal Goal\n  +DoneCondition DoneWhen\n  +EpisodeOutcome Outcome\n }\n WorkspaceCore *-- WorkspaceStore\n WorkspaceCore --> ProjectionService\n ProjectionService --> WorkspaceStore\n EvidenceAssertion *-- Provenance"
         }
       ],
-      "sourceSha256": "e06f96c54ea6a9ff0c9cefe53e47a1be047e2084ca1a81f1d6b49d247047eeea"
+      "sourceSha256": "b1bb1e2839787dec32f6bbb027e7ff2f82de31b9e6c1cf23bf1c33d9aed47414"
     },
     {
       "id": "diagram-component",
@@ -10013,7 +10588,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "The real assembly and namespace dependency edges of AI-DE, read from the composition roots rather than from the architecture prose, with the external systems at the boundary.",
       "tags": [
         "diagram",
@@ -10042,7 +10623,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n Operator[Local operator] --> App[AiDe.App — WPF / AvalonDock]\n App --> Client[Local pipe client and shell view models]\n Client --> Daemon[AiDe.Daemon — workspace lock and owner-scoped pipe]\n Daemon --> Core[AiDe.Core — workspace authority]\n Repo[Repository files — untrusted input] --> Extract[Static extractors]\n Extract --> Core\n Core --> Store[(workspace.db: assertions and snapshots)]\n Core --> Query[Bounded projections]\n Query --> Client\n App --> Session[Conversation / composer / compile / run]\n Session --> Envelope[Append-only compilation envelopes]\n Session --> Harness[ACP / ConPTY harness process]\n Harness --> Provider[Optional inference / remote services]\n App --> Watcher[Watcher / board / episode scoring]\n Watcher --> WatchDb[(watcher.db and contract records)]\n Harness --> Stdio[AiDe.Mcp — stdio coordination tools]\n Stdio --> WatchDb\n Client --> Views[Graph / tree / evidence / static UML / source]"
         }
       ],
-      "sourceSha256": "20760608492c91d2a6e144f79f356e3c208fabcf86a68d8b08832b4fc548efd8"
+      "sourceSha256": "b6beec71c9642d69614dd4f8cb3d0fb62c33719c04571cf7d40c2520e2c64ce9"
     },
     {
       "id": "diagram-layers",
@@ -10053,7 +10634,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "Where each AI-DE capability sits in the LOA tier ladder, and the single rule that governs the boundary: a model may explain a bounded, already-selected result, and may never select it.",
       "tags": [
         "diagram",
@@ -10083,7 +10670,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n UI[WPF shell: selection, conversation, diagrams, evidence]\n Query[Deterministic bounded queries and rendering models]\n Authority[Daemon/Core: extraction, snapshots, receipts and immutable store]\n Agent[External ACP/terminal harness and optional model compilation]\n Review[Proposed future agent assessments]\n UI --> Query --> Authority\n UI --> Agent\n Review -. proposed evidence only .-> UI"
         }
       ],
-      "sourceSha256": "e8b021b11e983466bb57465fd8d8cf61b400311cbbeb34ebdf4490c3bd1a5832"
+      "sourceSha256": "9e899e619268660d077042c1bef4b786b99bc866158a89e6084f1e7cb2f72ec7"
     },
     {
       "id": "diagram-sequence",
@@ -10094,7 +10681,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "The two flows the product turns on: repository change to rendered surface, and terminal launch to a scored, attributed episode — with the failure and refusal paths drawn, not only the happy one.",
       "tags": [
         "diagram",
@@ -10138,7 +10731,7 @@ window.DOCS_INDEX = {
           "mermaid": "sequenceDiagram\n participant Operator as Human operator\n participant Composer as Conversation and composer\n participant Compiler as Compile / typed validation\n participant Journal as Envelope events\n participant Agent as ACP or terminal lane\n Operator->>Composer: Draft goal and context\n Composer->>Compiler: Deterministic or explicitly gated model compilation\n Compiler->>Journal: Append compilation provenance\n Compiler-->>Operator: Reviewable typed result\n Operator->>Agent: Deliberate send through chosen lane\n Agent-->>Composer: Streamed result / receipt / failure\n Note over Agent: External provider/tool capabilities need separate qualification"
         }
       ],
-      "sourceSha256": "9feeadcd91ab9c70e5b3667302bb5d5ed2e177a5801f137e974f120463abf8a7"
+      "sourceSha256": "5727f8fa2657fcbf46972c7ec94db5bbfe0b53ed97248a6c305b934c13f1c515"
     },
     {
       "id": "docs-map-of-content",
@@ -10149,7 +10742,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "A curated route into the AI-DE documentation for four different readers, rather than a mirror of the folder tree. The machine-navigable form is the Docs Explorer.",
       "tags": [
         "moc",
@@ -10200,7 +10799,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b82e3609cc45857afb976434335ec212f7ac6a5bbb78821446381ad1d128a9be"
+      "sourceSha256": "f39b81e5bc9504f7239e38d4923d8ae5f9fb1e4a1a8583c26d785c404c4eff3b"
     },
     {
       "id": "domain-experts",
@@ -10262,7 +10861,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "Whole-solution forensic review — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
       "tags": [
         "forensic-review",
@@ -10291,7 +10896,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n Person[Local operator] --> App[WPF desktop workbench]\n App -->|owner-scoped pipe| Daemon[Workspace daemon]\n Daemon --> Core[Core extraction and projections]\n Repo[Untrusted repository files] --> Core\n Core --> Facts[(workspace.db)]\n App --> Watcher[Local watcher and episode readers]\n Watcher --> Observations[(watcher.db and records)]\n App --> Agents[ACP / terminal agent processes]\n Agents -->|optional external inference| Provider[Provider boundary]\n Agents --> MCP[Separate stdio identity/board/episode tools]\n MCP --> Observations"
         }
       ],
-      "sourceSha256": "6b9327ade4790d564858f8bb0823b61d30bfb033e7b75413329a9dbd4ef574fd"
+      "sourceSha256": "d96b2701651669c9ddecfa995f606d88e77a4327db04958149ebe910180c033f"
     },
     {
       "id": "forensic-review-rev102-backlog",
@@ -10302,7 +10907,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "Forensic remediation backlog — revision 102: repository evidence at 9f13ca7a, measured baseline, explicit confidence and proposed next work.",
       "tags": [
         "forensic-review",
@@ -10321,7 +10932,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e08f5c5160553e4dfa7578909e28925d019fb22ff4576695623dcba5db309fae"
+      "sourceSha256": "8f6d0b702b081fb9a73983b8cdf6dec5716106d4ea05d32c033eb99604329be6"
     },
     {
       "id": "inv-0001-agent-terminal-environment",
@@ -10807,7 +11418,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "An exploratory local desktop interaction model with three destinations, shared scope and evidence, and six working factory/review/understanding journeys; all sample metrics are explicitly synthetic.",
       "tags": [
         "mockup",
@@ -10831,7 +11448,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "53c58d751c78effa8d8710b1a269b5752bdc57af0c841701b08b872dca2826e2"
+      "sourceSha256": "665d4f5ccc16df0530f59ebf943771522e4b06675bcf31d0f008fa07308b9d1e"
     },
     {
       "id": "mockup-factory-workbench-v2",
@@ -12124,7 +12741,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "Bounded execution graph for the whole-solution review, five-area primary-source research, and local desktop factory proposal with interactive mockups.",
       "tags": [
         "planning",
@@ -12153,7 +12776,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n G --> F & R & U & B\n F & R & U & B --> S\n S --> M --> A --> V --> C\n S --> A"
         }
       ],
-      "sourceSha256": "26276aaaf32e627d2f2a25e0579adbae129ee79dcf56d89ac57cc6ff8c89549a"
+      "sourceSha256": "6c988ac81e758add23d31ddbc5a824f5f01f6183799b40a4f819ab5bfc2ac92b"
     },
     {
       "id": "plan-ownership-qualification",
@@ -12579,6 +13202,11 @@ window.DOCS_INDEX = {
           "by": "mockup-factory-workbench",
           "on": "2026-10-18",
           "reason": "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation."
+        },
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
         }
       ],
       "summary": "Exploratory evolution of AI-DE into a local desktop spec-first factory: work-centered delivery, scoped understanding and guided assurance over one versioned evidence model.",
@@ -12616,7 +13244,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ad29d63425ee553cade51d8c4f2c0849cd6d75d39cb30c2e057b2b68e3f4afe1"
+      "sourceSha256": "ce6c3cb3c33027e3a26fe9bcad39b8caea521ef7e2a84b4e32dd8f350bd40eb1"
     },
     {
       "id": "proposal-workbench-loops",
@@ -12627,7 +13255,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-11-18",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        }
+      ],
       "summary": "An exploratory local desktop workbench with equally valid work-first and system-first entry, an immersive intelligent editor, peer execution/evaluation, dockable evidence surfaces and explicitly authenticated native harnesses.",
       "tags": [
         "proposal",
@@ -12664,7 +13298,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ddcbd11a70621b6b5c7a30f078197a42f995a3b972ef06a0d99ef9affa1f003"
+      "sourceSha256": "148ef71d47243304b5c43de59705e2a56aa8d153a697bcaecf3e36d8c65fd608"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -18128,6 +18762,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "4ca22685db704bea072312d2a683d8e771a5c5ce2757822e8527e25b9087ab78"
     },
     {
+      "id": "plan-workbench-loops-drive-prompt",
+      "path": "docs/plans/workbench-loops-drive-prompt.md",
+      "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-10-18",
+          "reason": "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)"
+        },
+        {
+          "by": "adr-0045-perspective-set-factory-review-understand",
+          "on": "2026-10-18",
+          "reason": "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory"
+        }
+      ],
+      "summary": "The paste-ready prompt that starts the multi-day implementation drive: analyse the accepted architecture, build the coordination plan, and execute it with an Opus leader, a Fable owner, Sonnet for routine coding and Grok / Antigravity workers, reporting a backlog table every fifteen minutes. Written 2026-10-18 by the define-architecture run; the prompt below is the artifact, the frontmatter is only its graph record.",
+      "tags": [
+        "plan",
+        "prompt",
+        "coordination",
+        "workbench-loops",
+        "implementation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ffe66ed7ccba57ca81f9b722fa0d776b322b0d22d3414cc4cc7c7978877a771d"
+    },
+    {
       "id": "privacy-review-ai-native-ide",
       "path": "docs/security/ai-native-ide-privacy-review.md",
       "title": "AI-native IDE — Privacy and data-governance review",
@@ -23366,5 +24054,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "a177d7c29d168f81ba549d4392e302e5cb70501756be28f68908080cb2d4ebe0"
+  "graphSha256": "981f3a1c01655d218bdd19bdac60a1315374b4d64415dc87002d40c97d46a9e1"
 };

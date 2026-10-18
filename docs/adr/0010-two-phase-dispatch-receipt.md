@@ -53,7 +53,8 @@ process because ConPTY needs a real console (DC-014).
 **The residual was then measured, and it is not in this receipt.**
 [`spikes/agent-dispatch`](../../spikes/agent-dispatch/RESULT.md) dispatched into a real `claude` CLI:
 the receipt recorded `PtyWriteAccepted` and the agent never answered, because Claude Code opens on a
-modal **trust gate** and the prompt was consumed by that dialog — where the same `
+modal **trust gate** and the prompt was consumed by that dialog — where the same `
+
 ` that submits
 a prompt also confirms the highlighted option, *"No, exit"*.
 

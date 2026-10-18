@@ -14,7 +14,8 @@ review-by: 2027-09-02
 summary: >-
   The real assembly and namespace dependency edges of AI-DE, read from the composition roots rather
   than from the architecture prose, with the external systems at the boundary.
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # Recovered component and container map — 2026-10-17

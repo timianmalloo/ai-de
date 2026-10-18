@@ -15,7 +15,8 @@ links:
   - { to: built-inventory-rev102, rel: depends-on }
 review-by: 2026-11-18
 summary: An exploratory local desktop workbench with equally valid work-first and system-first entry, an immersive intelligent editor, peer execution/evaluation, dockable evidence surfaces and explicitly authenticated native harnesses.
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # AI-DE: start with the work, or start with the system

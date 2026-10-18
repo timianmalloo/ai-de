@@ -17,6 +17,7 @@ review-by: 2026-11-17
 summary: "Exploratory evolution of AI-DE into a local desktop spec-first factory: work-centered delivery, scoped understanding and guided assurance over one versioned evidence model."
 review-suggested:
   - { by: mockup-factory-workbench, on: 2026-10-18, reason: "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation." }
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # AI-DE: understand the work, review the decisions

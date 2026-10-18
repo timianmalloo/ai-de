@@ -11,7 +11,8 @@ links:
   - { to: architecture, rel: relates-to }
 review-by: 2027-01-17
 summary: An exploratory local desktop interaction model with three destinations, shared scope and evidence, and six working factory/review/understanding journeys; all sample metrics are explicitly synthetic.
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # Direction before screens

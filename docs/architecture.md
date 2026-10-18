@@ -45,12 +45,25 @@ links:
   - { to: note-understanding-views-n4-pass, rel: relates-to }
   - { to: note-addendum-cd-architecture-p1-inputs, rel: relates-to }
   - { to: architecture-agent-plane, rel: relates-to }
-review-by: 2027-03-15
+  - { to: spec-workbench-loops-ux, rel: implements }
+  - { to: proposal-workbench-loops, rel: relates-to }
+  - { to: kb-workbench-loops-20261018, rel: depends-on }
+  - { to: note-workbench-loops-direction, rel: depends-on }
+  - { to: adr-0039-workbench-records-durable-representation, rel: depends-on }
+  - { to: adr-0040-journey-purpose-identity, rel: depends-on }
+  - { to: adr-0041-execution-attempt-lifecycle, rel: depends-on }
+  - { to: adr-0042-native-harness-profile-binding, rel: depends-on }
+  - { to: adr-0043-notebook-editor-codemirror-canonical-source, rel: depends-on }
+  - { to: adr-0044-coordination-read-model-over-pack-authorities, rel: depends-on }
+  - { to: adr-0045-perspective-set-factory-review-understand, rel: depends-on }
+  - { to: note-workbench-loops-architecture-exhaust, rel: relates-to }
+review-by: 2027-04-18
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
   - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
   - { by: adr-0038-d0-solution-tree-census-and-kind, on: 2026-09-15, reason: "ADR-0038 proposed: D-0 Solution tree kind + query-time census; Addenda C/D slices still exclude D-0" }
+  - { by: adr-0045-perspective-set-factory-review-understand, on: 2026-10-18, reason: "Ruling 84's Coordination bench superseded; Loomkeeper kinds move under Factory" }
 summary: >-
   Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that
   builds provenance-labelled facts from repository artifacts, serves derived visual projections and
@@ -60,7 +73,10 @@ summary: >-
   and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation
   bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0
   (ADR-0038 proposed): one Architecture kind, query-time census, no second store.
-  Addenda C/D slices still exclude D-0; see §Understanding views / D-0.
+  Addenda C/D slices still exclude D-0; see §Understanding views / D-0. Amended 2026-10-18 for the
+  workbench-loops evolution (§Workbench loops): two durable journeys, a notebook/attempt identity
+  seam, native harness profile binding, a coordination read model, and the Perspective set re-rowed
+  to Factory · Review · Understand (ADR-0039–0045 proposed).
 ---
 
 # Architecture: AI-DE
@@ -86,7 +102,8 @@ entry-point results can exceed the transport byte limit despite row clamping. In
 freshness probing is a tested primitive without production composition. Static sequences are
 type-level call scenarios, not observed runtime traces. Crow's-foot ER/C4 product surfaces, PR/test
 assurance and a spec-first factory are remaining work, not claims promoted by their mockups.
-The proposed evolution is exploratory and does not change this architecture by implication.
+The 2026-10-18 evolution is defined in **§Workbench loops** below (ADR-0039–0045, proposed);
+until those ADRs are accepted and their slices land, the shipped composition is the one recovered here.
 
 
 - **Status:** In review
@@ -1211,6 +1228,365 @@ No unfamiliar SDK. Do not freeze a control in ADR-0038.
 `GATE define-architecture (Understanding views D-0) · 2026-09-15 · session grok-understanding-views-conductor
 · N6 Security PASS and Tech Lead PASS on repair a03fb622 · ADR-0038 **Accepted** (conductor recorded; authors did not self-clear).`
 Residual: other walkers may still disagree (N7 widen optional); production folder-cap unmeasured; UV-1 native Ctrl+Enter Flagged.
+
+## Workbench loops — two journeys, one local workbench (2026-10-18)
+
+- **Driving spec:** [`docs/specs/workbench-loops-ux.md`](specs/workbench-loops-ux.md) (30 stories,
+  90 criteria; in review). **Inputs:** [proposal v2](proposals/local-software-factory-v2.md),
+  [mockup v2](mockups/factory-workbench-v2.md), [research note](knowledge/workbench-loops-20261018.md),
+  [direction note](notes/workbench-loops-direction.md), the 2026-10-18 source inventory (cited
+  `file:line` below), and [`spikes/native-harness-presence`](../spikes/native-harness-presence/RESULT.md).
+- **Tier:** T2. **Status:** proposed — the council gate record is §WL.14.
+- **Grounding traversal:** `spec-workbench-loops-ux` ← `proposal-workbench-loops` ←
+  `kb-workbench-loops-20261018` / `note-workbench-loops-direction` (depends-on) → this document
+  (implements) → ADR-0039…0045 (depends-on) → `architecture-agent-plane`, ADR-0010/0017/0027/0030–0034
+  (refines / supersedes). **Findings from the traversal:** (1) ADR-0030 says three Perspective rows;
+  `Perspectives.cs:63-82` has four — the code drifted from the ADR before this change (recorded in
+  ADR-0045). (2) `IWorkspaceStore` is named in ADR-0002 and §Component map but no such interface
+  exists; the code uses `WorkspaceStore` — a stale name in this document, corrected in the table
+  below. (3) The proposal's frontmatter links `architecture` as `relates-to`; the spec did not link
+  this document at all — the inbound edge is added by this change's `implements` link.
+
+### WL.1 What changes, and the drift it resolves
+
+The spec promotes two **distinct journeys** — **J-W, start with work** (a declared deliverable or
+decision) and **J-S, start with the system** (understanding, closable with no work item) — to the
+primary workflow, with a **first-class intelligent notebook** beside a **peer execution/evaluation
+surface**, **explicit native-harness sign-in** across six families, a **coordination projection**
+of the pack's authorities, and a **dockable shell with Factory · Review · Understand** on the left.
+It retains every existing safety, isolation and provenance contract (spec §Scope reconciliation).
+
+Three existing decisions conflict with it and are **superseded or refined explicitly** rather than
+contradicted: ADR-0017/0030's Perspective rows (→ ADR-0045); the conversation-shaped composer of
+Addendum C (→ ADR-0043, the same `ComposerSurface` extended into a notebook; Prepare/Send
+unchanged); and the pane-owned run lifetime in `SessionDocumentSurface` (→ ADR-0041/0045). The
+compile step (ADR-0033–0037), the two-phase receipt (ADR-0010), the ACP lane shape (ADR-0027) and
+the fact store (ADR-0002) are **reused as-is** and extended.
+
+### WL.2 The system as a system (Stage 1)
+
+| Element | Instances in this evolution |
+|---|---|
+| **Stocks** | Notebook revisions; execution attempts and their run-event logs; obligations and evidence links; dispositions; profile observations; the pack's request/ACK/ruling stores; saved layouts |
+| **Flows** | Keystrokes → draft → saved revision → compile envelope → attempt → run events → evidence links → disposition; question → bounded query → answer → selection → next question; promotion (investigation → work) |
+| **Feedback loops** | Stale-prepare refusal (source/scope/profile change invalidates the envelope); currentness invalidation on HEAD / PR-head / intent change; readiness recomputed from observations before every dispatch; queue drained only on predecessor terminal state; recovery sweep → `outcome-unknown`; compaction incident on store growth |
+| **Delays** | Native process launch and sign-in (seconds to minutes, user-paced); index freshness after a working-tree edit (FR-001 class); pack-state polling (`.agents/`, refs); model latency (measured separately, NFR-02) |
+| **Boundary** | Inside: the workspace store, the agent plane, the composer, the shell, the read models. Outside (authorities we project, never own): native harness credentials and policies; the pack's coordination refs and scripts; the repository and its PRs; provider retention |
+| **Excluded** | Hosted product; general source editing; OAuth broker; API-key-first setup; automatic merge/push/release; media ingestion beyond diagrams/code/metadata/checklists |
+
+**Leverage point.** The high-leverage structural decision is not the editor or the pane layout — it
+is the **identity seam between a notebook revision and an execution attempt** (ADR-0039/0041): once
+an attempt binds exact bytes, a route fingerprint and a scope snapshot *before* launch, every other
+promise (stale results, queue vs steer, outcome-unknown, evidence-ready, no replay, acceptance
+blocked on missing evidence) becomes a fold over rows rather than a UI discipline. The second
+leverage point is **readiness as observed facts** (ADR-0042), which is what keeps six families
+honest. The visible decisions — rows on the left, where panes go — are ADR-0045 and are cheap.
+
+### WL.3 Candidate shapes considered (Stage 1–2)
+
+| Shape | What it is | Why rejected / chosen |
+|---|---|---|
+| **A. Extend in place** *(chosen)* | New schema group in the workspace store; `ComposerSurface` → notebook; `GovernedRunHost` + `RunEventRelay` → attempt host; `DockHost` ×3; read models over the pack | Every seam exists and is tested; the delta is identity rows, folds and two new transports; no second store, no second editor, no second authority |
+| B. Second workbench beside the first | A new "notebook app" surface tree with its own stores and run client, migrated to later | Two authoritative documents and two run readers (the `RunEventRelay` remark forbids the second); the proposal's own rule "each slice is a vertical migration, not a second workbench" |
+| C. Event-sourced notebook core | Everything (revisions, attempts, decisions) as one JSONL event stream; SQLite becomes a projection | Loses uniqueness/FK enforcement at write time for decisions and attempts; duplicates `envelope-events.jsonl`'s role; the store's ingress order already gives the total order |
+| D. Port coordination into C# | A C# leader/request store with its own schema | Rejected by the direction note and ADR-0044: a second authority diverging from the protocol other harnesses speak |
+
+### WL.4 Archetype and tier allocation (LOA)
+
+The composition, stated so that no label launders a different shape (Enterprise Architect,
+gate 2026-10-18): **F — Copilot Aside Hot Path** is the workbench substrate — store, folds,
+readiness, compile, shell, dispatch authorization are deterministic and no model mutates hot-path
+state; **C — Tool-Mediated Constructor** is the existing MCP gateway, unchanged; **H — Long-Horizon
+Agent is external and human-gated** — the native harness dispatched through the one run root, its
+`RunBudget` *validated but not enforced* until WL-4 enforces it at the attempt (agent-plane §12; the
+Unbudgeted-Loop residual in §WL.13); **D — Grounded Synthesizer is bounded and has a home**: an
+`ExplanationCallHost` (WL-5) composed like the compile call (ADR-0035: a pinned session with
+`tools: []`, `[CapabilityTier(T3)]`, budget, receipt activity) over Core's bounded queries, producing
+cited explanations and US-U01 summaries with explicit omissions. Until WL-5, J-S is a T0 query
+projection and **no model call** — the two journeys are then a product distinction over the same
+substrate, which is the honest statement. H and D sit in the *aside* channel, not inside F's hot
+path. Rejected: D as the global shape (unchanged from §Archetype); **B — Adversarial Ensemble** for
+review decisions (a human disposition is the authority; AC-P02a); **A — Cascade** for test/drift
+analysis (each analysis is a T0/T2 projection with its own witness, not a pipeline that launders
+inference into observation). Named patterns (LOA catalog): Hot Path Bypass 1.4, Token Budget
+Throttle 2.4 (WL-4), Grounded Context Injector 4.1 (WL-5), Tool-Mediated State 4.2, Receipt
+Ledger 4.3.
+
+| Capability | Tier | Why this tier |
+|---|---|---|
+| Journey/notebook/attempt/decision identity, folds (attempt state, acceptance eligibility, closure, currentness), readiness conjunction, migration | T0 | Invariants; a model would make them non-deterministic (P2) |
+| Completion / hover / diagnostics from Core queries; multi-edit preview/apply; revision compare | T0 | Index-backed, byte-bounded, testable without a model (ADR-0043) |
+| Compile envelope and Prepare (existing) | T0 mechanical + gated T3 agentic (ADR-0036 ladder) | Unchanged |
+| Change packet grouping by behaviour/boundary; test-attempt ingestion; consideration ↔ assertion mapping | T0 (extraction) + T2 where a classifier is qualified | Deterministic where the graph has the edge; a T2 classifier only behind an eval with denominators (NFR-09) |
+| J-S explanation; J-W plan/execute; summaries (US-U01); model rewrites in the editor | T3, bounded, previewed, cited | Synthesis is the model's job; authority and measured results never are |
+| Drift / contested review reasoning | T4 reserved | Only for contested cases where the value is justified (spec §A8) |
+| Attempt dispatch, permission answer, Stop, promotion confirm, acceptance | **Human-gated T0** | Irreversible or accountable actions take a human decision fact |
+
+### WL.5 Component map and boundaries
+
+```mermaid
+flowchart TB
+  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF
+  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
+  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2
+  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650
+
+  subgraph shell["AiDe.App — shell (three DockHosts, ADR-0045)"]
+    Rail["Left hierarchy: Factory · Review · Understand<br/>+ feature children (derived from kind rows)"]
+    Notebook["NotebookSurface (CodeMirror 6 / WebView2)<br/>rich ⇄ source projections · completion · diagnostics<br/>(ADR-0043)"]
+    Exec["ExecutionSurface<br/>attempt state fold · permissions · queue/steer/stop<br/>(ADR-0041)"]
+    Viz["VisualizerSurface<br/>sequence · components · data · code · metadata"]
+    Check["ChecklistSurface · ChangePacket · TestEvidence · RigorBacklog"]
+    Conn["ConnectionsSurface<br/>six families · observed readiness · native sign-in"]
+    Coord["CoordinationSurface<br/>graph · requests · recovery (read first)"]
+    Term["TerminalSurface (explicit, secondary)"]
+    Registry["SurfaceModelRegistry<br/>models keyed by object identity, workspace-owned"]
+  end
+
+  subgraph core["AiDe.Core — authority and folds (T0)"]
+    Records["Workbench records schema group<br/>journey · notebook_revision · execution_attempt ·<br/>permission_decision · evidence_link · disposition ·<br/>obligation · test_attempt · profile_observation (ADR-0039)"]
+    Folds["Folds: AttemptState · AcceptanceEligibility ·<br/>Closure · Currentness · Readiness"]
+    Compile["Compilation (ADR-0033/0034, unchanged)<br/>envelope · Project() · projection_sha"]
+    Queries["IWorkspaceQueries (bounded)<br/>Find · Describe · SearchContent · Knowledge · Graph"]
+    Assess["Assessment projections<br/>change packet · test worthiness · drift · rigor"]
+    Profiles["HarnessProfileBinding (ADR-0042)<br/>probe → observations · sanitized env · fingerprint"]
+    CoordRM["CoordinationReadModel (ADR-0044)<br/>refs · manifest · requests · board · watcher"]
+  end
+
+  subgraph plane["Agent plane (existing) + transports"]
+    Host["GovernedRunHost.RunAsync — the one run root"]
+    Relay["RunEventRelay — single reader republished"]
+    Mappers["Mappers: ACP (claude/codex adapters, copilot, grok) ·<br/>agy stream-json · muse exec JSONL → RunEvent (+raw frame)"]
+  end
+
+  Store[("workspace.db (SQLite)<br/>+ run logs · envelope-events.jsonl")]:::store
+  Pack[("AI-Forward pack: refs · .agents/ · runner · join")]:::ext
+  Native[("Native harness CLIs + their credential stores")]:::ext
+  Repo[("Repository · worktrees · PRs")]:::ext
+
+  Rail --> Notebook & Exec & Viz & Check & Conn & Coord & Term
+  Notebook --> Registry
+  Exec --> Registry
+  Registry --> Records
+  Notebook -->|completion/hover| Queries
+  Notebook -->|prepare| Compile
+  Compile -->|projection_sha| Records
+  Exec -->|dispatch attempt| Host
+  Host --> Mappers --> Relay --> Exec
+  Relay --> Folds
+  Records --> Folds --> Exec & Check
+  Assess --> Records
+  Queries --> Viz
+  Repo --> Queries
+  Repo --> Assess
+  Conn --> Profiles --> Native
+  Host --> Native
+  Coord --> CoordRM --> Pack
+  Records --> Store
+  class shell,Rail,Notebook,Exec,Viz,Check,Conn,Coord,Term,Registry app
+  class core,Records,Folds,Compile,Queries,Assess,Profiles,CoordRM core
+  class plane,Host,Relay,Mappers app
+```
+
+| Component | Home | Responsibility | Boundary contract | Decision |
+|---|---|---|---|---|
+| Workbench records (schema group) | Core/Store (`WorkspaceStore`, `WorkspaceSchema` v1 → v2) | Widened `dispatch_attempt/outcome_fact` and `prompt_revision_fact`; interval-versioned `journey_dim`, `notebook_dim`, `harness_profile_dim`; `permission_decision`, `evidence_link`, `assessment`, `disposition`, `checklist_obligation`, `profile_observation` facts | Same trigger set as every fact table; the first `workspace.db` migration chain (`EnsureSchema` reads `max(version)`, ordered `Migrations`, WAL-safe snapshot, read-only on a newer file); the constraint table of ADR-0039 §4 | ADR-0039 |
+| `RunLogStore` | Core/AgentPlane (builds the reserved `runs/<dispatch_key>.jsonl`, `SessionPaths.cs:28-32`) | One redacted line per `RunEvent`, appended and flushed **before** publish; the fold's durable input; the 3 a.m. record | Line before publish; outcome row after line; a cited seq absent reads Not recorded | ADR-0041 §3, ADR-0042 §6 |
+| Folds | Core/Workbench records | Non-terminal attempt states, `HasEvidence`, acceptance eligibility, closure, currentness, readiness | Pure functions over rows + run log; no stored status; indexes first, caches only when NFR-02 is measured red | ADR-0039/0040/0041 |
+| `NotebookSurface` | App/Workbench/Composer (reuses the WebView2 host, CSP, bundle pin, `ComposerSendGate`, router, refused names; **new** page bundle, draft shape, protocol v2) | Continuous Markdown notebook, both projections, completion/hover/diagnostics, multi-edit, revision stack | v2 = one `query.request` + three host→page kinds (WL-2); zero new kinds in WL-1a; page never sends | ADR-0043 |
+| `ExecutionSurface` | App/Conductor + Workbench | Peer execution/evaluation view: `TurnState` (+6 values), events, permissions, queue/steer/stop/retry, `HasEvidence` | One subscriber channel from publish-side fan-out; controls appear only with observed capability | ADR-0041/0042 |
+| Attempt host | App/Conductor (`GovernedRunHost` + the ADR-0010 gate) | Deterministic `dispatch_key`, insert-as-gate, `Dispatched` before the prompt write, terminals from the correlated `await prompt`, sweep with predicate + `last_sweep_at` | `AcpPeer.NotifyAsync` for `session/cancel` (bounded 10 s); the CTS and queue leave `SessionDocumentSurface` | ADR-0041 |
+| `ExplanationCallHost` | App/Conductor (WL-5; the `CompileCallHost` pattern) | J-S explanations and US-U01 summaries: pinned `tools: []` session over bounded query results, cited, with omissions | `[CapabilityTier(T3)]`, budget, receipt activity; never the run root | ADR-0035 pattern; §WL.4 |
+| `HarnessProfileBinding` | Core/AgentPlane (`ProviderRegistry`, `FirstUse`, `EngineCatalog` + rows for `agy`, `muse`) | Probe → observations; native sign-in launch; sanitized env; per-attempt fingerprint | Readiness is a conjunction of observed rows; `DROP_EXACT`; no credential read | ADR-0042 |
+| Transport mappers | Core/AgentPlane (`AcpRunEventMapper` + two new) | ACP / stream-json / JSONL → `RunEvent`, raw frame retained | Unknown kinds namespaced; native states projected, never erased | ADR-0042 |
+| Assessment projections | Core/Projections (+ test-result extractor adapter) | Change packet, test worthiness (numerator/denominator), drift, rigor findings at a baseline | Every result carries baseline, omissions, inference labels; head change ⇒ historical | ADR-0039 (grains); existing extractor contract |
+| `VisualizerSurface` | App (the former Explorer body + existing diagram surfaces) | Representation selector over the current object; selection → next question | Dockable kind; equivalent text/list view; bounded payload | ADR-0045, ADR-0018 |
+| `ChecklistSurface` and review surfaces | App | Obligations with acknowledgment vs satisfaction; dispositions at a baseline | Writes only decision/obligation facts; never a remote action | ADR-0039/0040 |
+| `CoordinationReadModel` + surface | Core/Coordination (new) + App | Fold of pack authorities and watcher; relationship from manifest; three dimensions | Read-only git/file access; commands only via the pack's scripts | ADR-0044 |
+| Shell model ownership | App/Workbench (`WorkbenchShell`'s existing identity-keyed dictionaries, re-keyed from surface to model) | Workspace-owned models keyed by object identity | Pane create/move/hide/close never disposes a model; no new registry class | ADR-0045 §4 |
+| `PerspectiveSet` (re-rowed) + three `DockHost`s | Core/Workbench (rows) + App (`PerspectiveMenu.For`, hosts) | Factory · Review · Understand with `Landing` and `RoutingOrder`; `FullWindow` retired; feature children derived | Closed set; one slot per host; migration by stable id with report; Ruling 84 superseded with SH-4.1's oracle re-run | ADR-0045 |
+| Terminal (existing) | Core/Terminal + App | Explicit "Open repo terminal" at a validated path | `ITerminalSession`; hide ≠ close ≠ stop attempt; output never enters facts | ADR-0005/0006, spec US-D02 |
+
+### WL.6 Bounded contexts, ubiquitous language and durable representation (DM1–DM13)
+
+The spec's §A4 model is adopted verbatim as the ubiquitous language (journey purpose, scope
+snapshot, session, execution attempt, evidence, finding, acceptance, ownership rule). The nine
+aggregates and their invariants, the grain of every row, the history rule per attribute, the
+derived quantities and the migration are **ADR-0039**; the journey's identity and bridges are
+**ADR-0040**. Layering stated honestly (DM6): one integrated operational store per workspace whose
+durable shape is dimensional; the run-event log and envelope stream are the raw evidence it
+references; every "current" read is latest-per-key through an index or a labelled rebuildable
+cache; coordination objects are a read model, never rows.
+
+### WL.7 Contracts at seams (Stage 3 — spikes and sourced contracts)
+
+| Seam / dependency | Contract relied on | Evidence | Confidence |
+|---|---|---|---|
+| Six native CLIs on PATH with documented headless/login entries | `claude -p --output-format stream-json`, `setup-token`; `codex exec` / `app-server` / `login`; `copilot --acp` / `-p` / `login`; `grok agent stdio`, `streaming-json`, `login`; `agy --print --output-format stream-json` (sign-in = interactive first run); `muse exec --json`, `login`, `serve` | `spikes/native-harness-presence/RESULT.md` (2026-10-18; versions 2.1.302 · 0.162.1 · 1.0.98 · 1.0.41 · 1.3.5 · 1.4.10) | **Verified** presence and entry; sign-in, model, permission semantics **Flagged** per family |
+| CLI versions are not stable at rest | Muse changed 1.4.7 → 1.4.10 between two probes minutes apart; Antigravity changed 1.3.5 → 1.4.2 within the hour | same spike (two runs) | **Verified** — hence per-attempt version fingerprint (ADR-0042) |
+| Benchmark environment sanitation and decision causes | `DROP_EXACT`, `cell_env`; `blocked_auth` / `blocked_permission` / `model_unavailable` | `x-harness-x-model-bench@8f514607` `profiles.py:50-70, 306-320`, `engine.py:67-70` | **Verified** (read) |
+| ACP lane (`session/new`, `session/prompt`, `session/request_permission`); no `session/cancel` today | `AcpLaneClient.cs:310-427`; single-reader queue; `RunEventRelay` | inventory 2026-10-18; `architecture-agent-plane` Phase-1 exit run | **Verified**; `session/cancel` per adapter/CLI **Flagged** until the Stop qualification |
+| Composer page protocol v1 | five page→host kinds, `host.init`, refused names incl. `send` | `ComposerVocabulary.cs:20-50`, `ComposerMessageRouter.cs:62-71` | **Verified** |
+| CodeMirror 6 as a Markdown notebook with decorations, multi-selection, IME, clipboard, 100k chars | decoration/selection primitives exist; this repo has not exercised them as a notebook | research note (source read) | **Verified in source; Flagged as a notebook** — qualification spike E-1 is the first slice's exit |
+| Three `DockHost`s under one presenter with live WebView2 | two-host unparent cycle proven | `spikes/second-dock-host-unparent` | **Verified ×2; Inferred ×3** — extend the spike |
+| Workspace store first migration (v1 → v2) | additive migrations pattern exists in the watcher store; `UpgradeCoordinator` / `MigrationJournal` exist | inventory (`SqliteWatcherObservationStore.cs:1042-1115`, `Upgrade/`) | **Verified pattern; Flagged** for `workspace.db` until the golden round-trip test |
+| Pack coordination protocol at `83a7834` | leader CAS ref + epoch; request lifecycle; manifest-driven dispatch; no replay | research note's source read; scripts present locally | **Verified by the codex session**; each line re-read at its slice |
+| Test-result ingestion (TRX/JUnit → `test_attempt_fact`) | format and extractor contract | none yet | **Flagged** — spike before the Review slice |
+
+### WL.8 Cross-cutting concerns
+
+- **Identity and trust boundaries.** Native harness credentials never cross into AI-DE (ADR-0042);
+  a permission decision matches one concrete request (ADR-0041); repository/diff/log text cannot
+  enlarge scope (existing MCP-inert rule, extended to notebook context: references produce
+  *context*, never permission — spec reconciliation row 6); the page cannot send (ADR-0043);
+  the pack keeps its own authority (ADR-0044). Threat lenses from spec §A7 are carried into each
+  slice's negative fixtures.
+- **Failure and resilience.** Write-ahead attempt, recovery sweep to `outcome-unknown`, no
+  automatic replay, stale-prepare refusal, per-family failure kinds with their own recovery
+  (auth / model / quota / capability / busy profile), self-updating CLIs fingerprinted per attempt,
+  layout drop-with-report, retained read-only journeys when the repository is unavailable (AC-L01b).
+- **Observability (NFR-11).** Every attempt row carries route, scope and timing; the run log
+  carries events; usage/cost are recorded only when emitted and otherwise **Not recorded**; the
+  3 a.m. question "which attempt, last known state, outstanding effects, safe recovery" is answered
+  by `attempt_id` → outcome rows → run log → permission decisions, with the health-incident sidecar
+  for store-unwritable failures (unchanged).
+- **Data governance / privacy (NFR-07).** Inspectable context and destination before Send
+  (compile envelope); credential-sentinel redaction in diagnostics and exports; local retention
+  default is a product decision still open (spec ledger) — until recorded, purge is by journey
+  containment with a report and never a claim about provider retention.
+- **Accessibility (NFR-05).** Every new kind inherits the keyboard command set and UIA naming of
+  ADR-0012's owned layer; the completion popup's ARIA state is a tested contract
+  (UI-COMPLETION-ARIA); native UIA/IME/DPI proof is a slice exit, never a screenshot.
+
+### WL.9 LOA conformance (C1–C11) for the additions
+
+LOA Part VII criteria (the first draft had relabelled the principles P1–P11 as C1–C11 — a
+regression inside this file the Enterprise Architect caught; corrected here):
+
+| Criterion | Status | Reason |
+|---|---|---|
+| C1 Tier annotation | PASS (conditional) | Every T3 site now has a component: `ExplanationCallHost` (WL-5), editor rewrites (ADR-0043 §4), the compile call (existing); each carries `[CapabilityTier(T3)]`; the attempt host is T0 |
+| C2 Budget propagation | **FAIL → WL-4** | `RunBudget` validated, not enforced (agent-plane §12); WL-4 enforces at the attempt (`Failed{budget-exhausted}` / `OverLimit`); recorded in §WL.13 as the Unbudgeted-Loop residual until then |
+| C3 Receipt emission | PASS | Attempts: write-ahead row + run log + `usage` or Not recorded; the T3 call hosts emit the compile call's receipt activity |
+| C4 Typed boundaries | PASS | Page protocol v2 exact-key tests; `RunEvent` envelope with redacted raw frame; CHECK-constrained rows; one `TurnState` |
+| C5 Side-effect protection | PASS | Permission answered only by the decision naming that `(run_id, seq)` and `arguments_sha`; the page cannot send; rewrites preview → accept; exit code ≠ success |
+| C6 Idempotency keys | PASS | Deterministic `dispatch_key`, insert-as-gate, partial unique `Dispatched`, no replay, pack commands by the runner's keys |
+| C7 Fallback declaration | PASS | `OutcomeUnknown{cause}`, stale-prepare refusal, `Failed{transport-unrecognised}`, drop-with-report, read-only journeys without a repo |
+| C8 Pattern naming | PASS | Hot Path Bypass 1.4, Token Budget Throttle 2.4 (WL-4), Grounded Context Injector 4.1 (WL-5), Tool-Mediated State 4.2, Receipt Ledger 4.3 (§WL.4) |
+| C9 Anti-pattern absence | PASS (conditional) | Unbudgeted Loop open until WL-4 (C2); no Silent Call (C1), no second reader, no stored status, no Trusting Consumer, no Confused Deputy (references produce context, never permission) |
+| C10 Audit completeness | PASS | History is the data (ADR-0039); `dispatch_key` → outcomes → run log → decisions is one queryable chain |
+| C11 Principal propagation | PASS | Harness-owned identity; `profile_key` and account in every route fingerprint; actor on every decision/disposition; sanitized child environment |
+
+Recorded deviation (Deviation Protocol): model suggestions in the editor and the explanation host
+are T3 capabilities in F's aside channel — the same deviation Addendum D recorded for the compile
+call (§C/D.11), under the same capability gate.
+
+### WL.10 E7 surface list (written once; every slice reaches every row it touches)
+
+store (`WorkspaceSchema` v2, migration, triggers) → model (records + folds in Core) → service
+(attempt host, profile binding, read models, assessment projections) → projection / wire
+(`RunEvent` mappers, page protocol v2, IPC operations for the new queries) → client type (App
+view models, `SurfaceModelRegistry`) → UI (the surfaces and the left hierarchy, every state in
+spec §C2) → compute reader (the folds' consumers: acceptance, closure, readiness — and the
+Explorer/docs index for the artifacts). A slice that stops before the UI or the compute reader
+is not done.
+
+### WL.11 Delivery phasing — vertical slices
+
+Defined whole above; delivered as thin end-to-end slices. The proposal's seven slices are kept in
+intent and re-cut so that **every slice is demonstrable end to end** with mocked seams declared as
+contracts. Slice 0 is inherited work the forensic review already names.
+
+| Slice | Proves end to end | Real | Mocked / stubbed seam (= contract) | Human validation (demo) | E2E checks (red first) | Unblocks |
+|---|---|---|---|---|---|---|
+| **WL-0 — evidence foundations** | The known freshness/framing defects are fixed before anything relies on index answers | FR-001 (dirty edits survive reindex) and FR-002 (entry-point frame overflow) repaired | — | edit a file under unchanged HEAD, refresh, see the new fact; open a large entry-point set, see a bounded result | failure-specific regressions for FR-001/002; existing suite stays green | every J-S answer |
+| **WL-1a — walking skeleton: the revision ↔ attempt seam** (re-cut at the gate: Enterprise, Simplifier; Tech Lead casting vote recorded in the exhaust note) | Start with work: write a notebook, prepare the exact request, dispatch to the **real** `claude-code` ACP lane, see the attempt bound to revision/`projection_sha`/route, edit and see the old result marked stale, Stop and see *StopRequested → Interrupted* on the native cancelled reply (or *OutcomeUnknown{stop_not_acknowledged}* at the deadline), restart and see the attempt and its events again | `WorkspaceSchema` v2 + the migration chain + WAL-safe snapshot; `journey_dim` (purpose only, so the notebook has an owner), `notebook_dim`, widened `prompt_revision_fact` and `dispatch_attempt/outcome_fact`, `permission_decision_fact`; `RunLogStore` with append-before-publish; publish-side relay fan-out; folds `AttemptState` + `Currentness`; `TurnState` +6; `ComposerSurface` prepare-from-revision; the ADR-0010 gate in `GovernedRunHost`; `AcpPeer.NotifyAsync` + bounded Stop; the sweep with predicate + `last_sweep_at`; the **existing** `session-document` kind in the **existing** Coding host re-bound to notebook + attempt, CTS/queue moved to the host | other five families (fixture engine conforming to the mapper contract); completion/hover v1 only; no J-S, no checklist, no re-row | the scenario above, keyboard only; hide the pane mid-run, reopen, run continues (the CTS has left the surface); kill the host mid-run, restart, read `OutcomeUnknown` with last `seq`/`ts` | write-ahead crash injection at W1–W4 (`P1-DISPATCH` pattern) → `OutcomeUnknown{cause}`, never resend; same `dispatch_key` twice → one launch; stale-prepare refusal; Stop: `session/cancel` sent → `acp.result cancelled` observed → `Interrupted`; token cancel alone ⇒ not `Interrupted`; migration golden round-trip incl. WAL snapshot/restore and fresh-vs-migrated `sqlite_master` equality; the DM11 forbidden-update test; the constraint table's violation tests; **NFR-11 oracle**: attempt carries `Dispatched.ts`, terminal `ts`, events, bytes, outcome, `usage` or Not recorded; `attempt.sweep{count,last_sweep_at}` emitted even at zero; redaction fixture: sentinel in a frame ⇒ run-log bytes clean + redaction row | WL-1b, WL-1c, WL-S, WL-2…WL-6 |
+| **WL-1b — obligations, evidence and acceptance** | Evaluate one mandatory obligation, link evidence, see acceptance blocked with the named gap, record a disposition, accept the declared deliverable | `checklist_obligation_fact` (+`mandatory`), `evidence_link_fact`, `disposition_fact` (obligation/work/intent kinds), the acceptance-eligibility and closure folds, a minimal `checklist` kind | assessments absent | accept a plan deliverable without claiming implementation (AC-W03c) | acknowledged ≠ satisfied (a row vs a fold); acceptance blocked while a mandatory obligation lacks a current link; saved review state is not acceptance; FK/trigger overhead measured P1-PERF-style at 100× | WL-5 |
+| **WL-1c — the system journey and the bridge** | Start with the system: a question notebook against the real graph (T0 projection), conclude `answered`/`bounded-partial`/`unresolved` with no work item; promote one finding and see the new work journey carrying its origin; cancel and see nothing created | `journey_dim.purpose = investigation`, origin columns, investigation-kind dispositions, the promote/cancel flow | the explanation host (J-S is a query projection until WL-5) | the AC-S01a/S03a/B01 scenario keyboard-only; reopen a concluded investigation at its baseline | zero work rows after a concluded investigation; origin row only on confirm; no permission/evidence/acceptance inherited across the bridge | WL-5 |
+| **WL-S — the shell re-row** (parallel to WL-1a; passes GO5 independence — no shared authored file with the seam) | Factory · Review · Understand with `Landing`/`RoutingOrder`; `FullWindow` retired; the Loomkeeper kinds under Factory → Coordination; `notebook` + `execution` kinds admitted; slot migration with report | ADR-0045 (a)+(b), `PerspectiveMenu.For` unchanged, three `DockHost`s, migration + `.bak`, the A↔B↔C unparent spike with private-bytes budget | — | restore today's saved layout and read the report; `Ctrl+1/2/3` with focus inside a WebView2 page; hide/float/redock a live notebook | `Perspectives` three-row build test; no-row-uses-`FullWindow` test; SH-4.1's oracle on the Factory host; slot migration golden round-trip; the unparent spike exit 0 with the budget recorded | WL-2 (the notebook in Factory) |
+| **WL-2 — intelligent authoring** | `@` / `/` / Ctrl+Space completion from Core, hover with real identity or explicit non-resolution, diagnostics at location, multi-edit preview/apply/undo, compare/branch, exact request preview | page protocol v2 (one `query.request`, three host→page kinds); completion/hover/diagnostics sources over `IWorkspaceQueries`; the notebook page bundle; rich projection decorations; the measuring harness for NFR-02 | model suggestion layer (fake peer returning typed proposals) | the six NFR-04 tasks keyboard-only against a CLI, timed (IME/clipboard are manual, dated records) | spike E-1 (IME, clipboard, multi-selection/undo, round-trip, 100k p95 < 50 ms with the harness shipped, UIA popup with no dangling option); ambiguous/unindexed/stale negatives; `send` still refused; `ForbiddenBodyMembers` intact; post-`edits.apply` sha check | default authoring surface |
+| **WL-3 — native profile bootstrap** | Connections shows six families with separately observed readiness; explicit native sign-in for a signed-out family; an inherited key cannot change the route; a read-only request succeeds on each qualified family | `HarnessProfileBinding`, interval-versioned profiles, observations with duration/exit code, `ChildEnvironment.Sanitize` used by every transport, the fingerprint with env-values sha and account; catalog rows for `agy`, `muse`; two new mappers with ingest redaction and golden-frame conformance; `Failed{transport-unrecognised}` | families not yet qualified render **Not checked** honestly | sign out of one CLI, see the state, sign in natively, re-probe, run a scoped read-only request | six qualification records (manual, dated: positive + signed-out, wrong account, quota, denied tool with exit 0, inherited-key observed absent in the child env); **automatable oracle:** advertised-ready ⇒ record fingerprint == observed fingerprint; `EngineCatalogTests` refusal re-scoped; catalog `Arguments` row test; sanitizer census | WL-4 on every family |
+| **WL-4 — execution and evaluation as a peer** | Permission requests answered by the decision naming that request; queue vs steer vs stop vs retry as four different rows; follow-latest suspends; `HasEvidence` derived; budget enforced at the attempt; summaries cite attempts (US-U01) | full `ExecutionSurface`; steer as an attempt row with `amends_dispatch_key` through Prepare; `RunBudget` enforcement (`Failed{budget-exhausted}`, `OverLimit`); per-family Stop acknowledgment where qualified; run-log growth/compaction; relay retention cap | families without `capability:steer` show no Steer | queue a follow-up while running; steer on claude; stop on a family whose ack is qualified; read "No reasoning summary supplied." | provider-specific stream fixtures; cancellation/permission/unknown-event tests; same action + different `rawInput` ⇒ new `Waiting`; decision for seq 5 refused for seq 9; one reader per channel (census); budget-exhausted fixture | WL-5 |
+| **WL-5 — review and understanding** | Open a PR at exact base/head, read the change packet, ask "did they think of X?" through the explanation host, open cited code/diagram/test evidence beside it, record a gap, record a local disposition; a new head makes the old answer historical; test worthiness with numerator/denominator | `ExplanationCallHost` (T3, pinned, cited); assessment projections; the test-result extractor spike then `test_attempt_fact` (schema v3); `assessment` kind(s); the Understand kinds following linked selection | drift analysis minimal (aligned/changed/missing only) | the J-S PR scenario and the J-W review-deliverable scenario on the same PR | changed-head invalidation; "Not recorded" ≠ zero; retry success never erases failure; disposition ≠ remote approval; explanation output identified separately from observation (AC-U01b) | WL-6 |
+| **WL-6 — coordination projection, then commands** | Read-only graph of leader/epoch, contracts, requests/ACKs/rulings, presence vs progress vs outcome; then dispatch preview, enqueue, finish, cancel, join preview through the runner | `CoordinationReadModel` (pure reads, validated ids, `--end-of-options`, trust fact for HEAD); `coordination` kind; `ParentAgentId` populated from the manifest; `watcher.tick_ms`/`files_read` emitted; origin labels on agent-authored text | commands land only after the read model's fixtures pass | watch a native fleet and a registered peer (manual, cross-harness); see "fresh but stalled"; see a stale ACK block an operation | native-child / cross-harness / registered-peer fixtures; stale ACK, leader epoch, zero-progress heartbeat, interrupted join; hostile `artifacts.yml`/`../` id/`-oproc` ref fixtures refused by the reader | full spec scope |
+
+Each slice carries the E7 list (§WL.10), its red-first tests, its Proof Pack, and the native UIA /
+IME / DPI obligations where it touches a pane. Terminal stays available throughout as the explicit
+secondary surface; Console stays as an evidence view.
+
+### WL.12 Confidence ledger
+
+| Claim | Confidence | Basis |
+|---|---|---|
+| All seams named in §WL.5 exist at the cited lines | Verified | 2026-10-18 inventory and direct reads |
+| Six native CLIs are installed with documented headless entries | Verified (this machine) | `spikes/native-harness-presence` |
+| Any family's authenticated read-only request works from AI-DE | Flagged | no qualification record yet |
+| CodeMirror 6 can meet the notebook floor | Inferred | primitives verified; spike E-1 pending |
+| Three DockHosts behave as two did | Inferred | two-host spike; extension pending |
+| The workspace store accepts a v2 migration safely | Inferred | watcher-store pattern verified; golden round-trip pending |
+| Pack protocol facts at `83a7834` | Verified by the codex session | re-read per slice |
+| Editor and fold performance budgets | Flagged | unmeasured (NFR-02); the measuring harness ships with WL-2 |
+| The per-attempt run log exists | **Flagged — reserved, not built** (`SessionPaths.cs:28-32`) | WL-1a builds `RunLogStore`; until then the fold has no durable input |
+| `session/cancel` honoured by the claude adapter/CLI | Flagged | WL-1a's Stop red test; notification semantics verified in `AcpPeer` only after `NotifyAsync` lands |
+
+### WL.13 Residual architectural risk
+
+- **Six self-updating native CLIs** make every qualification record perishable; the fingerprint
+  catches it, but the operational cost of re-qualifying is real and unmeasured.
+- **Three retained WebView2-bearing bodies** raise memory and focus/airspace exposure; the
+  unparent spike covers switching, not floats across mixed DPI (ADR-0015 remains open).
+- **Acceptance policy** ("which human disposition may cover a mandatory obligation") is undecided;
+  the default is strict and may feel obstructive.
+- **Coordination freshness** depends on polling files and refs; a stale read is labelled, not
+  prevented.
+- **Test-result ingestion** has no contract yet; Review's numerator/denominator promises rest on it.
+- **The first `workspace.db` migration** has no precedent in that file; the expand is additive, so
+  rollback is the WAL-safe snapshot — exercised by WL-1a's test, not by a downgrade.
+- **Unbudgeted Loop (LOA Appendix C2)** until WL-4 enforces `RunBudget` at the attempt; the only
+  bound before then is the human gate.
+- **Native transport wire drift** — Antigravity stream-json and Muse JSONL have no published
+  contract and the CLIs self-update; a frame *restructure* would degrade to namespaced-unknown
+  kinds. Controls: `Failed{transport-unrecognised}` and a golden-frame conformance check at every
+  probe (ADR-0042 §6). This is the seam most likely to break first.
+- **Adapter ↔ CLI skew** (claude-code reaches ACP through a pinned adapter over a self-updating
+  CLI) — the fingerprint records both shas; nothing yet detects a semantic skew.
+- **WebView2 Evergreen runtime** self-updates under three retained bodies — unmeasured.
+- **Ownership and cadence** — each family's qualification record and mapper needs a named owner
+  and a re-qualification cadence (per CLI version observed); the enhanced `conductor-join.py` must
+  survive `updatepack` (a verify-bundle control to add in WL-6).
+- **Single-user local posture** — the user runs AI-DE with full authority on their own machine;
+  the security controls above are the spec's floors (harness-owned identity, sanitized child
+  environment, redaction at ingest, decision identity), not an expanded threat model; pack
+  scripts under a third-party PR head are not sandboxed (ADR-0044 §4, accepted).
+
+### WL.14 Gate record — Workbench loops
+
+`GATE define-architecture · 2026-10-18 · council (Adversary Mode, fan-out 6): Security & Identity ·
+Distributed Systems · Data & Persistence · Enterprise · SRE (carrying the Test Architect's
+verification-path check) · Simplifier · first pass: Security VETO (raw frames persisted before
+redaction; inherited token/prefix-family keys pass through), Distributed Systems VETO
+(non-deterministic attempt id with no insert-as-gate; second reader on the single-reader relay),
+Data PASS-WITH-CONDITIONS (12), Enterprise PASS-WITH-CONDITIONS (6), SRE PASS-WITH-CONDITIONS (7),
+Simplifier PASS-WITH-CONDITIONS (9 merges) · repairs: ADR-0039 and ADR-0041 rewritten; ADR-0040,
+0042, 0043, 0044, 0045 and §WL.4/5/9/11/12/13 amended · re-review by the two vetoing seats: Security
+PASS-WITH-CONDITIONS (5 minors, all applied in text), Distributed Systems PASS-WITH-CONDITIONS
+(conditions 1–4 applied in text; 5–11 are named reds for WL-1a) · verdict: **PASS-WITH-CONDITIONS**
+· conditions carried into the slices: WL-1a's red list in §WL.11 (crash windows W1–W4, Stop
+acknowledgment, redaction fixture, migration/WAL round-trip, the constraint table, the NFR-11
+oracle, `TurnState` never serialized, terminal uniqueness, `consumed` after the outcome row); WL-3's
+fingerprint-equality oracle and child-env observation; WL-4's budget enforcement (LOA C2 FAIL until
+then) and Steer-in-flight drain red; WL-5's `ExplanationCallHost` with tier annotation and receipt;
+Data's purge-with-inbound-origin test and index plan · ADRs remain **Proposed** until the Owner
+accepts them; authors did not self-clear.`
+
+### WL.15 Status and next action — Workbench loops
+
+| | |
+|---|---|
+| **Completed** | §WL.1–WL.14; ADR-0039…0045 (proposed; council PASS-WITH-CONDITIONS after two vetoes cleared on re-review); `spikes/native-harness-presence` (two runs; two self-updating CLIs observed); drift findings recorded; the drive prompt `docs/plans/workbench-loops-drive-prompt.md` |
+| **Remaining** | WL-0 → WL-1a (walking skeleton) ∥ WL-S → WL-1b → WL-1c → WL-2 ∥ WL-3 → WL-4 → WL-5 → WL-6 |
+| **Best next action** | `/design-slice` WL-1a — the revision ↔ attempt seam (widened facts + migration chain, `RunLogStore`, the ADR-0010 gate in `GovernedRunHost`, `AcpPeer.NotifyAsync`, the sweep) — with the crash-window and Stop-acknowledgment reds first; WL-S's A↔B↔C unparent spike runs in parallel |
+
 
 ## LOA conformance check
 

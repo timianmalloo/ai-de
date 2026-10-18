@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T20:51:17Z",
+  "generated": "2026-10-18T21:37:01Z",
   "audit": [
     {
       "actor": null,
@@ -21613,6 +21613,61 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": false
       }
+    },
+    {
+      "id": "al-01M58CXA52DD6WYR0FVPJKV8KK",
+      "shortname": "/define-architecture ... ground yourself in the repo, go through the lat…",
+      "datetime": "2026-10-18T20:58:03Z",
+      "session": "prompt-log",
+      "prompt": "/define-architecture ... ground yourself in the repo, go through the latest mockups and proposal created in the codex session today then use the spec: docs/specs/workbench-loops-ux.html to define the architecture for the updated vision for the AI-DE application",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M58F18XFDFDNCGB8DMNKK5TV",
+      "shortname": "define-architecture-workbench-loops",
+      "datetime": "2026-10-18T21:35:10Z",
+      "session": "define-arch-20261018",
+      "prompt": "/define-architecture ... ground yourself in the repo, go through the latest mockups and proposal created in the codex session today then use the spec: docs/specs/workbench-loops-ux.html to define the architecture for the updated vision for the AI-DE application\n\n[mid-turn addition] when this is done, commit and push the architecture then write a prompt that: analyzes the architecture; creates an execution plan to autonomously work through implementing the new architecture according to the spec; uses my prepare-for-coordination and execute-with-coordination to maximize parallelism and efficiency while minimizing contention and blocking paths; assigns a leader (opus), an owner (fable), uses sonnet, where appropriate, for more cost-effective coding, and uses grok and agy (with whatever appropriate models from them) to assign and delegate coding tasks; ensure the prompt gives me a table with the task backlog and status every 15 minutes; instruct the leader and owner to execute as quickly and autonomously as possible (without sacrificing rigor and correctness) ... I really want to make as much progress on this full refactor over the next few days; remind the prompt that this is a single-user, local tool so dont overcomplicate privacy and security concerns... assume the user will run locally with full authority and their dev environment is their sandbox",
+      "summary": "Defined the workbench-loops architecture (docs/architecture.md §WL.1–WL.15) from spec-workbench-loops-ux, today's proposal v2, mockup v2, research note and a verified source inventory. Seven ADRs proposed: 0039 workbench records (widened dispatch pair and prompt_revision_fact, interval-versioned dims, derived folds, first workspace.db migration chain), 0040 journey purpose identity with origin-column bridges, 0041 execution attempt lifecycle (deterministic dispatch_key with insert-as-gate, host-asserted terminals, publish-side fan-out, bounded native Stop, sweep predicate), 0042 native harness profile binding (harness-owned sign-in, ingest redaction, one child-env sanitizer, fingerprint with env/account), 0043 CodeMirror notebook over one canonical source with minimal protocol v2, 0044 coordination read model over pack authorities, 0045 Perspective set re-rowed to Factory/Review/Understand (supersedes ADR-0017/0030 rows, retires FullWindow, supersedes Ruling 84). Spike spikes/native-harness-presence: six CLIs verified present with documented headless entries; two self-updated mid-session. Council (6 seats) first pass: Security and Distributed Systems VETO; repaired and re-reviewed to PASS-WITH-CONDITIONS; Data/Enterprise/SRE/Simplifier conditions folded in. Vertical phasing WL-0, WL-1a/1b/1c, WL-S (parallel), WL-2..WL-6. Drift surfaced: four Perspective rows vs ADR-0030's three; IWorkspaceStore stale name. Decision note note-workbench-loops-architecture-exhaust; drive prompt docs/plans/workbench-loops-drive-prompt.md.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0039-workbench-records-durable-representation.md",
+        "docs/adr/0041-execution-attempt-lifecycle.md",
+        "docs/adr/0042-native-harness-profile-binding.md",
+        "docs/adr/0045-perspective-set-factory-review-understand.md",
+        "docs/plans/workbench-loops-drive-prompt.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Define the top-level architecture for the workbench-loops evolution from spec-workbench-loops-ux, grounded in today's proposal/mockups and the source",
+      "done_when": "architecture.md §WL written, ADRs per load-bearing decision, vertical phasing, council gate passed, frontmatter+index synced, audit+change log, committed and pushed, drive prompt written",
+      "tier": "T2",
+      "fan_out": 6,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-18T20:56:03Z",
+      "duration_seconds": 2347.0,
+      "git": {
+        "sha": "d3ea7f65588d2a4b92594da13afb71cc980aed92",
+        "short": "d3ea7f655",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -25626,6 +25681,35 @@ window.AUDIT_DATA = {
         "after": "ca04e18b472abc4a4142896c8418191bbb704819",
         "branch": "main",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M58F1944EV5R220FAN1H2YER",
+      "datetime": "2026-10-18T21:35:10Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Workbench loops: two journeys, notebook/attempt identity seam, native harness binding, coordination read model, Perspective set re-rowed to Factory/Review/Understand",
+      "prompt": "/define-architecture ... ground yourself in the repo, go through the latest mockups and proposal created in the codex session today then use the spec: docs/specs/workbench-loops-ux.html to define the architecture for the updated vision for the AI-DE application\n\n[mid-turn addition] when this is done, commit and push the architecture then write a prompt that: analyzes the architecture; creates an execution plan to autonomously work through implementing the new architecture according to the spec; uses my prepare-for-coordination and execute-with-coordination to maximize parallelism and efficiency while minimizing contention and blocking paths; assigns a leader (opus), an owner (fable), uses sonnet, where appropriate, for more cost-effective coding, and uses grok and agy (with whatever appropriate models from them) to assign and delegate coding tasks; ensure the prompt gives me a table with the task backlog and status every 15 minutes; instruct the leader and owner to execute as quickly and autonomously as possible (without sacrificing rigor and correctness) ... I really want to make as much progress on this full refactor over the next few days; remind the prompt that this is a single-user, local tool so dont overcomplicate privacy and security concerns... assume the user will run locally with full authority and their dev environment is their sandbox",
+      "summary": "Defined the workbench-loops architecture (docs/architecture.md §WL.1–WL.15) from spec-workbench-loops-ux, today's proposal v2, mockup v2, research note and a verified source inventory. Seven ADRs proposed: 0039 workbench records (widened dispatch pair and prompt_revision_fact, interval-versioned dims, derived folds, first workspace.db migration chain), 0040 journey purpose identity with origin-column bridges, 0041 execution attempt lifecycle (deterministic dispatch_key with insert-as-gate, host-asserted terminals, publish-side fan-out, bounded native Stop, sweep predicate), 0042 native harness profile binding (harness-owned sign-in, ingest redaction, one child-env sanitizer, fingerprint with env/account), 0043 CodeMirror notebook over one canonical source with minimal protocol v2, 0044 coordination read model over pack authorities, 0045 Perspective set re-rowed to Factory/Review/Understand (supersedes ADR-0017/0030 rows, retires FullWindow, supersedes Ruling 84). Spike spikes/native-harness-presence: six CLIs verified present with documented headless entries; two self-updated mid-session. Council (6 seats) first pass: Security and Distributed Systems VETO; repaired and re-reviewed to PASS-WITH-CONDITIONS; Data/Enterprise/SRE/Simplifier conditions folded in. Vertical phasing WL-0, WL-1a/1b/1c, WL-S (parallel), WL-2..WL-6. Drift surfaced: four Perspective rows vs ADR-0030's three; IWorkspaceStore stale name. Decision note note-workbench-loops-architecture-exhaust; drive prompt docs/plans/workbench-loops-drive-prompt.md.",
+      "rationale": "The spec promotes two distinct journeys and a first-class notebook+execution surface; the leverage point is binding exact bytes, route and scope to an attempt before launch (ADR-0010 re-applied) so every promise becomes a fold; readiness must be observed facts because six native CLIs self-update; the existing shell and store machinery are reused by widening rather than duplicated.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0039-workbench-records-durable-representation.md",
+        "docs/adr/0040-journey-purpose-identity.md",
+        "docs/adr/0041-execution-attempt-lifecycle.md",
+        "docs/adr/0042-native-harness-profile-binding.md",
+        "docs/adr/0043-notebook-editor-codemirror-canonical-source.md",
+        "docs/adr/0044-coordination-read-model-over-pack-authorities.md",
+        "docs/adr/0045-perspective-set-factory-review-understand.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d3ea7f65588d2a4b92594da13afb71cc980aed92",
+        "after": "d3ea7f65588d2a4b92594da13afb71cc980aed92",
+        "branch": "main",
+        "pushed": true,
         "commits": []
       }
     }

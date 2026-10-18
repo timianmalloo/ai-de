@@ -21,7 +21,8 @@ review-by: 2027-09-02
 summary: >-
   A curated route into the AI-DE documentation for four different readers, rather than a mirror of
   the folder tree. The machine-navigable form is the Docs Explorer.
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # AI-DE documentation — map of content

@@ -11,7 +11,8 @@ links:
   - { to: kb-code-knowledge-graphs, rel: depends-on }
 review-by: 2027-01-17
 summary: Bounded execution graph for the whole-solution review, five-area primary-source research, and local desktop factory proposal with interactive mockups.
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-10-18, reason: "2026-10-18 workbench-loops architecture: §WL added, ADR-0039..0045 proposed, Perspective set re-rowed (ADR-0045 supersedes ADR-0017/0030 rows)" }
 ---
 
 # Goal and execution contract
