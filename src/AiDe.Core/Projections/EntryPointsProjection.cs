@@ -62,7 +62,9 @@ public static class EntryPointsProjection
     /// holds only while a row stays under 731 bytes — an identifier twice the fixture's length
     /// overflows the frame at this cap too. The durable fix is the byte budget every other
     /// projection carries; this is the cap the evidence supports today, and the listing's
-    /// <c>Omitted (n)</c> disclosure keeps it honest on the surface rather than silent.</para>
+    /// <c>Omitted (n)</c> disclosure keeps it honest on the surface rather than silent.
+    /// <b>The byte budget now exists</b> (<see cref="MaxRowBytes"/>, FR-002) and is what actually
+    /// bounds the frame; this count stays as the cheap first cut.</para>
     ///
     /// <para><b>A count is only a bound where something clamps it.</b> Until this was renamed it was
     /// <c>DefaultMaxRows</c> and it was only a default: <c>ProjectionService.EntryPoints</c> passed
@@ -87,17 +89,27 @@ public static class EntryPointsProjection
     /// </remarks>
     public const int MaxRowsCeiling = 1_254;
 
+    /// <summary>
+    /// The byte budget for the rows, the durable half of the bound the remarks above call for: the
+    /// response budget less 512 bytes for the envelope (revision and the <c>Omitted (n)</c> disclosure).
+    /// </summary>
+    public const int MaxRowBytes = ProjectionService.MaxResponseBytes - 512;
+
     public const string UnclassifiedReasonPendingClassifier = "classifier-not-admitted";
 }
 
 /// <summary>Store-facing listing. Lives next to the DTO so tests can name the query without IPC.</summary>
 public static class EntryPointsListing
 {
+    private static readonly System.Text.Json.JsonSerializerOptions WireOptions =
+        new(System.Text.Json.JsonSerializerDefaults.Web);
+
     public static EntryPointsResult FromHasType(
         IReadOnlyList<(string NodeId, string TypeKind)> candidates,
         int maxRows,
         string sourceRevision,
-        IReadOnlyList<(string TypeNodeId, string Member)>? members = null)
+        IReadOnlyList<(string TypeNodeId, string Member)>? members = null,
+        int maxBytes = EntryPointsProjection.MaxRowBytes)
     {
         var built = new List<EntryPointRow>();
         foreach (var c in candidates)
@@ -127,8 +139,23 @@ public static class EntryPointsListing
         }
 
         var cap = maxRows < 1 ? 1 : maxRows;
-        var omitted = Math.Max(0, built.Count - cap);
-        var rows = built.Take(cap).ToList();
+
+        // The row count is a count; the frame is bytes, and a row's size comes from repository
+        // content (FR-002: 1,300 rows of 2,000-character identifiers measured 5,165,696 bytes).
+        // Each row is weighed as it serialises, comma included, and taking stops at the budget. At
+        // least one row is always kept so a single oversized row is disclosed, never an empty list.
+        var rows = new List<EntryPointRow>();
+        var bytes = 0;
+        foreach (var row in built.Take(cap))
+        {
+            var cost = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(row, WireOptions).Length + 1;
+            if (rows.Count > 0 && bytes + cost > maxBytes) break;
+
+            rows.Add(row);
+            bytes += cost;
+        }
+
+        var omitted = built.Count - rows.Count;
 
         IReadOnlyList<string> disclosures = omitted > 0
             ? [$"Omitted ({omitted})"]

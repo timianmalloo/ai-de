@@ -24,7 +24,7 @@ namespace AiDe.Core.Extraction;
 ///
 /// <para><c>simplify: the generation is carried in the revision STRING rather than its own column in
 /// the natural key; ceiling is that a stored revision is no longer the caller's literal text, so
-/// anything showing one to a person calls <see cref="Base"/> first; upgrade trigger = the store
+/// anything showing one to a person calls <see cref="Base"/> first (which also drops the working-tree content digest); upgrade trigger = the store
 /// gains migration machinery, at which point extractor_generation becomes a real column and this
 /// type collapses to nothing.</c></para>
 /// </remarks>
@@ -41,19 +41,30 @@ public static class SourceRevision
 
     private const string Marker = "+x";
 
+    private const string ContentMarker = "+d:";
+
     private static readonly string Suffix = Marker + ScopeFingerprints.ExtractorGeneration;
 
     /// <summary>
     /// The revision to STORE facts under. Idempotent: stamping an already-stamped revision returns
     /// it unchanged, so a caller that passes one through twice does not create a third identity.
     /// </summary>
-    public static string Stamp(string artifactRevision)
+    /// <param name="artifactRevision">The caller's revision, typically the git HEAD.</param>
+    /// <param name="contentDigest">
+    /// A digest of the scope's working-tree inputs. The caller captures HEAD once and keeps it while
+    /// the user edits files under it (FR-001), so the revision alone cannot tell old content from new:
+    /// without this component a forced re-index of an edited scope collided with, or was skipped as,
+    /// the snapshot of the unedited one. Empty or null adds nothing.
+    /// </param>
+    public static string Stamp(string artifactRevision, string? contentDigest = null)
     {
         ArgumentNullException.ThrowIfNull(artifactRevision);
 
-        return artifactRevision.EndsWith(Suffix, StringComparison.Ordinal)
-            ? artifactRevision
-            : artifactRevision + Suffix;
+        if (artifactRevision.EndsWith(Suffix, StringComparison.Ordinal)) return artifactRevision;
+
+        return string.IsNullOrEmpty(contentDigest)
+            ? artifactRevision + Suffix
+            : artifactRevision + ContentMarker + contentDigest + Suffix;
     }
 
     /// <summary>
@@ -68,6 +79,9 @@ public static class SourceRevision
         if (string.IsNullOrEmpty(revision)) return revision;
 
         var at = revision.LastIndexOf(Marker, StringComparison.Ordinal);
-        return at <= 0 ? revision : revision[..at];
+        var withoutGeneration = at <= 0 ? revision : revision[..at];
+
+        var content = withoutGeneration.LastIndexOf(ContentMarker, StringComparison.Ordinal);
+        return content <= 0 ? withoutGeneration : withoutGeneration[..content];
     }
 }

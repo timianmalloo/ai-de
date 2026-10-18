@@ -59,4 +59,14 @@ public sealed class DirtyEditSurvivesReindexTests : IDisposable
         Assert.Contains(current, o => o.Contains("probe-after-edit", StringComparison.Ordinal));
         Assert.DoesNotContain(current, o => o.Contains("probe-before-edit", StringComparison.Ordinal));
     }
+
+    [Fact]
+    public void TheContentComponentNeverLeaksIntoTheShownRevision()
+    {
+        var stamped = SourceRevision.Stamp(Head, "abc123");
+
+        Assert.NotEqual(SourceRevision.Stamp(Head), stamped);
+        Assert.Equal(Head, SourceRevision.Base(stamped));
+        Assert.Equal(stamped, SourceRevision.Stamp(stamped, "abc123"));
+    }
 }
