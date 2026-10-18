@@ -18,3 +18,12 @@
 {"agent": "wl-t1-wl0", "at": 1792365455.0069776, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-bounds-red.txt", "session": "wl-t1-wl0", "wi": ""}
 {"agent": "wl-t1-wl0", "at": 1792365455.0310187, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-extractor-red.txt", "session": "wl-t1-wl0", "wi": ""}
 {"agent": "wl-t1-wl0", "at": 1792365455.0592031, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365461.0509007, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-bounds-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365461.0754254, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-extractor-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365461.1019573, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Extraction/ScopeFingerprints.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365461.1281912, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Projections/EntryPointsProjection.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365601.0072758, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0.md", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365601.0332823, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/gate-extractor-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365601.059333, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/suite-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365601.6412673, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792365601.6672752, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t1-wl0", "wi": ""}

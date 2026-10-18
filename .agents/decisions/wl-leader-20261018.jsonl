@@ -64,3 +64,13 @@
 {"agent": "wl-leader-20261018", "at": 1792365374.629453, "code": null, "kind": "allowed", "path": ".agents/log/wl-t4-sp3.jsonl", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792365374.6531265, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792365374.6744294, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.175641, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.2005956, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t1-wl0.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.225533, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.2510567, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.2752078, "code": null, "kind": "allowed", "path": "docs/coordination/coordination-workbench-loops.md", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365460.2982411, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365717.622457, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/r150-1-red.txt", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365717.6449761, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/r150-3-red.txt", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792365717.6665013, "code": "COORD-REFUSED", "kind": "refused", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "session": "wl-leader-20261018", "wi": "workbench-loops"}
+{"agent": "wl-leader-20261018", "at": 1792365717.6900444, "code": "COORD-REFUSED", "kind": "refused", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "session": "wl-leader-20261018", "wi": "workbench-loops"}

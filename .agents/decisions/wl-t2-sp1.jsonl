@@ -66,3 +66,7 @@
 {"agent": "wl-t2-sp1", "at": 1792365271.3070085, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/TypedStoreApiTests.cs", "session": "wl-t2-sp1", "wi": ""}
 {"agent": "wl-t2-sp1", "at": 1792365284.9933946, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "session": "wl-t2-sp1", "wi": ""}
 {"agent": "wl-t2-sp1", "at": 1792365292.4662354, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t2-sp1", "wi": ""}
+{"agent": "wl-t2-sp1", "at": 1792365722.0671737, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/r150-1-red.txt", "session": "wl-t2-sp1", "wi": ""}
+{"agent": "wl-t2-sp1", "at": 1792365722.0986886, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/r150-3-red.txt", "session": "wl-t2-sp1", "wi": ""}
+{"agent": "wl-t2-sp1", "at": 1792365722.1421688, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "session": "wl-t2-sp1", "wi": ""}
+{"agent": "wl-t2-sp1", "at": 1792365722.1820312, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "session": "wl-t2-sp1", "wi": ""}

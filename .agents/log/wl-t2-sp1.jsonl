@@ -27,3 +27,12 @@
 {"agent": "wl-t2-sp1", "at": 1792365293.876606, "kind": "release", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "seq": 27, "session": "wl-t2-sp1", "wi": "WI-0"}
 {"agent": "wl-t2-sp1", "at": 1792365293.9875174, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 28, "session": "wl-t2-sp1", "wi": "WI-0"}
 {"at": 1792365294.1527767, "from": "wl-t2-sp1", "kind": "done", "mail_id": "mail-01M58MQWJ82HNF7NGYYDDYS0BT", "ref": null, "session": "wl-t2-sp1", "to": "wl-leader-20261018", "type": "mail"}
+{"agent": "wl-t2-sp1", "at": 1792365657.5778513, "kind": "claim", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "seq": 30, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365657.7441022, "kind": "claim", "path": "src/AiDe.Core/Store/StoreWriter.cs", "seq": 31, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365657.9366655, "kind": "claim", "path": "src/AiDe.Core/Store/WorkspaceSchema.cs", "seq": 32, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.1190464, "kind": "claim", "path": "src/AiDe.Core/Store/Records/StoreWriter.Workbench.cs", "seq": 33, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.285368, "kind": "claim", "path": "src/AiDe.Core/Store/Records/WorkbenchRecords.cs", "seq": 34, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.4635525, "kind": "claim", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling148Tests.cs", "seq": 35, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.629895, "kind": "claim", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/MigrationTests.cs", "seq": 36, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.8121588, "kind": "claim", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "seq": 37, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t2-sp1", "at": 1792365658.9886823, "kind": "claim", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "seq": 38, "session": "wl-t2-sp1", "ttl": 300.0, "wi": "workbench-loops"}
