@@ -10529,7 +10529,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36387bd3fcb9f34dae75c17f40cf211192c76d4397d16ab2af5fa801df637cb9"
+      "sourceSha256": "5fce14c4541bfaaf7f239840a63b9c5be732306bce87f56c3d78215653d52d5a"
     },
     {
       "id": "design-session-profiler",
@@ -22184,6 +22184,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "edc03cbcf657c3d546b0b35150b2bfe18ab71fbc0d19ccee7fe3878b247a45d3"
     },
     {
+      "id": "proof-workbench-loops-wl-0",
+      "path": "docs/proof/workbench-loops-wl-0.md",
+      "title": "Proof Pack: workbench-loops WL-0 (FR-001, FR-002)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-0",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "A forced reindex under an unchanged git revision now indexes edited files, and entry-point listings are bounded by serialized bytes so they fit one IPC frame. Both proven red then green.",
+      "tags": [
+        "workbench-loops",
+        "freshness",
+        "ipc-frame"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "86bc474df898d16108ca39abc708184a0a7168a5c683c585b87f1e1d2942134e"
+    },
+    {
       "id": "proof-worktree-cleanup-20261017",
       "path": "docs/proof/worktree-cleanup-20261017.md",
       "title": "AI-DE worktree preservation and retirement",
@@ -24139,5 +24164,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "23a0b3dd4c1d10cd5d3f6edc56a177ddac82910465cff5fbfaac8fc1518d8a29"
+  "graphSha256": "3482b8a27defcd464a32f5875dbf697a8227f3653135f7fa61e377b5c28fcfca"
 };
