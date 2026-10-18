@@ -22,6 +22,14 @@ public static class WorkbenchVocabulary
     public static readonly IReadOnlyList<string> AssessmentKinds =
         ["change-packet", "test-worthiness", "drift", "rigor"];
 
+    /// <summary>
+    /// Keys an assessment payload may never carry, at any depth, in any letter case: each names a state
+    /// ADR-0039 section 3 derives (satisfaction, acceptance, currentness, closure, readiness). A payload holds
+    /// the producer's findings as asserted at the baseline. The per-kind payload schema lands with WL-5.
+    /// </summary>
+    public static readonly IReadOnlyList<string> ForbiddenPayloadKeys =
+        ["satisfied", "accepted", "stale", "current", "closed", "ready", "state", "status", "has_evidence", "eligible"];
+
     public static readonly IReadOnlyList<string> DispositionSubjectKinds =
         ["obligation", "assessment", "work", "investigation", "intent"];
 

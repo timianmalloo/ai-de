@@ -375,6 +375,38 @@ public sealed class Ruling148FrozenDdlTests
         Assert.NotNull(field);
         Assert.True(field.IsLiteral, "V2Sql must be a const: a static built from live lists drifts between fresh and migrated stores");
     }
+
+    [Fact]
+    public void TheV2MigrationDdl_IsPinnedByHash()
+    {
+        // A change to the v2 DDL (or to the triggers appended to it) re-defines a schema already deployed.
+        // New vocabulary or constraints belong in a v3 migration; this pin makes the edit loud.
+        var ddl = WorkspaceSchema.Migrations.Single(m => m.Version == 2).Ddl.ReplaceLineEndings(((char)10).ToString());
+
+        Assert.Equal("a75cc353890a9d683dc33977bcdf4013b1e6e636c0163bd37538072797f55df2", Ruling148.Sha(ddl));
+    }
+
+    [Fact]
+    public void EveryLiveVocabularyValue_IsAlreadyInTheFrozenDdl_SoGrowthFailsHereUntilV3Exists()
+    {
+        var ddl = WorkspaceSchema.V2Sql;
+        var live = WorkbenchVocabulary.JourneyPurposes
+            .Concat(WorkbenchVocabulary.JourneyOriginKinds).Concat(WorkbenchVocabulary.DeliveryUnknownCauses)
+            .Concat(WorkbenchVocabulary.AssessmentKinds).Concat(WorkbenchVocabulary.DispositionSubjectKinds)
+            .Concat(WorkbenchVocabulary.DispositionKindsBySubject.Values.SelectMany(v => v))
+            .Concat(WorkbenchVocabulary.ProfileObservationKinds).Concat(WorkbenchVocabulary.ForbiddenPayloadKeys)
+            .Concat(Enum.GetNames<DispatchState>());
+
+        foreach (var value in live.Distinct())
+        {
+            Assert.Contains($"'{value}'", ddl, StringComparison.Ordinal);
+        }
+
+        foreach (var terminal in new[] { "ResponseComplete", "Failed", "Interrupted", "DeliveryUnknown", "Rejected" })
+        {
+            Assert.Matches($@"ux_outcome_one_terminal[^;]*'{terminal}'", ddl);
+        }
+    }
 }
 
 /// <summary>(g) An intent-accepted disposition references an existing (notebook, revision) by a declared composite FK.</summary>

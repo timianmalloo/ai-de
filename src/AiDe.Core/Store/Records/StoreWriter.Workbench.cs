@@ -68,9 +68,11 @@ public sealed partial class StoreWriter
             VALUES ($id, $rev, $body, $at, $seq, $parent, $sha);
             """,
             ("$id", row.NotebookId), ("$rev", row.RevisionNo), ("$body", row.Body), ("$at", Now()),
-            ("$seq", NextIngressSequence()), ("$parent", row.ParentRevisionNo),
-            ("$sha", Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(row.Body)))));
+            ("$seq", NextIngressSequence()), ("$parent", row.ParentRevisionNo), ("$sha", BodySha(row.Body)));
     }
+
+    /// <summary>The one home of <c>body_sha</c>: every revision writer calls this, and the store refuses a row without it.</summary>
+    internal static string BodySha(string body) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(body)));
 
     public void AppendAttempt(AttemptRow row) => Exec("""
         INSERT INTO dispatch_attempt_fact

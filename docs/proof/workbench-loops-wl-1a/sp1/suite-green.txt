@@ -1,45 +1,16 @@
 
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
 Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:41.05]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+[xUnit.net 00:01:37.45]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
   Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
-[xUnit.net 00:01:39.66]     AiDe.Core.Tests.TerminalHostInLifePathTests.ADisposedSession_ReleasesItsHeadlessHostWhileTheOwnerLives [FAIL]
-  Failed AiDe.Core.Tests.TerminalHostInLifePathTests.ADisposedSession_ReleasesItsHeadlessHostWhileTheOwnerLives [9 s]
-  Error Message:
-   the process table could not be read
-  Stack Trace:
-     at AiDe.Core.Tests.TerminalHostInLifePathTests.MeasureAsync(String mode, String stateMarker) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\TerminalHostInLifePathTests.cs:line 72
---- End of stack trace from previous location ---
-  Standard Output Messages:
- [dispose-then-hold] owner 10332 live; headless hosts it owns: 0 
- [dispose-then-hold] state reached: disposed=2026-10-18T22:38:16.2190289+00:00
 
-
-[xUnit.net 00:01:50.44]     AiDe.Core.Tests.TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives [FAIL]
-  Failed AiDe.Core.Tests.TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives [10 s]
-  Error Message:
-   the process table could not be read
-  Stack Trace:
-     at AiDe.Core.Tests.TerminalHostInLifePathTests.MeasureAsync(String mode, String stateMarker) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\TerminalHostInLifePathTests.cs:line 72
---- End of stack trace from previous location ---
-  Standard Output Messages:
- [child-exit-then-hold] owner 8004 live; headless hosts it owns: 0 
- [child-exit-then-hold] state reached: child-exited=2026-10-18T22:38:30.4394481+00:00 code=3
-
-
-[xUnit.net 00:02:17.70]     AiDe.Core.Tests.TerminalHostExitPathTests.AnOwnerThatExitsWithoutDisposing_LeavesNoHeadlessHostFiveSecondsLater [FAIL]
-  Failed AiDe.Core.Tests.TerminalHostExitPathTests.AnOwnerThatExitsWithoutDisposing_LeavesNoHeadlessHostFiveSecondsLater [5 s]
-  Error Message:
-   the process table could not be read while the helper ran
-  Stack Trace:
-     at AiDe.Core.Tests.TerminalHostExitPathTests.MeasureAsync(String mode) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\TerminalHostExitPathTests.cs:line 72
---- End of stack trace from previous location ---
-[xUnit.net 00:02:23.64]     AiDe.Core.Tests.TerminalHostExitPathTests.AnOwnerThatIsKilled_LeavesNoHeadlessHostFiveSecondsLater [FAIL]
-  Failed AiDe.Core.Tests.TerminalHostExitPathTests.AnOwnerThatIsKilled_LeavesNoHeadlessHostFiveSecondsLater [5 s]
-  Error Message:
-   the process table could not be read while the helper ran
-  Stack Trace:
-     at AiDe.Core.Tests.TerminalHostExitPathTests.MeasureAsync(String mode) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\TerminalHostExitPathTests.cs:line 72
---- End of stack trace from previous location ---
-
-Failed!  - Failed:     4, Passed:  2851, Skipped:     1, Total:  2856, Duration: 2 m 26 s - AiDe.Core.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:  2891, Skipped:     1, Total:  2892, Duration: 2 m 12 s - AiDe.Core.Tests.dll (net10.0)
+exit=0

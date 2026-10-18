@@ -1,6 +1,7 @@
 using AiDe.Core.Facts;
 using AiDe.Core.Store;
 using AiDe.Core.Store.Records;
+using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Tests.SchemaV2;
 
@@ -102,19 +103,31 @@ public sealed class TypedStoreApiTests : IDisposable
     [Fact]
     public void ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed()
     {
-        using (var writer = Store.BeginWrite())
+        // A legacy row exists only from the migration backfill (Ruling 148 c), so start from a real v1 file.
+        var directory = SchemaV2Support.NewDirectory();
+        try
         {
-            writer.AppendJourney(new JourneyRow("j1", "work", "t"));
-            writer.AppendJourney(new JourneyRow("j2", "work", "t2"));
-            writer.AppendNotebook(new NotebookRow("nb1", null, Legacy: true));
-            writer.AppendNotebook(new NotebookRow("nb1", "j1", Legacy: false));
-            writer.Commit();
-        }
+            var path = Path.Combine(directory, "workspace.db");
+            SchemaV2Support.CreateV1Database(path);
+            using var migrated = WorkspaceStore.Open(path);
+            using (var writer = migrated.BeginWrite())
+            {
+                writer.AppendJourney(new JourneyRow("j1", "work", "t"));
+                writer.AppendJourney(new JourneyRow("j2", "work", "t2"));
+                writer.AppendNotebook(new NotebookRow("draft-a", "j1", Legacy: false));
+                writer.Commit();
+            }
 
-        using var again = Store.BeginWrite();
-        var ex = Assert.Throws<WorkspaceStoreException>(() =>
-            again.AppendNotebook(new NotebookRow("nb1", "j2", Legacy: false)));
-        Assert.Equal(StoreErrorCodes.Type0Violation, ex.ErrorCode);
+            using var again = migrated.BeginWrite();
+            var ex = Assert.Throws<WorkspaceStoreException>(() =>
+                again.AppendNotebook(new NotebookRow("draft-a", "j2", Legacy: false)));
+            Assert.Equal(StoreErrorCodes.Type0Violation, ex.ErrorCode);
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            try { Directory.Delete(directory, recursive: true); } catch (IOException) { }
+        }
     }
 
     [Fact]
@@ -122,6 +135,7 @@ public sealed class TypedStoreApiTests : IDisposable
     {
         using (var writer = Store.BeginWrite())
         {
+            SchemaV2Support.SeedNotebook(writer);
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "root"));
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 2, "a", ParentRevisionNo: 1));
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 3, "b", ParentRevisionNo: 1));

@@ -23,6 +23,7 @@ public sealed class ConstraintTests : IDisposable
         using var writer = Store.BeginWrite();
         if (key == "k1")
         {
+            SchemaV2Support.SeedNotebook(writer);
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "body"));
         }
 
@@ -134,6 +135,12 @@ public sealed class ConstraintTests : IDisposable
     [Fact]
     public void ARevisionCannotBranchFromAParentThatDoesNotExist()
     {
+        using (var writer = Store.BeginWrite())
+        {
+            SchemaV2Support.SeedNotebook(writer);
+            writer.Commit();
+        }
+
         var code = Violation(w => w.AppendNotebookRevision(new NotebookRevisionRow("nb1", 2, "b", ParentRevisionNo: 1)), Store);
 
         Assert.Equal(StoreErrorCodes.ReferenceViolation, code);
@@ -144,6 +151,7 @@ public sealed class ConstraintTests : IDisposable
     {
         using (var writer = Store.BeginWrite())
         {
+            SchemaV2Support.SeedNotebook(writer);
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "body"));
             writer.Commit();
         }
@@ -158,6 +166,7 @@ public sealed class ConstraintTests : IDisposable
     {
         using (var writer = Store.BeginWrite())
         {
+            SchemaV2Support.SeedNotebook(writer);
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "body"));
             writer.Commit();
         }
@@ -172,6 +181,7 @@ public sealed class ConstraintTests : IDisposable
     {
         using (var writer = Store.BeginWrite())
         {
+            SchemaV2Support.SeedNotebook(writer);
             writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "body"));
             writer.Commit();
         }
@@ -261,6 +271,7 @@ public sealed class ConstraintTests : IDisposable
     public void EveryDeliveryUnknownCauseInTheVocabularyIsAccepted()
     {
         using var writer = Store.BeginWrite();
+        SchemaV2Support.SeedNotebook(writer);
         writer.AppendNotebookRevision(new NotebookRevisionRow("nb1", 1, "body"));
         foreach (var cause in WorkbenchVocabulary.DeliveryUnknownCauses)
         {

@@ -14,6 +14,9 @@ public static class StoreErrorCodes
     public const string Type0Violation = "AIDE-STORE-TYPE0-VIOLATION";
     public const string NewerSchemaReadOnly = "AIDE-STORE-NEWER-SCHEMA-READ-ONLY";
     public const string MigrationFailed = "AIDE-STORE-MIGRATION-FAILED";
+    public const string VersionOrderViolation = "AIDE-STORE-VERSION-ORDER-VIOLATION";
+    public const string BodyHashRequired = "AIDE-STORE-BODY-HASH-REQUIRED";
+    public const string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>
@@ -238,27 +241,41 @@ public sealed class WorkspaceStore : IDisposable
                     ? HealthCheck.Pass("foreign-keys", "no violations")
                     : HealthCheck.Fail("foreign-keys", $"{violations} violation(s)");
             }),
-            new GateStep("attempts-bind-revisions", () =>
+            .. WorkspaceSchema.ReferenceChecks.Select(check => new GateStep(check.Name, () =>
             {
-                var orphans = Convert.ToInt64(ExecuteScalar(connection, """
-                    SELECT count(*) FROM dispatch_attempt_fact a WHERE NOT EXISTS (
-                        SELECT 1 FROM prompt_revision_fact r WHERE r.draft_id = a.draft_id AND r.revision_no = a.revision_no);
-                    """));
-                return orphans == 0
-                    ? HealthCheck.Pass("attempts-bind-revisions", "every attempt binds an existing revision")
-                    : HealthCheck.Fail("attempts-bind-revisions", $"{orphans} attempt(s) bind a revision that does not exist");
-            }),
-            new GateStep("every-draft-has-a-notebook", () =>
+                var violations = Convert.ToInt64(ExecuteScalar(connection, check.CountSql));
+                return violations == 0
+                    ? HealthCheck.Pass(check.Name, check.Passed)
+                    : HealthCheck.Fail(check.Name, $"{violations} {check.Failed}");
+            })),
+            new GateStep("outcome-states-known", () =>
             {
-                var missing = Convert.ToInt64(ExecuteScalar(connection, """
-                    SELECT count(DISTINCT draft_id) FROM prompt_revision_fact
-                    WHERE draft_id NOT IN (SELECT notebook_id FROM notebook_dim);
-                    """));
-                return missing == 0
-                    ? HealthCheck.Pass("every-draft-has-a-notebook", "backfill complete")
-                    : HealthCheck.Fail("every-draft-has-a-notebook", $"{missing} draft(s) have no notebook row");
+                var unknown = UnknownOutcomeStates(connection);
+                return unknown.Count == 0
+                    ? HealthCheck.Pass("outcome-states-known", "every outcome state is in the vocabulary")
+                    : HealthCheck.Fail("outcome-states-known",
+                        $"unknown outcome state(s): {string.Join(", ", unknown.Select(u => $"'{u}'"))}");
             }),
         ]);
+    }
+
+    /// <summary>Distinct stored outcome states the current vocabulary cannot parse (a read would throw on them).</summary>
+    private static List<string> UnknownOutcomeStates(SqliteConnection connection)
+    {
+        var known = Enum.GetNames<AiDe.Core.Facts.DispatchState>().ToHashSet(StringComparer.Ordinal);
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT DISTINCT state FROM dispatch_outcome_fact ORDER BY state;";
+        using var reader = command.ExecuteReader();
+        var unknown = new List<string>();
+        while (reader.Read())
+        {
+            if (!known.Contains(reader.GetString(0)))
+            {
+                unknown.Add(reader.GetString(0));
+            }
+        }
+
+        return unknown;
     }
 
     /// <summary>

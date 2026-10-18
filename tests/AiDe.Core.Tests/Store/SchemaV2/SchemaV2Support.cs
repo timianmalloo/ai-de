@@ -148,6 +148,13 @@ internal static class SchemaV2Support
         return profile;
     }
 
+    /// <summary>An owned, non-legacy notebook (and its journey), so revisions have a notebook to belong to.</summary>
+    internal static void SeedNotebook(StoreWriter writer, string notebookId = "nb1")
+    {
+        writer.AppendJourney(new JourneyRow("seed-journey", "work", "seed"));
+        writer.AppendNotebook(new NotebookRow(notebookId, "seed-journey", Legacy: false));
+    }
+
     internal static AttemptRow Attempt(string key, string notebook = "nb1", int revision = 1) =>
         new(key, "ws", 1, notebook, revision, "s1", 1);
 }

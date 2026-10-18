@@ -211,42 +211,32 @@ internal static class WorkspaceSchema
     /// <summary>Every table that gets immutability triggers: v1 facts, then the v2 facts and dimensions.</summary>
     internal static readonly string[] FactTables = [.. V1FactTables, .. V2FactTables];
 
-    /// <summary>Outcome states that end an attempt; at most one per attempt (ADR-0039 §3).</summary>
-    internal static readonly string[] TerminalStates =
-    [
-        nameof(DispatchState.ResponseComplete), nameof(DispatchState.Failed),
-        nameof(DispatchState.Interrupted), nameof(DispatchState.DeliveryUnknown), nameof(DispatchState.Rejected),
-    ];
-
-    private static string InList(IEnumerable<string> values) => string.Join(", ", values.Select(v => $"'{v}'"));
-
-    private static string DispositionCheck() =>
-        "(" + string.Join(" OR ", WorkbenchVocabulary.DispositionKindsBySubject.Select(p =>
-            $"(subject_kind = '{p.Key}' AND kind IN ({InList(p.Value)})"
-            + (p.Key == "intent" ? " AND notebook_id IS NOT NULL AND revision_no IS NOT NULL" : "") + ")")) + ")";
-
     /// <summary>
     /// Everything v2 adds, as ONE definition: the migration runs it over a v1 file and a fresh store
     /// runs it after the v1 baseline, so a fresh and a migrated schema cannot drift. Additive only
     /// (CREATE TABLE / ADD COLUMN / CREATE INDEX / CREATE TRIGGER); no copy and no contract step.
     /// </summary>
     /// <remarks>
+    /// <para><b>Frozen (Ruling 148 f).</b> This is a literal, not built from the live vocabularies, so a later
+    /// value cannot be accepted by a fresh store and refused by a migrated one. The vocabulary lists in
+    /// <see cref="WorkbenchVocabulary"/> and <see cref="DispatchState"/> may grow only with a v3 migration
+    /// that widens the CHECKs and triggers; the pinned hash and the vocabulary tests fail until it does.</para>
     /// SQLite cannot add a table CHECK or a composite FK with ALTER, and the ADR forbids the
     /// copy-and-swap. So the widened v1 tables get single-column FKs and column CHECKs through
     /// ADD COLUMN, and the constraints that need more - the <c>state</c> vocabulary and the
     /// composite references (attempt to revision, revision to parent, notebook to journey) - are
     /// BEFORE INSERT triggers. They abort with a stable code and behave as the CHECK/FK would.
     /// </remarks>
-    internal static readonly string V2Sql = $"""
+    internal const string V2Sql = """
         -- v2 dimensions: interval-versioned, no valid_to. A new version row supersedes the old one;
         -- the latest version is max(ingress_seq) per key.
         CREATE TABLE journey_dim (
             journey_id        TEXT    NOT NULL,
             version_no        INTEGER NOT NULL CHECK (version_no >= 1),
-            purpose           TEXT    NOT NULL CHECK (purpose IN ({InList(WorkbenchVocabulary.JourneyPurposes)})),
+            purpose           TEXT    NOT NULL CHECK (purpose IN ('work', 'investigation')),
             origin_scope      TEXT    NULL,
             origin_journey_id TEXT    NULL,
-            origin_kind       TEXT    NULL CHECK (origin_kind IS NULL OR origin_kind IN ({InList(WorkbenchVocabulary.JourneyOriginKinds)})),
+            origin_kind       TEXT    NULL CHECK (origin_kind IS NULL OR origin_kind IN ('promoted-from', 'investigation-of', 'review-assignment-of')),
             origin_object_ids TEXT    NULL,
             title             TEXT    NOT NULL,
             recorded_at       TEXT    NOT NULL,
@@ -319,7 +309,7 @@ internal static class WorkspaceSchema
         -- Grain: one assessment of one scope at one baseline. A new baseline is a new row.
         CREATE TABLE assessment_fact (
             assessment_id TEXT    NOT NULL PRIMARY KEY,
-            kind          TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.AssessmentKinds)})),
+            kind          TEXT    NOT NULL CHECK (kind IN ('change-packet', 'test-worthiness', 'drift', 'rigor')),
             scope         TEXT    NOT NULL,
             baseline      TEXT    NOT NULL,
             omissions     TEXT    NOT NULL,
@@ -343,9 +333,9 @@ internal static class WorkspaceSchema
 
         -- Grain: one actor's disposition on one subject at one baseline. Satisfaction is never a disposition.
         CREATE TABLE disposition_fact (
-            subject_kind TEXT    NOT NULL CHECK (subject_kind IN ({InList(WorkbenchVocabulary.DispositionSubjectKinds)})),
+            subject_kind TEXT    NOT NULL CHECK (subject_kind IN ('obligation', 'assessment', 'work', 'investigation', 'intent')),
             subject_id   TEXT    NOT NULL,
-            kind         TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.DispositionKindsBySubject.Values.SelectMany(v => v).Distinct())})),
+            kind         TEXT    NOT NULL CHECK (kind IN ('acknowledged', 'deferred', 'needs-decision', 'fixed', 'false-positive', 'intentional', 'accepted', 'answered', 'bounded-partial', 'unresolved', 'intent-accepted')),
             actor        TEXT    NOT NULL,
             reason       TEXT    NULL,
             baseline     TEXT    NOT NULL,
@@ -354,14 +344,15 @@ internal static class WorkspaceSchema
             recorded_at  TEXT    NOT NULL,
             ingress_seq  INTEGER NOT NULL,
             PRIMARY KEY (subject_kind, subject_id, ingress_seq),
-            CHECK {DispositionCheck()}
+            FOREIGN KEY (notebook_id, revision_no) REFERENCES prompt_revision_fact (draft_id, revision_no),
+            CHECK ((subject_kind = 'obligation' AND kind IN ('acknowledged', 'deferred', 'needs-decision')) OR (subject_kind = 'assessment' AND kind IN ('fixed', 'false-positive', 'intentional', 'deferred', 'needs-decision')) OR (subject_kind = 'work' AND kind IN ('accepted')) OR (subject_kind = 'investigation' AND kind IN ('answered', 'bounded-partial', 'unresolved')) OR (subject_kind = 'intent' AND kind IN ('intent-accepted') AND notebook_id IS NOT NULL AND revision_no IS NOT NULL))
         );
 
         -- Grain: one observation of one profile version. Absence is Not recorded.
         CREATE TABLE profile_observation_fact (
             profile_key INTEGER NOT NULL REFERENCES harness_profile_dim (profile_key),
-            kind        TEXT    NOT NULL CHECK (kind IN ({InList(WorkbenchVocabulary.ProfileObservationKinds)})
-                                                OR kind LIKE '{WorkbenchVocabulary.CapabilityObservationPrefix}%'),
+            kind        TEXT    NOT NULL CHECK (kind IN ('installed', 'version', 'authenticated', 'account', 'model-available', 'quota')
+                                                OR kind LIKE 'capability:%'),
             value       TEXT    NOT NULL,
             source      TEXT    NOT NULL,
             observed_at TEXT    NOT NULL,
@@ -381,34 +372,84 @@ internal static class WorkspaceSchema
         CREATE INDEX ix_attempt_revision ON dispatch_attempt_fact (draft_id, revision_no);
 
         ALTER TABLE dispatch_outcome_fact ADD COLUMN cause TEXT NULL
-            CHECK (cause IS NULL OR cause IN ({InList(WorkbenchVocabulary.DeliveryUnknownCauses)}));
+            CHECK (cause IS NULL OR cause IN ('never_dispatched', 'relay_lost', 'stop_not_acknowledged', 'prompt_timeout', 'host_restart', 'run_log_unwritable'));
         ALTER TABLE dispatch_outcome_fact ADD COLUMN detail TEXT NULL;
         CREATE UNIQUE INDEX ux_outcome_one_dispatched ON dispatch_outcome_fact (dispatch_key)
             WHERE state = 'Dispatched';
         CREATE UNIQUE INDEX ux_outcome_one_terminal ON dispatch_outcome_fact (dispatch_key)
-            WHERE state IN ({InList(TerminalStates)});
+            WHERE state IN ('ResponseComplete', 'Failed', 'Interrupted', 'DeliveryUnknown', 'Rejected');
 
         ALTER TABLE prompt_revision_fact ADD COLUMN parent_revision_no INTEGER NULL;
         ALTER TABLE prompt_revision_fact ADD COLUMN body_sha TEXT NULL;
 
         -- Constraints SQLite cannot ALTER in (see remarks).
         CREATE TRIGGER trg_dispatch_outcome_state_vocab BEFORE INSERT ON dispatch_outcome_fact
-            WHEN NEW.state NOT IN ({InList(Enum.GetNames<DispatchState>())})
-            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.VocabularyViolation}'); END;
+            WHEN NEW.state NOT IN ('Pending', 'PtyWriteAccepted', 'Rejected', 'TimedOut', 'Failed', 'DeliveryUnknown', 'Dispatched', 'StopRequested', 'PermissionCancelledByStop', 'ResponseComplete', 'Interrupted', 'WorktreeProvisioned', 'WorktreeDisposed')
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-VOCABULARY-VIOLATION'); END;
         CREATE TRIGGER trg_dispatch_attempt_binds_revision BEFORE INSERT ON dispatch_attempt_fact
             WHEN NOT EXISTS (SELECT 1 FROM prompt_revision_fact
                              WHERE draft_id = NEW.draft_id AND revision_no = NEW.revision_no)
-            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-REFERENCE-VIOLATION'); END;
         CREATE TRIGGER trg_prompt_revision_parent_exists BEFORE INSERT ON prompt_revision_fact
             WHEN NEW.parent_revision_no IS NOT NULL AND NOT EXISTS (
                 SELECT 1 FROM prompt_revision_fact
                 WHERE draft_id = NEW.draft_id AND revision_no = NEW.parent_revision_no)
-            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-REFERENCE-VIOLATION'); END;
         CREATE TRIGGER trg_notebook_owner_exists BEFORE INSERT ON notebook_dim
             WHEN NEW.owner_journey_id IS NOT NULL AND NOT EXISTS (
                 SELECT 1 FROM journey_dim WHERE journey_id = NEW.owner_journey_id)
-            BEGIN SELECT RAISE(ABORT, '{StoreErrorCodes.ReferenceViolation}'); END;
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-REFERENCE-VIOLATION'); END;
+        CREATE TRIGGER trg_prompt_revision_notebook_exists BEFORE INSERT ON prompt_revision_fact
+            WHEN NOT EXISTS (SELECT 1 FROM notebook_dim WHERE notebook_id = NEW.draft_id)
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-REFERENCE-VIOLATION'); END;
+        CREATE TRIGGER trg_prompt_revision_body_hash BEFORE INSERT ON prompt_revision_fact
+            WHEN NEW.body_sha IS NULL OR length(NEW.body_sha) <> 64
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-BODY-HASH-REQUIRED'); END;
+        CREATE TRIGGER trg_assessment_payload_no_derived_state BEFORE INSERT ON assessment_fact
+            WHEN CASE WHEN json_valid(NEW.payload)
+                      THEN EXISTS (SELECT 1 FROM json_tree(NEW.payload) WHERE lower(key) IN ('satisfied', 'accepted', 'stale', 'current', 'closed', 'ready', 'state', 'status', 'has_evidence', 'eligible'))
+                      ELSE 1 END
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-DERIVED-STATE-IN-PAYLOAD'); END;
+        CREATE TRIGGER trg_notebook_legacy_flag BEFORE INSERT ON notebook_dim
+            WHEN NEW.legacy = 1 AND (
+                (NEW.version_no = 1 AND EXISTS (SELECT 1 FROM schema_version WHERE version >= 2))
+                OR (NEW.version_no > 1 AND EXISTS (
+                    SELECT 1 FROM notebook_dim WHERE notebook_id = NEW.notebook_id AND legacy = 0)))
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-TYPE0-VIOLATION'); END;
+        CREATE TRIGGER trg_journey_dim_version_order BEFORE INSERT ON journey_dim
+            WHEN NEW.version_no <> coalesce((SELECT max(version_no) FROM journey_dim WHERE journey_id = NEW.journey_id), 0) + 1
+              OR NEW.ingress_seq <= coalesce((SELECT max(ingress_seq) FROM journey_dim WHERE journey_id = NEW.journey_id), 0)
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-VERSION-ORDER-VIOLATION'); END;
+        CREATE TRIGGER trg_notebook_dim_version_order BEFORE INSERT ON notebook_dim
+            WHEN NEW.version_no <> coalesce((SELECT max(version_no) FROM notebook_dim WHERE notebook_id = NEW.notebook_id), 0) + 1
+              OR NEW.ingress_seq <= coalesce((SELECT max(ingress_seq) FROM notebook_dim WHERE notebook_id = NEW.notebook_id), 0)
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-VERSION-ORDER-VIOLATION'); END;
+        CREATE TRIGGER trg_harness_profile_dim_version_order BEFORE INSERT ON harness_profile_dim
+            WHEN NEW.version_no <> coalesce((SELECT max(version_no) FROM harness_profile_dim WHERE profile_id = NEW.profile_id), 0) + 1
+              OR NEW.ingress_seq <= coalesce((SELECT max(ingress_seq) FROM harness_profile_dim WHERE profile_id = NEW.profile_id), 0)
+            BEGIN SELECT RAISE(ABORT, 'AIDE-STORE-VERSION-ORDER-VIOLATION'); END;
         """;
+
+    /// <summary>
+    /// The reference queries that stand in for the declared FKs SQLite cannot add by ALTER. Each counts
+    /// violations. The migration gate and the post-purge check of <see cref="StoreCompactor"/> run exactly
+    /// these, because <c>foreign_key_check</c> cannot see a trigger-enforced reference (Ruling 148 a).
+    /// </summary>
+    internal static readonly (string Name, string CountSql, string Passed, string Failed)[] ReferenceChecks =
+    [
+        ("attempts-bind-revisions",
+         """
+         SELECT count(*) FROM dispatch_attempt_fact a WHERE NOT EXISTS (
+             SELECT 1 FROM prompt_revision_fact r WHERE r.draft_id = a.draft_id AND r.revision_no = a.revision_no);
+         """,
+         "every attempt binds an existing revision", "attempt(s) bind a revision that does not exist"),
+        ("every-draft-has-a-notebook",
+         """
+         SELECT count(DISTINCT draft_id) FROM prompt_revision_fact
+         WHERE draft_id NOT IN (SELECT notebook_id FROM notebook_dim);
+         """,
+         "backfill complete", "draft(s) have no notebook row"),
+    ];
 
     /// <summary>
     /// The ordered migration chain over a v1 file: each entry's DDL (with the immutability triggers

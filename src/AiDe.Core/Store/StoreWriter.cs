@@ -142,15 +142,41 @@ public sealed partial class StoreWriter : IDisposable
     public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode) =>
         AppendOutcome(new OutcomeRow(dispatchKey, state, errorCode));
 
+    /// <summary>The standing journey that owns notebooks created by the terminal (PTY) save path.</summary>
+    internal const string TerminalJourneyId = "journey-terminal-drafts";
+
+    /// <summary>
+    /// The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it
+    /// under <see cref="TerminalJourneyId"/>: a non-legacy notebook with an owner, because a legacy row comes only
+    /// from the migration backfill (Ruling 148 c, d). The body hash is set here as on the typed path.
+    /// </summary>
     public void SavePromptRevision(string draftId, int revisionNo, string body)
     {
+        EnsureTerminalNotebook(draftId);
         var seq = NextIngressSequence();
         Exec("""
-            INSERT INTO prompt_revision_fact (draft_id, revision_no, body, saved_at, ingress_seq)
-            VALUES ($draft, $rev, $body, $at, $seq);
+            INSERT INTO prompt_revision_fact (draft_id, revision_no, body, saved_at, ingress_seq, body_sha)
+            VALUES ($draft, $rev, $body, $at, $seq, $sha);
             """,
             ("$draft", draftId), ("$rev", revisionNo), ("$body", body),
-            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq), ("$sha", BodySha(body)));
+    }
+
+    private void EnsureTerminalNotebook(string draftId)
+    {
+        if (WorkspaceStore.ExecuteScalar(_connection, "SELECT 1 FROM notebook_dim WHERE notebook_id = $id LIMIT 1;",
+                _transaction, ("$id", draftId)) is not null)
+        {
+            return;
+        }
+
+        if (WorkspaceStore.ExecuteScalar(_connection, "SELECT 1 FROM journey_dim WHERE journey_id = $id LIMIT 1;",
+                _transaction, ("$id", TerminalJourneyId)) is null)
+        {
+            AppendJourney(new JourneyRow(TerminalJourneyId, "work", "Terminal drafts"));
+        }
+
+        AppendNotebook(new NotebookRow(draftId, TerminalJourneyId, Legacy: false));
     }
 
     public void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)
@@ -219,22 +245,27 @@ public sealed partial class StoreWriter : IDisposable
         {
             WorkspaceStore.Execute(_connection, sql, _transaction, parameters);
         }
-        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.ImmutableViolation, StringComparison.Ordinal))
+        catch (SqliteException ex) when (FindTriggerCode(ex.Message) >= 0)
         {
-            throw new WorkspaceStoreException(StoreErrorCodes.ImmutableViolation,
-                "facts are append-only; correction is a superseding fact", ex);
-        }
-        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.VocabularyViolation, StringComparison.Ordinal))
-        {
-            throw new WorkspaceStoreException(StoreErrorCodes.VocabularyViolation,
-                "the value is not in the closed vocabulary of this column", ex);
-        }
-        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.ReferenceViolation, StringComparison.Ordinal))
-        {
-            throw new WorkspaceStoreException(StoreErrorCodes.ReferenceViolation,
-                "the row references a revision, parent or journey that does not exist", ex);
+            var known = TriggerCodes[FindTriggerCode(ex.Message)];
+            throw new WorkspaceStoreException(known.Code, known.Meaning, ex);
         }
     }
+
+    /// <summary>The stable codes a store trigger raises, and what each means to a caller.</summary>
+    private static readonly (string Code, string Meaning)[] TriggerCodes =
+    [
+        (StoreErrorCodes.ImmutableViolation, "facts are append-only; correction is a superseding fact"),
+        (StoreErrorCodes.VocabularyViolation, "the value is not in the closed vocabulary of this column"),
+        (StoreErrorCodes.ReferenceViolation, "the row references a revision, parent, notebook or journey that does not exist"),
+        (StoreErrorCodes.Type0Violation, "the attribute is Type-0 (or the legacy flag) and cannot change this way"),
+        (StoreErrorCodes.VersionOrderViolation, "a dimension version must be the next version with a greater ingress sequence"),
+        (StoreErrorCodes.BodyHashRequired, "a prompt revision must carry the sha256 of its body"),
+        (StoreErrorCodes.DerivedStateInPayload, "an assessment payload must be valid JSON that holds no derived state"),
+    ];
+
+    private static int FindTriggerCode(string message) =>
+        Array.FindIndex(TriggerCodes, c => message.Contains(c.Code, StringComparison.Ordinal));
 
     public void Dispose()
     {
