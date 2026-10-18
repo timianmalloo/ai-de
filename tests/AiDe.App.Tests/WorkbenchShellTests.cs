@@ -254,6 +254,31 @@ public sealed class WorkbenchShellTests
         Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
     }
 
+    // SH-4.1/4.2 on the Factory host (the WL-S design's §3 oracle 2): "Show ledger" with a session
+    // document active in the Left docks the ledger in the Center by the kind's zone rule — never
+    // tabbed beside the session by the placement policy, where it would become the Left's active tab
+    // and so Factory's landing. RED before the re-row: the ledger was not admitted by the initial host
+    // (sp3/sh41-factory-red.txt).
+    [Fact]
+    public void ShowLedger_InFactory_WithASessionActiveInTheLeft_DocksInTheCenter_AndTheLandingStaysTheSession()
+    {
+        var (zone, landing) = WithShell((shell, _) =>
+        {
+            var factory = shell.Hosts[0];
+            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            factory.Adapter.Render();
+            factory.Adapter.ActivateInView("session:s1");
+
+            Assert.True(factory.Controller.Execute("surface.show.ledger"));
+
+            var ledger = factory.Service.Zones.AllSurfaces().SingleOrDefault(s => s.Kind == "ledger");
+            return (ledger is null ? null : factory.Service.Zones.FindZoneOf(ledger.SurfaceId), PerspectiveShell.LandingSurfaceFor(factory));
+        });
+
+        Assert.Equal(ZoneId.Center, zone);
+        Assert.Equal("session:s1", landing);
+    }
+
     // The D&P reviewer's finding on the one-instance rule at open: a "Show <one-instance kind>" whose
     // only instance sits in a COLLAPSED zone must expand that zone and activate it — never add a
     // second (now refused) and never leave nothing on screen. RED before the fix: the Show branch

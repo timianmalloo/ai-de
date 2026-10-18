@@ -181,6 +181,47 @@ public sealed class PerspectiveShellTests
         }, 30);
     }
 
+    // SH-4.1 re-run on the Factory host (ADR-0045 §1(b); the WL-S design's §3 oracle 1). Folding the
+    // five Loomkeeper kinds into Factory is an occupancy change: its Center can now hold Ledger ·
+    // Leaderboard · Message board beside a session document in its Left, and the view's own "active"
+    // is whichever pane realized or was activated last. The landing is the row's data, not that: the
+    // session document; with the Left collapsed, the Center's active tab the operator chose. Through
+    // the product's DockHost and admission (DC-135). RED before the re-row: the initial host refused
+    // the ledger (sp3/sh41-factory-red.txt).
+    [Fact]
+    public void TheFactoryLanding_IsTheSessionDocument_WhenTheCoordinationKindsOccupyItsCenter()
+    {
+        Sta.Run(() =>
+        {
+            var factory = DockHost.Create(PerspectiveSet.Initial, _ => new Border(), new RecordingAnnouncer(), (_, _) => { });
+            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            foreach (var (kind, title) in new[] { ("ledger", "Ledger"), ("leaderboard", "Leaderboard"), ("board", "Message board") })
+            {
+                Assert.True(
+                    factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface(kind, kind, title))).Applied,
+                    $"the initial host refused '{kind}' — the Loomkeeper kinds are not admitted under Factory");
+            }
+
+            factory.Adapter.Render();
+            Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(factory));
+
+            // The view's notion of active moves to the Center's ledger (as a later-realizing pane
+            // control would make it); the landing does not follow it.
+            Assert.True(factory.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
+            factory.Adapter.Render();
+            factory.Adapter.ActivateInView("ledger");
+            Assert.Equal("ledger", factory.Adapter.ActiveSurfaceId);
+            Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(factory));
+
+            // The Left collapsed with the session held: the Center's active tab, literally the ledger.
+            Assert.True(factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            factory.Adapter.Render();
+            Assert.Equal("ledger", PerspectiveShell.LandingSurfaceFor(factory));
+            Assert.Equal("factory", factory.Row.Id);
+            return 0;
+        }, 30);
+    }
+
     // The UX & Accessibility lens's finding (SH-4.1): the landing surface must carry a focus target
     // in its first-run state — host C with no watcher store, every pane in its not-available state —
     // or the deferred entry focus falls through to an arbitrary tab header. Through the product's
