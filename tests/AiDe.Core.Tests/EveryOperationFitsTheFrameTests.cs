@@ -233,4 +233,18 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
         Assert.True(result.Rows.Count > 0);
         Assert.Equal(1_300 - result.Rows.Count, result.OmittedByCap);
     }
+
+    [Fact]
+    public void ACallerSuppliedByteBudgetLargerThanTheBoundIsClamped()
+    {
+        var wide = new string('x', 2_000);
+        var candidates = Enumerable.Range(0, 1_300)
+            .Select(i => ($"{wide}.Type{i}", "class")).ToList();
+
+        var result = EntryPointsListing.FromHasType(candidates, int.MaxValue, "rev-1", maxBytes: int.MaxValue);
+
+        Assert.True(WireBytes(result) <= EntryPointsProjection.MaxRowBytes + 512,
+            $"rows = {WireBytes(result):N0} bytes against a {EntryPointsProjection.MaxRowBytes:N0}-byte bound");
+        Assert.True(result.OmittedByCap > 0);
+    }
 }

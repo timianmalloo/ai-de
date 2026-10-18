@@ -1,0 +1,5 @@
+verify-bounds-are-enforced: FAILED
+  - MaxRowBytes (declared in src\AiDe.Core\Projections\EntryPointsProjection.cs) is never compared, clamped or taken against — it can be reported but it cannot fire
+
+  A bound that is only assigned, passed or documented is a promise the code does not
+  keep. Apply it, or rename it so it stops claiming to be a limit.
