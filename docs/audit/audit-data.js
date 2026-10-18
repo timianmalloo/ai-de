@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:17:27Z",
+  "generated": "2026-10-18T23:51:42Z",
   "audit": [
     {
       "actor": null,
@@ -22244,6 +22244,54 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:03:29Z",
       "duration_seconds": 831.0
+    },
+    {
+      "id": "al-01M58P2ZAQF18AP8CQ6BMX6BNN",
+      "shortname": "wl-t4-sp3",
+      "datetime": "2026-10-18T23:38:26Z",
+      "session": "wl-t4-sp3",
+      "prompt": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow.",
+      "summary": "Design WL-S committed (ed821a6e; Patterns Expert + Simplifier gate). PerspectiveSet = factory/review/understand, FullWindow + Body column + Explorer surface/reader/presenter paths + Escape/Previous deleted; Loomkeeper kinds under Factory -> Coordination (Zone Center); slot alias; SH-4.1 oracle green on Factory; old-row tests re-scoped red->green; Core 2781 pass, App 1038/1039 + env re-run pass; Ruling 149 conditions recorded.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-s.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
+      "done_when": "design doc committed; three-row + no-FullWindow build tests; SH-4.1 oracle on Factory; old-row tests re-scoped red then green; Loomkeeper kinds under Factory; dotnet build + test green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:38:06Z",
+      "duration_seconds": 3620.0
+    },
+    {
+      "id": "al-01M58PV9J02THW6NWER3N7A5HD",
+      "shortname": "wl-t4-sp3-fixforward",
+      "datetime": "2026-10-18T23:51:42Z",
+      "session": "wl-t4-sp3",
+      "prompt": "T4 fix-forward: delete leftovers and orphans, DESIGN.md rows, mutation reds",
+      "summary": "ShellMode params, IconExplore, HtmlSandboxHost, NodeReaderContentState deleted; DESIGN.md renamed; four mutation reds saved; suites green bar the environmental chord test",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Remove HYG-A leftovers and give four tests a red run",
+      "done_when": "items 1-4 committed, build clean, suites green",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-18T23:40:52Z",
+      "duration_seconds": 650.0
     }
   ],
   "changes": [
@@ -26287,6 +26335,37 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-01M58P2ZGJ6G67Q5B90Z5H4K33",
+      "datetime": "2026-10-18T23:38:26Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "WL-S design: Perspective set re-rowed to Factory/Review/Understand, FullWindow and the Body column retired",
+      "prompt": "T4 brief: /design-slice for all of ADR-0045, then implement 1(a)+1(b)",
+      "summary": "docs/design/workbench-loops-wl-s.md; D2 Factory Landing Left until T11; D3 Review admits none; D4 Escape/Previous deleted; D5 Body column deleted; s8 knowledge mode (Ruling 149)",
+      "rationale": "ADR-0045 1(a)/(b); both design adversaries co-signed D4/D5 as HYG-A deletions",
+      "artifacts": [
+        "docs/design/workbench-loops-wl-s.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4b439996",
+        "after": "3d46b718d293ef0e64b8a7c71f0554e4e412a0c1",
+        "branch": "sp3-perspective-rerow",
+        "pushed": null,
+        "commits": [
+          "3d46b718 test: green — kind-census, sh41-factory, slot-alias; suites; runtime; seam fallbacks (T4)",
+          "acfa04de feat: re-row the Perspective set to Factory · Review · Understand and retire FullWindow (ADR-0045 §1)",
+          "1ff6278a test: red — rescope (every old-row test: compile red list, then runtime red list)",
+          "c63a8ae4 test: red — slot-alias",
+          "edc21c7f test: red — sh41-factory (SH-4.1 oracle on the Factory host)",
+          "547a24f1 test: red — kind-census (Loomkeeper kinds under Factory)",
+          "0457daa6 test: red — three-rows, no-fullwindow",
+          "ed821a6e docs: design WL-S"
+        ]
       }
     }
   ],
