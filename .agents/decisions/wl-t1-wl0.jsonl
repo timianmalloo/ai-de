@@ -1,0 +1,16 @@
+{"agent": "wl-t1-wl0", "at": 1792362310.786793, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/fr001-red.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362310.8137472, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/fr002-red.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362310.840079, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362310.86616, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Freshness/DirtyEditSurvivesReindexTests.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.522079, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.5641246, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/app-suite-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.604649, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/fr001-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.6391618, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/fr002-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.668475, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0/suite-green.txt", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.699474, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Extraction/SourceRevision.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.730511, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Projections/EntryPointsProjection.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.7620397, "code": null, "kind": "allowed", "path": "src/AiDe.Core/WorkspaceCore.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362809.7948737, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Freshness/DirtyEditSurvivesReindexTests.cs", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362831.256039, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-0.md", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362831.8622322, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t1-wl0", "wi": ""}
+{"agent": "wl-t1-wl0", "at": 1792362831.890432, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t1-wl0", "wi": ""}

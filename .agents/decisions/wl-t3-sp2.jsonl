@@ -1,0 +1,4 @@
+{"agent": "wl-t3-sp2", "at": 1792362341.812527, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp2/turnstate-never-serialized-red.txt", "session": "wl-t3-sp2", "wi": ""}
+{"agent": "wl-t3-sp2", "at": 1792362341.8385847, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp2/vocab-red.txt", "session": "wl-t3-sp2", "wi": ""}
+{"agent": "wl-t3-sp2", "at": 1792362341.8642733, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/RunEventVocabularyTests.cs", "session": "wl-t3-sp2", "wi": ""}
+{"agent": "wl-t3-sp2", "at": 1792362341.8929646, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/TurnStateIsNeverSerializedTests.cs", "session": "wl-t3-sp2", "wi": ""}
