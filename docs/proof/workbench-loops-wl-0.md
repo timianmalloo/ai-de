@@ -63,3 +63,4 @@ Accepted by the Owner as named (2026-10-18): the size+mtime digest residual, and
 | **Completed** | FR-001 and FR-002 red-green, both suites green |
 | **Remaining** | GUI demo of steps 2–4 owed to the user — **not observed**. The Owner reproduced red (`e10b29d7`) and green (`acaa4358`) by test only (2026-10-18). The GUI run is folded into the WL-1a real-lane demo after T4's shell seam joins; FR-001's shell path stays unobserved until then. |
 | **Best next action** | Leader re-runs the Core suite on the joined tree |
+| **Fix-forward** | Join gates caught two reds: `verify-bounds-are-enforced` (red `6141d6de`, green `0c2994e4`: byte budget clamped to `MaxRowBytes`) and `verify-extractor-generation` (bumped to `2026-10-18.1` in `0c2994e4`); Core suite 2784 passed, 0 failed, 1 skipped |
