@@ -114,7 +114,7 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
     {
         var thread = new RunChannelSessionThread();
         var ordinal = thread.Accept("x", Decorations, "bytes", T0);
-        thread.Conclude(ordinal, TurnState.Stopped, T0.AddSeconds(1));
+        thread.Conclude(ordinal, TurnState.Interrupted, T0.AddSeconds(1));
 
         Assert.Throws<InvalidOperationException>(() => thread.Conclude(ordinal, TurnState.Completed, T0.AddSeconds(2)));
         Assert.Throws<InvalidOperationException>(() => thread.Wait(ordinal, new WaitingRequest("r", "permission", "?", [TurnActionKind.Deny])));

@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace AiDe.Core.AgentPlane;
 
@@ -169,6 +170,12 @@ public sealed record RunEventCost(
 /// <param name="Cost">Null when the wire recorded no usage.</param>
 /// <param name="Body">The payload of a recognized kind; empty for an unrecognized one.</param>
 /// <param name="Ext">Everything not projected into <paramref name="Body"/>, verbatim.</param>
+/// <param name="Redactions">
+/// Where the stored frame was redacted (ADR-0042 §6): null when the frame was never scanned, empty
+/// when it was scanned and nothing matched — "not scanned" is never read as "clean" (IO12). The
+/// envelope only carries the fields; the scanning transform is not part of the envelope.
+/// </param>
+/// <param name="ScannedWith">The pattern set that scanned the frame, e.g. <c>patterns v1</c>; null when not scanned.</param>
 public sealed record RunEvent(
     string RunId,
     string AgentId,
@@ -178,4 +185,28 @@ public sealed record RunEvent(
     string Kind,
     RunEventCost? Cost,
     JsonObject Body,
-    JsonObject Ext);
+    JsonObject Ext,
+    [property: JsonPropertyName("redactions")] IReadOnlyList<RunEventRedaction>? Redactions = null,
+    [property: JsonPropertyName("scanned_with")] string? ScannedWith = null);
+
+/// <summary>One redacted span of a stored raw frame (ADR-0042 §6): where it was and which pattern matched.</summary>
+/// <param name="Offset">Start of the span in the redacted frame.</param>
+/// <param name="Len">Length of the span.</param>
+/// <param name="PatternId">Stable id of the pattern that matched.</param>
+public sealed record RunEventRedaction(
+    [property: JsonPropertyName("offset")] int Offset,
+    [property: JsonPropertyName("len")] int Len,
+    [property: JsonPropertyName("pattern_id")] string PatternId);
+
+/// <summary>
+/// The kinds of the raw-frame fallbacks. Unknown kinds are carried namespaced (the existing
+/// <see cref="RunEvent"/> rule): <c>acp.*</c> from an ACP adapter, <c>native.*</c> from a native harness.
+/// </summary>
+public static class RunEventKinds
+{
+    /// <summary>The stored raw ACP frame (redacted per ADR-0042 §6).</summary>
+    public const string AcpFrame = "acp.frame";
+
+    /// <summary>The stored raw native-harness frame (redacted per ADR-0042 §6).</summary>
+    public const string NativeFrame = "native.frame";
+}

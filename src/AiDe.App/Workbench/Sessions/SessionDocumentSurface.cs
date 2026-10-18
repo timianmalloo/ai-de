@@ -650,7 +650,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
         {
             LastRunFailure = "OperationCanceledException: stopped by the operator";
-            _thread.Conclude(ordinal, TurnState.Stopped, DateTimeOffset.Now);
+            // Our own token cancel is not a native acknowledgment, so the turn is StopRequested, never Interrupted (ADR-0041 §2).
+            _thread.RequestStop(ordinal);
             RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.StoppedByOperator);
         }
         catch (Exception error) when (error is AgentPlaneException or IOException or OperationCanceledException)

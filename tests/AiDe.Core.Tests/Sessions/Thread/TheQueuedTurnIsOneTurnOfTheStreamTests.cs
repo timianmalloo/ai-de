@@ -92,7 +92,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
 
         // A queued turn cannot complete, stop or fail — it never ran.
         Assert.Throws<InvalidOperationException>(() => thread.Conclude(b2, TurnState.Completed, T0.AddSeconds(6)));
-        Assert.Throws<InvalidOperationException>(() => thread.Conclude(b2, TurnState.Stopped, T0.AddSeconds(6)));
+        Assert.Throws<InvalidOperationException>(() => thread.Conclude(b2, TurnState.Interrupted, T0.AddSeconds(6)));
         // A running turn is stopped or failed, never "cancelled" (two words, two facts).
         Assert.Throws<InvalidOperationException>(() => thread.Conclude(1, TurnState.Cancelled, T0.AddSeconds(6)));
         // A queued turn has no run to wait on or resume.
@@ -115,7 +115,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
     }
 
     [Theory]
-    [InlineData(TurnState.Stopped)]
+    [InlineData(TurnState.Interrupted)]
     [InlineData(TurnState.Failed)]
     public void AfterAStopOrAFailure_TheQueuedTurnWaitsOnYou(TurnState ending)
     {
@@ -130,7 +130,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
         Assert.Equal(
             ending == TurnState.Failed
                 ? "b1 lane exited 1; b2 is waiting — Send it or cancel it"
-                : "b1 stopped by you; b2 is waiting — Send it or cancel it",
+                : "b1 interrupted; b2 is waiting — Send it or cancel it",
             TurnCopy.QueuedSentence(snapshot));
     }
 

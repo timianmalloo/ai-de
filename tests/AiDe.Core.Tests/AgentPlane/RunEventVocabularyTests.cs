@@ -78,4 +78,54 @@ public sealed class RunEventVocabularyTests
         Assert.Equal("native.frame", kinds!.GetField("NativeFrame")?.GetRawConstantValue());
         Assert.Equal("acp.frame", kinds.GetField("AcpFrame")?.GetRawConstantValue());
     }
+
+    private static readonly DateTimeOffset T0 = new(2026, 10, 18, 9, 0, 0, TimeSpan.Zero);
+
+    private static TurnView TurnIn(TurnState state) => new(
+        1, "env-1", "words of b1", [new("shape", "goal block", "projection", "")], state,
+        TurnView.IsTerminal(state) ? new OutcomeView("claude-code", null, 1, null, TimeSpan.FromSeconds(5), 3) : null,
+        null, [], "bytes", T0);
+
+    [Theory]
+    [InlineData(TurnState.Interrupted, true, "interrupted", "Turn b1 interrupted after")]
+    [InlineData(TurnState.Preparing, false, "preparing", "Turn b1 accepted as a goal block")]
+    [InlineData(TurnState.StopRequested, false, "stop requested", "Turn b1: stop requested. Waiting for the harness to acknowledge.")]
+    [InlineData(TurnState.DeliveryUnknown, true, "delivery unknown", "Turn b1: delivery is unknown")]
+    [InlineData(TurnState.Rejected, true, "rejected", "Turn b1: the harness rejected this turn")]
+    [InlineData(TurnState.Denied, true, "denied", "Turn b1: a permission request of this turn was denied")]
+    [InlineData(TurnState.OverLimit, true, "over limit", "Turn b1: this turn went over a limit")]
+    public void EachNewTurnState_HasAWordATerminalityAndAnAnnouncement(TurnState state, bool terminal, string word, string announced)
+    {
+        Assert.Equal(terminal, TurnView.IsTerminal(state));
+        Assert.Equal(word, TurnCopy.OutcomeWord(state, exitCode: null));
+
+        var policy = new ThreadAnnouncementPolicy();
+        policy.Next(new ThreadSnapshot([TurnIn(TurnState.Running)], 0, true));
+        var emitted = policy.Next(new ThreadSnapshot([TurnIn(state)], 1, true));
+
+        Assert.StartsWith(announced, Assert.Single(emitted).Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void StopRequested_IsInFlight_SoASendDuringItQueues()
+    {
+        var snapshot = new ThreadSnapshot([TurnIn(TurnState.StopRequested)], 1, true);
+
+        Assert.Equal(1, snapshot.InFlight?.Ordinal);
+    }
+
+    [Fact]
+    public void RequestStop_MovesAnInFlightTurnToStopRequested_AndOnlyTheHarnessConcludesItInterrupted()
+    {
+        var thread = new RunChannelSessionThread(caughtUp: true);
+        var ordinal = thread.Accept("words", [], "bytes", T0);
+
+        thread.RequestStop(ordinal);
+        Assert.Equal(TurnState.StopRequested, thread.Current.Turns.Single().State);
+        Assert.Null(thread.Current.Turns.Single().Outcome);
+
+        thread.Conclude(ordinal, TurnState.Interrupted, T0.AddSeconds(2));
+        Assert.Equal(TurnState.Interrupted, thread.Current.Turns.Single().State);
+        Assert.Throws<InvalidOperationException>(() => thread.RequestStop(ordinal));
+    }
 }

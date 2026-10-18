@@ -146,8 +146,17 @@ public sealed class ThreadAnnouncementPolicy
                 "Turn " + now.DisplayOrdinal + ": " + LowerFirst(TurnCopy.ReasonSentence(now)),
                 Urgency.Assertive, AnnouncementKind.Aborted, now.Ordinal, label),
 
-            TurnState.Stopped => Status(
+            TurnState.Interrupted => Status(
                 now, "Turn " + now.DisplayOrdinal + " " + LowerFirst(TurnCopy.ReasonSentence(now)), AnnouncementKind.Aborted, label),
+
+            TurnState.Preparing => Accepted(now, label),
+
+            TurnState.StopRequested => Status(
+                now, "Turn " + now.DisplayOrdinal + ": " + LowerFirst(TurnCopy.ReasonSentence(now)), AnnouncementKind.Other, label),
+
+            TurnState.DeliveryUnknown or TurnState.Rejected or TurnState.Denied or TurnState.OverLimit => new Announcement(
+                "Turn " + now.DisplayOrdinal + ": " + LowerFirst(TurnCopy.ReasonSentence(now)),
+                Urgency.Assertive, AnnouncementKind.Aborted, now.Ordinal, label),
 
             TurnState.NotRecorded => Status(now, "Turn " + now.DisplayOrdinal + ": outcome not recorded.", AnnouncementKind.Other, label),
 
