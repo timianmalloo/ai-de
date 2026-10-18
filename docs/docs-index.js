@@ -10462,6 +10462,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "c50ec10e22accd66cb2f85263d2808c81dca4eca722375e9f2da176c5334173a"
     },
     {
+      "id": "coordination-workbench-loops-leader-kickoff",
+      "path": "docs/coordination/workbench-loops-leader-kickoff.md",
+      "title": "Kickoff brief — workbench-loops Leader (Opus) under the Fable Owner",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The Owner's hand-off to the spawned Opus Leader session for the workbench-loops drive: identities, what the Owner already did, the first turn, the cadence, and the Windows forms of every coord verb. The binding law is the drive prompt; this brief only adds the seat wiring.",
+      "tags": [
+        "coordination",
+        "kickoff",
+        "workbench-loops",
+        "leader",
+        "opus"
+      ],
+      "links": [
+        {
+          "to": "plan-workbench-loops-drive-prompt",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e8f3ecee3b4b59aadeb4c87f8a9a3d84e95476a0e8c0d34b535137030ff4b0dc"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -24054,5 +24089,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "8b615d0d5276345c366f03e2e4ae47e44b0ac16e78aeb40444a69fe72cf7fc7e"
+  "graphSha256": "6a7df4a768dddcddcdac0c7ad071de44b78dd07ccbd679c10a1101f8082e3d42"
 };
