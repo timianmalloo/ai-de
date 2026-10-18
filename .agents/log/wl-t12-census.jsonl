@@ -5,3 +5,10 @@
 {"agent": "wl-t12-census", "at": 1792364147.592939, "kind": "claim", "path": "tests/AiDe.Core.Tests/TerminalHostExitPathTests.cs", "seq": 5, "session": "wl-t12-census", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t12-census", "at": 1792364147.7560217, "kind": "claim", "path": "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs", "seq": 6, "session": "wl-t12-census", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t12-census", "at": 1792364147.9194121, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 7, "session": "wl-t12-census", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t12-census", "at": 1792364741.9668732, "kind": "release", "path": "tests/Shared/ConsoleHostCensus.cs", "seq": 8, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792364742.0639868, "kind": "release", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "seq": 9, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792364742.155949, "kind": "release", "path": "tests/AiDe.App.Tests/AppWindowCloseLeavesNoTerminalHostTests.cs", "seq": 10, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792364742.2470593, "kind": "release", "path": "tests/AiDe.Core.Tests/TerminalHostExitPathTests.cs", "seq": 11, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792364742.3362052, "kind": "release", "path": "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs", "seq": 12, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792364742.43019, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 13, "session": "wl-t12-census", "wi": "WI-0"}
+{"at": 1792364743.222663, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58M72HP63VY4DTDJGZQ8JCD", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}

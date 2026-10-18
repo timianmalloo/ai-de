@@ -3179,3 +3179,42 @@ rewritten to record the wrong diagnosis and how it was caught, not only the outc
 remains **not approved**: condition (a)'s adversary clearance is not on disk.
 
 ---
+
+### Ruling 148 — ADR-0039 amended: T2's six schema-v2 departures are accepted, each with its condition; the frozen DDL, the disposition FK and the outcome-state gate are merge conditions
+
+Accepted on the evidence in docs/notes/wl-dr-schema-v2-departures.md, with the Data & Persistence Architect's review (PASS-WITH-CONDITIONS, veto cleared). The Owner spot-checked it in the sp1-schema-v2 tree at 7369bcfa. StoreWriter.cs:161 closes session_dim by UPDATE. DispatchService.cs:96-103 saves a revision and binds an attempt in one transaction. WorkspaceSchema.cs builds the v2 CHECK lists from live WorkbenchVocabulary and TerminalStates. disposition_fact declares no foreign key.
+
+This ruling is the ADR-0039 amendment of record. The six amendment texts in the note's table are adopted verbatim: (1) trigger-enforced vocabulary and references, with stable codes; (2) append-only dimension versions without valid_to_seq; (3) owner_journey_id is Type-0 except one adoption transition, and legacy changes only 1 to 0; (4) PTY attempts may bind legacy revisions, and the gate asserts every attempt binds an existing revision; (5) assessment_fact.payload never holds a derived state; (6) StoreOpenReport carries the legacy count to the human.
+
+Merge conditions: T2 does not join until each one lands red-first with a refusing test.
+(a) The post-purge reference check runs the same queries as the attempts-bind-revisions gate.
+(b) A per-dimension BEFORE INSERT trigger enforces the next version_no and a strictly greater ingress_seq.
+(c) legacy changes only 1 to 0, and a version-1 legacy=1 row comes only from the backfill.
+(d) body_sha has one home: either every revision writer sets it under an equality test, or it is computed on read. Every revision save creates or requires a notebook.
+(e) The forbidden derived-status-key guard on assessment payload.
+(f) MAJOR: the v2 DDL is frozen as a literal or a pinned hash. Vocabulary growth is a v3 migration.
+(g) MAJOR: a declared composite FK from intent-accepted dispositions to prompt_revision_fact (draft_id, revision_no).
+(h) The migration gate checks existing outcome state values against the vocabulary and reports unknowns.
+The red tests run through Microsoft.Data.Sqlite's bundled engine, which closes the probe-engine residual.
+
+Tracked obligations, not merge conditions: the adoption actor is recorded when T8's binding lands, and the per-kind payload schema lands with WL-5's first producer. Both are named in their tracks' contracts.
+
+The join also needs a green suite, or the census-read failures shown to be baseline on main. The remaining residuals are accepted as listed: real v1 files with unknown states or orphans, and trigger overhead at 100x, which WL-1b measures.
+
+- request: req-01M58KREHTRS93NBAWG36JGNFP · ruled by: wl-owner-20261018 · at: 2026-10-18T22:58:38Z
+
+### Ruling 149 — ADR-0045 1(b) proceeds: ExplorerSurface is deleted; the in-app knowledge/spec corpus loss is named, bounded and owned by WL-S, not deferred to WL-6
+
+Option A, with conditions. The deletion is ADR-0045's accepted decision. Its rejection of Explorer as a full-window body still holds, because the visualizer must dock beside the question (AC-S02a, UX-04), so holding T4 (option B) would reopen a settled direction.
+
+The ADR's Consequences, however, accept only losing the full-window arrangement (ADR-0045:157). They do not accept losing the corpus. T4's evidence shows a second loss the ADR did not weigh. WorkbenchShell.cs:1386 sets ExcludeKnowledge = true on the docked canvas. GraphProjection.cs:93 says the docked graph never shows the knowledge/spec corpus. So deleting ExplorerSurface removes the only in-app view of knowledge and spec nodes. That loss is accepted here only bounded and named.
+
+Conditions:
+(1) T4's Proof Pack and the WL-S slice close state the capability loss in user terms, with docs/index.html as the interim path, under Flagged risks and not as a footnote.
+(2) The knowledge-inclusive representation is a committed WL-S backlog row with its own E2E check, not a WL-6 follow-up. It means Understand's canvas admits the knowledge/spec corpus through the existing representation selector (ADR-0045:98-101), as a mode of the admitted canvas kind, never a second graph surface. WL-S does not close until that check is green.
+(3) T4 records the ExcludeKnowledge seam as the place the mode attaches, and does not build it inside T4. Its done-when is unchanged.
+(4) The user is told in the morning summary, because this is a user-visible regression of a capability that worked before.
+
+The change is fully reversible: git restores ExplorerSurface. The blast radius is a single operator.
+
+- request: req-01M58M88614J682GM6JXM4NKMA · ruled by: wl-owner-20261018 · at: 2026-10-18T23:09:02Z

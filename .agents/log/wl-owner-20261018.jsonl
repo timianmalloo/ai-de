@@ -1,0 +1,4 @@
+{"action": "resolve", "agent": "wl-owner-20261018", "at": 1792364318.1313252, "id": "req-01M58KREHTRS93NBAWG36JGNFP", "kind": "request", "outcome": "resolution", "path": "-", "seq": 1, "session": "wl-owner-20261018", "type": "request", "wi": "WI-0"}
+{"at": 1792364318.1448488, "from": "wl-owner-20261018", "kind": "ruling", "mail_id": "mail-01M58KT3E0KXN7TPAHZ22VF2JE", "ref": "req-01M58KREHTRS93NBAWG36JGNFP", "session": "wl-owner-20261018", "to": "wl-leader-20261018", "type": "mail"}
+{"action": "resolve", "agent": "wl-owner-20261018", "at": 1792364942.1745205, "id": "req-01M58M88614J682GM6JXM4NKMA", "kind": "request", "outcome": "resolution", "path": "-", "seq": 3, "session": "wl-owner-20261018", "type": "request", "wi": "WI-0"}
+{"at": 1792364942.1900914, "from": "wl-owner-20261018", "kind": "ruling", "mail_id": "mail-01M58MD4VER693QBYJ5KVJZ606", "ref": "req-01M58M88614J682GM6JXM4NKMA", "session": "wl-owner-20261018", "to": "wl-t4-sp3", "type": "mail"}

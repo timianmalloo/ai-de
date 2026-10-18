@@ -2,3 +2,15 @@
 {"agent": "wl-t12-census", "at": 1792364138.622269, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-red.txt", "session": "wl-t12-census", "wi": ""}
 {"agent": "wl-t12-census", "at": 1792364138.6469169, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "session": "wl-t12-census", "wi": ""}
 {"agent": "wl-t12-census", "at": 1792364138.675015, "code": null, "kind": "allowed", "path": "tests/Shared/ConsoleHostCensus.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.5648427, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.5884197, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-green.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.6159966, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-observed.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.642076, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/suite-green-app-rerun.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.668341, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/suite-green-app.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.6934035, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/suite-green.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.718566, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/AppWindowCloseLeavesNoTerminalHostTests.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.74442, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/TerminalHostExitPathTests.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.7735522, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364741.7997549, "code": null, "kind": "allowed", "path": "tests/Shared/ConsoleHostCensus.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364742.927201, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792364742.9533014, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t12-census", "wi": ""}
