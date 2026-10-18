@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:33:51Z",
+  "generated": "2026-10-18T23:20:01Z",
   "audit": [
     {
       "actor": null,
@@ -22268,6 +22268,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:23:37Z",
       "duration_seconds": 614.0
+    },
+    {
+      "id": "al-01M58N18D10H0YX6DDRTRPBCGH",
+      "shortname": "wl-t1-wl0",
+      "datetime": "2026-10-18T23:20:01Z",
+      "session": "wl-t1-wl0",
+      "prompt": "WL-0 fix-forward: bounds clamp and extractor generation bump",
+      "summary": "Clamped entry-points byte budget to MaxRowBytes with test; bumped ExtractorGeneration to 2026-10-18.1; both gates green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/EntryPointsProjection.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "make two join gates green",
+      "done_when": "both gates exit 0, suite green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T23:16:55Z",
+      "duration_seconds": 186.0
     }
   ],
   "changes": [
