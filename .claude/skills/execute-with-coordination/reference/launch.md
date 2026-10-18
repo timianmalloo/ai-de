@@ -31,8 +31,9 @@ profile, lifecycle identity, model binding and current qualification evidence.
    documented native policy arguments. Never silently download an adapter, turn off trust
    controls or add blanket approval flags. Bound all effective instructions, hook files,
    policy/trust configuration and adapter lockfiles in `binding_files`.
-4. Prepare once. This creates fresh worktrees from the **invoking checkout's HEAD**, reads
-   back their actual paths and retains exact prompts as private manual briefs:
+4. Prepare once. This creates fresh worktrees from the contract's resolved dispatch base
+   (the invoking checkout's HEAD by default, or its explicit pinned `base`), reads back
+   their actual paths and retains exact prompts as private manual briefs:
 
    ```sh
    python3 docs/ai-forward-pack/scripts/coord-runner.py prepare --contract launch.json

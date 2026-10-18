@@ -91,14 +91,28 @@ CHECK_LIMIT, CHECK_BUDGET_SECONDS = 5, 10
 
 
 def _checks_file(cwd):
-    """The nearest .agents/session-checks.json at or above cwd, not past the checkout top."""
-    here = os.path.abspath(cwd)
+    """The nearest declaration, not past the Git top or this hook's installed project."""
+    here = os.path.realpath(cwd)
+    # Only the actual docs/ai-forward-pack/hooks layout identifies an installed root;
+    # source hooks retain the existing Git/filesystem boundary. Resolve aliases before
+    # walking so payload and launcher spellings cannot bypass the same project boundary.
+    hook_here = os.path.realpath(HERE)
+    deployed = os.path.abspath(os.path.join(hook_here, "..", "..", ".."))
+    installed_top = deployed if os.path.normcase(hook_here) == os.path.normcase(
+        os.path.join(deployed, "docs", "ai-forward-pack", "hooks")) else None
+    if installed_top:
+        try:
+            if os.path.normcase(os.path.commonpath([here, installed_top])) != os.path.normcase(installed_top):
+                return None, None
+        except ValueError:  # different Windows drives have no common project root
+            return None, None
     while True:
         candidate = os.path.join(here, CHECKS_FILE)
         if os.path.isfile(candidate):
             return here, candidate
         parent = os.path.dirname(here)
-        if os.path.exists(os.path.join(here, ".git")) or parent == here:
+        if (installed_top and os.path.normcase(here) == os.path.normcase(installed_top)
+                or os.path.exists(os.path.join(here, ".git")) or parent == here):
             return None, None
         here = parent
 

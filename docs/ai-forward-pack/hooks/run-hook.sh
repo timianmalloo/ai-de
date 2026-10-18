@@ -33,6 +33,18 @@ shift
 # exits 9009 after ~200 ms (measured 2026-10-14, on every hook call), so Windows asks python first.
 first=python3; second=python
 if [ "$OS" = "Windows_NT" ]; then first=python; second=python3; fi
-py=$($first -c 'import sys;print(sys.executable)' 2>/dev/null)
-[ -x "$py" ] || py=$($second -c 'import sys;print(sys.executable)')
+py=$($first -c 'import sys;print(sys.executable if sys.version_info >= (3, 10) else "")' 2>/dev/null)
+[ -x "$py" ] || py=$($second -c 'import sys;print(sys.executable if sys.version_info >= (3, 10) else "")' 2>/dev/null)
+# The portable bootstrap may supply Python through uv without adding Python to PATH.
+# Keep native Python preferred; uv isolates this hook from the project's dependencies.
+if [ ! -x "$py" ] && command -v uv >/dev/null 2>&1; then
+  if [ -n "${UV_PYTHON:-}" ]; then
+    requested=$UV_PYTHON
+    uv_py=$(UV_PYTHON= uv python find --no-config --no-project "$requested" 2>/dev/null)
+    if [ -x "$uv_py" ] && "$uv_py" -c 'import sys;raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1; then
+      exec uv run --no-config --no-project --python "$uv_py" "$script" "$@"
+    fi
+  fi
+  exec uv run --no-config --no-project --python '>=3.10' "$script" "$@"
+fi
 exec "$py" "$script" "$@"

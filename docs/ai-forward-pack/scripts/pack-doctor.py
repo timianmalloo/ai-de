@@ -606,54 +606,130 @@ def _command_head(command):
     return text.split(None, 1)[0] if text else ""
 
 
+def _coordination_activation(root):
+    """Read existing opt-ins, not the mere presence of shipped scripts/lifecycle hooks."""
+    signals = []
+    attributes = _read(os.path.join(root, ".gitattributes")) or ""
+    for line in attributes.splitlines():
+        tokens = line.split()
+        if tokens and not tokens[0].startswith("#") and any(
+                token.startswith("merge=coord-") for token in tokens[1:]):
+            signals.append(".gitattributes coordination merge driver")
+            break
+
+    checkout = _git_lines(root, "rev-parse", "--show-toplevel")
+    if checkout is not None and checkout[0] == 0:
+        drivers = _git_lines(root, "config", "--get-regexp", r"^merge\.coord-.*\.driver$")
+        if drivers is not None and drivers[1]:
+            signals.append("Git coordination merge driver configuration")
+        hooks = _git_lines(root, "rev-parse", "--git-path", "hooks")
+        if hooks is not None and hooks[0] == 0 and hooks[1]:
+            directory = hooks[1][0]
+            if not os.path.isabs(directory):
+                directory = os.path.join(root, directory)
+            for name in ("pre-commit", "pre-merge-commit"):
+                path = os.path.join(directory, name)
+                text = _read(path) or ""
+                if (os.path.isfile(path) and (os.name == "nt" or os.access(path, os.X_OK))
+                        and ("# coord-core pre-commit floor" in text
+                             or re.search(r"coord-core\.py[\"']?\s+(?:precommit|staged-markers)\b", text))):
+                    signals.append("Git " + name + " coordination hook")
+
+    def ownership_command(value):
+        if isinstance(value, dict):
+            if value.get("enabled") is False or value.get("disableAllHooks") is True:
+                return False
+            for key, item in value.items():
+                if key in ("command", "bash", "powershell") and isinstance(item, str):
+                    if re.search(r"coord-core\.py[\"']?\s+hook\b", item):
+                        return True
+                elif ownership_command(item):
+                    return True
+        elif isinstance(value, list):
+            return any(ownership_command(item) for item in value)
+        return False
+
+    configs = [".claude/settings.json", ".claude/settings.local.json",
+               ".agents/hooks.json", ".codex/hooks.json"]
+    for directory in (".github/hooks", ".grok/hooks"):
+        path = os.path.join(root, directory)
+        if os.path.isdir(path):
+            configs.extend(directory + "/" + name for name in sorted(os.listdir(path))
+                           if name.endswith(".json"))
+    for relative in configs:
+        text = _read(os.path.join(root, relative))
+        if text is None:
+            continue
+        try:
+            config = json.loads(text)
+        except ValueError:
+            # A broken installed config cannot establish an inactive mode. The launcher
+            # check diagnoses its syntax separately; never turn it into a serial exemption.
+            signals.append("invalid hook configuration " + relative)
+            continue
+        if ownership_command(config):
+            signals.append("native ownership hook in " + relative)
+    return signals
+
+
 def check_coordination(root):
-    """Is the coordination layer switched ON in this repo? (CTX-H)
+    """Optional for serial use; validate any registry or explicitly installed coordination.
 
-    The layer ships inert: `coord-core.py` is deployed and nothing writes the one file the
-    whole mechanism keys on. An uninstalled layer reports "0 decisions, nothing claimed",
-    which is indistinguishable from a working layer that saw no traffic -- so the absence
-    has to be checked here or it is not checked anywhere.
-
-    Three states, three verdicts:
-      no script         the check does not apply
-      no/broken registry FAIL - every path is `authored`, nothing is ever regenerated
-      declared-not-registered WARN - .git/config is per-clone and never committed, so a
-                            fresh CLONE lands here. A worktree does NOT: it shares the
-                            parent's config and inherits the registration, which is why
-                            the remedy names the primary checkout and `coord install`
-                            refuses to run from a linked tree.
+    Shipping coord-core.py and lifecycle hooks does not activate ownership/merge controls.
+    Existing native ownership commands, effective Git hooks/config, and merge attributes
+    are opt-ins. A missing enabled contract is a failure; an absent optional one is not.
+    Fresh clones with declared but unregistered drivers retain the per-clone warning.
     """
     name = "coordination"
     script = os.path.join(root, "docs", "ai-forward-pack", "scripts", "coord-core.py")
-    if not os.path.exists(script):
-        return _result(name, PASS, "coord-core.py not installed - check does not apply")
-
     registry = os.path.join(root, ".agents", "artifacts.yml")
     if not os.path.exists(registry):
-        return _result(name, FAIL,
-                       "coord-core.py is installed and .agents/artifacts.yml is absent - "
-                       "every path is treated as `authored` and nothing is regenerated",
-                       "python docs/ai-forward-pack/scripts/coord-core.py classify init")
+        activation = _coordination_activation(root)
+        if activation:
+            return _result(name, FAIL,
+                           "coordination is explicitly activated ({0}) but .agents/artifacts.yml "
+                           "is absent; the enabled classification contract is missing".format("; ".join(activation)),
+                           "restore the registry or intentionally remove the coordination opt-ins; "
+                           "initialize classifications with coord-core.py classify init only if coordination is intended")
+        if not os.path.exists(script):
+            return _result(name, PASS, "coord-core.py not installed - check does not apply")
+        return _result(name, WARN,
+                       "NOT APPLICABLE to serial use: optional coordination is not activated; "
+                       ".agents/artifacts.yml is absent (not an install failure)",
+                       "leave it absent for serial work; classify artifacts only when opting into coordination")
 
-    entries, bad, derived = 0, "", []
+    entries, bad, derived, seen = 0, "", [], {}
     try:
-        for lineno, raw in enumerate(
-                open(registry, encoding="utf-8").read().splitlines(), start=1):
+        with open(registry, encoding="utf-8") as handle:
+            rows = handle.read().splitlines()
+        for lineno, raw in enumerate(rows, start=1):
             line = raw.strip()
             if not line or line.startswith("#"):
                 continue
             if ":" not in line:
                 bad = "line {0}: expected `pattern: class [command]`".format(lineno)
                 break
-            parts = line.split(":", 1)[1].strip().split(None, 1)
+            pattern, rest = line.split(":", 1)
+            pattern = pattern.strip().replace("\\", "/")
+            if not pattern:
+                bad = "line {0}: empty pattern".format(lineno)
+                break
+            parts = rest.strip().split(None, 1)
             klass = parts[0] if parts else ""
             if klass not in ("authored", "derived", "register"):
                 bad = "line {0}: unknown class {1!r}".format(lineno, klass)
                 break
-            if klass == "derived" and len(parts) > 1:
+            if pattern in seen and seen[pattern] != klass:
+                bad = "line {0}: {1!r} has conflicting classes".format(lineno, pattern)
+                break
+            seen[pattern] = klass
+            if klass == "derived":
+                if len(parts) < 2 or not parts[1].strip():
+                    bad = "line {0}: a `derived` pattern needs a regenerate command".format(lineno)
+                    break
                 derived.append((lineno, parts[1].strip()))
             entries += 1
-    except OSError as e:
+    except (OSError, UnicodeError) as e:
         return _result(name, FAIL, f"registry unreadable ({e})",
                        "check .agents/artifacts.yml permissions")
     if bad:
@@ -690,12 +766,15 @@ def check_coordination(root):
     ga = os.path.join(root, ".gitattributes")
     if os.path.exists(ga):
         try:
-            for line in open(ga, encoding="utf-8").read().splitlines():
-                if "merge=" in line:
-                    value = line.rsplit("merge=", 1)[1].strip()
-                    if value.startswith("coord-"):
-                        declared.add(value)
-                if re.search(r"\beol=lf\b", line) and not line.lstrip().startswith("#"):
+            with open(ga, encoding="utf-8") as handle:
+                attribute_rows = handle.read().splitlines()
+            for line in attribute_rows:
+                tokens = line.split()
+                if not tokens or tokens[0].startswith("#"):
+                    continue
+                declared.update(token[len("merge="):] for token in tokens[1:]
+                                if token.startswith("merge=coord-"))
+                if "eol=lf" in tokens[1:]:
                     eol_rule = True
         except OSError:
             pass
@@ -807,6 +886,21 @@ def check_interpreter():
     of being discovered one command at a time (continuous-improvement.md CI6 - convert the
     lesson into a control that fires at the moment of the mistake).
     """
+    # uv prepends its selected interpreter directory to the child's PATH. A successful
+    # `python3 --version` there cannot prove the caller could run the native docs command.
+    # The actual uv marker is observed at runtime; no pack-specific mode flag is needed.
+    uv_depth = os.environ.get("UV_RUN_RECURSION_DEPTH", "0")
+    if uv_depth.isdigit() and int(uv_depth) > 0:
+        executable = sys.executable.replace("\\", "/")
+        return _result(
+            "python interpreter", WARN,
+            "running via uv-managed invocation (Python {0} at {1}); native Python invocation "
+            "from the caller PATH is not verified — uv may add Python names only to its child PATH".format(
+                sys.version.split()[0], sys.executable),
+            'use `uv run --no-config --no-project --python "{0}" '
+            'docs/ai-forward-pack/scripts/pack-doctor.py` with this existing interpreter; '
+            'test native Python commands separately in the caller shell'.format(executable))
+
     candidates = [("python3", ["python3", "--version"]),
                   ("python", ["python", "--version"]),
                   ("py -3", ["py", "-3", "--version"])]

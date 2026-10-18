@@ -569,3 +569,12 @@ docs/.smart-env/
 !.agents/hooks.json
 !.agents/rules*
 .agents/mail/
+
+# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed
+!.agents/session-checks.json
+.agents/log/audit/.run-starts.json
+.agents/log/audit/.run-starts.json.tmp
+**/docs/audit/.run-starts.json
+**/docs/audit/.run-starts.json.tmp
+**/.agents/log/audit/.run-starts.json
+**/.agents/log/audit/.run-starts.json.tmp

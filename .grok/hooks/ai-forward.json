@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host grok --event SessionStart",
+            "command": "git -c alias.aif-hook=!sh aif-hook -c 'r=.;n=0;while [ ! -f \"$r/docs/ai-forward-pack/hooks/run-hook.sh\" ];do [ -e \"$r/.git\" ] && exit 2;n=$((n+1));[ \"$n\" -le 64 ] || exit 2;r=$r/..;done;cd \"$r\" || exit 2;exec sh docs/ai-forward-pack/hooks/run-hook.sh \"$@\"' aif-hook dispatch.py --host grok --event SessionStart",
             "timeout": 15
           }
         ]
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh dispatch.py --host grok --event SubagentStart",
+            "command": "git -c alias.aif-hook=!sh aif-hook -c 'r=.;n=0;while [ ! -f \"$r/docs/ai-forward-pack/hooks/run-hook.sh\" ];do [ -e \"$r/.git\" ] && exit 2;n=$((n+1));[ \"$n\" -le 64 ] || exit 2;r=$r/..;done;cd \"$r\" || exit 2;exec sh docs/ai-forward-pack/hooks/run-hook.sh \"$@\"' aif-hook dispatch.py --host grok --event SubagentStart",
             "timeout": 15
           }
         ]

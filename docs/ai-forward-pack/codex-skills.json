@@ -36,6 +36,11 @@
   "define-architecture": [
     "SKILL.md"
   ],
+  "deliver": [
+    "SKILL.md",
+    "reference/checkpoints.md",
+    "reference/routing.md"
+  ],
   "design-slice": [
     "SKILL.md",
     "reference/co-s0.md",

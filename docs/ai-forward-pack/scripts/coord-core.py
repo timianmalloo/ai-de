@@ -2380,6 +2380,41 @@ class PrimaryCheckoutWrite(ValueError):
     """A target outside this linked worktree and inside the repository's primary checkout."""
 
 
+class SiblingCheckoutWrite(ValueError):
+    """WT-D: a target inside another LINKED worktree of this repository; `top` is that tree."""
+
+    def __init__(self, top):
+        super().__init__(str(top))
+        self.top = top
+
+
+class OutsideCheckout(ValueError):
+    """A target in no checkout of this repository. `via_alias` is True when the spelled path
+    was inside the checkout and only its resolved target escapes -- that one fails closed."""
+
+    def __init__(self, target, via_alias=False):
+        super().__init__(target)
+        self.via_alias = via_alias
+
+
+def _linked_sibling_top(target, base):
+    """WT-D: the top of the linked worktree of THIS repository that holds `target`, else None.
+
+    A submodule's `.git` file points into `.git/modules`, not `.git/worktrees`, so repo_root
+    does not map it to this repository and it stays outside."""
+    probe = target
+    while not probe.exists() and probe != probe.parent:
+        probe = probe.parent
+    top = checkout_top(probe)
+    if top == base or not (top / ".git").is_file():
+        return None
+    try:
+        same = os.path.samefile(repo_root(top), repo_root(base))
+    except OSError:
+        return None
+    return top if same else None
+
+
 def _in_primary_from_linked_tree(target, base):
     """PRIM-A: True when `base` is a LINKED worktree and `target` lies in the primary checkout
     (the main worktree, parent of the common .git dir) but not in `base`. A session working in
@@ -2422,7 +2457,15 @@ def _native_paths(path, repo, cwd):
     except ValueError:
         if _in_primary_from_linked_tree(canonical, base):
             raise PrimaryCheckoutWrite(str(canonical)) from None
-        raise
+        sibling = _linked_sibling_top(canonical, base)
+        if sibling is not None:
+            raise SiblingCheckoutWrite(sibling) from None
+        try:
+            lexical.relative_to(base)
+            via_alias = True
+        except ValueError:
+            via_alias = False
+        raise OutsideCheckout(str(canonical), via_alias=via_alias) from None
     for target in (lexical, canonical):
         try:
             relative = target.relative_to(base).as_posix()
@@ -2704,7 +2747,13 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
                     raise ValueError("tool cwd is not a checkout of the bound repository")
                 cwd = tool_cwd
                 repo = checkout_top(tool_cwd)
-        calls = parse_hook_request(event, repo or root, host=host, cwd=cwd)
+        try:
+            calls = parse_hook_request(event, repo or root, host=host, cwd=cwd)
+        except SiblingCheckoutWrite as exc:
+            # WT-D: the same check, made in the linked tree that holds the path. The ledger
+            # (root) is per repository, so the leases are the same leases.
+            repo = str(exc.top)
+            calls = parse_hook_request(event, repo, host=host, cwd=cwd)
     except PrimaryCheckoutWrite as exc:
         # PRIM-A: refused by name on every host (Claude's generic not-checked answer is `ask`).
         return hook_response("deny", "COORD-PRIMARY-WRITE  refused  {}\n"
@@ -2712,6 +2761,14 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
                              " the primary checkout, the Leader's fast-forward target\n"
                              "  remedy    write it in your own tree; the primary receives work by merge"
                              .format(_safe(str(exc), 300)), host)
+    except OutsideCheckout as exc:
+        reason = "the write target is outside this repository's checkouts ({})".format(_safe(str(exc), 300))
+        if exc.via_alias or host in ("codex", "grok", "agy", "copilot"):
+            return _not_checked(reason, host)
+        # WT-E: no lease can cover a path outside every checkout, so this hook has no opinion.
+        # `ask` overrode the session's own permission mode on every write to user memory or a
+        # scratchpad; `allow` would grant a write anywhere on disk. No decision defers to the mode.
+        return "{}"
     except Exception as exc:
         return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__), host)
 
@@ -5072,6 +5129,13 @@ def cmd_plugin_emit(out_dir, host=None):
             print("COORD-PLUGIN-HOOKS  install the native Copilot hook bundle before emitting this profile")
             return 2
         source = json.loads((hook_dir / "copilot.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        # Reuse the applier's exact managed startup syntax in source and installed layouts.
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("coord_plugin_pack_apply", here / "pack-apply.py")
+        if spec is None or spec.loader is None:
+            raise ValueError("Unsupported source-managed Copilot hook bundle")
+        applier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(applier)
         events = {"preToolUse": "PreToolUse", "postToolUse": "PostToolUse",
                   "sessionStart": "SessionStart", "subagentStart": "SubagentStart",
                   "agentStop": "Stop", "subagentStop": "SubagentStop",
@@ -5079,9 +5143,15 @@ def cmd_plugin_emit(out_dir, host=None):
         scripts = {}
         for event, entries in source["hooks"].items():
             for entry in entries:
-                # the launcher form (PLAT-A): ".../hooks/run-hook.sh <hook>.py <args>"
-                match = re.search(r"(?:hooks/|run-hook\.sh )([A-Za-z_-]+\.py)(.*)$", entry["bash"])
+                # Only the complete canonical startup command; its shell body is not argv.
+                match = re.fullmatch(re.escape(applier.STARTUP_LAUNCHER) +
+                                     r"(session-start\.py|dispatch\.py)( --host copilot(?: --event [A-Za-z]+)?)", entry["bash"])
                 if not match:
+                    # Existing PLAT-A commands retain their script, host and event argv.
+                    match = re.fullmatch(re.escape(
+                        "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh ") +
+                        r"([A-Za-z_-]+\.py)( --host copilot(?: --event [A-Za-z]+)?)", entry["bash"])
+                if not match or not (hook_dir / match.group(1)).is_file():
                     raise ValueError("Unsupported source-managed Copilot hook command")
                 name, arguments = match.groups()
                 scripts[name] = str(hook_dir / name)

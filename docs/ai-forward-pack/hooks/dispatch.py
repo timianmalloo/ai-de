@@ -17,6 +17,13 @@ exit code and output keep their meaning:
 
 Byte-code caches go under the OS temp dir (sys.pycache_prefix), never into the working tree.
 
+Hook time, where it is asked for (bench REC-UNREAD-A, 2026-10-17: Claude Code's record keeps no
+start for a hook, so a session's hook time was not recorded). When <git-dir>/ai-forward/
+hook-times.jsonl exists, each dispatch appends one line: host, event, hooks, start, ms, exit.
+The pack never creates the file, so nothing is written unless a caller (the bench) asked, and
+never into the working tree. `ms` is this process's time from main() to its exit code; the host's
+launch chain (git -> sh -> python start-up) is outside it. A write that fails is skipped.
+
 Usage: dispatch.py --host claude|grok|copilot|agy --event <host event name>
 """
 import argparse
@@ -27,8 +34,11 @@ import json
 import os
 import sys
 import tempfile
+import time
+from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+HOOK_TIMES = os.path.join("ai-forward", "hook-times.jsonl")  # under the checkout's git dir; see the docstring
 
 # The hooks each surface runs per event, in order. Revision 100 registered these one process each.
 # A hook that takes --event gets the event name; the other hooks take only --host.
@@ -124,7 +134,45 @@ def _run(script, argv, raw):
     return (code or 0), out.getvalue()
 
 
+def _git_dir(path):
+    """The git dir of the checkout holding `path` (`.git`, or the directory a linked worktree's
+    `.git` file names), or None outside git. Filesystem only (audit-log.py's rule)."""
+    here = os.path.abspath(path)
+    while True:
+        dot = os.path.join(here, ".git")
+        if os.path.isdir(dot):
+            return dot
+        if os.path.isfile(dot):
+            with open(dot, encoding="utf-8") as f:
+                text = f.read().strip()
+            if not text.startswith("gitdir:"):
+                return None
+            target = text.split(":", 1)[1].strip()
+            target = target if os.path.isabs(target) else os.path.join(here, target)
+            return target if os.path.isdir(target) else None
+        parent = os.path.dirname(here)
+        if parent == here:
+            return None
+        here = parent
+
+
+def record_time(raw, host, event, scripts, code, start, ms):
+    """Append one timing line where <git-dir>/ai-forward/hook-times.jsonl exists (see the docstring)."""
+    try:
+        cwd = json.loads(raw).get("cwd") if raw.strip().startswith("{") else None
+        git_dir = _git_dir(cwd if isinstance(cwd, str) and cwd else os.getcwd())
+        path = os.path.join(git_dir, HOOK_TIMES) if git_dir else None
+        if path and os.path.isfile(path):
+            row = {"host": host, "event": event, "hooks": scripts, "start": start, "ms": round(ms, 1), "exit": code}
+            with open(path, "a", encoding="utf-8", newline="\n") as f:
+                f.write(json.dumps(row) + "\n")
+    except Exception:  # noqa: BLE001 - a measurement that fails must never cost the host's tool call
+        pass
+
+
 def main(argv=None):
+    started = time.perf_counter()
+    start = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--host", required=True)
     parser.add_argument("--event", required=True)
@@ -156,7 +204,10 @@ def main(argv=None):
     if text:
         sys.stdout.write(text + "\n")
     sys.stdout.flush()
-    return 2 if 2 in codes else 0
+    code = 2 if 2 in codes else 0
+    record_time(raw, args.host, args.event, [script for script, _argv in route], code, start,
+                (time.perf_counter() - started) * 1000)
+    return code
 
 
 if __name__ == "__main__":

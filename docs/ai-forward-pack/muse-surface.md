@@ -136,14 +136,16 @@ live session after updating, restart Muse, confirm workspace trust
 (`--trust-workspace`), and ask Muse to name the resolved skill path
 (`muse skills inspect <name>`) before treating it as runtime confirmation.
 
-## Context budget (measured 2026-10-13, Muse 1.4.7)
+## Context budget (measured 2026-10-17, Muse 1.4.10)
 
 Muse assembles a different static prefix from Copilot, so Copilot's
 `prefix_tokens` baseline does not describe it. Measured components: the
-skills catalog is capped at 32 KB (32768 bytes; a 52-skill load reported
-"skills_catalog was trimmed to fit its size limit (32 KB): 11 descriptions
-compacted") and `AGENTS.md` in this repo is 29354 bytes (the managed block
-is most of it, including the Muse pointer above). The ratcheted record is `muse_profile` in
+skills catalog is capped at 32 KB (32768 bytes). A 52-skill load (30 pack +
+21 bundled + 1 plugin) costs 27215 startup bytes, 12963 of them the pack's,
+so nothing is compacted; the 30 `.claude/skills` duplicates are shadowed by
+`.agents/skills`. Muse 1.4.7 compacted 11 descriptions at the same count, so
+re-check after a Muse upgrade. `AGENTS.md` in this repo is 29570 bytes (the
+managed block is most of it, including the Muse pointer above). The ratcheted record is `muse_profile` in
 `pack/context-budget.json`; re-measure with `muse skills list
 --trust-workspace --json` (per-skill `context_cost`) after any catalog or
 block change rather than reusing these numbers.
@@ -153,7 +155,7 @@ block change rather than reusing these numbers.
 | Capability | Status | Evidence |
 |---|---|---|
 | `AGENTS.md` loaded as project rules | enforced | Live session + `muse init --dry-run` wording; CLAUDE.md-shadow warning observed in `muse exec`. |
-| Skill discovery (29/29 pack skills) | enforced | `muse skills list --json`: 29 project skills, all `.agents/skills/`; live session catalog. |
+| Skill discovery (30/30 pack skills) | enforced | `muse skills list --json` (1.4.10, 2026-10-17): 30 project skills, all `.agents/skills/`; live session catalog. |
 | Skill package shape | enforced | `muse skills validate .agents/skills/specify`: valid, `compatible`. |
 | Skill invocation by name/description | enforced | Live session: project skills loaded via `read_skill` (implement, extendaibundle). |
 | Knowledge path resolution | observed-only | Files present and read via `read_file` this session; no host loader exists to enforce scoping. |
