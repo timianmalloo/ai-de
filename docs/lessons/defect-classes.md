@@ -8287,3 +8287,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Observed instance:** Escape hid the October 18 popup without clearing its active option, and zero matches still named suggestion-0. The independent reviewer reproduced both.
 - **Sweep:** rich and source projections, Escape, empty matches and accepted completion. Closing clears active-descendant and expanded state; zero matches has no active option.
 - **Control:** `tools/verify-workbench-v2.py` covers dismissal and source completion; the independent targeted review also checked zero results. Native accessibility tree behavior remains separately unverified.
+
+### DC-NEW-wl-t1-wl0 — A cache or identity key omits the input the caller holds constant
+
+- **Shape:** an identity (revision) is captured once and reused while the thing it names changes underneath, so "same key" is read as "same content" (FR-001), and a count bound is read as a byte bound (FR-002).
+- **Observed instance:** a session-long git HEAD was the only key for a scope snapshot, so a forced reindex of an edited scope returned early as already current; separately, a 1,254-row cap let 2,000-character rows build a 5 MB reply.
+- **Sweep:** every reuse guard keyed on a caller-supplied identifier; every item cap guarding a byte-limited transport.
+- **Control:** `DirtyEditSurvivesReindexTests` (same revision, edited file) and `EveryOperationFitsTheFrameTests.EntryPointsRowsAreBoundedByBytesNotOnlyByCount`.

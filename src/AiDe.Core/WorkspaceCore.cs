@@ -454,6 +454,12 @@ public sealed class WorkspaceCore : IDisposable
                 continue;
             }
 
+            // The scope's revision names its working-tree content too: the shell supplies one HEAD
+            // for the whole session, so a dirty edit under it must still be a different observation
+            // (FR-001). An unchanged scope keeps the same string and is reused as before.
+            var scopeRevision = SourceRevision.Stamp(
+                SourceRevision.Base(artifactRevision), fingerprint.Length > 0 ? fingerprint[..16] : null);
+
             using var perScope = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             perScope.CancelAfter(budget);
 
@@ -461,7 +467,7 @@ public sealed class WorkspaceCore : IDisposable
             try
             {
                 result = await RefreshScopeAsync(
-                    scope.ScopeId, artifactRevision, perScope.Token, scope.ProjectPath).ConfigureAwait(false);
+                    scope.ScopeId, scopeRevision, perScope.Token, scope.ProjectPath).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
@@ -484,7 +490,7 @@ public sealed class WorkspaceCore : IDisposable
                 // this loop and contradict that decision, so the answer is to state it.
                 using var staleReader = Store.BeginRead();
                 if (staleReader.LatestCommittedSnapshot(scope.ScopeId) is { } stale
-                    && !string.Equals(stale.ArtifactRevision, artifactRevision, StringComparison.Ordinal))
+                    && !string.Equals(stale.ArtifactRevision, scopeRevision, StringComparison.Ordinal))
                 {
                     disclosures.Add(
                         $"stale-scope ({scope.ScopeId} still shows evidence from {stale.ArtifactRevision})");
