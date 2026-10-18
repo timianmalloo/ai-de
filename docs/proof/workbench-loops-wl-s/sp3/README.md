@@ -72,9 +72,9 @@ The Leader granted seams 3 and 4 retroactively (`req-01M58JG10…`, `req-01M58KF
    deleted from `App.xaml`. Grep: no reference to `IconExplore`, `firstEntry`, or the old `ShellMode` shape remains in `src` or `tests`.
 2. **Orphans.** Grep before deleting: `HtmlSandboxHost` was used only by `HtmlSandboxIntegrationTests.cs` and the ComposerProbe
    `--html-sandbox` step; `NodeReaderContentState` had no user at all. Deleted: both, `HtmlSandboxIntegrationTests.cs`,
-   `ComposerProbe/Program.HtmlSandbox.cs`, and the probe's dispatch. **New residual:** `HtmlSandboxPolicy.cs` and
-   `HtmlSandboxPolicyTests.cs` were used only by the host and now have no product user; outside the owned list, raised as a
-   seam request to the Leader.
+   `ComposerProbe/Program.HtmlSandbox.cs`, and the probe's dispatch. `HtmlSandboxPolicy.cs` and `HtmlSandboxPolicyTests.cs`
+   (used only by the host) were deleted too, by seam `req-01M58PV20W70QCYAYDQR1KPANH`; no reference remains. Build 0 errors,
+   0 warnings; `AiDe.App.Tests` 1023 passed, 1 failed (the same foreground chord test), total 1024 (`suite-app-policy-delete.txt`).
 3. **DESIGN.md.** The live sections now name Factory · Review · Understand (rail, icons, copy, focus landings, tooltips,
    Solution-tree prose); `IconCoding`/`IconArchitecture` read `IconFactory`/`IconUnderstand`, `IconReview` added to PS-R4;
    the menu sentence points at `PerspectiveMenu.For` rather than a per-row list. The dated errata (Rulings 83–84 and after)

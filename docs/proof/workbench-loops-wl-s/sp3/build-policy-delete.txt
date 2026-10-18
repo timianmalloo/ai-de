@@ -1,0 +1,28 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AgentDispatchSpike -> C:\Projects\ai-de-sp3-perspective-rerow\spikes\agent-dispatch\bin\Debug\net10.0-windows\AgentDispatchSpike.dll
+  WatcherCoordContractSpike -> C:\Projects\ai-de-sp3-perspective-rerow\spikes\watcher-coord-contract\bin\Debug\net10.0\WatcherCoordContractSpike.dll
+  AiDe.Core -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  WatcherOtlpIngestSpike -> C:\Projects\ai-de-sp3-perspective-rerow\spikes\watcher-otlp-ingest\bin\Debug\net10.0\WatcherOtlpIngestSpike.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  WatcherOtlpReceiveSpike -> C:\Projects\ai-de-sp3-perspective-rerow\spikes\watcher-otlp-receive\bin\Debug\net10.0\WatcherOtlpReceiveSpike.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Bench -> C:\Projects\ai-de-sp3-perspective-rerow\bench\AiDe.Bench\bin\Debug\net10.0\AiDe.Bench.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+  AiDe.App -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.03
