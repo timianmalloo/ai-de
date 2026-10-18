@@ -1679,6 +1679,8 @@ for both or split.*
 
 ### DC-039 — A focus-trapped surface reused in a new host without re-wiring its escape
 
+- **Recurrence (2026-10-18, notebook workbench HTML):** moving a pane left focus in a hidden move menu; restoring focus mode left focus on BODY. Sweep: dock move, hide, focus/restore, dialogs and checklist rerender. The fix returns focus to a visible pane/editor target and avoids needless same-parent reparenting. `tools/verify-workbench-v2.py` checks visible focus after move/restore and checklist updates. The independent UX reviewer observed the failures before correction and verified the fixes. This proves the HTML interaction, not native WPF focus.
+
 - **Shape:** a control that deliberately traps keyboard focus and posts a "leave" signal at its
   boundary (so a host can route focus out) is reused in a NEW host that binds the graph/content but
   forgets to subscribe to the leave signal. The trap still fires; nothing consumes it; the keyboard
@@ -6545,6 +6547,8 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled`.
 
 ### DC-147 — An in-artifact measurement that throws before it renders leaves its placeholder on screen, and the craft gate launders the claim
+
+- **Recurrence (2026-10-18, notebook workbench HTML):** generated script quoting/bracing left the page without its runtime model. A headless load observed the syntax errors before any green interaction claim. The executable control `tools/verify-workbench-v2.py` requires a nonzero rendered frame, no browser errors and a completed journey; exceptions outside individual assertions also fail the process. Static craft scanning alone cannot clear this class.
 - **Shape:** a reviewable artifact carries its own measurement (a verdict strip: contrast pairs,
   target sizes, density) so that its hub document can say *"measured, not asserted"*. A script
   error before the audit runs (a syntax slip in the strip's own string concatenation) leaves the
@@ -7593,6 +7597,8 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-182 — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
 
+- **Recurrence (2026-10-18, notebook workbench HTML):** switching loops reset the current run, and selecting a provider relabeled an old run. A single-loop/single-provider fixture hid both. Sweep: navigation, provider selection, input editing, docking and historical inspection. Runs now capture input, scope, mode, provider and capabilities; view selection does not own their lifetime. `tools/verify-workbench-v2.py` crosses loops/providers during a waiting run and requires unchanged identity and provenance. The independent reviewer observed the failing shape and retested the correction.
+
 - **Shape:** an identity oracle (`rows == f(source)`) is re-pointed from one derivation to another
   (`events` → `Coalesce(events)`) and re-written against a fixture whose every run has length one
   — so `f_old(source) == f_new(source)` on that fixture, the "red-first" run is green against the
@@ -8200,6 +8206,8 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-228 — CAP-P: a capability's presence on the host is inferred from the product's own configuration, or from a hardcoded list, instead of probed — and where a probe exists, its specific refusal is replaced by a generic absence
 
+- **Recurrence (2026-10-18, notebook proposal fixture):** one generic approval control was offered for every selected native route, including routes without a qualified interactive response channel. The fixture now pins a disclosed capability model to its run and exposes native-policy/read-only recovery for Antigravity/Muse instead of inventing approval responses. `tools/verify-workbench-v2.py` selects both routes and rejects an Allow-once control. Production must still derive capabilities from exact-profile qualification; the fixture map is not a host probe. Native cached sign-in is checked before requiring re-login, and API/SDK restrictions are not generalized into a prohibition on native CLI execution.
+
 - **Shape:** two sub-shapes. **(i)** A config guard short-circuits the probe: "we have no settings file, therefore we cannot know whether the tool is installed" — when the tool is on PATH and one call would say so. **(ii)** A requirement list is fixed in code rather than derived from the row's own declared requirement, so the thing that actually matters is never checked. Corollary: the product owns precise, actionable refusals and the operator is shown a generic absence instead.
 - **Signature:** a state sentence that is byte-identical across every item in a list, when the items have different install stories; a prerequisites block that ticks tools the engine does not use and omits the one it does; the literal string the operator quotes having exactly one producer, and that producer being a null-check rather than a probe; a comment three lines above the defect stating the correct rule.
 - **Instance (2026-09-16, the operator's clean machine):** all five accounts read *"not configured (no adapter root — no provider file)"* with `copilot` installed and on PATH. `NewSessionSheetViewModel.LaunchRefusal` (`:404-407`) returns that sentence whenever `~/.aide/providers.json` is absent, short-circuiting `EngineCatalog.InstallRefusal` — the single installed-reading **DC-223** created. Proven necessary and sufficient by a headless probe (one variable, both directions). Siblings, each separately blocking: `ConfigureProviderDialog.cs:65-67` (fixed `["node","npm"]` for every non-anthropic provider), `:131-132` (sign-in hardcoded to `claude-code`, so "ready" is unreachable for github through the product — and its `simplify:` marker at `NewSessionSheetViewModel.cs:477` had already fired), `:151/:246` (a false *"the adapter is not installed yet"* for a native engine).
@@ -8239,3 +8247,25 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Relation to DC-227:** the same reading error one level out. There a harness's exit code stood in for the tool's; here a *step's* failure stood in for the *job's*, and the step that actually failed had executed nothing. **A step's status is not a statement about its subject until you know the step ran.**
 - **Control:** the rule `coord` itself uses — **no session identity, no write.** `DesktopHold.Append` returns without writing when `AGENT_SESSION` is unset, because a desktop hold serializes a fleet and where there is no fleet there is nothing to announce. Measured both directions on the real suite: `AGENT_SESSION` unset ⇒ **0 lines appended**, so the tree stays clean and mutation replay starts; `AGENT_SESSION` set ⇒ **2 lines appended** (START and END), so Ruling 115's serialization is intact. The stronger control, owed and not built: a CI step asserting the tree is clean **immediately after** the test step, so the dirt is attributed to the step that caused it rather than to the next one that trips over it.
 - **Status:** `partially-controlled` — the write is guarded and the attribution repaired; the attribute-the-dirt-to-its-cause check is owed.
+
+
+### UI-REFERENCE-IDENTITY — Missing reference metadata is replaced by the first known symbol
+
+- **Shape:** an autocomplete/help resolver falls back to a plausible known entry when a reference is absent, promoting absence into a false source/signature claim.
+- **Observed instance:** the October 18 notebook fixture displayed RunEvent metadata for an unindexed symbol. The independent reviewer reproduced it before correction.
+- **Sweep:** tooltip, signature help, empty completion results, source and rich projections. Unknown references now retain their own name and explicitly lack metadata; no unrelated symbol is substituted.
+- **Control:** `tools/verify-workbench-v2.py`, “Unknown reference never substitutes another symbol.” This is a fixture-level regression control, not qualification of a live repository index.
+
+### UI-DOCUMENT-PROJECTION — A view conversion rewrites the document it is meant to display
+
+- **Shape:** changing rich/source views or navigating reads a lossy rendering as the canonical document, rewriting code language or meaningful whitespace without an edit.
+- **Observed instance:** the October 18 fixture hardcoded every code fence to C# and collapsed blank lines. The independent reviewer used JSON with repeated blank lines to expose it.
+- **Sweep:** source→rich→source, navigation, actual rich-text editing, saved revisions and submitted input. Unedited canonical source is retained; fence language and code whitespace survive the supported rich projection.
+- **Control:** `tools/verify-workbench-v2.py`, “Rich/source preserves code language and blank lines.” Full Markdown/IME/clipboard fidelity remains a production editor qualification gate.
+
+### UI-COMPLETION-ARIA — Visual completion state and its accessibility state disagree
+
+- **Shape:** a dismissed or empty completion popup leaves expanded/active-descendant metadata pointing at a nonexistent or hidden option.
+- **Observed instance:** Escape hid the October 18 popup without clearing its active option, and zero matches still named suggestion-0. The independent reviewer reproduced both.
+- **Sweep:** rich and source projections, Escape, empty matches and accepted completion. Closing clears active-descendant and expanded state; zero matches has no active option.
+- **Control:** `tools/verify-workbench-v2.py` covers dismissal and source completion; the independent targeted review also checked zero results. Native accessibility tree behavior remains separately unverified.

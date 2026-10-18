@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-17T21:07:37Z",
+  "generated": "2026-10-18T17:48:37Z",
   "audit": [
     {
       "actor": null,
@@ -21297,6 +21297,122 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-17T21:01:20Z",
       "duration_seconds": 376.0
+    },
+    {
+      "id": "al-01M57Y8MWXT2NDG67A52TH8VY2",
+      "shortname": "workbench-loops-elevation",
+      "datetime": "2026-10-18T16:42:06Z",
+      "session": "codex-workbench-loops-20261018",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M581X9Z8CKSZ9P0XEZH2FSAQ",
+      "shortname": "specify-workbench-loops-ux",
+      "datetime": "2026-10-18T17:45:48Z",
+      "session": "codex-workbench-loops-20261018",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome\n\n\nUser steering:\nnote i dont want the app to be able to transparently negotiate subscription auth... we should be able to navigate subscription auth just like we have been doing in other experiences ... we had done this for example in the x-harness-x-bench repo when we were doing full headless benchmark execution across harnesses\n\nUser steering:\nyour tip reminds me: we need to ensure things like autocomplete and intellisense are incorporated into the prompt editor experience... the experience MUST be superior to what one can do in CLI\n\nUser steering:\nalso note : implicit in the bi-model point is the two alternatives in the proposal should be legit paths: start with work AND start with system... we should meet the user where they are",
+      "summary": "Defined an exploratory three-layer UX contract before visual construction: two legitimate entry paths, three loops, editor/run identity, docking, explicit native sign-in, IntelliSense and hard-state criteria. No accepted production specification implied.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/workbench-loops-ux.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Elevate the local dockable workbench proposal and complete HTML interaction model.",
+      "done_when": "Reviewable proposal and full loop mockups are source-grounded, independently reviewed, verified and linked.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T16:45:31Z",
+      "duration_seconds": 3617.0
+    },
+    {
+      "id": "al-01M581XA3J6K6WGF84D8JFN10N",
+      "shortname": "ui-design-factory-workbench-v2",
+      "datetime": "2026-10-18T17:45:48Z",
+      "session": "codex-workbench-loops-20261018",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome\n\n\nUser steering:\nnote i dont want the app to be able to transparently negotiate subscription auth... we should be able to navigate subscription auth just like we have been doing in other experiences ... we had done this for example in the x-harness-x-bench repo when we were doing full headless benchmark execution across harnesses\n\nUser steering:\nyour tip reminds me: we need to ensure things like autocomplete and intellisense are incorporated into the prompt editor experience... the experience MUST be superior to what one can do in CLI\n\nUser steering:\nalso note : implicit in the bi-model point is the two alternatives in the proposal should be legit paths: start with work AND start with system... we should meet the user where they are",
+      "summary": "Elevated the baseline to left feature navigation, continuous intelligent notebook and peer execution/evaluation with dockable visualizer/checklist. Incorporated explicit cached native sign-in and both work/system entry paths. 36 browser checks pass; 18 theme/viewport/loop combinations, 10 hard states, 388 rendered text observations and 24 contrast-pair observations pass. Independent UX, source and provider reviews cleared their scoped blocks. Three Minor craft observations documented; native runtime proof remains unqualified.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/factory-workbench-v2.html",
+        "docs/reviews/ui-factory-workbench-v2.md",
+        "docs/proof/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Deliver an immersive editor and execution workbench exploration that exceeds CLI interaction capability.",
+      "done_when": "HTML flows, hard states, independent review and proof are available for human review.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T16:39:28Z",
+      "duration_seconds": 3980.0
+    },
+    {
+      "id": "al-01M581XA7C6Z11H96W8Y1BS5ZD",
+      "shortname": "create-proposal-workbench-loops",
+      "datetime": "2026-10-18T17:45:49Z",
+      "session": "codex-workbench-loops-20261018",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome\n\n\nUser steering:\nnote i dont want the app to be able to transparently negotiate subscription auth... we should be able to navigate subscription auth just like we have been doing in other experiences ... we had done this for example in the x-harness-x-bench repo when we were doing full headless benchmark execution across harnesses\n\nUser steering:\nyour tip reminds me: we need to ensure things like autocomplete and intellisense are incorporated into the prompt editor experience... the experience MUST be superior to what one can do in CLI\n\nUser steering:\nalso note : implicit in the bi-model point is the two alternatives in the proposal should be legit paths: start with work AND start with system... we should meet the user where they are",
+      "summary": "Produced canonical and self-contained interactive proposal comparing two genuine entry paths, detailed editor/run and native-profile design, current coordination integration and six staged migration slices. Grounded in official product docs, AI-Forward revision112 and benchmark 8f514607. Explicitly exploratory; no production implementation or provider login performed.",
+      "kind": "skill",
+      "skill": "create-proposal",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/local-software-factory-v2.html",
+        "docs/proposals/local-software-factory-v2-interactive.html",
+        "docs/knowledge/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Evolve AI-DE as a local desktop software factory and system-understanding workbench.",
+      "done_when": "Both entry paths and all three loops have reviewable HTML and an honest migration proposal.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T16:39:28Z",
+      "duration_seconds": 3981.0
+    },
+    {
+      "id": "al-01M581XAB7HE8C5N2831THZPJS",
+      "shortname": "optimize-graph-workbench-loops",
+      "datetime": "2026-10-18T17:45:49Z",
+      "session": "codex-workbench-loops-20261018",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome\n\n\nUser steering:\nnote i dont want the app to be able to transparently negotiate subscription auth... we should be able to navigate subscription auth just like we have been doing in other experiences ... we had done this for example in the x-harness-x-bench repo when we were doing full headless benchmark execution across harnesses\n\nUser steering:\nyour tip reminds me: we need to ensure things like autocomplete and intellisense are incorporated into the prompt editor experience... the experience MUST be superior to what one can do in CLI\n\nUser steering:\nalso note : implicit in the bi-model point is the two alternatives in the proposal should be legit paths: start with work AND start with system... we should meet the user where they are",
+      "summary": "Three read-only research branches joined one writer; targeted independent review corrected continuity, accessibility and capability truth. Extended targeted disconfirmation when the initial correction cap fired. Consolidated overlapping native proof to preserve the existing 100-surface graph bound. No new worktrees or production changes.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/workbench-loops-20261018.md",
+        "docs/proof/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Complete the full requested design and research without shared-write contention or dropped proof floors.",
+      "done_when": "All branches join; artifacts and review evidence are published locally with graph/audit consistency.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T16:39:28Z",
+      "duration_seconds": 3981.0
     }
   ],
   "changes": [
@@ -25261,6 +25377,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "9f13ca7a13c16eb1a7b4e3bd4027c20c640b6545",
         "after": "9f13ca7a13c16eb1a7b4e3bd4027c20c640b6545",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M581XAGWJJ702CGMH2JN7Y94",
+      "datetime": "2026-10-18T17:45:49Z",
+      "session": "codex-workbench-loops-20261018",
+      "kind": "design",
+      "skill": "create-proposal",
+      "title": "Two entry paths and a first-class notebook/run workbench",
+      "prompt": "Evaluate the Mockup and Proposal\n$ui-design elevate the mockup:\n   - I like the Factory, Review, Understand but I think the things like work items, prompt editor etc should not be tabs on the right pane they should be sub items of the appropriate section on the left tab\n   - The model we had was a dockable UX... make sure the mockup, proposal and overall UX metaphor contemplates how to be optimal in such a shell\n   - Really dig into the prompt editor plus the comensurate execution shell (where we can see reasoning and output from the LLM) and have a 1st class experience for the prompt editor and execution shell... that is still going to be the most productive and important part of the experience ... analyze how that experience exists in things like the desktop versions of Claude, Chat GPT, Copilot, Grok as well as pure dev experiences like Cursor. We want the experience to be highly tailored for a productive dev experience\n   - I want the prompt editor to be an immersive text editing experience closer to a code editor and notebook experience with inline tool tips and capabilities than text boxes... so really focus on how to build that experience..the current mockup is still too centered around \"blocks\" and \"boxes\" than an immersive rich text editor.\n\n$create-proposal evolve the proposal further ... start from the iteration on the ui-design outlined above, think through what else would be needed to really evolve this experience... it really should be multi-modal:\n- Mode 1: the development loop: builds on the AI-Forward and AI-Software-Factory approaches but really ground out that rich text and evaluation shell experience\n- Mode 2: the review loop\n- Mode 3: the understand loop ... the understand loop should work for both understanding the repo itself (ask the repo), or for understanding a PR. This should also be multi-modal: The prompt (rich text experience) experience for asking questions, the visualizer for viewing diagrams, metadata or code, the checklist - to enumerate tasks, risks etc that are enumerated from the questions asked in the prompt or already captured for the repo or the PR\n\nThe entire tooling experience should be backed by an LLM: originally i was thinking of setting an API key but lets move away from that and let the tooling experience just leverage an existing subscription using ACP or similar headless execution in the background ... a user should be able to choose from the following subscriptions: Anthropic/Claude, OpenAI/Codex, Microsoft/Github Copilot, Meta/Muse, Grok, Google/Antigravity\n\nI also want to move away from the terminal and cli experience - so retire the work we did on CLI experiences as the primary prompting model BUT allow the user to spawn a CLI instance in the repo path (this can then be hosted in the tool)\n\nFinally - ground yourself in the evolution of the coordination work we have done in AI-Forward. it has progressed far beyond where we were with AI-DE.. both in terms of multi-harness/multi-agent coordination and Single Harness/Mult-sub-agent coordination... integrate the evolution into the coordination work in the AI-DE tooling\n\nUpdate these, provide full end-to-end mockups in html and the proposal in html then provide me the links to be able to review in chrome\n\n\nUser steering:\nnote i dont want the app to be able to transparently negotiate subscription auth... we should be able to navigate subscription auth just like we have been doing in other experiences ... we had done this for example in the x-harness-x-bench repo when we were doing full headless benchmark execution across harnesses\n\nUser steering:\nyour tip reminds me: we need to ensure things like autocomplete and intellisense are incorporated into the prompt editor experience... the experience MUST be superior to what one can do in CLI\n\nUser steering:\nalso note : implicit in the bi-model point is the two alternatives in the proposal should be legit paths: start with work AND start with system... we should meet the user where they are",
+      "summary": "User-selected direction: local dockable shell, left feature navigation, intelligent editor and peer execution, equal work/system paths, explicit harness-native cached sign-in, optional terminal, and current coordination semantics.",
+      "rationale": "User steering plus inspected desktop comparables, existing CodeMirror/DockHost seams, benchmark native profiles and current AI-Forward protocols. Implementation architecture remains exploratory pending component qualification.",
+      "artifacts": [
+        "docs/notes/workbench-loops-direction.md",
+        "docs/proposals/local-software-factory-v2.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "7e7f73198142cdef0a0816551d412ea67517a93e",
+        "after": "7e7f73198142cdef0a0816551d412ea67517a93e",
         "branch": "main",
         "pushed": true,
         "commits": []

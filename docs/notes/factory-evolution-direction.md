@@ -11,6 +11,8 @@ links:
   - { to: mockup-factory-workbench, rel: relates-to }
 review-by: 2026-11-17
 summary: "Records the user's local-desktop constraint and PR-question/rich-authoring additions, while keeping the recommended work-centered direction exploratory."
+review-suggested:
+  - { by: mockup-factory-workbench, on: 2026-10-18, reason: "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation." }
 ---
 
 # Accepted constraints, exploratory direction

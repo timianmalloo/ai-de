@@ -16,6 +16,10 @@ review-suggested: []
 
 # Direction before screens
 
+**October 18 iteration:** [Notebook workbench v2](factory-workbench-v2.html) evolves this baseline
+with an immersive editor, peer execution, left feature navigation and working docking interactions.
+This page retains the October 17 direction as historical context.
+
 Audience: the technically expert owner coordinating several changes and arriving with uncertainty
 about what is complete, what is true, and where their judgment is needed. Job: accept intent,
 understand a change's evidence, and make the next bounded decision without reading every log.

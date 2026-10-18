@@ -6175,7 +6175,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-11-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-factory-workbench",
+          "on": "2026-10-18",
+          "reason": "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation."
+        }
+      ],
       "summary": "Records the user's local-desktop constraint and PR-question/rich-authoring additions, while keeping the recommended work-centered direction exploratory.",
       "tags": [
         "factory",
@@ -6194,7 +6200,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be875a6f8b3a7b39369b05c76b42195bb69346d60f285fe700d3cd7614c1e000"
+      "sourceSha256": "316dec50713263398f561aa0476a7078ff4a8f8d1c8e156cdf41da24e59c0b75"
     },
     {
       "id": "note-front-door-council-rulings",
@@ -7670,6 +7676,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ffa5f5177804a2f2fa7d086e9880a2357e6afd6d8c1aa256450743990cb508d1"
+    },
+    {
+      "id": "note-workbench-loops-direction",
+      "path": "docs/notes/workbench-loops-direction.md",
+      "title": "Work and system are equal entry paths",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Records the user's explicit direction for the exploration: two legitimate entry paths, native docking, first-class editor/run, core IntelliSense and explicit harness-owned sign-in. Production recommendations remain exploratory.",
+      "tags": [
+        "direction",
+        "editor",
+        "auth",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "proposal-workbench-loops",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "158c8b93d1b4da3363054f1971f758ea3a5ce2ae44c8ce5fe4deb2e6ffa88da4"
     },
     {
       "id": "note-workspace-open-layout-restore",
@@ -9889,7 +9925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e7aa7de4b63e17e1f76fe63815565acd8c5aa31dc4cd7a2e58929200ddbacc5d"
+      "sourceSha256": "5f1491af081bb48cd1151ab3e92cc473d4330b786a609ad2b1f55dfca2fe76a2"
     },
     {
       "id": "design-session-profiler",
@@ -10795,7 +10831,46 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "43f89b06e5d9fe1406ae7eb32f6ff29e4c78432e7617931c0f83144eb3f5ce2d"
+      "sourceSha256": "53c58d751c78effa8d8710b1a269b5752bdc57af0c841701b08b872dca2826e2"
+    },
+    {
+      "id": "mockup-factory-workbench-v2",
+      "path": "docs/mockups/factory-workbench-v2.md",
+      "title": "AI-DE notebook workbench — interactive iteration two",
+      "type": "doc",
+      "status": "exploratory",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Self-contained HTML exploration with two entry paths, three work loops, left feature navigation, an intelligent continuous editor and dockable execution, visualizer and checklist surfaces. All runs and accounts are fixtures.",
+      "tags": [
+        "mockup",
+        "desktop",
+        "notebook",
+        "docking",
+        "intellisense"
+      ],
+      "links": [
+        {
+          "to": "mockup-factory-workbench",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proposal-workbench-loops",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "48ed18172b2131457e06e354f8e45dda8e47a20121f7e1cdc8378a09d5dd0481"
     },
     {
       "id": "mockup-first-use-accounts",
@@ -12246,6 +12321,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "cca029134893249980c7c8fc167bb959b8ec1dd726037889515b7febbdc42ac8"
     },
     {
+      "id": "plan-workbench-loops-20261018",
+      "path": "docs/plans/workbench-loops-20261018.md",
+      "title": "Elevate the dockable editor and execution workbench",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Evolve the local desktop proposal around three work loops, an immersive editor and execution surface, and current subscription and coordination contracts.",
+      "tags": [
+        "plan",
+        "ux",
+        "editor",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-factory-workbench",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9528718ab9c6c24aca467d8c5d19a3144a5e808a1779bc1cc6e2d4f4eba16209"
+    },
+    {
       "id": "plan-worktree-cleanup-20261017",
       "path": "docs/plans/worktree-cleanup-20261017.md",
       "title": "Preserve and retire AI-DE worktrees",
@@ -12463,7 +12568,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-11-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-factory-workbench",
+          "on": "2026-10-18",
+          "reason": "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation."
+        }
+      ],
       "summary": "Exploratory evolution of AI-DE into a local desktop spec-first factory: work-centered delivery, scoped understanding and guided assurance over one versioned evidence model.",
       "tags": [
         "proposal",
@@ -12499,7 +12610,55 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "efd84e4f1d3f7c4a90fd7dbd4c9ec44b53fd1476cd80b17468d171484e3cc25c"
+      "sourceSha256": "ad29d63425ee553cade51d8c4f2c0849cd6d75d39cb30c2e057b2b68e3f4afe1"
+    },
+    {
+      "id": "proposal-workbench-loops",
+      "path": "docs/proposals/local-software-factory-v2.md",
+      "title": "AI-DE — a notebook workbench for work and systems",
+      "type": "doc",
+      "status": "exploratory",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "An exploratory local desktop workbench with equally valid work-first and system-first entry, an immersive intelligent editor, peer execution/evaluation, dockable evidence surfaces and explicitly authenticated native harnesses.",
+      "tags": [
+        "proposal",
+        "desktop",
+        "notebook",
+        "factory",
+        "review",
+        "understanding"
+      ],
+      "links": [
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-factory-workbench-v2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "built-inventory-rev102",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8da8e4c86803a574b721e6a257f23245ea64bca0e984d65292c573c6746ac638"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -12805,6 +12964,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e6fc17eb78821401cdff091a21bb0bdef37626774fcb439d93c8fb0b6b0e5249"
+    },
+    {
+      "id": "review-ui-factory-workbench-v2",
+      "path": "docs/reviews/ui-factory-workbench-v2.md",
+      "title": "Notebook workbench elevation — measurements and independent review",
+      "type": "doc",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Structure-first critique of the October 17 baseline and October 18 elevation, with measured browser checks, independent findings and explicit native proof boundaries.",
+      "tags": [
+        "ui-review",
+        "accessibility",
+        "notebook",
+        "docking"
+      ],
+      "links": [
+        {
+          "to": "mockup-factory-workbench-v2",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-workbench-loops-20261018",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "11ff483d9f8515e3eb166d683a1a0081d8c2cc56093d3c53518b505e836e4abf"
     },
     {
       "id": "review-ui-graph-canvas",
@@ -17630,6 +17823,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "2cc6067cecefd7127a47c46787acf241c29ab38c1975aad0588038f7029f573e"
     },
     {
+      "id": "kb-workbench-loops-20261018",
+      "path": "docs/knowledge/workbench-loops-20261018.md",
+      "title": "Desktop authoring, native subscription harnesses and coordination evidence",
+      "type": "knowledge",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Primary-source research checked on October 18, plus commit-pinned AI-Forward, AI-DE and headless benchmark evidence. Separates documented native routes from qualified runtime behavior.",
+      "tags": [
+        "research",
+        "editor",
+        "desktop",
+        "subscriptions",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "kb-spec-first-software-factory",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "48e66be76d85a858cd2ea35fd60b2a9cb4803c309e0f93e8aba705dc6de74cad"
+    },
+    {
       "id": "kb-wpf-modern-ui-styling",
       "path": "docs/knowledge/wpf-modern-ui-styling/index.md",
       "title": "Modern & Soft WPF UI Styling — domain knowledge",
@@ -19051,7 +19279,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-01-17",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-factory-workbench",
+          "on": "2026-10-18",
+          "reason": "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation."
+        }
+      ],
       "summary": "Measured build/test and forensic reproductions, independent source/UI reviews, and a retained 12-check Chrome regression sequence for the local factory proposal, PR questions and rich prompt authoring.",
       "tags": [
         "proof",
@@ -19087,7 +19321,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9da6512a6971b1f6d15c0f7f3a21773c73ecb3007c43483baee750c35e98c861"
+      "sourceSha256": "ec2cdea1d699a1ec26de2ed821c7e13cd25751eeb22f0d5a7c5611c4990868aa"
     },
     {
       "id": "proof-front-door-provider-config",
@@ -21126,6 +21360,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-workbench-loops-20261018",
+      "path": "docs/proof/workbench-loops-20261018.md",
+      "title": "Notebook workbench proposal — interaction and review proof",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Retains 36 passing browser interaction checks, three rendered-view contrast inspections, embedded-proposal parity and independent UX/provider/source reviews. Native implementation remains explicitly unqualified.",
+      "tags": [
+        "proof",
+        "ui",
+        "notebook",
+        "proposal",
+        "research"
+      ],
+      "links": [
+        {
+          "to": "proposal-workbench-loops",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-factory-workbench-v2",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-ui-factory-workbench-v2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "95b398a7e6b8994abf9d33c4d66b9f5098052dfa65725d481021400ae63b21b3"
+    },
+    {
       "id": "proof-worktree-cleanup-20261017",
       "path": "docs/proof/worktree-cleanup-20261017.md",
       "title": "AI-DE worktree preservation and retirement",
@@ -22167,6 +22440,61 @@ window.DOCS_INDEX = {
       "sourceSha256": "29d73fe7c19ee59e55722eb9d7d2eef209527a98f1fea809cce4ba7392c52be9"
     },
     {
+      "id": "spec-workbench-loops-ux",
+      "path": "docs/specs/workbench-loops-ux.md",
+      "title": "Dockable work loops — exploratory UX contract",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Draft UX contract for the proposal's three work loops, continuous editor, execution and evidence panes, subscription connection states and coordination views. It does not approve production requirements.",
+      "tags": [
+        "ux",
+        "desktop",
+        "notebook",
+        "execution",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-local-software-factory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Development loop",
+          "mermaid": "flowchart TD\n A[Open work item or notebook] --> B[Edit continuous document; attach scoped context]\n B --> C[Preview exact request and capability/billing route]\n C --> D{Inputs current and connection qualified?}\n D -- no --> E[Preserve draft; refresh scope or connect]\n E --> C\n D -- yes --> F[Request a plan or bounded run]\n F --> G{Human permission required?}\n G -- yes --> H[Inspect concrete action; allow once or reject]\n H -- reject --> I[Stopped with reason; draft retained]\n H -- allow --> J[Stream tools and outputs]\n G -- no --> J\n J --> K{Outcome known?}\n K -- disconnect --> L[Outcome unknown; inspect or explicitly reconnect]\n K -- cancelled --> I\n K -- complete --> M[Evaluate criteria and missing evidence]\n M --> N[Accept plan / revise / create next work item]\n N --> B"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Review loop",
+          "mermaid": "flowchart TD\n A[Choose PR and pin base/head] --> B[Read semantic change packet and human decisions]\n B --> C[Ask in review notebook using selected finding/code scope]\n C --> D[Inspect cited answer beside diff/diagram/test evidence]\n D --> E{Current and sufficient evidence?}\n E -- no --> F[Create proposed checklist obligation; request evidence]\n F --> C\n E -- yes --> G[Record disposition with reason]\n G --> H[Review-ready packet; integration is a separate action]\n D --> I[Flag unsupported claim or contradicting evidence]\n I --> F"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Understand loop",
+          "mermaid": "flowchart LR\n A[Repo or PR scope] --> Q[Question notebook]\n Q --> R[Scoped answer with evidence/inference/gaps]\n R --> V[Linked diagram, metadata or code]\n V --> Q\n R --> C[Checklist of questions, tasks and risks]\n C --> Q\n C --> E[Attach requested evidence]\n E --> R"
+        }
+      ],
+      "sourceSha256": "6b723a2587121eeed4ac9769756b639fc53e6f385ed8372a8a9e02abbe412eb4"
+    },
+    {
       "id": "threat-model-ai-native-ide",
       "path": "docs/security/ai-native-ide-threat-model.md",
       "title": "AI-DE threat model",
@@ -22354,6 +22682,21 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-factory-workbench"
     },
     {
+      "id": "surface-proposals-local-software-factory-v2",
+      "path": "docs/proposals/local-software-factory-v2.html",
+      "title": "AI-DE — a notebook workbench for work and systems",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-workbench-loops"
+    },
+    {
+      "id": "surface-mockups-workbench-design-language",
+      "path": "docs/mockups/workbench-design-language.html",
+      "title": "AI-DE — Design Language Preview",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-explore-graph-and-tree",
       "path": "docs/mockups/explore-graph-and-tree.html",
       "title": "AI-DE — Explore: Graph and Tree",
@@ -22383,6 +22726,21 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-solution-tree"
+    },
+    {
+      "id": "surface-mockups-factory-workbench-v2",
+      "path": "docs/mockups/factory-workbench-v2.html",
+      "title": "AI-DE — the notebook workbench",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-factory-workbench-v2"
+    },
+    {
+      "id": "surface-proposals-local-software-factory-v2-interactive",
+      "path": "docs/proposals/local-software-factory-v2-interactive.html",
+      "title": "AI-DE — Work and system, one workbench",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     },
     {
       "id": "surface-specs-ai-native-ide",
@@ -22903,6 +23261,14 @@ window.DOCS_INDEX = {
       "artifactId": "kb-factory-state-of-the-art"
     },
     {
+      "id": "surface-reviews-ui-factory-workbench-v2",
+      "path": "docs/reviews/ui-factory-workbench-v2.html",
+      "title": "Ui Factory Workbench V2",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "review-ui-factory-workbench-v2"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -22917,6 +23283,46 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "proof-updatepack-r102-20261017"
+    },
+    {
+      "id": "surface-knowledge-workbench-loops-20261018",
+      "path": "docs/knowledge/workbench-loops-20261018.html",
+      "title": "Workbench Loops 20261018",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "kb-workbench-loops-20261018"
+    },
+    {
+      "id": "surface-plans-workbench-loops-20261018",
+      "path": "docs/plans/workbench-loops-20261018.html",
+      "title": "Workbench Loops 20261018",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "plan-workbench-loops-20261018"
+    },
+    {
+      "id": "surface-proof-workbench-loops-20261018",
+      "path": "docs/proof/workbench-loops-20261018.html",
+      "title": "Workbench Loops 20261018",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-workbench-loops-20261018"
+    },
+    {
+      "id": "surface-notes-workbench-loops-direction",
+      "path": "docs/notes/workbench-loops-direction.html",
+      "title": "Workbench Loops Direction",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "note-workbench-loops-direction"
+    },
+    {
+      "id": "surface-specs-workbench-loops-ux",
+      "path": "docs/specs/workbench-loops-ux.html",
+      "title": "Workbench Loops Ux",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-workbench-loops-ux"
     },
     {
       "id": "surface-plans-worktree-cleanup-20261017",
@@ -22935,5 +23341,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "bfd07b4892f6063e5e640557d8c47cb5806bf6fffb8dc516e636d0ffcdf1196d"
+  "graphSha256": "3e39e87d0e13fb9935a4ac9ab1e723b81767dc3c833f04f8f8e451d79bb53bff"
 };

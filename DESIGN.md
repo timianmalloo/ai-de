@@ -1338,3 +1338,67 @@ Do not label skip-listed directories hidden or excluded. Do not say indexed fold
 | Default zone is Left beside Graph | Spec left this to design-slice; comparables put the tree left (**Inferred**). UX-1 still holds via View → Show Solution tree. |
 | Reveal in graph sits on the existing node menu for pointer users | N4 UX residual. Keyboard stays Ctrl+Enter. Primary pointer activate is double-click = View source (Enter). |
 | `ui-craft-gate.py` `cramped-padding` Minor on tree rows (left inset) | Compact WPF TreeView keeps a 16px expander slot (spike F9: Hidden, not absent). Inflating left padding to please the web detector would desync the mockup from the native indent. 28px row height is UI-10. |
+
+## October 18 exploration — the notebook and execution workbench
+
+This extension governs the exploratory `factory-workbench.html`, not accepted production behavior.
+Its UX layer is [workbench-loops-ux](docs/specs/workbench-loops-ux.md). It reuses the existing token
+frontmatter and contrast matrix. The shell keeps `PerspectiveShell / MultiPanelWorkstation`; the
+authoring pane adds G3 `ComputationalNotebook`, with local persistence, explicit execution and
+separately dockable output. The editor is continuous prose/code on the pane's surface. The run
+surface is a peer, not a subordinate console. Factory / Review / Understand and their feature
+children live in the left navigation. Open document identities may have document tabs; feature tabs
+across the right pane are prohibited in this iteration.
+
+The expert is immersive, deliberate and inspectable in the work; fragmented, obstructive and
+theatrical are the opposites. Segoe UI carries prose and chrome; Cascadia Mono carries code and
+exact identifiers. Existing neutral surfaces and one accent protect the document's focal point.
+Compact chrome surrounds a 15px prose editor with 1.65 line height; the 22px title and 18px section
+headings establish hierarchy. A margin gutter carries section/run affordances without boxing each
+paragraph. No rounded card grid, gradients, decorative icons or generated assets are introduced.
+
+| Surface | Ready | Empty/loading | Error/partial/stale | Focus/overflow |
+|---|---|---|---|---|
+| Notebook | Continuous prose, code and inline context; rich/source projection | Teaching first paragraph; content-shaped loading placeholder | Draft survives; previous output labeled stale; retry never discards edits | Explicit focus outline; internal scrolling; long paths wrap |
+| Execution | Approach summaries, tool events, output and evaluation | Named queued/starting states | Stop requested differs from interrupted; denied tools and unknown outcome explicit | Follow-latest can pause; pane remains independently scrollable |
+| Visualizer | Diagram with text/table equivalent; source and metadata views | Scope-specific empty explanation | Missing/omitted edges named; stale baseline visible | Keyboard node selection and zoom; selected object can become a question |
+| Checklist | Proposed obligation, evidence state and acknowledgment separately | Create from a question or review packet | Acknowledgment never marks a test passed | Long obligation labels wrap; counts show a denominator |
+| Connections | Product, transport, account, entitlement and capability separately | Discover/sign-in/qualify sequence | Approval-required, unknown billing, quota and unsupported actions explained | Six provider families remain inspectable; no API-key setup form |
+| Coordination | Relationship + harness + contract + progress + presence | No registered work, or loading observation | Stalled despite fresh heartbeat; stale ACK; unknown leader; interrupted attempt | Table alternative; human consent distinct from Owner-model ruling |
+
+Copy added by this section (review oracles quote these strings):
+
+| ID | Canonical copy |
+|---|---|
+| NB1 | Draft saved on this device. |
+| NB2 | This output belongs to an earlier draft. Run again to refresh it. |
+| RUN1 | No reasoning summary supplied. |
+| RUN2 | Stop requested. Waiting for the harness to acknowledge. |
+| RUN3 | Response complete. Evidence still needs review. |
+| RUN4 | Connection lost. The run outcome is unknown. |
+| CHECK1 | Acknowledged by you. Execution evidence is still missing. |
+| DOCK1 | Pane hidden. The run continues. |
+| AUTH1 | Signed in does not mean this route is qualified. |
+| DEMO1 | Interactive prototype. Runs, accounts and evidence are simulated. |
+
+Motion inventory: focus/selection changes are immediate; optional status transitions use
+`{motion.fast}` and `{motion.ease}`; no animated layout, pulsing status or artificial typing.
+Reduced motion disables the optional transition with identical state announcements. Model activity
+is represented by reported events and readable summaries only; hidden reasoning is never invented.
+Wrong answers expose correction and checklist actions. HAX control, correction and expectation
+guidance and Shape-of-AI Governors/Trust builders apply. Missing usage remains `Not recorded`.
+
+Pointer docking has move-menu and keyboard resize equivalents. Float in HTML is explicitly an
+in-window approximation; native windows, UIA, IME, mixed-DPI restoration and WebView focus handoff
+remain native proof obligations. A dock header identifies content, scope linkage and close/restore;
+hiding a pane does not terminate its work. Preset changes preserve the draft, immutable run snapshot
+and selected evidence. Budgets (proposed, not measured runtime claims): local edit input p95 under
+50ms for a 100k-character document, pane selection under 100ms, event batches bounded and virtualized;
+large-document IME/undo/selection and slow-stream tests gate production adoption.
+
+Editor intelligence is a core acceptance floor: `@` / slash / Ctrl+Space completion, keyboard
+selection and dismissal, source-aware help, signature information, diagnostics and previewed
+multi-edit with undo. The suggestion list is a transient editor accessory, not a permanent side
+panel. Deterministic repository/skill completions are distinct from optional model-generated
+suggestions. Native sign-in is explicit and harness-owned; the app never silently changes the
+authentication or billing route. These additions are traced in UX13–UX16 of the prototype contract.

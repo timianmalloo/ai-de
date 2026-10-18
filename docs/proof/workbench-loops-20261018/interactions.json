@@ -1,0 +1,156 @@
+{
+  "artifact": "docs\\mockups\\factory-workbench-v2.html",
+  "artifact_sha256": "a01d0bcf658b5b75b9c1f35d6846ef6fc47b90b30a7e7549775048db9683c04f",
+  "checked_at": "2026-10-18T17:44:55.731970+00:00",
+  "journey_completed": true,
+  "checks": [
+    {
+      "check": "Nonzero rendered frame and no initial layout failures",
+      "passed": true
+    },
+    {
+      "check": "Feature destinations live in left navigation",
+      "passed": true
+    },
+    {
+      "check": "System-first entry creates investigation without a work item",
+      "passed": true
+    },
+    {
+      "check": "Rich completion exposes indexed suggestions",
+      "passed": true
+    },
+    {
+      "check": "Rich completion inserts the selected reference",
+      "passed": true
+    },
+    {
+      "check": "Completion dismissal resets accessibility state",
+      "passed": true
+    },
+    {
+      "check": "Empty completion has no invented active option",
+      "passed": true
+    },
+    {
+      "check": "Source completion preserves projection and inserts symbol",
+      "passed": true
+    },
+    {
+      "check": "Unknown reference never substitutes another symbol",
+      "passed": true
+    },
+    {
+      "check": "Rich/source preserves code language and blank lines",
+      "passed": true
+    },
+    {
+      "check": "Multi-edit previews the real match count",
+      "passed": true
+    },
+    {
+      "check": "Multi-edit applies one explicit transaction",
+      "passed": true
+    },
+    {
+      "check": "Multi-edit undo restores exact content",
+      "passed": true
+    },
+    {
+      "check": "Branch retains an immutable prior prompt",
+      "passed": true
+    },
+    {
+      "check": "Active run survives loop navigation",
+      "passed": true
+    },
+    {
+      "check": "Completed response retains original route and scope",
+      "passed": true
+    },
+    {
+      "check": "Selected provider does not relabel previous run",
+      "passed": true
+    },
+    {
+      "check": "Authentication requires explicit native sign-in",
+      "passed": true
+    },
+    {
+      "check": "Profile qualification is separate from sign-in",
+      "passed": true
+    },
+    {
+      "check": "Execution docks below with stable run identity",
+      "passed": true
+    },
+    {
+      "check": "Dock move restores visible pane focus",
+      "passed": true
+    },
+    {
+      "check": "Floating approximation retains execution content",
+      "passed": true
+    },
+    {
+      "check": "Keyboard resizing changes the split",
+      "passed": true
+    },
+    {
+      "check": "Focus mode restores the peer run pane",
+      "passed": true
+    },
+    {
+      "check": "Focus mode restores a visible editing target",
+      "passed": true
+    },
+    {
+      "check": "Diagram question retains selected-object context",
+      "passed": true
+    },
+    {
+      "check": "Checklist acknowledgment does not become executed proof",
+      "passed": true
+    },
+    {
+      "check": "Checklist keyboard focus survives update",
+      "passed": true
+    },
+    {
+      "check": "Investigation becomes work only after explicit promotion",
+      "passed": true
+    },
+    {
+      "check": "PR review opens evidence before asking for disposition",
+      "passed": true
+    },
+    {
+      "check": "Reasoned review disposition is explicit and local",
+      "passed": true
+    },
+    {
+      "check": "Antigravity and Muse use native-policy/read-only recovery without invented approval controls",
+      "passed": true
+    },
+    {
+      "check": "18 theme/viewport/loop combinations render without measured failures",
+      "passed": true
+    },
+    {
+      "check": "10 hard states retain visible usable frame and required run blocks",
+      "passed": true
+    },
+    {
+      "check": "Persona, container viewport, density, capability and reduced-motion controls apply real state",
+      "passed": true
+    },
+    {
+      "check": "No browser errors or network/provider requests",
+      "passed": true
+    }
+  ],
+  "passed": 36,
+  "failed": 0,
+  "browser_errors": [],
+  "network_requests": []
+}

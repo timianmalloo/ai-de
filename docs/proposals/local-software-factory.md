@@ -15,10 +15,15 @@ links:
   - { to: spec-ai-native-ide, rel: refines }
 review-by: 2026-11-17
 summary: "Exploratory evolution of AI-DE into a local desktop spec-first factory: work-centered delivery, scoped understanding and guided assurance over one versioned evidence model."
-review-suggested: []
+review-suggested:
+  - { by: mockup-factory-workbench, on: 2026-10-18, reason: "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation." }
 ---
 
 # AI-DE: understand the work, review the decisions
+
+**New iteration, October 18:** [A notebook workbench for work and systems](local-software-factory-v2.html)
+and its [interactive proposal](local-software-factory-v2-interactive.html) evolve the authoring,
+execution, docking, subscription and coordination model. This document retains the earlier exploration.
 
 **Exploratory proposal, not an accepted specification.** The user's platform decision is settled:
 AI-DE remains a **local desktop workbench**. The HTML is an interactive review artifact; it is not

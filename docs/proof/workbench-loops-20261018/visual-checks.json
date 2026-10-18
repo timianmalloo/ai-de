@@ -1,0 +1,420 @@
+{
+  "views": [
+    {
+      "entry": "work",
+      "theme": "dark",
+      "audit": {
+        "frame": {
+          "width": 1440,
+          "height": 962
+        },
+        "controls": 43,
+        "minContrast": 6.25733837550922,
+        "findings": []
+      },
+      "contrast": {
+        "textCount": 112,
+        "pairs": [
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 14.984519241327133,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              152,
+              163,
+              178
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 7.158126089959794,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              26,
+              31,
+              38
+            ],
+            "ratio": 13.566283481723703,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              152,
+              163,
+              178
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 7.4608165276198095,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              91,
+              157,
+              217
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 6.600712437137574,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 15.61815863664934,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              13,
+              16,
+              20
+            ],
+            "background": [
+              91,
+              157,
+              217
+            ],
+            "ratio": 6.600712437137574,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              91,
+              157,
+              217
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 6.3329170116545015,
+            "required": 4.5
+          }
+        ],
+        "failures": []
+      },
+      "screenshot": "work-dark.png"
+    },
+    {
+      "entry": "system",
+      "theme": "light",
+      "audit": {
+        "frame": {
+          "width": 1440,
+          "height": 962
+        },
+        "controls": 50,
+        "minContrast": 5.742239036483249,
+        "findings": []
+      },
+      "contrast": {
+        "textCount": 123,
+        "pairs": [
+          {
+            "foreground": [
+              26,
+              31,
+              38
+            ],
+            "background": [
+              244,
+              246,
+              248
+            ],
+            "ratio": 15.288516371131225,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              85,
+              96,
+              110
+            ],
+            "background": [
+              244,
+              246,
+              248
+            ],
+            "ratio": 5.9016603995947685,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              26,
+              31,
+              38
+            ],
+            "background": [
+              255,
+              255,
+              255
+            ],
+            "ratio": 16.562753363157324,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              85,
+              96,
+              110
+            ],
+            "background": [
+              231,
+              235,
+              239
+            ],
+            "ratio": 5.336327672667242,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              26,
+              31,
+              38
+            ],
+            "background": [
+              231,
+              235,
+              239
+            ],
+            "ratio": 13.82399654695408,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              39,
+              100,
+              154
+            ],
+            "background": [
+              231,
+              235,
+              239
+            ],
+            "ratio": 5.192177624378332,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              255,
+              255,
+              255
+            ],
+            "background": [
+              39,
+              100,
+              154
+            ],
+            "ratio": 6.22083180635853,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              39,
+              100,
+              154
+            ],
+            "background": [
+              244,
+              246,
+              248
+            ],
+            "ratio": 5.742239036483249,
+            "required": 4.5
+          }
+        ],
+        "failures": []
+      },
+      "screenshot": "system-light.png"
+    },
+    {
+      "entry": "review",
+      "theme": "dark",
+      "audit": {
+        "frame": {
+          "width": 1440,
+          "height": 962
+        },
+        "controls": 62,
+        "minContrast": 6.25733837550922,
+        "findings": []
+      },
+      "contrast": {
+        "textCount": 153,
+        "pairs": [
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 14.984519241327133,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              152,
+              163,
+              178
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 7.158126089959794,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              26,
+              31,
+              38
+            ],
+            "ratio": 13.566283481723703,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              152,
+              163,
+              178
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 7.4608165276198095,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              228,
+              233,
+              239
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 15.61815863664934,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              91,
+              157,
+              217
+            ],
+            "background": [
+              13,
+              16,
+              20
+            ],
+            "ratio": 6.600712437137574,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              13,
+              16,
+              20
+            ],
+            "background": [
+              91,
+              157,
+              217
+            ],
+            "ratio": 6.600712437137574,
+            "required": 4.5
+          },
+          {
+            "foreground": [
+              91,
+              157,
+              217
+            ],
+            "background": [
+              18,
+              21,
+              26
+            ],
+            "ratio": 6.3329170116545015,
+            "required": 4.5
+          }
+        ],
+        "failures": []
+      },
+      "screenshot": "review-dark.png"
+    }
+  ],
+  "proposal_entries": [
+    {
+      "entry": "work",
+      "mode": "factory",
+      "scope": "work"
+    },
+    {
+      "entry": "system",
+      "mode": "understand",
+      "scope": "repo"
+    },
+    {
+      "entry": "review",
+      "mode": "review",
+      "scope": "pr"
+    }
+  ],
+  "embedded_mockup_matches": true,
+  "browser_errors": [],
+  "loopback_private_paths_refused": true
+}

@@ -15,6 +15,8 @@ links:
   - { to: mockup-factory-workbench, rel: documents }
 review-by: 2027-01-17
 summary: "Measured build/test and forensic reproductions, independent source/UI reviews, and a retained 12-check Chrome regression sequence for the local factory proposal, PR questions and rich prompt authoring."
+review-suggested:
+  - { by: mockup-factory-workbench, on: 2026-10-18, reason: "October 18 exploration replaces right-pane feature tabs and subordinate execution with the linked notebook workbench v2; reconcile contracts before implementation." }
 ---
 
 # Evidence for this episode
