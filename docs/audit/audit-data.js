@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T17:48:37Z",
+  "generated": "2026-10-18T20:51:17Z",
   "audit": [
     {
       "actor": null,
@@ -21413,6 +21413,206 @@ window.AUDIT_DATA = {
       "fan_out": 3,
       "started_at": "2026-10-18T16:39:28Z",
       "duration_seconds": 3981.0
+    },
+    {
+      "id": "al-01M58AV2V2JGV18E8ZBVSKMPP5",
+      "shortname": "$specify use the proposal to create the functional specfication for the …",
+      "datetime": "2026-10-18T20:21:53Z",
+      "session": "prompt-compile",
+      "prompt": "$specify use the proposal to create the functional specfication for the evolution of AI-DE, both entry paths should remain as distinct \"journeys\" that a user would do",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M58AWB64QBBWSWE0HRWYESA5",
+      "shortname": "compile-$specify use the proposal to create the functional specfication for the …",
+      "datetime": "2026-10-18T20:22:34Z",
+      "session": "codex-specify-evolution-20261018",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session codex-specify-evolution-20261018 --skill <skill>\nGoal state\nGoal: Use the proposal to specify the evolution of AI-DE with distinct work-first and system-first journeys.\nDone when: A functional specification for the evolution of AI-DE is derived from the proposal.; Both entry paths remain distinct user journeys.\nNot in scope: Production implementation rather than specification.\nTier: T2\nFan-out cap: 3\nContext ceiling: Current proposal, linked specifications, relevant standards and three bounded read-only reviews.\nMain-line budget: One specification, targeted review corrections, verification and committed handoff.\nTrace\n| clause | trace |\n|---|---|\n| done_when: A functional specification for the evolution of AI-DE is derived from the proposal. | phrase: use the proposal to create the functional specfication for the evolution of AI-DE |\n| done_when: Both entry paths remain distinct user journeys. | phrase: both entry paths should remain as distinct \"journeys\" that a user would do |\n| not_in_scope: Production implementation rather than specification. | phrase: create the functional specfication |\nReferences\n- none\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 3\ntransient_retry: At most one retry of an unavailable read; report absence rather than invent evidence.\nper_branch_exit: Return a bounded read-only review with falsifiable findings or a scoped pass.\njoin_rule: Root reconciles all three reports before the spec gate; no silent partial pass.\ncontainment: Reviewers do not edit files or invoke providers. Root is sole writer.\ntermination: All enumerated critical criteria reviewed and blocking findings resolved or explicitly recorded.\ndeadline: One initial review and targeted correction review; re-plan if unresolved.\nfallback: Retain evidence and report the unresolved requirement; never fabricate an approval.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M58AV2V2JGV18E8ZBVSKMPP5\nraw sha256: 92a70f57d12b4dd3f35fe8efbef1106504912386a154cf3d388fb9ead44584a1\ncompiler model: not recorded\nengine seconds: 0.005\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M58AV2V2JGV18E8ZBVSKMPP5 for codex v1: 3 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "A functional specification for the evolution of AI-DE is derived from the proposal.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "use the proposal to create the functional specfication for the evolution of AI-DE"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "Both entry paths remain distinct user journeys.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "both entry paths should remain as distinct \"journeys\" that a user would do"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "Production implementation rather than specification.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "create the functional specfication"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 3,
+          "transient_retry": "At most one retry of an unavailable read; report absence rather than invent evidence.",
+          "per_branch_exit": "Return a bounded read-only review with falsifiable findings or a scoped pass.",
+          "join_rule": "Root reconciles all three reports before the spec gate; no silent partial pass.",
+          "containment": "Reviewers do not edit files or invoke providers. Root is sole writer.",
+          "termination": "All enumerated critical criteria reviewed and blocking findings resolved or explicitly recorded.",
+          "deadline": "One initial review and targeted correction review; re-plan if unresolved.",
+          "fallback": "Retain evidence and report the unresolved requirement; never fabricate an approval."
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Use the proposal to specify the evolution of AI-DE with distinct work-first and system-first journeys.",
+          "done_when": [
+            "A functional specification for the evolution of AI-DE is derived from the proposal.",
+            "Both entry paths remain distinct user journeys."
+          ],
+          "not_in_scope": [
+            "Production implementation rather than specification."
+          ],
+          "tier": "T2",
+          "fan_out_cap": 3,
+          "context_ceiling": "Current proposal, linked specifications, relevant standards and three bounded read-only reviews.",
+          "main_line_budget": "One specification, targeted review corrections, verification and committed handoff."
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "not recorded",
+          "engine_seconds": 0.005,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M58AV2V2JGV18E8ZBVSKMPP5",
+        "raw_sha256": "92a70f57d12b4dd3f35fe8efbef1106504912386a154cf3d388fb9ead44584a1",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M58CGVHSXSDW79EB399778RM",
+      "shortname": "compile-evolution-distinct-journeys",
+      "datetime": "2026-10-18T20:51:15Z",
+      "session": "codex-specify-evolution-20261018",
+      "prompt": "$specify use the proposal to create the functional specfication for the evolution of AI-DE, both entry paths should remain as distinct \"journeys\" that a user would do\n",
+      "summary": "Compiled the exact request with traced clauses, no assumptions or decision requests, and a dispatchable bounded read-only review contract. Raw al-01M58AV2V2JGV18E8ZBVSKMPP5; compiled al-01M58AWB64QBBWSWE0HRWYESA5.",
+      "kind": "skill",
+      "skill": "compile",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T20:21:52Z",
+      "duration_seconds": 1763.0,
+      "git": {
+        "sha": "ca04e18b472abc4a4142896c8418191bbb704819",
+        "short": "ca04e18b4",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M58CGVQ3AZGJ8C6W9X805JHD",
+      "shortname": "specify-evolution-distinct-journeys",
+      "datetime": "2026-10-18T20:51:15Z",
+      "session": "codex-specify-evolution-20261018",
+      "prompt": "$specify use the proposal to create the functional specfication for the evolution of AI-DE, both entry paths should remain as distinct \"journeys\" that a user would do\n",
+      "summary": "Promoted the proposal UX contract to one functional/UX/UI specification with distinct work and system journeys, 30 stories, 90 Gherkin criteria, conceptual domain invariants, reconciliation, governance and traceability. Independent functional/domain, UX/accessibility and security/AI reviews passed after acceptance-state and diagram-readability corrections. Structural/browser checks and negative/positive generated-view freshness checks passed; native acceptance tests remain future obligations.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/workbench-loops-ux.md",
+        "docs/specs/workbench-loops-ux.html",
+        "docs/proof/workbench-loops-20261018.md",
+        "docs/proof/workbench-loops-20261018/specification-checks.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M58AWB64QBBWSWE0HRWYESA5",
+      "edit_distance": 0.0118,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T20:21:52Z",
+      "duration_seconds": 1763.0,
+      "git": {
+        "sha": "ca04e18b472abc4a4142896c8418191bbb704819",
+        "short": "ca04e18b4",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M58CGVWENNSG4RHKJEPQDHS0",
+      "shortname": "optimize-graph-evolution-distinct-journeys",
+      "datetime": "2026-10-18T20:51:15Z",
+      "session": "codex-specify-evolution-20261018",
+      "prompt": "$specify use the proposal to create the functional specfication for the evolution of AI-DE, both entry paths should remain as distinct \"journeys\" that a user would do\n",
+      "summary": "Executed the bounded graph with three read-only reviewers and root as sole writer. Reused existing graph/HTML identities within the 100-surface bound; resolved one semantic and one diagram-reading finding with targeted re-review. Preserved all rigor floors, native-proof distinction and explicit downstream architecture handoff. Tokens/spend not recorded.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/workbench-loops-20261018.md",
+        "docs/proof/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M58AWB64QBBWSWE0HRWYESA5",
+      "edit_distance": 0.0118,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-18T20:21:52Z",
+      "duration_seconds": 1763.0,
+      "git": {
+        "sha": "ca04e18b472abc4a4142896c8418191bbb704819",
+        "short": "ca04e18b4",
+        "branch": "main",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -25402,6 +25602,30 @@ window.AUDIT_DATA = {
         "after": "7e7f73198142cdef0a0816551d412ea67517a93e",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M58CGW3N6KW695K3BTWE01EJ",
+      "datetime": "2026-10-18T20:51:15Z",
+      "session": "codex-specify-evolution-20261018",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Distinct work and system journeys become the functional evolution contract",
+      "prompt": "$specify use the proposal to create the functional specfication for the evolution of AI-DE, both entry paths should remain as distinct \"journeys\" that a user would do\n",
+      "summary": "J-W pursues a reviewable work outcome; J-S pursues understanding and may close without a Work Item. Explicit bridges retain origin without promoting evidence or authority. Shared notebook/execution surfaces preserve these separate purposes.",
+      "rationale": "The user explicitly required both proposal entry paths to remain distinct journeys. Independent reviews resolved semantic acceptance and diagram-readability findings; native implementation remains downstream.",
+      "artifacts": [
+        "docs/specs/workbench-loops-ux.md",
+        "docs/notes/workbench-loops-direction.md",
+        "docs/proof/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ca04e18b472abc4a4142896c8418191bbb704819",
+        "after": "ca04e18b472abc4a4142896c8418191bbb704819",
+        "branch": "main",
+        "pushed": false,
         "commits": []
       }
     }

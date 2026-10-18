@@ -12,6 +12,8 @@ links:
   - { to: proof-workbench-loops-20261018, rel: relates-to }
 review-by: 2026-11-18
 summary: Structure-first critique of the October 17 baseline and October 18 elevation, with measured browser checks, independent findings and explicit native proof boundaries.
+review-suggested:
+  - { by: spec-workbench-loops-ux, on: 2026-10-18, reason: "Promoted prototype UX contract to the full functional evolution specification: distinct work/system journey purposes, closure, authority, bridges and testable requirements. Reconcile implementation and prototype assumptions before adoption." }
 ---
 
 # Outcome

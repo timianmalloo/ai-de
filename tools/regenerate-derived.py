@@ -71,6 +71,7 @@ STEPS = [
     # operator to go find the fix command themselves.
     ("audit log render", [sys.executable, "docs/ai-forward-pack/scripts/audit-log.py",
                            "--root", "docs", "--project", "ai-de", "render"]),
+    ("evolution specification", [sys.executable, "tools/build-evolution-spec-view.py"]),
     ("docs graph index", [sys.executable, "docs/ai-forward-pack/scripts/docs-graph.py", "derive"]),
 ]
 

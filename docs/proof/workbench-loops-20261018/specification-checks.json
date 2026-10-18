@@ -1,0 +1,24 @@
+{
+  "source": "docs\\specs\\workbench-loops-ux.md",
+  "source_sha256": "eb0e8daa2ecd9c06189ee530ec2ce33be0e10eab43eeae88703bdcc697c20a94",
+  "stories": 30,
+  "gherkin_criteria": 90,
+  "traceability_complete": true,
+  "journey_diagrams": 2,
+  "freshness_negative_rejected": true,
+  "freshness_positive_passed": true,
+  "existing_self_test_target_preserved": true,
+  "views": [
+    {
+      "width": 1440,
+      "diagram_count": 2,
+      "toc_links": 55,
+      "overflow": false
+    },
+    {
+      "width": 960,
+      "overflow": false
+    }
+  ],
+  "browser_errors": []
+}

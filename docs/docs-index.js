@@ -7705,7 +7705,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "158c8b93d1b4da3363054f1971f758ea3a5ce2ae44c8ce5fe4deb2e6ffa88da4"
+      "sourceSha256": "b05676a6b4378260a6e006983d6f702e208dcbe51b80bab93d1f7c9a525df338"
     },
     {
       "id": "note-workspace-open-layout-restore",
@@ -9925,7 +9925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5f1491af081bb48cd1151ab3e92cc473d4330b786a609ad2b1f55dfca2fe76a2"
+      "sourceSha256": "36387bd3fcb9f34dae75c17f40cf211192c76d4397d16ab2af5fa801df637cb9"
     },
     {
       "id": "design-session-profiler",
@@ -10842,7 +10842,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-11-18",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-workbench-loops-ux",
+          "on": "2026-10-18",
+          "reason": "Promoted prototype UX contract to the full functional evolution specification: distinct work/system journey purposes, closure, authority, bridges and testable requirements. Reconcile implementation and prototype assumptions before adoption."
+        }
+      ],
       "summary": "Self-contained HTML exploration with two entry paths, three work loops, left feature navigation, an intelligent continuous editor and dockable execution, visualizer and checklist surfaces. All runs and accounts are fixtures.",
       "tags": [
         "mockup",
@@ -10870,7 +10876,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48ed18172b2131457e06e354f8e45dda8e47a20121f7e1cdc8378a09d5dd0481"
+      "sourceSha256": "70dffe4ea6058c9e20b2fb7ff841c107400d2c910321a1b0d0e5556d67413e7d"
     },
     {
       "id": "mockup-first-use-accounts",
@@ -12348,7 +12354,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9528718ab9c6c24aca467d8c5d19a3144a5e808a1779bc1cc6e2d4f4eba16209"
+      "sourceSha256": "0d56e421ca00a036364ce6aef0342a41129bcb982b8824fe281f04a37eade5c8"
     },
     {
       "id": "plan-worktree-cleanup-20261017",
@@ -12658,7 +12664,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8da8e4c86803a574b721e6a257f23245ea64bca0e984d65292c573c6746ac638"
+      "sourceSha256": "7ddcbd11a70621b6b5c7a30f078197a42f995a3b972ef06a0d99ef9affa1f003"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -12974,7 +12980,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-11-18",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-workbench-loops-ux",
+          "on": "2026-10-18",
+          "reason": "Promoted prototype UX contract to the full functional evolution specification: distinct work/system journey purposes, closure, authority, bridges and testable requirements. Reconcile implementation and prototype assumptions before adoption."
+        }
+      ],
       "summary": "Structure-first critique of the October 17 baseline and October 18 elevation, with measured browser checks, independent findings and explicit native proof boundaries.",
       "tags": [
         "ui-review",
@@ -12997,7 +13009,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "11ff483d9f8515e3eb166d683a1a0081d8c2cc56093d3c53518b505e836e4abf"
+      "sourceSha256": "40359a037473995eda46d32b434adca04c94b089be9bc91adc82e9b1b56a987e"
     },
     {
       "id": "review-ui-graph-canvas",
@@ -21396,7 +21408,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "95b398a7e6b8994abf9d33c4d66b9f5098052dfa65725d481021400ae63b21b3"
+      "sourceSha256": "edc03cbcf657c3d546b0b35150b2bfe18ab71fbc0d19ccee7fe3878b247a45d3"
     },
     {
       "id": "proof-worktree-cleanup-20261017",
@@ -22442,20 +22454,22 @@ window.DOCS_INDEX = {
     {
       "id": "spec-workbench-loops-ux",
       "path": "docs/specs/workbench-loops-ux.md",
-      "title": "Dockable work loops — exploratory UX contract",
+      "title": "AI-DE evolution — functional specification and distinct user journeys",
       "type": "spec",
-      "status": "draft",
+      "status": "review",
       "owner": "@timianmalloo",
-      "phase": "proposal",
-      "reviewBy": "2026-11-18",
+      "phase": "specification",
+      "reviewBy": "2027-04-18",
       "reviewSuggested": [],
-      "summary": "Draft UX contract for the proposal's three work loops, continuous editor, execution and evidence panes, subscription connection states and coordination views. It does not approve production requirements.",
+      "summary": "Functional specification for AI-DE's local desktop evolution, retaining Start with work and Start with the system as distinct durable user journeys. Defines shared intelligent authoring, execution, evidence, native harness and coordination behavior with testable acceptance criteria and UX/UI requirements.",
       "tags": [
-        "ux",
+        "functional-specification",
+        "journeys",
         "desktop",
         "notebook",
         "execution",
-        "coordination"
+        "review",
+        "understanding"
       ],
       "links": [
         {
@@ -22464,35 +22478,46 @@ window.DOCS_INDEX = {
         },
         {
           "to": "spec-editor-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-terminal-sessions",
           "rel": "relates-to"
         },
         {
           "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-workbench-loops-20261018",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-factory-workbench-v2",
           "rel": "relates-to"
         },
         {
-          "to": "proposal-local-software-factory",
-          "rel": "relates-to"
+          "to": "note-workbench-loops-direction",
+          "rel": "depends-on"
         }
       ],
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Development loop",
-          "mermaid": "flowchart TD\n A[Open work item or notebook] --> B[Edit continuous document; attach scoped context]\n B --> C[Preview exact request and capability/billing route]\n C --> D{Inputs current and connection qualified?}\n D -- no --> E[Preserve draft; refresh scope or connect]\n E --> C\n D -- yes --> F[Request a plan or bounded run]\n F --> G{Human permission required?}\n G -- yes --> H[Inspect concrete action; allow once or reject]\n H -- reject --> I[Stopped with reason; draft retained]\n H -- allow --> J[Stream tools and outputs]\n G -- no --> J\n J --> K{Outcome known?}\n K -- disconnect --> L[Outcome unknown; inspect or explicitly reconnect]\n K -- cancelled --> I\n K -- complete --> M[Evaluate criteria and missing evidence]\n M --> N[Accept plan / revise / create next work item]\n N --> B"
+          "title": "B2. J-W flow — Start with work",
+          "mermaid": "flowchart TD\n  %% pos W0 60 20\n  %% pos W1 60 110\n  %% pos W2 60 200\n  %% pos W3 60 290\n  %% pos W4 60 380\n  %% pos W5 60 470\n  %% pos W6 60 560\n  %% pos W7 60 650\n  %% pos WI 560 110\n  %% pos WF 560 200\n  %% pos WD 560 290\n  %% pos WU 560 380\n  %% pos WG 560 470\n  %% pos WT 560 650\n  W0[\"Start with work\"]\n  W1[\"Declare deliverable and scope\"]\n  W2[\"Prepare intent and exact request\"]\n  W3[\"Inspect plan and applicable authority\"]\n  W4[\"Execute and observe attempt\"]\n  W5[\"Evaluate required obligations\"]\n  W6[\"Record work disposition\"]\n  W7[\"Close the declared work outcome\"]\n  WI[\"Open linked system investigation\"]\n  WF[\"Retain draft; correct stale or missing input\"]\n  WD[\"Denied action; narrow, pause or stop\"]\n  WU[\"Outcome unknown; inspect without replay\"]\n  WG[\"Evidence gap; explicitly replan\"]\n  WT[\"Retain paused, blocked or cancelled work\"]\n  W0 --> W1\n  W1 --> W2\n  W1 -->|ambiguity| WI\n  WI -->|return with references| W2\n  W2 --> W3\n  W2 -->|invalid| WF\n  WF -->|re-prepare| W2\n  W3 -->|authorized or no effect required| W4\n  W3 -->|denied| WD\n  WD -->|revise| W2\n  WD -->|pause| WT\n  W4 --> W5\n  W4 -->|connection lost| WU\n  WU -->|outcome evidence arrives| W5\n  WU -->|unresolved| WT\n  W5 -->|requirements met or permitted disposition| W6\n  W5 -->|missing evidence| WG\n  WG -->|new explicit attempt| W2\n  WG -->|pause| WT\n  W6 --> W7"
         },
         {
           "kind": "flowchart",
-          "title": "Review loop",
-          "mermaid": "flowchart TD\n A[Choose PR and pin base/head] --> B[Read semantic change packet and human decisions]\n B --> C[Ask in review notebook using selected finding/code scope]\n C --> D[Inspect cited answer beside diff/diagram/test evidence]\n D --> E{Current and sufficient evidence?}\n E -- no --> F[Create proposed checklist obligation; request evidence]\n F --> C\n E -- yes --> G[Record disposition with reason]\n G --> H[Review-ready packet; integration is a separate action]\n D --> I[Flag unsupported claim or contradicting evidence]\n I --> F"
-        },
-        {
-          "kind": "flowchart",
-          "title": "Understand loop",
-          "mermaid": "flowchart LR\n A[Repo or PR scope] --> Q[Question notebook]\n Q --> R[Scoped answer with evidence/inference/gaps]\n R --> V[Linked diagram, metadata or code]\n V --> Q\n R --> C[Checklist of questions, tasks and risks]\n C --> Q\n C --> E[Attach requested evidence]\n E --> R"
+          "title": "B3. J-S flow — Start with the system",
+          "mermaid": "flowchart TD\n  %% pos S0 60 20\n  %% pos S1 60 110\n  %% pos S2 60 200\n  %% pos S3 60 290\n  %% pos S4 60 380\n  %% pos S5 60 470\n  %% pos S6 60 560\n  %% pos S7 60 650\n  %% pos SE 560 110\n  %% pos SA 560 290\n  %% pos SU 560 380\n  %% pos SP 560 560\n  %% pos SW 560 650\n  S0[\"Start with the system\"]\n  S1[\"Choose repo or PR scope\"]\n  S2[\"Frame a question and bounded context\"]\n  S3[\"Run supported read-only analysis\"]\n  S4[\"Inspect answer, visuals and source\"]\n  S5[\"Challenge claims and retain open questions\"]\n  S6[\"Choose to continue or conclude\"]\n  S7[\"Keep an understanding record without work\"]\n  SE[\"Missing scope/index; retain the question\"]\n  SA[\"Native route blocked; explicit recovery\"]\n  SU[\"Partial or unknown evidence stays explicit\"]\n  SP[\"Preview promotion of a selected finding\"]\n  SW[\"Create a separate linked work journey\"]\n  S0 --> S1\n  S1 --> S2\n  S1 -->|unavailable| SE\n  SE -->|refresh or narrow scope| S2\n  S2 --> S3\n  S3 --> S4\n  S3 -->|not dispatched| SA\n  SA -->|explicitly retry after qualification| S3\n  S3 -->|incomplete or outcome unknown| SU\n  SU -->|inspect limits| S4\n  S4 --> S5\n  S5 --> S6\n  S6 -->|next question| S2\n  S6 -->|explicit conclusion| S7\n  S5 -->|choose promote| SP\n  SP -->|cancel or return| S5\n  SP -->|confirm| SW"
         }
       ],
-      "sourceSha256": "6b723a2587121eeed4ac9769756b639fc53e6f385ed8372a8a9e02abbe412eb4"
+      "sourceSha256": "3355161e3e04316e2c0e139481c8c24742dcc44e3304fc1507f5f1764f9503ee"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -22611,6 +22636,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-conversation-composer"
     },
     {
+      "id": "surface-specs-workbench-loops-ux",
+      "path": "docs/specs/workbench-loops-ux.html",
+      "title": "AI-DE evolution — functional specification and user journeys",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-workbench-loops-ux"
+    },
+    {
       "id": "surface-mockups-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.html",
       "title": "AI-DE facelift — elevate proposals (visualization)",
@@ -22680,14 +22713,6 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-factory-workbench"
-    },
-    {
-      "id": "surface-proposals-local-software-factory-v2",
-      "path": "docs/proposals/local-software-factory-v2.html",
-      "title": "AI-DE — a notebook workbench for work and systems",
-      "kind": "knowledge-tool",
-      "description": "Open an interactive knowledge artifact.",
-      "artifactId": "proposal-workbench-loops"
     },
     {
       "id": "surface-mockups-workbench-design-language",
@@ -23181,6 +23206,14 @@ window.DOCS_INDEX = {
       "artifactId": "proposal-local-software-factory"
     },
     {
+      "id": "surface-proposals-local-software-factory-v2",
+      "path": "docs/proposals/local-software-factory-v2.html",
+      "title": "Local Software Factory V2",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-workbench-loops"
+    },
+    {
       "id": "surface-specs-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.html",
       "title": "Loomkeeper - Agentic watcher proposal",
@@ -23317,14 +23350,6 @@ window.DOCS_INDEX = {
       "artifactId": "note-workbench-loops-direction"
     },
     {
-      "id": "surface-specs-workbench-loops-ux",
-      "path": "docs/specs/workbench-loops-ux.html",
-      "title": "Workbench Loops Ux",
-      "kind": "knowledge-tool",
-      "description": "Open an interactive knowledge artifact.",
-      "artifactId": "spec-workbench-loops-ux"
-    },
-    {
       "id": "surface-plans-worktree-cleanup-20261017",
       "path": "docs/plans/worktree-cleanup-20261017.html",
       "title": "Worktree Cleanup 20261017",
@@ -23341,5 +23366,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "3e39e87d0e13fb9935a4ac9ab1e723b81767dc3c833f04f8f8e451d79bb53bff"
+  "graphSha256": "a177d7c29d168f81ba549d4392e302e5cb70501756be28f68908080cb2d4ebe0"
 };

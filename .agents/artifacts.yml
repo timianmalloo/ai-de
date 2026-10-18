@@ -41,6 +41,7 @@ docs/health-history.jsonl: register
 
 docs/api/*.md: derived python tools/api-reference.py --src src --out docs/api
 docs/_site/index.html: derived python tools/build-doc-viewer.py
+docs/specs/workbench-loops-ux.html: derived python tools/build-evolution-spec-view.py
 # A GENERATOR OWNS A SET. build-doc-viewer.py writes docs/_site/index.html AND docs/_meta.json;
 # SETUP 4 registered only the first, so _meta.json stayed `authored` and produced a real merge
 # conflict at the head join that its own class would have resolved by regeneration. The registry's

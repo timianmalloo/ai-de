@@ -59,3 +59,58 @@ The final browser gate records 36 passing interaction checks, 18 theme/viewport/
 and 24 contrast-pair observations, with zero failures. The interactive proposal's embedded source
 matches the standalone mockup. Native runtime proof remains explicitly separate. Durations are
 measured in the closing audits; tokens/spend are not recorded. See the final linked Proof Pack.
+
+## Specification follow-up — distinct user journeys
+
+Goal: use the proposal to create AI-DE's functional evolution specification while retaining both
+entry paths as distinct user journeys. Done when the single three-layer specification contains
+testable functional requirements, independent work/system flows and completion criteria, explicit
+bridges, conceptual domain invariants, governance/NFRs, traceability and independent gate records,
+then is rendered, indexed and committed. Production implementation is out of scope. Tier T2;
+read-only fan-out cap 3. Context ceiling: linked proposal/specifications and bounded reviews.
+Main-line budget: one specification, targeted corrections and verified handoff. Compilation
+`al-01M58AWB64QBBWSWE0HRWYESA5` passed with no assumptions or decision requests.
+
+The completed proposal/mockup baseline was committed as `ca04e18b` before specification authoring.
+The existing `spec-workbench-loops-ux` artifact is promoted in place from a prototype UX contract to
+the full evolution specification, preserving links and the existing 100-HTML-surface bound. The
+earlier prototype remains recoverable in the baseline commit. Planning, review/decision record and
+proof use existing linked artifacts rather than proliferating another parallel document bundle.
+
+| Node | Capability / owner | Inputs | Exit / oracle | Dependency |
+|---|---|---|---|---|
+| S0 Ground and compile | Deterministic mechanics / root | User request, proposal, existing contracts | Traced dispatchable request and explicit reconciliation targets | None |
+| S1 Functional/domain review | Independent review / solution_forensics | Proposal, old contracts, conceptual scope | Data invariants, falsifiable criteria and compatibility gaps identified | S0 |
+| S2 Journey/UX review | Independent review / product_ux_research | Two user journeys and three-loop proposal | Distinct outcomes, bridges and recovery obligations identified | S0 |
+| S3 Identity/AI governance review | Independent review / review_drift_research | Native profiles, permissions and evidence model | Trust/identity/uncertainty boundaries and negative cases identified | S0 |
+| S4 Author canonical spec | Reasoning / root | S0–S3 | Functional → UX → UI, concrete Gherkin and traceability | S1–S3 data |
+| S5 Disconfirm and resolve | Independent review + root | Complete draft | No unaddressed hard veto; implementation unknowns explicitly bounded | S4 |
+| S6 Render/index/commit | Deterministic mechanics / root | Cleared spec | HTML readable; links/IDs/gates pass; committed artifact | S5 |
+
+Root alone writes. Reviewers do not touch files, invoke providers or create worktrees. All three
+reports join before the gate. The loop consumes a finite set of requirements and findings; a new
+finding must name the failed clause and evidence. Two targeted correction rounds are the circuit
+breaker, not a declaration of completion; re-plan if a substantive veto remains. No scope decision
+is invented to remove a question. Existing user preferences settle both journeys, native sign-in,
+desktop/docking, first-class intelligent editing/execution and optional terminal.
+
+Immovable floors: conceptual model before UI, explicit old/new contract reconciliation, happy and
+negative criteria, independent functional/UX/security review, native-proof distinction, graph and
+audit integrity. Surface list: user intent → journey context → notebook/revision → run/evidence →
+review/investigation disposition → cross-journey link → persisted user-visible continuation.
+Modeled phase work 7 equal units, span 5 and maximum review width 3 (Inferred, not duration claims).
+Actual duration comes from audit markers; no token or spend count is invented.
+
+### Specification follow-up outcome
+
+The planned three review branches joined and root remained the sole writer. One semantic
+correction distinguished an outstanding review record from satisfied acceptance; a separate
+rendering correction replaced overlapping flow labels with numbered routes and open legends.
+The targeted re-reviews cleared both findings. All functional, UX and security gates passed for
+specification scope. No production or provider changes were made.
+
+The deliverable is one three-layer specification with 30 stories, 90 Gherkin criteria, two journey
+flows and complete story-to-verification mapping. The existing HTML surface was upgraded in place
+with offline navigation and diagrams; its generator is registered in the derived-view gate. A
+deliberately stale generated view was rejected before the final fresh-view check. The Proof Pack
+records structural and browser observations separately from future native product acceptance.

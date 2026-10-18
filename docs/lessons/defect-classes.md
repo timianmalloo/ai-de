@@ -1568,6 +1568,15 @@ for both or split.*
 
 ### DC-036 — A graph is drawn with a layout that does not scale to its node count
 
+- **Reading-view recurrence, 2026-10-18:** the evolution specification's first SVG flows put long
+  condition labels across crossing edges. Both journey diagrams were swept. The bounded renderer
+  now uses numbered routes with a generated endpoint/condition legend, wider columns and a
+  collision check that refuses route badges it cannot place without overlap. Unknown grammar,
+  missing positions and oversized node labels also fail generation. Control:
+  `tools/build-evolution-spec-view.py`, registered in the derived-view gate. Independent visual
+  re-review remains required for the meaning/readability that geometry alone cannot establish;
+  both final diagrams passed. See `docs/specs/workbench-loops-ux.md`, Gate record.
+
 - **Signature:** a node-link view uses a layout that is fine for a handful of nodes and degenerate for
   many — a single ring, a fixed grid, a naive tree — so past a small threshold the nodes pile up and
   overlap into an unreadable blob. Often paired with heavy node glyphs (opaque cards/boxes with borders
@@ -3807,6 +3816,15 @@ for both or split.*
 - **Status:** `partially-controlled` — fixed at the instance and stated as a shape; no gate
 
 ### DC-098 — Scoring an absence as a zero
+
+- **Specification recurrence, 2026-10-18:** a draft review clause allowed a saved outstanding state
+  to be read as satisfying an acceptance obligation. The work/review/assessment criteria were swept
+  for the same conflation. AC-P02c now blocks affected acceptance until current evidence and judgment
+  are resolved or an explicitly permitted human disposition addresses the obligation. Independent
+  test/domain review rejected the original and passed the amendment. The always-loaded AGENTS.md
+  end-to-end rule (a gate passing is not its contents passing) and independent semantic gate apply
+  during specification; the negative Gherkin clause is an implementation-test obligation, **not an
+  executed product control**. No new native acceptance behavior is claimed.
 
 - **Shape:** a derivation produces a numeric or ranked result from evidence. Where evidence is
   missing it returns the neutral element — 0, empty, false — and downstream code cannot distinguish

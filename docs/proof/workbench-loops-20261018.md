@@ -13,6 +13,7 @@ links:
   - { to: review-ui-factory-workbench-v2, rel: relates-to }
 review-by: 2026-11-18
 summary: Retains 36 passing browser interaction checks, three rendered-view contrast inspections, embedded-proposal parity and independent UX/provider/source reviews. Native implementation remains explicitly unqualified.
+review-suggested: []
 ---
 
 # Delivered review artifacts
@@ -130,3 +131,34 @@ The desktop contract environment was absent, so no runtime episode registration 
 claimed. The named proof and artifacts are captured through the repository audit. The graph's
 100-HTML-surface bound was preserved by folding the small native proof into this pack instead of
 weakening the limit or dropping its required rows.
+
+# Functional specification follow-up — 2026-10-18
+
+Scope: promote the linked prototype UX contract into the full AI-DE evolution specification, with
+two distinct journeys. Production code, provider sign-in and native product execution were outside
+this follow-up. The completed proposal baseline is preserved at commit `ca04e18b`.
+
+| Observation | Named evidence | Boundary |
+|---|---|---|
+| 30 unique stories and 90 unique Given/When/Then criteria; every story maps to verification | [Specification checks](workbench-loops-20261018/specification-checks.json), canonical [specification](../specs/workbench-loops-ux.md) | Mechanical structure; semantic correctness also requires review |
+| Work and system journeys each have purpose, closure, recovery and explicit bridges | Specification Part A, Part B and Gate record | Independent domain/test and UX review PASS; not a native product pass |
+| Explicit native identity, permissions and uncertain evidence boundaries | Specification AC-H01/H02, AC-A01, AC-R01–R03 and Gate record | Independent security/AI review PASS; no providers invoked |
+| Stale generated specification rejected; fresh generated specification accepted | `specification-checks.json`; `tools/build-evolution-spec-view.py`; registered `tools/verify-derived-views.py` entry | Existing gate self-test target preserved; generator fails on undeclared diagram grammar |
+| Two readable journey diagrams and 55 contents links; no page overflow at 1440/960 or browser errors | `specification-checks.json`; generated [HTML reading view](../specs/workbench-loops-ux.html) | Headless browser reading-view checks, not native editor/UIA proof |
+
+The functional reviewer found an acceptance loophole in a draft: recording an outstanding review
+state could appear to satisfy acceptance. AC-P02c now expressly blocks that interpretation and the
+reviewer cleared the amended clause. Native diagnostics were also expressly brought under credential
+redaction. The UI reviewer rejected overlapping condition labels in the initial reading-view
+diagrams, then cleared the numbered routes and adjacent legends after inspecting both diagrams.
+
+Future implementation tests remain named obligations, not executed tests. The existing 36 mockup
+checks belong to the earlier prototype and were not relabeled as coverage of these 90 criteria.
+The specification source hash in the new check record ties structural/browser evidence to the
+reviewed final document. HTML freshness is now part of the repository's existing derived-view gate.
+
+The specification reuses an existing graph identity and HTML path. Impact flags remain visible for
+earlier exploratory artifacts until those artifacts are reconciled; no graph limit was increased.
+Duration is measured by audit markers; token cost and spend are not recorded. The native contract
+environment remains absent, so the repository audit names this proof without inventing a runtime
+episode outcome or score.

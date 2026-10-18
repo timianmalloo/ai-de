@@ -15,6 +15,7 @@ links:
   - { to: built-inventory-rev102, rel: depends-on }
 review-by: 2026-11-18
 summary: An exploratory local desktop workbench with equally valid work-first and system-first entry, an immersive intelligent editor, peer execution/evaluation, dockable evidence surfaces and explicitly authenticated native harnesses.
+review-suggested: []
 ---
 
 # AI-DE: start with the work, or start with the system
@@ -272,20 +273,24 @@ request preview, run/permission/queue/stop fixtures, diagrams, checklist, dockin
 simulation. It makes no real provider call, repository edit, login or approval. All example PRs,
 metrics and runs are labeled fixtures.
 
-The [UX contract](../specs/workbench-loops-ux.md), [review](../reviews/ui-factory-workbench-v2.md) and
+The [functional evolution specification](../specs/workbench-loops-ux.md), [review](../reviews/ui-factory-workbench-v2.md) and
 [proof](../proof/workbench-loops-20261018.md) retain the interaction checks and limitations. Native
 UIA/IME/DPI, actual providers, complete rich-editor semantics, large repository indexing, package
 trust and production coordination remain implementation work.
 
-## Decisions settled and questions for the next specification
+## Decisions settled and specification handoff
 
 Settled by the user: local desktop; dockable shell; Factory/Review/Understand; first-class intelligent
 editor and execution; left feature navigation; optional hosted terminal; explicit native subscription
 sign-in; both work-first and system-first paths. These are not reopened as permission questions.
 
-The prototype is complete enough to review without deciding release policy. Before production
-implementation, `/specify` must settle the initial qualified harness/version matrix, exact notebook
-document interoperability floor, default per-route permission policies, native layout migration and
-which measured outcomes justify a lighter human review policy. Those questions do not silently
-default to broad execution authority. The first `/design-slice` should cover the **notebook/run
-identity seam**, then native profile bootstrap and the editor qualification spike.
+The [functional specification](../specs/workbench-loops-ux.html) now formalizes this proposal as
+30 user stories and 90 acceptance criteria, with distinct work and system journeys and explicit
+bridges. It defines document interoperability, authority and migration obligations; exact native
+versions and release-policy decisions remain visibly qualified dependencies. They do not silently
+default to broad execution authority or a lighter human review policy.
+
+The next step is `/define-architecture` for journey/notebook/attempt/assurance and coordination
+boundaries, followed by `/design-slice` for the **notebook/run identity seam**, native profile
+bootstrap and editor qualification. This proposal remains exploratory; the specification governs
+future implementation behavior, and the mockup remains a bounded illustration of the direction.

@@ -13,7 +13,8 @@ links:
   - { to: kb-workbench-loops-20261018, rel: depends-on }
 review-by: 2026-11-18
 summary: Self-contained HTML exploration with two entry paths, three work loops, left feature navigation, an intelligent continuous editor and dockable execution, visualizer and checklist surfaces. All runs and accounts are fixtures.
-review-suggested: []
+review-suggested:
+  - { by: spec-workbench-loops-ux, on: 2026-10-18, reason: "Promoted prototype UX contract to the full functional evolution specification: distinct work/system journey purposes, closure, authority, bridges and testable requirements. Reconcile implementation and prototype assumptions before adoption." }
 ---
 
 # Review the workbench
@@ -67,6 +68,11 @@ motion. It checks a nonzero frame before layout/contrast/target measurements. Te
 exercise browser behavior; token ratios alone are not a usability or accessibility verdict.
 
 ## Limits
+
+The subsequent [functional specification](../specs/workbench-loops-ux.html) defines the two distinct
+journeys and their full acceptance obligations. This earlier prototype illustrates the direction;
+its fixture checks do not establish conformance to all 90 criteria. Reconcile those criteria when
+implementing or extending the mockup.
 
 Fixture completions are not a live repository index. Contenteditable is a bounded interaction
 model; production CodeMirror extensions and rich-document semantics must be qualified. Float is

@@ -86,6 +86,11 @@ VIEWS = [
         "command": ["tools/api-reference.py"],
         "from": "the /// comments on every public type and member in src/",
     },
+    {
+        "path": "docs/specs/workbench-loops-ux.html",
+        "command": ["tools/build-evolution-spec-view.py"],
+        "from": "the canonical evolution specification and its two Mermaid journey definitions",
+    },
 ]
 
 # A timestamp stamped at generation time. It differs on every run by construction — comparing it
