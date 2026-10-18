@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T22:17:27Z",
+  "generated": "2026-10-18T22:45:07Z",
   "audit": [
     {
       "actor": null,
@@ -22244,6 +22244,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:03:29Z",
       "duration_seconds": 831.0
+    },
+    {
+      "id": "al-01M58K1BX2VRNZMX3KJB5XC2MV",
+      "shortname": "wl-t3-sp2",
+      "datetime": "2026-10-18T22:45:07Z",
+      "session": "wl-t3-sp2",
+      "prompt": "T3 sp2-runevent-vocab: extend RunEvent envelope and TurnState once",
+      "summary": "TurnState +6 values, Stopped->Interrupted, RunEvent redactions/scanned_with, native.frame, TurnState-never-serialized guard; Core green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Extend RunEvent envelope and TurnState once",
+      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, dotnet test green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-18T22:23:45Z",
+      "duration_seconds": 1282.0
     }
   ],
   "changes": [
