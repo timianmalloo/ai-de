@@ -208,6 +208,29 @@ public sealed class RunChannelSessionThread : ISessionThread
         Publish();
     }
 
+    /// <summary>
+    /// A stop was requested and the harness has not acknowledged it (ADR-0041 §2). Only a turn that
+    /// is in flight can be asked to stop; the acknowledgment arrives later as
+    /// <see cref="TurnState.Interrupted"/> through <see cref="Conclude"/>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The turn is not preparing, running or waiting.</exception>
+    public void RequestStop(int ordinal)
+    {
+        lock (_gate)
+        {
+            var turn = Find(ordinal);
+            if (turn.State is not (TurnState.Preparing or TurnState.Running or TurnState.Waiting))
+            {
+                throw new InvalidOperationException($"turn b{turn.Ordinal} is {turn.State}; only a turn in flight can be asked to stop");
+            }
+
+            turn.State = TurnState.StopRequested;
+            turn.Waiting = null;
+        }
+
+        Publish();
+    }
+
     /// <summary>The request was answered; the turn runs again.</summary>
     public void Resume(int ordinal)
     {
@@ -224,7 +247,7 @@ public sealed class RunChannelSessionThread : ISessionThread
     }
 
     /// <summary>
-    /// The run ended. <paramref name="terminal"/> is one of the four terminal states. What the run
+    /// The run ended. <paramref name="terminal"/> is a terminal state. What the run
     /// said arrived as its events (Ruling 81: the fold is <c>Coalesce(Events)</c>); a conclusion
     /// carries no text of its own — a reason is appended as a line before it, never stored beside it.
     /// </summary>

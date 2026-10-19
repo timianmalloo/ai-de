@@ -256,7 +256,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
             }
             else
             {
-                var row = new TurnItem(turn) { IsFoldOpen = turn.State is TurnState.Running or TurnState.Waiting };
+                var row = new TurnItem(turn) { IsFoldOpen = turn.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested };
                 _items.Add(row);
             }
         }
@@ -1284,7 +1284,13 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Colour(TurnState.Answered, "VerifiedBrush");
         Colour(TurnState.Failed, "DangerBrush");
         Colour(TurnState.Waiting, "InferredBrush");
-        Colour(TurnState.Stopped, "TextMutedBrush");
+        Colour(TurnState.Interrupted, "TextMutedBrush");
+        Colour(TurnState.Preparing, "TextMutedBrush");
+        Colour(TurnState.StopRequested, "TextMutedBrush");
+        Colour(TurnState.DeliveryUnknown, "InferredBrush");
+        Colour(TurnState.Rejected, "DangerBrush");
+        Colour(TurnState.Denied, "InferredBrush");
+        Colour(TurnState.OverLimit, "DangerBrush");
         Colour(TurnState.NotRecorded, "TextMutedBrush");
         Colour(TurnState.Queued, "TextMutedBrush");
         Colour(TurnState.Cancelled, "TextMutedBrush");
@@ -1302,7 +1308,12 @@ public sealed class ThreadFeed : FeedList, IDisposable
         }
 
         Colour(TurnState.Failed, "DangerBrush");
-        Colour(TurnState.Stopped, "BorderBrush");
+        Colour(TurnState.Interrupted, "BorderBrush");
+        Colour(TurnState.StopRequested, "BorderBrush");
+        Colour(TurnState.DeliveryUnknown, "InferredBrush");
+        Colour(TurnState.Rejected, "DangerBrush");
+        Colour(TurnState.Denied, "InferredBrush");
+        Colour(TurnState.OverLimit, "DangerBrush");
         Colour(TurnState.Waiting, "InferredBrush");
         Colour(TurnState.Queued, "BorderBrush");
         return style;
@@ -1326,7 +1337,13 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Mark(TurnState.Answered, "M 1,6 L 4.5,9.5 L 11,2", "VerifiedBrush");
         Mark(TurnState.Failed, "M 1,1 L 11,11 M 11,1 L 1,11", "DangerBrush");
         Mark(TurnState.Waiting, "M 3,1 L 3,11 M 9,1 L 9,11", "InferredBrush");
-        Mark(TurnState.Stopped, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");
+        Mark(TurnState.Interrupted, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");
+        Mark(TurnState.StopRequested, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");
+        Mark(TurnState.Preparing, "M 6,2 L 6,6 L 9,8 M 1.5,6 A 4.5,4.5 0 1 0 10.5,6 A 4.5,4.5 0 1 0 1.5,6", "TextMutedBrush");
+        Mark(TurnState.DeliveryUnknown, "M 6,2 L 6,7 M 6,10 L 6,10.5", "InferredBrush");
+        Mark(TurnState.Rejected, "M 1,1 L 11,11 M 11,1 L 1,11", "DangerBrush");
+        Mark(TurnState.Denied, "M 1,1 L 11,11 M 11,1 L 1,11", "InferredBrush");
+        Mark(TurnState.OverLimit, "M 1,1 L 11,11 M 11,1 L 1,11", "DangerBrush");
         Mark(TurnState.NotRecorded, "M 6,2 L 6,7 M 6,10 L 6,10.5", "TextMutedBrush");
         Mark(TurnState.Queued, "M 6,2 L 6,6 L 9,8 M 1.5,6 A 4.5,4.5 0 1 0 10.5,6 A 4.5,4.5 0 1 0 1.5,6", "TextMutedBrush");
         Mark(TurnState.Cancelled, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");

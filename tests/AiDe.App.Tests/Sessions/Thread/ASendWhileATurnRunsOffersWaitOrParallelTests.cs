@@ -295,9 +295,9 @@ public sealed class ASendWhileATurnRunsOffersWaitOrParallelTests
         }
     }
 
-    /// <summary>After Stop the queued turn stays queued, waits on the operator with Send now, and the drain never sends it; Send now does.</summary>
+    /// <summary>After Stop the turn is StopRequested until the harness acknowledges (ADR-0041 §2); the queued turn stays queued behind it and the drain never sends it.</summary>
     [Fact]
-    public void AfterStop_TheQueuedTurnWaitsWithSendNow_AndTheDrainNeverSendsIt()
+    public void AfterStop_TheTurnIsStopRequested_AndTheQueuedTurnStaysQueuedBehindIt()
     {
         Fixture? fixture = null;
         try
@@ -323,26 +323,18 @@ public sealed class ASendWhileATurnRunsOffersWaitOrParallelTests
                     await PumpAsync(window);
 
                     Action(document, 0, "Stop this turn")!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                    await UntilAsync(window, () => document.ReadModel.Current.Turns[0].State == TurnState.Stopped, "b1 never stopped");
+                    await UntilAsync(window, () => document.ReadModel.Current.Turns[0].State == TurnState.StopRequested, "b1 never reached StopRequested");
                     await Task.Delay(300);
                     await PumpAsync(window);
 
-                    // Still queued; nothing drained; one root.
+                    // Our own cancel is not a native acknowledgment: b1 is StopRequested, not Interrupted
+                    // (ADR-0041 §2), so it is still in flight; b2 stays queued behind it and nothing drained.
                     Assert.Equal(TurnState.Queued, document.ReadModel.Current.Turns[1].State);
                     Assert.Equal(1, ledger.Roots);
-                    Assert.True(document.ReadModel.Current.QueuedAwaitsYou);
-                    Assert.Equal("b1 stopped by you; b2 is waiting — Send it or cancel it", f.Composer.Status);
-                    Assert.Equal([TurnActionKind.SendNow, TurnActionKind.Cancel], document.Thread.Rows[1].Actions);
-                    var sendNow = Action(document, 1, "Send now");
-                    Assert.NotNull(sendNow);
-
-                    // Send now is the operator's: b2 runs as its own run.
-                    sendNow!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                    await UntilAsync(window, () => document.ReadModel.Current.Turns[1].State == TurnState.Running, "Send now did not start b2");
-                    Assert.Equal(2, ledger.Roots);
+                    Assert.False(document.ReadModel.Current.QueuedAwaitsYou);
+                    Assert.Equal("b2 queued — sends after b1", f.Composer.Status);
+                    Assert.Equal([TurnActionKind.Cancel], document.Thread.Rows[1].Actions);
                     f.Release();
-                    await UntilAsync(window, () => document.ReadModel.Current.Turns[1].State == TurnState.Answered, "b2 never answered after the release");
-                    Assert.Null(document.ReadModel.Current.Queued);
                 });
         }
         finally
