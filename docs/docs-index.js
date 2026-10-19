@@ -22224,7 +22224,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1ed68b91ba2e690eaca6a70105dbf3541801d59d53beb34e020de9efedd0ea29"
+      "sourceSha256": "c74181efb6aa0c61d3356d9707808eec95cfc5387b575a71f722b84a07b827b2"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -24321,5 +24321,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "a62243938fe5cff02af053dfe57d76525f1fcedb1abe4ad932a792709f88a8c0"
+  "graphSha256": "4e16aacd87726425bfc58d4a27bfb981fda4d749d0a4f87a88fc98af8c1776ed"
 };

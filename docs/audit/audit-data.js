@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T02:55:11Z",
+  "generated": "2026-10-19T03:07:36Z",
   "audit": [
     {
       "actor": null,
@@ -23239,6 +23239,35 @@ window.AUDIT_DATA = {
         "acceptance_met": true
       },
       "started_at": "2026-10-19T02:55:09Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5921YJ5W8KGAGWEHQ4MF0NX",
+      "shortname": "join-gate-hygiene-wording",
+      "datetime": "2026-10-19T03:07:35Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of gate-hygiene into main",
+      "summary": "Re-join: pack-defects.md 'Rulings 1 to 153' was read by verify-ruling-citations as a citation of Ruling 1 (the second ratchet's only refusal). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Burn down main's pre-existing red gates",
+      "done_when": "ratchet PASS vs 2390a99b",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T03:07:34Z",
       "duration_seconds": 1.0
     }
   ],
