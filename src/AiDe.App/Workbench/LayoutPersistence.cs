@@ -23,6 +23,12 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4).</summary>
     public const string RefusedBackupSuffix = ".bak";
 
+    /// <summary>
+    /// The end of the zone restore's report line for floating windows moved off a missing display, after
+    /// their quoted titles (Ruling 174 (3); seam req-01M5A6W4HGN4PREM1CK48Q5X4H, the proposed copy).
+    /// </summary>
+    internal const string RehomedFloatingSentenceTail = "moved onto this display because the saved display is not connected.";
+
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
     private readonly SurfaceAvailability _availability;
@@ -148,6 +154,16 @@ public sealed class LayoutPersistence : IDisposable
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
                 // reports each drop; the announcement names caption, kind and the admitting
                 // perspective through the same result that reports a missing surface today.
+                // Ruling 174 (3), AC-D01b: a floating window whose saved bounds fall off every display
+                // loses them, so the render opens it at the default placement near the workbench. The
+                // same display test and the same words as the tree path (LayoutStore.Load).
+                var rehomed = new List<string>();
+                foreach (var floating in zones.Floating.Where(f => !_displayIsConnected(f)).ToList())
+                {
+                    rehomed.Add(floating.Active.Title);
+                    zones = zones with { Floating = zones.Floating.Replace(floating, floating with { FloatingBounds = null }) };
+                }
+
                 var report = _zoneService.RestoreZones(zones);
                 LastRestoreDropped = report.Dropped;
                 _backupDue = report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true) : null;
@@ -155,10 +171,12 @@ public sealed class LayoutPersistence : IDisposable
                 var result = new RestoreResult(
                     _zoneService.Current,
                     report.DefaultApplied,
-                    report.Dropped.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
+                    report.Dropped.Count > 0 || rehomed.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
-                    [],
-                    DropAnnouncement(report));
+                    rehomed,
+                    rehomed.Count == 0
+                        ? DropAnnouncement(report)
+                        : $"{DropAnnouncement(report)} {string.Join(", ", rehomed.Select(r => $"“{r}”"))} {RehomedFloatingSentenceTail}");
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;
