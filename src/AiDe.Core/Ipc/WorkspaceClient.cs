@@ -141,6 +141,26 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.NotebookRevisionLatest, new NotebookLatestRequest(notebookId), cancellationToken)
             .ConfigureAwait(false)).Revision;
 
+    /// <summary>Whether the work may be accepted now, and which attempts could still be linked as evidence.</summary>
+    public Task<ChecklistEvaluateResult> EvaluateChecklistAsync(ChecklistEvaluateRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<ChecklistEvaluateResult>(WorkspaceOperations.ChecklistEvaluate, request, cancellationToken);
+
+    /// <summary>Sets the journey's obligation list; an equal list returns the existing revision.</summary>
+    public Task<ObligationsSetResult> SetObligationsAsync(ObligationsSetRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<ObligationsSetResult>(WorkspaceOperations.ChecklistObligationsSet, request, cancellationToken);
+
+    /// <summary>Records one human disposition; the daemon names the actor.</summary>
+    public Task<DispositionRecordResult> RecordDispositionAsync(DispositionRecordRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<DispositionRecordResult>(WorkspaceOperations.ChecklistDispositionRecord, request, cancellationToken);
+
+    /// <summary>Links a completed, current attempt to an obligation as evidence.</summary>
+    public Task<EvidenceLinkResult> LinkEvidenceAsync(EvidenceLinkRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<EvidenceLinkResult>(WorkspaceOperations.ChecklistEvidenceLink, request, cancellationToken);
+
+    /// <summary>Accepts the work's deliverable (the intent revision); refused with the gap list while any gap remains.</summary>
+    public Task<WorkAcceptResult> AcceptWorkAsync(WorkAcceptRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<WorkAcceptResult>(WorkspaceOperations.WorkAccept, request, cancellationToken);
+
     /// <summary>What re-indexing has cost in this daemon so far.</summary>
     /// <remarks>
     /// The measurement the sub-scope-incrementality decision is blocked on: whether a re-index is an
