@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T14:34:14Z",
+  "generated": "2026-10-19T14:52:52Z",
   "audit": [
     {
       "actor": null,
@@ -25336,6 +25336,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T14:03:36Z",
       "duration_seconds": 1838.0
+    },
+    {
+      "id": "al-01M5AADBV9W3S7ZQVWS9PM10PM",
+      "shortname": "wl-t17e-dispose",
+      "datetime": "2026-10-19T14:52:52Z",
+      "session": "wl-t17e-dispose",
+      "prompt": "T17e: prove or rule out, deterministically, the read-back vs store-dispose race; fix if reproduced on the unit path and the shell close path; update docs",
+      "summary": "Race reproduced with a gate (red 31b61650: ObjectDisposedException escaped; 2 turns written after notebook/shell disposal), fixed in NotebookRuns (green d7e0ac1b: read-back under _disposing.Token, ends quietly as outcome ended). WL-1a residual line effbadc1; step 18 unchanged. Suites Core 3024/0, App 1147/1 (environmental chord). T17d teardown NRE is a different race (a run's write), left open.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Prove or rule out the read-back vs store-dispose race deterministically; fix it if it reproduces",
+      "done_when": "Checks red then green committed separately; suites in suite-green.txt; README and handoff; audit entry and done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T14:35:24Z",
+      "duration_seconds": 1048.0
     }
   ],
   "changes": [
