@@ -185,25 +185,39 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         bool Available(ZoneSurfaceDto s) =>
             availableSurfaces.Contains(s.SurfaceId) || restorableKinds.Contains(s.Kind);
 
+        // System.Text.Json passes null for an absent positional member whatever its annotation
+        // (DC-NEW-wl-t21-float). A file with no "zones" field reads as empty zones, as a zone missing
+        // from the list already does, and a floating stack with no "surfaces" field is left out. Both
+        // are reported as a partial read.
+        var partlyRead = envelope.Layout.Zones is null;
+        var savedZones = envelope.Layout.Zones ?? [];
+
         var zones = ImmutableDictionary.CreateBuilder<ZoneId, ZoneState>();
         foreach (var id in Enum.GetValues<ZoneId>())
         {
-            var dto = envelope.Layout.Zones.FirstOrDefault(z => z.Id == id.ToString());
+            var dto = savedZones.FirstOrDefault(z => z.Id == id.ToString());
             zones[id] = dto is null
                 ? new ZoneState(id, Content: null, id == ZoneId.Center ? 1.0 : ZoneState.DefaultExtent, Collapsed: false)
                 : new ZoneState(id, FromDto(dto.Content, Available), dto.Extent,
                     Collapsed: id != ZoneId.Center && dto.Collapsed);
         }
 
-        // System.Text.Json passes null for an absent positional member, so a file with no "floating"
-        // field (hand-edited, or written before floating was stored) reads as no floating panes.
-        var floating = (envelope.Layout.Floating ?? [])
-            .Select(f => FromStackDto(f, Available))
-            .Where(f => f is not null)
-            .Cast<StackNode>()
-            .ToImmutableList();
+        // A file with no "floating" field (hand-edited, or written before floating was stored) reads as
+        // no floating panes. That is an older file, not a partial read.
+        var floating = ImmutableList.CreateBuilder<StackNode>();
+        foreach (var f in envelope.Layout.Floating ?? [])
+        {
+            if (f.Surfaces is null)
+            {
+                partlyRead = true;
+            }
+            else if (FromStackDto(f, Available) is { } stack)
+            {
+                floating.Add(stack);
+            }
+        }
 
-        var layout = new WorkbenchLayout(zones.ToImmutable(), floating, Maximized: null);
+        var layout = new WorkbenchLayout(zones.ToImmutable(), floating.ToImmutable(), Maximized: null);
 
         try
         {
@@ -214,7 +228,7 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt); // e.g. a duplicated surface → keep current
         }
 
-        return new ZoneLoadResult(layout, ZoneLoadRefusal.None);
+        return new ZoneLoadResult(layout, ZoneLoadRefusal.None, partlyRead);
     }
 
     // ── mapping ────────────────────────────────────────────────────────────────────────────

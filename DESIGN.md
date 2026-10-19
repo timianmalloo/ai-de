@@ -276,6 +276,7 @@ for a workbench, and it is why the motion inventory is short by design rather th
 - `Restored 5 of 6 panes. "Trace Viewer" is no longer available and was not restored.`
 - `Display 2 is not connected. "Terminal 2" was moved onto this display.`
 - `Workbench layout could not be read and was reset to the default. Your previous layout file was kept.`
+- `Part of your saved layout could not be read and was left out.` *(appended to the restore announcement when the saved zone layout has no `zones` field, or a floating window with no `surfaces` field; code PartialRestore; `LayoutPersistence.PartlyReadSentence`; provisional, T21 node 4)*
 
 ---
 

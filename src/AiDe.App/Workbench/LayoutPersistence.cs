@@ -174,15 +174,24 @@ public sealed class LayoutPersistence : IDisposable
                 LastRestoreDropped = report.Dropped;
                 _backupDue = report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true) : null;
 
+                var sentences = new List<string> { DropAnnouncement(report) };
+                if (rehomed.Count > 0)
+                {
+                    sentences.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} {RehomedFloatingSentenceTail}");
+                }
+
+                if (read.PartlyRead)
+                {
+                    sentences.Add(PartlyReadSentence);
+                }
+
                 var result = new RestoreResult(
                     _zoneService.Current,
                     report.DefaultApplied,
-                    report.Dropped.Count > 0 || rehomed.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
+                    report.Dropped.Count > 0 || rehomed.Count > 0 || read.PartlyRead ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
                     rehomed,
-                    rehomed.Count == 0
-                        ? DropAnnouncement(report)
-                        : $"{DropAnnouncement(report)} {string.Join(", ", rehomed.Select(r => $"“{r}”"))} {RehomedFloatingSentenceTail}");
+                    string.Join(" ", sentences));
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;
