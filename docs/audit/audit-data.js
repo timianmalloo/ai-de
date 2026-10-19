@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:26:34Z",
+  "generated": "2026-10-19T00:38:59Z",
   "audit": [
     {
       "actor": null,
@@ -22661,6 +22661,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T00:26:32Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M58SHVSQ3VK6266W707QY73V",
+      "shortname": "join-sp1-step8-ratchet",
+      "datetime": "2026-10-19T00:38:59Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 151/153 step-8 completion for the T2 schema-v2 join",
+      "summary": "T2 schema v2 pushed d0cee41b (17fba9ef..d0cee41b). First join's ratchet REFUSED docs-graph validate green->red (sp1 evidence README had no frontmatter; Leader brief omission, same class on T3/T4 branches fixed pre-join; brief rule 13 added). Re-join with 888aeb36: ratchet PASS 0/48, Ruling 153 filter dropped 104/104, recount gates excluded per 151(3) (first join's recount green). Defect-register EOF conflict resolved by keeping both entries. Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land schema v2 on main under Ruling 151/153",
+      "done_when": "pushed with ratchet PASS recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-19T00:04:03Z",
+      "duration_seconds": 2096.0
     }
   ],
   "changes": [

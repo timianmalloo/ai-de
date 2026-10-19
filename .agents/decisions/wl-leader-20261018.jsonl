@@ -191,3 +191,15 @@
 {"agent": "wl-leader-20261018", "at": 1792369572.4306111, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792369572.9516504, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/sp2/README.md", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792369573.4400337, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/README.md", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.7620971, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.7856205, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.810232, "code": null, "kind": "allowed", "path": ".agents/log/wl-t10-e1.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.8343606, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.8576238, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.881721, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.905845, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.9294105, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.9534185, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.9773214, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369598.999375, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792369599.0223732, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader-20261018", "wi": ""}
