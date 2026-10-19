@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T04:39:55Z",
+  "generated": "2026-10-19T04:40:20Z",
   "audit": [
     {
       "actor": null,
@@ -23397,24 +23397,101 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M595J3H7J4YD9SSCYMGAAEQ2",
-      "shortname": "join-sp3-fix",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T04:08:50Z",
-      "session": "wl-leader-20261018",
+      "done_when": "ratchet PASS vs origin/main",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
+      "id": "al-01M595J3H7J4YD9SSCYMGAAEQ2",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp3-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T04:08:49Z",
       "summary": "T4c 9fe4e99f landed. Recount: only failure SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - 'foreground not held; SendInput would prove another window', probe exit 2 - NOT CHECKED (unattended desktop), identical on origin/main 3e1bd2ae; joined under Ruling 155 (attended run owed to the user; reopen if it fails while foreground is held). Continued --docs-only. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T04:39:55Z",
+      "done_when": "pushed with ratchet PASS; Ruling 155 and the NOT CHECKED reason recorded",
+      "duration_seconds": 2911.0,
+      "fan_out": 0,
+      "goal": "Land T4 under Rulings 151/153/155",
+      "id": "al-01M597B0G9SWYZ0AQ94K3EMRK9",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 155 + Rulings 151/153 step-8 completion for the T4 re-row join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t4-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T03:51:24Z",
+      "summary": "T4 re-row pushed c3013bd2 (3e1bd2ae..c3013bd2): FullWindow/Explorer retired, three DockHost rows, Rulings 149/152. App floor lowered 1064->1026 with the stated reason (37 test attributes in 5 deleted files). First ratchet REFUSED 2 green->red (verify-cited-controls, verify-fixture-derivation) -> T4c 9fe4e99f; the re-join recount's only failure was SolutionTreeChordTests 'foreground not held; SendInput would prove another window' (probe exit 2) - NOT CHECKED on an unattended desktop, identical on origin/main 3e1bd2ae; joined under Ruling 155 (attended run owed to the user; T4 reopens if it fails with foreground held). Two further ratchet refusals were the Leader's own: hand-off note prose read as a citation of Ruling 1 (reworded) and a stale docs-index.js (regenerated). Final ratchet PASS 0/48. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "spikes/second-dock-host-unparent/RESULT.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:09:45Z",
+      "done_when": "A-B-C cycle exits 0; private bytes recorded",
+      "duration_seconds": 344.0,
+      "fan_out": 0,
+      "goal": "Prove three DockHosts under one presenter with live WebView2",
+      "id": "al-01M58QWAPG5ZVJ4V4S3NS1ENFB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Prove three DockHosts under one presenter with live WebView2 (A-B-C unparent spike)",
+      "session": "wl-t9-spike",
+      "shortname": "wl-t9-spike",
+      "skill": "implement",
+      "started_at": "2026-10-19T00:04:01Z",
+      "summary": "Extended spike to A-B-C with raw HwndHost; exit 0; private bytes recorded in RESULT.md",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M597BR22ZA2PNY6RAJN8G2TH",
+      "shortname": "join-wls-unparent-spike",
+      "datetime": "2026-10-19T04:40:19Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of wls-unparent-spike into main",
+      "summary": "T9: three DockHosts under one presenter, live WebView2 + raw HwndHost survive A->B->C x3 and C->A->C (54 checks, exit 0, re-run by the Leader); private bytes recorded (~150 MiB total; WebView2 32.9 MiB idle, +4.4 MiB with the 100k doc); per-host idle rows are GC noise, stated. Spike-only diff -> --docs-only. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+        "spikes/second-dock-host-unparent/RESULT.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
-      "done_when": "ratchet PASS vs origin/main",
+      "goal": "Prove three DockHosts under one presenter with live WebView2",
+      "done_when": "spike exit 0 with the budget recorded; ratchet PASS",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -23422,32 +23499,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T04:08:49Z",
+      "started_at": "2026-10-19T04:40:18Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M597B0G9SWYZ0AQ94K3EMRK9",
-      "shortname": "join-t4-step8-ratchet",
-      "datetime": "2026-10-19T04:39:55Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 155 + Rulings 151/153 step-8 completion for the T4 re-row join",
-      "summary": "T4 re-row pushed c3013bd2 (3e1bd2ae..c3013bd2): FullWindow/Explorer retired, three DockHost rows, Rulings 149/152. App floor lowered 1064->1026 with the stated reason (37 test attributes in 5 deleted files). First ratchet REFUSED 2 green->red (verify-cited-controls, verify-fixture-derivation) -> T4c 9fe4e99f; the re-join recount's only failure was SolutionTreeChordTests 'foreground not held; SendInput would prove another window' (probe exit 2) - NOT CHECKED on an unattended desktop, identical on origin/main 3e1bd2ae; joined under Ruling 155 (attended run owed to the user; T4 reopens if it fails with foreground held). Two further ratchet refusals were the Leader's own: hand-off note prose read as a citation of Ruling 1 (reworded) and a stale docs-index.js (regenerated). Final ratchet PASS 0/48. Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/sp3/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T4 under Rulings 151/153/155",
-      "done_when": "pushed with ratchet PASS; Ruling 155 and the NOT CHECKED reason recorded",
-      "tier": "T1",
-      "fan_out": 0,
-      "started_at": "2026-10-19T03:51:24Z",
-      "duration_seconds": 2911.0
     }
   ],
   "changes": [
