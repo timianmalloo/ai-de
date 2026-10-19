@@ -1,0 +1,9 @@
+{"agent": "wl-t16b-bindrow", "at": 1792399681.169663, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/t16b-red.txt", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399681.1971903, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399681.2271905, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399681.257128, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399823.2665646, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/t16b-green.txt", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399823.2952166, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399823.3259165, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399823.354453, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "session": "wl-t16b-bindrow", "wi": ""}
+{"agent": "wl-t16b-bindrow", "at": 1792399823.383933, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "session": "wl-t16b-bindrow", "wi": ""}

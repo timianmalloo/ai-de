@@ -10,3 +10,7 @@
 {"agent": "wl-t16-bindrow", "at": 1792398938.1968865, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t16-bindrow", "wi": ""}
 {"agent": "wl-t16-bindrow", "at": 1792398938.2278972, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "session": "wl-t16-bindrow", "wi": ""}
 {"agent": "wl-t16-bindrow", "at": 1792398938.2555008, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792399411.5077035, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792399411.544704, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792399411.5822196, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/README.md", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792399411.6180608, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/suite-green.txt", "session": "wl-t16-bindrow", "wi": ""}

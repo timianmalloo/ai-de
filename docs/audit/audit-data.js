@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T08:37:15Z",
+  "generated": "2026-10-19T08:50:35Z",
   "audit": [
     {
       "actor": null,
@@ -24658,6 +24658,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T08:37:13Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M59NP0DX7H60HGNSXQZ40WYW",
+      "shortname": "join-wl1a-notebook-binding-step8",
+      "datetime": "2026-10-19T08:50:35Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 for the T8 wl1a-notebook-binding join fa71cd0a (first under Ruling 160)",
+      "summary": "Recount OK. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md canonical), continued --docs-only; standing brief rule 17 added (no .html under docs/). Step 8 5/48 (baseline). Ratchet vs 4f62453b under Ruling 160: PASS 0/49; tools/verify-ruling-citations ok (strict; 157 cited, 148 by a note, 9 frozen); the pack copy excluded (PD-1) with 7 new findings, all addendum-c rulings 156/159-162 it cannot read; identity gate OK (966). Pushed fa71cd0a:main; Release build exit 0. T8 = Opus nodes 1-6 + Sonnet node 7; Leader re-runs accepted every node.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T8 on main under Rulings 151/160",
+      "done_when": "ratchet PASS; strict repo citations OK; pushed; Release green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T08:44:35Z",
+      "duration_seconds": 360.0
     }
   ],
   "changes": [
@@ -29284,6 +29308,15 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M59MJ37YMWR9MKS49VKMWXZ2",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59N9840PPD5X4G2V801V635",
+      "ts": "2026-10-19T08:43:37Z",
+      "from": "wl-t16-bindrow",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t16-bindrow"
     }
   ]
 };
