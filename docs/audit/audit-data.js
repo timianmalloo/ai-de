@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:02:07Z",
+  "generated": "2026-10-19T00:09:45Z",
   "audit": [
     {
       "actor": null,
@@ -22531,6 +22531,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T23:52:02Z",
       "duration_seconds": 605.0
+    },
+    {
+      "id": "al-01M58QWAPG5ZVJ4V4S3NS1ENFB",
+      "shortname": "wl-t9-spike",
+      "datetime": "2026-10-19T00:09:45Z",
+      "session": "wl-t9-spike",
+      "prompt": "Prove three DockHosts under one presenter with live WebView2 (A-B-C unparent spike)",
+      "summary": "Extended spike to A-B-C with raw HwndHost; exit 0; private bytes recorded in RESULT.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/second-dock-host-unparent/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Prove three DockHosts under one presenter with live WebView2",
+      "done_when": "A-B-C cycle exits 0; private bytes recorded",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T00:04:01Z",
+      "duration_seconds": 344.0
     }
   ],
   "changes": [
