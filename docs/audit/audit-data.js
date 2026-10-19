@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T23:05:42Z",
+  "generated": "2026-10-19T01:14:23Z",
   "audit": [
     {
       "actor": null,
@@ -22449,6 +22449,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-18T22:49:07Z",
       "duration_seconds": 995.0
+    },
+    {
+      "id": "al-01M58VJNVPBHZZQR4VZKW9XC8K",
+      "shortname": "wl-t12-census",
+      "datetime": "2026-10-19T01:14:23Z",
+      "session": "wl-t12-census",
+      "prompt": "fix-forward census-flake: harness-diagnostics gate red on ConsoleHostCensusTests",
+      "summary": "Gate false positive on an inline throw lambda; moved to a named method; gate 0, Core 2788 pass",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "gate green",
+      "done_when": "gate exit 0, suites green, committed",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T01:11:28Z",
+      "duration_seconds": 175.0
     }
   ],
   "changes": [
