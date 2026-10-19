@@ -111,7 +111,7 @@ public sealed class NotebookRuns : IDisposable
     /// <summary>The attempt host this notebook's turns dispatch through, or null while none is bound.</summary>
     public IAttemptHost? Host => _host?.Host;
 
-    /// <summary>Raised each time an attempt becomes known to this notebook: a live receipt recorded, or a restart read-back finished.</summary>
+    /// <summary>Raised each time an attempt becomes known to this notebook: a live receipt recorded.</summary>
     public event Action? AttemptsChanged;
 
     /// <summary>The attempts read back from the store for this notebook's submitted envelopes (restart read-back).</summary>
@@ -240,9 +240,6 @@ public sealed class NotebookRuns : IDisposable
             return _attempts.GetValueOrDefault(ordinal);
         }
     }
-
-    /// <summary>The attempt read back for the envelope a turn sent, or null.</summary>
-    public AttemptReceipt? AttemptOfEnvelope(string envelopeId) => null;
 
     /// <summary>
     /// Restart read-back: each submitted envelope's dispatch key is derived (<see cref="AttemptKey.For"/>, nothing

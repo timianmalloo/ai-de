@@ -191,7 +191,7 @@ public sealed class SurfaceContentFactory(
 
         // Opened by the entry verb `terminal.new` (File, every perspective — US-C11), never by a
         // derived entry: two doors to one kind is the second list this arrangement exists to remove.
-        new("terminal", "Terminal",
+        new("terminal", AiDe.App.Workbench.Sessions.RouteWords.TerminalWord,
             "One live shell session.",
             static (_, s) => Terminal(s),
             Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("terminal.new"),

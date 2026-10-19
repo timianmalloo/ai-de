@@ -101,6 +101,10 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>Re-reads every row's attempt from <see cref="AttemptOf"/>.</summary>
     public void RefreshAttempts()
     {
+        foreach (var row in _items)
+        {
+            row.Attempt = _attemptOf(row.Ordinal);
+        }
     }
 
     /// <summary>The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none.</summary>

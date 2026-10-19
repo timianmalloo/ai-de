@@ -44,7 +44,7 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
     }
 
     [Fact]
-    public void AfterARestart_EachTurnsRowNamesItsOwnRevisionRequestAndRoute()
+    public void AfterARestart_TheStoreHoldsTheAttempt_ButTheThreadHasNoRowToSayOtherwise()
     {
         Sta.Pump(
             create: () => new Border(),
@@ -53,7 +53,6 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
             {
                 Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
                 string liveLine;
-                string envelopeId;
                 var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
                 using (host)
                 {
@@ -67,7 +66,6 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                     await NotebookFixture.SendAndSettleAsync(document);
                     await UntilAsync(window, () => model.Thread.Current.Turns[0].State is not (TurnState.Running or TurnState.Preparing),
                         () => "the attempt never ended");
-                    envelopeId = model.Thread.Current.Turns[0].EnvelopeId;
                     liveLine = LineOf(model.Runs, model.Thread.Current.Turns[0]);
                     Assert.StartsWith("Sent from revision ", liveLine);
                     window.Content = null;
@@ -77,18 +75,15 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                 using var restarted = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
                 using var reopened = _fixture.NewModel();
                 reopened.Runs.BindHost(restarted, Scope);
-                var raised = 0;
-                reopened.Runs.AttemptsChanged += () => raised++;
                 using var surface = new SessionDocumentSurface(reopened, null, new RecordingAnnouncer());
                 window.Content = surface;
                 await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
 
-                // No production path restores turns into a reopened thread (it starts empty), so the turn is rebuilt here
-                // from what the store holds: its envelope id. The mapping is the envelope's, not the live ordinal's.
-                var restoredTurn = new TurnView(1, envelopeId, "say ok", [], TurnState.Completed, null, null, [], "b", DateTimeOffset.UnixEpoch);
-                var attempt = reopened.Runs.AttemptOfEnvelope(restoredTurn.EnvelopeId);
-                Assert.Equal(liveLine, new TurnItem(restoredTurn) { Attempt = attempt?.Attempt }.BindingLine);
-                Assert.True(raised > 0, "the read-back finished and nothing told the rows");
+                // The premise of the Leader's gap 1, pinned: the store holds the attempt, but no production path restores turns
+                // into a reopened thread (it starts empty; a live turn's EnvelopeId is a placeholder, "turn-1"), so no row
+                // exists to say "not recorded". Restoring rows is a feature with its own seam, not a read-back mapping.
+                Assert.Single(reopened.Runs.ReadBack);
+                Assert.Empty(reopened.Thread.Current.Turns);
                 window.Content = null;
             });
     }
@@ -110,6 +105,8 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                 _fixture.ConfigureStub(document);
                 _fixture.ReleaseRun();
 
+                var changes = 0;
+                model.Runs.AttemptsChanged += () => changes++;
                 document.Composer.Draft.SetFreeFormText("first words");
                 await NotebookFixture.SendAndSettleAsync(document);
                 await UntilAsync(window, () => model.Thread.Current.Turns[0].State is not (TurnState.Running or TurnState.Preparing), () => "A never ended");
@@ -125,6 +122,7 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                 Assert.Equal(model.RevisionOf(turns[1].Ordinal)!.RevisionNo, b.RevisionNo);
                 Assert.NotEqual(a.RevisionNo, b.RevisionNo);
                 Assert.NotEqual(a.ProjectionSha, b.ProjectionSha);
+                Assert.True(changes >= 2, $"each recorded receipt must tell the rows; {changes} calls");
                 Assert.StartsWith($"Sent from revision {a.RevisionNo} · request {a.ProjectionSha![..7]} · via ", LineOf(model.Runs, turns[0]));
                 Assert.StartsWith($"Sent from revision {b.RevisionNo} · request {b.ProjectionSha![..7]} · via ", LineOf(model.Runs, turns[1]));
                 window.Content = null;
