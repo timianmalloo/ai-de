@@ -96,6 +96,8 @@ the Leader's gesture table. Lines marked **rehearse** are gestures whose exact k
 GUI steps not yet run by a person are **owed to the user**.*
 
 ### 0. Build and launch
+Run every step from a **clean worktree of origin/main**, never the primary checkout (`C:\Projects\ai-de`), because joins
+change the primary while you walk through. The Owner prepared one for this walk-through at `C:\Projects\ai-de-demo`.
 1. `dotnet build AiDe.sln -c Release`
 2. Run `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`. The path was confirmed on disk at 2026-10-19 08:17Z.
 
@@ -159,10 +161,12 @@ GUI steps not yet run by a person are **owed to the user**.*
 21. **Expect:** a new turn sent now continues the numbering after the restored rows. It never takes b1 again.
 
 ### 8. The recorded real-lane Stop run (the second recorded run, for the Proof Pack)
-22. **This step spends real adapter usage on your Claude account.** From the repository root in PowerShell:
-    `$env:AIDE_REAL_ADAPTER_ROOT = "$PWD\spikes\acp-subscription-lane"; dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AttemptRealLaneStopTests"`.
-    The adapter is installed in that folder's `node_modules` from the committed lockfile; if it is missing, run
-    `npm ci` there first. Without the variable the test reports **skipped**, never passed.
+22. **This step spends real adapter usage on your Claude account.** From the demo worktree's root in PowerShell:
+    `$env:AIDE_REAL_ADAPTER_ROOT = "C:\Projects\ai-de\spikes\acp-subscription-lane"; dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AttemptRealLaneStopTests"`.
+    The path is absolute because the adapter lives in that folder's `node_modules`, which git ignores, so only the
+    primary checkout has it installed. To use the folder inside another tree instead, run `npm ci` in that tree's
+    `spikes\acp-subscription-lane` first (it installs from the committed lockfile). Without the variable the test
+    reports **skipped**, never passed.
 23. **Expect:** `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` passes.
     Its PASS output becomes the second recorded real-lane run in this Proof Pack. Scrub any account email or
     organization from captured files before committing (brief rule 15); the identity gate refuses them.
