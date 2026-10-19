@@ -1007,6 +1007,16 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         if (queued is null)
         {
+            // THE DRAIN SENT IT (Ruling 181 (1)): the turn the field shows as queued is now the one in flight, so the heading
+            // says sent. A queue that emptied any other way (cancelled, held) leaves the turn not in flight, and the heading stays.
+            if (_sent is { } shown && _inFlight is { } sentNow
+                && string.Equals(shown.Heading, QueuedHeading(sentNow.DisplayOrdinal), StringComparison.Ordinal)
+                && string.Equals(shown.Text, sentNow.SentBytes, StringComparison.Ordinal))
+            {
+                _sent = (shown.Text, SentHeading(sentNow.DisplayOrdinal));
+                ShowCompiled(string.Empty);
+            }
+
             if (_statusKind is StatusKind.Queued or StatusKind.Refusal)
             {
                 SetStatus(string.Empty, Urgency.Status);
