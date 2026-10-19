@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T21:52:06Z",
+  "generated": "2026-10-19T22:05:22Z",
   "audit": [
     {
       "actor": null,
@@ -26504,6 +26504,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T21:52:04Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5B359PJRHQV6Q80N8WYQ35X",
+      "shortname": "join-wls-float-n8-step8",
+      "datetime": "2026-10-19T22:05:22Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n8 join d9102cd3",
+      "summary": "TWO recounts, both recorded (Owner). RECOUNT 1 FAILED: Core nonportable TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives ('the helper never wrote child-exited= to its report'); the src diff is one non-terminal file; passed 3/3 alone on the join head be5a497a and 3/3 on the first parent aa8247ff; instance (2) of DC-NEW-wl-leader3-b (tests that fail only under full-suite load), rate to be measured by T31. RECOUNT 2, the one re-run the Owner allowed: Core 3116 / portable 2933 / nonportable 183 all Completed (the terminal-host test passed under load); App 1229 counted, only SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests refused 'foreground', each ALONE on the head be5a497a and the parent aa8247ff in a clean detached tree: Ruling 155 (3), NOT CHECKED; the Owner confirmed that 'fails anywhere' excludes these two. Step 8 strict 6/48. Ratchet vs aa8247ff, head d9102cd3: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Close condition 4 (Ruling 171 (3)) proved by test: a live notebook floats, redocks with its state intact and focus in it, and survives a restart floating with its read-back; floating tabs are named and have a menu. Demo step 5 is owed to the user's WL-S walk-through.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 171 (3): a live notebook floats and redocks",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T20:56:37Z",
+      "duration_seconds": 90525.0
     }
   ],
   "changes": [
