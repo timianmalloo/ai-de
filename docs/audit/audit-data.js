@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T08:26:37Z",
+  "generated": "2026-10-19T08:43:30Z",
   "audit": [
     {
       "actor": null,
@@ -24600,6 +24600,30 @@ window.AUDIT_DATA = {
       "done_when": "every state's row Name pinned; suites green",
       "tier": "T2",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M59N91QZACDAZ2KX5X3JYPE2",
+      "shortname": "wl-t16-bindrow",
+      "datetime": "2026-10-19T08:43:30Z",
+      "session": "wl-t16-bindrow",
+      "prompt": "T16: turn row shows its attempt binding",
+      "summary": "Binding line in provenance disclosure + HelpText; RouteWords shared with the New session sheet",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Sessions/RouteWords.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "WL-1a demo sees attempt bound to revision, request, route",
+      "done_when": "line + HelpText + AC-R01a + DESIGN.md + suites green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T08:32:13Z",
+      "duration_seconds": 677.0
     }
   ],
   "changes": [
