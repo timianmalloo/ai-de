@@ -1,0 +1,123 @@
+text I/O that is not portable across Windows and macOS (120):
+  tools/api-reference.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/build-doc-viewer.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/build-evolution-spec-view.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/build-workbench-proposal-v2.py:26: write_text(...) without newline="\n"
+  tools/build-workbench-proposal-v2.py:42: write_text(...) without newline="\n"
+  tools/build-workbench-proposal-v2.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/list-workspace-stores.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/measure-repositories.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/merge-append-only-log.py:114: write_text(...) without newline="\n"
+  tools/merge-append-only-log.py:118: write_text(...) without newline="\n"
+  tools/merge-append-only-log.py:121: write_text(...) without newline="\n"
+  tools/mutation-replay.py:151: write_text(...) without newline="\n"
+  tools/reap-stragglers.py:923: write_text(...) without newline="\n"
+  tools/reap-stragglers.py:1040: write_text(...) without newline="\n"
+  tools/reap-stragglers.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/run-verify-gates.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/test-defect-register-merge.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-aide-gitignore.py:78: write_text(...) without newline="\n"
+  tools/verify-aide-gitignore.py:85: write_text(...) without newline="\n"
+  tools/verify-api-crefs.py:162: write_text(...) without newline="\n"
+  tools/verify-api-crefs.py:166: write_text(...) without newline="\n"
+  tools/verify-api-crefs.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-audit-log.py:357: write_text(...) without newline="\n"
+  tools/verify-audit-log.py:531: write_text(...) without newline="\n"
+  tools/verify-bounds-are-enforced.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-capture-instruction.py:152: write_text(...) without newline="\n"
+  tools/verify-capture-instruction.py:153: write_text(...) without newline="\n"
+  tools/verify-capture-instruction.py:155: write_text(...) without newline="\n"
+  tools/verify-capture-instruction.py:158: write_text(...) without newline="\n"
+  tools/verify-capture-instruction.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-cited-controls.py:188: write_text(...) without newline="\n"
+  tools/verify-cited-controls.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-containment-comparisons.py:459: write_text(...) without newline="\n"
+  tools/verify-containment-comparisons.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-defect-register.py:154: write_text(...) without newline="\n"
+  tools/verify-derived-views.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-design-modes.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-extractor-generation.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-front-door-exit-attended.py:127: write_text(...) without newline="\n"
+  tools/verify-front-door-exit-attended.py:134: write_text(...) without newline="\n"
+  tools/verify-front-door-exit-attended.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-front-door-exit-evidence.py:592: write_text(...) without newline="\n"
+  tools/verify-front-door-exit-evidence.py:585: write_text(...) without newline="\n"
+  tools/verify-front-door-exit-evidence.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-gate-self-tests.py:444: write_text(...) without newline="\n"
+  tools/verify-gate-self-tests.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-harness-diagnostics.py:272: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:280: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:295: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:300: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:308: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:315: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:322: write_text(...) without newline="\n"
+  tools/verify-harness-diagnostics.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-id-allocators.py:848: write_text(...) without newline="\n"
+  tools/verify-id-allocators.py:773: write_text(...) without newline="\n"
+  tools/verify-id-allocators.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-mockup-audits.py:210: write_text(...) without newline="\n"
+  tools/verify-mockup-audits.py:211: write_text(...) without newline="\n"
+  tools/verify-mockup-audits.py:212: write_text(...) without newline="\n"
+  tools/verify-node-reuse-control.py:117: write_text(...) without newline="\n"
+  tools/verify-node-reuse-control.py:161: write_text(...) without newline="\n"
+  tools/verify-node-reuse-control.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-perf-assertions.py:186: write_text(...) without newline="\n"
+  tools/verify-perf-assertions.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-preservation-workflow-policy.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-project-coverage.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-published-layout.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-r14b2-session-naming.py:187: write_text(...) without newline="\n"
+  tools/verify-r14b2-session-naming.py:193: write_text(...) without newline="\n"
+  tools/verify-r14b2-session-naming.py:198: write_text(...) without newline="\n"
+  tools/verify-r14b2-session-naming.py:204: write_text(...) without newline="\n"
+  tools/verify-r14b2-session-naming.py:210: write_text(...) without newline="\n"
+  tools/verify-r14b2-session-naming.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-ruling-citations.py:167: write_text(...) without newline="\n"
+  tools/verify-ruling-citations.py:155: write_text(...) without newline="\n"
+  tools/verify-ruling-citations.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-site-figures.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-standins.py:143: write_text(...) without newline="\n"
+  tools/verify-standins.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-stranded-audit.py:388: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:398: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:405: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:409: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:419: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:426: write_text(...) without newline="\n"
+  tools/verify-stranded-audit.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-subprocess-utf8.py:103: write_text(...) without newline="\n"
+  tools/verify-subprocess-utf8.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-surface-ownership.py:385: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:525: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:547: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:610: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:613: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:674: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:694: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:696: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:706: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:713: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:382: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:763: write_text(...) without newline="\n"
+  tools/verify-surface-ownership.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-terminal-host-exit-paths.py:101: write_text(...) without newline="\n"
+  tools/verify-ui-craft-floor.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-vendored-advisories.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-vendored-assets.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/verify-workbench-v2.py:131: write_text(...) without newline="\n"
+  tools/verify-workbench-v2.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
+  tools/compile-eval/derive-fixtures.py:105: write_text(...) without newline="\n"
+  tools/compile-eval/derive-fixtures.py:118: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:138: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:269: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:300: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:325: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:344: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:351: write_text(...) without newline="\n"
+  tools/compile-eval/ring.py:398: write_text(...) without newline="\n"
+  tools/compile-eval/score.py:423: write_text(...) without newline="\n"
+  tools/compile-eval/score.py:471: write_text(...) without newline="\n"
+  tools/compile-eval/score.py:501: write_text(...) without newline="\n"
+fix: newline="\n" on every text write (audit-log.py:465 is the example); the stdio guard from
+     pack-doctor.py at the top of every printing script; drop text=True from mkstemp

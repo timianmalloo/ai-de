@@ -1,0 +1,29 @@
+{
+  "artifact": "empty.html",
+  "artifact_sha256": "5024e5e04a757a42f8eb713f3033a814dcd950f13dc1c89e1ac492f125a8c268",
+  "checked_at": "2026-10-19T01:05:36.168545+00:00",
+  "journey_completed": false,
+  "checks": [
+    {
+      "check": "Nonzero rendered frame and no initial layout failures",
+      "passed": false,
+      "error": "Page.evaluate: TypeError: Cannot read properties of undefined (reading 'audit')\n    at eval (eval at evaluate (:311:30), <anonymous>:1:20)\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:311:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+    }
+  ],
+  "passed": 0,
+  "failed": 1,
+  "browser_errors": [],
+  "network_requests": []
+}
+self-test OK - a page with no workbench fails the journey
+exit 0
+    "passed": true
+    }
+  ],
+  "passed": 36,
+  "failed": 0,
+  "browser_errors": [],
+  "network_requests": []
+}
+verify-gate-self-tests: OK — 38 gate(s), 9 without a self-test, all frozen and none added.
+exit 0

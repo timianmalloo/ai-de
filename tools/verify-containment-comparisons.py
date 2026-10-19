@@ -456,7 +456,7 @@ internal static class PlantedIndirect
 def _write(root: Path, relative: str, body: str) -> Path:
     path = root / relative
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(body, encoding="utf-8")
+    path.write_text(body, encoding="utf-8", newline="\n")
     return path
 
 
@@ -550,6 +550,14 @@ def self_test() -> int:
           "shape, an unresolvable approval, a non-conditional approval and an empty corpus each "
           "fail; a clean tree passes, judged from a non-root directory.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

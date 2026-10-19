@@ -102,7 +102,7 @@ def write(golden: dict, out: Path, affirm: list[str] | None) -> int:
             print("REFUSED:\n  " + "\n  ".join(problems), file=sys.stderr)
             return 2
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(golden, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(golden, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {out}: {golden['counts']['cases']} case(s)")
     return 0
 
@@ -115,7 +115,7 @@ def self_test() -> int:
         repo.mkdir()
         subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
         events = Path(tmp) / "envelope-events.jsonl"
-        events.write_text("\n".join(_fixture(12, reused_every=4)) + "\n", encoding="utf-8")
+        events.write_text("\n".join(_fixture(12, reused_every=4)) + "\n", encoding="utf-8", newline="\n")
         golden = derive([events])
         # 12 agentic envelopes, i % 4 == 1 reused (i = 1, 5, 9) → 9 cases
         if golden["counts"]["cases"] != 9:

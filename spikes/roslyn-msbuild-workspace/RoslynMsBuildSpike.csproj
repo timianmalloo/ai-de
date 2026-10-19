@@ -32,7 +32,7 @@
       recorded as a Phase-2 finding in RESULT.md for the Security & Identity Architect, not resolved
       by this line.
     -->
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

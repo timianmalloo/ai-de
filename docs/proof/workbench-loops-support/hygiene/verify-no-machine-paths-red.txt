@@ -1,0 +1,11 @@
+machine-specific paths in tracked, machine-readable files (4):
+  .agents/requests.jsonl:508: {"agent": "codex-astra-gate-conductor", "at": 1789582987.3118522, "contract": "REQUEST canonical slot after diagnostic p
+  .agents/requests.jsonl:509: {"agent": "codex-astra-gate-conductor", "at": 1789582987.3644383, "contract": "REQUEST canonical slot after diagnostic p
+  .agents/sessions/copilot-main-watch.md:401: `C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/main-watch-observer.py`.
+  .agents/sessions/copilot-main-watch.md:403: `C:/Users/malla/AppData/Local/Temp/claude/C--projects-ai-de/b0e37443-a1ca-44d7-bf2e-8b893129f69d/scratchpad/conductor-wa
+fix: carry the portable token (`python3`, `~`, a repo-relative path) and resolve it at
+     run time; for the registry run `coord classify init --force`. The token is what a
+     tracked file spells; on Windows you RUN it as `python` or `py -3` (`python3` there is
+     the Store alias). A test fixture may opt out with `machine-path-ok` on the line, with
+     the reason beside it; a byte-exact captured record opts out per file with
+     `<pattern> machine-path-ok` in .gitattributes.

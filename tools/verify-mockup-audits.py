@@ -207,9 +207,9 @@ def run_self_test(browser: str) -> int:
         broken = tmp_path / "broken.html"
         healthy = tmp_path / "healthy.html"
         hidden = tmp_path / "hidden.html"
-        broken.write_text(BROKEN_FIXTURE, encoding="utf-8")
-        healthy.write_text(HEALTHY_FIXTURE, encoding="utf-8")
-        hidden.write_text(HIDDEN_FIXTURE, encoding="utf-8")
+        broken.write_text(BROKEN_FIXTURE, encoding="utf-8", newline="\n")
+        healthy.write_text(HEALTHY_FIXTURE, encoding="utf-8", newline="\n")
+        hidden.write_text(HIDDEN_FIXTURE, encoding="utf-8", newline="\n")
 
         broken_problems = findings_for(browser, broken)
         healthy_problems = findings_for(browser, healthy)

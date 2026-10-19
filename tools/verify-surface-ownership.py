@@ -379,12 +379,12 @@ def self_test() -> int:
         for relative in files:
             target = place / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("// probe\n", encoding="utf-8")
+            target.write_text("// probe\n", encoding="utf-8", newline="\n")
         contract = place / CONTRACT
         contract.parent.mkdir(parents=True, exist_ok=True)
         contract.write_text(
             "## 2. File ownership\n\n" + section + "\n## 3. Later\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
     def require(name: str, condition: bool, detail: str) -> None:
         if not condition:
@@ -526,7 +526,7 @@ def self_test() -> int:
             overlap_contract.read_text(encoding="utf-8").replace(
                 "## 3. Later", "### Design owns\n\n| Path | Why |\n|---|---|\n"
                 f"| `{SURFACES}/OneSurface.cs` | conflict |\n\n## 3. Later"),
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         require("cross-owner overlap always conflicts", has(
             check(overlap, unassigned={}), f"{SURFACES}/OneSurface.cs",
             "more than one owner", "Core", "Design"),
@@ -547,7 +547,7 @@ def self_test() -> int:
         (contamination / CONTRACT).write_text(
             (contamination / CONTRACT).read_text(encoding="utf-8") +
             f"\n| `{SURFACES}/LaterView.cs` | outside section 2 |\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         contamination_problems = check(contamination, unassigned={})
         for filename in ("ProseView.cs", "WhyView.cs", "SharedView.cs", "LaterView.cs"):
             require(f"Path-cell-only scope excludes {filename}", has(
@@ -607,7 +607,7 @@ def self_test() -> int:
         indented_end = base / "indented-section-end"
         target = indented_end / SURFACES / "HiddenView.cs"
         target.parent.mkdir(parents=True)
-        target.write_text("// probe\n", encoding="utf-8")
+        target.write_text("// probe\n", encoding="utf-8", newline="\n")
         contract = indented_end / CONTRACT
         contract.parent.mkdir(parents=True)
         contract.write_text(
@@ -617,7 +617,7 @@ def self_test() -> int:
             "  ## 3. Later\n\n"
             "### Design owns\n\n| Path | Why |\n|---|---|\n"
             f"| `{SURFACES}/HiddenView.cs` | outside section 2 |\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         require("indented level-two heading ends section 2",
                 check(indented_end, unassigned={}) == [],
                 f"got {check(indented_end, unassigned={})!r}")
@@ -674,7 +674,7 @@ def self_test() -> int:
         exception_contract.write_text(
             exception_contract.read_text(encoding="utf-8").replace(
                 "## 3. Later", f"| `{pending}` | now assigned |\n\n## 3. Later"),
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         require("newly assigned exception is stale", has(
             check(exception, {pending: valid_reason}), pending, "now assigns"),
             f"got {check(exception, {pending: valid_reason})!r}")
@@ -691,11 +691,11 @@ def self_test() -> int:
                 f"first={first!r}, second={second!r}")
         before = set(first)
         owned = deterministic / SURFACES / "OwnedSurface.cs"
-        owned.write_text("// probe\n", encoding="utf-8")
+        owned.write_text("// probe\n", encoding="utf-8", newline="\n")
         contract_text = (deterministic / CONTRACT).read_text(encoding="utf-8")
         (deterministic / CONTRACT).write_text(
             contract_text.replace("## 3. Later", f"| `{SURFACES}/OwnedSurface.cs` | owned |\n"
-                                  "\n## 3. Later"), encoding="utf-8")
+                                  "\n## 3. Later"), encoding="utf-8", newline="\n")
         require("adding an owned file does not erase existing findings",
                 before.issubset(set(check(deterministic, unassigned={}))),
                 f"before={before!r}, after={check(deterministic, unassigned={})!r}")
@@ -703,14 +703,14 @@ def self_test() -> int:
         missing_contract = base / "missing-contract"
         target = missing_contract / SURFACES / "OnlySurface.cs"
         target.parent.mkdir(parents=True)
-        target.write_text("// probe\n", encoding="utf-8")
+        target.write_text("// probe\n", encoding="utf-8", newline="\n")
         require("missing ownership contract fails closed", has(
             check(missing_contract, unassigned={}), CONTRACT, "does not exist"),
             f"got {check(missing_contract, unassigned={})!r}")
 
         missing_section = base / "missing-section"
         fixture(missing_section, [f"{SURFACES}/OnlySurface.cs"], "### Core owns\n")
-        (missing_section / CONTRACT).write_text("## 1. Other\n", encoding="utf-8")
+        (missing_section / CONTRACT).write_text("## 1. Other\n", encoding="utf-8", newline="\n")
         require("missing section 2 fails closed", has(
             check(missing_section, unassigned={}), "no '## 2. File ownership'"),
             f"got {check(missing_section, unassigned={})!r}")
@@ -760,7 +760,7 @@ def self_test() -> int:
                     failures.append(f"mutation oracle {name}: source target is absent")
                     continue
                 mutant = base / f"mutant-{index}.py"
-                mutant.write_text(source.replace(old, new, 1), encoding="utf-8")
+                mutant.write_text(source.replace(old, new, 1), encoding="utf-8", newline="\n")
                 result = subprocess.run(
                     [sys.executable, str(mutant), "--self-test"],
                     cwd=root_for_self_test(),
@@ -788,6 +788,14 @@ def self_test() -> int:
 def root_for_self_test() -> Path:
     """Keep mutation subprocesses in the repository so repo_root() has a Git context."""
     return repo_root()
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

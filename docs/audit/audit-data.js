@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T02:33:22Z",
+  "generated": "2026-10-19T01:41:53Z",
   "audit": [
     {
       "actor": null,
@@ -22689,6 +22689,140 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/plans/worktree-cleanup-20261017.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:02:03Z",
+      "done_when": "Remote recovery verified; only primary checkout remains locally.",
+      "duration_seconds": 410.0,
+      "fan_out": 0,
+      "goal": "Commit and push remaining AI-DE work and retire linked worktrees.",
+      "id": "al-01M58TW311DTEEXYVK853QTTV2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M55TPKC6J24DWNFXNSJ8AW3F (session codex-cleanup-20261017) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-J8AW3F",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "implement",
+      "started_at": "2026-10-19T00:55:13Z",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-cleanup-20261017 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M55TPKC6J24DWNFXNSJ8AW3F",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/workbench-loops-ux.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:02:03Z",
+      "done_when": "Reviewable proposal and full loop mockups are source-grounded, independently reviewed, verified and linked.",
+      "fan_out": 0,
+      "goal": "Elevate the local dockable workbench proposal and complete HTML interaction model.",
+      "id": "al-01M58TW34S8WPXSJ3M03N7MH1W",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581X9Z8CKSZ9P0XEZH2FSAQ (session codex-workbench-loops-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-H2FSAQ",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M581X9Z8CKSZ9P0XEZH2FSAQ",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/local-software-factory-v2.html",
+        "docs/proposals/local-software-factory-v2-interactive.html",
+        "docs/knowledge/workbench-loops-20261018.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:02:03Z",
+      "done_when": "Both entry paths and all three loops have reviewable HTML and an honest migration proposal.",
+      "fan_out": 0,
+      "goal": "Evolve AI-DE as a local desktop software factory and system-understanding workbench.",
+      "id": "al-01M58TW38PS72VK4NFBQDE6KY5",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581XA7C6Z11H96W8Y1BS5ZD (session codex-workbench-loops-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-1BS5ZD",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M581XA7C6Z11H96W8Y1BS5ZD",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/workbench-loops-20261018.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:02:03Z",
+      "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
+      "fan_out": 0,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "id": "al-01M58TW3CENZA0DWJB30MA06Q6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M58CGVHSXSDW79EB399778RM (session codex-specify-evolution-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-9778RM",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-specify-evolution-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M58CGVHSXSDW79EB399778RM",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:22:24Z",
+      "done_when": "Each item green red-first with proof files, or filed as a pack defect; gates-before/after show the red set shrink with no green-to-red",
+      "fan_out": 0,
+      "goal": "Burn down main's pre-existing red verify gates and remove the two join-time defect classes",
+      "id": "al-01M58W1C1NSTRCGGGZJMTNJNQK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene (Ruling 151): burn down main's red verify gates, union-merge the defect register, fix DesktopHold.Occupant",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-hygiene",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Register unions on merge (merge=union + test); DesktopHold.Occupant sees R115 holds (red-first); audit-capture, no-machine-paths, portable-text-io, preservation-policy, workbench-v2, ui-craft-floor, project-coverage (spikes) fixed; ruling-citations and the frozen front-door oracle filed as pack defects; suite 3978 green.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "tests/Shared/ConsoleHostCensus.cs"
       ],
       "compiled": false,
@@ -22871,159 +23005,28 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-18T22:45:07Z",
-      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, dotnet test green",
-      "duration_seconds": 1282.0,
-      "fan_out": 0,
-      "goal": "Extend RunEvent envelope and TurnState once",
-      "id": "al-01M58K1BX2VRNZMX3KJB5XC2MV",
+      "id": "al-01M58X50Q23YY06XV2BX88XF4V",
+      "shortname": "wl-t13-hygiene",
+      "datetime": "2026-10-19T01:41:52Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 condition gate-hygiene, Ruling 154 (1): keep the two workbench mockups scanned",
+      "summary": "verify-ui-craft-floor.py: the two pages leave LEGACY_ADVISORY and are scanned; only design-system-color exempt (COLOR_EXEMPT_RULES); self-test case added; red proof by planted undersized-ui-text",
       "kind": "skill",
-      "outcome": "success",
-      "prompt": "T3 sp2-runevent-vocab: extend RunEvent envelope and TurnState once",
-      "session": "wl-t3-sp2",
-      "shortname": "wl-t3-sp2",
       "skill": "implement",
-      "started_at": "2026-10-18T22:23:45Z",
-      "summary": "TurnState +6 values, Stopped->Interrupted, RunEvent redactions/scanned_with, native.frame, TurnState-never-serialized guard; Core green",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T01:56:07Z",
-      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, ratchet PASS",
-      "duration_seconds": 1.0,
-      "fan_out": 0,
-      "goal": "Extend the RunEvent envelope and TurnState once, so folds, host and UI share one vocabulary",
-      "id": "al-01M58XZ3GTX9ZAHH3RZXB2JMMJ",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "the join of the resolved merge into main",
-      "session": "wl-leader-20261018",
-      "shortname": "join-sp2-runevent-vocab",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "execute-with-coordination",
-      "started_at": "2026-10-19T01:56:06Z",
-      "summary": "T3 landed. The recount ran (step 4) and its only failures were 3 TerminalHost census reads reported NOT CHECKED with T12's cause (JSON parse error: 0x15 in a process CommandLine, unescaped by ConvertTo-Json) - green under Ruling 151(3); continued with --docs-only so the recount is not re-run; root-cause fix T12c dispatched. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
-      "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T02:10:36Z",
-      "done_when": "pushed with ratchet PASS and the Owner ruling recorded verbatim",
-      "duration_seconds": 855.0,
-      "fan_out": 0,
-      "goal": "Land T3 on main under the Owner's 151(3) reading",
-      "id": "al-01M58YSKBXAGW8JG364ZZQJYEE",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Owner on report #13: T3 may push, under my reading of 151(3), not yours. Record this message verbatim in T3's join audit entry and on the board.\n151(3)'s exception covers a census read that is transiently unreadable. The 0x15 parse error is a different cause: deterministic and content-driven, so on this machine those tests check nothing until it is fixed. That alone would not excuse them. I allow it for T3 only because T3's diff against its merge base (8 files: SessionDocumentSurface, ThreadFeed, TurnItem, AcpRunEventMapper, RunEvent, RunChannelSessionThread, SessionThread, ThreadAnnouncementPolicy) touches no terminal-host or process-lifecycle code. The three unchecked TerminalHost tests reference none of T3's types, so they could not have caught a T3 defect.\nConditions:\n(a) T12c joins NEXT, before T13.\n(b) After T12c is on main, re-run TerminalHostInLifePath, TerminalHostExitPath and AppWindowClose on main. They must PASS, not report NOT CHECKED. If any fails, T3 is reopened.\n(c) A join whose diff DOES touch terminal-host or process-lifecycle code gets no such allowance while the parse error stands.\nT13b's `-X ours` on site/collaboration.html and site/index.html is a concern. `-X ours` silently drops main's side of every conflicting hunk, and no gate checks for lost content. Before T13 joins, diff both files three ways (merge-base, origin/main, T13 head). Restore or justify every main-side change it discarded, and record that in T13's join audit.\nOrder: T3 (push), T12c, T13, then T4, T9, T10.",
-      "session": "wl-leader-20261018",
-      "shortname": "join-t3-step8-ratchet",
-      "skill": "execute-with-coordination",
-      "started_at": "2026-10-19T01:56:21Z",
-      "summary": "T3 pushed d35aae27 (4c3e4b0c..d35aae27) under the Owner's reading of Ruling 151(3) recorded verbatim in this entry's prompt field. Recount: only failures were 3 TerminalHost census reads NOT CHECKED (0x15 JSON parse error, deterministic); allowed for T3 only because T3's 8-file diff touches no terminal-host/process-lifecycle code. Ratchet PASS 0/48 (Ruling 153 filter 105/105). Conditions: T12c joins next; after it, TerminalHostInLifePath/ExitPath/AppWindowClose must PASS on main or T3 reopens; no allowance for a terminal-host-touching join while the parse error stands. Release build 0 errors.",
-      "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "tests/Shared/ConsoleHostCensus.cs"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T02:02:13Z",
-      "done_when": "new case red then green; census, TerminalHost x2, Core suite green",
-      "duration_seconds": 349.0,
-      "fan_out": 0,
-      "goal": "census parses a CommandLine containing 0x15",
-      "id": "al-01M58YA8M9249H8F4BKATAT5HE",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T12c: fix census JSON parse error on raw control chars",
-      "session": "wl-t12-census",
-      "shortname": "wl-t12-census",
-      "skill": "implement",
-      "started_at": "2026-10-19T01:56:24Z",
-      "summary": "ConsoleHostCensus escapes raw C0 chars in JSON strings before parsing; red/green test; register cause Verified",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "id": "al-01M58Z9SGTW8CNM6G9JM41VMRV",
-      "shortname": "join-census-flake-root",
-      "datetime": "2026-10-19T02:19:26Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of census-flake into main",
-      "summary": "T12c: raw C0 characters inside census JSON strings escaped to \\u00XX before parsing (root cause of the TerminalHost NOT CHECKED reads: a live CommandLine held 0x15, unescaped by PowerShell 5.1 ConvertTo-Json). Red d5511086, fix ba20965d. Joined next per the Owner's 151(3) condition (a). Step 8 per Rulings 151/153. recount_seconds=517 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-support/census/control-char-green.txt"
+        "tools/verify-ui-craft-floor.py"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Make the console-host census read the process table reliably",
-      "done_when": "control-character case red then green; TerminalHost tests pass (not NOT CHECKED); ratchet PASS",
-      "tier": "T1",
+      "goal": "Both pages stay scanned; non-colour Majors fail",
+      "done_when": "r154 red then green; gates-after-r154 saved",
+      "tier": "T2",
       "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-10-19T02:10:48Z",
-      "duration_seconds": 518.0
-    },
-    {
-      "id": "al-01M59039JVN6TN0N9H6Z7XADC6",
-      "shortname": "join-t12c-and-cond-b",
-      "datetime": "2026-10-19T02:33:22Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Owner 151(3) condition (b) for T3, after T12c",
-      "summary": "T12c pushed 45c9b940 (051160d6..45c9b940): ratchet PASS 0/48, recount green with no census failures. Condition (b) on main at 45c9b940: TerminalHostInLifePath+TerminalHostExitPath 4/4 passed, AppWindowCloseLeavesNoTerminalHost 1/1 passed, no NOT CHECKED - T3 is not reopened. Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-support/census/control-char-green.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T12c and discharge 151(3) condition (b)",
-      "done_when": "pushed; the three TerminalHost/AppWindowClose tests pass on main",
-      "tier": "T1",
-      "fan_out": 0,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T21:30:17Z",
-      "duration_seconds": 18185.0
+      "started_at": "2026-10-19T01:36:41Z",
+      "duration_seconds": 311.0
     }
   ],
   "changes": [
@@ -27340,24 +27343,6 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
       "session": "wl-owner-20261018"
-    },
-    {
-      "id": "mail-01M58X51G5X2AG9GMFE4E882EW",
-      "ts": "2026-10-19T01:41:53Z",
-      "from": "wl-t13-hygiene",
-      "to": "wl-leader-20261018",
-      "kind": "done",
-      "ref": null,
-      "session": "wl-t13-hygiene"
-    },
-    {
-      "id": "mail-01M58YA9DCS999B1QS9VS42GST",
-      "ts": "2026-10-19T02:02:14Z",
-      "from": "wl-t12-census",
-      "to": "wl-leader-20261018",
-      "kind": "done",
-      "ref": null,
-      "session": "wl-t12-census"
     }
   ]
 };

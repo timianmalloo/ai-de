@@ -385,7 +385,7 @@ def self_test() -> int:
         subprocess.run(["git", "init", "-q"], cwd=place, capture_output=True, check=True)
 
         log = audit / "audit-log.jsonl"
-        log.write_text('{"id": "al-0001"}\n', encoding="utf-8")
+        log.write_text('{"id": "al-0001"}\n', encoding="utf-8", newline="\n")
 
         subprocess.run(["git", "add", "-A"], cwd=place, capture_output=True, check=True)
         subprocess.run(
@@ -395,19 +395,19 @@ def self_test() -> int:
         clean, clean_reports = check(place, running=place)
 
         # The stranding: one more entry, appended and never committed.
-        log.write_text('{"id": "al-0001"}\n{"id": "al-0002"}\n', encoding="utf-8")
+        log.write_text('{"id": "al-0001"}\n{"id": "al-0002"}\n', encoding="utf-8", newline="\n")
 
         stranded, _ = check(place, running=place)
 
         # The linked-worktree case: a session registered in the PRIMARY's log is live in its own
         # tree, and the gate must see that even when it runs FROM that linked tree (whose own
         # .agents/log is only the committed snapshot). Restore the primary first so it is clean.
-        log.write_text('{"id": "al-0001"}\n', encoding="utf-8")
+        log.write_text('{"id": "al-0001"}\n', encoding="utf-8", newline="\n")
         linked = place.parent / (place.name + "-linked")
         subprocess.run(["git", "worktree", "add", "-q", "-b", "linked", str(linked)],
                        cwd=place, capture_output=True, check=True)
         (linked / "docs" / "audit" / "audit-log.jsonl").write_text(
-            '{"id": "al-0001"}\n{"id": "al-0003"}\n', encoding="utf-8")
+            '{"id": "al-0001"}\n{"id": "al-0003"}\n', encoding="utf-8", newline="\n")
 
         unregistered, _ = check(linked, running=linked)
 
@@ -418,14 +418,14 @@ def self_test() -> int:
         (linked / ".agents" / "log").mkdir(parents=True)
         (linked / ".agents" / "log" / "codex-foreign.jsonl").write_text(json.dumps({
             "kind": "claim", "session": "codex-foreign", "at": time.time() - 30 * 3600,
-            "worktree": str(linked)}) + "\n", encoding="utf-8")
+            "worktree": str(linked)}) + "\n", encoding="utf-8", newline="\n")
 
         foreign_problems, foreign_reports = check(place, running=place)
 
         (place / ".agents" / "log").mkdir(parents=True)
         (place / ".agents" / "log" / "s.jsonl").write_text(json.dumps({
             "kind": "session-start", "session": "s", "at": time.time(), "worktree": str(linked)}) + "\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         registered, registered_reports = check(linked, running=linked)
 
@@ -482,6 +482,14 @@ def self_test() -> int:
           "linked tree seen from the primary by another session is reported with its sessions and "
           "last coord record, exit 0.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

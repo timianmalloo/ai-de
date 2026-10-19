@@ -49,6 +49,8 @@ WHAT IS GATED AND WHAT IS NOT, deliberately and per Ruling 48:
                    fallbacks; the host-probe page carries the token values by hand). Measured
                    0 findings at promotion. A gate that is red on day one gets muted, which is
                    why it waited; a gate that is green on day one and stays wired is the control.
+  GATED, COLOUR   workbench-design-language.html and factory-workbench-notes.html: scanned, only
+                   the design-system-color rule exempt (COLOR_EXEMPT_RULES, Ruling 154 (1)).
   NOT SCANNED      the twelve legacy mockups in LEGACY_ADVISORY -- 60 Majors (2026-09-11) the
                    ui-craft.yml header records as deliberate DX17 dense-meta text. They gate when
                    docs/reviews/ui-mockups-craft-gate.md dispositions them.
@@ -80,6 +82,15 @@ LEGACY_ADVISORY = {
     "facelift-elevate.html", "graph-canvas.html", "knowledge-explorer-mode.html",
     "knowledge-explorer.html", "named-dock-zones.html", "uml-erm-surfaces.html",
     "watcher-observatory.html", "workbench.html",
+}
+
+# Ruling 154 (1): these two workbench-loops proposal mockups (11 Majors measured 2026-10-19, every
+# one design-system-color) stay SCANNED. Their palette IS the subject, so DESIGN.md cannot be the
+# yardstick for colour; every other rule, accessibility included, still fails them. They leave this
+# list when the workbench design language is adopted into DESIGN.md (or the pages are retired).
+COLOR_EXEMPT_RULES = {
+    "docs/mockups/workbench-design-language.html": {"design-system-color"},
+    "docs/mockups/factory-workbench-notes.html": {"design-system-color"},
 }
 
 def gated_mockups():
@@ -124,8 +135,9 @@ def scan(target):
         return None
 
 
-def check(gated=None, advisory=None):
+def check(gated=None, advisory=None, color_exempt=None):
     gated = GATED if gated is None else gated
+    color_exempt = COLOR_EXEMPT_RULES if color_exempt is None else color_exempt
     advisory = ADVISORY if advisory is None else advisory
     defects = []
     report = []
@@ -148,8 +160,10 @@ def check(gated=None, advisory=None):
                            f"A detector that scanned nothing reports like a clean one (CD9).")
             continue
 
+        exempt_rules = color_exempt.get(target, set())
         failing = [f for f in findings
-                   if at_or_above(str(f.get("severity", "")), threshold)]
+                   if at_or_above(str(f.get("severity", "")), threshold)
+                   and f.get("rule") not in exempt_rules]
         report.append(f"  gated   {target}: {len(findings)} finding(s), "
                       f"{len(failing)} at or above {threshold}")
         for f in failing:
@@ -201,6 +215,22 @@ def self_test():
         failures.append(f"threshold: a Major threshold should pass on this artifact today, "
                         f"got {len(major)} defect(s)")
 
+    # Ruling 154 (1): an exempt-by-rule page is still scanned. Unexempted, its colour findings
+    # fail; exempted, they pass; so the exemption is real and is scoped to the one rule.
+    page = [("docs/mockups/workbench-design-language.html", "Major")]
+    bare, _ = check(gated=page, advisory=[], color_exempt={})
+    scoped, _ = check(gated=page, advisory=[])
+    cases.append("colour exemption scoped to its rule")
+    if not bare:
+        failures.append("colour exemption: the page produced no Major without the exemption, so "
+                        "the exemption proves nothing")
+    if scoped:
+        failures.append(f"colour exemption: the exempted rule still fails, got {scoped}")
+    if any(f for f in COLOR_EXEMPT_RULES.values() if f != {"design-system-color"}):
+        failures.append("colour exemption: a rule other than design-system-color is exempt")
+    if set(COLOR_EXEMPT_RULES) & {"docs/mockups/" + n for n in LEGACY_ADVISORY}:
+        failures.append("colour exemption: an exempted page is also in LEGACY_ADVISORY (not scanned)")
+
     if failures:
         print(f"self-test FAILED: {len(failures)} case(s).")
         for f in failures:
@@ -230,6 +260,14 @@ def main():
     print("verify-ui-craft-floor: OK - every gated artifact is clean at its threshold, over "
           "committed source.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

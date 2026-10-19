@@ -770,7 +770,7 @@ def self_test_across_refs(root: Path) -> int:
         register = place / "register.md"
 
         def commit(text: str, message: str) -> None:
-            register.write_text(text, encoding="utf-8")
+            register.write_text(text, encoding="utf-8", newline="\n")
             subprocess.run(["git", "add", "-A"], cwd=place, capture_output=True, check=True)
             subprocess.run(
                 ["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-m", message],
@@ -850,7 +850,7 @@ def self_test(root: Path) -> int:
             '{"id": "zz-0002"}\n'
             '{"id": "zz-0002"}\n'   # the duplicate two trees would produce
             '{"id": "zz-0005"}\n',  # the hole a lost merge would leave
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         problems, _ = check_family(Path(directory), family)
 
@@ -866,6 +866,14 @@ def self_test(root: Path) -> int:
 
     print("verify-id-allocators: SELF-TEST FAILED — the control did not fire.")
     return 1
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

@@ -18,7 +18,7 @@
       D2 (cl-0012) decides the shipped posture and requires it be VERIFIED against the output
       directory rather than assumed.
     -->
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

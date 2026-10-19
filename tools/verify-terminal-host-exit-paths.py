@@ -98,7 +98,7 @@ def _trx(directory: Path, name: str, rows: dict[str, str]) -> None:
     for test, outcome in rows.items():
         lines.append(f'<UnitTestResult testId="x" testName="{test}" outcome="{outcome}" />')
     lines.append("</Results></TestRun>")
-    (directory / name).write_text("".join(lines), encoding="utf-8")
+    (directory / name).write_text("".join(lines), encoding="utf-8", newline="\n")
 
 
 def self_test() -> int:

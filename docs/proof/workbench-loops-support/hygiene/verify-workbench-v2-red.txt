@@ -1,0 +1,3 @@
+    os.mkdir(self, mode)
+FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\Projects\\ai-de-gate-hygiene\\.git'
+exit (script as at HEAD before the fix)

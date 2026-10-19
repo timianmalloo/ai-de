@@ -1,0 +1,13 @@
+verify-audit-capture: FAILED — a skill run did not record what it was for.
+  al-01M55TPKC6J24DWNFXNSJ8AW3F: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M581X9Z8CKSZ9P0XEZH2FSAQ: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M581XA7C6Z11H96W8Y1BS5ZD: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M58CGVHSXSDW79EB399778RM: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M58FV33ZKBC7NJBSJW2C7QWZ: no goal, done_when — it will never become a Work Episode, so nothing can score or observe it (AL5b). Pass --goal and --done-when.
+  al-01M58G5X47WPDGWXM0S4JBABR0: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M58HEG5ET4YCG1JYW3ZSG1JJ: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M58N18D10H0YX6DDRTRPBCGH: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+  al-01M58JR2M2VJHNYWY5H5HH77GH: no evidence — no signals object and no docs/proof/ artifact, so it scores Not Scored for want of a verification path. If nothing was verified, say so: --signal-verification-path false is capture, silence is not.
+
+Daydream, the leaderboard and the scorer all read Work Episodes, and an entry without
+a goal never becomes one. This is AL5b, which 259 entries show prose does not carry.

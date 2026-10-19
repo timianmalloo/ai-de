@@ -1,0 +1,2 @@
+test-defect-register-merge: OK - two appended entries merged, both kept, no markers, counts fix and check pass.
+exit 0

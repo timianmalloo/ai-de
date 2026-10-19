@@ -161,12 +161,12 @@ def self_test() -> int:
 
         (place / SRC / "Thing.cs").write_text(
             "public sealed class Thing { public static string Profiles { get; set; } }\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         (place / API / "doc.md").write_text(
             # The defect: a cref rendered without its first character.
             "See `rofiles` for the list. Also `Profiles` and `someParameter` and `null`.\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         problems, _, _ = check(place)
 
@@ -184,6 +184,14 @@ def self_test() -> int:
 
     print("verify-api-crefs: self-test OK — a dropped first character fails, a correct name does not.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

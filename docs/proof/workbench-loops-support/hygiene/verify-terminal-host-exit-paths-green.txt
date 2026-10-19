@@ -1,0 +1,2 @@
+verify-terminal-host-exit-paths: OK — 5 exit paths executed and passed (window close · owner exit · owner killed · tab close · child exit → 0 headless hosts)
+exit 0

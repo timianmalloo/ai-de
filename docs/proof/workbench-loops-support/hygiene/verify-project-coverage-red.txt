@@ -1,0 +1,13 @@
+verify-project-coverage: 42 tracked project(s) — 19 in AiDe.sln, 23 outside, 0 exempt.
+  built 23 project(s) outside the solution in 22s
+verify-project-coverage: FAILED
+  - tools/verify-preservation-workflow-policy.py is a gate that no workflow invokes — it runs only when somebody remembers, which is not a control
+  - tools/verify-workbench-v2.py is a gate that no workflow invokes — it runs only when somebody remembers, which is not a control
+  - spikes/extraction-containment/ExtractionContainmentSpike.csproj does not build — C:\Projects\ai-de-gate-hygiene\spikes\extraction-containment\ExtractionContainmentSpike.csproj : error NU1902: Warning As Error: Package 'System.Security.Cryptography.Pkcs' 9.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+  - spikes/extraction-fidelity/ExtractionFidelitySpike.csproj does not build — C:\Projects\ai-de-gate-hygiene\spikes\extraction-fidelity\ExtractionFidelitySpike.csproj : error NU1902: Warning As Error: Package 'System.Security.Cryptography.Pkcs' 9.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+  - spikes/msbuild-task-execution/MsBuildTaskSpike.csproj does not build — C:\Projects\ai-de-gate-hygiene\spikes\msbuild-task-execution\MsBuildTaskSpike.csproj : error NU1902: Warning As Error: Package 'System.Security.Cryptography.Pkcs' 9.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+  - spikes/roslyn-msbuild-workspace/RoslynMsBuildSpike.csproj does not build — C:\Projects\ai-de-gate-hygiene\spikes\roslyn-msbuild-workspace\RoslynMsBuildSpike.csproj : error NU1902: Warning As Error: Package 'System.Security.Cryptography.Pkcs' 9.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7
+
+  A project nothing compiles is a project that rots, and a harness that rots runs a
+  stale binary and reports a number nobody can tell is old.
+exit 1

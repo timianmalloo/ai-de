@@ -1,0 +1,6 @@
+usage: old-pwp.py [-h] [--policy POLICY] candidate
+old-pwp.py: error: the following arguments are required: candidate
+exit 2
+verify-gate-self-tests: FAILED
+  - verify-workbench-v2.py is a gate with no --self-test, and is not on the frozen list. A control that has never been observed failing has not been observed (DC-104): four controls were wrong on their first run today, and each was found by making the code wrong and watching what stayed quiet. Add a --self-test that proves this gate fires.
+exit 1
