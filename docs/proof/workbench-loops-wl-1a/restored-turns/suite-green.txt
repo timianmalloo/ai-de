@@ -1,0 +1,7 @@
+# T17 node 2 suites (HEAD 09a0c6d4)
+## tests/AiDe.App.Tests
+Passed!  - Failed:     0, Passed:  1124, Skipped:     1, Total:  1125, Duration: 4 m 27 s - AiDe.App.Tests.dll (net10.0)
+app_exit=0
+## tests/AiDe.Core.Tests
+Passed!  - Failed:     0, Passed:  3018, Skipped:     1, Total:  3019, Duration: 2 m 9 s - AiDe.Core.Tests.dll (net10.0)
+core_exit=0

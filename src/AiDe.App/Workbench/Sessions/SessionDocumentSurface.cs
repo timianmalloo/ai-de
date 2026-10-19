@@ -141,6 +141,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
         _feed.AttemptOf = ordinal => notebook.Runs.AttemptOf(ordinal)?.Attempt;
+        _feed.LastEventOf = notebook.Runs.LastEventOf;
         notebook.Runs.AttemptsChanged += OnAttemptsChanged;
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;
@@ -587,8 +588,33 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// </remarks>
     private void Launch(GovernedRunRequest request)
     {
-        var now = DateTimeOffset.Now;
-        var submission = Composer.Gate.LastSubmission;
+        var sent = (Text: Composer.Draft.SourceText, Composer.Decorations, Submission: Composer.Gate.LastSubmission, At: DateTimeOffset.Now);
+        if (LastReadBack.IsCompleted)
+        {
+            Admit(request, sent, beginNextTurn: true);
+            return;
+        }
+
+        // A SEND BEFORE THE RESTART READ-BACK ENDS WAITS FOR IT (Ruling 163's ordinal condition): the restored turns
+        // take their ordinals first, so this one continues after them. The words were captured above; the composer
+        // starts the next block now.
+        Composer.BeginNextTurn();
+        LastAdmission = AfterTheReadBackAsync(request, sent);
+    }
+
+    /// <summary>The admission of a turn sent while the read-back ran: completed when it joined the thread.</summary>
+    internal Task LastAdmission { get; private set; } = Task.CompletedTask;
+
+    private async Task AfterTheReadBackAsync(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent)
+    {
+        await LastReadBack.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await Dispatcher.InvokeAsync(() => Admit(request, sent, beginNextTurn: false));
+    }
+
+    /// <summary>The sent turn joins the thread (accepted, or queued behind the one in flight) and its run starts or queues.</summary>
+    private void Admit(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent, bool beginNextTurn)
+    {
+        var (sourceText, decorations, submission, now) = sent;
         var compileSpend = submission?.CompileCost is { } cost ? new Spend(cost.TokensIn, cost.CacheRead, cost.TokensOut, cost.Requests) : null;
 
         // A SEND WHILE A TURN IS IN FLIGHT IS A QUEUED TURN (Ruling 95's Wait): the composer offered
@@ -596,10 +622,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         // the turn joins the thread queued. It is sent by the drain when the turn in flight ends
         // Completed or Answered, by Send now after a Stop or a failure, or not at all (Cancel).
         var queue = _thread.Current.InFlight is not null;
-        var sourceText = Composer.Draft.SourceText;
         var ordinal = queue
-            ? _thread.Enqueue(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend)
-            : _thread.Accept(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend);
+            ? _thread.Enqueue(sourceText, decorations, request.Prompt, now, compileSpend: compileSpend)
+            : _thread.Accept(sourceText, decorations, request.Prompt, now, compileSpend: compileSpend);
 
         // THE ENVELOPE AND ITS CLASS PROVENANCE, CAPTURED WITH THE ORDINAL AT LAUNCH — never read
         // from the gate at completion, where the next block's submission may already stand.
@@ -616,7 +641,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         LastBinding = BindRevisionAsync(ordinal, sourceText);
 
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
-        Composer.BeginNextTurn();
+        if (beginNextTurn)
+        {
+            Composer.BeginNextTurn();
+        }
 
         // The run is the MODEL's (ADR-0045 §4): queued or started there, so closing this pane leaves it running.
         var envelopeId = submission?.EnvelopeId;
@@ -682,8 +710,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         }
     }
 
-    /// <summary>Every envelope this session submitted, as the pair its dispatch key derives from.</summary>
-    private List<(string EnvelopeId, string ProjectionSha)> SubmittedEnvelopes()
+    /// <summary>Every envelope this session submitted: the pair its dispatch key derives from, and the words it opened with.</summary>
+    private List<(string EnvelopeId, string ProjectionSha, string Words)> SubmittedEnvelopes()
     {
         lock (_envelopeGate)
         {
@@ -691,7 +719,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             {
                 return _envelopes is null
                     ? []
-                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha))];
+                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha, e.Opened?.SourceText ?? string.Empty))];
             }
             catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
             {

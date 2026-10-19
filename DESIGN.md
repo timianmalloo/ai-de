@@ -1378,6 +1378,7 @@ Copy added by this section (review oracles quote these strings):
 | RUN2 | Stop requested. Waiting for the harness to acknowledge. |
 | RUN3 | Response complete. Evidence still needs review. |
 | RUN4 | Connection lost. The run outcome is unknown. |
+| RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
 | DOCK1 | Pane hidden. The run continues. |
 | AUTH1 | Signed in does not mean this route is qualified. |

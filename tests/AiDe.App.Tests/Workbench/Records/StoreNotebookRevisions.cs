@@ -15,7 +15,17 @@ internal sealed class StoreNotebookRevisions(WorkspaceStore store) : INotebookRe
 
     public Task<NotebookRevision> SaveAsync(NotebookId notebook, string body, int? parentRevisionNo, CancellationToken cancellationToken)
     {
-        var revisionNo = (parentRevisionNo ?? 0) + 1;
+        // The next number after the store's head, as the daemon op numbers it: a reopened model (no Latest yet, so no
+        // parent) must not reuse revision 1 of a notebook that already has revisions (T17's restart-then-send).
+        var revisionNo = 1;
+        using (var probe = store.BeginRead())
+        {
+            while (probe.ReadNotebookRevision(notebook.Value, revisionNo) is not null)
+            {
+                revisionNo++;
+            }
+        }
+
         using (var reader = store.BeginRead())
         using (var writer = store.BeginWrite())
         {

@@ -340,6 +340,26 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
     /// <summary>The last sweep this host ran — at least the startup sweep.</summary>
     internal AttemptSweepResult? LastSweep { get; private set; }
 
+    /// <summary>
+    /// Completes when the attempt's launch has fully ended — run log disposed, entry deregistered — whether it ended in a
+    /// terminal or threw; already complete when the host holds no such attempt. A test seam for the in-process kill.
+    /// </summary>
+    internal async Task LaunchSettledAsync(string dispatchKey)
+    {
+        Task settled;
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            settled = _live.TryGetValue(dispatchKey, out var live) ? live.Done.Task : Task.CompletedTask;
+        }
+        finally
+        {
+            _gate.Release();
+        }
+
+        await settled.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+    }
+
     /// <summary>The attempts this host is running now (queued successors among them, from queue time).</summary>
     internal IReadOnlyCollection<string> Live
     {
