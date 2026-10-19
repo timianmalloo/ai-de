@@ -29,7 +29,7 @@ public sealed class NotebookOperationsTests : IDisposable
         var opened = Service.Open(new NotebookOpenRequest("nb-1", "Fix the login bug"));
 
         using var reader = _workspace.Store.BeginRead();
-        var journey = reader.ReadJourney(opened.JourneyId);
+        var journey = reader.ReadJourney(opened.JourneyId!);
         var notebook = reader.ReadNotebook("nb-1");
         Assert.Equal("nb-1", opened.NotebookId);
         Assert.Equal("work", journey!.Purpose);
@@ -57,7 +57,7 @@ public sealed class NotebookOperationsTests : IDisposable
         Assert.Equal(first, second);
         Assert.Equal(seqAfterFirst, after.ReadNotebook("nb-1")!.IngressSeq);
         Assert.Equal(journeysAfterFirst, after.ListJourneys().Count);
-        Assert.Equal("Fix the login bug", after.ReadJourney(first.JourneyId)!.Title);
+        Assert.Equal("Fix the login bug", after.ReadJourney(first.JourneyId!)!.Title);
     }
 
     // ---- notebook.revision.save
