@@ -185,6 +185,157 @@ public sealed class LayoutSlotMigrationTests : IDisposable
         }
     }
 
+    // Today's Understand slot, under T4's alias name `<layout>.architecture.zones.json` (the WL-S design's §7).
+    private const string TodaysArchitectureSlot = """
+        {
+          "schemaVersion": 1,
+          "appVersion": "0.4.0",
+          "savedUtc": "2026-10-18T22:33:53+00:00",
+          "layout": {
+            "zones": [
+              { "id": "Left", "extent": 0.22, "collapsed": false },
+              { "id": "Right", "extent": 0.22, "collapsed": false },
+              { "id": "Bottom", "extent": 0.3, "collapsed": false },
+              { "id": "Center", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "graph", "kind": "canvas", "title": "Graph" } ], "activeIndex": 0 },
+                "extent": 1.0, "collapsed": false }
+            ],
+            "floating": []
+          }
+        }
+        """;
+
+    // Factory's slot for the fold's oracle: a notebook active in the Center, and a pane in the Left that the fold must not join.
+    private const string FactorySlotBeforeTheFold = """
+        {
+          "schemaVersion": 1,
+          "appVersion": "0.4.0",
+          "savedUtc": "2026-10-18T22:33:53+00:00",
+          "layout": {
+            "zones": [
+              { "id": "Left", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "diagnostics", "kind": "diagnostics", "title": "Diagnostics" } ], "activeIndex": 0 },
+                "extent": 0.22, "collapsed": false },
+              { "id": "Right", "extent": 0.22, "collapsed": false },
+              { "id": "Bottom", "extent": 0.3, "collapsed": false },
+              { "id": "Center", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "notebook:20260911T125502Z-bd59855b", "kind": "notebook", "title": "Binding" } ], "activeIndex": 0 },
+                "extent": 1.0, "collapsed": false }
+            ],
+            "floating": []
+          }
+        }
+        """;
+
+    // Today's Coordination slot, left on disk unread since T4 retired the perspective: its Left `sessions` and its Center tabs, plus
+    // one graph that only Understand admits.
+    private const string TodaysCoordinationSlot = """
+        {
+          "schemaVersion": 1,
+          "appVersion": "0.4.0",
+          "savedUtc": "2026-10-18T22:33:53+00:00",
+          "layout": {
+            "zones": [
+              { "id": "Left", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "sessions", "kind": "sessions", "title": "Terminal sessions" } ], "activeIndex": 0 },
+                "extent": 0.22, "collapsed": false },
+              { "id": "Right", "extent": 0.22, "collapsed": false },
+              { "id": "Bottom", "extent": 0.3, "collapsed": false },
+              { "id": "Center", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "leaderboard", "kind": "leaderboard", "title": "Leaderboard" },
+                  { "surfaceId": "graph", "kind": "canvas", "title": "Graph" } ], "activeIndex": 1 },
+                "extent": 1.0, "collapsed": false }
+            ],
+            "floating": []
+          }
+        }
+        """;
+
+    private string Sibling(string suffix) => Path.Combine(_dir, "layout" + suffix + ".zones.json");
+
+    [Fact]
+    public void UnderstandsSlot_IsRenamedFromArchitecture_ReadingTheOldNameOnce_KeepingAOneTimeBak_AndRoundTrips()
+    {
+        Directory.CreateDirectory(_dir);
+        var oldSlot = Sibling(".architecture");
+        var newSlot = Sibling(".understand");
+        File.WriteAllText(oldSlot, TodaysArchitectureSlot);
+        var original = File.ReadAllBytes(oldSlot);
+
+        // The alias is gone: Understand's slot is its own id.
+        Assert.Equal(newSlot, LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Understand));
+
+        // Read the new name, fall back to the old.
+        var host = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Understand));
+        using (var persistence = PersistenceFor(host))
+        {
+            persistence.Restore();
+            Assert.Equal(["graph"], host.Zones.AllSurfaces().Select(s => s.SurfaceId));
+            Assert.Empty(persistence.LastRestoreDropped);
+            persistence.SaveNow();
+            Assert.Null(persistence.LastSaveFailure);
+        }
+
+        // Write the new: the old name is gone, and its bytes are kept once as `<old>.bak`.
+        Assert.True(File.Exists(newSlot), "the first save after the rename wrote no .understand slot");
+        Assert.False(File.Exists(oldSlot), "the .architecture slot is still on disk after the rename");
+        Assert.True(File.Exists(oldSlot + ".bak"), "the rename kept no one-time .bak of the .architecture slot");
+        Assert.Equal(original, File.ReadAllBytes(oldSlot + ".bak"));
+
+        // Round-trip from the new name.
+        var again = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Understand));
+        using (var persistence = PersistenceFor(again))
+        {
+            persistence.Restore();
+            Assert.Equal(["graph"], again.Zones.AllSurfaces().Select(s => s.SurfaceId));
+        }
+    }
+
+    [Fact]
+    public void CoordinationsSlot_FoldsIntoFactorysCenter_AsTabs_NeverItsLeft_LandingOnTheNotebook_DropsWithAReport_AndRoundTrips()
+    {
+        Directory.CreateDirectory(_dir);
+        var coordination = Sibling(".coordination");
+        File.WriteAllText(Slot, FactorySlotBeforeTheFold);
+        File.WriteAllText(coordination, TodaysCoordinationSlot);
+        var originalCoordination = File.ReadAllBytes(coordination);
+
+        var host = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        using (var persistence = PersistenceFor(host))
+        {
+            var result = persistence.Restore();
+
+            // Every folded surface is appended to Factory's Center, its Left `sessions` included; Factory's Left is untouched.
+            var center = (ZoneStack)host.Zones.Zone(ZoneId.Center).Content!;
+            Assert.Equal([$"notebook:{FirstSession}", "sessions", "leaderboard"], center.Tabs.Select(s => s.SurfaceId));
+            Assert.Equal($"notebook:{FirstSession}", center.Active.SurfaceId);
+            Assert.Equal(["diagnostics"], host.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId));
+
+            // What Factory does not admit is dropped with a report (DC-219's control).
+            Assert.Equal(["graph"], persistence.LastRestoreDropped.Select(d => d.Surface.SurfaceId));
+            Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
+            Assert.StartsWith("1 pane from your saved layout isn't available in Factory", result.Announcement, StringComparison.Ordinal);
+
+            persistence.SaveNow();
+            Assert.Null(persistence.LastSaveFailure);
+        }
+
+        // The folded slot is gone, and its bytes are kept once as `<coordination>.bak`.
+        Assert.False(File.Exists(coordination), "the coordination slot is still on disk after the fold");
+        Assert.True(File.Exists(coordination + ".bak"), "the fold kept no one-time .bak of the coordination slot");
+        Assert.Equal(originalCoordination, File.ReadAllBytes(coordination + ".bak"));
+
+        // Round-trip: Factory's rewritten slot holds the folded tabs, with nothing left to fold or drop.
+        var again = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        using (var persistence = PersistenceFor(again))
+        {
+            persistence.Restore();
+            Assert.Equal(host.Zones.AllSurfaces().Select(s => s.SurfaceId), again.Zones.AllSurfaces().Select(s => s.SurfaceId));
+            Assert.Equal($"notebook:{FirstSession}", ((ZoneStack)again.Zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
+            Assert.Empty(persistence.LastRestoreDropped);
+        }
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_dir))
