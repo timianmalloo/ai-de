@@ -1,0 +1,11 @@
+T21 check 2 GREEN - move and close a floating surface
+Change: ZoneLayoutService.MovePane, ClosePane and Activate fall back to the floating stacks (FloatingStackOf) before refusing. Redock adds the surface to the target zone as its active tab, expands it, floors an empty tool zone's extent (the same as a docked move) and announces 'Moved <Title> to <zone>.'; close announces 'Closed <Title>.'. WithoutFloatingSurface removes an emptied floating window and keeps the window's active tab otherwise. 'is not docked' now applies only to a surface the layout does not hold at all.
+Adjacent run: Core *Zone*|*Float*|*Layout*: 123 passed, 0 failed.
+---
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 45 ms - AiDe.Core.Tests.dll (net10.0)
