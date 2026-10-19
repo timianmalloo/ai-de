@@ -1,0 +1,319 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl1a-folds\src\AiDe.Daemon\AiDe.Daemon.csproj (in 149 ms).
+  Restored C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 149 ms).
+  Restored C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 149 ms).
+  Restored C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 149 ms).
+  Restored C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\AiDe.Core.csproj (in 149 ms).
+  Restored C:\Projects\ai-de-wl1a-folds\src\AiDe.Mcp\AiDe.Mcp.csproj (in 149 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-folds\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-folds\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DispatchedWithOnlyAgentOutput_IsRunning [FAIL]
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Failed, expected: Failed) [FAIL]
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: ResponseComplete, expected: Completed) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Rejected, expected: Rejected) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Interrupted, expected: Interrupted) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: DeliveryUnknown, expected: DeliveryUnknown) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.HasEvidence_IsADerivedBool_NotAState [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.EachEvaluation_EmitsOneFoldDurationMs [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TheFoldIsPure_SameInputSameAnswer [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DispatchedWithOnlyAgentOutput_IsRunning [1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DispatchedWithOnlyAgentOutput_IsRunning() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 39
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Failed, expected: Failed) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(DispatchState row, TurnState expected) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 91
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: ResponseComplete, expected: Completed) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(DispatchState row, TurnState expected) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 91
+   at InvokeStub_AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Rejected, expected: Rejected) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(DispatchState row, TurnState expected) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 91
+   at InvokeStub_AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: Interrupted, expected: Interrupted) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(DispatchState row, TurnState expected) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 91
+   at InvokeStub_AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(row: DeliveryUnknown, expected: DeliveryUnknown) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(DispatchState row, TurnState expected) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 91
+   at InvokeStub_AttemptStateFoldTests.ATerminalOutcomeRow_WinsOverTheLog(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.HasEvidence_IsADerivedBool_NotAState [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.AttemptArtifactRef(String dispatchKey) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 25
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.HasEvidence_IsADerivedBool_NotAState() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 127
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.EachEvaluation_EmitsOneFoldDurationMs [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.EachEvaluation_EmitsOneFoldDurationMs() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 163
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TheFoldIsPure_SameInputSameAnswer [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TheFoldIsPure_SameInputSameAnswer() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 147
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AStopHighWaterMarkTheLogLacks_IsNotRecorded [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUnansweredPermissionRequest_IsWaiting [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestFollowedByAnEvent_IsRunning [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.NoOutcomeRows_IsPreparing [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ALinkToAnotherAttempt_IsNotEvidenceForThisOne [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.OnlyTheLastDecisionDecidesDenied [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestWithNoLaterEvent_IsDenied [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnAnsweredAllowedRequest_IsRunningAgain [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TwoTerminals_TheLowestIngressSeqWins [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AStopHighWaterMarkTheLogLacks_IsNotRecorded [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AStopHighWaterMarkTheLogLacks_IsNotRecorded() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 118
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUnansweredPermissionRequest_IsWaiting [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUnansweredPermissionRequest_IsWaiting() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 43
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestFollowedByAnEvent_IsRunning [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestFollowedByAnEvent_IsRunning() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 57
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.NoOutcomeRows_IsPreparing [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.NoOutcomeRows_IsPreparing() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 35
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ALinkToAnotherAttempt_IsNotEvidenceForThisOne [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.AttemptArtifactRef(String dispatchKey) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 25
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ALinkToAnotherAttempt_IsNotEvidenceForThisOne() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 138
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.OnlyTheLastDecisionDecidesDenied [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.OnlyTheLastDecisionDecidesDenied() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 62
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestWithNoLaterEvent_IsDenied [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ARejectedRequestWithNoLaterEvent_IsDenied() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 52
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnAnsweredAllowedRequest_IsRunningAgain [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnAnsweredAllowedRequest_IsRunningAgain() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 47
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TwoTerminals_TheLowestIngressSeqWins [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.TwoTerminals_TheLowestIngressSeqWins() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 97
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DeliveryUnknown_CarriesItsCause [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ADecisionCitingASeqTheLogLacks_IsNotRecorded_AndNeverDenied [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.StopRequestedDominatesWaiting [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(kind: "budget.exceeded") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(kind: "context.ceiling") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUncorrelatedAcpResultOrError_NeverYieldsATerminalState [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnAttemptWithNoBoundProjection_IsNotRecorded [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ADifferentProjection_IsStale [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(revision: 3, sha: null) [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DeliveryUnknown_CarriesItsCause [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.DeliveryUnknown_CarriesItsCause() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 103
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ADecisionCitingASeqTheLogLacks_IsNotRecorded_AndNeverDenied [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ADecisionCitingASeqTheLogLacks_IsNotRecorded_AndNeverDenied() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 109
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.StopRequestedDominatesWaiting [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.StopRequestedDominatesWaiting() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 74
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(kind: "budget.exceeded") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(String kind) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 70
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(kind: "context.ceiling") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(String kind) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 70
+   at InvokeStub_AttemptStateFoldTests.ABudgetOrContextCeilingEvent_IsOverLimit(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUncorrelatedAcpResultOrError_NeverYieldsATerminalState [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AttemptStateFold.Evaluate(AttemptStateInput input) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\AttemptStateFold.cs:line 27
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.Fold(RunEvent[] events, OutcomeRow[] outcomes, PermissionDecisionRow[] decisions, EvidenceLinkRow[] links) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 28
+   at AiDe.Core.Tests.Workbench.Folds.AttemptStateFoldTests.AnUncorrelatedAcpResultOrError_NeverYieldsATerminalState() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\AttemptStateFoldTests.cs:line 80
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnAttemptWithNoBoundProjection_IsNotRecorded [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnAttemptWithNoBoundProjection_IsNotRecorded() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 40
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ADifferentProjection_IsStale [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ADifferentProjection_IsStale() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 26
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(revision: 3, sha: null) [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(Nullable`1 revision, String sha) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 36
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(revision: null, sha: "sha-a") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ACurrentResult_CarriesNoCopy [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ALaterRevision_IsStale_WithTheSpecCopy [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.SameRevisionAndProjection_IsCurrent [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(revision: null, sha: "sha-a") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(Nullable`1 revision, String sha) in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 36
+   at InvokeStub_CurrentnessFoldTests.AnUnknownLiveSide_IsNotRecorded_NeverGuessedCurrent(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ACurrentResult_CarriesNoCopy [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ACurrentResult_CarriesNoCopy() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 30
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ALaterRevision_IsStale_WithTheSpecCopy [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.ALaterRevision_IsStale_WithTheSpecCopy() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 18
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.SameRevisionAndProjection_IsCurrent [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.CurrentnessFold.Evaluate(AttemptRow attempt, Nullable`1 currentRevisionNo, String liveProjectionSha) in C:\Projects\ai-de-wl1a-folds\src\AiDe.Core\Workbench\Records\Folds\CurrentnessFold.cs:line 12
+   at AiDe.Core.Tests.Workbench.Folds.CurrentnessFoldTests.SameRevisionAndProjection_IsCurrent() in C:\Projects\ai-de-wl1a-folds\tests\AiDe.Core.Tests\Workbench\Folds\CurrentnessFoldTests.cs:line 13
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    31, Passed:     0, Skipped:     0, Total:    31, Duration: 53 ms - AiDe.Core.Tests.dll (net10.0)
