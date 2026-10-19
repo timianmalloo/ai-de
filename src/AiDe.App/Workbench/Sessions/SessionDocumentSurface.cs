@@ -313,6 +313,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     public Action<int?>? ConsoleRequested { get; set; }
 
     /// <summary>
+    /// The shell's execution opener (the WL-S design's §4): when set, a turn's <i>Open the log</i> opens or focuses
+    /// that turn's attempt's execution in the Bottom zone through it, with the turn's ordinal. Unset (a document
+    /// composed without a shell), <i>Open the log</i> opens the split at the turn, as <i>Open the Console at</i> does.
+    /// </summary>
+    public Action<int>? ExecutionRequested { get; set; }
+
+    /// <summary>
     /// The shell's close (the other half of the seam): when hosted, unchecking the header's toggle
     /// closes the Console document — the toggle's state is the document's open state, honestly, so
     /// an AT's Toggle pattern (which flips the state without a Click) opens and closes too.
@@ -921,6 +928,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
                     Composer.UseAsNextDraft(turn.SourceText);
                 }
 
+                break;
+
+            case TurnActionKind.OpenLog when ExecutionRequested is { } execution:
+                execution(action.Ordinal);
                 break;
 
             case TurnActionKind.OpenLog:

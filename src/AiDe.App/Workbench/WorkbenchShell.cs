@@ -3607,6 +3607,9 @@ public sealed class WorkbenchShell : IDisposable
             document.ConsoleRequested = ordinal => Announcer.Announce(OpenSessionConsole(document, ordinal));
             document.ConsoleDismissed = () => Announcer.Announce(CloseSessionConsole(document));
 
+            // The WL-S design's §4: a turn's "Open the log" opens that turn's attempt's execution in the Bottom.
+            document.ExecutionRequested = ordinal => Announcer.Announce(OpenExecution(document, ordinal));
+
             // Ruling 95: the composer's "Start a parallel session" runs the window's flow — a derived
             // sibling session, opened docked beside this one, the draft sent as its first turn — and
             // gets back the reason when the words could not be sent, so they stay in this editor.
@@ -3743,6 +3746,52 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         return FocusConsole(host, consoleId, ordinal, "Console open");
+    }
+
+    /// <summary>
+    /// Opens turn <paramref name="ordinal"/>'s execution in the Bottom zone, or focuses the one already open (the WL-S
+    /// design's §4): identity <c>execution:&lt;DispatchKey&gt;</c>, the key read through
+    /// <see cref="Records.NotebookRuns.AttemptOf"/>, one per attempt. A collapsed Bottom is expanded first. A turn with
+    /// no attempt opens nothing. Returns what to announce.
+    /// </summary>
+    private string OpenExecution(Sessions.SessionDocumentSurface document, int ordinal)
+    {
+        if (document.Notebook.Runs.AttemptOf(ordinal) is not { } receipt)
+        {
+            return "This turn was never sent to the host, so it has no execution to open.";
+        }
+
+        var host = HostOf(document.SurfaceId) ?? Factory;
+        ReconcileViewIntoModel(host);
+
+        var executionId = Execution.ExecutionSurface.SurfaceIdFor(receipt.DispatchKey);
+        var caption = Execution.ExecutionSurface.CaptionFor(receipt.DispatchKey);
+        var holder = host.Service.Zones.FindZoneOf(executionId) ?? ZoneId.Bottom;
+        if (host.Service.Zones.Zone(holder).Collapsed)
+        {
+            ExpandZone(host, holder);
+        }
+
+        var shown = host.Service.Zones.FindZoneOf(executionId) is not null;
+        var result = shown
+            ? host.Service.Apply(new LayoutOperation.ActivateSurface(executionId))
+            : host.Service.Apply(new LayoutOperation.AddSurface(
+                ZonesToTree.StackIdOf(ZoneId.Bottom),
+                new Surface(executionId, Execution.ExecutionSurface.Kind, caption)));
+        if (result.Applied)
+        {
+            OpeningDocument(host);
+        }
+
+        WorkbenchDiagnostics.LayoutMutation("open-execution", "zone-rule", executionId, host.Adapter.ActiveSurfaceId, host.Service.Current);
+        host.Adapter.Render();
+        if (!result.Applied && !shown)
+        {
+            return result.Announcement;
+        }
+
+        host.Adapter.ActivateInView(executionId);
+        return (shown ? "Execution shown, " : "Execution open, ") + caption + ".";
     }
 
     /// <summary>Closes the session's Console document — the toggle unchecked, or the tab's close by another route — and says so.</summary>

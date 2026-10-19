@@ -103,8 +103,7 @@ public sealed class TheExecutionOpensFromOpenLogTests : IDisposable
                     Assert.Equal("Execution — " + key, AutomationProperties.GetName(surface));
 
                     // Focus moves back to the notebook; a second press focuses the one execution, never a second.
-                    Assert.True(shell.Factory.Service.Apply(new LayoutOperation.ActivateSurface(sessionId)).Applied);
-                    shell.Factory.Adapter.Render();
+                    shell.Factory.Adapter.ActivateInView(sessionId);
                     await Settle(window);
                     Assert.Equal(sessionId, shell.Factory.Adapter.ActiveSurfaceId);
 
