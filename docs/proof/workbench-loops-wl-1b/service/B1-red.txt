@@ -1,0 +1,63 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-service\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-service\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-service\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWhenEligible_WritesOneRow_AndNamesTheIntentRevisionNotImplementation [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptAgainAtTheSameBaseline_ReturnsTheSameRow_AndWritesNothing [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AnEditAfterTheIntentWasAccepted_IsSeenByTheRefoldInsideAccept [FAIL]
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_TheBlockedPath_EmitsItsWorkAcceptActivity [FAIL]
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWithAGap_IsRefusedWithEveryGapCode_AndWritesNoRow [FAIL]
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWhenEligible_WritesOneRow_AndNamesTheIntentRevisionNotImplementation [43 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Ipc.ChecklistService.SetObligations(ObligationsSetRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 51
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.MandatoryObligation(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 46
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWhenEligible_WritesOneRow_AndNamesTheIntentRevisionNotImplementation() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 86
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptAgainAtTheSameBaseline_ReturnsTheSameRow_AndWritesNothing [12 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Ipc.ChecklistService.SetObligations(ObligationsSetRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 51
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.MandatoryObligation(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 46
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptAgainAtTheSameBaseline_ReturnsTheSameRow_AndWritesNothing() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 108
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AnEditAfterTheIntentWasAccepted_IsSeenByTheRefoldInsideAccept [11 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Ipc.ChecklistService.SetObligations(ObligationsSetRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 51
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.MandatoryObligation(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 46
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AnEditAfterTheIntentWasAccepted_IsSeenByTheRefoldInsideAccept() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 125
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_TheBlockedPath_EmitsItsWorkAcceptActivity [12 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Ipc.ChecklistService.SetObligations(ObligationsSetRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 51
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.MandatoryObligation(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 46
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_TheBlockedPath_EmitsItsWorkAcceptActivity() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 150
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWithAGap_IsRefusedWithEveryGapCode_AndWritesNoRow [11 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Ipc.ChecklistService.SetObligations(ObligationsSetRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 51
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.MandatoryObligation(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 46
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B1_AcceptWithAGap_IsRefusedWithEveryGapCode_AndWritesNoRow() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 72
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     5, Passed:     0, Skipped:     0, Total:     5, Duration: 110 ms - AiDe.Core.Tests.dll (net10.0)

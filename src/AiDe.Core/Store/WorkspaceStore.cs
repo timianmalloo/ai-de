@@ -20,6 +20,12 @@ public static class StoreErrorCodes
     public const string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY";
     public const string AdoptionNotOffered = "AIDE-STORE-ADOPTION-NOT-OFFERED";
     public const string JourneyIdCollision = "AIDE-STORE-JOURNEY-ID-COLLISION";
+    public const string WorkNotAWorkJourney = "AIDE-WORK-NOT-A-WORK-JOURNEY";
+    public const string WorkObligationUnknown = "AIDE-WORK-OBLIGATION-UNKNOWN";
+    public const string WorkFieldTooLong = "AIDE-WORK-FIELD-TOO-LONG";
+    public const string WorkEvidenceNotEligible = "AIDE-WORK-EVIDENCE-NOT-ELIGIBLE";
+    public const string WorkAcceptanceBlocked = "AIDE-WORK-ACCEPTANCE-BLOCKED";
+    public const string WorkSecondChecklist = "AIDE-WORK-SECOND-CHECKLIST";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>
