@@ -62,6 +62,7 @@ public sealed class WorkbenchAdapter
     private bool _raisingArrangementChanged;
     private bool _rendering;
     private LayoutRoot? _watchedRoot;
+    private readonly HashSet<LayoutDocumentPane> _watchedFloatingPanes = new(System.Collections.Generic.ReferenceEqualityComparer.Instance);
 
     public WorkbenchAdapter(
         DockingManager manager, ILayoutService service,
@@ -380,29 +381,69 @@ public sealed class WorkbenchAdapter
 
     private void WatchTheDockingModel()
     {
-        if (ReferenceEquals(_watchedRoot, Manager.Layout))
+        if (!ReferenceEquals(_watchedRoot, Manager.Layout))
+        {
+            if (_watchedRoot is not null)
+            {
+                _watchedRoot.Updated -= OnDockingModelUpdated;
+            }
+
+            foreach (var pane in _watchedFloatingPanes)
+            {
+                pane.FloatingPropertiesUpdated -= OnFloatingBoundsUpdated;
+            }
+
+            _watchedFloatingPanes.Clear();
+            _watchedRoot = Manager.Layout;
+            if (_watchedRoot is not null)
+            {
+                _watchedRoot.Updated += OnDockingModelUpdated;
+            }
+        }
+
+        WatchTheFloatingPanes();
+    }
+
+    private void OnDockingModelUpdated(object? sender, EventArgs e)
+    {
+        // A pane floated natively (AvalonDock's Float) is a new floating window: watch its bounds too.
+        WatchTheFloatingPanes();
+        RaiseWhenTheViewArrangementChanged();
+    }
+
+    /// <summary>
+    /// The writer of a floating window's bounds (Ruling 174 (2)). When the user's move or resize ends,
+    /// AvalonDock's floating window copies its bounds into its panes and raises
+    /// <c>FloatingPropertiesUpdated</c> (AvalonDock 5.0.0, <c>LayoutFloatingWindowControl</c>, on
+    /// <c>WM_EXITSIZEMOVE</c>). A bounds change does not raise <see cref="LayoutRoot.Updated"/>, so
+    /// without this the model learned a move only at the next unrelated reconcile, and the zone file
+    /// saved the bounds of the last render. The signature carries the bounds, so the raise is
+    /// <see cref="ViewArrangementChanged"/>, and the shell's reconcile writes them into the model.
+    /// </summary>
+    private void WatchTheFloatingPanes()
+    {
+        if (_watchedRoot is null)
         {
             return;
         }
 
-        if (_watchedRoot is not null)
+        foreach (var pane in _watchedRoot.FloatingWindows.SelectMany(w => w.Descendents().OfType<LayoutDocumentPane>()))
         {
-            _watchedRoot.Updated -= OnDockingModelUpdated;
-        }
-
-        _watchedRoot = Manager.Layout;
-        if (_watchedRoot is not null)
-        {
-            _watchedRoot.Updated += OnDockingModelUpdated;
+            if (_watchedFloatingPanes.Add(pane))
+            {
+                pane.FloatingPropertiesUpdated += OnFloatingBoundsUpdated;
+            }
         }
     }
 
-    private void OnDockingModelUpdated(object? sender, EventArgs e) => RaiseWhenTheViewArrangementChanged();
+    private void OnFloatingBoundsUpdated(object? sender, EventArgs e) => RaiseWhenTheViewArrangementChanged();
 
     /// <summary>
-    /// The view's pane topology: each document pane's surfaces, in pane order and in tab order.
-    /// Null when nothing is rendered. Deliberately ignores sizes, selection and node identity — a
-    /// splitter drag or a tab click is not a rearrangement.
+    /// The view's pane topology: each document pane's surfaces, in pane order and in tab order, then
+    /// each floating pane's bounds in whole device-independent pixels. Null when nothing is rendered.
+    /// Deliberately ignores docked sizes, selection and node identity — a splitter drag or a tab click
+    /// is not a rearrangement. A floating window's bounds are included because the layout stores them
+    /// (Ruling 174): a move that does not reach the model is a move the next save loses.
     /// </summary>
     private string? ViewArrangementSignature()
     {
@@ -414,7 +455,11 @@ public sealed class WorkbenchAdapter
         var panes = root.Descendents().OfType<LayoutDocumentPane>()
             .Select(pane => string.Join(
                 ",", pane.Children.OfType<LayoutDocument>().Select(d => d.ContentId ?? "?")));
-        return string.Join("|", panes);
+        var floating = root.FloatingWindows
+            .SelectMany(w => w.Descendents().OfType<LayoutDocumentPane>())
+            .Select(p => FormattableString.Invariant(
+                $"{Math.Round(p.FloatingLeft)},{Math.Round(p.FloatingTop)},{Math.Round(p.FloatingWidth)},{Math.Round(p.FloatingHeight)}"));
+        return string.Join("|", panes) + "#" + string.Join("|", floating);
     }
 
     private void RaiseWhenTheViewArrangementChanged()
@@ -1105,13 +1150,17 @@ public sealed class WorkbenchAdapter
     {
         var pane = BuildPane(stack, reuse);
         var bounds = stack.FloatingBounds ?? DefaultBoundsNearTheWorkbench();
-        pane.FloatingLeft = bounds.X;
-        pane.FloatingTop = bounds.Y;
-        pane.FloatingWidth = bounds.Width;
-        pane.FloatingHeight = bounds.Height;
-
         var group = new LayoutDocumentPaneGroup();
         group.Children.Add(pane);
+
+        // AvalonDock places a document floating window from its ROOT PANEL's bounds (DockingManager,
+        // CreateUIElementForModel), not the pane's. Writing only the pane opened every window at 0,0,
+        // sized to its content. The pane keeps them too, because the read-back reads the pane first.
+        pane.FloatingLeft = group.FloatingLeft = bounds.X;
+        pane.FloatingTop = group.FloatingTop = bounds.Y;
+        pane.FloatingWidth = group.FloatingWidth = bounds.Width;
+        pane.FloatingHeight = group.FloatingHeight = bounds.Height;
+
         return new LayoutDocumentFloatingWindow { RootPanel = group };
     }
 

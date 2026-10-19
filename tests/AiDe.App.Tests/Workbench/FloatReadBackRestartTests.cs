@@ -13,15 +13,12 @@ namespace AiDe.App.Tests.Shell;
 /// <see cref="LayoutContent.Float"/>, the native gesture only a read-back can bring into the model.
 /// </summary>
 /// <remarks>
-/// <para><b>The restart leg runs through the store, not <c>LayoutPersistence</c>.</b> T20's guard
-/// still docks every floating pane on restore (<c>LayoutPersistence.cs:151</c>,
-/// <c>FloatingRedock.Dock</c>), so a restart through it cannot restore a pane floating until node 2
-/// removes that call. This test therefore saves with <see cref="ZoneLayoutStore.Save"/>, reads with
-/// <see cref="ZoneLayoutStore.Read"/>, restores with <see cref="ZoneBackedLayoutService.RestoreZones"/>
-/// into a new service, and renders into a new DockingManager, which is the persistence path minus
-/// that one call.</para>
-/// <para><b>Placement.</b> The zone file stores no floating bounds (seam request
-/// req-01M5A43ANDG4G188C55BY7BM3S), so a restored floating window opens at the default placement.</para>
+/// <para><b>The restart leg runs through the store.</b> It saves with <see cref="ZoneLayoutStore.Save"/>,
+/// reads with <see cref="ZoneLayoutStore.Read"/>, restores with <see cref="ZoneBackedLayoutService.RestoreZones"/>
+/// into a new service, and renders into a new DockingManager. The restart through
+/// <c>LayoutPersistence</c> is <c>FloatGuardTests</c> and <c>FloatBoundsPersistTests</c>.</para>
+/// <para><b>Placement.</b> The zone file stores each floating stack's bounds (Ruling 174), so both
+/// windows keep the bounds the read-back took from the view.</para>
 /// </remarks>
 public sealed class FloatReadBackRestartTests : IDisposable
 {
@@ -88,7 +85,8 @@ public sealed class FloatReadBackRestartTests : IDisposable
                 var read = new ZoneLayoutStore(path).Read(ids, new HashSet<string>(StringComparer.Ordinal));
                 Assert.Equal(ZoneLoadRefusal.None, read.Refusal);
                 Assert.Equal(2, read.Layout!.Floating.Count);
-                Assert.All(read.Layout.Floating, s => Assert.Null(s.FloatingBounds)); // no bounds in the file (the seam)
+                Assert.All(read.Layout.Floating, s => Assert.Equal(
+                    service.Zones.Floating.Single(f => f.Id == s.Id).FloatingBounds, s.FloatingBounds)); // the bounds are in the file (Ruling 174)
 
                 var restarted = new ZoneBackedLayoutService();
                 restarted.RestoreZones(read.Layout);
