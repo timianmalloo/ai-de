@@ -28,7 +28,7 @@ Tests: `tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecord
   ("renders 0 rows for 2 recorded attempts", "renders no row for the killed attempt").
 - Green: `restored-rows-green.txt` and `restored-outcome-green.txt` hold one run, 11 of 11 passed (the two new tests, plus
   `TheRowsAttemptBindingSurvivesRestartAndSequenceTests` and `TheAttemptHostBindingTests`).
-- Suites: `suite-green.txt`.
+- Suites: `suite-green.txt` (App 1121 passed, 1 skipped; Core 3018 passed, 1 skipped; 0 failed).
 
 ## How
 
