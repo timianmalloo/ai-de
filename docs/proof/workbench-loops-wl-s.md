@@ -102,8 +102,15 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
 ### 0. Build and launch
 1. In a clean worktree of origin/main: `dotnet build AiDe.sln -c Release`, then start
    `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`. Open this repository as the workspace.
-2. Before the first launch, copy an older layout folder that has a `layout.zones.json` naming a
-   `session-document`, a `layout.architecture.zones.json` and a `layout.coordination.zones.json`. Step 6 uses it.
+2. Step 6 needs an older layout, but **do not copy it before the first launch**: the slot migration and the rename/fold
+   run at the first launch that reads it (step 1), so step 6's relaunch would then show no drop report, no kept-prompt
+   sentence and no new `.bak` files. Put it in place **with the app closed, between step 5 and step 6's relaunch**. It
+   needs:
+   - a `layout.zones.json` naming at least one `session-document` pane **and at least one `prompt` tab**, because the
+     kept-prompt sentence prints only when a slot migrated and a prompt draft was kept (`LayoutPersistence.cs:427-431`);
+   - a `layout.architecture.zones.json` and a `layout.coordination.zones.json`;
+   - no `layout.understand.zones.json` and none of the three `.bak` files, from an earlier run.
+   The Owner's staging script `wls-step6-reset.py` does exactly this for the demo tree.
 
 ### 1. Factory lands on the notebook in the Center
 1. Press **Ctrl+1**. Factory opens.
@@ -140,7 +147,8 @@ announcement. **Ctrl+K, F is not bound as a key:** the catalog announces it, but
    landed on the window, `float/live-redock-focus-red.txt`).*
 
 ### 6. Restore an older layout
-1. Close the app, then start it again with step 0's older layout folder.
+1. Close the app. With it closed, put step 0.2's older layout in place (or run `wls-step6-reset.py`). Then start the
+   app again.
 2. **See (Factory):** each old session pane is back as a notebook, in the same tab position. The status strip
    names each pane that was dropped and where it now lives. Any prompt draft is still a prompt draft, and the
    report says "Kept 1 prompt draft as it was: prompt drafts do not become notebooks."
