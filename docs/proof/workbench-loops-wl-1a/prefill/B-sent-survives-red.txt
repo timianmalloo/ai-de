@@ -1,0 +1,56 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:01.67]     AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [FAIL]
+[xUnit.net 00:00:01.67]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:00:01.67]       String:    ""
+[xUnit.net 00:00:01.67]       Not found: "Suggestion 1 for goal."
+[xUnit.net 00:00:01.67]       Stack Trace:
+[xUnit.net 00:00:01.67]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(109,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.67]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(110,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.67]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(122,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.67]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.67]       Output:
+[xUnit.net 00:00:01.67]         before restart: b1 Completed; sent 263 chars; carries the goal line: True
+[xUnit.net 00:00:01.67]         after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 0 chars; disclosure shows 0 chars; equal to what was sent: False
+[xUnit.net 00:00:01.67]         disclosure text: ""
+[xUnit.net 00:00:01.68]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [1 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    ""
+Not found: "Suggestion 1 for goal."
+  Stack Trace:
+     at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 109
+   at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 110
+   at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 122
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ before restart: b1 Completed; sent 263 chars; carries the goal line: True
+ after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 0 chars; disclosure shows 0 chars; equal to what was sent: False
+ disclosure text: ""
+
+
+
+Test Run Failed.
+Total tests: 1
+     Failed: 1
+ Total time: 2.0407 Seconds
