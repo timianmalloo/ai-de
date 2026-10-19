@@ -9,6 +9,7 @@ published. The control is a gate, not a habit: it reads only TRACKED files under
 ALLOW-LIST (exactly this; no per-file opt-out, no line marker):
   any address at example.invalid  ·  any address at example.com or example.org
   GitHub noreply:  <anything>@users.noreply.github.com
+  exactly noreply@anthropic.com (the co-author trailer; never the rest of anthropic.com)
 
 OUTPUT. Each finding is `<path>:<line>: <masked address>`. The local part is masked, so the gate
 never writes the address it is refusing into a log.
@@ -37,8 +38,11 @@ for _stream in (sys.stdout, sys.stderr):
             pass
 
 SCOPES = ("docs/proof/", ".agents/")
-ALLOWED_DOMAINS = frozenset({"example.invalid", "example.com", "example.org", "users.noreply.github.com", "anthropic.com"})
+ALLOWED_DOMAINS = frozenset({"example.invalid", "example.com", "example.org", "users.noreply.github.com"})
 # The last label must be alphabetic, so a package pin such as `name@1.10.0` is not an address.
+# The one address allowed by exact match (case-insensitive), never its domain: the public co-author
+# trailer, which is not an account.
+ALLOWED_ADDRESSES = frozenset({"noreply@anthropic.com"})
 EMAIL = re.compile(r"[A-Za-z0-9._%+\-]+@([A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,})")
 
 
@@ -74,7 +78,7 @@ def scan(root: str) -> tuple[list[str], int]:
         scanned += 1
         for lineno, line in enumerate(raw.decode("utf-8", "replace").splitlines(), 1):
             for found in EMAIL.finditer(line):
-                if found.group(1).lower() not in ALLOWED_DOMAINS:
+                if found.group(1).lower() not in ALLOWED_DOMAINS and found.group(0).lower() not in ALLOWED_ADDRESSES:
                     hits.append("{0}:{1}: {2}".format(rel, lineno, mask(found.group(0))))
     return hits, scanned
 

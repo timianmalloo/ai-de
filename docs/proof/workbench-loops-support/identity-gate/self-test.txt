@@ -1,0 +1,2 @@
+self-test: planted address refused (masked), 4 allow-list forms pass, untracked and out-of-scope ignored
+exit=0
