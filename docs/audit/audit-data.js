@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T18:20:32Z",
+  "generated": "2026-10-19T18:34:22Z",
   "audit": [
     {
       "actor": null,
@@ -25788,6 +25788,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T18:20:30Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5AQ2Y0K579H5KETVNVYAPQS",
+      "shortname": "join-wl1a-compiled-field-n3-step8",
+      "datetime": "2026-10-19T18:34:22Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T28 n3 join 8fa28005",
+      "summary": "Recount ran in full (App 1181 counted; Core 3047/2864/183). Only refusal: SolutionTreeChordTests 'foreground not held', refused ALONE on the join head ae24e512 and on the first parent b9e740d5 in a clean detached tree (removed): Ruling 155 (3), NOT CHECKED; --continue --docs-only skipped only that re-run. NoDispatchOutsideTheHostTests.ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds, which failed under load in T28 n3's own suite, did NOT recur in this recount (Owner: recorded; first item of the next dispatch-touching node). Step 8 strict 6/48. Ratchet vs b9e740d5, head 8fa28005: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. T28 n3: queued-as heading, the queued resend guard, the DC-NEW-wl-t28-compiled class gate (ComposerContentOraclesDriveTheGestureTests).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 181 (1)/(3): every submit shows its prompt; the class gate",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T18:01:47Z",
+      "duration_seconds": 1955.0
     }
   ],
   "changes": [
