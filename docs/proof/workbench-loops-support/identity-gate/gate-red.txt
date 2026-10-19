@@ -1,0 +1,2 @@
+SELF-TEST FAIL: the planted real-shaped address was not refused
+exit=1
