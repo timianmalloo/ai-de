@@ -1,0 +1,49 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.20]     AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.TheDirectRunSeam_IsInternal [FAIL]
+[xUnit.net 00:00:00.24]     AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.NothingUnderSrc_CallsTheDirectRunSeam_OnlyItsDeclarationNamesIt [FAIL]
+  Failed AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.TheDirectRunSeam_IsInternal [1 ms]
+  Error Message:
+   the direct-run seam must be an internal NotebookRuns.UnhostedForTests(), reachable only through InternalsVisibleTo
+  Stack Trace:
+     at AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.TheDirectRunSeam_IsInternal() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheUnhostedRunIsATestSeamTests.cs:line 19
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.NothingUnderSrc_CallsTheDirectRunSeam_OnlyItsDeclarationNamesIt [40 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+           ↓ (pos 0)
+Expected: [Tuple ("AiDe.App/Workbench/Records/NotebookRuns.cs", "declaration")]
+Actual:   []
+  Stack Trace:
+     at AiDe.App.Tests.Records.TheUnhostedRunIsATestSeamTests.NothingUnderSrc_CallsTheDirectRunSeam_OnlyItsDeclarationNamesIt() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheUnhostedRunIsATestSeamTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:20.77]     AiDe.App.Tests.Records.NoDispatchOutsideTheHostTests.WithNoWorkspaceClient_SendIsRefusedWithItsCause_NoRetryIsOffered_AndNoTurnRuns [FAIL]
+  Failed AiDe.App.Tests.Records.NoDispatchOutsideTheHostTests.WithNoWorkspaceClient_SendIsRefusedWithItsCause_NoRetryIsOffered_AndNoTurnRuns [20 s]
+  Error Message:
+   Send stayed enabled in a window with no workspace client: its turn would run unrecorded
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.NoDispatchOutsideTheHostTests.Pump(Func`4 body) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\NoDispatchOutsideTheHostTests.cs:line 256
+   at AiDe.App.Tests.Records.NoDispatchOutsideTheHostTests.WithNoWorkspaceClient_SendIsRefusedWithItsCause_NoRetryIsOffered_AndNoTurnRuns() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\NoDispatchOutsideTheHostTests.cs:line 184
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 20 s - AiDe.App.Tests.dll (net10.0)
+exit=1

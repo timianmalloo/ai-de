@@ -174,6 +174,32 @@ public sealed class NoDispatchOutsideTheHostTests : IDisposable
         });
     }
 
+    /// <summary>
+    /// Ruling 159(2): a window with no workspace client (a degraded start, the daemon unavailable) refuses Send with its
+    /// cause through the same refusal surface, offers no Retry (none can help), and never runs a turn directly.
+    /// </summary>
+    [Fact]
+    public void WithNoWorkspaceClient_SendIsRefusedWithItsCause_NoRetryIsOffered_AndNoTurnRuns()
+    {
+        Pump(async (window, model, document) =>
+        {
+            var send = ButtonIn(document.Composer, b => Equals(b.Content, "Send"));
+            await UntilAsync(window, () => !send.IsEnabled,
+                () => "Send stayed enabled in a window with no workspace client: its turn would run unrecorded");
+
+            Assert.Equal(
+                "Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs.",
+                AutomationProperties.GetHelpText(send));
+            Assert.Null(FindButton(document.Composer, b => AutomationProperties.GetName(b) == "Retry hosting runs" && b.IsVisible));
+
+            document.Composer.Draft.SetFreeFormText("say ok");
+            Assert.Null(document.Composer.Send());
+            await Task.Delay(300);
+            Assert.False(_fixture.RunOpened, "a window with no workspace client ran a turn directly");
+            Assert.Empty(model.Thread.Current.Turns);
+        });
+    }
+
     private static Button ButtonIn(DependencyObject root, Func<Button, bool> match) =>
         FindButton(root, match) ?? throw new InvalidOperationException("no such button in the composer");
 
