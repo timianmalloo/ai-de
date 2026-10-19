@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:38:35Z",
+  "generated": "2026-10-19T06:53:14Z",
   "audit": [
     {
       "actor": null,
@@ -24155,6 +24155,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T06:29:14Z",
       "duration_seconds": 560.0
+    },
+    {
+      "id": "al-01M59EZ4N4590EVCJF2GWDHT30",
+      "shortname": "join-wl1a-folds-step8",
+      "datetime": "2026-10-19T06:53:14Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T6 wl1a-folds join cac40d5a",
+      "summary": "conductor-join recount OK; strict step 8 5/47 (baseline). gate_ratchet vs first parent 888555bb: PASS, 0 refusals over 48 gates (Ruling 153 filter parent=107 head=108; +1 = Ruling 157 heading swept into the join by step 7 staging, PD-1). Pushed cac40d5a:main; Release build exit 0. T6 Sonnet 32 calls/128k/6 min; its fold inputs were fixed by T5's design 68f3a753 (all adopted).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T6 on main under Ruling 151",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:39:05Z",
+      "duration_seconds": 849.0
     }
   ],
   "changes": [
@@ -28664,6 +28688,24 @@ window.AUDIT_DATA = {
       "kind": "decision-request",
       "ref": "req-01M59E463DZEPBDFCRBPS7C7AX",
       "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59E50R56GCGY3MX7BFG63R4",
+      "ts": "2026-10-19T06:38:58Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59E463DZEPBDFCRBPS7C7AX",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59END6786MQD0C5GHK266FY",
+      "ts": "2026-10-19T06:47:55Z",
+      "from": "wl-t15-idgate",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t15-idgate"
     }
   ]
 };

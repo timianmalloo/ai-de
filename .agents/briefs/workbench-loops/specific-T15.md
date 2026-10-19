@@ -9,7 +9,7 @@ gate line.
   the full address, mask the local part. It exits 0 when it finds none.
 - The allow-list is exactly: any address at `example.invalid`; any address at `example.com` or `example.org`;
   GitHub's `*@users.noreply.github.com`. Nothing else, and no per-file opt-out.
-- `--self-test` plants a real-shaped address (e.g. `jane.doe@realmail.test`) in a temporary file of a temporary git repo,
+- `--self-test` plants a real-shaped address (built at run time from parts, so no literal address is ever committed) in a temporary file of a temporary git repo,
   and proves the gate refuses it. It also proves each allow-list form passes and that an untracked file is ignored.
   It exits 0 only when all of that holds.
 - The gate is green on main as it stands. The Owner verified that the only email-shaped string under `docs/proof/` is

@@ -74,3 +74,9 @@
 {"agent": "wl-t8-bind", "at": 1792391832.3933458, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-core.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792391832.43185, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-green.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792391832.90405, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392045.883581, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/adoption-seam-rewrite-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392045.9158738, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/MigrationTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392045.9524474, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/Ruling150Tests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392045.98575, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/TypedStoreApiTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392459.41134, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/host-run-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392459.4428694, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheAttemptHostBindingTests.cs", "session": "wl-t8-bind", "wi": ""}
