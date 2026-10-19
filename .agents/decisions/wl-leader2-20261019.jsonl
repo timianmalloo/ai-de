@@ -535,3 +535,13 @@
 {"agent": "wl-leader2-20261019", "at": 1792419654.3005667, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792419654.334677, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792419654.367199, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420455.3117285, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420455.3470242, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420455.3796084, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420455.4141326, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420538.658864, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/ack_all.py", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420538.6964622, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420538.730355, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/run_ratchet.sh", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792420538.7628791, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792421640.7182477, "code": null, "kind": "allowed", "path": "docs/coordination/workbench-loops-leader-handoff-2.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792421717.848172, "code": null, "kind": "allowed", "path": "docs/coordination/workbench-loops-leader-handoff-2.md", "session": "wl-leader2-20261019", "wi": ""}

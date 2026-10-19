@@ -1,0 +1,26 @@
+# T21 n5 check (C) red at 3b12744f plus the test. The first float after a restore that holds float-1 mints float-1 again; the tree projection's invariant throws 'duplicate node id' out of Apply.
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.FloatIdAfterRestoreTests.AfterARestoreThatHoldsFloat1_TheNextFloat_MintsAnIdNotAlreadyInUse [FAIL]
+  Failed AiDe.Core.Tests.Workbench.FloatIdAfterRestoreTests.AfterARestoreThatHoldsFloat1_TheNextFloat_MintsAnIdNotAlreadyInUse [61 ms]
+  Error Message:
+   System.InvalidOperationException : duplicate node id 'float-1'
+  Stack Trace:
+     at AiDe.Core.Workbench.Layout.AssertInvariant() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\LayoutModel.cs:line 199
+   at AiDe.Core.Workbench.ZonesToTree.ToTree(WorkbenchLayout zones) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZonesToTree.cs:line 68
+   at AiDe.Core.Workbench.ZoneBackedLayoutService.get_Current() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneBackedLayoutService.cs:line 92
+   at AiDe.Core.Workbench.ZoneBackedLayoutService.Apply(LayoutOperation operation) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneBackedLayoutService.cs:line 470
+   at AiDe.Core.Tests.Workbench.FloatIdAfterRestoreTests.AfterARestoreThatHoldsFloat1_TheNextFloat_MintsAnIdNotAlreadyInUse() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\FloatIdAfterRestoreTests.cs:line 36
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 68 ms - AiDe.Core.Tests.dll (net10.0)

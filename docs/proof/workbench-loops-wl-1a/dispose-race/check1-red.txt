@@ -1,0 +1,26 @@
+
+Test run for C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.22]     AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileTheDocumentNotebookHostAndStoreAreDisposed_EndsQuietly_AndWritesNoTurn [FAIL]
+  Failed AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileTheDocumentNotebookHostAndStoreAreDisposed_EndsQuietly_AndWritesNoTurn [1 s]
+  Error Message:
+   the read-back pending at disposal ended with ObjectDisposedException: Cannot access a disposed object.
+Object name: 'AiDe.Core.Store.WorkspaceStore'.
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileTheDocumentNotebookHostAndStoreAreDisposed_EndsQuietly_AndWritesNoTurn() in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Workbench\Records\AReadBackPendingAtDisposalEndsQuietlyTests.cs:line 50
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.99]     AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileItsNotebookIsDisposed_RestoresNoTurn_WhenTheReadReturnsAfterward [FAIL]
+  Failed AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileItsNotebookIsDisposed_RestoresNoTurn_WhenTheReadReturnsAfterward [772 ms]
+  Error Message:
+   2 turn rows were written after disposal
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileItsNotebookIsDisposed_RestoresNoTurn_WhenTheReadReturnsAfterward() in C:\Projects\ai-de-wl1a-dispose-race\tests\AiDe.App.Tests\Workbench\Records\AReadBackPendingAtDisposalEndsQuietlyTests.cs:line 79
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

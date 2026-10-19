@@ -1,7 +1,9 @@
 namespace AiDe.Core.Workbench;
 
-/// <summary>A rectangle in window coordinates. Deliberately not <c>System.Windows.Rect</c> — this
-/// layer stays free of WPF so the drop logic is testable headlessly and survives a shell change.</summary>
+/// <summary>A rectangle. A drop hit box is in window coordinates; a floating pane's bounds
+/// (<see cref="StackNode.FloatingBounds"/>) are device-independent pixels in virtual-screen coordinates.
+/// Deliberately not <c>System.Windows.Rect</c> — this layer stays free of WPF so the drop logic is
+/// testable headlessly and survives a shell change.</summary>
 public readonly record struct LayoutRect(double X, double Y, double Width, double Height)
 {
     public double Right => X + Width;

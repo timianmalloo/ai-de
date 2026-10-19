@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**95 public types · 418 public members · 69% documented.**
+**95 public types · 417 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2102,7 +2102,7 @@ from a stale model and revert it. Returns null when the view cannot be mapped co
 
 **Remarks.** **Fail-safe by construction.** The model is the source of truth and a wrong reconcile
 would be rendered AND persisted, so this returns null the moment it meets a shape it cannot map
-losslessly — a floating window, an anchorable pane, an empty pane, an unknown node, a document
+losslessly — a floating window that is not one document pane, an anchorable pane, an empty pane, an unknown node, a document
 whose surface the model does not know, or a result that does not carry exactly the same set of
 surfaces it started with. The caller then leaves the model untouched, degrading to the
 pre-existing revert-on-rebuild, never to a lost or duplicated pane.
@@ -2195,7 +2195,6 @@ is indistinguishable from a broken key.
 
 | Member | Summary |
 |---|---|
-| `string FloatUnavailableAnnouncement = "Floating a pane is not available yet. The pane stays where it is."` | Why `workbench.floatPane` refuses: floating is not drawn yet (T21), so a floated pane would vanish (Ruling 171 (1)). |
 | `string? FocusedStackId { get; set; }` | The stack the user is working in. Layout commands act on this. |
 | `string? FocusedSurfaceId { get; set; }` | The surface within the focused stack, when one is selected. |
 | `bool IsResizing` | **(gap)** |

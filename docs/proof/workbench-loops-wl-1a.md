@@ -81,6 +81,12 @@ Slice deliverables owned by other tracks (cited; their folders join with them):
 - **Not built in WL-1a:** the design's `aide.attempt` spans (`attempt.begin` / `attempt.terminal`) — the rolling log
   carries `attempt.sweep` and `fold.duration_ms`; the relay retention cap, steer, retry UI and budget are WL-4.
 - **One real Stop run** proves the adapter version it ran; a new adapter release re-opens check 4.
+- **Closed by T17e: a read-back still running when the shell shuts down.** Before the fix, a read-back that returned
+  after `WorkbenchShell.Dispose` wrote its turns into the disposed notebook. A store that was already disposed let an
+  `ObjectDisposedException` escape. Both were reproduced with a gate, not a rerun (`workbench-loops-wl-1a/dispose-race/`).
+  The demo was only mildly exposed. The kill step (step 19) ends the process and disposes nothing. A normal close would
+  have to land inside a read-back of about 23 ms, which is unlikely. Measured in T17d's shell-path test, n=10: host-open
+  median 16.5 ms, read-back median 23.25 ms (`workbench-loops-wl-1a/readback/README.md`).
 
 ## Human demo script
 
@@ -90,6 +96,8 @@ the Leader's gesture table. Lines marked **rehearse** are gestures whose exact k
 GUI steps not yet run by a person are **owed to the user**.*
 
 ### 0. Build and launch
+Run every step from a **clean worktree of origin/main**, never the primary checkout (`C:\Projects\ai-de`), because joins
+change the primary while you walk through. The Owner prepared one for this walk-through at `C:\Projects\ai-de-demo`.
 1. `dotnet build AiDe.sln -c Release`
 2. Run `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`. The path was confirmed on disk at 2026-10-19 08:17Z.
 
@@ -153,10 +161,12 @@ GUI steps not yet run by a person are **owed to the user**.*
 21. **Expect:** a new turn sent now continues the numbering after the restored rows. It never takes b1 again.
 
 ### 8. The recorded real-lane Stop run (the second recorded run, for the Proof Pack)
-22. **This step spends real adapter usage on your Claude account.** From the repository root in PowerShell:
-    `$env:AIDE_REAL_ADAPTER_ROOT = "$PWD\spikes\acp-subscription-lane"; dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AttemptRealLaneStopTests"`.
-    The adapter is installed in that folder's `node_modules` from the committed lockfile; if it is missing, run
-    `npm ci` there first. Without the variable the test reports **skipped**, never passed.
+22. **This step spends real adapter usage on your Claude account.** From the demo worktree's root in PowerShell:
+    `$env:AIDE_REAL_ADAPTER_ROOT = "C:\Projects\ai-de\spikes\acp-subscription-lane"; dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AttemptRealLaneStopTests"`.
+    The path is absolute because the adapter lives in that folder's `node_modules`, which git ignores, so only the
+    primary checkout has it installed. To use the folder inside another tree instead, run `npm ci` in that tree's
+    `spikes\acp-subscription-lane` first (it installs from the committed lockfile). Without the variable the test
+    reports **skipped**, never passed.
 23. **Expect:** `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` passes.
     Its PASS output becomes the second recorded real-lane run in this Proof Pack. Scrub any account email or
     organization from captured files before committing (brief rule 15); the identity gate refuses them.
@@ -172,7 +182,23 @@ GUI steps not yet run by a person are **owed to the user**.*
 
 ## Acceptance (Owner, 2026-10-19)
 
-**WL-1a is reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
+**WL-1a is ACCEPTED by the user's demo, 2026-10-19.** The user walked the human demo script above in a clean worktree of
+origin/main (`C:\Projects\ai-de-demo`, detached at `52f83032`, Release build), between the Owner's `USER DEMO IN PROGRESS`
+(15:34Z) and `USER DEMO DONE` (15:46Z) board posts, and reported "all steps passed", restart step 18 included. Ruling 172's
+reopening is closed by T17d (`e1280798`, step-8 `a0e33443`) and T17e (`293c18a4`, step-8 `64f713a4`). T17e joined after the
+demo tree's base; it changes only a read-back pending at disposal, which no demo step reaches. Recorded by the Leader
+(`wl-leader3-20261019`) from the Owner's relay of the user's report; the Leader did not observe the walk-through.
+
+The user raised two findings during the walk-through. They are work items, not acceptance blockers:
+
+- The compiled prompt did not show in the compiled field after a submit. This is a recurrence of Ruling 96, now under
+  `/investigate`.
+- The user expects the goal and done-criteria fields to be prefilled from an analysis of the prompt (AC-W01a). This is
+  under assessment for a decision request.
+
+The history before this acceptance:
+
+**WL-1a was reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
 
 **T17d's fix and proof** (`wl1a-readback`; `workbench-loops-wl-1a/readback/README.md`):
 

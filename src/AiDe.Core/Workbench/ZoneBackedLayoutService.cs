@@ -321,7 +321,9 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         // Build the result from the current model (so extents are preserved), replacing each zone's
         // content with what the view assigned it. A zone the view could not show — collapsed, still
         // holding — keeps the model's content; a rendered zone the view no longer shows is empty.
-        var result = current;
+        // Floating stacks are the view's: a pane the user floated natively is in them and in no zone,
+        // and a pane redocked natively has left them.
+        var result = current with { Floating = tree.Floating };
         foreach (var id in Enum.GetValues<ZoneId>())
         {
             var zone = result.Zone(id);
@@ -512,10 +514,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
 
         var surface = _zones.Zone(zoneId.Value).Surfaces().First(s => s.SurfaceId == surfaceId);
         var removed = ZoneLayoutService.ClosePane(_zones, surfaceId).Layout;
+
+        // The counter starts at 0 in every service, and a restore brings back the ids an earlier
+        // service minted, so an id already in use is skipped (T21 close condition 2).
+        string id;
+        do
+        {
+            id = $"float-{++_floatSeq}";
+        }
+        while (removed.Floating.Any(f => f.Id == id));
+
         var floated = removed with
         {
-            Floating = removed.Floating.Add(
-                new StackNode($"float-{++_floatSeq}", [surface], 0, StackState.Floating)),
+            Floating = removed.Floating.Add(new StackNode(id, [surface], 0, StackState.Floating)),
         };
         return new ZoneLayoutResult(floated, true, null, $"{surface.Title} is now floating.");
     }
@@ -579,10 +590,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             StackState.Collapsed or StackState.Hidden => ZoneLayoutService.CollapseZone(_zones, zoneId.Value),
             StackState.Docked => ZoneLayoutService.ExpandZone(_zones, zoneId.Value),
             StackState.Maximized => ZoneLayoutService.Maximize(_zones, zoneId.Value),
-            StackState.Floating => Float(_zones.Zone(zoneId.Value).Surfaces().FirstOrDefault()?.SurfaceId ?? string.Empty),
+            StackState.Floating => Float(FocusedIn(_zones.Zone(zoneId.Value).Content)?.SurfaceId ?? string.Empty),
             _ => new ZoneLayoutResult(_zones, false, LayoutErrorCodes.InvalidTarget, "Unsupported state."),
         };
     }
+
+    // The tab a zone shows as focused: a stack's active tab. A split renders as one tab strip whose
+    // active tab is its first (ZonesToTree.StackFromContent), so floatPane takes the same one
+    // (T21 close condition 3).
+    private static Surface? FocusedIn(ZoneContent? content) => content switch
+    {
+        ZoneStack stack => stack.Active,
+        _ => content?.Surfaces().FirstOrDefault(),
+    };
 
     private bool ColumnsStartWithLeft() =>
         !_zones.Zone(ZoneId.Left).Collapsed && !_zones.Zone(ZoneId.Left).IsEmpty;

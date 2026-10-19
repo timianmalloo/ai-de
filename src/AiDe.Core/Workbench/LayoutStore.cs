@@ -269,7 +269,7 @@ public sealed class LayoutStore(
         if (rehomed.Count > 0)
         {
             parts.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} " +
-                      $"moved onto this display because the saved display is not connected");
+                      ZoneLayoutStore.RehomedSentenceTail);
         }
 
         return new RestoreResult(restored, false, LayoutErrorCodes.PartialRestore, missing, rehomed,

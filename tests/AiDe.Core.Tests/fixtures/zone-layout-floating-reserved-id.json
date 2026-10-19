@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.3.0",
+  "savedUtc": "2026-10-01T09:00:00+00:00",
+  "layout": {
+    "zones": [
+      {
+        "id": "Left",
+        "content": {
+          "kind": "stack",
+          "tabs": [ { "surfaceId": "explore", "kind": "view", "title": "Explore" } ],
+          "activeIndex": 0
+        },
+        "extent": 0.22,
+        "collapsed": false
+      },
+      { "id": "Center", "extent": 1.0, "collapsed": false },
+      { "id": "Right", "extent": 0.25, "collapsed": false },
+      { "id": "Bottom", "extent": 0.3, "collapsed": false }
+    ],
+    "floating": [
+      {
+        "id": "zone-left",
+        "surfaces": [ { "surfaceId": "sessions-a", "kind": "view", "title": "Sessions A" } ],
+        "activeIndex": 0,
+        "floatX": 100, "floatY": 100, "floatWidth": 400, "floatHeight": 300
+      }
+    ]
+  }
+}

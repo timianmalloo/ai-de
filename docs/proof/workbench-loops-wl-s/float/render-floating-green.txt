@@ -1,0 +1,12 @@
+T21 check 1 GREEN - render Layout.Floating
+Change: WorkbenchAdapter.Render adds one LayoutDocumentFloatingWindow per non-empty Current.Floating stack (BuildFloatingWindow), at the stack's FloatingBounds or a 640x420 default offset into the workbench.
+Test correction after red (disclosed): the red commit asserted Window.GetWindow(content) is the floating window. GetWindow follows the window inherited through the logical tree, and AvalonDock makes floating windows logical children of the DockingManager, so it returns the workbench window even for floated content (measured: the content's PresentationSource root is a Border inside AvalonDock's own HwndSource, not the workbench's). The assertion is now the HWND chain: the content's HwndSource is the floating window's or a child of it (user32 IsChild), and not the workbench window's. The red still fails first at Assert.Single(Manager.Layout.FloatingWindows), before either assertion.
+Adjacent run: WorkbenchAdapter*, FloatGuard*, FloatRender*, WebView2FloatProbe*: 25 passed, 0 failed.
+---
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

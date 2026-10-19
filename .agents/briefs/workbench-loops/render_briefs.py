@@ -29,6 +29,13 @@ TRACKS = {
     "T16": ("wl-t16-bindrow", "wl1a-attempt-binding-row", "docs/proof/workbench-loops-wl-1a/binding-row", "Sonnet 5.5"),
     "T17": ("wl-t17-restore", "wl1a-restored-turns", "docs/proof/workbench-loops-wl-1a/restored-turns", "Opus 5.5"),
     "T18": ("wl-t18-knowledge", "wls-knowledge-mode", "docs/proof/workbench-loops-wl-s/knowledge-mode", "Opus 5.5"),
+    "T21": ("wl-t21-float", "wls-float", "docs/proof/workbench-loops-wl-s/float", "Opus 5.5"),
+    "T22": ("wl-t22-wl1b-design", "wl1b-design", "docs/proof/workbench-loops-wl-1b/design", "Opus 5.5"),
+    "T23": ("wl-t23-wl1b-folds", "wl1b-folds", "docs/proof/workbench-loops-wl-1b/folds", "Sonnet 5.5"),
+    "T24": ("wl-t24-wl1b-service", "wl1b-service", "docs/proof/workbench-loops-wl-1b/service", "Sonnet 5.5"),
+    "T27": ("wl-t27-currentness", "wl1b-currentness", "docs/proof/workbench-loops-wl-1b/currentness", "Sonnet 5.5"),
+    "T28": ("wl-t28-compiled", "wl1a-compiled-field", "docs/proof/workbench-loops-wl-1a/compiled-field", "Opus 5.5"),
+    "T29": ("wl-t29-prefill", "wl-prefill-assessment", "docs/proof/workbench-loops-wl-1a/prefill-assessment", "Opus 5.5"),
 }
 
 common = (HERE / "brief-common.md").read_text(encoding="utf-8")

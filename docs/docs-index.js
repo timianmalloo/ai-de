@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fff34e13a496499830d4bd559cbf20ecb27e4c4bdd9f521800083daaa23122f2"
+      "sourceSha256": "f55f53f2b23f2f0699bed7d20281bb39916068423fe3944909976a99aa9941c3"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2681,7 +2681,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9d3b057aa42a59daa2d048e1d2fc0bf84d0e07a865c91242073eca43c24c265c"
+      "sourceSha256": "049ddaf453ecda8208821b51839943796c5f84716fbb5f24d1b174d82b2d70e8"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -3193,7 +3193,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 80 types, 153 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 77 types, 153 members, 60% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3206,7 +3206,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4b5aee1deaa6bcc49c45c8bc360c894defb9dca1296841b506f18adf82cfbe03"
+      "sourceSha256": "f6dcee4b04afdf1bb0016c61d7946d30ab9e3c6adeb650708671e40c1ae87c25"
     },
     {
       "id": "api-aide-core-workbench-records-folds",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "01612d203dbaa572efc397aebd468c767d0a66db33e22e509fe7cb1f7eca9149"
+      "sourceSha256": "5c7254e616713b30cea72365a00e4dd210e927a293bb6a06efa22e84d2480646"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e09cbab6ef32f97a1cb5f6f54d570e86983fc8159371029207181a5eda00d0ff"
+      "sourceSha256": "82b85c46d68492a06b0353ae550e6ab117d4f2cf6462e023584528a97445a609"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -19046,7 +19046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e60d616c2639064ab759aadfdc787c4718bfd528a0643d35de0917c92b058dd5"
+      "sourceSha256": "cc4f90186deee5d48b1cc5d97e8a840248f154a2448b0d79ec7c39b56deffa03"
     },
     {
       "id": "coordination-workbench-loops-leader-handoff-1",
@@ -19077,6 +19077,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f0471ae9a4259635fe7e2aa92a9afb62760e032c88e3f938d0df68a26b36d811"
+    },
+    {
+      "id": "coordination-workbench-loops-leader-handoff-2",
+      "path": "docs/coordination/workbench-loops-leader-handoff-2.md",
+      "title": "Leader hand-off 2 — workbench-loops drive (wl-leader2-20261019 → wl-leader3)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Second Leader's hand-off. WL-1a was accepted provisionally, then reopened (Ruling 172) and fixed by T17d. WL-S is near close: T11, T18, T20 and T21. The next Leader starts WL-1b on branches only. Includes the controls added this epoch and a resume brief.",
+      "tags": [
+        "coordination",
+        "handoff",
+        "workbench-loops",
+        "leader"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-handoff-1",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "05dd48661a59c93b470d757e06843efb6066a8ffda01a7db3aa4a61c02b91af3"
     },
     {
       "id": "plan-workbench-loops-drive-prompt",
@@ -22584,7 +22618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "951895db7c9309dabe37b730a456681cb859645623b7fa91d8270ff91bb3d5e8"
+      "sourceSha256": "588ea1d1551b8855f62d1e7365715a95d326ee423f1807dc5d2a60147da62d86"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -22644,6 +22678,60 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fc797b730674972340e8ecca41a9d6ec216afb6e9eb70f05e583278c16daf917"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-dispose-race",
+      "path": "docs/proof/workbench-loops-wl-1a/dispose-race/README.md",
+      "title": "Proof Pack: WL-1a T17e — a read-back pending at disposal ends quietly",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17e: since T17d the restart read-back starts when the host binds, so it can still run when the shell disposes the notebook, host and store. Held on a gate, it was red: an ObjectDisposedException escaped, and 2 turn rows were written after disposal, on the unit path and through WorkbenchShell.Dispose over a real WorkspaceClient. The read-back now runs under the notebook's lifetime and ends quietly. T17d's teardown NRE is a different race (a write), and stays open.",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "evidence",
+        "read-back",
+        "dispose",
+        "ruling-172",
+        "ruling-175"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30469604dc5e03df20e79212e7fb4bc3d5aabb55b7ce67a1c27f67e2e82a7213"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-dispose-race-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/dispose-race/handoff.md",
+      "title": "Hand-off — WL-1a T17e: a read-back pending at disposal ends quietly",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17e: the read-back-at-disposal race was reproduced with a gate on the unit path and through WorkbenchShell.Dispose, then fixed in NotebookRuns (red 31b61650, green d7e0ac1b). The WL-1a residual line is effbadc1, and step 18 is unchanged. T17d's teardown NRE is a different race (a run's write) and stays open.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "54d340e4754f6757223ed7d8b995c15136e4ae6879f54f43f2ed2ac289e44570"
     },
     {
       "id": "proof-workbench-loops-wl-1a-host-handoff",
@@ -22973,6 +23061,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e5b842133ae95c35079f4b80c1c5a5e08db71179de865a4215fb20197a364e33"
+    },
+    {
+      "id": "wl-s-float-handoff-n1",
+      "path": "docs/proof/workbench-loops-wl-s/float/handoff.md",
+      "title": "WL-S T21 float - node 6 hand-off",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "T21 node 6: the owed App suite at node 5's head is 1165/1/2 (the known SolutionTreeChord precondition); floatPane floats the focused tab (close condition 3); a saved floating stack whose id is in use loads with the partial-read sentence; a native float never takes a restored float-view id. Core 3046/0/1, App 1166/1/2. Next is the T21 join, before T11.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7fa8a0f149c90d3c0e0481991de3c9d5aaadc7b130e808660a2d18b6fccb9a41"
+    },
+    {
+      "id": "wl-s-float-proof",
+      "path": "docs/proof/workbench-loops-wl-s/float/README.md",
+      "title": "WL-S T21 float - proof pack",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8cfcb72942a1040fa711ef77a40d9bd071131f311dea24585e336eeaad72c63f"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -24901,5 +25031,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2d790758da318ad7d9a7d8ed2bbbd73482e7e67357da61fd6a98fb7376a06bf8"
+  "graphSha256": "efeeac5ca8fc5ada4de88ca7a40c80d830f1b38e520c9bc7ca8afdba6768e2fa"
 };

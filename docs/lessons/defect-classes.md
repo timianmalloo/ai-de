@@ -8507,3 +8507,61 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled`.
 
 ---
+### DC-NEW-wl-t21-float — An absent JSON field arrives null in a non-nullable positional DTO, and the reader dereferences it
+
+- **Shape:** a persistence DTO is a positional record whose collection parameter is declared non-nullable (`List<T> Floating`). System.Text.Json passes `null` for a constructor parameter whose property is absent from the file, whatever the annotation says, unless `RespectNullableAnnotations` / `RespectRequiredConstructorParameters` is set. The reader trusts the annotation, calls `.Select` on the member, and a read documented as "never throws on a bad file" throws on a file that is merely older or hand-edited.
+- **Observed instance:** T21 null check (Ruling 171 (2)). `ZoneLayoutStore.Read` threw `ArgumentNullException (source)` at `ZoneLayoutStore.cs:186` for a schema-1 file with no `"floating"` field. Red: `ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows` (fixture `tests/AiDe.Core.Tests/fixtures/zone-layout-no-floating.json`).
+- **Sweep:** every non-nullable collection member of the schema-1 zone DTOs that `Read` dereferences. Two siblings had the same shape: `ZoneLayoutDto.Zones` (the zones loop in `Read`) and `ZoneStackDto.Surfaces` (`FromStackDto`). Both are controlled in T21 node 4 (below). `ZoneContentDto.Tabs/Children/Weights` are already declared nullable and coalesced. Node 4 found by reading that a JSON `null` *element* inside a list (for example `"floating": [null]`) arrives as a null DTO and is dereferenced the same way. Node 5 made each list red: `zones`, `floating`, `tabs` and `surfaces` threw `NullReferenceException`; a null in `children` loaded but was not reported; and the node-5 title reader (`TitlesIn`) threw on a null tab. `weights` is `List<double>`, so a null there is a `JsonException` and the file is refused as corrupt, which does not throw. The other JSON stores in `src/` were not swept. Not in this class, and open: a null *scalar* (`surfaceId`, a floating stack's `id`) is not dereferenced by `Read`; it is passed into the model.
+- **Control:** the read coalesces each absent member: `Floating ?? []` (T21 n1b, `ZoneLayoutWithoutFloatingTests`); `Zones ?? []`, and a floating stack with no `surfaces` is left out (T21 n4, `ZoneLayoutPartlyReadTests`, fixtures `zone-layout-no-zones.json` and `zone-layout-floating-no-surfaces.json`). A left-out part sets `ZoneLoadResult.PartlyRead`, and `LayoutPersistence.Restore` reports it with code PartialRestore and `PartlyReadSentence` (`ZoneLayoutPartlyReadRestoreTests`). An absent `floating` field is an older file, not a partial read, and is pinned as not reported. The schema-1 DTO shape is unchanged, and the freeze is now an allow-list of ruled additions (`PerspectiveLayoutSlotTests.TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed`). Null list elements (T21 n5): every list `Read` restores from passes through one helper, `ZoneLayoutStore.Present`, which drops the nulls and reports a partial read before any element is touched. The tests are `ZoneLayoutPartlyReadTests.ANullElementInASavedLayoutList_IsLeftOut_TheRestLoads_AndTheReadSaysSo` (fixtures `zone-layout-{floating,zones,tabs,children,surfaces}-null.json`), `ANullTabInsideAZoneEntryTheBuildDoesNotKnow_AddsNoTitle_AndNeverThrows`, and the same five fixtures through `LayoutPersistence.Restore` in `ZoneLayoutPartlyReadRestoreTests`.
+- **Derive:** a reader of a persisted file treats every member, and every list element, as possibly absent, whatever its C# annotation. The annotation describes what the writer writes, not what the reader will be given.
+- **Status:** `controlled` for `ZoneLayoutStore.Read` (T21 n5): absent `floating`, `zones` and `surfaces`, and a null element in every list it reads, are each pinned by a test. No list element is dereferenced before the null check. The other JSON stores in `src/` are not swept.
+
+### DC-NEW-wl-t21-float-b — A value written to the view element the dock library does not read, proven only on the model
+
+- **Shape:** the adapter sets a placement property on one element of the dock library's tree (the pane), while the library reads the same property from another element (the pane's root panel) when it draws the window. The model holds the right value, the read-back reads it back from the element that was written, and every test that checks the model or the read-back passes. The drawn window is somewhere else.
+- **Observed instance:** T21 node 3, check 2 (Ruling 174 (2)). `WorkbenchAdapter.BuildFloatingWindow` set `FloatingLeft/Top/Width/Height` on the `LayoutDocumentPane` only. AvalonDock 5.0.0 places a document floating window from `RootPanel` (`DockingManager.CreateUIElementForModel`, read from the decompiled assembly), so every floating window since node 1 opened at (0, 0), sized to its content, whatever its saved or default bounds. Red: `FloatBoundsPersistTests.AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle`, the window assertion (model (160, 120, 520, 360), window (0, 0, 132x37.3)).
+- **Sweep:** every write of a `Floating*` property in `src/` (grep `FloatingLeft\s*=`): one site, `BuildFloatingWindow`, now writes the pane and the group. The read side, `MapFloatingWindow`, reads the pane and then the group; AvalonDock's `UpdatePositionAndSizeOfPanes` writes both, so the read is right.
+- **Control:** the test above asserts the drawn window's `Left/Top/Width/Height`, not only the model. Node 1's `FloatRenderTests` and node 1b's `FloatReadBackRestartTests` asserted visibility and hosting, never position.
+- **Derive:** for a view library, the proof of a placement is the drawn object's own geometry. A value is not placed because the adapter wrote it; it is placed when the library's own window reports it.
+- **Status:** `controlled`.
+### DC-NEW-wl-leader3 — A join's recount shares a single-occupant desktop resource with a running track's suite, so the join refuses for a cause outside the join
+- **Class:** a gate that needs an exclusive machine resource (the Ruling 115 desktop hold for shown-window/UIA probes)
+  runs while other sessions may hold it. The gate then reports the resource's occupancy as a test failure. A join's
+  verdict comes to depend on what another track happened to be running, not on the joined code.
+- **Instance (2026-10-19, T17e join):** step 4's recount refused `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`
+  with "Ruling 115 desktop hold is occupied". The occupant was a concurrent track suite (PID 40900, started 14:57:08Z).
+  With the hold free (released 15:05:35Z), the probe passed alone on the join head 293c18a4 (1/1). The join continued
+  with `--docs-only` and the step-8 record says so (`al-01M5AC39QMCJD0W1QMAQZHAVSP`).
+- **Sweep:** every shown-window/UIA test in `tests/AiDe.App.Tests` that takes the hold, and every running track whose App
+  suite overlaps a join (T11, T21 and the WL-1b tracks).
+- **Derive:** a gate's refusal must name a cause in the code under test. Occupancy is an environment state, so it should
+  read NOT CHECKED with its cause, never Failed, or the gate should wait for the resource.
+- **Control:** brief rule 19 in `.agents/briefs/workbench-loops/brief-common.md` (a5a0fdc8): a track starts no App suite
+  while a `join in flight` post is open. Mechanical candidate, not yet built: the conductor recount takes the desktop hold
+  before the App project and waits for it, so occupancy cannot reach the verdict.
+- **Status:** `partially-controlled` (a brief rule only, until the recount takes the hold).
+- **Control, extended (Owner, 2026-10-19):** the same resource is the user's desktop during a demo. Brief rule 20: while
+  `USER DEMO IN PROGRESS` is the Owner's latest demo post on the board, no App suite, UI probe or real-lane test runs in
+  any tree. Running tracks were told by mail at the rule's commit.
+
+### DC-NEW-wl-t21-float-c — A saved node id meets a check weaker than the one its consumer enforces
+- **Shape:** an id is saved with the layout and read back, while new ids of the same kind are minted from a counter
+  that restarts with the service or the process. The writer and the reader check one invariant (unique *surface* ids,
+  `WorkbenchLayout.AssertInvariant`). The tree projection enforces a stronger one (unique *node* ids, including the
+  frame's own ids, `Layout.AssertInvariant`, `LayoutModel.cs:199`). An id that passes the first check throws at the
+  second, out of `service.Current`, after the read has already said the file was fine.
+- **Instances (T21):** n5 (C) `ZoneBackedLayoutService.Float` minted `float-1` again after a restore that held it
+  (red f3d14d3b). n6 (B) `ZoneLayoutStore.Read` passed two floating stacks with one id, and a floating stack with the
+  id `zone-left` (red 5327d810). n6 (C) `WorkbenchAdapter.MapFloatingWindow` minted `float-view-N` from the static
+  `_nodeSeq`, which restarts with the process, so a native float could take a restored window's id (red f5fc73b0).
+- **Sweep:** every site that mints or admits a floating node id: `ZoneBackedLayoutService.Float` (controlled n5),
+  `ZoneLayoutStore.Read` (controlled n6 B), `WorkbenchAdapter.MapFloatingWindow` (controlled n6 C). The adapter's
+  `split-view-N` and `stack-view-N` ids are not saved (zones do not store split or stack ids), so they are outside the
+  class. Open: a kept `float-` pane id that the model does not hold, read after a window this read minted, is not
+  checked (not reachable from a render, which names panes from the model). Inferred.
+- **Control:** `FloatIdAfterRestoreTests`, `ZoneLayoutFloatingIdInUseTests` (fixtures
+  `zone-layout-floating-{duplicate,reserved}-id.json`), `FloatViewIdAfterRestartTests`. The reader seeds its id set
+  with the frame's six node ids; both minters skip every id in use.
+- **Derive:** a reader that promises "never throws on a bad file" checks every invariant the file's consumer enforces,
+  not only the one its own model asserts. A counter that restarts never mints a saved id without checking the ids in use.
+- **Status:** `controlled` for the three floating-id sites.

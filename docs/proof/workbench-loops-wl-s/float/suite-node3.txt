@@ -1,0 +1,17 @@
+T21 node 3 suite, at f8bee27a, 2026-10-19T14:06:09Z
+== tests/AiDe.Core.Tests ==
+Passed!  - Failed:     0, Passed:  3031, Skipped:     1, Total:  3032, Duration: 2 m 10 s - AiDe.Core.Tests.dll (net10.0)
+== tests/AiDe.App.Tests ==
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+Failed!  - Failed:     1, Passed:  1135, Skipped:     2, Total:  1138, Duration: 5 m 4 s - AiDe.App.Tests.dll (net10.0)
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+== SolutionTreeChordTests alone ==
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 20 s - AiDe.App.Tests.dll (net10.0)
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
