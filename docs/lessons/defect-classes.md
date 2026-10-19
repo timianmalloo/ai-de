@@ -8645,9 +8645,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Derive:** a filtered red/green is a claim about the filtered set; rule 7's whole-suite run is what catches this
   shape, and it did.
 - **Prevent (control):** instance, the filter at `TheCompileModeControlTests.OpenSettings`, green in the whole suite
-  (`docs/proof/workbench-loops-wl-1a/prefill/suite-node1.txt`). Class: **not built** — a source scan that refuses an
-  unscoped `CurrentSources` / `Application.Current.Windows` read in `tests/AiDe.App.Tests` is the next step.
-- **Status:** `open` (instance fixed; the class control is not built).
+  (`docs/proof/workbench-loops-wl-1a/prefill/suite-node1.txt`). Class (T30 n2): the fixture
+  `tests/AiDe.App.Tests/OwnWindow.cs` — `OwnWindow.Popups(window)` returns only this thread's sources whose popup is
+  placed over the test's own window. Red first: `TheCompileModeControlTests.TheSettingsQuery_ReadsThisTestsOwnWindow_WithConcurrentWindowsOpen`
+  forces two concurrent windows (one on another STA thread, one on this thread), each with an open *Compile mode*
+  popup; the thread-only filter read the same-thread window's control (`C-own-window-red.txt`), the fixture reads
+  the test's own (`C-own-window-green.txt`). Sweep (2026-10-19, `grep -rn "CurrentSources|Application.Current|
+  EnumWindows|FindWindow|AutomationElement.RootElement|GetForegroundWindow" tests/AiDe.App.Tests`): one reader of
+  `CurrentSources` (moved onto the fixture); no `Application.Current.Windows` reader; `GetForegroundWindow` in
+  `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` compares with its own hwnd (scoped; its failure is the
+  desktop hold, a different class). Gap: nothing yet refuses a NEW unscoped read — a source scan is the next control.
+- **Status:** `partially-controlled` (the fixture exists and the only reader uses it; no scan refuses a new one).
 - **DC-NEW-wl-leader3, fourth instance (2026-10-19, T21 n7):** a seam request (`req-01M5ATF6PNMEW0SX2KKZA34D4D`, a
   one-line `DockHost.cs` grant that blocked close condition 4) sat unanswered through the whole node. The Leader watched
   mail and the board, and seam requests arrive in the requests ledger. The node stopped at its kick with no check green.
