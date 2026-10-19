@@ -271,7 +271,9 @@ public sealed class SurfaceContentTests
         // ADR-0045 §1(b): the five Loomkeeper kinds are admitted under Factory → Coordination and
         // opened from its View menu; no perspective's default carries one (Ruling 55d: never a
         // fleet-view tab strip beside a session).
-        string[] loomkeeper = ["sessions", "board", "leaderboard", "ledger", "daydreams"];
+        string[] loomkeeper = [.. SurfaceContentFactory.Kinds
+            .Where(k => k.Perspectives.Contains(PerspectiveSet.Factory) && k.Zone == ZoneId.Center && k.Entry is SurfaceContentFactory.SurfaceEntry.Derived)
+            .Select(k => k.Kind)];
         Assert.All(loomkeeper, kind => Assert.True(PerspectiveMenu.Admits(PerspectiveSet.Factory, kind), kind));
         Assert.All(PerspectiveSet.All, p => Assert.DoesNotContain(WorkbenchLayout.Default(p).AllSurfaces(), s => loomkeeper.Contains(s.Kind)));
     }

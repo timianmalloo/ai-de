@@ -1,0 +1,3 @@
+verify-cited-controls: FAILED
+  - src/AiDe.Core/Workbench/ZoneLayout.cs:216 claims enforcement and cites `TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops`, which resolves to nothing. A comment naming a control by a name that does not exist reads as a guarantee and is an unverified assertion (DC-095).
+  - tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:10 claims enforcement and cites `ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileExplorerIsTheBodyIsShown`, which resolves to nothing. A comment naming a control by a name that does not exist reads as a guarantee and is an unverified assertion (DC-095).

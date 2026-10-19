@@ -7,7 +7,7 @@ namespace AiDe.App.Tests.Sessions;
 
 /// <summary>
 /// <b>INV-0009 Phase 1 — the structural half of DC-148's control.</b> The behavioural half is
-/// <see cref="ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileExplorerIsTheBodyIsShown"/>,
+/// <see cref="ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown"/>,
 /// which proves one document and one sibling render. This proves the property it relies on: every
 /// command in the shell that adds a dock document raises the one seam the window handles, the window
 /// handles it by making the workbench the body, and the mode change is in the log with its trigger.
