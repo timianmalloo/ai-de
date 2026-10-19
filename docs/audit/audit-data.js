@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T18:34:22Z",
+  "generated": "2026-10-19T19:05:50Z",
   "audit": [
     {
       "actor": null,
@@ -25812,6 +25812,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T18:01:47Z",
       "duration_seconds": 1955.0
+    },
+    {
+      "id": "al-01M5ARWJDQJAJQQT23VZG16TXF",
+      "shortname": "wl-t28-compiled",
+      "datetime": "2026-10-19T19:05:50Z",
+      "session": "wl-t28-compiled",
+      "prompt": "T28 n4: the compiled field heading never states something false (drain to sent)",
+      "summary": "Queued heading switches to sent as b{n} when the queue drains with no keystroke; held drain keeps queued; resend guard holds; B and C mutation reds",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "the compiled field heading never states something false",
+      "done_when": "A, B, C red then green through the gesture; suites; ratchet",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T18:35:50Z",
+      "duration_seconds": 1800.0
     }
   ],
   "changes": [
