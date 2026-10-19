@@ -8584,3 +8584,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   tests, and a gate that refuses a composer-content assertion with no non-empty check or with no gesture on a
   `SessionDocumentSurface`. Repair plan in the proof README.
 - **Status:** `open` (red only; the fix waits for the Owner's read of the root cause).
+- **Third instance (2026-10-19, T11 join):** the step-8 ratchet refused three gates that went green→red, none of which a
+  track's suites run. `docs-graph.py validate` found an orphan hand-off. `tools/verify-cited-controls.py` found a comment
+  citing a test the track had renamed. `tools/verify-surface-ownership.py` found a new `*Surface.cs` with no owner in
+  `docs/collaboration/session-contracts.md` §2. The join was abandoned before the push; the refused join is kept at
+  `backup/t11-join-070d2637`. The class widens: **a track's done is judged by its suites, while the join is judged by
+  every gate**, so a gate-only finding is caught only at the join, after a 20-minute recount.
+- **Control, extended:** brief rule 22 (`52b73c11`). A node that hands off for a join runs the step-8 ratchet from its
+  own tree against origin/main and must PASS before its done mail.
