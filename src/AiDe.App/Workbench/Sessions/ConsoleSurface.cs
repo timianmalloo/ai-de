@@ -129,7 +129,8 @@ public sealed class ConsoleSurface : FeedList
             ScrollToEndOfFeed();
         }
 
-        var running = turns.LastOrDefault(t => t.State is TurnState.Running or TurnState.Waiting);
+        // Every live state is followed: Preparing and StopRequested are still in flight (T3; ADR-0041 section 2).
+        var running = turns.LastOrDefault(t => t.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested);
         AutomationProperties.SetItemStatus(
             this,
             _at is { } here ? string.Create(CultureInfo.InvariantCulture, $"at b{here}")

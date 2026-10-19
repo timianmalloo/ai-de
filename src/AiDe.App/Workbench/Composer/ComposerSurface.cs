@@ -979,7 +979,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public static string WaitOrParallelOffer(TurnView inFlight)
     {
         ArgumentNullException.ThrowIfNull(inFlight);
-        return $"{inFlight.DisplayOrdinal} {InFlightState(inFlight)}. {WaitActionName(inFlight)}, or start a parallel session.";
+        // A StopRequested turn is in flight but not running: T3's sentence, never "running" (ADR-0041 section 2).
+        return inFlight.State == TurnState.StopRequested
+            ? $"{inFlight.DisplayOrdinal}: {TurnCopy.ReasonSentence(inFlight)} {WaitActionName(inFlight)}, or start a parallel session."
+            : $"{inFlight.DisplayOrdinal} {InFlightState(inFlight)}. {WaitActionName(inFlight)}, or start a parallel session.";
     }
 
     /// <summary>The Wait action's name: <i>Wait — send after b1</i>.</summary>
@@ -994,7 +997,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>The offer's link to the turn in flight, named by its state: <i>b1, running</i>.</summary>
     public static string InFlightLinkName(TurnView inFlight) =>
-        $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}";
+        $"{inFlight.DisplayOrdinal}, {inFlight.State switch
+        {
+            TurnState.Waiting => "waiting for you",
+            TurnState.StopRequested => "stop requested",
+            _ => "running",
+        }}";
 
     private static string InFlightState(TurnView inFlight) =>
         inFlight.State == TurnState.Waiting ? "is waiting for you" : "is running";
