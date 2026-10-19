@@ -11,6 +11,7 @@ Exit 0 on pass, 1 on any failure.
 """
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 import sys
@@ -54,7 +55,7 @@ def main() -> int:
         failures = []
         if merge.returncode != 0:
             failures.append("merge exited {}: {}".format(merge.returncode, merge.stdout.strip()[:200]))
-        if any(m in text for m in ("<<<<<<<", ">>>>>>>")):
+        if re.search(r"^(<<<<<<< |>>>>>>> |=======$)", text, re.MULTILINE):
             failures.append("conflict markers in the merged register")
         for tag in ("a", "b"):
             if text.count(f"### DC-NEW-{tag} - ") != 1:
