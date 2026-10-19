@@ -80,6 +80,13 @@ LEGACY_ADVISORY = {
     "facelift-elevate.html", "graph-canvas.html", "knowledge-explorer-mode.html",
     "knowledge-explorer.html", "named-dock-zones.html", "uml-erm-surfaces.html",
     "watcher-observatory.html", "workbench.html",
+    # Two workbench-loops proposal mockups (T13, Ruling 151; 11 Majors measured 2026-10-19, every
+    # one design-system-color). They are exempt for a reason that is not "dense meta text": their
+    # palette IS the subject, so DESIGN.md cannot be the yardstick. workbench-design-language.html
+    # proposes the candidate palette and a contrast table for the next DESIGN.md; the notes page is
+    # a dark-theme rendering of factory-workbench.md. Both promote to gated when the workbench
+    # design language is adopted into DESIGN.md (or the pages are retired).
+    "workbench-design-language.html", "factory-workbench-notes.html",
 }
 
 def gated_mockups():
