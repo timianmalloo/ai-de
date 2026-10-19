@@ -137,4 +137,28 @@ public sealed class KnowledgeModeTests
             await WaitFor(() => Task.FromResult(canvas.KnowledgeInclusive), "Enter to choose the mode");
             Assert.Equal("\"true\"", await Attr(canvas, "aria-pressed"));
         });
+
+    // Ruling 166 (1): each string is ONE const, so the page and every assertion read the same words.
+    // Read by name, so a missing const fails as an assertion rather than as a compile error.
+    private static string? Const(string name) =>
+        typeof(CanvasPage).GetField(name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+            ?.GetRawConstantValue() as string;
+
+    [Fact]
+    public void TheToggle_IsDefaultOff_AndItsTextAndUiaNameAreOneConstEach() =>
+        OnUiThread(async (canvas, _) =>
+        {
+            Assert.Equal("Knowledge-inclusive", Const("KnowledgeModeText"));
+            Assert.Equal("Knowledge-inclusive mode", Const("KnowledgeModeName"));
+
+            await WaitFor(() => Task.FromResult(canvas.Ready), "the canvas page");
+            await WaitFor(() => Drawn(canvas, CodeNode), "the code-only default to draw");
+
+            // Default OFF (Ruling 166 (2)): a new canvas instance is today's code-only docked graph.
+            Assert.False(canvas.KnowledgeInclusive, "a new canvas started in the knowledge-inclusive mode");
+            Assert.Equal("\"false\"", await Attr(canvas, "aria-pressed"));
+            Assert.False(await Drawn(canvas, KnowledgeNode), "the default drew a knowledge node");
+            Assert.Equal($"\"{Const("KnowledgeModeName")}\"", await Attr(canvas, "aria-label"));
+            Assert.Equal($"\"{Const("KnowledgeModeText")}\"", await canvas.EvaluateAsync("document.getElementById('knowledge').textContent"));
+        });
 }
