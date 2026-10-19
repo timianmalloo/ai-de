@@ -56,6 +56,11 @@ public sealed class NotebookRuns : IDisposable
     private readonly Lock _gate = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
     private readonly Dictionary<int, AttemptReceipt> _attempts = [];
+
+    // Host-bound only: each turn's dispatch key, derived at Send (AttemptKey.For — nothing stored beside the envelope);
+    // a successor held at the host, by its G0 and the cancellation that becomes its run's once it starts.
+    private readonly Dictionary<int, string> _keys = [];
+    private readonly Dictionary<int, (TaskCompletionSource G0, CancellationTokenSource Cancel)> _held = [];
     private (int Ordinal, GovernedRunRequest Request, RunLaunch Launch)? _queued;
     private (IAttemptHost Host, AttemptScope Scope)? _host;
 
@@ -165,9 +170,7 @@ public sealed class NotebookRuns : IDisposable
 
         if (_host is { } bound)
         {
-            // assume: the host's run publishes to no sink until Subscribe lands (T5 node 2), so no lane is attached.
-            // Confirm: IAttemptHost.Subscribe on main. If false: attach the subscription's reader here.
-            return LastRun = DispatchAsync(bound.Host, bound.Scope, request, launch, ordinal, cancel);
+            return LastRun = DispatchAsync(bound.Host, bound.Scope, request, launch, ordinal, cancel, queuedAfter: null);
         }
 
         var relay = new RunEventRelay();
@@ -175,29 +178,80 @@ public sealed class NotebookRuns : IDisposable
         return LastRun = RunAsync(request, launch, relay, ordinal, cancel);
     }
 
-    /// <summary>Holds queued turn <paramref name="ordinal"/> until the drain or Send now (Ruling 95: exactly one).</summary>
+    /// <summary>
+    /// Queues turn <paramref name="ordinal"/> (Ruling 95: exactly one). Host-bound, the queue is the host's (ADR-0045 §4,
+    /// design "Queued launch"): the turn is dispatched now as the held successor of the turn in flight, and the host
+    /// launches it after that one's <c>ResponseComplete</c>. Otherwise it is held here until the drain or Send now.
+    /// </summary>
     public void Queue(int ordinal, GovernedRunRequest request, RunLaunch launch)
     {
+        string? predecessor = null;
         lock (_gate)
         {
             _queued = (ordinal, request, launch);
+            if (_host is not null && Thread.Current.InFlight is { } running && launch is { EnvelopeId: not null, ProjectionSha: not null })
+            {
+                predecessor = _keys.GetValueOrDefault(running.Ordinal);
+            }
         }
+
+        if (_host is not { } bound || predecessor is null)
+        {
+            return;
+        }
+
+        var cancel = CancellationTokenSource.CreateLinkedTokenSource(_disposing.Token);
+        var g0 = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        lock (_gate)
+        {
+            _held[ordinal] = (g0, cancel);
+        }
+
+        LastRun = DispatchAsync(bound.Host, bound.Scope, request, launch, ordinal, cancel, predecessor, g0);
     }
 
-    /// <summary>Stop: cancels the run's token; the turn is StopRequested, never Interrupted (ADR-0041 §2).</summary>
+    /// <summary>
+    /// Stop: the turn is StopRequested, never Interrupted by our own word (ADR-0041 §2). Host-bound, the Stop is the
+    /// host's (<see cref="IAttemptHost.StopAsync"/>), whose terminal the turn then takes; otherwise the run's token is cancelled.
+    /// </summary>
     public void Stop(int ordinal)
     {
         lock (_gate)
         {
-            if (_runs.TryGetValue(ordinal, out var cancel))
+            if (!_runs.TryGetValue(ordinal, out var cancel))
             {
-                cancel.Cancel();
+                return;
             }
+
+            cancel.Cancel();
+        }
+
+        if (_host is not { } bound)
+        {
+            return;
+        }
+
+        if (Thread.Current.Turns.FirstOrDefault(t => t.Ordinal == ordinal) is { State: TurnState.Preparing or TurnState.Running or TurnState.Waiting })
+        {
+            try
+            {
+                Thread.RequestStop(ordinal);
+            }
+            catch (InvalidOperationException)
+            {
+                // The attempt concluded between the read and the request: its terminal already stands.
+            }
+        }
+
+        // Before G0 the dispatch itself sees the cancellation and sends nothing (DispatchAsync).
+        if (AttemptOf(ordinal) is { } attempt)
+        {
+            _ = StopAttemptAsync(bound.Host, ordinal, attempt.DispatchKey);
         }
     }
 
     /// <summary>Send now on the queued turn: started when it is the queued one and no turn is in flight.</summary>
-    /// <returns>The run, or null when nothing was started.</returns>
+    /// <returns>The run (host-bound and held at the host: the host's launch), or null when nothing was started.</returns>
     public Task? SendNow(int ordinal)
     {
         (int Ordinal, GovernedRunRequest Request, RunLaunch Launch) queued;
@@ -212,16 +266,28 @@ public sealed class NotebookRuns : IDisposable
             _queued = null;
         }
 
+        if (_host is { } bound && HeldG0(ordinal) is { } g0)
+        {
+            // One launch however many callers race — the host's drainer among them (IAttemptHost.SendNowAsync).
+            MarkStarted(ordinal);
+            return SendHeldAsync(bound.Host, ordinal, g0);
+        }
+
         Thread.Start(queued.Ordinal, DateTimeOffset.Now);
         return Start(queued.Ordinal, queued.Request, queued.Launch);
     }
 
     /// <summary>Cancel on the queued turn: dropped from the queue. True when it was the queued one.</summary>
+    /// <remarks>
+    /// A successor held at the host is refused: <see cref="IAttemptHost"/> has no withdrawal (its Stop never cancels a
+    /// queued successor), so dropping it here would leave the host to launch a turn the operator cancelled. Seam
+    /// req-01M59ERYY7362ASCQ4E20XA4MA.
+    /// </remarks>
     public bool Cancel(int ordinal)
     {
         lock (_gate)
         {
-            if (_queued is not { } held || held.Ordinal != ordinal)
+            if (_queued is not { } held || held.Ordinal != ordinal || _held.ContainsKey(ordinal))
             {
                 return false;
             }
@@ -289,10 +355,23 @@ public sealed class NotebookRuns : IDisposable
     /// A turn as an attempt (docs/design/workbench-loops-wl-1a.md, "The gate and the write order"): the revision it ran
     /// is awaited, the host's gate decides, and the terminal row the host committed is the turn's terminal state.
     /// </summary>
-    private async Task DispatchAsync(IAttemptHost host, AttemptScope scope, GovernedRunRequest request, RunLaunch launch, int ordinal, CancellationTokenSource cancel)
+    /// <param name="queuedAfter">The predecessor's dispatch key when the host holds this turn as its successor, else null.</param>
+    /// <param name="g0">Signalled once the host's gate decided a held successor, so Send now never races its G0.</param>
+    private async Task DispatchAsync(
+        IAttemptHost host, AttemptScope scope, GovernedRunRequest request, RunLaunch launch, int ordinal,
+        CancellationTokenSource cancel, string? queuedAfter, TaskCompletionSource? g0 = null)
     {
+        using var lines = new CancellationTokenSource();
         try
         {
+            if (launch is { EnvelopeId: { } derivedFrom, ProjectionSha: { } derivedSha })
+            {
+                lock (_gate)
+                {
+                    _keys[ordinal] = AttemptKey.For(derivedFrom, derivedSha, queuedAfter, null);
+                }
+            }
+
             await launch.Revision.ConfigureAwait(false);
             if (_notebook.RevisionOf(ordinal) is not { } revision)
             {
@@ -307,13 +386,31 @@ public sealed class NotebookRuns : IDisposable
                 return;
             }
 
+            if (StopRequested(cancel))
+            {
+                Fail(ordinal, request.EngineId, "stopped before dispatch; no prompt is sent");
+                return;
+            }
+
             var start = await host.DispatchAsync(
                 new AttemptDispatch(request, scope.WorkspaceId, scope.WorkspaceEpoch, envelopeId, projectionSha,
-                    _notebook.Id.Value, revision.RevisionNo, _notebook.Session.SessionId, scope.SessionGeneration, current),
+                    _notebook.Id.Value, revision.RevisionNo, _notebook.Session.SessionId, scope.SessionGeneration, current,
+                    QueuedAfterDispatchKey: queuedAfter),
                 CancellationToken.None).ConfigureAwait(false);
             Record(ordinal, start.Receipt);
+            g0?.TrySetResult();
+            if (StopRequested(cancel))
+            {
+                _ = StopAttemptAsync(host, ordinal, start.Receipt.DispatchKey);
+            }
+
+            var pump = FollowAsync(host, start.Receipt.DispatchKey, request.EngineId, ordinal, lines.Token);
             var receipt = await start.Completion.ConfigureAwait(false);
             Record(ordinal, receipt);
+
+            // The relay completes as the run ends, so the lines are in; the bound is for an attempt that never launched.
+            lines.CancelAfter(LiveLinesGrace);
+            await pump.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
 
             var terminal = receipt.Terminal;
             var answered = request.Goal is null ? TurnState.Answered : TurnState.Completed;
@@ -345,12 +442,113 @@ public sealed class NotebookRuns : IDisposable
         }
         finally
         {
+            g0?.TrySetResult();
             lock (_gate)
             {
                 _runs.Remove(ordinal);
+                _held.Remove(ordinal);
+                _keys.Remove(ordinal);
             }
 
             cancel.Dispose();
+        }
+    }
+
+    /// <summary>How long a run's lines may trail its terminal row before the follow is let go.</summary>
+    private static readonly TimeSpan LiveLinesGrace = TimeSpan.FromSeconds(5);
+
+    private bool StopRequested(CancellationTokenSource cancel) => cancel.IsCancellationRequested && !_disposing.IsCancellationRequested;
+
+    /// <summary>The host's Stop (ADR-0041 §4); its terminal reaches the turn through the attempt's completion.</summary>
+    private async Task StopAttemptAsync(IAttemptHost host, int ordinal, string dispatchKey)
+    {
+        try
+        {
+            await host.StopAsync(dispatchKey, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or WorkspaceStoreException or IpcRequestException or KeyNotFoundException)
+        {
+            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, "attempt-host", "stderr", $"Stop: {error.GetType().Name}: {error.Message}", "run"));
+        }
+    }
+
+    /// <summary>
+    /// The attempt's lines (<see cref="IAttemptHost.SubscribeAsync"/>: the run log so far, then the live relay) folded
+    /// into the turn and relayed to the bound surface's lane through the one sink, from the attempt's first event.
+    /// </summary>
+    private async Task FollowAsync(IAttemptHost host, string dispatchKey, string engineId, int ordinal, CancellationToken cancellationToken)
+    {
+        RunEventRelay? relay = null;
+        try
+        {
+            var subscription = await host.SubscribeAsync(dispatchKey, cancellationToken).ConfigureAwait(false);
+            Action<ObservedRunEvent>? sink = null;
+            await foreach (var runEvent in subscription.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (sink is null)
+                {
+                    MarkStarted(ordinal);
+                    relay = new RunEventRelay();
+                    Observer?.RunStarted(ordinal, engineId, relay);
+                    sink = Sink(engineId, relay, ordinal);
+                }
+
+                sink(new ObservedRunEvent(runEvent, ReceivedAt: null, NormalizationLatency: null));
+            }
+        }
+        finally
+        {
+            relay?.Complete();
+        }
+    }
+
+    /// <summary>A successor held at the host has started (its first event, or Send now): the turn runs from now, once.</summary>
+    private void MarkStarted(int ordinal)
+    {
+        lock (_gate)
+        {
+            if (!_held.Remove(ordinal, out var held))
+            {
+                return;
+            }
+
+            _runs[ordinal] = held.Cancel;
+            if (_queued?.Ordinal == ordinal)
+            {
+                _queued = null;
+            }
+        }
+
+        if (Thread.Current.Turns.FirstOrDefault(t => t.Ordinal == ordinal) is { State: TurnState.Queued })
+        {
+            Thread.Start(ordinal, DateTimeOffset.Now);
+        }
+    }
+
+    private Task? HeldG0(int ordinal)
+    {
+        lock (_gate)
+        {
+            return _held.TryGetValue(ordinal, out var held) ? held.G0.Task : null;
+        }
+    }
+
+    /// <summary>Send now on a successor held at the host: after its G0, the host's launch.</summary>
+    private async Task SendHeldAsync(IAttemptHost host, int ordinal, Task g0)
+    {
+        await g0.ConfigureAwait(false);
+        if (AttemptOf(ordinal) is not { } attempt)
+        {
+            return;
+        }
+
+        try
+        {
+            await host.SendNowAsync(attempt.DispatchKey, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or WorkspaceStoreException or IpcRequestException or KeyNotFoundException)
+        {
+            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, "attempt-host", "stderr", $"Send now: {error.GetType().Name}: {error.Message}", "run"));
         }
     }
 
