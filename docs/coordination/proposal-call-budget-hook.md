@@ -1,7 +1,7 @@
 ---
 id: proposal-call-budget-hook
 title: "Proposal — a per-agent tool-call budget hook (hard stop for rule 16)"
-type: proposal
+type: plan
 status: proposed
 owner: "@timianmalloo"
 tags: [proposal, hooks, budget, go9, workbench-loops]

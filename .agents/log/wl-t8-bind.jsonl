@@ -38,3 +38,13 @@
 {"agent": "wl-t8-bind", "at": 1792394383.3382373, "kind": "claim", "path": "src/AiDe.Core/Store/Records/StoreReader.Workbench.cs", "seq": 38, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792394383.5727448, "kind": "claim", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostTests.cs", "seq": 39, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792394647.5417416, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 40, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394925.1174924, "kind": "release", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 41, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.23597, "kind": "release", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 42, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.3460488, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 43, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.4546216, "kind": "release", "path": "src/AiDe.Core/Ipc/IWorkspaceDispatch.cs", "seq": 44, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.5655541, "kind": "release", "path": "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs", "seq": 45, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.6764247, "kind": "release", "path": "src/AiDe.Core/Ipc/WorkspaceOperations.cs", "seq": 46, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.808425, "kind": "release", "path": "src/AiDe.Core/Ipc/WorkspaceClient.cs", "seq": 47, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394925.9276388, "kind": "release", "path": "src/AiDe.Core/Store/Records/StoreReader.Workbench.cs", "seq": 48, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394926.0602894, "kind": "release", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostTests.cs", "seq": 49, "session": "wl-t8-bind", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394926.1768632, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 50, "session": "wl-t8-bind", "wi": "WI-0"}
