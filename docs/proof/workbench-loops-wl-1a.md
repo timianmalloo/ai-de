@@ -172,6 +172,17 @@ GUI steps not yet run by a person are **owed to the user**.*
 
 ## Acceptance (Owner, 2026-10-19)
 
+**WL-1a is reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
+
+**T17d's fix and proof** (`wl1a-readback`; `workbench-loops-wl-1a/readback/README.md`):
+
+- Checks 1–2: the read-back runs when the host binds, before or after construction, once per bind. Check 1 runs through `WorkbenchShell.ReviveRestoredSessionDocuments`. `readback/check1-red.txt` → `check1-green.txt` and `readback/check2-red.txt` → `check2-green.txt`.
+- Check 3: Ruling 163's tests now reopen in the shell's order, and a per-site guard fails any read-back test that binds the host first unless the site is named as not a reopen. `readback/check3-red.txt`, `check3-red-per-site.txt` → `check3-green.txt`. Mutation red: `readback/check3-mutation-red.txt`.
+- Whole suites: **not green yet** (`readback/suite-run.txt`). Core 3024/0. App has one regression from the fix (`NoDispatchOutsideTheHostTests`, its line 47 expects a row before the host opens; seam req-01M5A52AQHR32CPQFSBS9NGJ4T) plus the known environmental `SolutionTreeChordTests`. T17d does not join until that test is green and `readback/suite-green.txt` exists.
+- **The human demo's restart step is the one this fixes:** step 18 (section 7, "Restart, and kill the host mid-run"). Walk it after T17d joins. Before that join it fails in the running app.
+
+The provisional acceptance, as the Owner recorded it before Ruling 172:
+
 **WL-1a is ACCEPTED, PROVISIONALLY.** The Owner (`wl-owner-20261018`) ran these on a clean detached tree at `origin/main` `ba2b7e5e`:
 
 - `dotnet build AiDe.sln -c Release`: 0 warnings, 0 errors.
