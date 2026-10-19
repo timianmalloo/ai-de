@@ -10,10 +10,12 @@ namespace AiDe.App.Tests;
 /// </summary>
 internal static class DesktopHold
 {
-    public static string? Occupant()
+    public static string? Occupant() => OccupantOf(ReadRequestLines());
+
+    internal static string? OccupantOf(IEnumerable<string> requestLines)
     {
         string? lastStart = null;
-        foreach (var record in ReadRequests())
+        foreach (var record in ParseRequests(requestLines))
         {
             var contract = record.Contract ?? "";
             if (contract.Contains("desktop START", StringComparison.OrdinalIgnoreCase))
@@ -29,10 +31,20 @@ internal static class DesktopHold
         return lastStart;
     }
 
+    internal static string StartedAnnouncement(string session, string run, int pid) =>
+        JsonSerializer.Serialize(new Dictionary<string, string>
+        {
+            ["session"] = session,
+            ["contract"] = StartContract(run),
+            ["reason"] = $"ActualPID{pid};start{IsoNow()}",
+        });
+
+    private static string StartContract(string run) => $"R115 desktop {run} START";
+
     public static void AnnounceStart(string run, int pid)
     {
         Append(
-            contract: $"R115 desktop {run} START",
+            contract: StartContract(run),
             reason: $"ActualPID{pid};start{IsoNow()}");
     }
 
@@ -89,15 +101,15 @@ internal static class DesktopHold
         File.AppendAllText(RequestsPath(), line);
     }
 
-    private static IEnumerable<Request> ReadRequests()
+    private static IEnumerable<string> ReadRequestLines()
     {
         var path = RequestsPath();
-        if (!File.Exists(path))
-        {
-            yield break;
-        }
+        return File.Exists(path) ? File.ReadLines(path) : [];
+    }
 
-        foreach (var line in File.ReadLines(path))
+    private static IEnumerable<Request> ParseRequests(IEnumerable<string> lines)
+    {
+        foreach (var line in lines)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
