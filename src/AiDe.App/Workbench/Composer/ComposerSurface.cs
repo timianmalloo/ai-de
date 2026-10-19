@@ -146,7 +146,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono,
             FontSize = 12,
         };
-        AutomationProperties.SetName(_compiled, "Compiled prompt — exactly what will be sent");
+        AutomationProperties.SetName(_compiled, CompiledPromptLiveName);
 
         _status = new TextBlock { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, FontSize = 12 };
         _status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
@@ -231,7 +231,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(_settingsLine, "Settings");
         _compiledDisclosure = new Expander
         {
-            Header = "Compiled prompt",
+            Header = CompiledPromptHeading,
             IsExpanded = false,
             Content = _compiled,
             Margin = new Thickness(0, 2, 0, 0),
@@ -305,6 +305,23 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// minimum grows — the document's belt yields, the thread gets less; nothing is cut to 2 px.
     /// </summary>
     public const double CompiledPromptMinHeight = 48;
+
+    /// <summary>The compiled prompt disclosure's heading while it shows the live draft's compile (DESIGN.md:879).</summary>
+    public const string CompiledPromptHeading = "Compiled prompt";
+
+    /// <summary>The compiled field's UIA name while it shows the live draft's compile: the outgoing text.</summary>
+    public const string CompiledPromptLiveName = "Compiled prompt — exactly what will be sent";
+
+    /// <summary>
+    /// Ruling 181 (1): the heading while the field shows the turn just sent, until the next keystroke — the visible
+    /// header, the field's UIA name and the disclosure's ItemStatus, one string. <c>{0}</c> is the turn's ordinal
+    /// (<c>b1</c>).
+    /// </summary>
+    public const string SentHeadingFormat = "Compiled prompt — sent as {0}";
+
+    /// <summary>The <see cref="SentHeadingFormat"/> heading for one turn's ordinal.</summary>
+    public static string SentHeading(string displayOrdinal) =>
+        string.Format(System.Globalization.CultureInfo.InvariantCulture, SentHeadingFormat, displayOrdinal);
 
     /// <summary>A disclosure's header row (DESIGN.md: each line 24 px) — what the compiled prompt costs at rest.</summary>
     private const double DisclosureHeaderHeight = 24;
