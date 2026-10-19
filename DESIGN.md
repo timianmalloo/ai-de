@@ -330,6 +330,20 @@ the same commands the palette runs; they never diverge.
 is `GRAPH-PROVENANCE-LAUNDERED` (kg-visualization-ux-expert, hard escalation). Colour is the third signal; the
 glyph and the word carry it when hue is unavailable.
 
+### The graph canvas's knowledge-inclusive toggle (Ruling 166 (1); Ruling 169)
+
+The representation selector for the knowledge corpus (design WL-S §8; Ruling 149 (2)) is one toggle in the
+graph canvas's toolbar, beside Group. It is a mode of the one `canvas` kind, never a second graph surface.
+
+| String | Words | Code |
+|---|---|---|
+| Visible text | `Knowledge-inclusive` | `CanvasPage.KnowledgeModeText` |
+| UI Automation name | `Knowledge-inclusive mode` | `CanvasPage.KnowledgeModeName` |
+
+It is a native button with `aria-pressed`, so UI Automation reads it as a Toggle. It starts **off**, which keeps
+the docked graph code-only. Its state belongs to one canvas instance and lasts for the session only, like Group:
+it resets when the canvas reopens, and the layout does not store it (Ruling 169).
+
 ### §4a rendering tokens — bounded reads & emphasis (Core→Design requests)
 
 The Core session's view models admit their own bounds (`EvidenceRead.Shortfall`) and carry a dominant

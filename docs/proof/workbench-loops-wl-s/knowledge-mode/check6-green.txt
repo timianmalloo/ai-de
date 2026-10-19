@@ -1,0 +1,32 @@
+# T18 node 3 check 6 (design WL-S 8 E2E) GREEN, at the T18 seam (HEAD d7edb99f plus the new test).
+# Run: AIDE_REAL_PROJECTION_ROOT=<this worktree> dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~KnowledgeModeRealProjectionTests
+
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Starting:    AiDe.App.Tests
+known node knowledge-hub: 45 edge(s): adr-0001-derived-evidence-views -depends-on-> knowledge-hub [Verified]; architecture -depends-on-> knowledge-hub [Verified]; docs-map-of-content -relates-to-> knowledge-hub [Verified]; domain-experts -relates-to-> knowledge-hub [Verified]; kb-ai-native-ide-shell -refines-> knowledge-hub [Verified]; kb-azure-cloud-architecture -refines-> knowledge-hub [Verified]; kb-code-and-infra-extraction -refines-> knowledge-hub [Verified]; kb-code-knowledge-graphs -refines-> knowledge-hub [Verified]; kb-diagram-generation -refines-> knowledge-hub [Verified]; kb-domain-modeling-and-erm -refines-> knowledge-hub [Verified]; kb-editor-and-content-rendering-surfaces -refines-> knowledge-hub [Verified]; kb-graph-experience-and-visualization -refines-> knowledge-hub [Verified]; kb-mcp-agent-integration -refines-> knowledge-hub [Verified]; kb-microservice-interaction -refines-> knowledge-hub [Verified]; kb-multi-agent-coordination -refines-> knowledge-hub [Verified]; kb-operational-and-test-dashboards -refines-> knowledge-hub [Verified]; kb-uml-mde-and-4gl -refines-> knowledge-hub [Verified]; kb-wpf-modern-ui-styling -refines-> knowledge-hub [Verified]; knowledge-hub -documents-> seed-agent-coordination-spec [Verified]; knowledge-hub -documents-> seed-ai-native-ide-sketch [Verified]; knowledge-hub -links_to-> kb-ai-native-ide-shell [Verified]; knowledge-hub -links_to-> kb-azure-cloud-architecture [Verified]; knowledge-hub -links_to-> kb-code-and-infra-extraction [Verified]; knowledge-hub -links_to-> kb-code-knowledge-graphs [Verified]; knowledge-hub -links_to-> kb-diagram-generation [Verified]; knowledge-hub -links_to-> kb-domain-modeling-and-erm [Verified]; knowledge-hub -links_to-> kb-editor-and-content-rendering-surfaces [Verified]; knowledge-hub -links_to-> kb-graph-experience-and-visualization [Verified]; knowledge-hub -links_to-> kb-mcp-agent-integration [Verified]; knowledge-hub -links_to-> kb-microservice-interaction [Verified]; knowledge-hub -links_to-> kb-multi-agent-coordination [Verified]; knowledge-hub -links_to-> kb-operational-and-test-dashboards [Verified]; knowledge-hub -links_to-> kb-uml-mde-and-4gl [Verified]; knowledge-hub -links_to-> kb-wpf-modern-ui-styling [Verified]; knowledge-hub -relates-to-> architecture [Verified]; note-20260829-graph-experience-knowledge-scope -relates-to-> knowledge-hub [Verified]; note-20260829-wpf-styling-knowledge-scope -relates-to-> knowledge-hub [Verified]; note-conductor-agents-gitignore-deviation -relates-to-> knowledge-hub [Verified]; plan-ai-native-ide-architecture -depends-on-> knowledge-hub [Verified]; privacy-review-ai-native-ide -relates-to-> knowledge-hub [Verified]; seed-agent-coordination-spec -relates-to-> knowledge-hub [Verified]; seed-ai-native-ide-sketch -relates-to-> knowledge-hub [Verified]; session-contracts -relates-to-> knowledge-hub [Verified]; spec-ai-native-ide -refines-> knowledge-hub [Verified]; ui-craft-findings-2026-09-01 -relates-to-> knowledge-hub [Verified]
+[xUnit.net 00:00:26.33]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt [26 s]
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 26.6649 Seconds
+exit 0
