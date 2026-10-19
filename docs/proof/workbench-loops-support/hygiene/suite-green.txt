@@ -1,0 +1,9 @@
+verify-test-run: running 2 test project(s)…
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+AiDe.App.Tests                    1064      1062     Completed
+AiDe.Core.Tests                   2914      2914     Completed
+
+verify-test-run: OK — 3978 tests counted across 2 project(s), every project met its baseline and every skip was one the baseline names.
+exit 0
