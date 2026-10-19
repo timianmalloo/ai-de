@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T09:42:08Z",
+  "generated": "2026-10-19T10:04:01Z",
   "audit": [
     {
       "actor": null,
@@ -24831,6 +24831,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T09:26:12Z",
       "duration_seconds": 956.0
+    },
+    {
+      "id": "al-01M59SWEPTT5GKWSGZJDP77K3Y",
+      "shortname": "wl-t17c-restore",
+      "datetime": "2026-10-19T10:04:01Z",
+      "session": "wl-t17c-restore",
+      "prompt": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
+      "summary": "AttemptHost.LaunchSettledAsync (internal) awaited by the killed-attempt test before its write; RunLogStoreSharingTests pins Read share mode (red proven); 15x mixed filter 0 failures",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
+      "done_when": "test awaits launch; sharing test red-green; N=15 green; suites green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T09:53:01Z",
+      "duration_seconds": 660.0
     }
   ],
   "changes": [

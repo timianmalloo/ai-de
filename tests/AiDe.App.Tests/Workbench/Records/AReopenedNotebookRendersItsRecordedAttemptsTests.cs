@@ -190,9 +190,10 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 Assert.NotNull(surface.Composer.Send());
                 await UntilAsync(window, () => dying.Died, () => "the host never reached its terminal write");
                 var attempt = model.Runs.AttemptOf(1)!.Attempt;
+                await host.LaunchSettledAsync(attempt.DispatchKey);
                 Close(window, host, model, surface);
 
-                // The attempt is recorded; its run log holds no event.
+                // The attempt is recorded; its run log holds no event. The killed launch has disposed its writer (Ruling 165).
                 File.WriteAllText(RunLogStore.PathFor(_fixture.Root, NotebookFixture.SessionId, attempt.DispatchKey), string.Empty);
 
                 (host, model, surface) = await ReopenAsync(window);
