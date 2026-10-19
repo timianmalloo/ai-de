@@ -36,3 +36,20 @@ Suites: suite-green.txt (Core 3020 passed, 1 skipped; App 1125 passed, 1 skipped
 - Seam request sent with the two sentences (the refusal const and the restore report line) and the DESIGN.md copy-row question. Built with the proposed sentences; DESIGN.md untouched.
 - The "kind has no zone" fallback is `TreeToZones.ClassifyStack`'s own default (Left); admission still runs after and drops an inadmissible kind with the existing report.
 - T21 removes the refusal and the `Dock` call.
+
+## Node 2 - DOCK3 wording and zone label (Owner-confirmed DOCK2, DOCK3)
+
+Tests: `tests/AiDe.Core.Tests/Workbench/FloatingRedockCopyTests.cs`.
+
+| Check | Test | Red | Green |
+|---|---|---|---|
+| 1. exact sentences | `TheSingularSentence_IsExactlyThePinnedWording`, `ThePluralSentence_IsExactlyThePinnedWording`, `TheDesignRowDock3_CarriesTheSameSentencesWordForWord` | dock3-wording-red.txt (plural and DESIGN row fail on assertions) | dock3-wording-green.txt (4/4) |
+| 2. zone label | `TheZoneInTheReport_IsTheShellsUserFacingLabel_NeverTheInternalZoneId` | dock3-zone-label-red.txt | dock3-zone-label-green.txt |
+
+- Plural is now exactly `{N} floating panes in your saved layout are docked: {Title} in {zone}, {Title} in {zone}.` The wording lives in three consts on `FloatingRedockResult` (`SingularFormat`, `PluralFormat`, `PluralItemFormat`); the DESIGN.md DOCK3 row (line 1385, the only DESIGN.md edit) is checked against them.
+- Zone label source: `ZoneLayoutService.ZoneName`, `src/AiDe.Core/Workbench/ZoneLayoutService.cs:272-279` (identical on origin/main, checked with `git show origin/main:...`): Left "the left zone", Right "the right zone", Bottom "the bottom zone", Center "the center". The same method feeds the shell's "Moved X to the left zone" (:38, :53-54). The default arm (`_ => id.ToString()`, :278) is not reached by any current ZoneId; the test enumerates `Enum.GetValues<ZoneId>()` and fails if a zone's label equals its enum name. Every zone has a user-facing word, so no seam request was needed; ZoneLayoutService.cs is untouched.
+- Reach: `Dock` can land a pane in Left, Bottom or Center only (`TreeToZones.ClassifyStack`). Right has no floating route, so the report text is checked for those three and Right is covered by the label check alone.
+- Disclosure on check 2's red: the label was already correct (node 1 used `ZoneName`), so the test passed from the start. Its red was produced by mutation (`zone.ToString()` in place of `ZoneName(zone)`, run, then reverted; not committed), which fails on `Assert.EndsWith ... "docked in the left zone."`. The red commit carries the red text, not the mutation.
+- Red commit a150e0bf (tests plus the format-const extraction, wording unchanged); green commit 1a814602.
+- Suite: suite-node2.txt. Core 3024 passed, 1 skipped. App 1125 passed, 1 skipped, 1 failed: `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` (known focus flake), passes alone (suite-node2-flake-alone.txt).
+- The kick mail in the inbox (12:09Z) predates this node's start (12:15Z) and was not treated as this node's kick.
