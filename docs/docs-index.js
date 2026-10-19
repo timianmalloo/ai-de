@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fff34e13a496499830d4bd559cbf20ecb27e4c4bdd9f521800083daaa23122f2"
+      "sourceSha256": "f55f53f2b23f2f0699bed7d20281bb39916068423fe3944909976a99aa9941c3"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -3193,7 +3193,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 80 types, 153 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 77 types, 153 members, 60% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3206,7 +3206,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4b5aee1deaa6bcc49c45c8bc360c894defb9dca1296841b506f18adf82cfbe03"
+      "sourceSha256": "f6dcee4b04afdf1bb0016c61d7946d30ab9e3c6adeb650708671e40c1ae87c25"
     },
     {
       "id": "api-aide-core-workbench-records-folds",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4c907207a5f942e585428c427b6038eab689414ed9a05a6f3502f0d180935fa0"
+      "sourceSha256": "5c7254e616713b30cea72365a00e4dd210e927a293bb6a06efa22e84d2480646"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e09cbab6ef32f97a1cb5f6f54d570e86983fc8159371029207181a5eda00d0ff"
+      "sourceSha256": "82b85c46d68492a06b0353ae550e6ab117d4f2cf6462e023584528a97445a609"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -19046,7 +19046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e60d616c2639064ab759aadfdc787c4718bfd528a0643d35de0917c92b058dd5"
+      "sourceSha256": "cc4f90186deee5d48b1cc5d97e8a840248f154a2448b0d79ec7c39b56deffa03"
     },
     {
       "id": "coordination-workbench-loops-leader-handoff-1",
@@ -22618,7 +22618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d4c7c303f0a4832234de2e3c49ac9d273740127aa2fa744368d0deaafd76253c"
+      "sourceSha256": "588ea1d1551b8855f62d1e7365715a95d326ee423f1807dc5d2a60147da62d86"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -23061,6 +23061,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e5b842133ae95c35079f4b80c1c5a5e08db71179de865a4215fb20197a364e33"
+    },
+    {
+      "id": "wl-s-float-handoff-n1",
+      "path": "docs/proof/workbench-loops-wl-s/float/handoff.md",
+      "title": "WL-S T21 float - node 6 hand-off",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "T21 node 6: the owed App suite at node 5's head is 1165/1/2 (the known SolutionTreeChord precondition); floatPane floats the focused tab (close condition 3); a saved floating stack whose id is in use loads with the partial-read sentence; a native float never takes a restored float-view id. Core 3046/0/1, App 1166/1/2. Next is the T21 join, before T11.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7fa8a0f149c90d3c0e0481991de3c9d5aaadc7b130e808660a2d18b6fccb9a41"
+    },
+    {
+      "id": "wl-s-float-proof",
+      "path": "docs/proof/workbench-loops-wl-s/float/README.md",
+      "title": "WL-S T21 float - proof pack",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8cfcb72942a1040fa711ef77a40d9bd071131f311dea24585e336eeaad72c63f"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -24989,5 +25031,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "39074c03f832bda06c84e58233d06415cafc6a2b9ff42fbca3ee61af2c285381"
+  "graphSha256": "efeeac5ca8fc5ada4de88ca7a40c80d830f1b38e520c9bc7ca8afdba6768e2fa"
 };

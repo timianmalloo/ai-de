@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T13:44:16Z",
+  "generated": "2026-10-19T16:31:52Z",
   "audit": [
     {
       "actor": null,
@@ -25136,24 +25136,471 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5A2HGRHJ753ZYQMEQ0SC709",
-      "shortname": "join-wls-float-guard",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T12:35:19Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "merged on main, recount and step 8 ratchet PASS, pushed",
+      "duration_seconds": 549.0,
+      "fan_out": 0,
+      "goal": "Ruling 171 (1): no pane on main can vanish by floating",
+      "id": "al-01M5A2HGRHJ753ZYQMEQ0SC709",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wls-float-guard into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wls-float-guard",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T12:26:10Z",
       "summary": "T20 (Sonnet, 2 nodes): workbench.floatPane refuses with DOCK2 and leaves the layout unchanged; a layout restored with floating windows docks each pane into its kind's zone (FloatingRedock, Core) with the DOCK3 report line through RestoreResult; copy confirmed by the Owner, consts pinned against DESIGN.md:1384-1385; zone label = ZoneLayoutService.ZoneName (:272-279), pinned for every ZoneId. Lands before any later WL-S join (Ruling 171 (1)). recount_seconds=548 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T12:46:53Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1386.0,
+      "fan_out": 0,
+      "goal": "Land T20 on main before any later WL-S join (Ruling 171 (1))",
+      "id": "al-01M5A36P40WAKZSRSV0ASXHXBF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/160) for the T20 join 4748cdb2",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wls-float-guard-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T12:23:47Z",
+      "summary": "Recount OK. Step 8 5/48 (baseline). Ratchet vs first parent eda6aeff on clean trees, head 4748cdb2: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). No foreign file in the join commit: Rulings 172/173, written mid-join, were saved as a patch and the register restored before step 7. T20 (Sonnet, 2 nodes; Ruling 171 (1)): workbench.floatPane refuses with DOCK2 and leaves the layout unchanged; a layout restored with floating windows docks each pane into its kind's zone (FloatingRedock, Core) with the DOCK3 report line through RestoreResult; copy confirmed by the Owner, singular/plural consts pinned against DESIGN.md:1384-1385; zone label ZoneLayoutService.ZoneName (:272-279), pinned for every ZoneId. Lands before any later WL-S join.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:03:09Z",
+      "done_when": "probe recorded; each check red then green with proof; README; audit; done mail",
+      "duration_seconds": 806.0,
+      "fan_out": 0,
+      "goal": "Make float real in node 1: probe, render, move/close, read-back",
+      "id": "al-01M5A44EYY5JJ13BKEQKFMM1HF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 wls-float node 1 (Ruling 171 (2)): WebView2 float probe, render floating, move/close floating, read-back",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T12:49:43Z",
+      "summary": "Probe: canvas and composer survive an AvalonDock float and redock (no crash). Check 1 green (Render draws floating stacks as AvalonDock floating windows). Check 2 green (ZoneLayoutService redocks, closes, activates floating surfaces). Check 3 not started (kick). Seam req-01M5A43ANDG4G188C55BY7BM3S on floating bounds schema.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:21:05Z",
+      "done_when": "red and green commits for each check, suite-node1.txt, README and handoff updated, audit entry, done mail",
+      "duration_seconds": 989.0,
+      "fan_out": 0,
+      "goal": "Check 3 and the null check, each red then green, then one suite run",
+      "id": "al-01M5A55ABXR5ND8EZ7V5KPYXHV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 1b: check 3 (adapter+store round-trip floating windows; a pane floating at save restores floating after restart) and the null check (a layout with no floating field restores empty, never throws), red then green",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:04:36Z",
+      "summary": "Null check red 7302703f green b581cc5d (ZoneLayoutStore.Read coalesces an absent floating field; DC-NEW-wl-t21-float). Check 3 red 0fd316bd green 268f0994 (ReadLayoutFromView maps floating windows; TryMapByPosition takes tree.Floating; mutation proved red). Restart leg via ZoneLayoutStore+RestoreZones, not LayoutPersistence (T20 guard, node 2). Suite: Core 3029/0/1; App 1132/1/2, SolutionTreeChordTests foreground-not-held, red alone twice, not proven.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:44:16Z",
+      "done_when": "three checks green and committed, suite run saved, README/handoff/audit updated, Leader mailed",
+      "duration_seconds": 1250.0,
+      "fan_out": 0,
+      "goal": "T21 node 2: T20's float guard removed red-first",
+      "id": "al-01M5A6FR8GCKGMRDV137RHP12H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 2: remove T20's float guard, restore redock, delete the DOCK2/DOCK3 copy, each red-first, plus the whole suite",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:23:26Z",
+      "summary": "Guard removed in 3 red-then-green checks: floatPane floats the focused pane again (aa64c64e->650d65c2); LayoutPersistence restores a saved floating window floating (975f4430->aec61ebe); DOCK2/DOCK3 rows, FloatingRedock.cs and FloatingRedockCopyTests.cs deleted (629815fa->e9591175). Suite Core 3025/0/1, App 1133/1/2 (SolutionTreeChordTests foreground precondition, also red alone).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:07:53Z",
+      "done_when": "three checks green, suite-node3.txt written, README and handoff updated, done mail sent",
+      "duration_seconds": 1342.0,
+      "fan_out": 0,
+      "goal": "Ruling 174's three checks red then green, with the suite run",
+      "id": "al-01M5A7TZP32MD9AY4471VB1DXP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 3 (Ruling 174): store a floating window's bounds in the zone layout as four optional fields, write them at move or resize end, recover off-screen bounds with a report line",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:45:31Z",
+      "summary": "Check 1 47074ff7->99226792 (ZoneStackDto floatX/Y/Width/Height double?, all-or-none, schema 1); check 2 3b15c959->2ac90f20 (FloatingPropertiesUpdated writer via the arrangement signature; floating windows now placed from the root panel, DC-NEW-wl-t21-float-b); 60779f03 frozen-constructor theory admits additive optional fields (seam); check 3 74eba6d2->f8bee27a (zone restore clears off-screen bounds, RehomedFloating, PartialRestore, one sentence). Suite Core 3031/0/1, App 1135/1/2 (chord focus flake). DropTargetResolver comment not done.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:02:53Z",
+      "done_when": "Checks 1-3 red then green; suite green; readback Proof Pack; WL-1a Acceptance says reopened (Ruling 172)",
+      "duration_seconds": 810.0,
+      "fan_out": 0,
+      "goal": "The read-back runs when the host binds, exactly once per bind, proven in the shell's order",
+      "id": "al-01M5A43ZQ1SGSVK62QMDEKH3YM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17d (Ruling 172): the restart read-back runs when the attempt host binds, once per bind, red through the real shell construction order; guard against bind-first read-back tests",
+      "session": "wl-t17d-readback",
+      "shortname": "wl-t17d-readback",
+      "skill": "implement",
+      "started_at": "2026-10-19T12:49:23Z",
+      "summary": "Node 1 stopped at the rule-16 kick. Checks 1-2 red 04b75bf0 -> green 69452f35: NotebookRuns.ReadBackOnEachBind + Bound() + a bind counter; ReadingBack is pending while the host opens; the real WorkbenchShell revive renders its attempts; 18/18 with the T17/163/164 tests. Check 3 guard red 7bd617ad on 3 T17 files; its green waits on seam req-01M5A3JM9CAE3Q0EA1K0ZX315K. Suite run, README and the Acceptance update are not done (handoff.md).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:20:16Z",
+      "done_when": "guard + converted files green, suite-green.txt, README + acceptance committed, done mail sent",
+      "duration_seconds": 979.0,
+      "fan_out": 0,
+      "goal": "check 3 green, both suites run, Proof Pack and acceptance written",
+      "id": "al-01M5A53T1M8EVSVYZ3JP2HF89V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17d node 2: turn check 3 green (convert the reopen sites to the shell's order), whole suites, Proof Pack README, slice acceptance reopened (Ruling 172)",
+      "session": "wl-t17d-readback",
+      "shortname": "wl-t17d-readback",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:03:57Z",
+      "summary": "check 3 per-site guard red 0c92dafd -> green 4be08710 (4 reopen sites converted, 8 named; mutation red 7/14); README + acceptance 1a0e9c4b; Core 3024/0; App 1134/2: NoDispatchOutsideTheHostTests regression from 69452f35 (seam req-01M5A52AQHR32CPQFSBS9NGJ4T open), SolutionTreeChord environmental",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:43:34Z",
+      "done_when": "A, B, C red+green; suites run; README, handoff, audit, done mail",
+      "duration_seconds": 1248.0,
+      "fan_out": 0,
+      "goal": "Ship T17d node 3: Ruling 175 checks A, B, C red-then-green",
+      "id": "al-01M5A6EFCYEHNS7CAFMPE4K8YV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17d node 3: Ruling 175 items 1-5 as checks A (pending Send), B (failure words), C (durations), red-first",
+      "session": "wl-t17d-readback",
+      "shortname": "wl-t17d-readback",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:22:46Z",
+      "summary": "Check A red 7d07d8ed -> green f796d727 (words kept, Send disabled with RestoringTurns in status+UIA, one turn admitted as b3, DESIGN row, NoDispatch:47 re-scoped). Check B red 7954c4ea -> green e16d2fcd (failed read-back is HostRefusal in Ruling 159 words via CannotHost; Retry re-reads). Check C not started (kick). Suites: Core 3024/0, App 1139/1 (SolutionTreeChordTests environmental).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:07:37Z",
+      "done_when": "Red and green commits for each check on wl1a-readback; README and Acceptance carry measured min/median/max; suite-green.txt replaced; audit entry and done mail sent",
+      "duration_seconds": 1383.0,
+      "fan_out": 0,
+      "goal": "Emit host-open and read-back durations on the normal path (Ruling 175(4)) and land the Owner's two corrections, each red then green, measured on this machine",
+      "id": "al-01M5A7TGA5HNYSDECAJYPHTGES",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17d node 4: Ruling 175 (4) durations, plus the Owner's two corrections moved into this node (no 'sent' for a waiting Send; the read-back failure's own copy)",
+      "session": "wl-t17d-readback",
+      "shortname": "wl-t17d-readback",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:44:34Z",
+      "summary": "Three checks red then green: 074c1c90/ce94643d ('sent' never announced before admission; ComposerSurface one granted line), 8825c4a8/0bf5f955 (NotebookRuns.RestoringFailed copy + DESIGN.md :1220; host-open keeps Ruling 159), 03a1dfd3/fa310512 (notebook.host-open and notebook.read-back durations via WorkbenchDiagnostics.Write, by default). Measured in the shell-path test n=10: host-open median 16.5 ms, read-back median 23.25 ms. Suites at fa310512: Core 3024/0; App 1143/2 (chord environmental; one teardown race not reproduced). Proof 7b3061cc.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:20:48Z",
+      "done_when": "merged on main, recount (Ruling 155 (3) excusal recorded) and step 8 ratchet PASS, pushed",
+      "duration_seconds": 2.0,
+      "fan_out": 0,
+      "goal": "Ruling 172/175: WL-1a's restart step works in the running app",
+      "id": "al-01M5A8JMHATV0QVD9V63HHGXVV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-readback",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T14:20:46Z",
+      "summary": "T17d (Opus, 4 nodes): read-back on host bind, once per bind (Ruling 172); Send during restore keeps the words, never announces 'sent', admits one turn as b3; failure keeps the words with its own sentence; durations logged by default (Ruling 175). Recount RAN IN FULL at step 4 (App 1147 counted, Core 3025/2842/183 completed); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head e1280798 AND on the first parent 3802bb70 in a clean tree in the same environment, so it is excused under Ruling 155 (3) and NOT CHECKED; --docs-only here only skips re-running a recount that cannot pass unattended. The teardown NRE did not recur in this recount; T17e investigates it next. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:34:14Z",
+      "done_when": "ratchet PASS; sixth gate named; step-8 recorded before push",
+      "duration_seconds": 1838.0,
+      "fan_out": 0,
+      "goal": "Ruling 172/175: WL-1a's restart step works in the running app",
+      "id": "al-01M5A9B8C9PEB5E6TBGKY3KXM2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T17d join fd68b3eb",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-readback-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T14:03:36Z",
+      "summary": "Recount ran in full at step 4 (App 1147 counted, Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph \"foreground not held\" (probe exit 2). It refused alone on the join head e1280798 AND on the first parent 3802bb70 in a clean detached tree in the same environment, so it is excused under Ruling 155 (3) and NOT CHECKED. The join continued with --docs-only only to skip a re-run that cannot pass unattended (Owner confirmed the reading). Step 8 6/48 against the 5 baseline. The sixth gate is tools/verify-test-run.py: in the primary its .trx carries that same [Failed] probe result (the other two non-passes are the named expected skips KnowledgeModeRealProjectionTests and AttemptRealLaneStopTests). At the T20 join it was OK, because the probe passed then. It is one of Ruling 151 (3)'s never-ratcheted gates, and its red is the 155 (3)-excused refusal, so it is not a T17d green->red; the 5 baseline was not stale. Ratchet vs first parent 3802bb70 on clean trees, head fd68b3eb: PASS 0/49; no gate green->red; verify-derived-views and verify-site-figures went red->green. T17d (Opus, 4 nodes; Rulings 172, 175): read-back on host bind, once per bind, red through the real shell revive; bind-before-construction tests converted and guarded; a Send during the restore keeps the words, disables Send, never announces \"sent\", admits one turn as b3; a failed read-back keeps the words with its own sentence; host-open and read-back durations logged by default (shell-path medians 16.5 ms / 23.25 ms, n=10). Residual: one teardown NRE seen once in TheRowsAttemptBindingSurvivesRestartAndSequenceTests (not recurred, including this recount); T17e is next.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:03:34Z",
+      "done_when": "Three checks green and committed, suite-node4.txt, README and handoff updated, audit entry, done mail",
+      "duration_seconds": 1294.0,
+      "fan_out": 0,
+      "goal": "Finish T21 node 4's three checks red-then-green on wls-float",
+      "id": "al-01M5AB0YS472C495A904QQS23B",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 4: schema-1 freeze allow-list; the two crashing zone-file shapes load with a report line; LayoutRect comment and one off-screen sentence const",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T14:42:00Z",
+      "summary": "Check 0 freeze allow-list (9e20dcd0 red, 1da9f822 green); check 1 no-zones and no-surfaces load with PartlyRead + PartialRestore + one sentence (96ffc26a, 7c3a40aa); check 2 one off-screen sentence const, LayoutRect comment (c2dd868e, 08f62223); suite Core 3034/0/1, App 1155/1/2 (known foreground probe); Owner sentence refinement handed to next node",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:52:52Z",
+      "done_when": "Checks red then green committed separately; suites in suite-green.txt; README and handoff; audit entry and done mail",
+      "duration_seconds": 1048.0,
+      "fan_out": 0,
+      "goal": "Prove or rule out the read-back vs store-dispose race deterministically; fix it if it reproduces",
+      "id": "al-01M5AADBV9W3S7ZQVWS9PM10PM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17e: prove or rule out, deterministically, the read-back vs store-dispose race; fix if reproduced on the unit path and the shell close path; update docs",
+      "session": "wl-t17e-dispose",
+      "shortname": "wl-t17e-dispose",
+      "skill": "implement",
+      "started_at": "2026-10-19T14:35:24Z",
+      "summary": "Race reproduced with a gate (red 31b61650: ObjectDisposedException escaped; 2 turns written after notebook/shell disposal), fixed in NotebookRuns (green d7e0ac1b: read-back under _disposing.Token, ends quietly as outcome ended). WL-1a residual line effbadc1; step 18 unchanged. Suites Core 3024/0, App 1147/1 (environmental chord). T17d teardown NRE is a different race (a run's write), left open.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/dispose-race/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:08:54Z",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Owner 14:15Z: a read-back pending at disposal ends quietly, no NRE, no turn",
+      "id": "al-01M5ABAQP7GT0Q6V10ZEDG0S1R",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wl1a-dispose-race",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T15:08:53Z",
+      "summary": "T17e (Opus, 1 node): the read-back-at-disposal race reproduced with a gate on the unit path and through WorkbenchShell.Dispose (red 31b61650), fixed in NotebookRuns.cs (green d7e0ac1b): the read-back runs under the notebook's lifetime token, checks it after each read and before each thread write, and ends as notebook.read-back outcome 'ended' with no refusal and no turn. Recount ran in full (App 1150 counted; Core 3025/2842/183 completed); its only refusal was SolutionTreeChordTests 'Ruling 115 desktop hold is occupied' by a concurrent track suite (PID 40900); the probe then PASSED alone on the join head 293c18a4 (1/1, 20 s), so --continue --docs-only skips a re-run only. T17d's teardown NRE stays open. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/dispose-race/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:22:19Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1641.0,
+      "fan_out": 0,
+      "goal": "Owner 14:15Z: a read-back pending at disposal ends quietly, no NRE, no turn",
+      "id": "al-01M5AC39QMCJD0W1QMAQZHAVSP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T17e join 59cd35a9",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wl1a-dispose-race-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T14:54:58Z",
+      "summary": "Recount ran in full at step 4 (App 1150 counted; Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'Ruling 115 desktop hold is occupied' (occupant: a concurrent track suite, PID 40900 started 14:57:08Z, under wl-leader2's session id; the process had exited by the check). With the hold free (released 15:05:35Z) the probe was run ALONE on the join head 293c18a4 and PASSED (1/1, 20 s; Ruling 155 as corrected), so the join continued with --docs-only only to skip a re-run. The other two non-passes are the named expected skips (KnowledgeModeRealProjectionTests, AttemptRealLaneStopTests). Step 8 6/48 strict. Ratchet vs first parent 52f83032 on clean trees, head 59cd35a9: PASS 0/49; no gate green->red; verify-site-figures red->green; verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage excluded (Ruling 151 (3), evidence is the recount). Release build 0 errors. Finding for the register (Leader, wl-leader3): a join's recount races a running track's shown-window suite for the Ruling 115 desktop hold, so the recount refuses a probe for a cause outside the join. T17e (Opus, 1 node, Owner 14:15Z): read-back pending at disposal ends quietly, red 31b61650 -> green d7e0ac1b. Residual: T17d's teardown NRE (a run's write vs fixture disposal) stays open.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5AD3145HS0KBGTPWG6WQRSH",
+      "shortname": "wl-t21-float",
+      "datetime": "2026-10-19T15:39:39Z",
+      "session": "wl-t21-float",
+      "prompt": "T21 n5: (A) the partial-read sentence names the left-out surfaces by title; (B) a null element in a saved-layout list loads with the sentence and never throws; (C) floating-window ids are unique across a restore",
+      "summary": "A: unknown zone entries left out and reported, LeftOutTitles + PartlyReadNamingPrefix, DESIGN.md row with both forms (f6e7842e/733391b6). B: ZoneLayoutStore.Present drops JSON nulls in zones/floating/tabs/children/surfaces and reports; DC-NEW-wl-t21-float controlled for the zone reader (8c533157/3b12744f). C: Float skips float-N ids in use (f3d14d3b/4d43a871). Core suite 3043/0/1; App suite owed under rule 20.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Float and redock are real; a malformed saved layout loads with a report line and never throws; close condition 2",
+      "done_when": "A, B, C each red then green with saved output and commits; whole Core suite saved; README and hand-off updated",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T15:25:49Z",
+      "duration_seconds": 830.0
+    },
+    {
+      "id": "al-01M5AFAMY6TDCCWZSCX3CKS7BY",
+      "shortname": "wl-t21-float",
+      "datetime": "2026-10-19T16:18:46Z",
+      "session": "wl-t21-float",
+      "prompt": "T21 n6: the owed App suite at node 5's head; floatPane floats the focused tab (close condition 3); duplicate floating ids in a saved file load with the partial-read sentence; float-view ids after a restart",
+      "summary": "App suite at f21fdf95 1165/1/2 (known SolutionTreeChord precondition). A focused tab red 2a590c8a green 3c433c3f. B floating id in use red 5327d810 green 51ae8820 (DC-NEW-wl-t21-float-c). C float-view id collision real, red f5fc73b0 green 9973a1ce. Core 3046/0/1, App 1166/1/2 at 51ae8820.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Float and redock are real: floatPane floats the focused tab, a malformed saved layout with an id in use loads with a report line and never throws, and native float ids never collide after a restart",
+      "done_when": "Checks A, B, C each red then green and committed; Core and App whole suites saved as suite-node6.txt; README and handoff updated; done mail sent",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T15:50:01Z",
+      "duration_seconds": 1725.0
+    },
+    {
+      "id": "al-01M5AG2KPZWN89AM9VAFX5RW7F",
+      "shortname": "join-wls-float",
+      "datetime": "2026-10-19T16:31:51Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T21 (Opus, nodes 1-6): floating panes render, move, close, persist their bounds (Ruling 174) and are read back; T20's guard and DOCK2/DOCK3 removed red-first; schema-1 freeze as an allow-list of the four bounds fields; malformed saved layouts load with the partial-read sentence naming dropped tabs by saved Title, never throw; floating ids unique across restore (model and adapter); floatPane floats the focused tab. Recount ran in full (App 1169 counted; Core 3047/2864/183 completed); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head 0ccb0299 AND on the first parent a1555fc1 in a clean detached tree (Ruling 155 (3): excused, NOT CHECKED); --continue --docs-only skips only that re-run. Close condition 4 (live-notebook float) follows T11's join. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+        "docs/proof/workbench-loops-wl-s/float/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Ruling 171 (1): no pane on main can vanish by floating",
-      "done_when": "merged on main, recount and step 8 ratchet PASS, pushed",
+      "goal": "Ruling 171 (2): float and redock made real in WL-S; T21's own close conditions 1-3",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -25161,104 +25608,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T12:26:10Z",
-      "duration_seconds": 549.0
-    },
-    {
-      "id": "al-01M5A36P40WAKZSRSV0ASXHXBF",
-      "shortname": "join-wls-float-guard-step8",
-      "datetime": "2026-10-19T12:46:53Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Rulings 151/160) for the T20 join 4748cdb2",
-      "summary": "Recount OK. Step 8 5/48 (baseline). Ratchet vs first parent eda6aeff on clean trees, head 4748cdb2: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). No foreign file in the join commit: Rulings 172/173, written mid-join, were saved as a patch and the register restored before step 7. T20 (Sonnet, 2 nodes; Ruling 171 (1)): workbench.floatPane refuses with DOCK2 and leaves the layout unchanged; a layout restored with floating windows docks each pane into its kind's zone (FloatingRedock, Core) with the DOCK3 report line through RestoreResult; copy confirmed by the Owner, singular/plural consts pinned against DESIGN.md:1384-1385; zone label ZoneLayoutService.ZoneName (:272-279), pinned for every ZoneId. Lands before any later WL-S join.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T20 on main before any later WL-S join (Ruling 171 (1))",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T12:23:47Z",
-      "duration_seconds": 1386.0
-    },
-    {
-      "id": "al-01M5A44EYY5JJ13BKEQKFMM1HF",
-      "shortname": "wl-t21-float",
-      "datetime": "2026-10-19T13:03:09Z",
-      "session": "wl-t21-float",
-      "prompt": "T21 wls-float node 1 (Ruling 171 (2)): WebView2 float probe, render floating, move/close floating, read-back",
-      "summary": "Probe: canvas and composer survive an AvalonDock float and redock (no crash). Check 1 green (Render draws floating stacks as AvalonDock floating windows). Check 2 green (ZoneLayoutService redocks, closes, activates floating surfaces). Check 3 not started (kick). Seam req-01M5A43ANDG4G188C55BY7BM3S on floating bounds schema.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Make float real in node 1: probe, render, move/close, read-back",
-      "done_when": "probe recorded; each check red then green with proof; README; audit; done mail",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T12:49:43Z",
-      "duration_seconds": 806.0
-    },
-    {
-      "id": "al-01M5A55ABXR5ND8EZ7V5KPYXHV",
-      "shortname": "wl-t21-float",
-      "datetime": "2026-10-19T13:21:05Z",
-      "session": "wl-t21-float",
-      "prompt": "T21 node 1b: check 3 (adapter+store round-trip floating windows; a pane floating at save restores floating after restart) and the null check (a layout with no floating field restores empty, never throws), red then green",
-      "summary": "Null check red 7302703f green b581cc5d (ZoneLayoutStore.Read coalesces an absent floating field; DC-NEW-wl-t21-float). Check 3 red 0fd316bd green 268f0994 (ReadLayoutFromView maps floating windows; TryMapByPosition takes tree.Floating; mutation proved red). Restart leg via ZoneLayoutStore+RestoreZones, not LayoutPersistence (T20 guard, node 2). Suite: Core 3029/0/1; App 1132/1/2, SolutionTreeChordTests foreground-not-held, red alone twice, not proven.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Check 3 and the null check, each red then green, then one suite run",
-      "done_when": "red and green commits for each check, suite-node1.txt, README and handoff updated, audit entry, done mail",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T13:04:36Z",
-      "duration_seconds": 989.0
-    },
-    {
-      "id": "al-01M5A6FR8GCKGMRDV137RHP12H",
-      "shortname": "wl-t21-float",
-      "datetime": "2026-10-19T13:44:16Z",
-      "session": "wl-t21-float",
-      "prompt": "T21 node 2: remove T20's float guard, restore redock, delete the DOCK2/DOCK3 copy, each red-first, plus the whole suite",
-      "summary": "Guard removed in 3 red-then-green checks: floatPane floats the focused pane again (aa64c64e->650d65c2); LayoutPersistence restores a saved floating window floating (975f4430->aec61ebe); DOCK2/DOCK3 rows, FloatingRedock.cs and FloatingRedockCopyTests.cs deleted (629815fa->e9591175). Suite Core 3025/0/1, App 1133/1/2 (SolutionTreeChordTests foreground precondition, also red alone).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "T21 node 2: T20's float guard removed red-first",
-      "done_when": "three checks green and committed, suite run saved, README/handoff/audit updated, Leader mailed",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T13:23:26Z",
-      "duration_seconds": 1250.0
+      "started_at": "2026-10-19T16:31:50Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -30281,6 +30632,546 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M5A28A97KF9XW18GX2819ZZR",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A420WB2CGVK3J35QZ6GT07",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A420YXFJ12EP0YEX88FKC7",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4211D2WNH4W7HS9AN5Y5H",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A44CVJ1DM0KC6YJ6D4TF60",
+      "ts": "2026-10-19T13:03:07Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A44R7BVV96NS5CJ7E4KXP3",
+      "ts": "2026-10-19T13:03:18Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A4911ZBH2WACBD8WC9WF08",
+      "ts": "2026-10-19T13:05:38Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A4911PW38Z4E28QBGXMP7P",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4AKSF83A9JZ0XTF07F4JH",
+      "ts": "2026-10-19T13:06:30Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A4911PW38Z4E28QBGXMP7P",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A4EV0SH5PBN7A3ZRGQ57HG",
+      "ts": "2026-10-19T13:08:49Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A4VTBAEXCR2GP6QCC1C275",
+      "ts": "2026-10-19T13:15:54Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4WWMZKPYG0J21D7FKYME5",
+      "ts": "2026-10-19T13:16:29Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A545G298NY20240EE230MD",
+      "ts": "2026-10-19T13:20:28Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A55C9MQQ18XSQ32F8CJRC8",
+      "ts": "2026-10-19T13:21:07Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A55C99CWSEFYBCT7NX0VYT",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A55WZQPJ3YRR9DW2FNBX1S",
+      "ts": "2026-10-19T13:21:24Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A56HYZSJVGQ0H6ZHG99Q7N",
+      "ts": "2026-10-19T13:21:46Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A56RDPJQ8G39P5028TBM54",
+      "ts": "2026-10-19T13:21:53Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A55C99CWSEFYBCT7NX0VYT",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A5HFVR5AB0H5YS8TKGNSKZ",
+      "ts": "2026-10-19T13:27:44Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A5YAMCHFRT6KQSAXDWCAZX",
+      "ts": "2026-10-19T13:34:45Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A5ZEEWPXE1BWTBQ235858H",
+      "ts": "2026-10-19T13:35:22Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A6ESPQSRMCA8MQWHY8BPS8",
+      "ts": "2026-10-19T13:43:45Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A6G2T5AGABR0FT498TADS9",
+      "ts": "2026-10-19T13:44:27Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A761TE3CTMAW1D1VZQ22ZG",
+      "ts": "2026-10-19T13:56:27Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A77WEPDAXC9ADWHP2466RY",
+      "ts": "2026-10-19T13:57:27Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A7TVJAADWZY8GX56P454B6",
+      "ts": "2026-10-19T14:07:48Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A7VD69MME76AACHF8RPMG1",
+      "ts": "2026-10-19T14:08:06Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5AA1FKAQ0GCNPQ0X0TBRFXH",
+      "ts": "2026-10-19T14:46:23Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "unblocked",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AA3CAB0QC1B51JHX32YX7R",
+      "ts": "2026-10-19T14:47:25Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17e-dispose",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AADP3Z6FDWHW0GCM3W32CH",
+      "ts": "2026-10-19T14:53:02Z",
+      "from": "wl-t17e-dispose",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17e-dispose"
+    },
+    {
+      "id": "mail-01M5AAFRD0C4AAMNCZGVC4W6BP",
+      "ts": "2026-10-19T14:54:10Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AAFRG61ZC5VZ93TWTBR0WN",
+      "ts": "2026-10-19T14:54:10Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AB1BK7RV9JHH5E39Q3W4B3",
+      "ts": "2026-10-19T15:03:47Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5ABB8XJ3DD4G2WQFWJPJ5X6",
+      "ts": "2026-10-19T15:09:12Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5ACV5N7AHR39935K6VQGAC2",
+      "ts": "2026-10-19T15:35:22Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5ACVKHK11FMJXHBGAHPD9EY",
+      "ts": "2026-10-19T15:35:36Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t22-wl1b-design",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AD3GABQ2Z88Y7DZZZM66F7",
+      "ts": "2026-10-19T15:39:55Z",
+      "from": "wl-t22-wl1b-design",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t22-wl1b-design"
+    },
+    {
+      "id": "mail-01M5AD4FMFDGWKGKG0VM3JK3RF",
+      "ts": "2026-10-19T15:40:27Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5AD6E2W2NP5DMT9SQGY7DG9",
+      "ts": "2026-10-19T15:41:31Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AD6E2KGW7N7RAZKGCZMEY9",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AD6E7VBTP38GH7JYNDAW3V",
+      "ts": "2026-10-19T15:41:31Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AD6E7JA61TVJGM32MHCQKP",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AD6ECNAE383R8JJMBEC9S3",
+      "ts": "2026-10-19T15:41:31Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AD6ECD82SXWFSTCXA8EMM6",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AD6EHB6FNKN5TZWT0ZMWFX",
+      "ts": "2026-10-19T15:41:31Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AD6EH3Y1VE7BGNGM5KHJHH",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5ADAAD05FJMYE385YX88BD1",
+      "ts": "2026-10-19T15:43:38Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AD6E2KGW7N7RAZKGCZMEY9",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5ADAAMWDRKM1WRHD25C39S2",
+      "ts": "2026-10-19T15:43:38Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AD6E7JA61TVJGM32MHCQKP",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5ADAATTW10F1KD0X59852TY",
+      "ts": "2026-10-19T15:43:38Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AD6ECD82SXWFSTCXA8EMM6",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5ADAB0RCSWRC2B3S28YRCEH",
+      "ts": "2026-10-19T15:43:39Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AD6EH3Y1VE7BGNGM5KHJHH",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5ADFD5TJBGDTF59K8WN2SAN",
+      "ts": "2026-10-19T15:46:25Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t23-wl1b-folds",
+      "kind": "ruling",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5ADPAHGAMHZSWSCCHD573M4",
+      "ts": "2026-10-19T15:50:11Z",
+      "from": "wl-t23-wl1b-folds",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t23-wl1b-folds"
+    },
+    {
+      "id": "mail-01M5AE5YQZH6XZ74MQBVNW5GCG",
+      "ts": "2026-10-19T15:58:43Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t24-wl1b-service",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AE5ZXT1SV5Q6MQQFA2AVC5",
+      "ts": "2026-10-19T15:58:45Z",
+      "from": "wl-t24-wl1b-service",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t24-wl1b-service"
+    },
+    {
+      "id": "mail-01M5AE7XGFAY7VMJXZ02MXPQY6",
+      "ts": "2026-10-19T15:59:48Z",
+      "from": "wl-t29-prefill",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t29-prefill"
+    },
+    {
+      "id": "mail-01M5AE9DY6SZGVH7RE9TPE6FMQ",
+      "ts": "2026-10-19T16:00:37Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AE9DXW4KNPPMBJB385J14P",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AEBVGJ9EPY6GD4E4YDPT0D",
+      "ts": "2026-10-19T16:01:57Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AE9DXW4KNPPMBJB385J14P",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5AEBW48XB8QW7E8MAFFJ8R9",
+      "ts": "2026-10-19T16:01:57Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AECJ83CJQVHR1NNCDPZW97",
+      "ts": "2026-10-19T16:02:20Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t27-currentness",
+      "kind": "ruling",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AEDJBBSXXVBJ2TTG4VKNH1",
+      "ts": "2026-10-19T16:02:53Z",
+      "from": "wl-t27-currentness",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t27-currentness"
+    },
+    {
+      "id": "mail-01M5AESHTY47MM0GG6Z7X08ZT6",
+      "ts": "2026-10-19T16:09:26Z",
+      "from": "wl-t24-wl1b-service",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t24-wl1b-service"
+    },
+    {
+      "id": "mail-01M5AEZ7Y226NMWE339NCSDQW9",
+      "ts": "2026-10-19T16:12:32Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t28-compiled",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AEZY94XV2G4PAV9GPJGMD7",
+      "ts": "2026-10-19T16:12:55Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5AEZY8REW390YCZ0SBRFRTX",
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AF0ZNW2F8DY5FN3RPM4A4S",
+      "ts": "2026-10-19T16:13:29Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader3-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5AEZY8REW390YCZ0SBRFRTX",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5AF44WV74H6ZPWV201DPAVT",
+      "ts": "2026-10-19T16:15:13Z",
+      "from": "wl-t27-currentness",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t27-currentness"
+    },
+    {
+      "id": "mail-01M5AFASV7DDSN29NEYFDG573F",
+      "ts": "2026-10-19T16:18:51Z",
+      "from": "wl-t28-compiled",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t28-compiled"
+    },
+    {
+      "id": "mail-01M5AFB6H482CX0SZ9KAV7ERF1",
+      "ts": "2026-10-19T16:19:04Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
     }
   ]
 };
