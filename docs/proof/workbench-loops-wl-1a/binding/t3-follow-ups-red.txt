@@ -1,0 +1,60 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(state: StopRequested) [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(state: Preparing) [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheComposersOffer_ForAStopRequestedTurn_UsesTheStopCopy_NeverRunning [FAIL]
+  Failed AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(state: StopRequested) [101 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "following b1"
+Actual:   "at the end"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(TurnState state) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheLiveStatesReadAsLiveTests.cs:line 36
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(state: Preparing) [4 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "following b1"
+Actual:   "at the end"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(TurnState state) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheLiveStatesReadAsLiveTests.cs:line 36
+   at InvokeStub_TheLiveStatesReadAsLiveTests.TheConsole_FollowsEveryLiveState(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheComposersOffer_ForAStopRequestedTurn_UsesTheStopCopy_NeverRunning [1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+             ↓ (pos 2)
+Expected: "b1: Stop requested. Waiting for the harne"···
+Actual:   "b1 is running. Wait — send after b1, or s"···
+             ↑ (pos 2)
+  Stack Trace:
+     at AiDe.App.Tests.Records.TheLiveStatesReadAsLiveTests.TheComposersOffer_ForAStopRequestedTurn_UsesTheStopCopy_NeverRunning() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheLiveStatesReadAsLiveTests.cs:line 24
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     1, Skipped:     0, Total:     4, Duration: 125 ms - AiDe.App.Tests.dll (net10.0)

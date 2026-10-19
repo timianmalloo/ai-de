@@ -992,6 +992,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The Parallel action's name.</summary>
     public const string ParallelActionName = "Start a parallel session";
 
+    /// <summary>The offer's link to the turn in flight, named by its state: <i>b1, running</i>.</summary>
+    public static string InFlightLinkName(TurnView inFlight) =>
+        $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}";
+
     private static string InFlightState(TurnView inFlight) =>
         inFlight.State == TurnState.Waiting ? "is waiting for you" : "is running";
 
@@ -1035,7 +1039,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _statusKind = StatusKind.Offer;
 
         var ordinal = inFlight.Ordinal;
-        var turn = StatusLink(inFlight.DisplayOrdinal, $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}");
+        var turn = StatusLink(inFlight.DisplayOrdinal, InFlightLinkName(inFlight));
         turn.Click += (_, _) => TurnRequested?.Invoke(ordinal);
 
         var wait = StatusLink(WaitActionName(inFlight), WaitActionName(inFlight));
