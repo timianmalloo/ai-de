@@ -142,7 +142,7 @@ public sealed class LayoutSlotMigrationTests : IDisposable
         }
         """;
 
-    // The report's sentence for a kept prompt draft (Ruling 173 (3)); seam request to the Leader proposes it.
+    // The report's sentence for a kept prompt draft (Ruling 173 (3)); the Owner confirmed it, and DESIGN.md's DOCK4 carries it.
     private const string KeptPromptSentence = "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.";
 
     [Fact]
@@ -334,6 +334,29 @@ public sealed class LayoutSlotMigrationTests : IDisposable
             Assert.Equal($"notebook:{FirstSession}", ((ZoneStack)again.Zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
             Assert.Empty(persistence.LastRestoreDropped);
         }
+    }
+
+    /// <summary>
+    /// The DESIGN.md row DOCK4 carries the kept-prompt sentence word for word (Ruling 173; the Owner confirmed the
+    /// wording on 2026-10-19), as T20's <c>FloatingRedockCopyTests</c> pins DOCK3.
+    /// </summary>
+    [Fact]
+    public void TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord()
+    {
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root is not null && !File.Exists(Path.Combine(root.FullName, "AiDe.sln")))
+        {
+            root = root.Parent;
+        }
+
+        Assert.NotNull(root);
+        var row = File.ReadAllLines(Path.Combine(root!.FullName, "DESIGN.md"))
+            .SingleOrDefault(l => l.StartsWith("| DOCK4 |", StringComparison.Ordinal));
+
+        Assert.True(row is not null, "DESIGN.md has no DOCK4 row for the kept-prompt sentence");
+        Assert.Contains(KeptPromptSentence, row, StringComparison.Ordinal);
+        Assert.Contains("Kept {N} prompt drafts as they were: prompt drafts do not become notebooks.", row, StringComparison.Ordinal);
+        Assert.Contains("Ruling 173", row, StringComparison.Ordinal);
     }
 
     public void Dispose()
