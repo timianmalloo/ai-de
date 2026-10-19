@@ -1,0 +1,9 @@
+{"agent": "wl-t9-spike", "at": 1792368289.3666902, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/spike/spike-red.txt", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368289.391075, "code": null, "kind": "allowed", "path": "spikes/second-dock-host-unparent/Program.cs", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368444.6346047, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/spike/spike-green.txt", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368444.6592054, "code": null, "kind": "allowed", "path": "spikes/second-dock-host-unparent/Program.cs", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368444.684707, "code": null, "kind": "allowed", "path": "spikes/second-dock-host-unparent/RESULT-raw.txt", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368444.712104, "code": null, "kind": "allowed", "path": "spikes/second-dock-host-unparent/RESULT.md", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368585.891243, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368585.91323, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t9-spike", "wi": ""}
+{"agent": "wl-t9-spike", "at": 1792368585.9382284, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/spike/suite-green.txt", "session": "wl-t9-spike", "wi": ""}

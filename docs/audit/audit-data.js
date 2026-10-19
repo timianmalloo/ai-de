@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:02:07Z",
+  "generated": "2026-10-19T00:12:41Z",
   "audit": [
     {
       "actor": null,
@@ -22480,24 +22480,149 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58P3Q95SWBP5T6R0T5ZEXND",
-      "shortname": "join-wl0-evidence-fix",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-0.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-18T23:38:50Z",
-      "session": "wl-leader-20261018",
+      "done_when": "both regressions red then green, suite green, both join-caught gates green",
+      "duration_seconds": 544.0,
+      "fan_out": 0,
+      "goal": "Fix FR-001 and FR-002 in Core so index answers are fresh and frame-bounded",
+      "id": "al-01M58P3Q95SWBP5T6R0T5ZEXND",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl0-evidence into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-wl0-evidence-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T23:29:46Z",
       "summary": "WL-0 fix-forward: red 6141d6de, fix 0c2994e4 - MaxRowBytes now clamps a caller budget; ExtractorGeneration bumped for the SourceRevision change. Step 8 per Ruling 151 (finding-level ratchet vs origin/main a790ccaa). recount_seconds=543 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-0.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:02:07Z",
+      "done_when": "WL-0 pushed with ratchet PASS recorded",
+      "duration_seconds": 605.0,
+      "fan_out": 0,
+      "goal": "Land WL-0 on main under Ruling 151/153",
+      "id": "al-01M58QEBCFXE71925RG7AJ14VP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the WL-0 join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-wl0-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T23:52:02Z",
+      "summary": "WL-0 pushed 4e615327 (a790ccaa..4e615327). conductor-join stopped at step 8 (strict, 10/47 red; main was red before the drive). Ruling 151 ratchet: parent a790ccaa vs head 4e615327 in clean detached trees back to back, finding level: PASS, 0 refusals over 48 gates; excluded per 151(3): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage (conductor recount green). Ruling 153 filter on verify-ruling-citations dropped parent=98 head=102 findings (rulings with exactly one heading in addendum-c). Normalisation: tree-root prefix only (escaped-backslash form added after a FileExistsError false refusal in verify-workbench-v2). Join build (Release) 0 errors 0 warnings. First recount attempt failed on the ConsoleHostCensus read flake; retried with --continue.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/WorkspaceSchema.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T22:40:03Z",
+      "done_when": "golden migration round-trip incl WAL snapshot/restore, fresh-vs-migrated equality, DM11 test, one violation test per ADR-0039 s4 row, read-only-on-newer test, each red then green, dotnet test green",
+      "duration_seconds": 982.0,
+      "fan_out": 0,
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "id": "al-01M58JR2M2VJHNYWY5H5HH77GH",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T2 sp1-schema-v2: land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API",
+      "session": "wl-t2-sp1",
+      "shortname": "wl-t2-sp1",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:23:41Z",
+      "summary": "WorkspaceSchema v2: shared V2 DDL (fresh = migrated), migration via UpgradeCoordinator with gate and rollback, WAL-safe snapshot, read-only on newer file, typed append/read API for 12 row types; 73 new tests red then green",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:14:45Z",
+      "done_when": "each condition has a red-first refusing test, suites green",
+      "duration_seconds": 909.0,
+      "fan_out": 0,
+      "goal": "Land Ruling 148 merge conditions (a)-(h)",
+      "id": "al-01M58MQKRHGZ5YP9NJGVFCMAM9",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T2 rework: land Ruling 148 merge conditions (a)-(h) red first on sp1-schema-v2",
+      "session": "wl-t2-sp1",
+      "shortname": "wl-t2-sp1",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:59:36Z",
+      "summary": "All eight conditions landed red then green; Core 2891 passed, App 1062 passed",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:30:50Z",
+      "done_when": "each condition has a red then green test; Core and App suites green bar named env failures",
+      "duration_seconds": 681.0,
+      "fan_out": 0,
+      "goal": "Land Ruling 150 items 1 and 3 with refusing tests",
+      "id": "al-01M58NN2Y8E7TFBSFVP9YNW46F",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T2 rework 2: Ruling 150 conditions on schema v2",
+      "session": "wl-t2-sp1",
+      "shortname": "wl-t2-sp1",
+      "skill": "implement",
+      "started_at": "2026-10-18T23:19:29Z",
+      "summary": "Marked standing terminal-drafts journey (migration-created once, counted, PTY-only, re-ownable); payload guard = ADR-0039 s3 names, separator-insensitive, pinned",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M58R1P58WC1KKB9XF6CZEJ0C",
+      "shortname": "join-sp1-schema-v2",
+      "datetime": "2026-10-19T00:12:41Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Schema v2: migration chain, WAL-safe snapshot, constraints, typed record API; Ruling 148 (a)-(h) and Ruling 150 landed red-first. Defect-register EOF conflict resolved by keeping both entries (DC-NEW-wl-t1-wl0, DC-NEW-wl-t2-sp1). Step 8 per Rulings 151/153. recount_seconds=555 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-0.md"
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Fix FR-001 and FR-002 in Core so index answers are fresh and frame-bounded",
-      "done_when": "both regressions red then green, suite green, both join-caught gates green",
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "done_when": "migration golden round-trip incl. WAL; DM11; one violation test per ADR-0039 s4 row; read-only-on-newer; Ruling 148/150 conditions",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -22505,32 +22630,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-18T23:29:46Z",
-      "duration_seconds": 544.0
-    },
-    {
-      "id": "al-01M58QEBCFXE71925RG7AJ14VP",
-      "shortname": "join-wl0-step8-ratchet",
-      "datetime": "2026-10-19T00:02:07Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153 step-8 completion for the WL-0 join",
-      "summary": "WL-0 pushed 4e615327 (a790ccaa..4e615327). conductor-join stopped at step 8 (strict, 10/47 red; main was red before the drive). Ruling 151 ratchet: parent a790ccaa vs head 4e615327 in clean detached trees back to back, finding level: PASS, 0 refusals over 48 gates; excluded per 151(3): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage (conductor recount green). Ruling 153 filter on verify-ruling-citations dropped parent=98 head=102 findings (rulings with exactly one heading in addendum-c). Normalisation: tree-root prefix only (escaped-backslash form added after a FileExistsError false refusal in verify-workbench-v2). Join build (Release) 0 errors 0 warnings. First recount attempt failed on the ConsoleHostCensus read flake; retried with --continue.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-0.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land WL-0 on main under Ruling 151/153",
-      "done_when": "WL-0 pushed with ratchet PASS recorded",
-      "tier": "T1",
-      "fan_out": 0,
-      "started_at": "2026-10-18T23:52:02Z",
-      "duration_seconds": 605.0
+      "started_at": "2026-10-19T00:03:24Z",
+      "duration_seconds": 557.0
     }
   ],
   "changes": [
@@ -26784,6 +26885,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M58QWBDV68YXQ5CYKSD3458F",
+      "ts": "2026-10-19T00:09:46Z",
+      "from": "wl-t9-spike",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t9-spike"
     }
   ]
 };

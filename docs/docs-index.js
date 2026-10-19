@@ -3043,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 56 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 13 types, 95 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3056,7 +3056,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4980cf344022f8e39525950ba3f967174f4c2305cb9db74c7b0d273bb5be1ee5"
+      "sourceSha256": "3a8d816f8a020c07f585e7f3492bba00d4a11d31a09963dcfbbb920ab1275d6b"
+    },
+    {
+      "id": "api-aide-core-store-records",
+      "path": "docs/api/AiDe.Core.Store.Records.md",
+      "title": "API: AiDe.Core.Store.Records",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Store.Records: 13 types, 37 members, 38% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "307e5c64a05d868b7c492a32927ed5ec68e0ec56985e115eb37a9cac9b96bba6"
     },
     {
       "id": "api-aide-core-terminal",
@@ -3106,7 +3131,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7cf8b89e41c8c2d1f465b6b4056935ad8a04eed42e17806ce65f61bcd2d3e9ee"
+      "sourceSha256": "f61c770081a5522c2f24041d6264e16d447feb0d46deca929de2715fbb1d49cd"
     },
     {
       "id": "api-aide-core-watcher",
@@ -10559,7 +10584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5fce14c4541bfaaf7f239840a63b9c5be732306bce87f56c3d78215653d52d5a"
+      "sourceSha256": "7e0a5f7f2a327bae9e2c8f67df43ebfb335fefb7da3df9248d0ed15b967418ec"
     },
     {
       "id": "design-session-profiler",
@@ -12170,7 +12195,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "df9f7186bf898f02e6ecd9b0a9e418eecf45c050ffc91ac297c1622a58eed5c6"
+      "sourceSha256": "997f01994a9906b5ac226f87f6976639f7fa2a062c8dfc79d817d5a0691e0202"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -24194,5 +24219,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "b77ca148fd0af869d52dda7204ea518037a649cfc0079ed68a2f3c5bcedc1683"
+  "graphSha256": "f6925fb216a7a138490c7966128c9732b5f3eeab60d6aaba7012cc104fcce226"
 };
