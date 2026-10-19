@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T12:46:53Z",
+  "generated": "2026-10-19T13:44:16Z",
   "audit": [
     {
       "actor": null,
@@ -25187,6 +25187,78 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T12:23:47Z",
       "duration_seconds": 1386.0
+    },
+    {
+      "id": "al-01M5A44EYY5JJ13BKEQKFMM1HF",
+      "shortname": "wl-t21-float",
+      "datetime": "2026-10-19T13:03:09Z",
+      "session": "wl-t21-float",
+      "prompt": "T21 wls-float node 1 (Ruling 171 (2)): WebView2 float probe, render floating, move/close floating, read-back",
+      "summary": "Probe: canvas and composer survive an AvalonDock float and redock (no crash). Check 1 green (Render draws floating stacks as AvalonDock floating windows). Check 2 green (ZoneLayoutService redocks, closes, activates floating surfaces). Check 3 not started (kick). Seam req-01M5A43ANDG4G188C55BY7BM3S on floating bounds schema.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Make float real in node 1: probe, render, move/close, read-back",
+      "done_when": "probe recorded; each check red then green with proof; README; audit; done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T12:49:43Z",
+      "duration_seconds": 806.0
+    },
+    {
+      "id": "al-01M5A55ABXR5ND8EZ7V5KPYXHV",
+      "shortname": "wl-t21-float",
+      "datetime": "2026-10-19T13:21:05Z",
+      "session": "wl-t21-float",
+      "prompt": "T21 node 1b: check 3 (adapter+store round-trip floating windows; a pane floating at save restores floating after restart) and the null check (a layout with no floating field restores empty, never throws), red then green",
+      "summary": "Null check red 7302703f green b581cc5d (ZoneLayoutStore.Read coalesces an absent floating field; DC-NEW-wl-t21-float). Check 3 red 0fd316bd green 268f0994 (ReadLayoutFromView maps floating windows; TryMapByPosition takes tree.Floating; mutation proved red). Restart leg via ZoneLayoutStore+RestoreZones, not LayoutPersistence (T20 guard, node 2). Suite: Core 3029/0/1; App 1132/1/2, SolutionTreeChordTests foreground-not-held, red alone twice, not proven.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Check 3 and the null check, each red then green, then one suite run",
+      "done_when": "red and green commits for each check, suite-node1.txt, README and handoff updated, audit entry, done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T13:04:36Z",
+      "duration_seconds": 989.0
+    },
+    {
+      "id": "al-01M5A6FR8GCKGMRDV137RHP12H",
+      "shortname": "wl-t21-float",
+      "datetime": "2026-10-19T13:44:16Z",
+      "session": "wl-t21-float",
+      "prompt": "T21 node 2: remove T20's float guard, restore redock, delete the DOCK2/DOCK3 copy, each red-first, plus the whole suite",
+      "summary": "Guard removed in 3 red-then-green checks: floatPane floats the focused pane again (aa64c64e->650d65c2); LayoutPersistence restores a saved floating window floating (975f4430->aec61ebe); DOCK2/DOCK3 rows, FloatingRedock.cs and FloatingRedockCopyTests.cs deleted (629815fa->e9591175). Suite Core 3025/0/1, App 1133/1/2 (SolutionTreeChordTests foreground precondition, also red alone).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T21 node 2: T20's float guard removed red-first",
+      "done_when": "three checks green and committed, suite run saved, README/handoff/audit updated, Leader mailed",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T13:23:26Z",
+      "duration_seconds": 1250.0
     }
   ],
   "changes": [
