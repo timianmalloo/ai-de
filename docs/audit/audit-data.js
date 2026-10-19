@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T11:01:57Z",
+  "generated": "2026-10-19T11:16:38Z",
   "audit": [
     {
       "actor": null,
@@ -24961,6 +24961,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T10:52:23Z",
       "duration_seconds": 573.0
+    },
+    {
+      "id": "al-01M59Y1EBW3YP4MA6E5VCX47SS",
+      "shortname": "join-wl1a-stopped-by-you-step8",
+      "datetime": "2026-10-19T11:16:38Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/160) for the T19 join 4ca7a73e",
+      "summary": "Recount OK; step 8 5/48 (baseline). Ratchet vs first parent 3281d689 on clean trees: PASS 0/49 (repo citations ok strict). Release build exit 0. T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1170/:1182/:1204, Ruling 167); 3 assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou; demo-script Stop step updated.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T19 on main under Ruling 160",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T11:06:37Z",
+      "duration_seconds": 601.0
     }
   ],
   "changes": [
@@ -29767,6 +29791,24 @@ window.AUDIT_DATA = {
       "kind": "decision-request",
       "ref": "req-01M59X6EFREMF46BDWAN9MGCDJ",
       "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59X7YWWXPY2ZNM7JKSEKVW3",
+      "ts": "2026-10-19T11:02:43Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59X6EFREMF46BDWAN9MGCDJ",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59Y0V8D5FC4PM5DDE7JA6QC",
+      "ts": "2026-10-19T11:16:19Z",
+      "from": "wl-t18-knowledge",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t18-knowledge"
     }
   ]
 };

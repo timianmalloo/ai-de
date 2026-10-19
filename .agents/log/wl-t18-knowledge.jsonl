@@ -7,3 +7,4 @@
 {"action": "add", "agent": "wl-t18-knowledge", "at": 1792406362.038038, "deadline_at": 1792408162.038038, "id": "req-01M59VX5XV8Y1ZHYGH65C14YM8", "kind": "request", "path": "-", "seq": 7, "session": "wl-t18-knowledge", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
 {"action": "add", "agent": "wl-t18-knowledge", "at": 1792407503.7566624, "deadline_at": 1792409303.7566624, "id": "req-01M59X00WGJBF1EAEGDMDXDZF3", "kind": "request", "path": "-", "seq": 8, "session": "wl-t18-knowledge", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
 {"agent": "wl-t18-knowledge", "at": 1792407566.9800606, "kind": "release", "path": "src/AiDe.App/Workbench/CanvasPage.cs", "seq": 9, "session": "wl-t18-knowledge", "wi": "WI-0"}
+{"at": 1792408579.3414853, "from": "wl-t18-knowledge", "kind": "done", "mail_id": "mail-01M59Y0V8D5FC4PM5DDE7JA6QC", "ref": null, "session": "wl-t18-knowledge", "to": "wl-leader2-20261019", "type": "mail"}
