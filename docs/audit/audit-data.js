@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T03:38:46Z",
+  "generated": "2026-10-19T04:08:51Z",
   "audit": [
     {
       "actor": null,
@@ -23344,12 +23344,65 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M593V0STST29FX5GT279V2V8",
-      "shortname": "join-sp3-perspective-rerow",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T03:38:45Z",
+      "done_when": "three-row and no-FullWindow build tests, SH-4.1 on Factory, old-row tests re-scoped, ratchet PASS",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
+      "id": "al-01M593V0STST29FX5GT279V2V8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp3-perspective-rerow",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T03:38:44Z",
+      "summary": "T4: three DockHost rows (factory/review/understand) with Landing + RoutingOrder; FullWindow, ExplorerSurface, NodeReader*, HtmlSandbox* deleted; Loomkeeper kinds under Factory; SH-4.1 on Factory; D2/D4/D5 (Ruling 152); Ruling 149 interim corpus loss (docs/index.html) + knowledge-mode WL-S close row. Recount: the join's --update refused to lower App 1064->1026; the Leader re-baselined down with verify-test-run --allow-lower and the stated reason (37 test attributes in the 5 deleted files + rescopes), then ran the split recounts; verify-test-run --no-run OK (3962 tests). Continued --docs-only so the recount is not run a third time. Budget overrun 413/280 recorded as GO9. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/PerspectiveShellTests.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T03:56:19Z",
+      "done_when": "gates exit 0, App tests green",
+      "duration_seconds": 292.0,
+      "fan_out": 0,
+      "goal": "both gates green",
+      "id": "al-01M594V6AKMXYH1QW6RN06JCWC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T4 fix-forward 2: two gate reds",
+      "session": "wl-t4-sp3",
+      "shortname": "wl-t4-sp3",
+      "skill": "implement",
+      "started_at": "2026-10-19T03:51:27Z",
+      "summary": "cited controls repointed; Loomkeeper kinds derived from SurfaceContentFactory.Kinds",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M595J3H7J4YD9SSCYMGAAEQ2",
+      "shortname": "join-sp3-fix",
+      "datetime": "2026-10-19T04:08:50Z",
       "session": "wl-leader-20261018",
       "prompt": "the join of the resolved merge into main",
-      "summary": "T4: three DockHost rows (factory/review/understand) with Landing + RoutingOrder; FullWindow, ExplorerSurface, NodeReader*, HtmlSandbox* deleted; Loomkeeper kinds under Factory; SH-4.1 on Factory; D2/D4/D5 (Ruling 152); Ruling 149 interim corpus loss (docs/index.html) + knowledge-mode WL-S close row. Recount: the join's --update refused to lower App 1064->1026; the Leader re-baselined down with verify-test-run --allow-lower and the stated reason (37 test attributes in the 5 deleted files + rescopes), then ran the split recounts; verify-test-run --no-run OK (3962 tests). Continued --docs-only so the recount is not run a third time. Budget overrun 413/280 recorded as GO9. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "summary": "T4c 9fe4e99f landed. Recount: only failure SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - 'foreground not held; SendInput would prove another window', probe exit 2 - NOT CHECKED (unattended desktop), identical on origin/main 3e1bd2ae; joined under Ruling 155 (attended run owed to the user; reopen if it fails while foreground is held). Continued --docs-only. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
@@ -23361,7 +23414,7 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "compiled": false,
       "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
-      "done_when": "three-row and no-FullWindow build tests, SH-4.1 on Factory, old-row tests re-scoped, ratchet PASS",
+      "done_when": "ratchet PASS vs origin/main",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -23369,7 +23422,7 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T03:38:44Z",
+      "started_at": "2026-10-19T04:08:49Z",
       "duration_seconds": 1.0
     }
   ],
@@ -27736,6 +27789,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t12-census"
+    },
+    {
+      "id": "mail-01M594VAFWJEKQ25QSZSX06YVV",
+      "ts": "2026-10-19T03:56:23Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M595E2WCFW91DQTKEYNGK3BF",
+      "ts": "2026-10-19T04:06:38Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M595E2W3YNRRCXEKMCKA3YTQ",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M595HF0HFQVQEPX27Y2TRK4Z",
+      "ts": "2026-10-19T04:08:29Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M595E2W3YNRRCXEKMCKA3YTQ",
+      "session": "wl-owner-20261018"
     }
   ]
 };

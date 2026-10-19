@@ -3285,3 +3285,20 @@ Condition, before T13 joins: workbench-design-language.html and factory-workbenc
 Audit-capture: the Owner's two entries are corrected by superseders al-01M58WCRBWDKPAEBZKBEEMMCN8 and al-01M58WCRGVJK5X7QK9SYP37AG2. The project-coverage CI step stays out of T13's scope as the Leader decided. It is a next step for the user, because it changes what runs on every push.
 
 - request: req-01M58WAMA58T3GFHN8E5P0PT9T · ruled by: wl-owner-20261018 · at: 2026-10-19T01:28:48Z
+
+### Ruling 155 — T4 joins: SolutionTreeChordTests' real-input probe is not checked on an unattended desktop on either side; the reveal routing and the Understand landing are proven without it; an attended run is owed to the user
+
+Option A. Option B was attempted. The Owner ran SolutionTreeChordTests on the merged T4 commit 5979a7ff in a separate detached tree. It failed the same way: 'foreground not held; SendInput would prove another window', probe exit 2. The desktop is unattended overnight, so the probe refuses before it tests anything. It does the same on origin/main 3e1bd2ae without T4. On this machine tonight it is NOT CHECKED, not red, and it gives no evidence either way.
+
+What T4 changed is proven without real input. On 5979a7ff the Owner ran:
+- SolutionTreeSurfaceTests, NodeViewMenuTests and EntryPointsSurfaceTests: 32 of 32 pass. SolutionTreeSurfaceTests.cs:398-400 drives Ctrl+Enter through the tree's key handler and gets a GraphNeighbourhood activation.
+- PerspectiveShellTests and PerspectiveLayoutSlotTests: 39 of 39 pass. They include the Understand landing, which is Center = the one graph canvas (SolutionTreeSurfaceTests.cs:645-657, Ruling 140).
+The probe adds only real keyboard routing through the window. T4 does not change that routing, and its result is environmental on both sides.
+
+Conditions:
+(1) T4's join audit records this ruling and the probe's NOT CHECKED reason.
+(2) An attended run is owed to the user: from C:\Projects\ai-de, nothing else focused, dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~SolutionTreeChordTests. It goes in the morning summary next to the WL-0 GUI demo. If it fails while foreground is held, T4 is reopened.
+(3) An unattended foreground refusal of this probe never counts as a pass in a later join. It is excused only when it also refuses on the first parent in the same environment, and is recorded the same way.
+(4) Feed the 'foreground not held' class to T13's successor: the probe should report NOT CHECKED with its cause rather than fail, matching the census pattern (Ruling 151, T12).
+
+- request: req-01M595E2W3YNRRCXEKMCKA3YTQ · ruled by: wl-owner-20261018 · at: 2026-10-19T04:08:29Z

@@ -12225,7 +12225,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e55e79678612a894bddbaa14355bbbdd3a271ccf5f9efbd7a31de895b8e8d84f"
+      "sourceSha256": "b651508aae1e24c0f7858a7645071260ea929ede4d4a1f8848218f7bc45c301f"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -18932,6 +18932,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "e3473bd21bee1c37dd1d20903391df787ec4b37f4fb9456d783b7243fd01df87"
     },
     {
+      "id": "coordination-workbench-loops-leader-handoff-1",
+      "path": "docs/coordination/workbench-loops-leader-handoff-1.md",
+      "title": "Leader hand-off 1 — workbench-loops drive (wl-leader-20261018 → wl-leader2-20261019)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The first Leader's hand-off after the serial spine landed: what is on main, every track's tree, branch and last sha, the binding rulings (148–154 and the 151(3) T3 reading), the step-8 ratchet procedure, the owed items, and the wave-2 dispatch order with per-track budgets split per GO9. The resume brief is the last section.",
+      "tags": [
+        "coordination",
+        "handoff",
+        "workbench-loops",
+        "leader"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1129019f72f6f267a52b85b52b3915a4d1183cdc8298995e3bdb7c9a8b7aee0c"
+    },
+    {
       "id": "plan-workbench-loops-drive-prompt",
       "path": "docs/plans/workbench-loops-drive-prompt.md",
       "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
@@ -24375,5 +24405,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2bc9c6b0ce2fed98d21c1570582e2080c6ca6cd1486e02a2141400e1b90a4e00"
+  "graphSha256": "cc73886afb164cf93e76921841149a15d55edbd7b5a62d386983acd35190726b"
 };
