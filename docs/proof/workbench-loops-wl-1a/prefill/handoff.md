@@ -1,67 +1,51 @@
 ---
 id: handoff-workbench-loops-wl-1a-prefill-n1
-title: "Hand-off: WL-1a T30 node 2 (Ruling 180 (1)-(3) reach the user)"
+title: "Hand-off: WL-1a T30 node 3 (Ruling 182 (2)-(4); the gate's real reason)"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
 phase: "workbench-loops WL-1a"
-tags: [workbench-loops, wl-1a, handoff, compile-mode, ruling-180]
+tags: [workbench-loops, wl-1a, handoff, compile-mode, ruling-180, ruling-182]
 links:
   - { to: architecture, rel: implements }
   - { to: proof-workbench-loops-wl-1a-prefill, rel: relates-to }
 review-by: "2026-11-19"
 summary: >-
-  T30 n2: C1's restart half measured (the kept line does not survive; DR on draft persistence owed); File > New
-  Session and the real settings evaluate the gate; the mark reads "suggested"; the OwnWindow fixture. Open: the DR,
-  node 3's cost line, first-50 record, eval run and Proof Pack.
+  T30 n3: (A) no saved-state copy (mutation red), (B) a sent turn's compiled prompt survives a restart (real red; the
+  restored disclosure was empty), (C) the settings row states the gate's refusal for a demoted rung. Residual line in
+  the Proof Pack. Next: node 4 (cost line, first 50 calls, compile-eval, sheet-test gate seam, rule 22's ratchet).
 ---
 
-# Hand-off — T30 node 2
+# Hand-off — T30 node 3
 
-**Done:** (A), (B), (C), each red then green; see `README.md` § Node 2 for shas and proof files. Whole suites:
-`suite-node2.txt` (Core 3119/0/1; App 1230/3/2 — one passed on re-run, two are the foreground/desktop-hold pair).
+**Done:** (A), (B), (C), each red then green. See `README.md` § Node 3 for the shas and proof files. Ruling 182 (3)'s
+residual line is at the top of `README.md`. Whole suites (`suite-node3.txt`): **Core 3119 passed, 0 failed, 1 skipped;
+App 1242 passed, 3 failed, 2 skipped.** On re-run, `SessionDocumentPlacementTests` passed. Node 1's foreground pair
+(`CtrlDigitSwitchesThePerspectiveFromInsideAPageTests`, `SolutionTreeChordTests`) failed again: *foreground not held*.
+`docs-graph.py validate`: 0 problems, index drift only.
 
-## (0) C1's restart half — NOT met; item stopped
+## Findings
 
-The kept Goal does **not** survive a restart through `WorkbenchShell.ReviveRestoredSessionDocuments`
-(`c1-restart-measure.txt`). Measured: before restart the draft goal is the kept line; the stored head revision's body is
-the editor's words only; after the revive the draft goal is `""`, and the editor's words are gone too. Paths:
-`ComposerSurface.cs:813` saves `_draft.SourceText`, which is the editor text only in the goal-block form
-(`ComposerDraft.cs:109`); the App's `NotebookRevision` holds no body (`NotebookModel.cs:30`); the revived composer starts
-from `new ComposerDraft()` (`ComposerSurface.cs:96`); `ComposerDraftStore` has no App caller. **No persistence was
-built.** The Leader brings the Owner a DR on draft persistence. The test pinning the measured fact turns red on purpose
-when persistence lands; its last two asserts then invert.
+1. **Ruling 182 (4)'s premise was false until this node.** The restored row's disclosure was empty
+   (`B-sent-survives-red.txt`). The fix rebuilds the bytes and shows them only on a sha match with
+   `submitted.text_sha256`. A turn whose bytes carried **attachment bodies or a template** does not rebuild, so its
+   restored row reads *not recorded*. That is honest, but it is not full survival. Full survival for those turns needs
+   the bytes or the bodies stored, which is a store change. The decision belongs to the Owner or WL-2.
+2. **`KeepHelp` says "a kept line stays in your draft."** (A)'s scan does not refuse it, and it is true across a prepare.
+   A reader could take it to mean the line survives a restart. Not changed. It is the Owner's call whether that wording
+   implies "saved".
+3. **The WL-1a Proof Pack's residual paragraph** (`docs/proof/workbench-loops-wl-1a.md:202`, the Leader's) says the sent
+   prompt survives. That is true from `9234fc77` on, with finding 1's limit.
+4. **Rule-6 lapse (this node):** one empty heredoc was run by mistake while editing `NotebookRuns.cs`. It executed nothing
+   and changed no file. Every edit was made with the Edit tool.
+5. **Branch:** origin/main was merged into `wl-prefill` at `565b2883`, because `coord claim` refused on stale controls
+   (DC-226).
 
-## Findings (not acted on)
+## Next step (node 4, from the brief)
 
-1. **Existing sheet tests now read `~/.aide/proof` incidentally.** The sheet's default gate input is the real
-   `CompileModeGate.Evaluate` (the product needs it). Tests that call `Create` on a sheet with an adapter root and do not
-   inject `CompileModeGateInput` read the real artifact first (`CompileModeGate.cs:107`): `TheNewSessionSheetTests`,
-   `TheRunBindingComesFromTheProviderFileTests`, `TheSheetListsAccountsWithDerivedStatesTests`,
-   `TheConfigureDialogIsTheFirstUseSurfaceTests` (by grep; not each traced). Their result is still deterministic here
-   (the fixture's adapter sha never equals the pin, so Gate 1 refuses), but the rule's "no real read" is broken for
-   them. Fix: a seam to inject the gate input in those files.
-2. **The settings line can say "Gate 1 admits it" while the rung is disabled.** `SessionDocumentSurface.CompileModeWhy`
-   returns that sentence for any session whose stored mode is `agentic-advisory`, without reading the ladder. Seen in
-   `A-settings-red.txt`: the line said it while advisory was offered as *not available*. A demotion after creation would
-   show it to the user (C3). Node 1's code; one red-then-green for node 3.
-3. **"? derived" kept nowhere in the code.** DESIGN.md's only other *derived* word near it is the tier decoration's
-   *T1 derived* (DESIGN.md:894), a mechanical derivation, not this mark; it is unchanged.
-4. **The composer's lexical guard** (`ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer`)
-   refuses `Suggest` in any composer source, so the const is `ModelLineMark`, not `SuggestedMark` as the seam grant
-   named it (`suite-core-node2-lexical-red.txt`, fixed at `f2b382fa`).
+1. Ruling 180 (4), the cost line and the first 50 calls.
+2. Ruling 180 (6), compile-eval.
+3. Inject the gate in the four sheet tests that read the real `~/.aide/proof` (the Leader grants the seam).
+4. Rule 22's ratchet, ahead of T30's join.
 
-## (C) sweep
-
-`grep -rn "CurrentSources|Application.Current|EnumWindows|FindWindow|AutomationElement.RootElement|GetForegroundWindow"
-tests/AiDe.App.Tests`: `TheCompileModeControlTests.OpenSettings` (moved onto `OwnWindow.Popups`);
-`CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` (`GetForegroundWindow`, compared with its own hwnd — already scoped;
-not moved). Nothing else. The class control is partial: no scan refuses a new unscoped read (next step).
-
-## Next step (in order)
-
-1. The Owner's DR on draft persistence (item (0)).
-2. Node 3: Ruling 180 (4) cost line and the first 50 advisory calls; (6) `tools/compile-eval`; the Proof Pack; rule 22.
-3. Findings 1 and 2 above.
-
-Ratchet (rule 22) not run: the next step is node 3, not a join.
+Ratchet (rule 22) not run: the next step is node 4, not a join.

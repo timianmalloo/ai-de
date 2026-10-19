@@ -1,0 +1,10 @@
+T30 n3 whole suites, head e2175eb8 (2026-10-19). Full logs: suite-core-node3.txt, suite-app-node3.txt, suite-app-node3-rerun.txt.
+Core: Passed!  - Failed:     0, Passed:  3119, Skipped:     1, Total:  3120, Duration: 2 m 16 s - AiDe.Core.Tests.dll (net10.0)
+App:  Failed!  - Failed:     3, Passed:  1242, Skipped:     2, Total:  1247, Duration: 5 m 32 s - AiDe.App.Tests.dll (net10.0)
+App failures in the whole run:
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [3 s]
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget [182 ms]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+Re-run of those three classes (started 22:46:32Z): Failed!  - Failed:     2, Passed:     6, Skipped:     0, Total:     8, Duration: 32 s - AiDe.App.Tests.dll (net10.0)
+  SessionDocumentPlacementTests passed on re-run (its suite failure: focus landed on (none), not inside the composer).
+  CtrlDigitSwitchesThePerspectiveFromInsideAPageTests and SolutionTreeChordTests failed again: foreground not held (node 1's and node 2's same pair; neither touches this track's code).
