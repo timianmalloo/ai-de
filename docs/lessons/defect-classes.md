@@ -8380,6 +8380,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `leader_precommit.py` refuses any push whose range (`origin/main..<commit>`) carries a `chore(join): join-<name>`
   commit with no `join-<name>-step8` audit entry in the pushed tree. It was shown refusing the incident range
   (`bf2eebed..146b2066`, exit 1) and clearing the join check on a clean one (`dafcbee8..f323f2b1`).
+- **Eighth and ninth instances (2026-10-19).**
+  - **The Owner** cited the `ExcludeKnowledge` seam at `WorkbenchShell.cs:1386` in Ruling 166, from an older tree.
+    On `origin/main` it is `:1398`; the Leader flagged it.
+  - **The Leader** recommended "DESIGN.md:1204 is stale" after reading only that line and the product's tests. It did
+    not read DESIGN.md's own outcome-word list at `:1170`, which names "stopped by you", so the product was the
+    departure. The Owner overruled it (Ruling 167).
+  - **Control, both seats:** a ruling's or recommendation's file:line is cited against `origin/main` at the time of
+    writing. Before calling a document stale, read every place in it that defines the term (its list, glossary or
+    table), not just the line in question.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.

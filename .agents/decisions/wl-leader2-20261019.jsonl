@@ -378,3 +378,10 @@
 {"agent": "wl-leader2-20261019", "at": 1792406292.080408, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792406292.1171207, "code": null, "kind": "allowed", "path": "docs/coordination/coordination-workbench-loops.md", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792406311.534793, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.8176014, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.8505814, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.886366, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.9174871, "code": null, "kind": "allowed", "path": ".agents/log/wl-t18-knowledge.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.94962, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406394.984298, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792406472.132187, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "wl-leader2-20261019", "wi": ""}

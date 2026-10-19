@@ -1,0 +1,4 @@
+{"agent": "wl-t19-stopword", "at": 1792406611.5531337, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.5886095, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/RunEventVocabularyTests.cs", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.626132, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheQueuedTurnIsOneTurnOfTheStreamTests.cs", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.6616476, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs", "session": "wl-t19-stopword", "wi": ""}
