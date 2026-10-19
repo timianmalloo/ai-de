@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T15:22:19Z",
+  "generated": "2026-10-19T16:18:34Z",
   "audit": [
     {
       "actor": null,
@@ -25413,6 +25413,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T14:54:58Z",
       "duration_seconds": 1641.0
+    },
+    {
+      "id": "al-01M5AFA9MTF1SFCW6YJ4PEA7GC",
+      "shortname": "wl-t28-compiled",
+      "datetime": "2026-10-19T16:18:34Z",
+      "session": "wl-t28-compiled",
+      "prompt": "T28 wl1a-compiled-field n1: /investigate the Ruling 96 recurrence (compiled prompt not shown in the compiled field after a submit); red only, root cause to the Owner first",
+      "summary": "Reproduced on the product composition with a real Ctrl+Enter: _compiled.Text.Length 69 -> 0, ActualHeight 48 (floor), IsExpanded true. Verified root cause: SessionDocumentSurface.Admit (:672) -> ComposerSurface.BeginNextTurn empties the draft (:1138) and re-renders the live-draft view (:1149, :1225). Not layout. Ruling 96's tests open over an unsent draft (theory oracle is empty==empty). DC-NEW-wl-t28-compiled registered; red test f3bdf334; phased plan with Owner decision (A keep sent prompt / B empty-state pointer); seam req-01M5AE5QGZMKFC36RA4C93QSPJ.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Verified root cause of the compiled field empty after a submit, red test, class, repair plan; no fix",
+      "done_when": "reproduction.txt, root cause by file:line, DC-NEW entry, red test committed, README and handoff",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T15:50:03Z",
+      "duration_seconds": 1711.0
     }
   ],
   "changes": [
