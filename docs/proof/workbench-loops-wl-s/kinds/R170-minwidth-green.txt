@@ -1,0 +1,59 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.AtStartupSizeInTheCenterBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [1 s]
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given, 5 turns: document 1349×708 · thread viewport 237 · editor 280 · 1 of 2 realized at least half visible · b4 1994 px, 0 shown · b5 345 px, 237 shown
+
+
+[xUnit.net 00:00:02.89]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.AtStartupSizeInTheCenterBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [272 ms]
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given, 5 turns: document 1349×708 · thread viewport 237 · editor 280 · 1 of 2 realized at least half visible · b4 239 px, 0 shown · b5 239 px, 237 shown
+
+
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere [442 ms]
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given: body 1369 · Center pane 1369 · turn row 1326 · words column 1274 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+ derived minimum width: 71 shell chrome + 43 pane chrome + 672.6 measure + 40 gutter + 12 padding = 838.6; MainWindow MinWidth = 840
+ 840×520 requested, 840×520 given: body 769 · Center pane 769 · turn row 726 · words column 674 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+
+
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "startup", width: 1440, height: 900) [284 ms]
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given: body 1369 · Center pane 1369 · turn row 1326 · words column 1274 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+
+
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "minimum", width: 840, height: 520) [338 ms]
+  Standard Output Messages:
+ 840×520 requested, 840×520 given: body 769 · Center pane 769 · turn row 726 · words column 674 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+
+
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "wide", width: 1706, height: 1066) [251 ms]
+  Standard Output Messages:
+ 1706×1066 requested, 1706×1066 given: body 1635 · Center pane 1635 · turn row 1609 · words column 1557 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+
+
+
+Test Run Successful.
+Total tests: 6
+     Passed: 6
+ Total time: 3.3211 Seconds

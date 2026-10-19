@@ -1,0 +1,79 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [1 s]
+  Standard Output Messages:
+ before the second press: field 69 chars · header "Compiled prompt — sent as b1" · draft 0 chars
+ after the second press: turns 1 · attempt rows 1 (was 1) · blocks sent 1 (was 1) · status "an empty prompt is not a task" · field 69 chars · header "Compiled prompt — sent as b1"
+
+
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [699 ms]
+  Standard Output Messages:
+ held: turns 0 · status "Restoring this notebook's turns. Your message sends when they are back." · header "Compiled prompt" · field 10 chars · draft "held words"
+ after the admission and a further press: turns 1 · attempt rows 1 (was 1) · status "an empty prompt is not a task"
+
+
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing [1 s]
+  Standard Output Messages:
+ after the second press: turns b1 Running, b2 Queued · attempt rows 2 (was 2) · blocks sent 2 (was 2) · status "b2 is queued; cancel it or wait." · field 69 chars · header "Compiled prompt — queued as b2"
+ after the drain and a further press: turns b1 Answered, b2 Answered · attempt rows 2 (was 2) · blocks sent 2 (was 2) · status "an empty prompt is not a task"
+
+
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft [555 ms]
+  Standard Output Messages:
+ after the submit: IsExpanded True · header "Compiled prompt — sent as b1" · UIA name "Compiled prompt — sent as b1" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 0 chars
+ after the next keystroke: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 1 · _compiled.ActualHeight 48.00 · draft 1 chars
+
+
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [509 ms]
+  Standard Output Messages:
+ open, typed, before the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 69 chars
+ open, after the submit: IsExpanded True · header "Compiled prompt — sent as b1" · UIA name "Compiled prompt — sent as b1" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 0 chars
+
+
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames [15 ms]
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [476 ms]
+  Standard Output Messages:
+ before the submit: IsExpanded False · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · draft 69 chars
+ render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.BeginNextTurn ← SessionDocumentSurface.Admit ← SessionDocumentSurface.Launch ← ComposerSendGate.Send ← ComposerSurface.SendThroughTheGate ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ after the submit, disclosure closed: IsExpanded False · header "Compiled prompt — sent as b1" · UIA name "Compiled prompt — sent as b1" · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · draft 0 chars
+ after the submit, disclosure opened: IsExpanded True · header "Compiled prompt — sent as b1" · UIA name "Compiled prompt — sent as b1" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 0 chars
+ sent prompt 69 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+
+
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterAQueuedSendTests.AfterAQueuedSend_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft [1 s]
+  Standard Output Messages:
+ before the keystroke: header "Compiled prompt — queued as b2" · after it: header "Compiled prompt" · field "third words" · draft "third words"
+
+
+[xUnit.net 00:00:07.72]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterAQueuedSendTests.OpenedAfterAQueuedSend_TheCompiledFieldShowsThatTurnsPrompt_HeadedQueuedAsB2 [1 s]
+  Standard Output Messages:
+ after the queued send, opened: turns b1 Running, b2 Queued · status "b2 queued — sends after b1" · header "Compiled prompt — queued as b2" · name "Compiled prompt — queued as b2" · ItemStatus "Compiled prompt — queued as b2" · field 69 chars (the live compile before the press was 69) · draft 0 chars
+
+
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterAQueuedSendTests.TheQueuedHeading_IsTheCopyDesignMdNames [17 ms]
+
+Test Run Successful.
+Total tests: 10
+     Passed: 10
+ Total time: 8.0950 Seconds

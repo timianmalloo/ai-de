@@ -31,10 +31,21 @@ public sealed record ZoneContentDto(
     [property: JsonPropertyName("children")] List<ZoneContentDto>? Children,
     [property: JsonPropertyName("weights")] List<double>? Weights);
 
+/// <summary>One floating stack. The four float fields are its window's bounds (Ruling 174).</summary>
+/// <remarks>
+/// The bounds are device-independent pixels in virtual-screen coordinates. They are optional and
+/// additive, so schema 1 is kept: an older file has none, and an older reader ignores them. They are
+/// read all-or-none, as the tree store reads its own (<see cref="LayoutStore"/>), and a width or height
+/// of zero or less counts as no bounds.
+/// </remarks>
 public sealed record ZoneStackDto(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
-    [property: JsonPropertyName("activeIndex")] int ActiveIndex);
+    [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+    [property: JsonPropertyName("floatX")] double? FloatX = null,
+    [property: JsonPropertyName("floatY")] double? FloatY = null,
+    [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+    [property: JsonPropertyName("floatHeight")] double? FloatHeight = null);
 
 public sealed record ZoneSurfaceDto(
     [property: JsonPropertyName("surfaceId")] string SurfaceId,
@@ -57,7 +68,15 @@ public enum ZoneLoadRefusal
 }
 
 /// <summary>What a read produced: the layout, or null with the reason.</summary>
-public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal);
+/// <param name="PartlyRead">True when the layout was returned without a part of the file that could not be read.</param>
+public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal, bool PartlyRead = false)
+{
+    /// <summary>
+    /// The saved titles of the surfaces in the part that was left out, in saved order. Empty when that
+    /// part held no surface with a title, or when nothing was left out.
+    /// </summary>
+    public IReadOnlyList<string> LeftOutTitles { get; init; } = [];
+}
 
 /// <summary>
 /// Saves and restores a <see cref="WorkbenchLayout"/> of named zones as JSON (ADR-0021 dz-persist),
@@ -69,6 +88,13 @@ public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Ref
 public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0")
 {
     public const int CurrentSchemaVersion = 1;
+
+    /// <summary>
+    /// The words after the quoted titles in the report line for a floating window moved off a display
+    /// that is no longer connected (AC-D01b), without a final period. Both restores say it: the tree
+    /// path (<see cref="LayoutStore"/>) and the zone path (<c>LayoutPersistence</c>).
+    /// </summary>
+    public const string RehomedSentenceTail = "moved onto this display because the saved display is not connected";
 
     private static readonly JsonSerializerOptions Json = new()
     {
@@ -173,23 +199,62 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         bool Available(ZoneSurfaceDto s) =>
             availableSurfaces.Contains(s.SurfaceId) || restorableKinds.Contains(s.Kind);
 
+        // System.Text.Json passes null for an absent positional member whatever its annotation
+        // (DC-NEW-wl-t21-float). A file with no "zones" field reads as empty zones, as a zone missing
+        // from the list already does, and a floating stack with no "surfaces" field is left out. Both
+        // are reported as a partial read. A JSON null element in any list (zones, floating, tabs,
+        // children, surfaces) arrives as a null DTO. It is left out and reported the same way.
+        var partlyRead = envelope.Layout.Zones is null;
+        void LeftOut() => partlyRead = true;
+        var savedZones = Present(envelope.Layout.Zones ?? [], LeftOut);
+        var leftOutTitles = new List<string>();
+
+        // A zone entry whose id names no zone of this build cannot be placed. It is left out, and its
+        // surfaces are named by their saved titles (T21 node 5, the Owner's refinement).
+        foreach (var unknown in savedZones.Where(z => !Enum.GetNames<ZoneId>().Contains(z.Id, StringComparer.Ordinal)))
+        {
+            partlyRead = true;
+            leftOutTitles.AddRange(TitlesIn(unknown.Content));
+        }
+
         var zones = ImmutableDictionary.CreateBuilder<ZoneId, ZoneState>();
         foreach (var id in Enum.GetValues<ZoneId>())
         {
-            var dto = envelope.Layout.Zones.FirstOrDefault(z => z.Id == id.ToString());
+            var dto = savedZones.FirstOrDefault(z => z.Id == id.ToString());
             zones[id] = dto is null
                 ? new ZoneState(id, Content: null, id == ZoneId.Center ? 1.0 : ZoneState.DefaultExtent, Collapsed: false)
-                : new ZoneState(id, FromDto(dto.Content, Available), dto.Extent,
+                : new ZoneState(id, FromDto(dto.Content, Available, LeftOut), dto.Extent,
                     Collapsed: id != ZoneId.Center && dto.Collapsed);
         }
 
-        var floating = envelope.Layout.Floating
-            .Select(f => FromStackDto(f, Available))
-            .Where(f => f is not null)
-            .Cast<StackNode>()
-            .ToImmutableList();
+        // A file with no "floating" field (hand-edited, or written before floating was stored) reads as
+        // no floating panes. That is an older file, not a partial read.
+        // A floating stack's id is a node id in the tree projection, beside the frame's own ids, and
+        // Layout.AssertInvariant throws on a repeat. The zone invariant checks surface ids only, so a
+        // floating stack whose id is already in use is left out here and named by its titles (T21 n6).
+        var floating = ImmutableList.CreateBuilder<StackNode>();
+        var nodeIds = new HashSet<string>(FrameNodeIds, StringComparer.Ordinal);
+        foreach (var f in Present(envelope.Layout.Floating ?? [], LeftOut))
+        {
+            if (f.Surfaces is null)
+            {
+                partlyRead = true;
+            }
+            else if (FromStackDto(f, Available, LeftOut) is { } stack)
+            {
+                if (nodeIds.Add(stack.Id))
+                {
+                    floating.Add(stack);
+                }
+                else
+                {
+                    partlyRead = true;
+                    leftOutTitles.AddRange(stack.Surfaces.Select(s => s.Title).Where(t => !string.IsNullOrEmpty(t)));
+                }
+            }
+        }
 
-        var layout = new WorkbenchLayout(zones.ToImmutable(), floating, Maximized: null);
+        var layout = new WorkbenchLayout(zones.ToImmutable(), floating.ToImmutable(), Maximized: null);
 
         try
         {
@@ -200,7 +265,36 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt); // e.g. a duplicated surface → keep current
         }
 
-        return new ZoneLoadResult(layout, ZoneLoadRefusal.None);
+        return new ZoneLoadResult(layout, ZoneLoadRefusal.None, partlyRead) { LeftOutTitles = leftOutTitles };
+    }
+
+    // The node ids ZonesToTree.ToTree gives the frame. A floating stack may hold none of them.
+    private static readonly string[] FrameNodeIds =
+    [
+        ZonesToTree.LeftStackId, ZonesToTree.CenterStackId, ZonesToTree.RightStackId,
+        ZonesToTree.BottomStackId, ZonesToTree.ColumnsSplitId, ZonesToTree.RootSplitId,
+    ];
+
+    private static IEnumerable<string> TitlesIn(ZoneContentDto? content) =>
+        content is null
+            ? []
+            : (content.Tabs ?? []).Where(t => t is not null).Select(t => t.Title)
+                .Concat((content.Children ?? []).SelectMany(TitlesIn))
+                .Where(title => !string.IsNullOrEmpty(title));
+
+    // The saved list without its JSON null elements. Each list the read restores from goes through here,
+    // so no list element is dereferenced before this check (DC-NEW-wl-t21-float). TitlesIn, which only
+    // names a part already left out, skips its own nulls.
+    private static List<T> Present<T>(List<T> saved, Action leftOut)
+        where T : class
+    {
+        var present = saved.Where(e => e is not null).ToList();
+        if (present.Count < saved.Count)
+        {
+            leftOut();
+        }
+
+        return present;
     }
 
     // ── mapping ────────────────────────────────────────────────────────────────────────────
@@ -218,11 +312,12 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
     };
 
     private static ZoneStackDto ToStackDto(StackNode s) =>
-        new(s.Id, [.. s.Surfaces.Select(ToDto)], s.ActiveIndex);
+        new(s.Id, [.. s.Surfaces.Select(ToDto)], s.ActiveIndex,
+            s.FloatingBounds?.X, s.FloatingBounds?.Y, s.FloatingBounds?.Width, s.FloatingBounds?.Height);
 
     private static ZoneSurfaceDto ToDto(Surface s) => new(s.SurfaceId, s.Kind, s.Title);
 
-    private static ZoneContent? FromDto(ZoneContentDto? dto, Func<ZoneSurfaceDto, bool> available)
+    private static ZoneContent? FromDto(ZoneContentDto? dto, Func<ZoneSurfaceDto, bool> available, Action leftOut)
     {
         if (dto is null)
         {
@@ -232,8 +327,8 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         if (string.Equals(dto.Kind, "split", StringComparison.Ordinal)
             && dto.Children is { Count: > 0 } childrenDto)
         {
-            var children = childrenDto
-                .Select(c => FromDto(c, available))
+            var children = Present(childrenDto, leftOut)
+                .Select(c => FromDto(c, available, leftOut))
                 .Where(c => c is not null)
                 .Cast<ZoneContent>()
                 .ToImmutableList();
@@ -251,7 +346,7 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             };
         }
 
-        var tabs = (dto.Tabs ?? [])
+        var tabs = Present(dto.Tabs ?? [], leftOut)
             .Where(available)
             .Select(FromDto)
             .ToImmutableList();
@@ -259,10 +354,13 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         return tabs.Count == 0 ? null : new ZoneStack(tabs, Math.Clamp(dto.ActiveIndex, 0, tabs.Count - 1));
     }
 
-    private static StackNode? FromStackDto(ZoneStackDto dto, Func<ZoneSurfaceDto, bool> available)
+    private static StackNode? FromStackDto(ZoneStackDto dto, Func<ZoneSurfaceDto, bool> available, Action leftOut)
     {
-        var surfaces = dto.Surfaces.Where(available).Select(FromDto).ToImmutableList();
-        return surfaces.Count == 0 ? null : new StackNode(dto.Id, surfaces, dto.ActiveIndex, StackState.Floating);
+        var surfaces = Present(dto.Surfaces, leftOut).Where(available).Select(FromDto).ToImmutableList();
+        var bounds = dto is { FloatX: { } x, FloatY: { } y, FloatWidth: { } w and > 0, FloatHeight: { } h and > 0 }
+            ? new LayoutRect(x, y, w, h)
+            : (LayoutRect?)null;
+        return surfaces.Count == 0 ? null : new StackNode(dto.Id, surfaces, dto.ActiveIndex, StackState.Floating, floatingBounds: bounds);
     }
 
     private static Surface FromDto(ZoneSurfaceDto s) => new(s.SurfaceId, s.Kind, s.Title);

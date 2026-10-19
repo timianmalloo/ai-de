@@ -276,6 +276,8 @@ for a workbench, and it is why the motion inventory is short by design rather th
 - `Restored 5 of 6 panes. "Trace Viewer" is no longer available and was not restored.`
 - `Display 2 is not connected. "Terminal 2" was moved onto this display.`
 - `Workbench layout could not be read and was reset to the default. Your previous layout file was kept.`
+- `Part of your saved layout could not be read and was left out.` *(appended to the restore announcement when part of the saved zone layout could not be read and that part held no surface with a title: no `zones` field, a floating window with no `surfaces` field, or a zone entry the build does not know that holds nothing; code PartialRestore; `LayoutPersistence.PartlyReadSentence`; confirmed by the Owner, T21 node 4)*
+- `Part of your saved layout could not be read and was left out: Notebook 2, Graph.` *(the same, when the left-out part held surfaces with titles: their saved titles in saved order, joined with ", ", never an internal id; code PartialRestore; `LayoutPersistence.PartlyReadNamingPrefix`; T21 node 5)*
 
 ---
 
@@ -876,7 +878,9 @@ demand, settings elsewhere.
 | **Derived structure** | 24px collapsed → 3 × 24px | labels `{colors.text-muted}`, values `{colors.text}`, both on `{colors.surface-raised}` | *Goal · Done when · Not in scope* as editable lines, not boxes; the *derived* mark is `{colors.inferred}` glyph + word; an *invalid* mark is `{colors.danger}` glyph + one-line reason. Expands beneath the editor over `{motion.base}`; **the editor's top edge never moves.** |
 | **Inherited settings line** | 24px | `{colors.text-muted}` on raised; the link `{colors.accent}` | *"fan-out ≤ 3 · budget 40,000 tokens — from session settings"*. The text is the link. **No per-prompt override, and no tier here.** The fan-out value is the session's **ceiling**; the effective cap is the compiled tier's cap within it (0 at T0, 2 at T1, the GO7 cap at T2) **[Inferred: the conductor's reconciliation of CT19 with the operator's correction, not yet the operator's word]**. |
 | **Write scope line** | 24px (one per pattern) | `{colors.text-muted}`; the pattern in `{typography.mono}` `{colors.text}` | *"Write scope: src/AiDe.Core/Workbench/** — from your mention"*; none: *"Write scope: none yet — mention the files this run may write as @path"*. |
-| **Compiled prompt** | 24px collapsed | summary `{colors.text-muted}`; the tier decoration `{colors.inferred}` glyph + word (derived) or `{colors.text}` (confirmed); body `{typography.mono}` `{colors.text}` on `{colors.surface-sunken}` | An `Expander` named *"Compiled prompt"*; collapsed by default; exactly the outgoing text; **no diff, no summary**; header says *updated* when stale. **The tier is a decoration the compile step attaches**: the header reads *"Compiled prompt · T1 derived"* (or *"tier not derived yet"* before the draft settles); the operator sees it and confirms it by sending. How the tier is derived, and the compile step itself, are **not designed here**: the operator will specify them separately. |
+| **Compiled prompt** | 24px collapsed | summary `{colors.text-muted}`; the tier decoration `{colors.inferred}` glyph + word (derived) or `{colors.text}` (confirmed); body `{typography.mono}` `{colors.text}` on `{colors.surface-sunken}` | An `Expander` named *"Compiled prompt"*; collapsed by default; exactly the outgoing text — after a submit, the text just sent, named as sent (next row); **no diff, no summary**; header says *updated* when stale. **The tier is a decoration the compile step attaches**: the header reads *"Compiled prompt · T1 derived"* (or *"tier not derived yet"* before the draft settles); the operator sees it and confirms it by sending. How the tier is derived, and the compile step itself, are **not designed here**: the operator will specify them separately. |
+| **Compiled prompt — after a submit** (Ruling 181) | as above | as above | After a submit the field keeps showing the turn just sent, headed *"Compiled prompt — sent as b{n}"* — the header, the field's UIA name and the disclosure's ItemStatus, one const (`ComposerSurface.SentHeadingFormat`) — until the next keystroke in the editor, which returns it to the live view of the new draft. **Display-only:** the shown text never reaches the gate's view, so a press with no keystroke sends the empty draft and is refused (*"an empty prompt is not a task"*), never b{n} again. A queued turn (Ruling 95) is a submit too, in the row below. A turn held by the restart read-back (Ruling 175) keeps its words in the editor and the field shows their live compile; it reads *sent as* only once admitted. |
+| **Compiled prompt — after a queued send** (Ruling 181 (1), Ruling 95; T28 n3) | as above | as above | A send taken as *Wait — send after b1* while b1 runs is a submit: the field shows that turn's compiled text, headed *"Compiled prompt — queued as b{n}"* — the header, the field's UIA name and the disclosure's ItemStatus, one const (`ComposerSurface.QueuedHeadingFormat`) — until the next keystroke in the editor, which returns it to the live view of the new draft. The status line still says *"b2 queued — sends after b1"*. **Display-only:** a press with no keystroke queues nothing and sends nothing (Ruling 95's *"b2 is queued; cancel it or wait."*), and once the queue has drained it is refused as *"an empty prompt is not a task"*, never b{n} again. |
 | **Send row** | 36px | Send: `{colors.accent-contrast}` on `{colors.accent}` | Send (Ctrl+Enter) · shape badge · a refusal reason beside a disabled Send, in `{colors.inferred}`. |
 
 | Rule | Statement |
@@ -1134,6 +1138,12 @@ measured at the shell's startup size, 1440 × 900.
   so within-turn is visibly tighter than between-turn. A 40px gutter carries the ordinal; every
   turn's text, reply and outcome share **one left edge**. Prose (the words, the reply) wraps at a
   96ch measure; evidence lines run the width.
+- **The minimum window holds the measure (Ruling 170).** `MainWindow` `MinWidth` is **840**, derived, never
+  chosen: 71 px activity bar and window frame + 43 px pane chrome + 672.6 px measure (96ch at 13 px) + 40 px
+  gutter + 12 px body padding = 838.6 px, rounded up. At 820 the turn's row was 706 px against the 724.6 it needs.
+  `TheThreadMeasureMovesWithTheNotebookTests.TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere`
+  measures the chrome at the startup size, reads `MinWidth` from the window, and re-measures the row there.
+  `MinHeight` stays 520.
 
 ### Trigger map (delta from the section above)
 
@@ -1397,8 +1407,7 @@ Copy added by this section (review oracles quote these strings):
 | RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
 | DOCK1 | Pane hidden. The run continues. |
-| DOCK2 | Floating a pane is not available yet. The pane stays where it is. (Ruling 171 (1); removed by T21) |
-| DOCK3 | {Title} was floating in your saved layout. Floating is not available yet, so it is docked in {zone}. — plural: {N} floating panes in your saved layout are docked: {Title} in {zone}, {Title} in {zone}. (Ruling 171 (1); removed by T21) |
+| DOCK4 | Kept 1 prompt draft as it was: prompt drafts do not become notebooks. — plural: Kept {N} prompt drafts as they were: prompt drafts do not become notebooks. (Ruling 173: said once, on the restore that migrates a slot) |
 | AUTH1 | Signed in does not mean this route is qualified. |
 | DEMO1 | Interactive prototype. Runs, accounts and evidence are simulated. |
 

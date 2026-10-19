@@ -1,0 +1,28 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Workbench.ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows [33 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.ArgumentNullException: Value cannot be null. (Parameter 'source')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.Select[TSource,TResult](IEnumerable`1 source, Func`2 selector)
+   at AiDe.Core.Workbench.ZoneLayoutStore.Read(IReadOnlySet`1 availableSurfaces, IReadOnlySet`1 restorableKinds) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 186
+   at AiDe.Core.Tests.Workbench.ZoneLayoutWithoutFloatingTests.<>c__DisplayClass5_0.<ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows>b__0() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutWithoutFloatingTests.cs:line 31
+   at Xunit.Record.Exception(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 47
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutWithoutFloatingTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 38 ms - AiDe.Core.Tests.dll (net10.0)

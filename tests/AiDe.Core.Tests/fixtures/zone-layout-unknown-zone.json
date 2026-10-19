@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.3.0",
+  "savedUtc": "2026-10-01T09:00:00+00:00",
+  "layout": {
+    "zones": [
+      {
+        "id": "Left",
+        "content": {
+          "kind": "stack",
+          "tabs": [ { "surfaceId": "explore", "kind": "view", "title": "Explore" } ],
+          "activeIndex": 0
+        },
+        "extent": 0.22,
+        "collapsed": false
+      },
+      { "id": "Center", "extent": 1.0, "collapsed": false },
+      { "id": "Right", "extent": 0.25, "collapsed": false },
+      { "id": "Bottom", "extent": 0.3, "collapsed": false },
+      {
+        "id": "Nowhere",
+        "content": {
+          "kind": "split",
+          "orientation": "Vertical",
+          "children": [
+            {
+              "kind": "stack",
+              "tabs": [ { "surfaceId": "notebook-2", "kind": "notebook", "title": "Notebook 2" } ],
+              "activeIndex": 0
+            },
+            {
+              "kind": "stack",
+              "tabs": [ { "surfaceId": "graph", "kind": "view", "title": "Graph" } ],
+              "activeIndex": 0
+            }
+          ],
+          "weights": [ 0.5, 0.5 ]
+        },
+        "extent": 0.3,
+        "collapsed": false
+      }
+    ],
+    "floating": []
+  }
+}

@@ -1,0 +1,46 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:24.61]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen [3 s]
+  Error Message:
+   the session-render probe failed with exit 34. options: priorDocument=False away=False returnToWorkbench=False reopen=False sibling=False bindOnRestore=True chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:03:15.0935169\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='8 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Session-document:20260911T125502Z-bd59855b (retired by ADR-0045: a session now opens as a notebook in the Center; reopen it from File ? Recent sessions), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins, Session-document:20260911T175821Z-1edfa710 (retired by ADR-0045: a session now opens as a notebook in the Center; reopen it from File ? Recent sessions). They live in Understand (Ctrl+3); open them from its View menu.' dropped=8 zones=zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea]
+restored active document: surface=notebook:20260911T175821Z-1edfa710 live-document=False renders='(no content)'
+bind-on-restore: revived=[] bound='' zones=zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea]
+bind-on-restore: active document live=False renders='(no content)' active in view=board; gone document live=False renders='(no content)'
+diag: {"ts":"2026-10-19T12:03:16.6756910\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1588.5876,"exitCode":null}
+ the restored active session's document was not revived: the shell holds no composer for it
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 163
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:38.27]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [5 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "restore (22:33:53Z replay): applied-saved"···
+Not found: " dropped=6 zones="
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 59
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     2, Passed:    25, Skipped:     0, Total:    27, Duration: 44 s - AiDe.App.Tests.dll (net10.0)

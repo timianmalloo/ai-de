@@ -13,8 +13,8 @@ namespace AiDe.Core.Workbench;
 /// <param name="Description">What the perspective is for, as the palette's hint says it.</param>
 /// <param name="Landing">
 /// Where focus lands after a switch to this perspective (spec §C5; DESIGN.md's landing row): the
-/// zone whose active tab takes focus — Factory lands on its Left (the session document, Ruling 83),
-/// Review and Understand on their Center. A zone the arrangement has emptied or collapsed falls back
+/// zone whose active tab takes focus — every row lands on its Center (Factory on its notebook, Ruling 152 D2).
+/// A zone the arrangement has emptied or collapsed falls back
 /// to the Center's active tab (the empty copy when the Center is empty), then the body's active
 /// surface. Stated on the row because the view's own notion of "active" after a body is first
 /// parented is whichever pane control realized last (measured, SH-4.1), which is not a landing
@@ -46,14 +46,14 @@ public sealed record Perspective(
 /// </remarks>
 public static class PerspectiveSet
 {
-    // simplify: Factory lands on the Left, where the session document docks (Ruling 83), until the
-    // notebook kind exists. Ceiling: ADR-0045 §1(a)'s "Factory: Center = notebook". Upgrade trigger:
-    // T11 docks `notebook` in the Center and flips this to ZoneId.Center in the same change
-    // (docs/design/workbench-loops-wl-s.md D2).
+    /// <summary>
+    /// Make the change. It lands on the Center, where the notebook docks (ADR-0045 §1(a); Ruling 152 D2 flipped
+    /// it from the Left in the same change that docked the notebook there).
+    /// </summary>
     public static Perspective Factory { get; } = new(
         "factory", "Factory", 1, "perspective.factory",
-        "Make the change: session documents, terminals, prompt drafts, and the fleet's coordination panes. The perspective the tool starts in.",
-        Landing: ZoneId.Left);
+        "Make the change: notebooks, terminals, prompt drafts, and the fleet's coordination panes. The perspective the tool starts in.",
+        Landing: ZoneId.Center);
 
     /// <summary>
     /// Review a change against its intent. It admits no surface kind until WL-5 lands the change

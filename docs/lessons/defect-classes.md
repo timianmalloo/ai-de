@@ -8485,6 +8485,45 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   at about 19 min, and both rates are re-derived after every node.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
+### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it
+
+- **Shape:** a structural guard scopes each match to a "head" taken from a hand-written list of member names (the
+  population). A new member that the list does not name has no head of its own. So the guard reads its match as part of
+  the listed member declared above it, and judges it with that member's text. The result is a red that names the wrong
+  member and describes a fault the code does not have. It can equally hide a fault that falls between the two members.
+- **Instance (T11 node 9 to 10, 2026-10-19):** `EveryOpeningCommandPassesThroughTheSeamTests` listed four heads.
+  `OpenExecution` (583dddc6, node 5) was declared just after `OpenSessionConsole` and was not listed. The guard read
+  `OpenExecution`'s add as `OpenSessionConsole`'s, with `OpenSessionConsole`'s own seam "BEFORE its add"
+  (`suite-node9.txt`). The dispatch then asked for `OpenSessionConsole`'s order to be restored. That order was never
+  changed: `git diff main` shows the new opener as the only opener change.
+- **Class → sweep → derive → prevent.** *Class:* DC-068's shape (a parallel hand-kept list drifts from the code), seen
+  in a guard's scoping rule rather than in a product list. *Sweep:* every test in `tests/` that takes a head with
+  `LastIndexOf` over a name list, or declares a `string[]` of member declarations: one, the instance. *Derive:* a guard's
+  scope must come from the code's own structure, not from names someone has to remember to add. *Prevent:* below.
+- **Control:** the guard derives the head: the nearest member declaration at the class's member indent, or a
+  `Requested = ` delegate, whichever is closer. Proved both ways. Green on the tree (`open-seam-green.txt`, 12/12 with
+  `TheExecutionOpensFromOpenLogTests` and `ConsoleSplitPlacementTests`). A seam call moved before `OpenExecution`'s add
+  turns it red, and the red names `OpenExecution` as the head (`open-seam-mutation-red.txt`).
+- **Status:** `controlled`.
+
+---
+### DC-NEW-wl-t21-float — An absent JSON field arrives null in a non-nullable positional DTO, and the reader dereferences it
+
+- **Shape:** a persistence DTO is a positional record whose collection parameter is declared non-nullable (`List<T> Floating`). System.Text.Json passes `null` for a constructor parameter whose property is absent from the file, whatever the annotation says, unless `RespectNullableAnnotations` / `RespectRequiredConstructorParameters` is set. The reader trusts the annotation, calls `.Select` on the member, and a read documented as "never throws on a bad file" throws on a file that is merely older or hand-edited.
+- **Observed instance:** T21 null check (Ruling 171 (2)). `ZoneLayoutStore.Read` threw `ArgumentNullException (source)` at `ZoneLayoutStore.cs:186` for a schema-1 file with no `"floating"` field. Red: `ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows` (fixture `tests/AiDe.Core.Tests/fixtures/zone-layout-no-floating.json`).
+- **Sweep:** every non-nullable collection member of the schema-1 zone DTOs that `Read` dereferences. Two siblings had the same shape: `ZoneLayoutDto.Zones` (the zones loop in `Read`) and `ZoneStackDto.Surfaces` (`FromStackDto`). Both are controlled in T21 node 4 (below). `ZoneContentDto.Tabs/Children/Weights` are already declared nullable and coalesced. Node 4 found by reading that a JSON `null` *element* inside a list (for example `"floating": [null]`) arrives as a null DTO and is dereferenced the same way. Node 5 made each list red: `zones`, `floating`, `tabs` and `surfaces` threw `NullReferenceException`; a null in `children` loaded but was not reported; and the node-5 title reader (`TitlesIn`) threw on a null tab. `weights` is `List<double>`, so a null there is a `JsonException` and the file is refused as corrupt, which does not throw. The other JSON stores in `src/` were not swept. Not in this class, and open: a null *scalar* (`surfaceId`, a floating stack's `id`) is not dereferenced by `Read`; it is passed into the model.
+- **Control:** the read coalesces each absent member: `Floating ?? []` (T21 n1b, `ZoneLayoutWithoutFloatingTests`); `Zones ?? []`, and a floating stack with no `surfaces` is left out (T21 n4, `ZoneLayoutPartlyReadTests`, fixtures `zone-layout-no-zones.json` and `zone-layout-floating-no-surfaces.json`). A left-out part sets `ZoneLoadResult.PartlyRead`, and `LayoutPersistence.Restore` reports it with code PartialRestore and `PartlyReadSentence` (`ZoneLayoutPartlyReadRestoreTests`). An absent `floating` field is an older file, not a partial read, and is pinned as not reported. The schema-1 DTO shape is unchanged, and the freeze is now an allow-list of ruled additions (`PerspectiveLayoutSlotTests.TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed`). Null list elements (T21 n5): every list `Read` restores from passes through one helper, `ZoneLayoutStore.Present`, which drops the nulls and reports a partial read before any element is touched. The tests are `ZoneLayoutPartlyReadTests.ANullElementInASavedLayoutList_IsLeftOut_TheRestLoads_AndTheReadSaysSo` (fixtures `zone-layout-{floating,zones,tabs,children,surfaces}-null.json`), `ANullTabInsideAZoneEntryTheBuildDoesNotKnow_AddsNoTitle_AndNeverThrows`, and the same five fixtures through `LayoutPersistence.Restore` in `ZoneLayoutPartlyReadRestoreTests`.
+- **Derive:** a reader of a persisted file treats every member, and every list element, as possibly absent, whatever its C# annotation. The annotation describes what the writer writes, not what the reader will be given.
+- **Status:** `controlled` for `ZoneLayoutStore.Read` (T21 n5): absent `floating`, `zones` and `surfaces`, and a null element in every list it reads, are each pinned by a test. No list element is dereferenced before the null check. The other JSON stores in `src/` are not swept.
+
+### DC-NEW-wl-t21-float-b — A value written to the view element the dock library does not read, proven only on the model
+
+- **Shape:** the adapter sets a placement property on one element of the dock library's tree (the pane), while the library reads the same property from another element (the pane's root panel) when it draws the window. The model holds the right value, the read-back reads it back from the element that was written, and every test that checks the model or the read-back passes. The drawn window is somewhere else.
+- **Observed instance:** T21 node 3, check 2 (Ruling 174 (2)). `WorkbenchAdapter.BuildFloatingWindow` set `FloatingLeft/Top/Width/Height` on the `LayoutDocumentPane` only. AvalonDock 5.0.0 places a document floating window from `RootPanel` (`DockingManager.CreateUIElementForModel`, read from the decompiled assembly), so every floating window since node 1 opened at (0, 0), sized to its content, whatever its saved or default bounds. Red: `FloatBoundsPersistTests.AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle`, the window assertion (model (160, 120, 520, 360), window (0, 0, 132x37.3)).
+- **Sweep:** every write of a `Floating*` property in `src/` (grep `FloatingLeft\s*=`): one site, `BuildFloatingWindow`, now writes the pane and the group. The read side, `MapFloatingWindow`, reads the pane and then the group; AvalonDock's `UpdatePositionAndSizeOfPanes` writes both, so the read is right.
+- **Control:** the test above asserts the drawn window's `Left/Top/Width/Height`, not only the model. Node 1's `FloatRenderTests` and node 1b's `FloatReadBackRestartTests` asserted visibility and hosting, never position.
+- **Derive:** for a view library, the proof of a placement is the drawn object's own geometry. A value is not placed because the adapter wrote it; it is placed when the library's own window reports it.
+- **Status:** `controlled`.
 ### DC-NEW-wl-leader3 — A join's recount shares a single-occupant desktop resource with a running track's suite, so the join refuses for a cause outside the join
 - **Class:** a gate that needs an exclusive machine resource (the Ruling 115 desktop hold for shown-window/UIA probes)
   runs while other sessions may hold it. The gate then reports the resource's occupancy as a test failure. A join's
@@ -8504,3 +8543,90 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control, extended (Owner, 2026-10-19):** the same resource is the user's desktop during a demo. Brief rule 20: while
   `USER DEMO IN PROGRESS` is the Owner's latest demo post on the board, no App suite, UI probe or real-lane test runs in
   any tree. Running tracks were told by mail at the rule's commit.
+
+### DC-NEW-wl-t21-float-c — A saved node id meets a check weaker than the one its consumer enforces
+- **Shape:** an id is saved with the layout and read back, while new ids of the same kind are minted from a counter
+  that restarts with the service or the process. The writer and the reader check one invariant (unique *surface* ids,
+  `WorkbenchLayout.AssertInvariant`). The tree projection enforces a stronger one (unique *node* ids, including the
+  frame's own ids, `Layout.AssertInvariant`, `LayoutModel.cs:199`). An id that passes the first check throws at the
+  second, out of `service.Current`, after the read has already said the file was fine.
+- **Instances (T21):** n5 (C) `ZoneBackedLayoutService.Float` minted `float-1` again after a restore that held it
+  (red f3d14d3b). n6 (B) `ZoneLayoutStore.Read` passed two floating stacks with one id, and a floating stack with the
+  id `zone-left` (red 5327d810). n6 (C) `WorkbenchAdapter.MapFloatingWindow` minted `float-view-N` from the static
+  `_nodeSeq`, which restarts with the process, so a native float could take a restored window's id (red f5fc73b0).
+- **Sweep:** every site that mints or admits a floating node id: `ZoneBackedLayoutService.Float` (controlled n5),
+  `ZoneLayoutStore.Read` (controlled n6 B), `WorkbenchAdapter.MapFloatingWindow` (controlled n6 C). The adapter's
+  `split-view-N` and `stack-view-N` ids are not saved (zones do not store split or stack ids), so they are outside the
+  class. Open: a kept `float-` pane id that the model does not hold, read after a window this read minted, is not
+  checked (not reachable from a render, which names panes from the model). Inferred.
+- **Control:** `FloatIdAfterRestoreTests`, `ZoneLayoutFloatingIdInUseTests` (fixtures
+  `zone-layout-floating-{duplicate,reserved}-id.json`), `FloatViewIdAfterRestartTests`. The reader seeds its id set
+  with the frame's six node ids; both minters skip every id in use.
+- **Derive:** a reader that promises "never throws on a bad file" checks every invariant the file's consumer enforces,
+  not only the one its own model asserts. A counter that restarts never mints a saved id without checking the ids in use.
+- **Status:** `controlled` for the three floating-id sites.
+### DC-NEW-wl-t28-compiled — A content oracle set up by fixture mutation never drives the user's gesture, so the state transition the gesture triggers in the real composition goes untested
+- **Class:** a UI content test puts the surface in the state it asserts by mutating a fixture (the draft set directly, a
+  property set instead of a click, a bare control instead of its composed parent) and asserts there. The user reaches the
+  same screen through a gesture that runs a state transition first (here: submit → `SessionDocumentSurface.Admit` →
+  `ComposerSurface.BeginNextTurn` consumes and resets the draft). The test certifies a state the user is never left in.
+  A second shape rides with it: a **self-referential oracle** (`field == producer(input)` over the same input) passes as
+  `"" == ""` when the input is empty, so "the content shows" is never asserted.
+- **Signature:** a test that asserts composer content (`CompiledView`, the compiled `TextBox.Text`,
+  `RenderView(draft).Text`) after `Draft.SetFreeFormText` / `CompiledPromptOpen = true` on a bare `ComposerSurface`, or
+  after a `Send()` with no `SessionDocumentSurface` to admit it; an equality oracle with no non-empty assertion.
+- **Why it survived (the controls it passed):** Ruling 96's condition (2) extended "the existing on-screen test" to the
+  content. Its two tests (`Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount`,
+  `...OpenedAtTheOperatorsBelt_RendersTheCompiledText`) open the disclosure through the header's real toggle, but over a
+  draft that was set and never sent: the theory's draft is empty (observed "text 0 chars" at 0, 1 and 40 turns), and the
+  belt test is a bare composer. `Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenIsTheWholePromptAndNotASummary`
+  asserts `CompiledView == request.Prompt` after a send, on a bare composer that nothing admits. Ruling 96's cause was
+  Inferred (layout) and its measurement (condition 1) was taken on the same fixture, so it measured the layout, not the
+  gesture.
+- **Instance (2026-10-19, WL-1a demo, T28 n1):** type, Ctrl+Enter, open the *Compiled prompt* disclosure on the product's
+  composition: `_compiled.Text.Length` 69 before the submit, 0 after; `ActualHeight` 48 = `CompiledPromptMinHeight`. The
+  emptying render was observed on the stack: `RenderCompiledView ← BeginNextTurn ← SessionDocumentSurface.Admit ← Launch
+  ← ComposerSendGate.Send ← SendThroughTheGate ← Send ← OnAcceleratorKey` (`ComposerSurface.cs:1138`, `:1149`, `:1224-1225`;
+  `SessionDocumentSurface.cs:672`). Proof: `docs/proof/workbench-loops-wl-1a/compiled-field/`.
+- **Sweep (tests asserting composer content on a path the user's gesture does not take):** confirmed —
+  the two Ruling 96 tests above (no submit; the theory's oracle is `"" == ""`) and
+  `TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenIsTheWholePromptAndNotASummary:381` (post-send content
+  on a composition with no admit). Ruled out, with the reason — `TheDecorationTheRowTheBytesAndTheColumnAgreeTests:96`
+  (asserts the pre-send view, a state typing does pass through); `ASendWhileATurnRunsOffersWaitOrParallelTests:203`
+  (asserts the queued row's bytes, not the composer); `NoLateBindingOnTheSendPathTests.TheCompiledViewAndTheSentTextAreTheSameBytes`
+  (gate-level, no surface); `Composer.TheWriterKeepsItsRoomTests:90` and `Sessions.TheWriterKeepsItsRoomTests:386`
+  (pre-send geometry; they open by property, a lesser gesture skip recorded here); `TheThreadIsChatLikeTests:77` (no
+  content assertion). Wider surface, not each read: 19 App test files mutate the draft directly, 8 use the page verb
+  `SetFieldText`.
+- **Derive:** a content oracle on a composed surface drives the gesture the user takes — the page's input verb, the
+  accelerator, the header click — on the composition the product builds, and asserts the content non-empty as well as
+  equal. A fixture mutation is allowed only to reach a state the gesture cannot, and says so.
+- **Prevent (control):** instance — `TheCompiledFieldAfterASubmitTests` (both facts, observed failing on the unfixed code,
+  `f3bdf334`), and for a queued send `TheCompiledFieldAfterAQueuedSendTests` (T28 n3). Class — **built (T28 n3, Ruling 181
+  (3))**: the shared gesture helper `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs` (n2), and the gate
+  `ComposerContentOraclesDriveTheGestureTests` beside it. Every App test that reads composer field content
+  (`CompiledView`, `_compiled.Text`, the compiled box's `.Text`, its UIA name, `ComposerGesture.Field`/`Heading`, in its
+  body or a same-file helper it calls) must run on a `SessionDocumentSurface` **and** use a `ComposerGesture` verb, and
+  must not set the draft or the disclosure directly, unless its `PreAdmit` list names it with a reason (3 entries, the
+  pre-send reads ruled out in the sweep above; the list may only shrink, and a stale entry fails). Seen failing on a
+  planted bare-composer content assertion (`d4995b84`, `n3-C-red.txt`), green on the tree (`n3-C-green.txt`); its
+  self-test fact refuses Ruling 96's original shape (`2a89cf0b:…TheWriterKeepsItsRoomTests.cs:107-142`). **Not built:**
+  the non-empty check on an equality oracle (the second shape) is not mechanized; it is a source scan, so a reader behind
+  another file's helper is not seen.
+- **Status:** `partially-controlled` — the gesture gate is built (T28 n3); the non-empty check on an equality oracle is not mechanized. Repair plan and evidence in the proof README.
+- **Status:** `open` (red only; the fix waits for the Owner's read of the root cause).
+- **Third instance (2026-10-19, T11 join):** the step-8 ratchet refused three gates that went green→red, none of which a
+  track's suites run. `docs-graph.py validate` found an orphan hand-off. `tools/verify-cited-controls.py` found a comment
+  citing a test the track had renamed. `tools/verify-surface-ownership.py` found a new `*Surface.cs` with no owner in
+  `docs/collaboration/session-contracts.md` §2. The join was abandoned before the push; the refused join is kept at
+  `backup/t11-join-070d2637`. The class widens: **a track's done is judged by its suites, while the join is judged by
+  every gate**, so a gate-only finding is caught only at the join, after a 20-minute recount.
+- **Control, extended:** brief rule 22 (`52b73c11`). A node that hands off for a join runs the step-8 ratchet from its
+  own tree against origin/main and must PASS before its done mail.
+- **DC-NEW-wl-leader2, recurrence under wl-leader3 (2026-10-19):** four Leader messages carried values the Leader had not
+  read in that turn. Two were placeholder times ("15:4xZ", "16:2xZ"). One was a kick time written as 16:38Z; the mail's
+  own timestamp is 16:37:22Z. One was a commit sha written as "4d…" before the commit existed; it is 2f413c4e. Each was
+  corrected to the Owner in the next message. **Control (process, Leader):** a time or sha goes into a message or a
+  committed file only from command output printed earlier in the same turn. The send of a message that cites a sha
+  comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
+  `partially-controlled`.

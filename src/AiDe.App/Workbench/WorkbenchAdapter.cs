@@ -62,6 +62,7 @@ public sealed class WorkbenchAdapter
     private bool _raisingArrangementChanged;
     private bool _rendering;
     private LayoutRoot? _watchedRoot;
+    private readonly HashSet<LayoutDocumentPane> _watchedFloatingPanes = new(System.Collections.Generic.ReferenceEqualityComparer.Instance);
 
     public WorkbenchAdapter(
         DockingManager manager, ILayoutService service,
@@ -335,7 +336,15 @@ public sealed class WorkbenchAdapter
 
         _pendingRebuild.Clear();
 
-        var panel = BuildPanel(_service.Current.Root, reuse);
+        var layoutRoot = new LayoutRoot { RootPanel = BuildPanel(_service.Current.Root, reuse) };
+
+        // Floating stacks live outside the docked tree (LayoutModel's Floating), so each one is drawn
+        // as the dock library's own floating window. Before T21 only the tree was drawn, and a floated
+        // pane was in the model and on no screen (Ruling 171).
+        foreach (var stack in _service.Current.Floating.Where(s => s.Surfaces.Count > 0))
+        {
+            layoutRoot.FloatingWindows.Add(BuildFloatingWindow(stack, reuse));
+        }
 
         // A render IS the model speaking; every mutation it makes to the docking tree must not come
         // back as "the view changed under us". What we drew becomes the arrangement the watcher has
@@ -343,7 +352,7 @@ public sealed class WorkbenchAdapter
         _rendering = true;
         try
         {
-            Manager.Layout = new LayoutRoot { RootPanel = panel };
+            Manager.Layout = layoutRoot;
             RestoreSelection();
             RestoreActive(preActive);
             ApplyAccessibleNames();
@@ -372,29 +381,69 @@ public sealed class WorkbenchAdapter
 
     private void WatchTheDockingModel()
     {
-        if (ReferenceEquals(_watchedRoot, Manager.Layout))
+        if (!ReferenceEquals(_watchedRoot, Manager.Layout))
+        {
+            if (_watchedRoot is not null)
+            {
+                _watchedRoot.Updated -= OnDockingModelUpdated;
+            }
+
+            foreach (var pane in _watchedFloatingPanes)
+            {
+                pane.FloatingPropertiesUpdated -= OnFloatingBoundsUpdated;
+            }
+
+            _watchedFloatingPanes.Clear();
+            _watchedRoot = Manager.Layout;
+            if (_watchedRoot is not null)
+            {
+                _watchedRoot.Updated += OnDockingModelUpdated;
+            }
+        }
+
+        WatchTheFloatingPanes();
+    }
+
+    private void OnDockingModelUpdated(object? sender, EventArgs e)
+    {
+        // A pane floated natively (AvalonDock's Float) is a new floating window: watch its bounds too.
+        WatchTheFloatingPanes();
+        RaiseWhenTheViewArrangementChanged();
+    }
+
+    /// <summary>
+    /// The writer of a floating window's bounds (Ruling 174 (2)). When the user's move or resize ends,
+    /// AvalonDock's floating window copies its bounds into its panes and raises
+    /// <c>FloatingPropertiesUpdated</c> (AvalonDock 5.0.0, <c>LayoutFloatingWindowControl</c>, on
+    /// <c>WM_EXITSIZEMOVE</c>). A bounds change does not raise <see cref="LayoutRoot.Updated"/>, so
+    /// without this the model learned a move only at the next unrelated reconcile, and the zone file
+    /// saved the bounds of the last render. The signature carries the bounds, so the raise is
+    /// <see cref="ViewArrangementChanged"/>, and the shell's reconcile writes them into the model.
+    /// </summary>
+    private void WatchTheFloatingPanes()
+    {
+        if (_watchedRoot is null)
         {
             return;
         }
 
-        if (_watchedRoot is not null)
+        foreach (var pane in _watchedRoot.FloatingWindows.SelectMany(w => w.Descendents().OfType<LayoutDocumentPane>()))
         {
-            _watchedRoot.Updated -= OnDockingModelUpdated;
-        }
-
-        _watchedRoot = Manager.Layout;
-        if (_watchedRoot is not null)
-        {
-            _watchedRoot.Updated += OnDockingModelUpdated;
+            if (_watchedFloatingPanes.Add(pane))
+            {
+                pane.FloatingPropertiesUpdated += OnFloatingBoundsUpdated;
+            }
         }
     }
 
-    private void OnDockingModelUpdated(object? sender, EventArgs e) => RaiseWhenTheViewArrangementChanged();
+    private void OnFloatingBoundsUpdated(object? sender, EventArgs e) => RaiseWhenTheViewArrangementChanged();
 
     /// <summary>
-    /// The view's pane topology: each document pane's surfaces, in pane order and in tab order.
-    /// Null when nothing is rendered. Deliberately ignores sizes, selection and node identity — a
-    /// splitter drag or a tab click is not a rearrangement.
+    /// The view's pane topology: each document pane's surfaces, in pane order and in tab order, then
+    /// each floating pane's bounds in whole device-independent pixels. Null when nothing is rendered.
+    /// Deliberately ignores docked sizes, selection and node identity — a splitter drag or a tab click
+    /// is not a rearrangement. A floating window's bounds are included because the layout stores them
+    /// (Ruling 174): a move that does not reach the model is a move the next save loses.
     /// </summary>
     private string? ViewArrangementSignature()
     {
@@ -406,7 +455,11 @@ public sealed class WorkbenchAdapter
         var panes = root.Descendents().OfType<LayoutDocumentPane>()
             .Select(pane => string.Join(
                 ",", pane.Children.OfType<LayoutDocument>().Select(d => d.ContentId ?? "?")));
-        return string.Join("|", panes);
+        var floating = root.FloatingWindows
+            .SelectMany(w => w.Descendents().OfType<LayoutDocumentPane>())
+            .Select(p => FormattableString.Invariant(
+                $"{Math.Round(p.FloatingLeft)},{Math.Round(p.FloatingTop)},{Math.Round(p.FloatingWidth)},{Math.Round(p.FloatingHeight)}"));
+        return string.Join("|", panes) + "#" + string.Join("|", floating);
     }
 
     private void RaiseWhenTheViewArrangementChanged()
@@ -873,7 +926,7 @@ public sealed class WorkbenchAdapter
     /// <remarks>
     /// <para><b>Fail-safe by construction.</b> The model is the source of truth and a wrong reconcile
     /// would be rendered AND persisted, so this returns null the moment it meets a shape it cannot map
-    /// losslessly — a floating window, an anchorable pane, an empty pane, an unknown node, a document
+    /// losslessly — a floating window that is not one document pane, an anchorable pane, an empty pane, an unknown node, a document
     /// whose surface the model does not know, or a result that does not carry exactly the same set of
     /// surfaces it started with. The caller then leaves the model untouched, degrading to the
     /// pre-existing revert-on-rebuild, never to a lost or duplicated pane.</para>
@@ -886,9 +939,6 @@ public sealed class WorkbenchAdapter
     public Layout? ReadLayoutFromView()
     {
         if (Manager.Layout is not { } root) { return null; }
-
-        // Floating windows are not mapped yet — bail rather than silently drop a floated pane.
-        if (root.FloatingWindows.Any()) { return null; }
 
         var known = _service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
@@ -905,7 +955,18 @@ public sealed class WorkbenchAdapter
         var mapped = MapNode(root.RootPanel, known);
         if (mapped is null) { return null; }
 
-        var reconciled = _service.Current with { Root = mapped, Floating = [] };
+        // A floating stack's id is saved with the layout, so a restored window keeps an id an earlier
+        // process minted, and the static counter restarts with each process. A native float's id skips
+        // every node id the model holds and every id this read has taken (T21 n6 check C).
+        var inUse = _service.Current.AllStacks().Select(s => s.Id).ToHashSet(StringComparer.Ordinal);
+        var floating = new List<StackNode>();
+        foreach (var window in root.FloatingWindows)
+        {
+            if (MapFloatingWindow(window, known, inUse) is not { } stack) { return null; }
+            floating.Add(stack);
+        }
+
+        var reconciled = _service.Current with { Root = mapped, Floating = [.. floating] };
 
         // The strong guard: a reconcile that lost, duplicated or invented a surface is a corrupt
         // reconcile, and rendering it would drop a pane. Compare the surface SET, and refuse if it moved.
@@ -917,6 +978,46 @@ public sealed class WorkbenchAdapter
         }
 
         return reconciled;
+    }
+
+    /// <summary>
+    /// One AvalonDock floating window as one floating stack: a document window holding exactly one
+    /// non-empty document pane of known surfaces. The window a <see cref="Render"/> drew keeps its
+    /// stack's id (<see cref="BuildFloatingWindow"/> names the pane with it); a window the user floated
+    /// natively gets a fresh one. Its bounds are read from the view, so the next render reopens it where
+    /// it is. Anything else (an anchorable window, several panes, the Center's placeholder) is null.
+    /// </summary>
+    private static StackNode? MapFloatingWindow(LayoutFloatingWindow window, IReadOnlyDictionary<string, Surface> known, HashSet<string> inUse)
+    {
+        if (window is not LayoutDocumentFloatingWindow { RootPanel: { } group }) { return null; }
+
+        var panes = group.Descendents().OfType<LayoutDocumentPane>().Where(p => p.Children.Count > 0).ToList();
+        if (panes.Count != 1) { return null; }
+        var pane = panes[0];
+
+        var surfaces = new List<Surface>();
+        foreach (var content in pane.Children)
+        {
+            if (content is not LayoutDocument { ContentId: { } id }
+                || id == ZonesToTree.WelcomePlaceholder.SurfaceId
+                || !known.TryGetValue(id, out var surface))
+            {
+                return null;
+            }
+
+            surfaces.Add(surface);
+        }
+
+        var paneId = ((ILayoutPaneSerializable)pane).Id;
+        var stackId = paneId is { Length: > 0 } && paneId.StartsWith("float-", StringComparison.Ordinal) ? paneId : NewFloatId(inUse);
+        inUse.Add(stackId);
+        var bounds = Placed(pane.FloatingLeft, pane.FloatingTop, pane.FloatingWidth, pane.FloatingHeight)
+            ?? Placed(group.FloatingLeft, group.FloatingTop, group.FloatingWidth, group.FloatingHeight);
+        return new StackNode(stackId, [.. surfaces], Math.Clamp(pane.SelectedContentIndex, 0, surfaces.Count - 1),
+            StackState.Floating, floatingBounds: bounds);
+
+        static LayoutRect? Placed(double left, double top, double width, double height) =>
+            width > 0 && height > 0 ? new LayoutRect(left, top, width, height) : null;
     }
 
     private static LayoutNode? MapNode(ILayoutElement element, IReadOnlyDictionary<string, Surface> known)
@@ -1006,6 +1107,18 @@ public sealed class WorkbenchAdapter
     private static string NewNodeId(string prefix) =>
         $"{prefix}-view-{System.Threading.Interlocked.Increment(ref _nodeSeq)}";
 
+    private static string NewFloatId(HashSet<string> inUse)
+    {
+        string id;
+        do
+        {
+            id = NewNodeId("float");
+        }
+        while (inUse.Contains(id));
+
+        return id;
+    }
+
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();
@@ -1039,5 +1152,41 @@ public sealed class WorkbenchAdapter
         // The model's active tab is applied after the layout attaches (RestoreSelection) — AvalonDock
         // resets a detached pane's selection on attach, so setting it here would not survive.
         return pane;
+    }
+
+    /// <summary>The size a floating window opens at when its stack has no saved bounds.</summary>
+    internal static readonly LayoutRect DefaultFloatingSize = new(0, 0, 640, 420);
+
+    /// <summary>
+    /// One floating stack as AvalonDock's floating window, at the stack's saved bounds (device-
+    /// independent units, as <c>VirtualScreen.IsOnAConnectedDisplay</c> reads them). A stack with no
+    /// bounds opens at <see cref="DefaultFloatingSize"/>, offset into the workbench so it is on the
+    /// same display as the window that floated it.
+    /// </summary>
+    private LayoutDocumentFloatingWindow BuildFloatingWindow(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
+    {
+        var pane = BuildPane(stack, reuse);
+        var bounds = stack.FloatingBounds ?? DefaultBoundsNearTheWorkbench();
+        var group = new LayoutDocumentPaneGroup();
+        group.Children.Add(pane);
+
+        // AvalonDock places a document floating window from its ROOT PANEL's bounds (DockingManager,
+        // CreateUIElementForModel), not the pane's. Writing only the pane opened every window at 0,0,
+        // sized to its content. The pane keeps them too, because the read-back reads the pane first.
+        pane.FloatingLeft = group.FloatingLeft = bounds.X;
+        pane.FloatingTop = group.FloatingTop = bounds.Y;
+        pane.FloatingWidth = group.FloatingWidth = bounds.Width;
+        pane.FloatingHeight = group.FloatingHeight = bounds.Height;
+
+        return new LayoutDocumentFloatingWindow { RootPanel = group };
+    }
+
+    private LayoutRect DefaultBoundsNearTheWorkbench()
+    {
+        const double Offset = 48;
+        var origin = Window.GetWindow(Manager) is { } owner
+            ? new Point(owner.Left, owner.Top)
+            : new Point(SystemParameters.WorkArea.Left, SystemParameters.WorkArea.Top);
+        return DefaultFloatingSize with { X = origin.X + Offset, Y = origin.Y + Offset };
     }
 }

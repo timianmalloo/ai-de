@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**95 public types · 418 public members · 69% documented.**
+**96 public types · 419 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -662,11 +662,13 @@ and writing the file on each one would turn a smooth drag into a stutter of disk
 | Member | Summary |
 |---|---|
 | `string PrePerspectivesBackupSuffix = ".pre-perspectives.bak"` | The suffix of the one-time backup the first save after a dropping restore writes (ADR-0032 rule 3). |
+| `string PreNotebookBackupSuffix = ".pre-notebook.bak"` | The suffix of the one-time backup the first save after a slot migration writes (ADR-0045 §7). |
 | `string RefusedBackupSuffix = ".bak"` | The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4). |
 | `LayoutPersistence(` | **(gap)** |
 | `string SlotPathFor(string layoutFilePath, Perspective perspective)` | The zone-envelope file of one host perspective's slot (ADR-0032 rule 1): Factory's is today's `<layout>.zones.json` — the empty suffix is the grandfathering decision, so a pre-Addendum-C file IS the initial host's slo… |
 | `Perspective Perspective` | The perspective whose slot this persists; `Initial` for the legacy tree path. |
 | `IReadOnlyList<DroppedSurface> LastRestoreDropped { get; private set; } = []` | What the last `Restore` dropped from this slot (ADR-0032 rule 2) — by surface, reason and the perspective that admits it. Empty when nothing was dropped or nothing restored. |
+| `IReadOnlyList<Surface> LastRestoreMigrated { get; private set; } = []` | The notebooks the last `Restore` made from saved `session-document` placements (ADR-0045 §7), in zone order. Empty when nothing was migrated or nothing restored. |
 | `string? LastSaveFailure { get; private set; }` | Why the last `SaveNow` wrote nothing, or null when it succeeded (or never ran). |
 | `event Action<string>? SaveFailed` | Raised when a save could not be written, with the reason. May fire on the debounce timer's thread. |
 | `RestoreResult? LastRestore { get; private set; }` | The last restore's outcome — what to announce, and what could not be honoured. |
@@ -1408,6 +1410,12 @@ The opener is derived from the row and placed under  (`_View`, or `_Prompt` for 
 
 The kind's only door is the catalog entry verb  (`terminal.new`, `session.new`); nothing is derived.
 
+## `TurnAction`
+
+*record* — `SurfaceContentFactory.cs`
+
+The opener is a turn's  on its notebook (the execution's *Open the log*); nothing is derived and no verb names it.
+
 ## `SurfaceKind`
 
 *record* — `SurfaceContentFactory.cs`
@@ -2102,7 +2110,7 @@ from a stale model and revert it. Returns null when the view cannot be mapped co
 
 **Remarks.** **Fail-safe by construction.** The model is the source of truth and a wrong reconcile
 would be rendered AND persisted, so this returns null the moment it meets a shape it cannot map
-losslessly — a floating window, an anchorable pane, an empty pane, an unknown node, a document
+losslessly — a floating window that is not one document pane, an anchorable pane, an empty pane, an unknown node, a document
 whose surface the model does not know, or a result that does not carry exactly the same set of
 surfaces it started with. The caller then leaves the model untouched, degrading to the
 pre-existing revert-on-rebuild, never to a lost or duplicated pane.
@@ -2195,7 +2203,6 @@ is indistinguishable from a broken key.
 
 | Member | Summary |
 |---|---|
-| `string FloatUnavailableAnnouncement = "Floating a pane is not available yet. The pane stays where it is."` | Why `workbench.floatPane` refuses: floating is not drawn yet (T21), so a floated pane would vanish (Ruling 171 (1)). |
 | `string? FocusedStackId { get; set; }` | The stack the user is working in. Layout commands act on this. |
 | `string? FocusedSurfaceId { get; set; }` | The surface within the focused stack, when one is selected. |
 | `bool IsResizing` | **(gap)** |

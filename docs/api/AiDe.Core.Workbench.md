@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 80 types, 153 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 77 types, 153 members, 60% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**80 public types · 153 public members · 59% documented.**
+**77 public types · 153 public members · 60% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -141,8 +141,10 @@ content rather than the boundary handler has no privileged effect.
 
 *record* — `DropTargetResolver.cs`
 
-A rectangle in window coordinates. Deliberately not `System.Windows.Rect` — this
-layer stays free of WPF so the drop logic is testable headlessly and survives a shell change.
+A rectangle. A drop hit box is in window coordinates; a floating pane's bounds
+(`FloatingBounds`) are device-independent pixels in virtual-screen coordinates.
+Deliberately not `System.Windows.Rect` — this layer stays free of WPF so the drop logic is
+testable headlessly and survives a shell change.
 
 | Member | Summary |
 |---|---|
@@ -214,38 +216,6 @@ The rectangle to highlight for a destination — what the user sees before relea
 
 **Remarks.** Derived from the same target the drop will apply, so the highlight cannot promise one
 destination while the drop performs another.
-
-## `RedockedPane`
-
-*record* — `FloatingRedock.cs`
-
-One pane docked back from a floating window, and where it landed.
-
-## `FloatingRedockResult`
-
-*record* — `FloatingRedock.cs`
-
-A layout with no floating windows, and the panes that were docked to make it so.
-
-| Member | Summary |
-|---|---|
-| `string Report(WorkbenchLayout restored)` | The report line for the panes that are still docked in  — a pane the host's admission dropped afterwards is reported as dropped, not as docked — or empty when none. |
-
-## `FloatingRedock`
-
-*class* — `FloatingRedock.cs`
-
-Docks every floating window of a restored layout back into a zone (Ruling 171 (1)).
-
-**Remarks.** Floating is not drawn yet (T21 makes it real), so a restored floating pane would be invisible and
-unreachable. Each pane goes to the zone its kind belongs to (`ClassifyStack`);
-a kind with no zone of its own falls to that classifier's default, and the host's admission still
-runs afterwards, so a kind the perspective does not admit is dropped with the existing report.
-Upgrade trigger: T21 removes this call when floating windows restore as windows.
-
-| Member | Summary |
-|---|---|
-| `FloatingRedockResult Dock(WorkbenchLayout layout)` | **(gap)** |
 
 ## `LayoutMigration`
 
@@ -627,7 +597,7 @@ and every derived surface followed. **Tests** is a reserved name with no row (Ru
 
 | Member | Summary |
 |---|---|
-| `Perspective Factory { get; } = new(` | **(gap)** |
+| `Perspective Factory { get; } = new(` | Make the change. It lands on the Center, where the notebook docks (ADR-0045 §1(a); Ruling 152 D2 flipped it from the Left in the same change that docked the notebook there). |
 | `Perspective Review { get; } = new(` | Review a change against its intent. It admits no surface kind until WL-5 lands the change packet (the WL-S design's D3): an honest empty host, never a borrowed kind. |
 | `Perspective Understand { get; } = new(` | **(gap)** |
 | `IReadOnlyList<Perspective> All { get; } = [Factory, Review, Understand]` | The rows, in rail order: Factory · Review · Understand (spec §B1). |
@@ -1010,7 +980,12 @@ remedy for DC-063: there is no operation that restructures the relationship betw
 
 *record* — `ZoneLayoutStore.cs`
 
-*No doc comment on this type.* **(gap)**
+One floating stack. The four float fields are its window's bounds (Ruling 174).
+
+**Remarks.** The bounds are device-independent pixels in virtual-screen coordinates. They are optional and
+additive, so schema 1 is kept: an older file has none, and an older reader ignores them. They are
+read all-or-none, as the tree store reads its own (`LayoutStore`), and a width or height
+of zero or less counts as no bounds.
 
 ## `ZoneSurfaceDto`
 
@@ -1030,6 +1005,10 @@ Why `Read` returned no layout (ADR-0032 rule 4). `None` when it returned one.
 
 What a read produced: the layout, or null with the reason.
 
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<string> LeftOutTitles { get; init; } = []` | The saved titles of the surfaces in the part that was left out, in saved order. Empty when that part held no surface with a title, or when nothing was left out. |
+
 ## `ZoneLayoutStore`
 
 *class* — `ZoneLayoutStore.cs`
@@ -1043,6 +1022,7 @@ becomes a placeholder, never a broken pane.
 | Member | Summary |
 |---|---|
 | `int CurrentSchemaVersion = 1` | **(gap)** |
+| `string RehomedSentenceTail = "moved onto this display because the saved display is not connected"` | The words after the quoted titles in the report line for a floating window moved off a display that is no longer connected (AC-D01b), without a final period. Both restores say it: the tree path (`LayoutStore`) and the… |
 | `string FilePath` | **(gap)** |
 | `string TempPath` | The sibling a save is written to before it replaces the file: `<file>.tmp`. |
 | `void Save(WorkbenchLayout layout, string? backupPath = null)` | Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to `TempPath` and then moved over the destination in one step, so the file the product reads is never a torn write: a crash before the … |

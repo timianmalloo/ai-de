@@ -21,6 +21,22 @@ public static class ZoneLayoutService
         var source = layout.FindZoneOf(surfaceId);
         if (source is null)
         {
+            if (FloatingStackOf(layout, surfaceId) is { } window)
+            {
+                // Redock: out of its floating window and into the zone, as that zone's active tab.
+                var floating = window.Surfaces.First(s => s.SurfaceId == surfaceId);
+                var undocked = WithoutFloatingSurface(layout, window, surfaceId);
+                var into = undocked.Zone(target);
+                var redocked = undocked.WithZone(into with
+                {
+                    Content = AddSurface(into.Content, floating, dropIndex),
+                    Collapsed = false,
+                    Extent = UsableExtentFor(into, target),
+                });
+                redocked.AssertInvariant();
+                return new ZoneLayoutResult(redocked, true, null, $"Moved {floating.Title} to {ZoneName(target)}.");
+            }
+
             return new ZoneLayoutResult(layout, false, LayoutErrorCodes.SurfaceUnknown,
                 $"Cannot move: surface '{surfaceId}' is not docked.");
         }
@@ -74,6 +90,30 @@ public static class ZoneLayoutService
         return new ZoneLayoutResult(next, true, null, $"Opened {surface.Title} in {ZoneName(target)}.");
     }
 
+    /// <summary>The floating stack (one floating window) holding <paramref name="surfaceId"/>, or null.</summary>
+    private static StackNode? FloatingStackOf(WorkbenchLayout layout, string surfaceId) =>
+        layout.Floating.FirstOrDefault(f => f.Surfaces.Any(s => s.SurfaceId == surfaceId));
+
+    /// <summary>
+    /// <paramref name="layout"/> with <paramref name="surfaceId"/> taken out of its floating window.
+    /// A window left with no tab is removed (a stack is never empty). Otherwise the window keeps its
+    /// active tab, or the neighbour that takes the removed tab's place.
+    /// </summary>
+    private static WorkbenchLayout WithoutFloatingSurface(WorkbenchLayout layout, StackNode window, string surfaceId)
+    {
+        var removedAt = window.Surfaces.FindIndex(s => s.SurfaceId == surfaceId);
+        var tabs = window.Surfaces.RemoveAt(removedAt);
+        if (tabs.Count == 0)
+        {
+            return layout with { Floating = layout.Floating.Remove(window) };
+        }
+
+        var active = window.ActiveIndex == removedAt
+            ? Math.Min(removedAt, tabs.Count - 1)
+            : tabs.IndexOf(window.Active);
+        return layout with { Floating = layout.Floating.Replace(window, window with { Surfaces = tabs, ActiveIndex = active }) };
+    }
+
     // A pane arriving into an EMPTY tool zone must land at a usable width, not whatever sliver a
     // previous resize/collapse left behind — the "created but hidden in the container till I widened
     // it" case (smoke 9-1 #4). Only empty tool zones are floored: a zone that already holds panes
@@ -89,6 +129,14 @@ public static class ZoneLayoutService
         var zoneId = layout.FindZoneOf(surfaceId);
         if (zoneId is null)
         {
+            if (FloatingStackOf(layout, surfaceId) is { } window)
+            {
+                var closing = window.Surfaces.First(s => s.SurfaceId == surfaceId);
+                var without = WithoutFloatingSurface(layout, window, surfaceId);
+                without.AssertInvariant();
+                return new ZoneLayoutResult(without, true, null, $"Closed {closing.Title}.");
+            }
+
             return new ZoneLayoutResult(layout, false, LayoutErrorCodes.SurfaceUnknown,
                 $"Cannot close: surface '{surfaceId}' is not docked.");
         }
@@ -106,6 +154,12 @@ public static class ZoneLayoutService
         var zoneId = layout.FindZoneOf(surfaceId);
         if (zoneId is null)
         {
+            if (FloatingStackOf(layout, surfaceId) is { } window)
+            {
+                var activated = window with { ActiveIndex = window.Surfaces.FindIndex(s => s.SurfaceId == surfaceId) };
+                return new ZoneLayoutResult(layout with { Floating = layout.Floating.Replace(window, activated) }, true, null, string.Empty);
+            }
+
             return new ZoneLayoutResult(layout, false, LayoutErrorCodes.SurfaceUnknown,
                 $"Cannot activate: surface '{surfaceId}' is not docked.");
         }

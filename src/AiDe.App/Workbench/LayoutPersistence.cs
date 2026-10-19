@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using AiDe.Core.Workbench;
 
@@ -20,8 +22,29 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>The suffix of the one-time backup the first save after a dropping restore writes (ADR-0032 rule 3).</summary>
     public const string PrePerspectivesBackupSuffix = ".pre-perspectives.bak";
 
+    /// <summary>The suffix of the one-time backup the first save after a slot migration writes (ADR-0045 §7).</summary>
+    public const string PreNotebookBackupSuffix = ".pre-notebook.bak";
+
     /// <summary>The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4).</summary>
     public const string RefusedBackupSuffix = ".bak";
+
+    /// <summary>
+    /// The zone restore's report sentence when part of the saved file could not be read and was left out,
+    /// and that part held no surface with a title (T21 node 4; confirmed by the Owner).
+    /// </summary>
+    internal const string PartlyReadSentence = "Part of your saved layout could not be read and was left out.";
+
+    /// <summary>
+    /// The same sentence when the left-out part held titled surfaces: this prefix, then their saved
+    /// titles in saved order joined with ", ", then a period (T21 node 5, the Owner's refinement).
+    /// </summary>
+    internal const string PartlyReadNamingPrefix = "Part of your saved layout could not be read and was left out: ";
+
+    /// <summary>
+    /// DESIGN.md DOCK4's plural (Ruling 173 (3)): the restore that migrates a slot with more than one prompt draft says
+    /// this, with <c>{N}</c> replaced by the number of drafts kept.
+    /// </summary>
+    internal const string KeptPromptsSentence = "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks.";
 
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
@@ -43,6 +66,13 @@ public sealed class LayoutPersistence : IDisposable
     // path destroyed the only copy while the announcement said "kept").
     private (string Path, bool Once)? _backupDue;
     private readonly object _saveGate = new();
+
+    // The WL-S design's §7: the old slot this slot is renamed from, and the retired slot this one folds in (null when none).
+    // `_renameDue` / `_foldDue` name the old file the next save moves to `<old>.bak`, after the restore that read it.
+    private readonly string? _renamedFrom;
+    private readonly string? _foldedFrom;
+    private string? _renameDue;
+    private string? _foldDue;
 
     /// <param name="restorableKinds">
     /// Surface kinds the shell can build content for. Surfaces CREATED at runtime — an agent
@@ -73,6 +103,8 @@ public sealed class LayoutPersistence : IDisposable
         {
             _zoneService = zbs;
             _zoneStore = new ZoneLayoutStore(SlotPathFor(layoutFilePath, zbs.Admission.Perspective));
+            _renamedFrom = RenamedFromFor(layoutFilePath, zbs.Admission.Perspective);
+            _foldedFrom = FoldedFromFor(layoutFilePath, zbs.Admission.Perspective);
         }
 
         _debounce = new System.Timers.Timer(debounceMilliseconds) { AutoReset = false };
@@ -91,19 +123,22 @@ public sealed class LayoutPersistence : IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(layoutFilePath);
         ArgumentNullException.ThrowIfNull(perspective);
 
-        var dir = Path.GetDirectoryName(layoutFilePath) ?? string.Empty;
-        var name = Path.GetFileNameWithoutExtension(layoutFilePath);
-        return Path.Combine(dir, name + SlotSuffix(perspective) + ".zones.json");
+        return Sibling(layoutFilePath, perspective == PerspectiveSet.Initial ? string.Empty : "." + perspective.Id);
     }
 
-    // simplify: a time-boxed legacy persistence-key alias (the WL-S design's §7): Understand reads and
-    // writes Architecture's file so today's saved arrangement restores with no drop. Ceiling: T11.
-    // Upgrade trigger: T11's slot migration renames `.architecture` to `.understand` (read the new
-    // name, fall back to the old, write the new, one-time .bak) and deletes this arm.
-    private static string SlotSuffix(Perspective perspective) =>
-        perspective == PerspectiveSet.Initial ? string.Empty
-        : perspective == PerspectiveSet.Understand ? ".architecture"
-        : "." + perspective.Id;
+    private static string Sibling(string layoutFilePath, string suffix) =>
+        Path.Combine(Path.GetDirectoryName(layoutFilePath) ?? string.Empty, Path.GetFileNameWithoutExtension(layoutFilePath) + suffix + ".zones.json");
+
+    // simplify: the WL-S design's §7 slot migration reads two slots that no build writes any more: Understand falls back to
+    // Architecture's `<layout>.architecture.zones.json` while its own file is absent (the rename), and Factory folds the retired
+    // Coordination perspective's `<layout>.coordination.zones.json` into its Center (the fold). The first save after either
+    // moves the old file to `<old>.bak`, so each runs once. Ceiling: these two paths. Upgrade trigger: when no supported build
+    // can have left either file, delete both arms and the .bak handling in SaveNow.
+    private static string? RenamedFromFor(string layoutFilePath, Perspective perspective) =>
+        perspective == PerspectiveSet.Understand ? Sibling(layoutFilePath, ".architecture") : null;
+
+    private static string? FoldedFromFor(string layoutFilePath, Perspective perspective) =>
+        perspective == PerspectiveSet.Initial ? Sibling(layoutFilePath, ".coordination") : null;
 
     /// <summary>The perspective whose slot this persists; <see cref="PerspectiveSet.Initial"/> for the legacy tree path.</summary>
     public Perspective Perspective => _zoneService?.Admission.Perspective ?? PerspectiveSet.Initial;
@@ -113,6 +148,12 @@ public sealed class LayoutPersistence : IDisposable
     /// reason and the perspective that admits it. Empty when nothing was dropped or nothing restored.
     /// </summary>
     public IReadOnlyList<DroppedSurface> LastRestoreDropped { get; private set; } = [];
+
+    /// <summary>
+    /// The notebooks the last <see cref="Restore"/> made from saved <c>session-document</c> placements (ADR-0045 §7), in
+    /// zone order. Empty when nothing was migrated or nothing restored.
+    /// </summary>
+    public IReadOnlyList<Surface> LastRestoreMigrated { get; private set; } = [];
 
     /// <summary>Why the last <see cref="SaveNow"/> wrote nothing, or null when it succeeded (or never ran).</summary>
     public string? LastSaveFailure { get; private set; }
@@ -142,24 +183,79 @@ public sealed class LayoutPersistence : IDisposable
         if (_zoneService is not null && _zoneStore is not null)
         {
             LastRestoreDropped = [];
+            LastRestoreMigrated = [];
+            _renameDue = null;
+            _foldDue = null;
             var read = _zoneStore.Read(_availableSurfaces, _restorableKinds);
-            if (read.Layout is { } zones)
+
+            // §7's rename: read the new name, fall back to the old. An old file that cannot be read is left where it is.
+            if (read.Refusal == ZoneLoadRefusal.NoFile && _renamedFrom is not null
+                && new ZoneLayoutStore(_renamedFrom).Read(_availableSurfaces, _restorableKinds) is { Layout: not null } renamed)
             {
+                read = renamed;
+                _renameDue = _renamedFrom;
+            }
+
+            // §7's fold: every surface of the retired slot is appended to this slot's Center as tabs, never to its Left (the
+            // landing rule), so the active tab stays what this slot saved. Admission below drops and reports what it refuses.
+            var saved = read.Layout;
+            if ((read.Refusal is ZoneLoadRefusal.None or ZoneLoadRefusal.NoFile) && _foldedFrom is not null
+                && new ZoneLayoutStore(_foldedFrom).Read(_availableSurfaces, _restorableKinds).Layout is { } retired)
+            {
+                saved = Fold(saved ?? _zoneService.Zones, retired);
+                _foldDue = _foldedFrom;
+            }
+
+            if (saved is not null)
+            {
+                // ADR-0045 §7: a saved session's pane is mapped to its notebook by stable id before admission.
+                var (zones, migrated, keptPrompts) = Notebook.NotebookSlotMigration.Migrate(saved);
+                LastRestoreMigrated = migrated;
+
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
                 // reports each drop; the announcement names caption, kind and the admitting
                 // perspective through the same result that reports a missing surface today.
-                var redock = FloatingRedock.Dock(zones);
-                var report = _zoneService.RestoreZones(redock.Layout);
+                // Ruling 174 (3), AC-D01b: a floating window whose saved bounds fall off every display
+                // loses them, so the render opens it at the default placement near the workbench. The
+                // same display test and the same words as the tree path (LayoutStore.Load).
+                var rehomed = new List<string>();
+                foreach (var floating in zones.Floating.Where(f => !_displayIsConnected(f)).ToList())
+                {
+                    rehomed.Add(floating.Active.Title);
+                    zones = zones with { Floating = zones.Floating.Replace(floating, floating with { FloatingBounds = null }) };
+                }
+
+                var report = _zoneService.RestoreZones(zones);
                 LastRestoreDropped = report.Dropped;
-                _backupDue = report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true) : null;
+
+                // The first save after a migration keeps today's bytes once (ADR-0045 §7). That copy holds everything the
+                // pre-perspective one would, so a restore that both migrates and drops owes only the migration's.
+                // A renamed slot's old bytes are the whole original, so its `.bak` is the one owed.
+                _backupDue = _renameDue is not null ? (_renameDue + RefusedBackupSuffix, Once: true)
+                    : migrated.Count > 0 ? (_zoneStore.FilePath + PreNotebookBackupSuffix, Once: true)
+                    : report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true)
+                    : null;
+
+                var sentences = new List<string?> { DropAnnouncement(report), KeptPromptsReport(migrated.Count, keptPrompts.Count) };
+                if (rehomed.Count > 0)
+                {
+                    sentences.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} {ZoneLayoutStore.RehomedSentenceTail}.");
+                }
+
+                if (read.PartlyRead)
+                {
+                    sentences.Add(read.LeftOutTitles.Count > 0
+                        ? $"{PartlyReadNamingPrefix}{string.Join(", ", read.LeftOutTitles)}."
+                        : PartlyReadSentence);
+                }
 
                 var result = new RestoreResult(
                     _zoneService.Current,
                     report.DefaultApplied,
-                    report.Dropped.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
+                    report.Dropped.Count > 0 || rehomed.Count > 0 || read.PartlyRead ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
-                    [],
-                    $"{DropAnnouncement(report)} {redock.Report(_zoneService.Zones)}".TrimEnd());
+                    rehomed,
+                    string.Join(" ", sentences.Where(part => !string.IsNullOrEmpty(part))));
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;
@@ -229,8 +325,25 @@ public sealed class LayoutPersistence : IDisposable
                     // replace that would otherwise lose the bytes — the pre-perspective copy once,
                     // guarded by its absence; the refused copy every time.
                     backup = _backupDue is { } due && !(due.Once && File.Exists(due.Path)) ? due.Path : null;
+
+                    // §7's rename: the old file is moved onto the new name, so the replace below keeps its bytes as `<old>.bak`.
+                    if (_renameDue is { } old && File.Exists(old) && !File.Exists(_zoneStore.FilePath))
+                    {
+                        File.Move(old, _zoneStore.FilePath);
+                    }
+
                     _zoneStore.Save(_zoneService.Zones, backup); // zone-faithful: keeps collapsed content + extents
                     _backupDue = null;
+                    _renameDue = null;
+
+                    // §7's fold: once the folded tabs are written here, the retired slot is kept once as `<old>.bak`. An
+                    // existing `.bak` is never replaced; the retired file then stays, and the next restore folds it again.
+                    if (_foldDue is { } folded && File.Exists(folded) && !File.Exists(folded + RefusedBackupSuffix))
+                    {
+                        File.Move(folded, folded + RefusedBackupSuffix);
+                    }
+
+                    _foldDue = null;
                 }
                 else
                 {
@@ -276,6 +389,47 @@ public sealed class LayoutPersistence : IDisposable
             ? $"a second {caption} (the first was kept)"
             : caption;
     }
+
+    /// <summary>
+    /// <paramref name="into"/> with every surface of <paramref name="retired"/> it does not already hold appended to its Center
+    /// as tabs, in zone order and then floating (the WL-S design's §7). The Center's active tab is unchanged.
+    /// </summary>
+    private static WorkbenchLayout Fold(WorkbenchLayout into, WorkbenchLayout retired)
+    {
+        var taken = into.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+        var tabs = Enum.GetValues<ZoneId>().SelectMany(id => retired.Zone(id).Surfaces())
+            .Concat(retired.Floating.SelectMany(f => f.Surfaces))
+            .Where(s => taken.Add(s.SurfaceId))
+            .ToImmutableList();
+        if (tabs.IsEmpty)
+        {
+            return into;
+        }
+
+        var center = into.Zone(ZoneId.Center);
+        return into.WithZone(center with { Content = Append(center.Content, tabs) });
+    }
+
+    // A split Center takes the tabs in its first stack.
+    private static ZoneContent Append(ZoneContent? content, ImmutableList<Surface> tabs) => content switch
+    {
+        null => new ZoneStack(tabs),
+        ZoneStack stack => stack with { Tabs = stack.Tabs.AddRange(tabs) },
+        ZoneSplit split => split with { Children = split.Children.SetItem(0, Append(split.Children[0], tabs)) },
+        _ => throw new InvalidOperationException($"zone content '{content.GetType().Name}' has no fold"),
+    };
+
+    /// <summary>
+    /// Ruling 173 (3): the restore that migrates a slot says that its prompt drafts were kept as they were, because the
+    /// notebook does not replace them yet. Null when this restore migrated nothing (the sentence is the migration's, said
+    /// once) or the slot holds no prompt draft.
+    /// </summary>
+    private static string? KeptPromptsReport(int migrated, int kept) => (migrated, kept) switch
+    {
+        (0, _) or (_, 0) => null,
+        (_, 1) => "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.",
+        _ => KeptPromptsSentence.Replace("{N}", kept.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal),
+    };
 
     /// <summary>The drop-with-report sentence (spec §C4, plural forms as fixed there), or the plain restore sentence.</summary>
     private string DropAnnouncement(ZoneRestoreReport report)

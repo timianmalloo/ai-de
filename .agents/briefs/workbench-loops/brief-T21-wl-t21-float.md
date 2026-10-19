@@ -1,43 +1,37 @@
-# Brief — T21 `wls-float` (slice WL-S) · Claude Code · Opus · node 6
+# Brief — T21 `wls-float` (slice WL-S) · Claude Code · Opus · node 7 (close condition 4)
 
-**Goal (Ruling 171 (2), Ruling 174, and the Owner's T21 close conditions):** float and redock are real. A floating pane
-renders, moves, closes, persists its bounds and is read back. A malformed saved layout loads with a report line and
-never throws.
-**Node 5 is done** (715fe108): partial-read names by Title (seam req-01M5ACJG6Z… ACCEPTED by the Owner, so the saved
-title is the right one), null list elements swept, unique float ids across a restore. Core 3043/0/1.
+**Goal (Ruling 171 (3)):** WL-S is not accepted until **a live notebook floats and redocks**. T21 (nodes 1–6) is joined on
+main (`8608d4eb`), and T11's notebook kind is now joined on main too (`d25d0311`). This node proves the live case.
 
-**This node (n6), in this order:**
-- **(0) The owed App suite at node 5's head**, before any edit. `dotnet test tests/AiDe.App.Tests -nologo`, saved as
-  `docs/proof/workbench-loops-wl-s/float/suite-node5-app.txt`. Rule 20's hold was lifted at 15:46Z (USER DEMO DONE). Any App red that node 5 caused is
-  this node's first fix.
-- **(A) Close condition 3: floatPane floats the focused tab, not the first.** `ZoneBackedLayoutService.cs:593` passes
-  `Surfaces().FirstOrDefault()` to `Float`. Red: a zone with two tabs, the second focused, floatPane → the second floats.
-- **(B) Two floating stacks with the same id in a saved file** load with the partial-read sentence and never throw at
-  restore. Node 5 found this by reading: the reader passes them, and the restore throws `duplicate node id`. Same class
-  as node 5's crash shapes. Red first, with a fixture.
-- **(C) The adapter's floating-view ids after a restart.** Node 5 said a `float-view-N` counter restarts with the process
-  (`WorkbenchAdapter.cs:1102`). **The Leader's grep for `float-view` in `src/AiDe.App` found no match at af5a663b**, so
-  open the code first (rule 14). If the collision is real, it is red then green (an App test). If it is not, record what
-  the code does, with file:line, in handoff.md, and correct node 5's README line. This counts as the check.
+**This node (n7). Each check is red then green, through real gestures on the real shell composition
+(`WorkbenchShell` + the `notebook` kind + a bound `AttemptHost`, as T11's and T17d's tests build it):**
+- **(A) A notebook with a turn running floats, and the run continues.** Open a notebook, send a long turn on the stub
+  lane so it is Running, then float its pane (floatPane, the user's gesture). Expect: one floating window holds the
+  notebook; the same `NotebookModel` instance and the same in-flight attempt keep going, with no restart, no second
+  dispatch and no lost events; the turn completes inside the floating window, and its row reads as completed there.
+- **(B) It redocks, and the run's state is intact.** Redock the floating notebook, mid-run and after completion (two
+  cases). Expect: it returns to its zone (Center for Factory). The thread, the composer draft and the attempt row are
+  the same as before the float. No "Pane hidden" announcement is made, since a float is not a hide (DOCK1 is for a
+  close). Focus lands in the notebook.
+- **(C) A floating live notebook survives a restart.** Save the layout with a floating notebook, then restart (the
+  shell's revive path). Expect: the notebook restores floating, with its bounds (Ruling 174), and reads its attempts
+  back (T17d). A turn that was running at close shows as T17's restored state. Do not invent a new state.
+- **Then** update the WL-S Proof Pack (`docs/proof/workbench-loops-wl-s.md`). The float step in the human demo script
+  stops being "pending: close condition 4"; it gets its exact keyboard steps and expected observations, and the
+  float/redock risk row moves to the evidence. Run rule 22's ratchet before the done mail.
 
-**After this node:** T21 joins **before** T11 (Owner). Close condition 4, a live notebook floats and redocks, follows once
-T11 is on main.
+If the shell needs a code change outside T21's window (for example `WorkbenchShell.cs` routing the notebook's float),
+send a seam request naming file:line and keep the red committed. Do not edit the file without a grant.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 12 min by mail.
-**Desktop hold (DC-NEW-wl-leader3):** other tracks may run App UI tests in parallel. A result that says "Ruling 115
-desktop hold is occupied" is **neither a failure nor a pass**: record it, wait two minutes, and re-run.
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 15 min by mail.
+**Desktop hold:** a "desktop hold occupied" result is re-run after 2 min and logged. Rules 19, 20, 21 and 22 apply.
 
-## Owned authored paths (T21's window)
-`src/AiDe.Core/Workbench/ZoneLayoutStore.cs`, `ZoneLayoutService.cs`, `ZoneBackedLayoutService.cs`, `LayoutStore.cs`
-(node 4's one const line), `DropTargetResolver.cs`; `src/AiDe.App/Workbench/LayoutPersistence.cs` (the partial-read and
-off-screen sentences only; T11 holds the DOCK4 arm), `WorkbenchAdapter.cs`, `WorkbenchController.cs`; the `DESIGN.md`
-row node 4 added; T21's tests under `tests/AiDe.Core.Tests/Workbench/`, `tests/AiDe.App.Tests/Workbench/` and
-`tests/AiDe.Core.Tests/fixtures/zone-layout-*.json`; `docs/lessons/defect-classes.md` (your DC-NEW entry only);
-`docs/proof/workbench-loops-wl-s/float/**`.
+## Owned authored paths
+T21's window, as in node 6. Plus new tests under `tests/AiDe.App.Tests/Workbench/` for (A)–(C), and
+`docs/proof/workbench-loops-wl-s.md` (the float step, the float risk row and the evidence rows only).
 
 ## Not in scope
-The live-notebook float. The move-then-crash residual (`WorkbenchShell.cs`, needs a grant; it stays Inferred). The
-"No surface “”." placeholder copy and the DESIGN.md:277 drift, which stay listed as findings.
+The move-then-crash residual (`WorkbenchShell.cs`, needs a grant; it stays Inferred), and the "No surface “”." copy.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
@@ -122,3 +116,18 @@ and a default.
     post on it reads `USER DEMO IN PROGRESS`, with no later `USER DEMO DONE`, run **no App suite, no UI probe and no
     real-lane test**, in any tree. Core suites and docs-only work may continue. Read the board (rule 19's command) before
     every App, probe or real-lane run.
+21. **Every output file you write stays in your own tree (DC-NEW-wl-leader3, 2nd instance).** Test logs, suite runs and
+    scratch files go under `docs/proof/workbench-loops-wl-s/float/` or a folder named for your track inside `C:\Projects\ai-de-wls-float`. Never use the session
+    scratchpad, `%TEMP%` or any other shared path: sub-agents share one session scratchpad, and T21's suite overwrote
+    T28's result files there (2026-10-19 ~16:05Z), so T28 had to discard a whole suite run.
+22. **A node that hands off for a join runs the step-8 ratchet first (DC-NEW-wl-leader3, 3rd instance).** The T11 join
+    was refused by three gates that no track suite runs: `docs-graph.py validate` (an orphan hand-off),
+    `tools/verify-cited-controls.py` (a comment citing a renamed test) and `tools/verify-surface-ownership.py` (a new
+    `*Surface.cs` with no owner in `docs/collaboration/session-contracts.md` §2). Before the done mail of a node whose
+    next step is a join, run
+    `RATCHET_OUT_DIR=C:\Projects\ai-de-wls-float/docs/proof/workbench-loops-wl-s/float/ratchet sh .agents/briefs/workbench-loops/run_ratchet.sh <origin/main sha> <your head sha> wl-t21-float`
+    from `C:\Projects\ai-de-wls-float`. Save its refusal lines and last line in `docs/proof/workbench-loops-wl-s/float/ratchet.txt`. A `REFUSE green->red` is yours to fix
+    before done, **except the three derived-view gates**: `docs-graph.py` (when its only defect is index drift),
+    `tools/verify-derived-views.py` and `tools/verify-site-figures.py`. Join step 6 regenerates those views before the
+    join's own ratchet, so a branch head is always red there (T11 n13, 2026-10-19). Name them in `ratchet.txt` as
+    expected. Do not commit the `ratchet/` folder. The script makes and removes its own `C:/Projects/rt-wl-t21-float-*` trees.

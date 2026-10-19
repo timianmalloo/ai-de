@@ -1,0 +1,43 @@
+T21 check 2 RED - move and close a floating surface
+Tests: tests/AiDe.Core.Tests/Workbench/FloatingMoveCloseTests.cs (4), through ZoneBackedLayoutService.Apply
+Expected red: each fails Assert.True(result.Applied) with the zone service's refusal 'is not docked' (ZoneLayoutService.MovePane :21-25, ClosePane :89-93, Activate).
+---
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingDocument_RedocksToTheCenter_AsItsActiveTab_AndLeavesNoFloatingWindow [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.RedockingOneTabOfAFloatingStack_KeepsTheOtherTabFloating [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_CanBeActivated [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_Closes_AndIsGoneFromTheModel [FAIL]
+  Failed AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingDocument_RedocksToTheCenter_AsItsActiveTab_AndLeavesNoFloatingWindow [24 ms]
+  Error Message:
+   Cannot move: surface 'graph' is not docked.
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingDocument_RedocksToTheCenter_AsItsActiveTab_AndLeavesNoFloatingWindow() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\FloatingMoveCloseTests.cs:line 32
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.RedockingOneTabOfAFloatingStack_KeepsTheOtherTabFloating [< 1 ms]
+  Error Message:
+   Cannot move: surface 'float-b' is not docked.
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.RedockingOneTabOfAFloatingStack_KeepsTheOtherTabFloating() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\FloatingMoveCloseTests.cs:line 78
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_CanBeActivated [< 1 ms]
+  Error Message:
+   Cannot activate: surface 'sessions' is not docked.
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_CanBeActivated() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\FloatingMoveCloseTests.cs:line 61
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_Closes_AndIsGoneFromTheModel [< 1 ms]
+  Error Message:
+   Cannot close: surface 'sessions' is not docked.
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingMoveCloseTests.AFloatingSurface_Closes_AndIsGoneFromTheModel() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\FloatingMoveCloseTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 41 ms - AiDe.Core.Tests.dll (net10.0)

@@ -119,3 +119,18 @@ and a default.
     post on it reads `USER DEMO IN PROGRESS`, with no later `USER DEMO DONE`, run **no App suite, no UI probe and no
     real-lane test**, in any tree. Core suites and docs-only work may continue. Read the board (rule 19's command) before
     every App, probe or real-lane run.
+21. **Every output file you write stays in your own tree (DC-NEW-wl-leader3, 2nd instance).** Test logs, suite runs and
+    scratch files go under `docs/proof/workbench-loops-wl-1b/service/` or a folder named for your track inside `C:\Projects\ai-de-wl1b-service`. Never use the session
+    scratchpad, `%TEMP%` or any other shared path: sub-agents share one session scratchpad, and T21's suite overwrote
+    T28's result files there (2026-10-19 ~16:05Z), so T28 had to discard a whole suite run.
+22. **A node that hands off for a join runs the step-8 ratchet first (DC-NEW-wl-leader3, 3rd instance).** The T11 join
+    was refused by three gates that no track suite runs: `docs-graph.py validate` (an orphan hand-off),
+    `tools/verify-cited-controls.py` (a comment citing a renamed test) and `tools/verify-surface-ownership.py` (a new
+    `*Surface.cs` with no owner in `docs/collaboration/session-contracts.md` §2). Before the done mail of a node whose
+    next step is a join, run
+    `RATCHET_OUT_DIR=C:\Projects\ai-de-wl1b-service/docs/proof/workbench-loops-wl-1b/service/ratchet sh .agents/briefs/workbench-loops/run_ratchet.sh <origin/main sha> <your head sha> wl-t24-wl1b-service`
+    from `C:\Projects\ai-de-wl1b-service`. Save its refusal lines and last line in `docs/proof/workbench-loops-wl-1b/service/ratchet.txt`. A `REFUSE green->red` is yours to fix
+    before done, **except the three derived-view gates**: `docs-graph.py` (when its only defect is index drift),
+    `tools/verify-derived-views.py` and `tools/verify-site-figures.py`. Join step 6 regenerates those views before the
+    join's own ratchet, so a branch head is always red there (T11 n13, 2026-10-19). Name them in `ratchet.txt` as
+    expected. Do not commit the `ratchet/` folder. The script makes and removes its own `C:/Projects/rt-wl-t24-wl1b-service-*` trees.

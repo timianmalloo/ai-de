@@ -1,0 +1,45 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatHeight", value: -5) [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatWidth", value: 0) [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatHeight", value: null) [FAIL]
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.AFloatingStacksBounds_RoundTripThroughTheZoneFile_AsFourOptionalFields_WithNoSchemaBump [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatHeight", value: -5) [53 ms]
+  Error Message:
+   the saved floating stack has no "floatHeight" field to change: {"id":"float-1","surfaces":[{"surfaceId":"sessions","kind":"sessions","title":"Sessions"}],"activeIndex":0}
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(String field, Nullable`1 value) in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneFloatingBoundsStoreTests.cs:line 86
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatWidth", value: 0) [7 ms]
+  Error Message:
+   the saved floating stack has no "floatWidth" field to change: {"id":"float-1","surfaces":[{"surfaceId":"sessions","kind":"sessions","title":"Sessions"}],"activeIndex":0}
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(String field, Nullable`1 value) in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneFloatingBoundsStoreTests.cs:line 86
+   at InvokeStub_ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(field: "floatHeight", value: null) [6 ms]
+  Error Message:
+   the saved floating stack has no "floatHeight" field to change: {"id":"float-1","surfaces":[{"surfaceId":"sessions","kind":"sessions","title":"Sessions"}],"activeIndex":0}
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(String field, Nullable`1 value) in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneFloatingBoundsStoreTests.cs:line 86
+   at InvokeStub_ZoneFloatingBoundsStoreTests.PartialOrEmptyBounds_ReadAsNoBounds_AndTheStackStillLoads(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.AFloatingStacksBounds_RoundTripThroughTheZoneFile_AsFourOptionalFields_WithNoSchemaBump [8 ms]
+  Error Message:
+   the saved floating stack has no bounds fields: {"id":"float-1","surfaces":[{"surfaceId":"sessions","kind":"sessions","title":"Sessions"}],"activeIndex":0}
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneFloatingBoundsStoreTests.AFloatingStacksBounds_RoundTripThroughTheZoneFile_AsFourOptionalFields_WithNoSchemaBump() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneFloatingBoundsStoreTests.cs:line 52
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     2, Skipped:     0, Total:     6, Duration: 116 ms - AiDe.Core.Tests.dll (net10.0)

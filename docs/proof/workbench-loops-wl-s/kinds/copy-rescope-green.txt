@@ -1,0 +1,2 @@
+Copy re-scope (mechanical, Leader ruling req-01M59WCW4YBGJ1AXQEVK63KN0J withdrawn): CenterEmptyCopyTests.
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 926 ms - AiDe.App.Tests.dll (net10.0)

@@ -1,45 +1,33 @@
-# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Opus · node 1 (investigate)
+# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Sonnet · node 4 (the drain heading)
 
-**Goal (Owner, 2026-10-19 ~15:50Z, high priority, ahead of every WL-1b join):** the user submitted a prompt during the
-WL-1a walk-through, and the compiled prompt did not show in the compiled field. This is a **recurrence of Ruling 96**
-(`docs/notes/addendum-c-council-rulings.md`, "Ruling 96 — F-E", about :1626-1634). Ruling 96's cause was only **Inferred**
-("consistent with the belt not re-measuring on expand"), and its measurement was made a condition.
-**This node runs `/investigate`** (`.claude/skills/investigate/SKILL.md`). It **stops for review before any fix lands**:
-the Owner reads the root cause first.
-**Done when, all in this node:**
-1. **Reproduced on the real composed tree with an actual submit.** Use the real `WorkbenchShell` / `SessionDocumentSurface`
-   / `ComposerSurface` composition, as the existing on-screen composer tests build it. Submit with Ctrl+Enter or the send
-   path the user takes (demo script step 5, `docs/proof/workbench-loops-wl-1a.md`), not just a draft change. Then expand
-   the compiled disclosure. Record `_compiled.Text.Length`, `_compiled.ActualHeight` and `IsExpanded`, before and after
-   the submit, in `docs/proof/workbench-loops-wl-1a/compiled-field/reproduction.txt`. Say which one is wrong.
-2. **The verified root cause, by file:line.** Verified means you observed it. A plausible chain is not enough (NG rules).
-   If the cause differs before and after a submit, name both.
-3. **Why Ruling 96's control did not catch it, as a defect class.** Open the test Ruling 96's condition (2) produced
-   (find it; it extends "the existing on-screen test" to the content). State what it drives and what it does not drive.
-   For example: a draft change but no submit, or a fixture composition but not the real one. Append
-   `DC-NEW-wl-t28-compiled` to `docs/lessons/defect-classes.md` with class / sweep / derive / prevent. The sweep covers
-   every other test that asserts composer content on a path the user's gesture does not take.
-4. **A red test, committed red only.** It drives a real submit and asserts that the expanded field shows the non-empty
-   compiled text (`Text == RenderView(draft).Text`, non-empty, `ActualHeight ≥ CompiledPromptMinHeight`). Save
-   `docs/proof/workbench-loops-wl-1a/compiled-field/compiled-after-submit-red.txt`. **Do not write the fix in this node.**
-5. `docs/proof/workbench-loops-wl-1a/compiled-field/README.md`, with the root cause, the class, the phased repair plan (code + tests) and its confidence labels.
-   Also `handoff.md`.
+**Goal (Owner's direction under Ruling 181):** the compiled field's heading never states something false.
+**Nodes 1–3 are joined on main** (n3 at `367f4de4`). A submit shows `Compiled prompt — sent as b{n}`. A queued send shows
+`Compiled prompt — queued as b{n}`. A second press never resends, and the gesture-oracle class gate is in place.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 12 min by mail. The Leader extends
-the kick for this node to 20 min, because reproduction on the real tree is one long check; rule 16's 120 calls / 200k cap
-still binds.
+**This node (n4). Each check is red then green, through the real gesture, with a turn in flight
+(`ComposerGesture.CtrlEnterThenWait`):**
+- **(A) Drain → sent.** Queue b2 behind b1, then let b1 complete. When the queue drains and b2 is sent, and the field is
+  still showing b2 because the user has typed nothing since, the heading switches from `queued as b2` to
+  `Compiled prompt — sent as b2`. The text, the UIA name and the ItemStatus switch with it. If the user has typed
+  since, nothing changes: the live draft stays. Red: assert `sent as b2` after b1 completes, with no keystroke. Today
+  it still reads `queued as b2`. Node 3's hand-off: nothing re-renders the field on the drain, and the fix is expected
+  to be one `ShowCompiled` call on the drain path. Open the code first (rule 14).
+- **(B) Drain refused → still queued.** b1 fails, or is stopped, so b2 is held and not sent (Ruling 95: the drain sends
+  only on Completed/Answered). The heading stays `queued as b2`, because that is still true. Red: plant the switch on
+  every drain outcome (mutation), and show this test fails. Then revert.
+- **(C) The resend guard after the switch.** After (A)'s switch to `sent as b2`, a press with no keystroke sends
+  nothing, as node 2's guard does. Prove the red with a planted leak, recorded as a mutation red.
 
-## Desktop hold (DC-NEW-wl-leader3)
-Other tracks may run App UI tests in parallel. A result that says "Ruling 115 desktop hold is occupied" is **not a
-failure and not a pass**: record it, wait two minutes, and re-run. Rules 19 and 20 hold.
+**Tier** T2 · **fan-out** 0 · **budget** 80 tool calls · 150k · **kick** at 12 min by mail.
+**Rule 22:** this node hands off for a join, so run the ratchet before the done mail (the derived-view exception applies).
 
 ## Owned authored paths
-New tests under `tests/AiDe.App.Tests/Workbench/Composer/` (or beside the existing on-screen composer test; name the
-file in handoff.md); `docs/lessons/defect-classes.md` (your DC-NEW entry only); `docs/proof/workbench-loops-wl-1a/compiled-field/**`. **Reading any file is
-free. Editing product code is not in this node.**
+`src/AiDe.App/Workbench/Composer/ComposerSurface.cs` (the drain path's `ShowCompiled` call only), the compiled-field tests
+under `tests/AiDe.App.Tests/Workbench/Composer/`, and `docs/proof/workbench-loops-wl-1a/compiled-field/**`. `ComposerSendGate.cs` and `SessionDocumentSurface.cs`
+are read only.
 
 ## Not in scope
-The fix (node 2, after the Owner's read of the root cause). The goal / done-criteria prefill (a separate assessment, T29).
+The prefill (T30). It follows on this file after this node joins.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
@@ -78,7 +66,7 @@ and a default.
 8. **Context ceiling 400k tokens.** Near ~350k: commit what is green, write
    `docs/proof/workbench-loops-wl-1a/compiled-field/handoff.md` (what is done, what is red, the next step), and stop with a partial report.
 9. **Commit on your branch only; do not push; do not merge.** Commit messages end with
-   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The Leader joins via `conductor-join.py`.
+   `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. The Leader joins via `conductor-join.py`.
 10. **No dead code survives** (HYG-A): no commented-out code, no unused members.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
     `DC-NEW-wl-t28-compiled` (class / sweep / derive / prevent), in the same commit as the fix.
@@ -124,3 +112,18 @@ and a default.
     post on it reads `USER DEMO IN PROGRESS`, with no later `USER DEMO DONE`, run **no App suite, no UI probe and no
     real-lane test**, in any tree. Core suites and docs-only work may continue. Read the board (rule 19's command) before
     every App, probe or real-lane run.
+21. **Every output file you write stays in your own tree (DC-NEW-wl-leader3, 2nd instance).** Test logs, suite runs and
+    scratch files go under `docs/proof/workbench-loops-wl-1a/compiled-field/` or a folder named for your track inside `C:\Projects\ai-de-wl1a-compiled-field`. Never use the session
+    scratchpad, `%TEMP%` or any other shared path: sub-agents share one session scratchpad, and T21's suite overwrote
+    T28's result files there (2026-10-19 ~16:05Z), so T28 had to discard a whole suite run.
+22. **A node that hands off for a join runs the step-8 ratchet first (DC-NEW-wl-leader3, 3rd instance).** The T11 join
+    was refused by three gates that no track suite runs: `docs-graph.py validate` (an orphan hand-off),
+    `tools/verify-cited-controls.py` (a comment citing a renamed test) and `tools/verify-surface-ownership.py` (a new
+    `*Surface.cs` with no owner in `docs/collaboration/session-contracts.md` §2). Before the done mail of a node whose
+    next step is a join, run
+    `RATCHET_OUT_DIR=C:\Projects\ai-de-wl1a-compiled-field/docs/proof/workbench-loops-wl-1a/compiled-field/ratchet sh .agents/briefs/workbench-loops/run_ratchet.sh <origin/main sha> <your head sha> wl-t28-compiled`
+    from `C:\Projects\ai-de-wl1a-compiled-field`. Save its refusal lines and last line in `docs/proof/workbench-loops-wl-1a/compiled-field/ratchet.txt`. A `REFUSE green->red` is yours to fix
+    before done, **except the three derived-view gates**: `docs-graph.py` (when its only defect is index drift),
+    `tools/verify-derived-views.py` and `tools/verify-site-figures.py`. Join step 6 regenerates those views before the
+    join's own ratchet, so a branch head is always red there (T11 n13, 2026-10-19). Name them in `ratchet.txt` as
+    expected. Do not commit the `ratchet/` folder. The script makes and removes its own `C:/Projects/rt-wl-t28-compiled-*` trees.

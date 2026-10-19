@@ -1,0 +1,42 @@
+T21 step 0 - WebView2 float probe (ADR-0015 risk), measured 2026-10-19 on this machine
+Test: tests/AiDe.App.Tests/Workbench/WebView2FloatProbeTests.cs FloatingAndRedockingTheCanvasAndTheComposer_KeepsTheProcessAndBothBrowsersAlive
+Subjects: the app's real CanvasSurface (windowed WebView2) and a real ComposerSurface (a notebook's composer), each in an AvalonDock 5.0.0 LayoutDocument.
+Float: LayoutDocument.Float() (AvalonDock's own floating window, LayoutDocumentFloatingWindowControl). Redock: a fresh Manager.Layout, the same re-parent WorkbenchAdapter.Render does.
+
+RESULT: the process SURVIVED. No crash. Both browsers ran script (6*7 = 42) docked, floated and redocked; the canvas initialised once.
+
+Library note: AvalonDock's LayoutDocument.Dock() left the canvas floating once its original pane had emptied (measured in an earlier run of this probe: after canvas Dock() 'canvas floating True'). The product does not use Dock(); it redocks through the model and Render.
+Limit: the host window is off-screen (Sta.Pump default); pixels were not sampled. Liveness is CoreWebView2 non-null plus ExecuteScriptAsync.
+
+--- dotnet test output ---
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:09.24]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.WebView2FloatProbeTests.FloatingAndRedockingTheCanvasAndTheComposer_KeepsTheProcessAndBothBrowsersAlive [9 s]
+  Standard Output Messages:
+ canvas docked: CoreWebView2 alive, script 6*7 = 42
+ composer docked: CoreWebView2 alive, script 6*7 = 42
+ floating windows after canvas float: 1
+ canvas floated: CoreWebView2 alive, script 6*7 = 42
+ floating windows after composer float: 2
+ composer floated: CoreWebView2 alive, script 6*7 = 42
+ after redock by a fresh layout: floating windows 0
+ composer redocked: CoreWebView2 alive, script 6*7 = 42
+ canvas redocked: CoreWebView2 alive, script 6*7 = 42
+ canvas initialisations: 1
+ process survived float and redock of both WebView2 hosts
+
+
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 9.5692 Seconds

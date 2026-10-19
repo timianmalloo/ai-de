@@ -212,6 +212,33 @@ for is kept as a reflection and source test — `Perspective` has no `Body` memb
 `PerspectiveBody` type, and no `.cs` file under `src/` names `FullWindow` — so re-adding a full-window
 body fails the suite. Recorded conformance deviation from §1(a)'s wording.
 
+**D6 — a kind's opener is one of three, and every switch names all three.** §4's openers are a menu
+(`SurfaceEntry.Derived`), a verb (`SurfaceEntry.Verb`), or a turn action (`SurfaceEntry.TurnAction`), as
+the Owner's review of 2026-10-19 accepted. The third exists because the `execution` kind opens from a
+turn's *Open the log* action on its notebook (T11 node 4): a View-menu entry and a catalog verb both
+misname that door. The rule, as the Owner amended it at T11 node 11, has three parts, so that no type can fall
+into a silent default:
+
+1. A switch **statement** over `SurfaceEntry` lists `Derived`, `Verb` and `TurnAction`, each as its own case,
+   with no `default` case.
+2. A switch **expression** over `SurfaceEntry` lists the same three arms. Its discard arm throws
+   `UnreachableException` naming the type, and never returns a value.
+3. One reflection test enumerates every `SurfaceEntry` subtype. It asserts that each consumer handles each one
+   without reaching that throw: `PerspectiveMenu`, `CenterEmptyState`, `SurfaceContentFactory`, and any other
+   reader. The test is `EverySurfaceEntryIsHandledByEveryReaderTests`. Each reader's arm is a switch expression in
+   the test, and the test checks each reader's real behaviour against its arm. A source scan pins the set of
+   `src/` files that name `SurfaceEntry`, so a new reader fails until it has its arm. A planted fourth subtype
+   failed the test and named all three readers (`kinds/D6-reflection-red.txt`).
+
+A reader that needs one type only (`is SurfaceEntry.Derived`, as `PerspectiveMenu` and `CenterEmptyState` do
+today) is a test, not a switch, so parts 1 and 2 do not apply to it. Part 3 still covers it. No `switch` over
+`SurfaceEntry` exists in `src/` (grep at T11 node 11).
+
+**Why part 2 exists (verified at node 11).** C# 14 does not treat `SurfaceEntry` (an abstract record with a
+private constructor) as a closed hierarchy. A switch expression with the three type arms and no discard is
+`error CS8509` under `TreatWarningsAsErrors` (`Directory.Build.props:5`), so "no default arm" cannot be built
+for an expression. The probe's output is `kinds/D6-cs8509-probe.txt`.
+
 ## §3 — Kind re-admission (T4 builds)
 
 Every one of today's 20 kind rows (`SurfaceContentFactory.cs:135-284`) is admitted somewhere:
@@ -267,11 +294,24 @@ Left. The oracle, re-run on the Factory host:
 - They **bind** T8's models (`Dictionary<NotebookId, NotebookModel>`, the attempt host); the surface never
   owns a token or a queue slot (ADR-0045 §4; AC-D01a).
 - `session-document` placements in a saved slot map to one `notebook` (same identity) plus, when an
-  attempt was live, one `execution`; `prompt` placements map to `notebook` drafts or drop with a report.
-  `session-document` and `prompt` then join `RetiredKinds` with the sentence the report shows.
+  attempt was live, one `execution`. `session-document` then joins `RetiredKinds` with the sentence the
+  report shows.
+- **`prompt` is kept (Ruling 173, amending this section).** `prompt` stays an admitted kind and is not in
+  `RetiredKinds`. The slot migration leaves `prompt` placements as they are, and the report of the restore
+  that migrates a slot says so once: "Kept 1 prompt draft as it was: prompt drafts do not become
+  notebooks." (plural: "Kept N prompt drafts as they were: …"). `prompt` is retired into notebook drafts
+  **only when the notebook provides all six** of the prompt draft's capabilities, each proven by a test
+  (T11 node 8's survey; Ruling 173 (1)–(2)):
+  1. terminal send: transfer the draft into a ready terminal session's input (US-ED6, US-ED7);
+  2. target choice: pick which ready terminal receives it;
+  3. the draft kept across a restart, per keystroke;
+  4. opening beside a terminal;
+  5. the menu entry ("New prompt draft" under `_Prompt`);
+  6. the "no ready terminal" blocked reason.
+  These six are the retirement's precondition, owned by whichever slice builds them. No partial retirement.
 - T11 flips Factory's `Landing` to `Center` (D2) in the same change, and removes the `simplify:` marker.
-- New kinds follow the row contract: a UIA name, an allow-list entry, a derived or verb opener, an entry
-  in `KindAllowListsTests`' column table.
+- New kinds follow the row contract: a UIA name, an allow-list entry, an opener (D6), an entry in
+  `KindAllowListsTests`' column table.
 
 ## §5 — Three hosts and the A↔B↔C spike (T9 builds)
 

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 223 members, 76% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 224 members, 76% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**37 public types · 223 public members · 76% documented.**
+**37 public types · 224 public members · 76% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -758,7 +758,7 @@ refusal is announced (`THR-0002`), never silent.
 | `SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | A surface that **binds** to a workspace-owned model (ADR-0045 §4): disposing the surface leaves the model, its thread and its revisions to the next surface built over it. The shell's construction site uses this one. |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
 | `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
-| `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for — `session-document`, never `session` (Ruling 18). |
+| `string Kind = "notebook"` | The surface kind `SurfaceContentFactory` builds this for: `notebook` (ADR-0045 §2). This surface binds the `NotebookModel`, so it is the notebook kind. The `session-document` kind it replaces is retired, and a saved l… |
 | `string PaneHiddenCopy = "Pane hidden. The run continues."` | Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a). |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `NotebookModel Notebook { get; }` | The notebook this surface is bound to (ADR-0045 §4) — the shell's, or this surface's own when built from a bare view model. |
@@ -771,6 +771,7 @@ refusal is announced (`THR-0002`), never silent.
 | `RunChannelSessionThread ReadModel` | The read model the thread renders. CV-1's implementer; a test feeds it directly. |
 | `ConsoleSurface Split` | The Console split, whether or not it is open — and the console document's one instance when the shell hosts it (Ruling 89). |
 | `Action<int?>? ConsoleRequested { get; set; }` | The shell's verb (Ruling 89; SH-4.2's seam): when set, the header's Console toggle and a turn's *Open the log* open or focus the session's Console as a document in the Center zone through it — with the turn ordinal to… |
+| `Action<int>? ExecutionRequested { get; set; }` | The shell's execution opener (the WL-S design's §4): when set, a turn's *Open the log* opens or focuses that turn's attempt's execution in the Bottom zone through it, with the turn's ordinal. Unset (a document compose… |
 | `Action? ConsoleDismissed { get; set; }` | The shell's close (the other half of the seam): when hosted, unchecking the header's toggle closes the Console document — the toggle's state is the document's open state, honestly, so an AT's Toggle pattern (which fli… |
 | `void ReflectConsole(bool open)` | Reflects the hosted Console's open state on the header's toggle WITHOUT dispatching the verb — the shell's, after an open, a focus, a close, or a refused open. |
 | `bool IsSplitOpen` | Whether the Console split is open beside the thread (Ruling 74: on demand). |

@@ -1,0 +1,43 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(fixture: "zone-layout-floating-reserved-id.json", leftOut: "Sessions A") [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(fixture: "zone-layout-floating-duplicate-id.json", leftOut: "Notebook B") [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(fixture: "zone-layout-floating-reserved-id.json", leftOut: "Sessions A") [73 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.InvalidOperationException: duplicate node id 'zone-left'
+   at AiDe.Core.Workbench.Layout.AssertInvariant() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\LayoutModel.cs:line 199
+   at AiDe.Core.Workbench.ZonesToTree.ToTree(WorkbenchLayout zones) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZonesToTree.cs:line 68
+   at AiDe.Core.Workbench.ZoneBackedLayoutService.get_Current() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneBackedLayoutService.cs:line 92
+   at AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.<>c__DisplayClass5_0.<AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows>b__1() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutFloatingIdInUseTests.cs:line 38
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(String fixture, String leftOut) in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutFloatingIdInUseTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(fixture: "zone-layout-floating-duplicate-id.json", leftOut: "Notebook B") [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.InvalidOperationException: duplicate node id 'float-1'
+   at AiDe.Core.Workbench.Layout.AssertInvariant() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\LayoutModel.cs:line 199
+   at AiDe.Core.Workbench.ZonesToTree.ToTree(WorkbenchLayout zones) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZonesToTree.cs:line 68
+   at AiDe.Core.Workbench.ZoneBackedLayoutService.get_Current() in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneBackedLayoutService.cs:line 92
+   at AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.<>c__DisplayClass5_0.<AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows>b__1() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutFloatingIdInUseTests.cs:line 38
+   at Xunit.Record.Exception(Action testCode) in /_/src/xunit.core/Record.cs:line 25
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(String fixture, String leftOut) in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutFloatingIdInUseTests.cs:line 41
+   at InvokeStub_ZoneLayoutFloatingIdInUseTests.AFloatingStackWhoseIdIsInUse_IsLeftOut_NamedByTitle_AndTheRestoreNeverThrows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 86 ms - AiDe.Core.Tests.dll (net10.0)

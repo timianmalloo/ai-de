@@ -1,0 +1,41 @@
+T28 n1 - reproduction of "the compiled prompt did not show in the compiled field after a submit" (WL-1a demo, 2026-10-19)
+Tree: C:\Projects\ai-de-wl1a-compiled-field, branch wl1a-compiled-field, base 624b46c4. Run 2026-10-19 ~16:05Z.
+Source: tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterASubmitTests.cs, full output in compiled-after-submit-red.txt.
+
+Composition (the product's, as WorkbenchShell.cs:3586-3601 builds it):
+  NotebookModel over a real schema-v2 store, Runs bound to a real AttemptHost (BoundaryDispatcher), stub ACP lane;
+  SessionDocumentSurface(notebook) shown in a WPF window; its ComposerSurface configured with ComposerFields.GoalBlock()
+  (the form SessionComposerBinder.cs:164 configures); default mechanical compile mode (one press sends, demo step 5).
+Gesture: words through ComposerSurface.SetFieldText (the page's input verb), Ctrl+Enter through
+  ComposerSurface.OnAcceleratorKey(0x0D, ctrl, keydown), disclosure opened through its header's IToggleProvider.
+Words: "why are we using grep? is graphify and obsidian vault not configured?" (69 chars; Ruling 96's operator message).
+
+A. The user's order - type, Ctrl+Enter, then open the disclosure
+  before the submit:                   IsExpanded False · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00  (collapsed; arrange-valid False)
+  after the submit, disclosure closed: IsExpanded False · _compiled.Text.Length 0  · _compiled.ActualHeight 0.00  (collapsed; arrange-valid False)
+  after the submit, disclosure opened: IsExpanded True  · _compiled.Text.Length 0  · _compiled.ActualHeight 48.00 (arrange-valid True)
+
+B. The sticky order - open, type, Ctrl+Enter
+  open, typed, before the submit:      IsExpanded True  · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00
+  open, after the submit:              IsExpanded True  · _compiled.Text.Length 0  · _compiled.ActualHeight 48.00
+
+WHICH ONE IS WRONG: _compiled.Text.Length. It is 69 before the submit and 0 after it, in both orders.
+  _compiled.ActualHeight is 48.00 whenever the disclosure is open = CompiledPromptMinHeight (ComposerSurface.cs:307). Not wrong.
+  IsExpanded follows the header click, and the submit does not close it. Not wrong.
+  Ruling 96's inferred cause (the belt not re-measuring on expand, 0 px) is NOT reproduced: the box is laid out at its floor.
+
+The writer of the empty text, observed (every re-render during the Ctrl+Enter gesture, with its product frames):
+  render -> 69 chars via ComposerSurface.RenderCompiledView <- ComposerSurface.Send <- ComposerSurface.OnAcceleratorKey
+  render -> 0 chars  via ComposerSurface.RenderCompiledView <- ComposerSurface.BeginNextTurn <- SessionDocumentSurface.Admit
+                     <- SessionDocumentSurface.Launch <- ComposerSendGate.Send <- ComposerSurface.SendThroughTheGate
+                     <- ComposerSurface.Send <- ComposerSurface.OnAcceleratorKey
+
+Where the sent bytes went:
+  sent prompt 69 chars · RenderView(next draft) 0 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+  (the thread row's own "Compiled prompt of b1" disclosure, ThreadFeed.cs:664-680, collapsed by default)
+
+Ruling 96's own tests on the same tree (all pass; output read 2026-10-19):
+  Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(0|1|40):
+    "compiled 48.0 · text 0 chars" at every count - Text == RenderView(draft).Text holds as "" == "".
+  Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText:
+    "compiled arrange-valid True height 48.00 ... text 69 chars" - a bare ComposerSurface, draft set directly, never sent.

@@ -1,0 +1,107 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.AFloatingStackWithNoSurfacesField_IsLeftOut_TheZonesRestore_AndTheReadSaysSo [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.ASavedLayoutWithNoZonesField_RestoresItsFloatingWindow_WithEmptyZones_AndSaysPartWasLeftOut [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.AFloatingStackWithNoSurfacesField_IsLeftOut_TheZonesRestore_AndTheReadSaysSo [34 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.ArgumentNullException: Value cannot be null. (Parameter 'source')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.Where[TSource](IEnumerable`1 source, Func`2 predicate)
+   at AiDe.Core.Workbench.ZoneLayoutStore.FromStackDto(ZoneStackDto dto, Func`2 available) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 279
+   at AiDe.Core.Workbench.ZoneLayoutStore.<>c__DisplayClass10_0.<Read>b__1(ZoneStackDto f) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 201
+   at System.Linq.Enumerable.ListSelectIterator`2.MoveNext()
+   at System.Linq.Enumerable.IEnumerableWhereIterator`1.ToArray()
+   at System.Collections.Immutable.ImmutableExtensions.FallbackWrapper`1.get_Count()
+   at System.Collections.Immutable.ImmutableList`1.CreateRange(IEnumerable`1 items)
+   at AiDe.Core.Workbench.ZoneLayoutStore.Read(IReadOnlySet`1 availableSurfaces, IReadOnlySet`1 restorableKinds) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 200
+   at AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.<>c__DisplayClass6_0.<AFloatingStackWithNoSurfacesField_IsLeftOut_TheZonesRestore_AndTheReadSaysSo>b__0() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutPartlyReadTests.cs:line 49
+   at Xunit.Record.Exception(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 47
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.AFloatingStackWithNoSurfacesField_IsLeftOut_TheZonesRestore_AndTheReadSaysSo() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutPartlyReadTests.cs:line 51
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.ASavedLayoutWithNoZonesField_RestoresItsFloatingWindow_WithEmptyZones_AndSaysPartWasLeftOut [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.ArgumentNullException: Value cannot be null. (Parameter 'source')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.TryGetFirst[TSource](IEnumerable`1 source, Func`2 predicate, Boolean& found)
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
+   at AiDe.Core.Workbench.ZoneLayoutStore.Read(IReadOnlySet`1 availableSurfaces, IReadOnlySet`1 restorableKinds) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 191
+   at AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.<>c__DisplayClass5_0.<ASavedLayoutWithNoZonesField_RestoresItsFloatingWindow_WithEmptyZones_AndSaysPartWasLeftOut>b__0() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutPartlyReadTests.cs:line 31
+   at Xunit.Record.Exception(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 47
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.ZoneLayoutPartlyReadTests.ASavedLayoutWithNoZonesField_RestoresItsFloatingWindow_WithEmptyZones_AndSaysPartWasLeftOut() in C:\Projects\ai-de-wls-float\tests\AiDe.Core.Tests\Workbench\ZoneLayoutPartlyReadTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     1, Skipped:     0, Total:     3, Duration: 48 ms - AiDe.Core.Tests.dll (net10.0)
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-float\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.27]     AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(fixture: "zone-layout-no-zones.json") [FAIL]
+[xUnit.net 00:00:00.28]     AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(fixture: "zone-layout-floating-no-surfaces.json") [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(fixture: "zone-layout-no-zones.json") [56 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.ArgumentNullException: Value cannot be null. (Parameter 'source')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.TryGetFirst[TSource](IEnumerable`1 source, Func`2 predicate, Boolean& found)
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source, Func`2 predicate)
+   at AiDe.Core.Workbench.ZoneLayoutStore.Read(IReadOnlySet`1 availableSurfaces, IReadOnlySet`1 restorableKinds) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 191
+   at AiDe.App.Workbench.LayoutPersistence.Restore() in C:\Projects\ai-de-wls-float\src\AiDe.App\Workbench\LayoutPersistence.cs:line 157
+   at AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.<>c__DisplayClass1_0.<AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut>b__1() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ZoneLayoutPartlyReadRestoreTests.cs:line 31
+   at Xunit.Record.Exception(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 47
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(String fixture) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ZoneLayoutPartlyReadRestoreTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(fixture: "zone-layout-floating-no-surfaces.json") [11 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   System.ArgumentNullException: Value cannot be null. (Parameter 'source')
+   at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.Where[TSource](IEnumerable`1 source, Func`2 predicate)
+   at AiDe.Core.Workbench.ZoneLayoutStore.FromStackDto(ZoneStackDto dto, Func`2 available) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 279
+   at AiDe.Core.Workbench.ZoneLayoutStore.<>c__DisplayClass10_0.<Read>b__1(ZoneStackDto f) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 201
+   at System.Linq.Enumerable.ListSelectIterator`2.MoveNext()
+   at System.Linq.Enumerable.IEnumerableWhereIterator`1.ToArray()
+   at System.Collections.Immutable.ImmutableExtensions.FallbackWrapper`1.get_Count()
+   at System.Collections.Immutable.ImmutableList`1.CreateRange(IEnumerable`1 items)
+   at AiDe.Core.Workbench.ZoneLayoutStore.Read(IReadOnlySet`1 availableSurfaces, IReadOnlySet`1 restorableKinds) in C:\Projects\ai-de-wls-float\src\AiDe.Core\Workbench\ZoneLayoutStore.cs:line 200
+   at AiDe.App.Workbench.LayoutPersistence.Restore() in C:\Projects\ai-de-wls-float\src\AiDe.App\Workbench\LayoutPersistence.cs:line 157
+   at AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.<>c__DisplayClass1_0.<AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut>b__1() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ZoneLayoutPartlyReadRestoreTests.cs:line 31
+   at Xunit.Record.Exception(Func`1 testCode) in /_/src/xunit.core/Record.cs:line 47
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(String fixture) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ZoneLayoutPartlyReadRestoreTests.cs:line 33
+   at InvokeStub_ZoneLayoutPartlyReadRestoreTests.AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 73 ms - AiDe.App.Tests.dll (net10.0)

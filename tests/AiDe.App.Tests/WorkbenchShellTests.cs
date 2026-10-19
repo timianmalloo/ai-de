@@ -251,29 +251,28 @@ public sealed class WorkbenchShellTests
         Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
     }
 
-    // SH-4.1/4.2 on the Factory host (the WL-S design's §3 oracle 2): "Show ledger" with a session
-    // document active in the Left docks the ledger in the Center by the kind's zone rule — never
-    // tabbed beside the session by the placement policy, where it would become the Left's active tab
-    // and so Factory's landing. RED before the re-row: the ledger was not admitted by the initial host
-    // (sp3/sh41-factory-red.txt).
+    // SH-4.1/4.2 on the Factory host (the WL-S design's §3 oracle 2), re-scoped by ADR-0045 §1(a):
+    // "Show ledger" with the notebook in the Center docks the ledger in the Center by the kind's zone
+    // rule, and the landing is the Center's active tab. RED before the re-row: the ledger was not
+    // admitted by the initial host (sp3/sh41-factory-red.txt).
     [Fact]
-    public void ShowLedger_InFactory_WithASessionActiveInTheLeft_DocksInTheCenter_AndTheLandingStaysTheSession()
+    public void ShowLedger_InFactory_WithTheNotebookInTheCenter_DocksInTheCenter_AndTheLandingIsTheCentersActiveTab()
     {
         var (zone, landing) = WithShell((shell, _) =>
         {
             var factory = shell.Hosts[0];
-            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface("session:s1", "notebook", "S1"))).Applied);
             factory.Adapter.Render();
             factory.Adapter.ActivateInView("session:s1");
 
             Assert.True(factory.Controller.Execute("surface.show.ledger"));
 
             var ledger = factory.Service.Zones.AllSurfaces().SingleOrDefault(s => s.Kind == "ledger");
-            return (ledger is null ? null : factory.Service.Zones.FindZoneOf(ledger.SurfaceId), PerspectiveShell.LandingSurfaceFor(factory));
+            return (ledger is null ? null : factory.Service.Zones.FindZoneOf(ledger.SurfaceId), PerspectiveShell.LandingSurfaceFor(factory) == ledger?.SurfaceId);
         });
 
         Assert.Equal(ZoneId.Center, zone);
-        Assert.Equal("session:s1", landing);
+        Assert.True(landing, "the landing is not the Center's active tab, the ledger the operator just showed");
     }
 
     // The D&P reviewer's finding on the one-instance rule at open: a "Show <one-instance kind>" whose
