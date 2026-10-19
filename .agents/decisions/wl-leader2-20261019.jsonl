@@ -275,3 +275,7 @@
 {"agent": "wl-leader2-20261019", "at": 1792399836.378988, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792399836.4116924, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792399836.4462998, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792399891.210723, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/leader_precommit.py", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792399891.2448666, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792399891.2795122, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792399891.3086202, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader2-20261019", "wi": ""}
