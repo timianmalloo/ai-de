@@ -169,3 +169,14 @@ GUI steps not yet run by a person are **owed to the user**.*
 ### Still owed to the user (not observable by the Owner's session)
 - Every GUI step above (1–7, 9) needs a person at the window. Each is labelled not observed until run.
 - The native IME check for E-1 (WL-2).
+
+## Acceptance (Owner, 2026-10-19)
+
+**WL-1a is ACCEPTED, PROVISIONALLY.** The Owner (`wl-owner-20261018`) ran these on a clean detached tree at `origin/main` `ba2b7e5e`:
+
+- `dotnet build AiDe.sln -c Release`: 0 warnings, 0 errors.
+- Core: 3019 passed, 0 failed, 1 skipped.
+- App: 1123 passed, 1 skipped. `SolutionTreeChordTests` reported NOT CHECKED in the Owner's environment ("foreground not held", refused alone too). Its evidence is the Leader's solo PASS on the T17 join head (`restored-turns/solution-tree-chord-solo-on-join-head.txt`).
+- **Second recorded real-lane run:** `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` PASSED (1/1, 15 s) with `AIDE_REAL_ADAPTER_ROOT` set to the repository's `spikes/acp-subscription-lane` folder, on 2026-10-19. The run spent real adapter usage on the user's account. The first recorded run is `host/real-lane-stop/` (T5 node 2).
+
+**Not observed: the GUI demo (steps 1–9 above, including WL-0's folded GUI steps 2–4).** The Owner's session has no desktop control, so these steps are owed to the user. If any step fails, WL-1a is reopened.

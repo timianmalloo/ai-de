@@ -4,3 +4,4 @@
 {"agent": "wl-t18-knowledge", "at": 1792405983.5497637, "kind": "claim", "path": "src/AiDe.App/Workbench/CanvasPage.cs", "seq": 4, "session": "wl-t18-knowledge", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t18-knowledge", "at": 1792405983.718362, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 5, "session": "wl-t18-knowledge", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t18-knowledge", "at": 1792405983.9110942, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeTests.cs", "seq": 6, "session": "wl-t18-knowledge", "ttl": 300.0, "wi": "workbench-loops"}
+{"action": "add", "agent": "wl-t18-knowledge", "at": 1792406362.038038, "deadline_at": 1792408162.038038, "id": "req-01M59VX5XV8Y1ZHYGH65C14YM8", "kind": "request", "path": "-", "seq": 7, "session": "wl-t18-knowledge", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
