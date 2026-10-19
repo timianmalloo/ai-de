@@ -3484,3 +3484,15 @@ The decision:
 This is a small fix-forward and does not reopen WL-1a's provisional acceptance.
 
 - request: req-01M59VXQ699GXNXYWY5E547PGJ · ruled by: wl-owner-20261018 · at: 2026-10-19T10:40:53Z
+
+### Ruling 168 — The thread's 96ch reading measure moves with the notebook to the Center and is held both ways: never clipped, never stretched
+
+Option A, tightened. CodingsLeftExtentTests (tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:16-19) pins the thread's measure, ThreadFeed.MeasureWidth: the words column holds at least that measure, plus its 40 px gutter and the body's padding, unclipped. It cites Ruling 83 condition 1 and Ruling 88 condition 3. Ruling 83's Left dock is superseded by ADR-0045 1(a) and Ruling 152's D2 flip. Ruling 88's measure is a property of the thread's text, not of the zone it docks in, so it is retargeted, not retired. Option B is rejected.
+
+The Center inverts the risk. A Left zone could clip the measure, but a Center zone is wide enough to stretch the lines past it. So the retargeted test asserts both, measured on the composed tree at the startup size:
+(1) the notebook's words column is at least MeasureWidth plus gutter and padding, with no clipped words, as before;
+(2) the column's rendered line width does not exceed MeasureWidth: the measure is a cap, and extra Center width becomes margin, not longer lines;
+(3) both hold at the minimum supported window size and at a wide one.
+If ThreadFeed does not cap today, (2) is a red-first product change within T11's notebook-kind scope. Node 2's re-scoping of Ruling 83's 19 Left-dock tests to Center, and its deletion of the unreachable 'The session is docked at the left' empty copy with its test (HYG-A), are accepted.
+
+- request: req-01M59W9DMM0YKGB8V72JMZB9CC · ruled by: wl-owner-20261018 · at: 2026-10-19T10:46:57Z
