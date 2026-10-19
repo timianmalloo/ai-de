@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 420 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "083a8732e4bef730240ab1d34d072e612160b542608a7b2d37e9407ded2dfb7e"
+      "sourceSha256": "5f57489baab5fcee025234d8ae517c6984a62d2ec42dee4d3254f17290995e83"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -10837,7 +10837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6e7fe606bbf26a5ccdbf8ef6d1ba31155799b033e605e9ea6096c58cbf5044a"
+      "sourceSha256": "7f4e6c1a11fb83ba07108336efd5d2e5a2ed32eed1eb2ab01c063def45d5ffd2"
     },
     {
       "id": "design-session-profiler",
@@ -12448,7 +12448,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "82b85c46d68492a06b0353ae550e6ab117d4f2cf6462e023584528a97445a609"
+      "sourceSha256": "834f57633d378eac3d0c0bc3cb1a6bebf56975be349d143c7558e0f3130b84cf"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -23426,7 +23426,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4116353cef194df07565bab8597ef6e9c7bde097b11d7c22dd713689de73da5c"
+      "sourceSha256": "c5bdc2727feb36a9be0a4f6fd398d5bbfbe8578a73e2a2bd4892e245fcb2b775"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -23537,14 +23537,14 @@ window.DOCS_INDEX = {
     {
       "id": "wl-s-float-handoff-n1",
       "path": "docs/proof/workbench-loops-wl-s/float/handoff.md",
-      "title": "WL-S T21 float - node 6 hand-off",
+      "title": "WL-S T21 float - node 7 hand-off",
       "type": "proof-pack",
       "status": "active",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "T21 node 6: the owed App suite at node 5's head is 1165/1/2 (the known SolutionTreeChord precondition); floatPane floats the focused tab (close condition 3); a saved floating stack whose id is in use loads with the partial-read sentence; a native float never takes a restored float-view id. Core 3046/0/1, App 1166/1/2. Next is the T21 join, before T11.",
+      "summary": "T21 node 7 (close condition 4): (A) is red at 0097164f. Through the real shell, the palette's Float pane floats a live notebook in the model and draws no floating window, because no controller-routed layout command renders. The fix needs one line in DockHost.cs (seam req-01M5ATF6PNMEW0SX2KKZA34D4D, no reply at the kick). (B) and (C) are drafted, not run. Core 3046/0/1, App 1214/3/2.",
       "tags": [],
       "links": [
         {
@@ -23553,7 +23553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7fa8a0f149c90d3c0e0481991de3c9d5aaadc7b130e808660a2d18b6fccb9a41"
+      "sourceSha256": "0854cc6af11a264bb9dd45f94d6d417e096b386b50c45bcfe2a355a4f0ff5811"
     },
     {
       "id": "wl-s-float-proof",
@@ -23565,7 +23565,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id.",
+      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam.",
       "tags": [],
       "links": [
         {
@@ -23574,7 +23574,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8cfcb72942a1040fa711ef77a40d9bd071131f311dea24585e336eeaad72c63f"
+      "sourceSha256": "cbf09e40d0f0898f40406057bf233b002f6cd1704c5d6ff37d637ea8379a9fd5"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -25503,5 +25503,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "ab5a1172c78c5d6cdb7c5ff8d19fca4a6c5032bc372846efbc8f4e6e5b2f9f92"
+  "graphSha256": "2e83677e32463a9a5c071343ccfaa5dbe7ab1d4426b0a05b95369c8b656097f4"
 };

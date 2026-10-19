@@ -162,3 +162,24 @@
 {"agent": "wl-t21-float", "at": 1792426726.148583, "kind": "release", "path": "docs/proof/workbench-loops-wl-s/float/README.md", "seq": 162, "session": "wl-t21-float", "wi": "workbench-loops"}
 {"agent": "wl-t21-float", "at": 1792426726.2543263, "kind": "release", "path": "docs/proof/workbench-loops-wl-s/float/handoff.md", "seq": 163, "session": "wl-t21-float", "wi": "workbench-loops"}
 {"at": 1792426744.3564923, "from": "wl-t21-float", "kind": "done", "mail_id": "mail-01M5AFB6H482CX0SZ9KAV7ERF1", "ref": null, "session": "wl-t21-float", "to": "wl-leader3-20261019", "type": "mail"}
+{"action": "add", "agent": "wl-t21-float", "at": 1792438409.9363704, "deadline_at": 1792440209.9363704, "id": "req-01M5ATF6PNMEW0SX2KKZA34D4D", "kind": "request", "path": "-", "seq": 165, "session": "wl-t21-float", "to": "wl-leader3-20261019", "type": "request", "wi": "WI-0"}
+{"at": 1792439856.5119004, "from": "wl-t21-float", "kind": "done", "mail_id": "mail-01M5AVVBBZ5SQWTQW0GV3PZGRV", "ref": null, "session": "wl-t21-float", "to": "wl-leader3-20261019", "type": "mail"}
+{"agent": "wl-t21-float", "at": 1792440159.1999729, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchController.cs", "seq": 167, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440159.3843727, "kind": "claim", "path": "src/AiDe.App/Workbench/DockHost.cs", "seq": 168, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440159.585247, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 169, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440159.790207, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/ALiveNotebookFloatsAndRedocksTests.cs", "seq": 170, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440293.014549, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/FloatPaneGuardTests.cs", "seq": 171, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440315.7712522, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/FloatGuardTests.cs", "seq": 172, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440632.7647262, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/LayoutCommandsRenderTests.cs", "seq": 173, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792440730.9736302, "kind": "release", "path": "src/AiDe.App/Workbench/DockHost.cs", "seq": 174, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792440823.8107753, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchAdapter.cs", "seq": 175, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792441242.949113, "kind": "claim", "path": "docs/proof/workbench-loops-wl-s.md", "seq": 176, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792443911.9176505, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchController.cs", "seq": 177, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.0171218, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchAdapter.cs", "seq": 178, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.1114328, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 179, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.2406569, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/ALiveNotebookFloatsAndRedocksTests.cs", "seq": 180, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.3566782, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/FloatPaneGuardTests.cs", "seq": 181, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.4580643, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/FloatGuardTests.cs", "seq": 182, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.5617917, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/LayoutCommandsRenderTests.cs", "seq": 183, "session": "wl-t21-float", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792443912.6728156, "kind": "release", "path": "docs/proof/workbench-loops-wl-s.md", "seq": 184, "session": "wl-t21-float", "wi": "WI-0"}
+{"at": 1792443930.0411925, "from": "wl-t21-float", "kind": "done", "mail_id": "mail-01M5AZQNDSJ37B5BN1CCFTTGMF", "ref": null, "session": "wl-t21-float", "to": "wl-leader3-20261019", "type": "mail"}

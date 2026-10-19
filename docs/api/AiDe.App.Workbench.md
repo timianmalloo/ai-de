@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 96 types, 420 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**96 public types · 419 public members · 69% documented.**
+**96 public types · 420 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2232,6 +2232,7 @@ is indistinguishable from a broken key.
 | `Func<string>? NewTerminalRequested { get; set; }` | Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces. |
 | `Func<string>? RaiseDisputeRequested { get; set; }` | Raises an append-only dispute against the latest scored episode. Set by the shell (US rule 12). |
 | `Func<string, bool, string>? OpenSurfaceRequested { get; set; }` | Opens a surface of the named kind — a derived "New/Show <title>" entry (ADR-0030 rule 3). Set by the shell that can create surfaces; the kind is a row of `Kinds`. The second argument is true for a "Show" entry: the on… |
+| `event Action? LayoutApplied` | Raised after a layout command this controller ran changed the model, so the holder of the view draws it. |
 | `void Bind(UIElement host, Func<string, bool>? execute = null)` | Binds the catalog's gestures on a WPF element — to  when given (the shell-level router of ADR-0031, which resolves the host a command reaches), else to this controller — and this controller's keyboard-resize keys. |
 
 ### `Func<Task<string>>? WorkspaceRefresh { get; set; }`
@@ -2355,6 +2356,22 @@ Opens a terminal running an agent CLI. Set by the shell that can create surfaces
 register for a known session discards its attributes rather than merging them (observed —
 `CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge`),
 so there is no later opportunity to say which harness this session is running.
+
+### `event Action? LayoutApplied`
+
+Raised after a layout command this controller ran changed the model, so the holder of the view draws it.
+
+**Remarks.** **A command used to end at the announcement (DC-NEW-wl-t21-float-d).** Every catalog route — the palette,
+the menu, the window's router — ends here, and nothing rendered after the apply. The palette's *Float pane*
+floated a live notebook in the model and drew no window, while the shell said it was floating; a close, a collapse,
+a maximize and a next tab were in the model and on no screen until an unrelated render.
+
+
+
+
+An event, as `WorkspaceDataChanged` is: the controller owns no view. `DockHost` wires it
+to its adapter's render. Raised after the announcement, so a sentence the render says (DOCK1 for a hidden notebook)
+is the last one heard. A refusal changed nothing and raises nothing.
 
 ## `WorkbenchDiagnostics`
 
