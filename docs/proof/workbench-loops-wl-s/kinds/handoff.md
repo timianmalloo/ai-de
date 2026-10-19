@@ -8,7 +8,61 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+summary: "Node 12 (kicked, after the merge of main with T21 joined): the merge head 31077bb7 brought in no red, and both of the Leader's conflict resolutions hold; the DOCK4 plural is green (KeptPromptsSentence const, c25e3e90, mutation proved); the WL-S demo script has the attended list (Ruling 155 (3)) and the float step pending close condition 4; the node-10 seam guard is green at the merge head. suite-node12: Core 3046/0/1, App 1202/2/2 (the two foreground tests). Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+---
+
+# T11 node 12 — hand-off (rule 16 kick at 17:00Z, during (A))
+
+## Done
+
+- **(0) The suites at the merge head `31077bb7`, before any edit** (`suite-node12-start.txt`, commit `1fd77d91`).
+  - Core 3046 passed, 0 failed, 1 skipped (3047). App 1201 passed, 3 failed, 2 skipped (1206).
+  - The 3: `TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord` (node 11's red, expected) and the two
+    foreground tests (Ruling 155 (3)). **The merge brought in no red.**
+  - **The Leader's two resolutions are right.** DESIGN.md has no DOCK2 or DOCK3 row and keeps DOCK4. In
+    `LayoutPersistence.cs`, the `sentences` list holds `DropAnnouncement` first and `KeptPromptsReport` second
+    (:239 after this node's edit), and the join drops null or empty parts (:258). T20's `redock.Report` is gone with
+    `FloatingRedock`, as T21 deleted it. Both the singular and the plural kept-prompt tests pass through that list.
+- **(A) The DOCK4 plural pin, green** (`c25e3e90`).
+  - Line check (rule 14): the plural arm was at :424 on the merged file, not :391.
+  - `internal const string KeptPromptsSentence` (`LayoutPersistence.cs:47`). The plural arm (:431) returns it with
+    `{N}` replaced by the invariant-culture count.
+  - Mutation: "as they were" changed to "as they are" turned both `TwoKeptPromptDrafts_SayDock4sPluralSentence_WordForWord`
+    and the row pin red (`DOCK4-plural-mutation-red.txt`). Reverted. Green: `DOCK4-plural-green.txt`, 6/6.
+  - The pin's failure message no longer cites `:391`. Its doc comment no longer names `FloatingRedockCopyTests`, which
+    T21 deleted.
+- **(B) The demo script** (`f8ac6dd8`, docs only). `docs/proof/workbench-loops-wl-s.md` has an "Attended list" section
+  with the exact `dotnet test` command for each of `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` and
+  `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`. Step 5 reads "pending: close condition 4,
+  the live-notebook float after the T11 join", citing `float/handoff.md` Next step 2.
+- **(C) The node-10 seam guard is green at the merge head.**
+  - `git diff a2e2e8b8 31077bb7` shows no change to `EveryOpeningCommandPassesThroughTheSeamTests.cs` or
+    `WorkbenchShell.cs`, so the merge did not reopen it.
+  - It is not among the failures at the merge head (`suite-node12-start.txt`). `suite-node12.txt`, run at normal
+    verbosity, names all 5 of its tests as Passed, `EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender`
+    among them.
+- **Proof Pack:** row 22 is Verified, row 20's note is updated, the DOCK4 risk is closed, the float risk and the status
+  line name close condition 4, and a node-12 suite paragraph is added.
+
+## Suites (`suite-node12.txt`, HEAD `c25e3e90`)
+
+- **Core: 3046 passed, 0 failed, 1 skipped (3047).**
+- **App: 1202 passed, 2 failed, 2 skipped (1206).** The 2 are the foreground tests ("foreground held=False",
+  "foreground not held"), NOT CHECKED unattended. They are now on the attended list.
+- No App run started during a join (rule 19). The T28 join ran from 16:57Z to 17:23Z, so the App runs waited. There
+  was no USER DEMO post, and no desktop-hold result occurred.
+
+## Not done
+
+- Nothing in this node's scope. Close condition 4 (float and redock a live notebook) is out of scope, owed after the
+  T11 join as a T21 node.
+- Process slip: one Proof Pack edit used a heredoc-written Python file (rule 6 / CT27 says file, then run). The
+  result was checked by `git diff`.
+
+## Next step
+
+The T11 join. After it, the T21 node for close condition 4. Then the user runs the attended list.
+
 ---
 
 # T11 node 11 — hand-off (rule 16 kick, during check 3)
