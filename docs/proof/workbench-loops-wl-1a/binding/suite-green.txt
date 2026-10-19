@@ -9,37 +9,10 @@
   AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
 Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:34.28]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [55 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'draft-a': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 95
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
-[xUnit.net 00:01:06.02]     AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [11 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'pty-draft': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 117
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
-[xUnit.net 00:01:06.11]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+[xUnit.net 00:00:41.16]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
   Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
-[xUnit.net 00:01:52.52]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [51 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'draft-a': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 117
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
 
-Failed!  - Failed:     3, Passed:  2976, Skipped:     1, Total:  2980, Duration: 2 m 11 s - AiDe.Core.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:  3013, Skipped:     1, Total:  3014, Duration: 2 m 7 s - AiDe.Core.Tests.dll (net10.0)
 
   Determining projects to restore...
   All projects are up-to-date for restore.
@@ -49,23 +22,14 @@ Failed!  - Failed:     3, Passed:  2976, Skipped:     1, Total:  2980, Duration:
   AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
   AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
   AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
-  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
   AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
   AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
   AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
   AiDe.App.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
 Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:37.04]     AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers [FAIL]
-  Failed AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers [12 ms]
-  Error Message:
-   IAttemptHost has no StopAsync, SendNowAsync, Subscribe yet (design 'IAttemptHost', T5 node 2). Until then a host-run turn cannot be stopped, a queued turn is drained by the notebook rather than the host, and its live lines do not reach the thread.
-  Stack Trace:
-     at AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheAttemptHostBindingTests.cs:line 108
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
-   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
-[xUnit.net 00:04:15.46]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+[xUnit.net 00:02:35.80]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
   Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
   Error Message:
    Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
@@ -75,18 +39,7 @@ A total of 1 test files matched the specified pattern.
    at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
    at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
    at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
-[xUnit.net 00:04:18.85]     AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath [FAIL]
-  Failed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath [32 ms]
-  Error Message:
-   Assert.Equal() Failure: Collections differ
-                                                                                                                                                 ↓ (pos 2)
-Expected: ValueTuple<string, int>[]     [Tuple ("AiDe.App/Cli/CompileFold.cs", 1), Tuple ("AiDe.App/Workbench/Composer/ComposerSendGate.cs", 2), Tuple ("AiDe.Core/Presentation/Composer/ComposerCompiler.c"···, 1)]
-Actual:   List<ValueTuple<string, int>> [Tuple ("AiDe.App/Cli/CompileFold.cs", 1), Tuple ("AiDe.App/Workbench/Composer/ComposerSendGate.cs", 2), Tuple ("AiDe.App/Workbench/Sessions/SessionDocumentSurface"···, 1), Tuple ("AiDe.Core/Presentation/Composer/ComposerCompiler.c"···, 1)]
-                                                                                                                                                 ↑ (pos 2)
-  Stack Trace:
-     at AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Composer\TheSendGateSendsWhatProjectionProjectsTests.cs:line 226
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
-   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:03:51.89]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
 
-Failed!  - Failed:     3, Passed:  1049, Skipped:     0, Total:  1052, Duration: 4 m 18 s - AiDe.App.Tests.dll (net10.0)
+Failed!  - Failed:     1, Passed:  1070, Skipped:     1, Total:  1072, Duration: 4 m 23 s - AiDe.App.Tests.dll (net10.0)

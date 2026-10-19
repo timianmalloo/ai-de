@@ -7,23 +7,14 @@
   AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
   AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
   AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
-  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
   AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
   AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
   AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
   AiDe.App.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
 Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:37.04]     AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers [FAIL]
-  Failed AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers [12 ms]
-  Error Message:
-   IAttemptHost has no StopAsync, SendNowAsync, Subscribe yet (design 'IAttemptHost', T5 node 2). Until then a host-run turn cannot be stopped, a queued turn is drained by the notebook rather than the host, and its live lines do not reach the thread.
-  Stack Trace:
-     at AiDe.App.Tests.Records.TheAttemptHostBindingTests.TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheAttemptHostBindingTests.cs:line 108
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
-   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
-[xUnit.net 00:04:15.46]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+[xUnit.net 00:02:35.80]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
   Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
   Error Message:
    Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
@@ -33,18 +24,7 @@ A total of 1 test files matched the specified pattern.
    at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
    at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
    at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
-[xUnit.net 00:04:18.85]     AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath [FAIL]
-  Failed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath [32 ms]
-  Error Message:
-   Assert.Equal() Failure: Collections differ
-                                                                                                                                                 ↓ (pos 2)
-Expected: ValueTuple<string, int>[]     [Tuple ("AiDe.App/Cli/CompileFold.cs", 1), Tuple ("AiDe.App/Workbench/Composer/ComposerSendGate.cs", 2), Tuple ("AiDe.Core/Presentation/Composer/ComposerCompiler.c"···, 1)]
-Actual:   List<ValueTuple<string, int>> [Tuple ("AiDe.App/Cli/CompileFold.cs", 1), Tuple ("AiDe.App/Workbench/Composer/ComposerSendGate.cs", 2), Tuple ("AiDe.App/Workbench/Sessions/SessionDocumentSurface"···, 1), Tuple ("AiDe.Core/Presentation/Composer/ComposerCompiler.c"···, 1)]
-                                                                                                                                                 ↑ (pos 2)
-  Stack Trace:
-     at AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Composer\TheSendGateSendsWhatProjectionProjectsTests.cs:line 226
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
-   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:03:51.89]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
 
-Failed!  - Failed:     3, Passed:  1049, Skipped:     0, Total:  1052, Duration: 4 m 18 s - AiDe.App.Tests.dll (net10.0)
+Failed!  - Failed:     1, Passed:  1070, Skipped:     1, Total:  1072, Duration: 4 m 23 s - AiDe.App.Tests.dll (net10.0)

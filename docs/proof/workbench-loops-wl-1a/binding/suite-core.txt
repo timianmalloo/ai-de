@@ -9,34 +9,7 @@
   AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
 Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:34.28]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [55 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'draft-a': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 95
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
-[xUnit.net 00:01:06.02]     AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay [11 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'pty-draft': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.Ruling150StandingJourneyUseTests.ALaterAdoption_ReOwnsADraftOutOfTheStandingJourney_AndItsRevisionsStay() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 117
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
-[xUnit.net 00:01:06.11]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+[xUnit.net 00:00:41.16]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
   Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
-[xUnit.net 00:01:52.52]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [FAIL]
-  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [51 ms]
-  Error Message:
-   AiDe.Core.Store.WorkspaceStoreException : notebook 'draft-a': adoption is not offered until the store can record its actor (Ruling 156)
-  Stack Trace:
-     at AiDe.Core.Store.StoreWriter.AppendNotebook(NotebookRow row) in C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 71
-   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 117
-   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
-   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
 
-Failed!  - Failed:     3, Passed:  2976, Skipped:     1, Total:  2980, Duration: 2 m 11 s - AiDe.Core.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:  3013, Skipped:     1, Total:  3014, Duration: 2 m 7 s - AiDe.Core.Tests.dll (net10.0)
