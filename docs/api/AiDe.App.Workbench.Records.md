@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 48 members, 85% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 49 members, 85% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Records`
 
-**12 public types · 48 public members · 85% documented.**
+**12 public types · 49 public members · 85% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -171,6 +171,7 @@ continues."). Disposing the model is what cancels them.
 | `bool InFlight` | Whether any run is in flight. |
 | `int? QueuedOrdinal` | The queued turn's ordinal, or null. |
 | `IAttemptHost? Host` | The attempt host this notebook's turns dispatch through, or null while none is bound. |
+| `event Action? AttemptsChanged` | Raised each time an attempt becomes known to this notebook: a live receipt recorded. |
 | `IReadOnlyList<AttemptReceipt> ReadBack { get; private set; } = []` | The attempts read back from the store for this notebook's submitted envelopes (restart read-back). |
 | `void BindHost(IAttemptHost host, AttemptScope scope)` | Binds the notebook to the workspace's attempt host (ADR-0041): from now on a sent turn is an attempt of the revision it ran, launched and owned by the host, never by a surface. |
 | `string HostedElsewhere = "This workspace's runs are hosted in another window. Send from that window, or close it to host runs here."` | Ruling 159(1): the copy Send shows while another window holds the workspace's attempt host. |

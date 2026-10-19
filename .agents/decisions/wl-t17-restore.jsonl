@@ -1,0 +1,3 @@
+{"agent": "wl-t17-restore", "at": 1792401257.1676695, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-outcome-red.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401257.2010047, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-rows-red.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401257.2355237, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "session": "wl-t17-restore", "wi": ""}

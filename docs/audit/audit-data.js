@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T08:50:35Z",
+  "generated": "2026-10-19T09:15:25Z",
   "audit": [
     {
       "actor": null,
@@ -24580,74 +24580,175 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59MA3HTAHK88HHFDZGMN8NK",
-      "shortname": "wl-t8-bind-n7",
-      "datetime": "2026-10-19T08:26:36Z",
-      "session": "wl-t8-bind",
-      "prompt": "T8 node 7: UIA names for the execution states",
-      "summary": "Guard theory: every TurnState row keeps Name=ordinal+words, reason in HelpText; passed on first run (already true). Cancelled-reason theory not built: TurnCopy has one inline Cancelled arm, no enumerable source.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/Workbench/Records/EveryExecutionStateKeepsTheUiaNameTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "UIA names for execution states",
+      "datetime": "2026-10-19T08:26:36Z",
       "done_when": "every state's row Name pinned; suites green",
+      "fan_out": 0,
+      "goal": "UIA names for execution states",
+      "id": "al-01M59MA3HTAHK88HHFDZGMN8NK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T8 node 7: UIA names for the execution states",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind-n7",
+      "skill": "implement",
+      "summary": "Guard theory: every TurnState row keeps Name=ordinal+words, reason in HelpText; passed on first run (already true). Cancelled-reason theory not built: TurnCopy has one inline Cancelled arm, no enumerable source.",
+      "tags": [],
       "tier": "T2",
-      "fan_out": 0
+      "tool": null
     },
     {
-      "id": "al-01M59MWJ8TDEXXWWV4H408QYYV",
-      "shortname": "join-wl1a-notebook-binding",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T08:36:41Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "duration_seconds": 576.0,
+      "fan_out": 0,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "id": "al-01M59MWJ8TDEXXWWV4H408QYYV",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl1a-notebook-binding into main",
-      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync (Rejected/never_dispatched + attempt.withdraw receipt, one txn); Ruling 159 (no dispatch outside the host; Send disabled with cause; dead holder never locks out); Ruling 156 adoption refusal; withdrawn copy; UIA names guard recount_seconds=575 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "join T8 wl1a-notebook-binding to main",
-      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-10-19T08:27:05Z",
-      "duration_seconds": 576.0
-    },
-    {
-      "id": "al-01M59MXJJP1SX51CZ8JWK5EKZ4",
+      "session": "wl-leader2-20261019",
       "shortname": "join-wl1a-notebook-binding",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:27:05Z",
+      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync (Rejected/never_dispatched + attempt.withdraw receipt, one txn); Ruling 159 (no dispatch outside the host; Send disabled with cause; dead holder never locks out); Ruling 156 adoption refusal; withdrawn copy; UIA names guard recount_seconds=575 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T08:37:14Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "id": "al-01M59MXJJP1SX51CZ8JWK5EKZ4",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-binding",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:37:13Z",
       "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync; Ruling 159; Ruling 156 refusal; withdrawn copy; UIA names guard. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md is canonical; an internal hand-off note), then continued --docs-only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:50:35Z",
+      "done_when": "ratchet PASS; strict repo citations OK; pushed; Release green",
+      "duration_seconds": 360.0,
+      "fan_out": 0,
+      "goal": "Land T8 on main under Rulings 151/160",
+      "id": "al-01M59NP0DX7H60HGNSXQZ40WYW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 for the T8 wl1a-notebook-binding join fa71cd0a (first under Ruling 160)",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-binding-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:44:35Z",
+      "summary": "Recount OK. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md canonical), continued --docs-only; standing brief rule 17 added (no .html under docs/). Step 8 5/48 (baseline). Ratchet vs 4f62453b under Ruling 160: PASS 0/49; tools/verify-ruling-citations ok (strict; 157 cited, 148 by a note, 9 frozen); the pack copy excluded (PD-1) with 7 new findings, all addendum-c rulings 156/159-162 it cannot read; identity gate OK (966). Pushed fa71cd0a:main; Release build exit 0. T8 = Opus nodes 1-6 + Sonnet node 7; Leader re-runs accepted every node.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Sessions/RouteWords.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:43:30Z",
+      "done_when": "line + HelpText + AC-R01a + DESIGN.md + suites green",
+      "duration_seconds": 677.0,
+      "fan_out": 0,
+      "goal": "WL-1a demo sees attempt bound to revision, request, route",
+      "id": "al-01M59N91QZACDAZ2KX5X3JYPE2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T16: turn row shows its attempt binding",
+      "session": "wl-t16-bindrow",
+      "shortname": "wl-t16-bindrow",
+      "skill": "implement",
+      "started_at": "2026-10-19T08:32:13Z",
+      "summary": "Binding line in provenance disclosure + HelpText; RouteWords shared with the New session sheet",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T09:04:23Z",
+      "done_when": "each gap closed or its premise pinned; suites green",
+      "duration_seconds": 1183.0,
+      "fan_out": 0,
+      "goal": "close three gaps in T16 read-back",
+      "id": "al-01M59PF93G64ZXC9SXWV95PN1T",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T16b: close three gaps in T16 binding-row read-back",
+      "session": "wl-t16b-bindrow",
+      "shortname": "wl-t16b-bindrow",
+      "skill": "implement",
+      "started_at": "2026-10-19T08:44:40Z",
+      "summary": "Terminal word single-sourced; late receipt refreshes rows (AttemptsChanged, RefreshAttempts, surface wiring); send-edit-send pinned; restart premise pinned (no turn restoration exists)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59Q3EWRDJPXWSZPBMGDK70X",
+      "shortname": "join-wl1a-attempt-binding-row",
+      "datetime": "2026-10-19T09:15:24Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-attempt-binding-row into main",
+      "summary": "T16 + T16b (Sonnet): the turn row's disclosure shows the attempt's binding read via AttemptHost; RouteWords shared with the New session sheet; AC-R01a end to end; late receipt refreshes the row (AttemptsChanged); one Terminal word; restart premise pinned for T17 (Ruling 163) recount_seconds=548 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+        "docs/proof/workbench-loops-wl-1a/binding-row/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T8 wl1a-notebook-binding to main",
+      "goal": "join T16 to main",
       "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
       "tier": "T1",
       "fan_out": 0,
@@ -24656,32 +24757,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T08:37:13Z",
-      "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M59NP0DX7H60HGNSXQZ40WYW",
-      "shortname": "join-wl1a-notebook-binding-step8",
-      "datetime": "2026-10-19T08:50:35Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 for the T8 wl1a-notebook-binding join fa71cd0a (first under Ruling 160)",
-      "summary": "Recount OK. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md canonical), continued --docs-only; standing brief rule 17 added (no .html under docs/). Step 8 5/48 (baseline). Ratchet vs 4f62453b under Ruling 160: PASS 0/49; tools/verify-ruling-citations ok (strict; 157 cited, 148 by a note, 9 frozen); the pack copy excluded (PD-1) with 7 new findings, all addendum-c rulings 156/159-162 it cannot read; identity gate OK (966). Pushed fa71cd0a:main; Release build exit 0. T8 = Opus nodes 1-6 + Sonnet node 7; Leader re-runs accepted every node.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T8 on main under Rulings 151/160",
-      "done_when": "ratchet PASS; strict repo citations OK; pushed; Release green",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T08:44:35Z",
-      "duration_seconds": 360.0
+      "started_at": "2026-10-19T09:06:15Z",
+      "duration_seconds": 549.0
     }
   ],
   "changes": [
@@ -29317,6 +29394,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t16-bindrow"
+    },
+    {
+      "id": "mail-01M59P2Y1CPN56GHEJJ5K3TCAX",
+      "ts": "2026-10-19T08:57:39Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59P2Y12AGCTY77NJD2AA217",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59P47HSG09PJ6DX9Q41TKGW",
+      "ts": "2026-10-19T08:58:21Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59P2Y12AGCTY77NJD2AA217",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59PF9ZYMFWQNJHG0RTTMZ79",
+      "ts": "2026-10-19T09:04:24Z",
+      "from": "wl-t16b-bindrow",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t16b-bindrow"
     }
   ]
 };

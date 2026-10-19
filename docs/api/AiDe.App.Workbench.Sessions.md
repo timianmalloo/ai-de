@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 210 members, 74% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 219 members, 75% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**36 public types · 210 public members · 74% documented.**
+**37 public types · 219 public members · 75% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -653,6 +653,22 @@ half R13 b3 names.
 | `void Remember(string? stateDirectory, RecentSessionEntry entry)` | Records a session as recently opened. Newest first, deduplicated by id, capped. |
 | `RecentSessionEntry? Find(string? stateDirectory, string sessionId)` | The entry for a session id, or null when it is not in the list (or is unreachable). |
 
+## `RouteWords`
+
+*class* — `RouteWords.cs`
+
+The words for an attempt's route (Ruling 162): one derivation, called by the turn row's binding line and by the
+New session sheet's engine line, so the two cannot disagree. The route picker (WL-3) will replace the source of
+the fingerprint, not these words.
+
+| Member | Summary |
+|---|---|
+| `string AcpPrefix = "acp:"` | The prefix `AttemptDispatch` puts on an engine's fingerprint when the binding has none. |
+| `string PtyFingerprint = "pty"` | The fingerprint a terminal row carries (`StoreWriter`). |
+| `string TerminalWord = "Terminal"` | The terminal surface's existing label (`SurfaceContentFactory`), reused, not a new word. |
+| `string Engine(string engineId)` | The engine as the New session sheet shows it: the catalog id. |
+| `string For(string fingerprint)` | The route of a fingerprint; a shape this does not know renders verbatim, never guessed. |
+
 ## `SessionDisposalLedger`
 
 *class* — `SessionDisposalLedger.cs`
@@ -948,6 +964,8 @@ stopped row and one assertive announcement, the channel kept alive for a second 
 | `bool IsStopped { get; private set; }` | The feed's own fault state: `ItemStatus` "stopped"; "live" otherwise. |
 | `double MeasureWidth { get; }` | The prose measure in device-independent pixels: 96 × the advance of "0" in the UI type at 13 px. |
 | `Func<bool> ReducedMotion { get; set; } = static ()` | Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it. |
+| `void RefreshAttempts()` | Re-reads every row's attempt from `AttemptOf`. |
+| `Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf` | The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none. |
 | `IReadOnlyList<TurnItem> Rows` | The rows, in ordinal order — a rebuildable projection of the read model's turns. |
 | `int Applies { get; private set; }` | How many times `Apply` ran — the coalescing witness (C1). |
 | `double LastLayoutMs { get; private set; }` | The last apply's layout time — reported, never asserted absolutely (DC-107). |
@@ -1019,6 +1037,8 @@ state of its own.
 | `string Counts` | **(gap)** |
 | `IReadOnlyList<ConversationRow> Conversation` | The reply side's conversation (Ruling 82): the prose, reasoning and tool items of `Items`, in event order, as rows updated in place — the same collection instance across snapshots, so the panel keeps its containers. |
 | `string SentBytes` | **(gap)** |
+| `AttemptRow? Attempt` | The attempt this turn ran as, read from the attempt host by the feed; null when none is recorded. |
+| `string BindingLine` | `Sent from revision {n} · request {first 7 of projection_sha} · via {route}` (Ruling 161): the turn's own attempt, in the provenance disclosure and as its HelpText. A field the row does not carry reads *not recorded*. |
 | `string ProvenanceName` | **(gap)** |
 | `string CompiledName` | **(gap)** |
 | `string FoldHeader` | *N events* — the non-conversation rows only (SC7 as amended: `acp.*`, the conductor's lines, stderr, a result with no call). |
