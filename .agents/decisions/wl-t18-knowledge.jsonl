@@ -1,0 +1,15 @@
+{"agent": "wl-t18-knowledge", "at": 1792406030.402036, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check1-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406030.4388885, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check2-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406030.4789343, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check3-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406030.52037, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/CanvasSurface.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406030.5618684, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeTests.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.2056808, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check1-green.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.2406116, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check1-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.278205, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check2-green.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.312321, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check2-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.3491263, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check3-green.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.3904014, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check3-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.4251473, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/CanvasPage.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.4621942, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/CanvasSurface.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.50128, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792406203.5392387, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeTests.cs", "session": "wl-t18-knowledge", "wi": ""}

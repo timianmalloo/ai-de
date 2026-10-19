@@ -1,0 +1,6 @@
+{"agent": "wl-leader2-20261019", "at": 1792405789.9672225, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t11-kinds", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wls-kinds-migration"}
+{"action": "add", "agent": "wl-t11-kinds", "at": 1792406027.280144, "deadline_at": 1792407827.280144, "id": "req-01M59VJZ0N12XCM461BTB230N0", "kind": "request", "path": "-", "seq": 2, "session": "wl-t11-kinds", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t11-kinds", "at": 1792406100.0635014, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 3, "session": "wl-t11-kinds", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t11-kinds", "at": 1792406100.270502, "kind": "claim", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 4, "session": "wl-t11-kinds", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t11-kinds", "at": 1792406100.476506, "kind": "claim", "path": "src/AiDe.Core/Workbench/Perspectives.cs", "seq": 5, "session": "wl-t11-kinds", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t11-kinds", "at": 1792406100.6804047, "kind": "claim", "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs", "seq": 6, "session": "wl-t11-kinds", "ttl": 300.0, "wi": "workbench-loops"}

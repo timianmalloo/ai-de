@@ -1,0 +1,3 @@
+{"agent": "wl-t11-kinds", "at": 1792406089.4998472, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/A-notebook-kind-red.txt", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792406089.5308297, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Notebook/TheNotebookKindBindsTheModelTests.cs", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792406089.5681005, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs", "session": "wl-t11-kinds", "wi": ""}
