@@ -1,0 +1,12 @@
+source run log: red-all.txt
+== latency: FAIL - p95 NaN ms page (keydown->next frame), NaN ms host (SendInput->paint stamp received), n=0/450, doc 100076 chars
+   method: SendInput letters at 50 ms cadence, 150 per position (near start, middle, end) of a rich-projection notebook; page/latency-harness.mjs stamps keydown.timeStamp and the first task after the next animation frame
+   | load: 100076 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 30
+   | [near start] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries >=16ms 0, max 0
+   | focus: native click at (556,299); editor hasFocus=false; caret 50083
+   | [middle] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries >=16ms 0, max 0
+   | focus: native click at (556,299); editor hasFocus=false; caret 100076
+   | [end] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries >=16ms 0, max 0
+   | document 100076 chars; all positions: 0 samples of 450 keys; page p95 NaN ms; host p95 NaN ms; event-timing entries > 50 ms: 0
+E-1 exit 1: 0/7 passed

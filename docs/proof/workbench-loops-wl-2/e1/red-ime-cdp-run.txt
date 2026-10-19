@@ -1,0 +1,13 @@
+== ime-cdp: FAIL - paragraph end: FAIL; rich heading text: FAIL; inside a JSON fence: FAIL
+   method: DevTools Input.imeSetComposition (?  ????  ???) then Input.insertText commit, at a paragraph end, a rich heading and inside a JSON fence; SHA-256 compare; one SendInput Ctrl+Z
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | [paragraph end] events start 0, update 0, end []; rich decorations mid-composition 0; doc == original with '???' at 63: False; one native Ctrl+Z restores original: False
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 70
+   | [rich heading text] events start 0, update 0, end []; rich decorations mid-composition 0; doc == original with '???' at 70: False; one native Ctrl+Z restores original: False
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 95
+   | [inside a JSON fence] events start 0, update 0, end []; rich decorations mid-composition 0; doc == original with '???' at 95: False; one native Ctrl+Z restores original: False
+window closed; disposing the WebView2
+E-1 exit 1: 0/1 passed

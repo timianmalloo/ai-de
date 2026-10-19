@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>E-1 notebook</title>
+<!--
+  The E-1 spike page: one continuous Markdown notebook in one EditorView. The host reads state
+  through window.nb and edits only through native input; the page posts nothing but the latency
+  harness's paint stamps.
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #12151A; color: #E4E9EF; }
+  #notebook { height: 100%; font: 14px/1.5 "Segoe UI", sans-serif; }
+  #notebook .cm-editor { height: 100%; }
+  #error { padding: 12px; color: #E07A6F; white-space: pre-wrap; font: 12px/1.5 Consolas, monospace; }
+</style>
+
+<div id="notebook"></div>
+<pre id="error" hidden></pre>
+
+<script type="module">
+  try {
+    await import("./notebook.bundle.mjs");
+  } catch (e) {
+    const el = document.getElementById("error");
+    el.hidden = false;
+    el.textContent = String(e && e.stack || e);
+  }
+</script>

@@ -1,0 +1,12 @@
+source run log: red-all.txt
+== ime-control: FAIL - paragraph end: '<surrounding text changed>'; rich heading text: '<surrounding text changed>'
+   method: negative control: the same SendInput keys with the user's en-US layout and no IME - must insert ASCII with no composition events
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | [paragraph end] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409
+   | [paragraph end] composition events: 0 (start 0, end []); inserted '<surrounding text changed>'; rest of document intact: False
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 70
+   | [rich heading text] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409
+   | [rich heading text] composition events: 0 (start 0, end []); inserted '<surrounding text changed>'; rest of document intact: False
+E-1 exit 1: 0/7 passed

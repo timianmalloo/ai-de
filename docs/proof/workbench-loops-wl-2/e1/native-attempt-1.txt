@@ -1,0 +1,69 @@
+== ime: FAIL - paragraph end: 'nihongo 
+'; rich heading text: 'nihongo 
+'
+   method: Microsoft Japanese IME (KLID 00000411) switched onto the browser's focus window via WM_INPUTLANGCHANGEREQUEST, opened via WM_IME_CONTROL, then SendInput VK keys 'nihongo', Space (convert), Enter (commit); then one SendInput Ctrl+Z
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | [paragraph end] focus hwnd 0x2f009f0 in pid 19232, layout 0x4090409
+   | [paragraph end] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x34e0a6a, open status 1
+   | [paragraph end] unloaded 0x4110411: True
+   | [paragraph end] focus layout restored to 0x4090409
+   | [paragraph end] composition events: 0 (start 0, end []); inserted 'nihongo 
+'; rest of document intact: True
+   | [paragraph end] one Ctrl+Z restores the original bytes: False
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 70
+   | [rich heading text] focus hwnd 0x2f009f0 in pid 19232, layout 0x4090409
+   | [rich heading text] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x34e0a6a, open status 1
+   | [rich heading text] unloaded 0x4110411: True
+   | [rich heading text] focus layout restored to 0x4090409
+   | [rich heading text] composition events: 0 (start 0, end []); inserted 'nihongo 
+'; rest of document intact: True
+   | [rich heading text] one Ctrl+Z restores the original bytes: False
+== ime-control: PASS - paragraph end: 'nihongo 
+'; rich heading text: 'nihongo 
+'
+   method: negative control: the same SendInput keys with the user's en-US layout and no IME - must insert ASCII with no composition events
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | [paragraph end] focus hwnd 0x2f009f0 in pid 19232, layout 0x4090409
+   | [paragraph end] composition events: 0 (start 0, end []); inserted 'nihongo 
+'; rest of document intact: True
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 70
+   | [rich heading text] focus hwnd 0x2f009f0 in pid 19232, layout 0x4090409
+   | [rich heading text] composition events: 0 (start 0, end []); inserted 'nihongo 
+'; rest of document intact: True
+== completion-uia: FAIL - open=pass; ArrowDown moves DOM and UIA selection to option 1=FAIL; Escape=pass; zero matches=pass; Enter accepts and leaves nothing active=pass
+   method: SendInput '@sp' / ArrowDown / Escape / '@zzq' / Enter; System.Windows.Automation over the WebView2 window (List 'Completions', ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM's aria-activedescendant
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | open: DOM listbox True; DOM {"activedescendant":"cm-ac-ph3r-0","controls":"cm-ac-ph3r","listbox":true,"selectedId":"cm-ac-ph3r-0","selectedIndex":0,"status":"active"}
+   | open: UIA list 'Completions' ControlType.List; items [@spec/workbench-loops | @spike/notebook-editor-e1]; UIA selected index 0
+   | editor: UIA 'Notebook' ControlType.Edit
+   | ArrowDown: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA selected index -1
+   | Escape: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | zero matches: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | accept: applied '@spec/workbench-loops' True
+   | accept: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | PASS open: listbox named, options, first selected in DOM and UIA
+   | FAIL ArrowDown moves DOM and UIA selection to option 1
+   | PASS Escape: no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor
+   | PASS zero matches: nothing open, nothing active
+   | PASS Enter accepts and leaves nothing active
+== latency: PASS - p95 6.1 ms page (keydown->next frame), 7.7 ms host (SendInput->paint stamp received), n=450/450, doc 100076 chars
+   method: SendInput letters at 50 ms cadence, 150 per position (near start, middle, end) of a rich-projection notebook; page/latency-harness.mjs stamps keydown.timeStamp and the first task after the next animation frame
+   | load: 100076 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 30
+   | [near start] keys 150, samples 150, doc grew 150; page p50 4.4 p95 6.2 max 7.7 ms; host p95 7.7 ms; event-timing entries >=16ms 3, max 16
+   | focus: native click at (550,314); editor hasFocus=true; caret 50083
+   | [middle] keys 150, samples 150, doc grew 150; page p50 4.8 p95 6.5 max 8.2 ms; host p95 8.1 ms; event-timing entries >=16ms 0, max 0
+   | focus: native click at (550,314); editor hasFocus=true; caret 100076
+   | [end] keys 150, samples 150, doc grew 150; page p50 4.8 p95 5.8 max 7.3 ms; host p95 7.5 ms; event-timing entries >=16ms 0, max 0
+   | document 100076 chars; all positions: 450 samples of 450 keys; page p95 6.1 ms; host p95 7.7 ms; event-timing entries > 50 ms: 0
+window closed; disposing the WebView2
+E-1 exit 1: 2/4 passed

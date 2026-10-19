@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-19T00:26:40.2134976+00:00",
+  "exit": 1,
+  "webview2Runtime": "155.0.4283.62",
+  "results": [
+    {
+      "Name": "ime",
+      "Pass": false,
+      "Value": "paragraph end: \u0027\u003Csurrounding text changed\u003E\u0027; rich heading text: \u0027\u003Csurrounding text changed\u003E\u0027",
+      "Method": "Microsoft Japanese IME (KLID 00000411) switched onto the browser\u0027s focus window via WM_INPUTLANGCHANGEREQUEST, opened via WM_IME_CONTROL, then SendInput VK keys \u0027nihongo\u0027, Space (convert), Enter (commit); then one SendInput Ctrl\u002BZ",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 63",
+        "[paragraph end] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409",
+        "[paragraph end] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x17b0b40, open status 1",
+        "[paragraph end] unloaded 0x4110411: True",
+        "[paragraph end] focus layout restored to 0x4090409",
+        "[paragraph end] composition events: 0 (start 0, end []); inserted \u0027\u003Csurrounding text changed\u003E\u0027; rest of document intact: False",
+        "[paragraph end] one Ctrl\u002BZ restores the original bytes: False",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 70",
+        "[rich heading text] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409",
+        "[rich heading text] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x17b0b40, open status 1",
+        "[rich heading text] unloaded 0x4110411: True",
+        "[rich heading text] focus layout restored to 0x4090409",
+        "[rich heading text] composition events: 0 (start 0, end []); inserted \u0027\u003Csurrounding text changed\u003E\u0027; rest of document intact: False",
+        "[rich heading text] one Ctrl\u002BZ restores the original bytes: False"
+      ]
+    },
+    {
+      "Name": "ime-control",
+      "Pass": false,
+      "Value": "paragraph end: \u0027\u003Csurrounding text changed\u003E\u0027; rich heading text: \u0027\u003Csurrounding text changed\u003E\u0027",
+      "Method": "negative control: the same SendInput keys with the user\u0027s en-US layout and no IME \u2014 must insert ASCII with no composition events",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 63",
+        "[paragraph end] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409",
+        "[paragraph end] composition events: 0 (start 0, end []); inserted \u0027\u003Csurrounding text changed\u003E\u0027; rest of document intact: False",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 70",
+        "[rich heading text] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409",
+        "[rich heading text] composition events: 0 (start 0, end []); inserted \u0027\u003Csurrounding text changed\u003E\u0027; rest of document intact: False"
+      ]
+    },
+    {
+      "Name": "clipboard",
+      "Pass": false,
+      "Value": "paste=False, copy=False, doc-\u003Eclipboard-\u003Edoc fixed point=True, clipboard out CRLF=True",
+      "Method": "Windows clipboard (UnicodeText \u002B HTML Format) -\u003E SendInput Ctrl\u002BV; SendInput Ctrl\u002BA, Ctrl\u002BC -\u003E Clipboard.GetText; SendInput Ctrl\u002BV into an empty document; SHA-256 compare",
+      "Detail": [
+        "load: 0 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 0",
+        "Windows clipboard set: UnicodeText (88 chars, CRLF) \u002B HTML Format",
+        "paste: doc sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; expected (CRLF-\u003ELF, the editor\u0027s line model) sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; equal False; html leaked False",
+        "copy: clipboard sequence changed False; clipboard text 88 chars, CRLF pairs 6, byte-identical to the original Windows text True; equals doc modulo CRLF False",
+        "load: 0 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 0",
+        "re-paste of the editor\u0027s own copy: sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; fixed point True"
+      ]
+    },
+    {
+      "Name": "multiselect",
+      "Pass": false,
+      "Value": "cursors=False, 3-cursor edit=False, one undo restores exact bytes=False, one redo=False",
+      "Method": "SendInput click \u002B 2 Ctrl\u002Bclicks at coordsAtPos (rich projection, cursors in prose, a JSON fence and a heading), SendInput \u0027xyz\u0027, Ctrl\u002BZ, Ctrl\u002BY; SHA-256 compare",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 0",
+        "cursors after click \u002B 2 Ctrl\u002Bclicks: [], wanted [29,100,363]",
+        "typed \u0027xyz\u0027 at every cursor: sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, expected 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce: False",
+        "one Ctrl\u002BZ: sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 vs original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72: False",
+        "one Ctrl\u002BY: equals the edited bytes False"
+      ]
+    },
+    {
+      "Name": "roundtrip",
+      "Pass": false,
+      "Value": "LF: FAIL (bytes changed); CRLF: FAIL (bytes changed); mixed: FAIL (NOT disclosed)",
+      "Method": "load fixture -\u003E rich (decorations \u003E 0, fence info strings read from the syntax tree) -\u003E 3x source\u003C-\u003Erich -\u003E save UTF-8 file -\u003E reload page -\u003E load file; SHA-256 compare at every step",
+      "Detail": [
+        "[LF] page: {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}; rich decorations 0; fence info [] expected [json|csharp|python||json|csharp]",
+        "[LF] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: False; saved file sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; page reloaded True; reloaded doc sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72",
+        "[CRLF] page: {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}; rich decorations 0; fence info [] expected [json|csharp|python||json|csharp]",
+        "[CRLF] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: False; saved file sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; page reloaded True; reloaded doc sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; original 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40",
+        "[mixed] page: {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}; rich decorations 0; fence info [] expected [json|csharp|python||json|csharp]",
+        "[mixed] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: True; saved file sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; page reloaded True; reloaded doc sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; original ef739f8a6347dc0cb1bdbd17f21fedbb78c90013b9ede04a60cb55ff6867a578"
+      ]
+    },
+    {
+      "Name": "latency",
+      "Pass": false,
+      "Value": "p95 NaN ms page (keydown-\u003Enext frame), NaN ms host (SendInput-\u003Epaint stamp received), n=0/450, doc 100076 chars",
+      "Method": "SendInput letters at 50 ms cadence, 150 per position (near start, middle, end) of a rich-projection notebook; page/latency-harness.mjs stamps keydown.timeStamp and the first task after the next animation frame",
+      "Detail": [
+        "load: 100076 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 30",
+        "[near start] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries \u003E=16ms 0, max 0",
+        "focus: native click at (556,299); editor hasFocus=false; caret 50083",
+        "[middle] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries \u003E=16ms 0, max 0",
+        "focus: native click at (556,299); editor hasFocus=false; caret 100076",
+        "[end] keys 150, samples 0, doc grew 0; page p50 NaN p95 NaN max NaN ms; host p95 NaN ms; event-timing entries \u003E=16ms 0, max 0",
+        "document 100076 chars; all positions: 0 samples of 450 keys; page p95 NaN ms; host p95 NaN ms; event-timing entries \u003E 50 ms: 0"
+      ]
+    },
+    {
+      "Name": "completion-uia",
+      "Pass": false,
+      "Value": "open=FAIL; ArrowDown moves DOM and UIA selection to option 1=FAIL; Escape=FAIL; zero matches=FAIL; Enter accepts and leaves nothing active=FAIL",
+      "Method": "SendInput \u0027@sp\u0027 / ArrowDown / Escape / \u0027@zzq\u0027 / Enter; System.Windows.Automation over the WebView2 window (List \u0027Completions\u0027, ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM\u0027s aria-activedescendant",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 63",
+        "open: DOM listbox False; DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}",
+        "open: UIA list NOT FOUND; items []; UIA selected index -1",
+        "editor: UIA NOT FOUND",
+        "ArrowDown: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA selected index -1",
+        "Escape: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA list gone True; selected ListItems left 0; UIA focus \u0027E-1 notebook\u0027 ControlType.Document",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 63",
+        "zero matches: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA list gone True; selected ListItems left 0; UIA focus \u0027E-1 notebook\u0027 ControlType.Document",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (556,299); editor hasFocus=false; caret 63",
+        "accept: applied \u0027@spec/workbench-loops\u0027 False",
+        "FAIL open: listbox named, options, first selected in DOM and UIA",
+        "FAIL ArrowDown moves DOM and UIA selection to option 1",
+        "FAIL Escape: no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor",
+        "FAIL zero matches: nothing open, nothing active",
+        "FAIL Enter accepts and leaves nothing active"
+      ]
+    }
+  ]
+}

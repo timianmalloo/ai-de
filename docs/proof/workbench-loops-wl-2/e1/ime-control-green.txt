@@ -1,0 +1,12 @@
+source run log: green-all.txt
+== ime-control: PASS — paragraph end: 'nihongo \n'; rich heading text: 'nihongo \n'
+   method: negative control: the same SendInput keys with the user's en-US layout and no IME — must insert ASCII with no composition events
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | [paragraph end] focus hwnd 0x2030ac4 in pid 23564, layout 0x4090409
+   | [paragraph end] composition events: 0 (start 0, end []); inserted 'nihongo \n'; rest of document intact: True
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 70
+   | [rich heading text] focus hwnd 0x2030ac4 in pid 23564, layout 0x4090409
+   | [rich heading text] composition events: 0 (start 0, end []); inserted 'nihongo \n'; rest of document intact: True
+E-1 exit 1: 7/8 passed

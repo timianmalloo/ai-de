@@ -1,0 +1,10 @@
+source run log: green-all.txt
+== multiselect: PASS — cursors=True, 3-cursor edit=True, one undo restores exact bytes=True, one redo=True
+   method: SendInput click + 2 Ctrl+clicks at coordsAtPos (rich projection, cursors in prose, a JSON fence and a heading), SendInput 'xyz', Ctrl+Z, Ctrl+Y; SHA-256 compare
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 0
+   | cursors after click + 2 Ctrl+clicks: [29,100,363], wanted [29,100,363]
+   | typed 'xyz' at every cursor: sha 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce, expected 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce: True
+   | one Ctrl+Z: sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72 vs original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72: True
+   | one Ctrl+Y: equals the edited bytes True
+E-1 exit 1: 7/8 passed
