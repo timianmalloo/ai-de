@@ -121,4 +121,19 @@ public sealed class ASentGoalLineSurvivesARestartTests(ITestOutputHelper output)
             }
         }
     }
+
+    /// <summary>The restored row's <i>not recorded</i> line is DESIGN.md's copy, word for word.</summary>
+    [Fact]
+    public void TheNotRecordedLine_IsTheCopyDesignMdNames()
+    {
+        var dir = new System.IO.DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !System.IO.File.Exists(System.IO.Path.Combine(dir.FullName, "AiDe.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        Assert.NotNull(dir);
+        var row = Assert.Single(System.IO.File.ReadAllLines(System.IO.Path.Combine(dir!.FullName, "DESIGN.md")), l => l.Contains("a restored turn", StringComparison.Ordinal) && l.Contains("Ruling 182 (4)", StringComparison.Ordinal));
+        Assert.Contains(AiDe.App.Workbench.Records.NotebookRuns.CompiledPromptNotRecorded, row, StringComparison.Ordinal);
+    }
 }

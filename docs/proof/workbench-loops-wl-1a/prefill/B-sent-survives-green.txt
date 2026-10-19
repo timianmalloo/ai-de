@@ -1,0 +1,100 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: False) [2 s]
+  Passed AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: True) [706 ms]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ASendWhileTheTurnsRestore_IsNeverAnnouncedAsSent_BeforeTheTurnIsAdmitted [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheReadBackRunsOncePerBind_NotOncePerDocument_AndARebindReadsBackOnceMore [2 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AReadBackThatFails_EmitsItsDuration_WithTheFailedOutcome [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AnOpenThatFails_EmitsItsDuration_WithTheFailedOutcome_AndNoReadBack [615 ms]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheRestoringSentence_IsOneDesignCopyRow_CitingRuling175 [16 ms]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ATurnSentWhileTheHostOpens_WaitsForTheReadBackTheBindRuns_AndIsB3_AndEachAttemptIsReadOnce [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheHostOpenAndTheReadBack_EachEmitTheirDuration_AtLeastTheTimeEachTook [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ASendWhileTheTurnsRestore_KeepsTheWordsAndSaysWhyItWaits_ThenAdmitsExactlyOneTurnAsB3_AndClears [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds [930 ms]
+  Standard Output Messages:
+ timing {"ts":"2026-10-19T22:35:54.3302022\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":3.9,"tries":1,"attempts":null,"error_type":null}
+ timing {"ts":"2026-10-19T22:35:54.3373722\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":7.1,"tries":null,"attempts":2,"error_type":null}
+
+
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AnOpenThatFails_ReadsNothingBack_AndTheRetryThatBinds_ReadsBackOnce [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ASendWhoseReadBackFails_KeepsTheWords_AndShowsTheFailuresOwnCause_AndTheRetryRestoresThenSendsB3 [1 s]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheReadBackFailedSentence_IsOneDesignCopyRow_BesideTheRestoringSentence [14 ms]
+  Passed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ASendWhoseHostOpenFails_KeepsTheWords_AndShowsTheRefusalsOwnCause_AndSendsThemAfterTheRetry [1 s]
+  Passed AiDe.App.Tests.Sessions.RestoredSessionDocumentsAreRevivedTests.Revive_WithASessionFileThatReadsAsNull_KeepsTheIslandRatherThanThrowing [147 ms]
+  Passed AiDe.App.Tests.Sessions.RestoredSessionDocumentsAreRevivedTests.Revive_WithASessionFileThatLoads_RegistersTheDocumentAndTheNextRenderShowsIt [28 ms]
+  Passed AiDe.App.Tests.Sessions.RestoredSessionDocumentsAreRevivedTests.Revive_WithAMalformedSessionFile_KeepsTheIsland [18 ms]
+  Passed AiDe.App.Tests.Sessions.RestoredSessionDocumentsAreRevivedTests.Revive_WithNoSessionFile_KeepsTheIsland [21 ms]
+  Passed AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileTheDocumentNotebookHostAndStoreAreDisposed_EndsQuietly_AndWritesNoTurn [632 ms]
+  Passed AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.TheShellShuttingDown_WhileARevivedNotebookReadsBack_EndsTheReadBackQuietly_AndWritesNoTurn [1 s]
+  Passed AiDe.App.Tests.Records.AReadBackPendingAtDisposalEndsQuietlyTests.AReadBackHeldWhileItsNotebookIsDisposed_RestoresNoTurn_WhenTheReadReturnsAfterward [757 ms]
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [657 ms]
+  Standard Output Messages:
+ before restart: b1 Completed; sent 263 chars; carries the goal line: True
+ after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 263 chars; disclosure shows 263 chars; equal to what was sent: True
+ disclosure text: "## goal
+
+Suggestion 1 for goal.
+
+## done_when
+
+Suggestion 1 for done_when.
+
+## not_in_scope
+
+Suggestion 1 for not_in_scope.
+
+## tier
+
+T1
+
+## fan_out_cap
+
+2
+
+## budget
+
+bounded by your subscription — not measured here
+
+## message
+
+Rename the helper in the parser.
+"
+
+
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.TheNotRecordedLine_IsTheCopyDesignMdNames [14 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.AStaleRenderedViewIsRefusedRatherThanSentWithALeaseFromOtherBytes [5 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ALeaseIsMintedAtExactlyTwoNamedSitesAndByNoOtherPattern [196 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ATemplateSendIsByteIdenticalToTheGolden [2 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.NoFileImportsTheProjectionOrTheDerivationStaticallyOrTakesThemAsAMethodGroup [236 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.AMessageSendIsByteIdenticalToTheGolden [1 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ThePublicSignaturesOfTheThreeContractTypesAreUnchangedAndTheRequestHasFourteenParameters [1 ms]
+[xUnit.net 00:00:22.47]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.AGoalBlockSendIsByteIdenticalToTheGolden [1 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.AReopenedSessionSendsWithTheSessionsDefaultClassAndSourceSessionDefault [< 1 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.EveryLeaseDerivationCallSiteIsNamedAndPassesTheSourceTextSymbol [91 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.ProjectionProjectHasExactlyThreeNamedCallSitesByPath [47 ms]
+  Passed AiDe.App.Tests.Composer.TheSendGateSendsWhatProjectionProjectsTests.RunBudgetMemberReadsAreANamedSetWithNamedGuards [53 ms]
+
+Test Run Successful.
+Total tests: 35
+     Passed: 35
+ Total time: 22.9204 Seconds

@@ -260,6 +260,33 @@ public sealed class ComposerSendGate
     /// <exception cref="EnvelopeStoreException">The fold has no <c>opened</c> row.</exception>
     public static string CurrentProjectionSha(Envelope envelope) => ProjectForSend(envelope, draft: null, template: null).ProjectionSha;
 
+    /// <summary>
+    /// The bytes an accepted send carried, rebuilt from the envelope's own fold by the call the send projects through
+    /// (Ruling 182 (4): what was sent survives a restart). They are returned only when their sha256 equals the accepted
+    /// <c>submitted.text_sha256</c> (C15's witness), and null otherwise, never a plausible wrong text. The rebuild holds
+    /// the opened source text only, so a turn whose bytes carried attachment bodies or a template does not rebuild.
+    /// </summary>
+    public static string? SentBytesOf(Envelope envelope)
+    {
+        ArgumentNullException.ThrowIfNull(envelope);
+        if (envelope.Submitted is not { } submitted || envelope.Opened is not { } opened)
+        {
+            return null;
+        }
+
+        var draft = new ComposerDraft();
+        draft.SetFreeFormText(opened.SourceText);
+        try
+        {
+            var text = ProjectForSend(envelope, draft, template: null).Compiled?.Text;
+            return text is not null && string.Equals(EnvelopeHash.Sha256Hex(text), submitted.TextSha256, StringComparison.Ordinal) ? text : null;
+        }
+        catch (EnvelopeStoreException)
+        {
+            return null;
+        }
+    }
+
     private static CompiledProjection ProjectForSend(Envelope envelope, ComposerDraft? draft, PromptTemplate? template) =>
         Projection.Project(envelope, draft, template);
 

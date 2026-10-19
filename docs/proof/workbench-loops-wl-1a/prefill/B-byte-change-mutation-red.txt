@@ -1,0 +1,97 @@
+MUTATION RED (planted, not committed; seam condition 4): one byte appended to the rebuilt text before the sha check. The row must say not recorded, never show wrong text. Planted diff:
+diff --git a/src/AiDe.App/Workbench/Composer/ComposerSendGate.cs b/src/AiDe.App/Workbench/Composer/ComposerSendGate.cs
+index 5e686090..51e07b80 100644
+--- a/src/AiDe.App/Workbench/Composer/ComposerSendGate.cs
++++ b/src/AiDe.App/Workbench/Composer/ComposerSendGate.cs
+@@ -260,6 +260,33 @@ public sealed class ComposerSendGate
+     /// <exception cref="EnvelopeStoreException">The fold has no <c>opened</c> row.</exception>
+     public static string CurrentProjectionSha(Envelope envelope) => ProjectForSend(envelope, draft: null, template: null).ProjectionSha;
+ 
++    /// <summary>
++    /// The bytes an accepted send carried, rebuilt from the envelope's own fold by the call the send projects through
++    /// (Ruling 182 (4): what was sent survives a restart). They are returned only when their sha256 equals the accepted
++    /// <c>submitted.text_sha256</c> (C15's witness), and null otherwise, never a plausible wrong text. The rebuild holds
++    /// the opened source text only, so a turn whose bytes carried attachment bodies or a template does not rebuild.
++    /// </summary>
++    public static string? SentBytesOf(Envelope envelope)
++    {
++        ArgumentNullException.ThrowIfNull(envelope);
++        if (envelope.Submitted is not { } submitted || envelope.Opened is not { } opened)
++        {
++            return null;
++        }
++
++        var draft = new ComposerDraft();
++        draft.SetFreeFormText(opened.SourceText);
++        try
++        {
++            var text = ProjectForSend(envelope, draft, template: null).Compiled?.Text + "!";
++            return text is not null && string.Equals(EnvelopeHash.Sha256Hex(text), submitted.TextSha256, StringComparison.Ordinal) ? text : null;
++        }
++        catch (EnvelopeStoreException)
++        {
++            return null;
++        }
++    }
++
+     private static CompiledProjection ProjectForSend(Envelope envelope, ComposerDraft? draft, PromptTemplate? template) =>
+         Projection.Project(envelope, draft, template);
+ 
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:01.75]     AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [FAIL]
+[xUnit.net 00:00:01.75]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:00:01.75]       String:    "Compiled prompt not recorded: this turn's"···
+[xUnit.net 00:00:01.75]       Not found: "Suggestion 1 for goal."
+[xUnit.net 00:00:01.75]       Stack Trace:
+[xUnit.net 00:00:01.75]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(109,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.75]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(110,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.75]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs(122,0): at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive()
+[xUnit.net 00:00:01.75]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.75]       Output:
+[xUnit.net 00:00:01.75]         before restart: b1 Completed; sent 263 chars; carries the goal line: True
+[xUnit.net 00:00:01.75]         after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 105 chars; disclosure shows 105 chars; equal to what was sent: False
+[xUnit.net 00:00:01.75]         disclosure text: "Compiled prompt not recorded: this turn's sent bytes could not be rebuilt and verified after the restart."
+[xUnit.net 00:00:01.77]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [1 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "Compiled prompt not recorded: this turn's"···
+Not found: "Suggestion 1 for goal."
+  Stack Trace:
+     at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 109
+   at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 110
+   at AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ASentGoalLineSurvivesARestartTests.cs:line 122
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ before restart: b1 Completed; sent 263 chars; carries the goal line: True
+ after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 105 chars; disclosure shows 105 chars; equal to what was sent: False
+ disclosure text: "Compiled prompt not recorded: this turn's sent bytes could not be rebuilt and verified after the restart."
+
+
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.TheNotRecordedLine_IsTheCopyDesignMdNames [13 ms]
+
+Test Run Failed.
+Total tests: 2
+     Passed: 1
+     Failed: 1
+ Total time: 2.0978 Seconds
