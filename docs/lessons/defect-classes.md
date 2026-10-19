@@ -8580,9 +8580,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   accelerator, the header click — on the composition the product builds, and asserts the content non-empty as well as
   equal. A fixture mutation is allowed only to reach a state the gesture cannot, and says so.
 - **Prevent (control):** instance — `TheCompiledFieldAfterASubmitTests` (both facts, observed failing on the unfixed code,
-  `f3bdf334`). Class — proposed, not built in this node: a shared gesture helper (type / submit / open) for composer
-  tests, and a gate that refuses a composer-content assertion with no non-empty check or with no gesture on a
-  `SessionDocumentSurface`. Repair plan in the proof README.
+  `f3bdf334`), and for a queued send `TheCompiledFieldAfterAQueuedSendTests` (T28 n3). Class — **built (T28 n3, Ruling 181
+  (3))**: the shared gesture helper `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs` (n2), and the gate
+  `ComposerContentOraclesDriveTheGestureTests` beside it. Every App test that reads composer field content
+  (`CompiledView`, `_compiled.Text`, the compiled box's `.Text`, its UIA name, `ComposerGesture.Field`/`Heading`, in its
+  body or a same-file helper it calls) must run on a `SessionDocumentSurface` **and** use a `ComposerGesture` verb, and
+  must not set the draft or the disclosure directly, unless its `PreAdmit` list names it with a reason (3 entries, the
+  pre-send reads ruled out in the sweep above; the list may only shrink, and a stale entry fails). Seen failing on a
+  planted bare-composer content assertion (`d4995b84`, `n3-C-red.txt`), green on the tree (`n3-C-green.txt`); its
+  self-test fact refuses Ruling 96's original shape (`2a89cf0b:…TheWriterKeepsItsRoomTests.cs:107-142`). **Not built:**
+  the non-empty check on an equality oracle (the second shape) is not mechanized; it is a source scan, so a reader behind
+  another file's helper is not seen.
+- **Status:** `partially-controlled` — the gesture gate is built (T28 n3); the non-empty check on an equality oracle is not mechanized. Repair plan and evidence in the proof README.
 - **Status:** `open` (red only; the fix waits for the Owner's read of the root cause).
 - **Third instance (2026-10-19, T11 join):** the step-8 ratchet refused three gates that went green→red, none of which a
   track's suites run. `docs-graph.py validate` found an orphan hand-off. `tools/verify-cited-controls.py` found a comment

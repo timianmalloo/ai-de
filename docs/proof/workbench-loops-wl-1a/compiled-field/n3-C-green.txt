@@ -1,0 +1,42 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.64]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.ComposerContentOraclesDriveTheGestureTests.EveryComposerFieldContentOracle_DrivesTheUsersGesture_OrIsNamedPreAdmit [431 ms]
+  Standard Output Messages:
+ 194 files · 14 tests read composer field content · 3 do not drive the gesture · 3 named pre-admit
+   pre-admit Composer/TheWriterKeepsItsRoomTests.cs::TheEditorHostIsNeverSmallerThanTheCompiledViewAndTheCompiledViewKeepsToItsCeiling: reads composer field content (.CompiledView) — no product composition (a SessionDocumentSurface); no user gesture (a ComposerGesture verb); the draft or the disclosure set directly (.CompiledPromptOpen =)
+   pre-admit Sessions/TheDecorationTheRowTheBytesAndTheColumnAgreeTests.cs::ForOnePromptTheDecorationTheRowTheBytesAndTheColumnAgree: reads composer field content (.CompiledView) — no user gesture (a ComposerGesture verb); the draft or the disclosure set directly (.Draft.SwitchTo()
+   pre-admit Sessions/TheWriterKeepsItsRoomTests.cs::UnderAShortWindow_TheEditorGivesWayToItsFloor_NeverBelow130: reads composer field content (.CompiledView) — no user gesture (a ComposerGesture verb); the draft or the disclosure set directly (.CompiledPromptOpen =)
+
+
+  Passed AiDe.App.Tests.Composer.ComposerContentOraclesDriveTheGestureTests.TheGate_RefusesABareComposerContentAssertion_AndAcceptsAGestureDrivenOne [7 ms]
+  Standard Output Messages:
+ Planted.cs::Ruling96Original: reads composer field content (box.Text of the compiled field's box) — no user gesture (a ComposerGesture verb)
+ Planted.cs::BareComposer: reads composer field content (.CompiledView) — no product composition (a SessionDocumentSurface); no user gesture (a ComposerGesture verb); the draft or the disclosure set directly (.Draft.SetFreeFormText()
+ Planted.cs::BehindAHelper: reads composer field content (.CompiledView) — no product composition (a SessionDocumentSurface); no user gesture (a ComposerGesture verb)
+
+
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 0.9803 Seconds

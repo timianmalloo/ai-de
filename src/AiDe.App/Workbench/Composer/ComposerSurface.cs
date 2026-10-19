@@ -87,7 +87,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private string _leaseLine = ComposerCompiler.LeaseLine(null);
     private TurnView? _inFlight;
 
-    /// <summary>The turn just sent and its heading while the field shows it (Ruling 181 (1)); null when it shows the live draft.</summary>
+    /// <summary>The turn just submitted — sent, or queued (Ruling 95) — and its heading while the field shows it (Ruling 181 (1)); null when it shows the live draft.</summary>
     private (string Text, string Heading)? _sent;
     private TurnView? _queued;
     private string? _queuedSentence;
@@ -325,6 +325,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The <see cref="SentHeadingFormat"/> heading for one turn's ordinal.</summary>
     public static string SentHeading(string displayOrdinal) =>
         string.Format(System.Globalization.CultureInfo.InvariantCulture, SentHeadingFormat, displayOrdinal);
+
+    /// <summary>
+    /// Ruling 181 (1), a queued send (Ruling 95): the heading while the field shows the turn just queued behind the one
+    /// in flight, until the next keystroke — the visible header, the field's UIA name and the disclosure's ItemStatus,
+    /// one string. <c>{0}</c> is the queued turn's ordinal (<c>b2</c>).
+    /// </summary>
+    public const string QueuedHeadingFormat = "Compiled prompt — queued as {0}";
+
+    /// <summary>The <see cref="QueuedHeadingFormat"/> heading for one turn's ordinal.</summary>
+    public static string QueuedHeading(string displayOrdinal) =>
+        string.Format(System.Globalization.CultureInfo.InvariantCulture, QueuedHeadingFormat, displayOrdinal);
 
     /// <summary>A disclosure's header row (DESIGN.md: each line 24 px) — what the compiled prompt costs at rest.</summary>
     private const double DisclosureHeaderHeight = 24;
@@ -1155,13 +1166,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// </summary>
     public void BeginNextTurn()
     {
-        // WHAT WAS SENT STAYS ON SCREEN (Ruling 181 (1)), read before the gate's view is dropped: the bytes the send
-        // took, when the thread admitted them as the turn now in flight. A queued turn (Ruling 95) is not sent yet and
-        // keeps its own sentence; a parallel session's first turn is not this thread's.
-        _sent = _queued is null && _inFlight is { } turn && _gate.RenderedView is { Text.Length: > 0 } view
-            && string.Equals(turn.SentBytes, view.Text, StringComparison.Ordinal)
-                ? (view.Text, SentHeading(turn.DisplayOrdinal))
-                : null;
+        // WHAT WAS SUBMITTED STAYS ON SCREEN (Ruling 181 (1)), read before the gate's view is dropped: the bytes the send
+        // took, when the thread admitted them — as the turn just queued behind the one in flight (Ruling 95: a queued
+        // send is a submit, headed as queued), else as the turn now in flight (headed as sent). A parallel session's
+        // first turn is not this thread's, so it matches neither.
+        _sent = _gate.RenderedView is not { Text.Length: > 0 } view
+            ? null
+            : _queued is { } queued
+                ? string.Equals(queued.SentBytes, view.Text, StringComparison.Ordinal) ? (view.Text, QueuedHeading(queued.DisplayOrdinal)) : null
+                : _inFlight is { } turn && string.Equals(turn.SentBytes, view.Text, StringComparison.Ordinal)
+                    ? (view.Text, SentHeading(turn.DisplayOrdinal))
+                    : null;
         _gate.NextBlock();
         _compileRow.Visibility = Visibility.Collapsed;
         _draft.SetFreeFormText(string.Empty);
@@ -1274,7 +1289,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>
     /// Writes the compiled field: the live draft's compile, or — after a submit, until the next keystroke — the turn just
-    /// sent under <see cref="SentHeadingFormat"/> (Ruling 181 (1)).
+    /// sent under <see cref="SentHeadingFormat"/>, or just queued under <see cref="QueuedHeadingFormat"/> (Ruling 181 (1)).
     /// </summary>
     /// <remarks>
     /// <b>DISPLAY-ONLY (Ruling 181 (2), the hard resend guard).</b> The sent text is written to the box and to nothing

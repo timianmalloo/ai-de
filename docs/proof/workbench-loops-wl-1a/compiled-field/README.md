@@ -15,11 +15,13 @@ summary: >-
   48 px floor. The verified cause is the submit's own reset of the draft (BeginNextTurn on Admit), not layout. Node 2
   lands Ruling 181: the field keeps the sent turn headed 'Compiled prompt — sent as b{n}', display-only, until the next
   keystroke; the resend guard is proved by a planted-leak mutation; Ruling 96's tests are re-driven through the gesture.
+  Node 3: a queued send shows its turn headed 'Compiled prompt — queued as b{n}' under the same guard (mutation red M3), and
+  the class gate ComposerContentOraclesDriveTheGestureTests refuses a content oracle that skips the gesture.
 ---
 
 # T28 — the compiled field is empty after a submit
 
-- **Branch:** `wl1a-compiled-field`, off `origin/main` `624b46c4` (merged with origin/main at 2a89cf0b). Node 1 (`wl-t28-compiled`), `/investigate`, was red only. **Node 2 (§5) is the fix under Ruling 181.**
+- **Branch:** `wl1a-compiled-field`, off `origin/main` `624b46c4` (merged with origin/main at 2a89cf0b). Node 1 (`wl-t28-compiled`), `/investigate`, was red only. **Node 2 (§5) is the fix under Ruling 181. Node 3 (§6) is the queued state and the class gate.**
 - **Symptom (the user, WL-1a demo, 2026-10-19):** they submitted a prompt, and the compiled prompt did not show in the compiled field.
 - **Prior ruling:** Ruling 96 (`docs/notes/addendum-c-council-rulings.md:1626-1638`). Its cause ("the belt not re-measuring on expand") was **Inferred**.
 
@@ -94,7 +96,30 @@ The class: **a content oracle that is set up by fixture mutation never drives th
 
 The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs`. It has `Drive`, `Type`, `CtrlEnter`, `Open`, `Field`, `Heading` and `AttemptRows`. n3's class gate can require it.
 
-**Design choice, marked (Inferred, not ruled):** a **queued** send (Ruling 95) does not show its bytes in the field. The field shows the live, empty new draft under the plain heading, and the status line carries *"b2 queued — sends after b1"*. Ruling 181 names only *sent as b{n}*, and the only other way to show it needs a new copy string (for example "queued as b2"). If the Owner wants that, it is one more heading const. A **held** send keeps its words in the editor, and the field shows their live compile. Once the turn is admitted it reads *sent as b1*.
+**Design choice, marked (Inferred, not ruled; superseded by §6 under the Owner's direction):** a **queued** send (Ruling 95) does not show its bytes in the field. The field shows the live, empty new draft under the plain heading, and the status line carries *"b2 queued — sends after b1"*. Ruling 181 names only *sent as b{n}*, and the only other way to show it needs a new copy string (for example "queued as b2"). If the Owner wants that, it is one more heading const. A **held** send keeps its words in the editor, and the field shows their live compile. Once the turn is admitted it reads *sent as b1*.
+
+## 6. Node 3 — the queued state and the class gate (Ruling 181 (1)-(3), the Owner's direction)
+
+**What landed:**
+- `ComposerSurface.QueuedHeadingFormat = "Compiled prompt — queued as {0}"` (and `QueuedHeading`). `BeginNextTurn` keeps the gate's view as display-only state when the thread admitted it as **the turn just queued** (`_queued.SentBytes` equal), headed `QueuedHeading(b{n})`; otherwise, as before, as the turn in flight, headed `SentHeading(b{n})`. `ShowCompiled` stays the only writer, so the header, the field's UIA name and the disclosure's ItemStatus carry one string. The next keystroke returns the field to the live view. This supersedes §5's marked design choice (a queued send showed the live, empty draft).
+- `DESIGN.md`: the queued-state row *Compiled prompt — after a queued send* follows the sent-state row. The sent row's queued clause now points to it.
+- **The class gate** `tests/AiDe.App.Tests/Workbench/Composer/ComposerContentOraclesDriveTheGestureTests.cs` is a test, not a `tools/` gate. A `tools/verify-*.py` gate also needs a workflow line (`verify-project-coverage.py` lists any gate no workflow names), and `.github/workflows` is outside this track's paths. As a test it runs in the App suite.
+- **Read on main first (rule 14):** `_queued` is set by `SetQueued` from the thread snapshot during `Admit`'s `Enqueue`, **before** `BeginNextTurn` (`SessionDocumentSurface.Admit`). So the queued turn's `SentBytes` is there to compare. The code matched the brief, and no seam was raised.
+
+**Checks (red then green, through the gesture: `SetFieldText`, Ctrl+Enter through `OnAcceleratorKey` with b1 in flight, the status line's *Wait — send after b1* (`ComposerGesture.CtrlEnterThenWait`), then the toggle peer, on the real `SessionDocumentSurface`):**
+
+| Check | Tests | Red | Green |
+|---|---|---|---|
+| A — a queued send shows its prompt | `TheCompiledFieldAfterAQueuedSendTests`: `OpenedAfterAQueuedSend_TheCompiledFieldShowsThatTurnsPrompt_HeadedQueuedAsB2`, `AfterAQueuedSend_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft`, `TheQueuedHeading_IsTheCopyDesignMdNames` | `n3-A-red.txt` (`13b32da6`), on the unfixed code: the field is 0 chars under the plain heading after the queued send, and b2 holds 69 chars. There is no DESIGN row. | `n3-A-green.txt` (`1874cb5e`): these 3, node 2's 4 sent-state tests and the 3 resend tests, 10 of 10 |
+| B — the queued resend guard | `TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing`. It replaces node 2's `AQueuedSend_ShowsItsQueuedState_NotTheSentState`, whose oracle was the old queued state. | `n3-B-red-mutation.txt` (`65bde9a9`): **mutation red**. M3 is the planted leak: the queued submit keeps its words in the draft (`BeginNextTurn`: `if (_queued is null) { clear }`), so the gate's view holds the shown text. The press right after the queue is refused by Ruling 95. After the drain, a press with no keystroke **resent** b2's bytes as b3: 3 turns, 3 attempt rows (was 2), 3 blocks sent, status "sent". M3 was then reverted. | `n3-B-green.txt` (`db516197`), 3 of 3. The press right after the queue reads *"b2 is queued; cancel it or wait."* (2 turns, 1 queued, attempt rows and blocks sent unchanged). After the drain the press reads *"an empty prompt is not a task"*. |
+| C — the class gate (DC-NEW-wl-t28-compiled) | `ComposerContentOraclesDriveTheGestureTests`: `EveryComposerFieldContentOracle_DrivesTheUsersGesture_OrIsNamedPreAdmit` (the tree) and `TheGate_RefusesABareComposerContentAssertion_AndAcceptsAGestureDrivenOne` (the self-test: Ruling 96's original shape, a bare composer with its draft set, and a read behind a helper are refused; a layout-only read and a gesture-driven oracle pass) | `n3-C-red.txt` (`d4995b84`): the planted `PlantedBareComposerContentTests` (a bare composer, its draft set, `CompiledView` asserted) is **REFUSED**. 1 failed. | `n3-C-green.txt` (`23c7c461`), with the plant removed: 194 files, 14 tests read composer field content, 3 are named pre-admit, 0 refused, 0 stale. 2 of 2. |
+
+**The gate's rule.** A test reads composer field content when its body, or a same-file helper it calls, reads one of these: `CompiledView`, `_compiled.Text`, the compiled box's `.Text` (the box itself is found by `IsReadOnly && MaxHeight <= CompiledPromptMaxHeight`), the field's UIA name, or `ComposerGesture.Field` / `Heading`. Such a test must run on a `SessionDocumentSurface` (`ComposerGesture.Drive`, `new SessionDocumentSurface`, `ThreadFixtures.Document`) **and** use a `ComposerGesture` verb (`Type`, `CtrlEnter`, `CtrlEnterThenWait`, `Open`). It must not set the draft (`Draft.Set*`, `SwitchTo`, `UseTemplate`) or `CompiledPromptOpen` by assignment. The only exception is a `PreAdmit` entry with a reason. A measure of the box's height alone is not a content read. That narrowing came from the first run: 5 layout tests in `Sessions/TheWriterKeepsItsRoomTests.cs` reach the box only through the `Layout` helper's `ActualHeight`. The 3 `PreAdmit` entries are the pre-send reads that node 1's sweep ruled out: the ~30-line layout non-vacuity checks in `Composer/` and `Sessions/TheWriterKeepsItsRoomTests`, and the decoration test's read before the send. The list may only shrink, and a stale entry fails.
+
+**Not built, or residual:**
+- **Inferred, not observed:** after the queue drains and b2 is sent, the field keeps the *queued as b2* heading until a keystroke. `SetQueued` and `SetInFlight` do not re-render the field. Ruling 181 names no transition from queued to sent, and B's test does not assert the heading after the drain. If one is wanted, it is one `ShowCompiled` call when `_queued` clears to the turn now in flight.
+- The gate does not mechanize the non-empty check on an equality oracle (DC-NEW's second shape). It is a source scan, so a content read behind a helper in another file is not seen. DC-NEW-wl-t28-compiled's status is therefore `partially-controlled`.
+- **Rule 19 lapse:** the T11 join (`join-wls-kinds-migration`) went in flight at 17:32:18Z. This node's four filtered App runs of the gate test (about 17:33–17:37Z) started during it, because I did not re-read the board before each run. Those facts are source scans that open no window and take no desktop hold. The (A) and (B) runs ended before 17:31Z. The whole App suite waited for the join's end.
 
 ## Files
 
@@ -107,3 +132,9 @@ The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.c
 - `C-red.txt`, `C-red-mutation.txt` — C on the unfixed code; mutation M2 against the re-driven and the original Ruling 96 test.
 - `ABC-green.txt` — the 12 tests on the fix (`5da5d032`): 12 of 12 passed.
 - `suite-node2.txt` (`suite-node2-core.txt`, `suite-node2-app.txt`) — the whole Core and App suites at the node head.
+- `n3-A-red.txt`, `n3-A-green.txt` — node 3, check A: the queued state, red on the unfixed code (`13b32da6`), green on the fix (`1874cb5e`).
+- `n3-B-red-mutation.txt`, `n3-B-green.txt` — check B: planted leak M3, under which the press after the drain resends b2 as b3; then green (`db516197`).
+- `n3-C-red.txt`, `n3-C-green.txt` — check C: the class gate refusing the planted bare-composer assertion (`d4995b84`), then green on the tree (`23c7c461`).
+- `n3-verify-defect-register.txt` — `tools/verify-defect-register.py` after the DC-NEW entry update: OK.
+- `suite-node3.txt` (`suite-node3-core.txt`, `suite-node3-app.txt`) — the whole Core and App suites at the node-3 head.
+- No "Ruling 115 desktop hold is occupied" result occurred in node 3, so there is no `desktop-hold.txt`. App: 1177/2/2. The 2 failures were re-run alone in `suite-node3-rerun-app.txt`: `ADeadHolder` passes; the SolutionTreeChord probe is refused, "foreground not held" (Ruling 155 (3)).

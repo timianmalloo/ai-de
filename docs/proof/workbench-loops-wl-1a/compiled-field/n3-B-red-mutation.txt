@@ -1,0 +1,58 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:02.59]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing [FAIL]
+[xUnit.net 00:00:02.59]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:02.59]       Expected: 2
+[xUnit.net 00:00:02.59]       Actual:   3
+[xUnit.net 00:00:02.59]       Stack Trace:
+[xUnit.net 00:00:02.59]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:02.59]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:02.59]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(49,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:02.59]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(89,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing()
+[xUnit.net 00:00:02.59]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:02.59]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:02.59]       Output:
+[xUnit.net 00:00:02.59]         after the second press: turns b1 Running, b2 Queued · attempt rows 2 (was 2) · blocks sent 2 (was 2) · status "b2 is queued; cancel it or wait." · field 69 chars · header "Compiled prompt"
+[xUnit.net 00:00:02.59]         after the drain and a further press: turns b1 Answered, b2 Answered, b3 Answered · attempt rows 3 (was 2) · blocks sent 3 (was 2) · status "sent"
+[xUnit.net 00:00:02.60]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing [2 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 2
+Actual:   3
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 49
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 89
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ after the second press: turns b1 Running, b2 Queued · attempt rows 2 (was 2) · blocks sent 2 (was 2) · status "b2 is queued; cancel it or wait." · field 69 chars · header "Compiled prompt"
+ after the drain and a further press: turns b1 Answered, b2 Answered, b3 Answered · attempt rows 3 (was 2) · blocks sent 3 (was 2) · status "sent"
+
+
+
+Test Run Failed.
+Total tests: 1
+     Failed: 1
+ Total time: 2.9166 Seconds
