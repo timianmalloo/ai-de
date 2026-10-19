@@ -1,63 +1,60 @@
 ---
 id: wl-s-float-handoff-n1
-title: "WL-S T21 float - node 4 hand-off"
+title: "WL-S T21 float - node 5 hand-off"
 type: proof-pack
 status: active
 owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "T21 node 4: the schema-1 freeze as an allow-list, the two malformed zone-file shapes load with a report line (close condition 1), and one definition of the off-screen sentence; next is the Owner's refinement of the partial-read sentence, then close conditions 2 to 4."
+summary: "T21 node 5: the partial-read sentence names the left-out surfaces by title, a null element in any saved-layout list loads with a report line, and floating-window ids are unique across a restore (close condition 2). The App suite is owed under rule 20; next is close condition 3, the focused-tab float."
 ---
 
-# T21 node 4 hand-off
+# T21 node 5 hand-off
 
-Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. The node 3
-hand-off is in git history at 0ec8dd34. Node 4 stopped at the Leader's rule-16 kick, after check 2's
-green. No check is half done.
+Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. The node 4
+hand-off is in git history at ba6b0768. Node 5 stopped at the Leader's 15:35Z rule-16 kick, after
+check (C)'s green. No check is half done.
 
 ## Done (green, committed)
 
-- Nodes 1 to 3: see README.md.
-- Check 0, the schema-1 freeze as an allow-list: red 9e20dcd0, green 1da9f822.
-- Check 1, no `"zones"` field and a floating stack with no `"surfaces"` field load with a report line (close condition 1): red 96ffc26a, green 7c3a40aa.
-- Check 2, one definition of the off-screen sentence, and the `LayoutRect` comment: red c2dd868e, green 08f62223.
-- Suite (suite-node4.txt, at 08f62223): Core 3034 passed / 0 failed / 1 skipped; App 1155 / 1 / 2. The one failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held; SendInput would prove another window". That is the probe refusing at its precondition, the same as nodes 1b to 3. It is not proven either way. Core is node 3's count plus 3. The App count also includes the tests main brought in at 003688ea, so it is not compared with node 3's.
+- Nodes 1 to 4: see README.md.
+- Check (A), the partial-read sentence names what was left out: red f6e7842e, green 733391b6.
+- Check (B), a null element in a saved-layout list loads with the sentence and never throws: red 8c533157, green 3b12744f.
+- Check (C), floating-window ids are unique across a restore (close condition 2): red f3d14d3b, green 4d43a871.
+- Core suite (suite-node5-core.txt, at 4d43a871): 3043 passed / 0 failed / 1 skipped. That is node 4's 3034 plus 9 new: 2 in (A), 6 in (B), 1 in (C).
 
-## Next node, first item: the Owner's refinement of the partial-read sentence
+## Owed: the App suite (rule 20)
 
-The Owner confirmed "Part of your saved layout could not be read and was left out." with one
-refinement, which arrived after check 1 was green:
+The Owner posted USER DEMO IN PROGRESS at 15:34Z, so no App run was made after that. The App tests
+of (A) and (B) were run red and green before 15:34Z (in the check's red and green files). The whole
+App suite was not run in this node. When the board shows USER DEMO DONE and no open join, run:
 
-- When the reader knows what it dropped (a surface title or a zone), the sentence names it: `Part of your saved layout could not be read and was left out: {what}.`
-- When there is nothing to name, the sentence stays as it is.
-- Each form gets one const, pinned by a test, red first.
+```
+cd C:\Projects\ai-de-wls-float && dotnet test tests/AiDe.App.Tests -nologo > docs/proof/workbench-loops-wl-s/float/suite-node5-app.txt 2>&1
+```
 
-Today `ZoneLoadResult.PartlyRead` is a bool, and `LayoutPersistence.PartlyReadSentence` is the one form.
-The next node needs a list of what was left out in place of the bool, and must decide what each of the two shapes can name:
-- A floating stack with no `"surfaces"` field has no title to name. Only its `id` is known, such as `float-1`, and that is not user-facing.
-- A file with no `"zones"` field names no zone either.
+Expected from node 4's 1155 / 1 / 2: plus 6 (one named Fact, and five rows added to the plain-form
+Theory). This is a prediction, not a result. The one known failure is the SolutionTreeChord probe at
+its precondition, as in nodes 1b to 4.
 
-So both fixtures today hit the nothing-to-name form. A test of the `{what}` form needs a shape that does name something, for example a zone entry whose content cannot be read. That shape is a new fixture. Ask the Owner which words `{what}` takes for the shapes in hand before you build it. Update the DESIGN.md row (granted in node 4) to carry both forms.
+## Next node (n6): close condition 3, then the join
 
-## Then: the Owner's T21 close conditions, in this priority
+1. **floatPane floats the focused tab.** `SetState` passes `Surfaces().FirstOrDefault()` to `Float` (`ZoneBackedLayoutService.cs:593` at 4d43a871; it was :584 before this node's change to `Float`).
+2. T21 joins before T11 (Owner). T11 rebases onto T21, since both edit `LayoutPersistence.cs`.
+3. Close condition 4 (a live notebook floats and redocks) after T11 is on main.
 
-1. Done in node 4 (above).
-2. **Floating-window ids are unique across a restore.** `ZoneBackedLayoutService._floatSeq` (:17) restarts at 0, so the first float after a restore that holds `float-1` mints `float-1` again. Found by reading, not tested.
-3. **floatPane floats the focused tab.** `SetState` passes `Surfaces().FirstOrDefault()` to `Float` (`ZoneBackedLayoutService.cs:584`), so the zone's first tab floats. This is older than T20.
-4. **The live-notebook float**, after T11's notebook kind lands on main.
+## Seam requests (node 5)
 
-## Seam requests (node 4)
+- req-01M5ACJG6ZCRGJ3BDBPCYW0WJJ (open): the sentence names a left-out surface by its saved title (`ZoneSurfaceDto.Title`). A renamed tab shows `IHasDisplayName.DisplayName` instead (`WorkbenchAdapter.cs:1128` and `:216`; `IHasDisplayName.cs:9`). The display name is session state and is not in the zone file. After a restart the restored tab also shows the saved title, so the sentence matches the tab the user sees next. The fallback, built: name the saved title. Saving the display name would need a schema-1 field and a ruling.
 
-- req-01M5A9WFD8G87N4DFPRB0B5C9X: merge main into the tree. Done by the Leader at 003688ea.
-- req-01M5A9YZ4PB93ZD06KE5EMC5X8: the partial-read sentence. Accepted provisionally, then confirmed by the Owner with the refinement above.
-- req-01M5A9YZ7H7QPANKV4YMECM31H: LayoutStore.cs, one line, granted. The changed line is :272, the literal's own line in the statement that starts at :271.
-- Older: req-01M5A6W4HGN4PREM1CK48Q5X4H (off-screen sentence copy) and req-01M5A74MXYR2X0YG0EVE501PMF (60779f03, now replaced by the allow-list as the Owner asked).
+## Findings (not fixed)
 
-## Other findings (still open)
-
-- A JSON `null` element inside `zones`, `floating`, `tabs` or `surfaces` (for example `"floating": [null]`) is still dereferenced by `ZoneLayoutStore.Read`. Found by reading, not tested. DC-NEW-wl-t21-float stays `partially-controlled` for this.
-- DESIGN.md:277 still has an older form of the off-screen sentence ("Display 2 is not connected. …"). The code says "“X” moved onto this display because the saved display is not connected."
-- floatPane on the empty center's placeholder says "No surface “”.".
-- No test references `ZoneLayoutService.ZoneName`, since FloatingRedockCopyTests was deleted.
-- A move followed by a crash, before the next layout pass or the shutdown flush, is not saved. The reconcile does not call `MarkDirty` (`WorkbenchShell.cs`). This is Inferred.
+- **Two floating stacks with one id in a saved file** (hand-edited) pass `ZoneLayoutStore.Read`. The zone invariant checks surface ids only. The tree projection's invariant (`Layout.AssertInvariant`, `LayoutModel.cs:199`) then throws "duplicate node id", the same exception check (C)'s red shows. Found by reading, not tested. It is a sibling of check (C) and of the reader's never-throws promise.
+- **`float-view-N` ids** (`WorkbenchAdapter.NewNodeId`, `:1102`, used at `:1008` for a natively floated window) come from a static counter that restarts with the process. A restored `float-view-1` and the next native float in a new process could share an id. Found by reading, not tested. It needs an App test, so it waits for USER DEMO DONE.
+- **A zone content with no `"tabs"` field** reads as an empty zone without a report (`tabs ?? []`). It holds nothing, so nothing is lost. Not changed.
+- **A null scalar** (`surfaceId`, a floating stack's `id`) is not dereferenced by `Read`. It is passed into the model. Recorded in DC-NEW-wl-t21-float as outside that class.
+- The "No surface “”." placeholder copy (floatPane on the empty center) is unchanged. Out of scope.
+- DESIGN.md:277 still has an older form of the off-screen sentence ("Display 2 is not connected. …"). The code says "“X” moved onto this display because the saved display is not connected." Out of scope.
+- No test references `ZoneLayoutService.ZoneName`.
+- A move followed by a crash, before the next layout pass or the shutdown flush, is not saved (`WorkbenchShell.cs`, no grant). Inferred.
