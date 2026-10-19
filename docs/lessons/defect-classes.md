@@ -8630,3 +8630,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   committed file only from command output printed earlier in the same turn. The send of a message that cites a sha
   comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
   `partially-controlled`.
+- **DC-NEW-wl-leader3, fourth instance (2026-10-19, T21 n7):** a seam request (`req-01M5ATF6PNMEW0SX2KKZA34D4D`, a
+  one-line `DockHost.cs` grant that blocked close condition 4) sat unanswered through the whole node. The Leader watched
+  mail and the board, and seam requests arrive in the requests ledger. The node stopped at its kick with no check green.
+  **Control (mechanical, Leader session):** a monitor polls `coord request list` every 60 s and raises an event for each
+  new typed request addressed to the Leader. Its gap: it lives only as long as the Leader's session, so the next Leader's
+  kickoff must start it. That makes the status `partially-controlled`; a hand-off brief line is owed.
