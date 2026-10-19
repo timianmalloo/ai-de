@@ -558,7 +558,8 @@ public sealed class NewSessionSheetViewModel
             fanOutCeiling: FanOutCeiling!.Value,
             budgetCap: BudgetCap,
             defaultTaskClass: TaskClass!.Trim(),
-            origin: SessionOrigins.MainMenuNewSession);
+            origin: SessionOrigins.MainMenuNewSession,
+            compileModes: _adapterInstallRoot is null ? null : CompileModeGateInput(_adapterInstallRoot));
 
         // The result's class IS the config's default (Ruling 72; ADR-0033 §4) — one source, read
         // back from what was written, never a second copy of the sheet's field.
