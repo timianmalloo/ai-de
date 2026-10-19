@@ -1,1 +1,2 @@
 {"action": "add", "agent": "wl-t16b-bindrow", "at": 1792399823.5263383, "deadline_at": 1792401623.5263383, "id": "req-01M59NNMNABZ2FS5CJMTA9RHMP", "kind": "request", "path": "-", "seq": 1, "session": "wl-t16b-bindrow", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"at": 1792400664.5748029, "from": "wl-t16b-bindrow", "kind": "done", "mail_id": "mail-01M59PF9ZYMFWQNJHG0RTTMZ79", "ref": null, "session": "wl-t16b-bindrow", "to": "wl-leader2-20261019", "type": "mail"}
