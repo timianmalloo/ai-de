@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T21:09:54Z",
+  "generated": "2026-10-19T21:25:17Z",
   "audit": [
     {
       "actor": null,
@@ -26427,6 +26427,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T21:09:52Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5B0VWT95GDB4S51JSQ5S1V0",
+      "shortname": "join-wls-float-fix-step8",
+      "datetime": "2026-10-19T21:25:17Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the float-fix re-join 921a65b2",
+      "summary": "The first float-fix join (head a7f17301, kept at backup/float-fix-join-a7f17301) passed its recount in full (App 1226/1226) but its ratchet refused verify-cited-controls (FloatGuardTests.cs:14 cited a deleted test); the guard fallback refused identically at d82df79e; Owner approved T21's one-line cite fix 2213b507 on 36884736. This re-join: recount ran in full (App 1226 counted; Core 3116/2933/183); refusals SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground', each ALONE on the join head b3d52a60 and the first parent 3f22efa8 in a clean detached tree: Ruling 155 (3), NOT CHECKED. Step 8 strict 6/48. Ratchet vs 3f22efa8, head 921a65b2: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Owner's join-record lines: the palette Float route renders (red 626c7221 -> green 36884736); the sweep's four routes (close, collapse, maximize, next tab) red at 626c7221, green at 36884736; floating tab has no context menu (74af5881 red) -> fixed on wls-float at 28c60d1f, joins next; redock remains reachable via the palette's Move to -> Center.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 171: a floated pane never vanishes; layout commands render",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T20:08:35Z",
+      "duration_seconds": 4602.0
     }
   ],
   "changes": [
