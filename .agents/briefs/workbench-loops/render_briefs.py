@@ -25,6 +25,7 @@ TRACKS = {
     "T13b": ("wl-t13-hygiene", "gate-hygiene", "docs/proof/workbench-loops-support/hygiene", "Sonnet 5.5"),
     "T12c": ("wl-t12-census", "census-flake", "docs/proof/workbench-loops-support/census", "Sonnet 5.5"),
     "T14": ("wl-t14-nbops", "wl1a-notebook-ops", "docs/proof/workbench-loops-wl-1a/notebook-ops", "Sonnet 5.5"),
+    "T15": ("wl-t15-idgate", "account-identity-gate", "docs/proof/workbench-loops-support/identity-gate", "Sonnet 5.5"),
 }
 
 common = (HERE / "brief-common.md").read_text(encoding="utf-8")

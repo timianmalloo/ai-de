@@ -3325,3 +3325,33 @@ The v3 text is frozen like v2, with a fresh-versus-migrated test. Invariant 5 is
 (4) This discharges how Ruling 148's tracked obligation (the adoption actor at T8's binding) lands. T8's brief carries the refusal, and the adopting slice's brief carries v3.
 
 - request: req-01M59C8HM5DG2YX6XHPHE4SJXZ · ruled by: wl-owner-20261018 · at: 2026-10-19T06:06:44Z
+
+### Ruling 157 — Run-log identity: the local log keeps the adapter's account email and organization as a recorded residual; the control is at the commit boundary, as brief rule 15 AND a gate now, because the repository is public
+
+Option B, with the gate brought forward to now. It replaces the default (rule 15 only).
+
+Why not A: ADR-0042 section 6's ingest redaction covers credentials, and the run log is local to a single-user tool. That matches the recorded single-user-local posture: security stays at the spec floors, and residuals are recorded, not mitigated. Widening ingest redaction to identity would change ADR-0042's scope for a threat this tool does not face locally.
+
+Why the gate now: gh repo view reports timianmalloo/ai-de as PUBLIC. A real-lane run log copied under docs/proof/ and pushed publishes the account email and organization. The commit boundary is therefore the only exposure that matters. A prose rule alone is a memoir (CI6).
+
+The Owner checked, on origin/main and on wl1a-attempt-host-n2 (53d529ce): no tracked file contains the account email. The only email-shaped string under docs/proof/ is the placeholder redacted@example.invalid (compile-pin-spike.md:93).
+
+The decision:
+(1) Local run logs keep the _auth/status_update identity values. This is a recorded residual in the WL-1a Proof Pack and in docs/proof/workbench-loops-support/hygiene/residuals.md.
+(2) Brief rule 15, now: a real-lane proof copy scrubs identity values to placeholders and records the original's sha256 and the scrubbed field names.
+(3) A gate, now, before any further real-lane proof is committed. It is a small hygiene track, red-first, wired into run-verify-gates. It refuses an email-shaped string in tracked files under docs/proof/ and .agents/, with an explicit allow-list: *@example.invalid, example.com and example.org, and GitHub users.noreply addresses. Its self-test plants one real-shaped address and shows it refused.
+(4) Option C's ingest redaction stays available if the tool ever becomes multi-user or uploads logs. Record that as the upgrade trigger.
+
+- request: req-01M59DPQZM7BQ4CRNDQ7DVQE3D · ruled by: wl-owner-20261018 · at: 2026-10-19T06:32:12Z
+
+### Ruling 158 — Ruling 157's allow-list adds the one exact address noreply@anthropic.com (the required commit-attribution trailer); Ruling 156 reads as T8 applied it
+
+Option A. The Owner counted every email-shaped string in tracked docs/proof/** and .agents/** on origin/main. There are 7 instances of noreply@anthropic.com, all in the brief files under .agents/briefs/workbench-loops/, and 1 of redacted@example.invalid. There are no others. noreply@anthropic.com is the public no-reply address of the attribution trailer every commit in this drive must carry. It is a service address, not an account, so it identifies no person.
+
+The allow-list gains that exact address only: an exact match, not the anthropic.com domain. The gate's self-test adds one case showing a different @anthropic.com address is still refused. Option B is rejected, because removing the trailer from the briefs would make each track reconstruct it from memory.
+
+On Ruling 156: T8's change to the adoption step in the 3 older Core tests, so they assert the refusal, is the correct reading. Ruling 156 makes the store refuse adoption until v3 lands. The positive adoption assertions move to the v3 slice as an obligation, and they come back red-first with v3.
+
+T8 node 3's seam in T5's ConductorEntry and CompositionRootLedger is agreed, because T5 is finished. It is held within rule 16's three items.
+
+- request: req-01M59E463DZEPBDFCRBPS7C7AX · ruled by: wl-owner-20261018 · at: 2026-10-19T06:38:58Z

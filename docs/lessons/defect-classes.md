@@ -8361,3 +8361,22 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** `PendingDispatchKeys` is narrowed to PTY rows (`route_fingerprint IS NULL OR = 'pty'`); the native host writes a non-null, non-`pty` route on every attempt (`AttemptDispatch.ToRow`). Test: `AttemptGateTests.ThePtySweep_NeverTouchesANativeAttempt`.
 - **Derive:** a sweep over a shared fact table names *whose* rows it owns in its predicate; "no outcome yet" alone is not ownership.
 - **Status:** `controlled`.
+
+### DC-NEW-wl-leader2-b — A node is sized by a budget cap, not by its scope, so every node overruns the cap
+
+- **Shape:** the Leader splits a long track into "nodes" and gives each one a call/context cap. But the node's *scope* (its
+  list of red-then-green checks) is set by dividing the track's checks in two, not by measured cost per check. The cap
+  is a circuit breaker; once scope exceeds it, the cap fires on every node. Each firing is then read as a one-off and
+  answered with a lower cap, which fires again (GO9: a cap firing is a defect signal, never a termination argument).
+- **Observed instances:** three Opus nodes in a row overran. T5 node 1: 150 calls / 346k against 200 / 300k. T8 node 1:
+  154 calls / 285k against 200 / 300k, with the cap firing mid-suite. T5 node 2: 143 calls / 330k against 180 / 280k.
+  All are harness-measured. Each agent's self-reported usage was about 30–40% low: T5 n1 said ~125 / ~200k.
+- **Sweep:** every remaining wave-2 node (T8 node 2, T11's two nodes, and any WL-1b/1c node in the refreshed plan).
+- **Derive:** measured cost per check on this codebase is about 30–50 calls and 60–100k context for an Opus App/host
+  check, plus about 100k of fixed reading per node. A node therefore holds at most three checks, or one check plus a
+  real-lane run. Self-reported usage is not a measurement; only the harness count is.
+- **Control:** brief rule 16 in `.agents/briefs/workbench-loops/brief-common.md` (rendered into every brief): at most
+  three checks per node, and a hand-off at 120 calls or 200k, even mid-check. The Leader's reports state each node's
+  budget from the harness `usage` line, never from the agent's own count. T8 node 2 was re-capped live at 120 / 200k, and
+  T11 is re-cut into nodes of three checks or fewer before dispatch (Owner, on report 6).
+- **Status:** `controlled` (always-loaded brief rule; Leader reporting rule).

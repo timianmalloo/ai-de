@@ -1,0 +1,12 @@
+{"agent": "wl-t15-idgate", "at": 1792391627.9446642, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/gate-red.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792391627.9797428, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/self-test-red.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792391628.0178697, "code": null, "kind": "allowed", "path": "tools/verify-no-account-identity.py", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392077.745243, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/anthropic-exact-red.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392077.779751, "code": null, "kind": "allowed", "path": "tools/verify-no-account-identity.py", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392469.4406717, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/README.md", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392469.4731963, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/gate-green.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392469.507706, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/gate-line.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392469.539239, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/self-test.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392469.5726244, "code": null, "kind": "allowed", "path": "tools/verify-no-account-identity.py", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392475.4951806, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792392475.5257194, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t15-idgate", "wi": ""}
