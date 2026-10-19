@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-18T23:38:51Z",
+  "generated": "2026-10-19T00:02:07Z",
   "audit": [
     {
       "actor": null,
@@ -22507,6 +22507,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-18T23:29:46Z",
       "duration_seconds": 544.0
+    },
+    {
+      "id": "al-01M58QEBCFXE71925RG7AJ14VP",
+      "shortname": "join-wl0-step8-ratchet",
+      "datetime": "2026-10-19T00:02:07Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 151/153 step-8 completion for the WL-0 join",
+      "summary": "WL-0 pushed 4e615327 (a790ccaa..4e615327). conductor-join stopped at step 8 (strict, 10/47 red; main was red before the drive). Ruling 151 ratchet: parent a790ccaa vs head 4e615327 in clean detached trees back to back, finding level: PASS, 0 refusals over 48 gates; excluded per 151(3): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage (conductor recount green). Ruling 153 filter on verify-ruling-citations dropped parent=98 head=102 findings (rulings with exactly one heading in addendum-c). Normalisation: tree-root prefix only (escaped-backslash form added after a FileExistsError false refusal in verify-workbench-v2). Join build (Release) 0 errors 0 warnings. First recount attempt failed on the ConsoleHostCensus read flake; retried with --continue.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-0.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land WL-0 on main under Ruling 151/153",
+      "done_when": "WL-0 pushed with ratchet PASS recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-18T23:52:02Z",
+      "duration_seconds": 605.0
     }
   ],
   "changes": [
@@ -26701,6 +26725,60 @@ window.AUDIT_DATA = {
     {
       "id": "mail-01M58P3N4HT8EE043C2H7CYPE8",
       "ts": "2026-10-18T23:38:48Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M58P6FZBY986GPS78Q8E16JM",
+      "ts": "2026-10-18T23:40:21Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58P6FZ03JG8EQ8EW3G12MSA",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58P9CTWGCHQ44YCBNZP8HXC",
+      "ts": "2026-10-18T23:41:56Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58P6FZ03JG8EQ8EW3G12MSA",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58PVA6JZZBDJ6KJN8ZD5028",
+      "ts": "2026-10-18T23:51:43Z",
+      "from": "wl-t4-sp3",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t4-sp3"
+    },
+    {
+      "id": "mail-01M58PX7AGE5M6XZPK20H6HKTT",
+      "ts": "2026-10-18T23:52:46Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58PX7A6BXNH5TP6RHEHTMWE",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58PY0WEJJAH6F7YBVZVZMT6",
+      "ts": "2026-10-18T23:53:12Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58PX7A6BXNH5TP6RHEHTMWE",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58Q40GAXCDDPT0VRGQP01R2",
+      "ts": "2026-10-18T23:56:28Z",
       "from": "wl-t4-sp3",
       "to": "wl-leader-20261018",
       "kind": "done",

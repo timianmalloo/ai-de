@@ -3247,3 +3247,30 @@ T13, the hygiene track, is approved and owns the burn-down, each item red-first.
 The ratchet ends when the line is green on main. From then on, step 8 is strict again. This ruling is reversible: it is a join policy only.
 
 - request: req-01M58MTQWEHY7WSNFXM59QZ7H3 · ruled by: wl-owner-20261018 · at: 2026-10-18T23:28:15Z
+
+### Ruling 152 — ADR-0045 amended: T4's D2 (Factory lands Left until T11), D4 (Escape/Previous deleted, US-C1 pinned by a rendered-window test) and D5 (Body column deleted, no-FullWindow as a build fact) are accepted
+
+Option A. Each deviation keeps ADR-0045's intent, and the Patterns Expert and Simplifier adversaries co-signed each one (docs/design/workbench-loops-wl-s.md:132, :193, :206 in the sp3 tree).
+
+The Owner verified D4 at 4b439996. The only production caller of Escape() is MainWindow.xaml.cs:113, inside the Explore-guarded handler that ADR-0045 1(b) deletes. PerspectiveShell.Previous is written at :236 and read only at :301, inside Escape(). The other Previous symbols (IpcContract, WpfHostFocusScope, workbench.previousSurface) are unrelated. In the sp3 tree, no src/*.cs names PerspectiveBody or FullWindow.
+
+Conditions:
+(D2) The Left landing is time-boxed. Flipping it to Center is a merge condition of T11, in the same change that docks the notebook in the Center. The build test pins the value, and the Factory row's simplify: marker names T11. Ruling 83's left-dock focus (SH-4.1/SH-4.2) stays pinned until then.
+(D4) The previous-perspective slot is re-added only with its first reader, the drill-to-node return of US-C1, by whichever slice builds that return. Until then, US-C1's 'Escape never switches the perspective from a host' is a rendered-window test, and the US-C1 trace names it.
+(D5) The reflection and source build test is the ADR's requested build test. Re-adding a full-window body must fail the suite.
+
+This ruling and Rulings 149 and 151 together are ADR-0045's amendment of record for WL-S. The change is reversible.
+
+- request: req-01M58P6FZ03JG8EQ8EW3G12MSA · ruled by: wl-owner-20261018 · at: 2026-10-18T23:41:56Z
+
+### Ruling 153 — verify-ruling-citations stays ratcheted, with only the findings the addendum-c register answers filtered out; erratum to Ruling 152
+
+Neither option as posed. Excluding the gate wholesale would also hide a citation of a ruling that exists nowhere, which is the defect the gate exists for (class ID-A). Ratcheting it unfiltered refuses every ruling this drive makes, because the gate reads only docs/notes/rulings.md while the Owner rules into docs/notes/addendum-c-council-rulings.md (Ruling 148 onward).
+
+So the comparator drops exactly one class of finding from verify-ruling-citations, on both sides of the ratchet: a finding 'Ruling N is cited ... no heading in docs/notes/rulings.md defines it' where docs/notes/addendum-c-council-rulings.md has exactly one '## Ruling N' or '### Ruling N' heading. Every other finding of that gate still ratchets. That includes a number cited and defined in neither register, and a number defined twice. The filter, and the count of findings it dropped, are recorded in each join's audit entry. It ends when T13 resolves the register mismatch: either the pack gate learns --register, filed as a pack defect, or the repo adopts one register.
+
+On verify-workbench-v2: the comparator fix may normalise only the tree-root path prefix. Record that fix in the join's audit entry. No other normalisation is allowed without a ruling.
+
+ERRATUM to Ruling 152: its last paragraph should read 'This ruling and Ruling 149 together are ADR-0045's amendment of record for WL-S'. Ruling 151 is the join gate policy and does not amend ADR-0045. Ruling 152 is otherwise unchanged and is not edited in place.
+
+- request: req-01M58PX7A6BXNH5TP6RHEHTMWE · ruled by: wl-owner-20261018 · at: 2026-10-18T23:53:12Z
