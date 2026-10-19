@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T09:15:25Z",
+  "generated": "2026-10-19T09:28:02Z",
   "audit": [
     {
       "actor": null,
@@ -24759,6 +24759,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T09:06:15Z",
       "duration_seconds": 549.0
+    },
+    {
+      "id": "al-01M59QTJQF04ZZZXMF55PXWSPQ",
+      "shortname": "join-wl1a-attempt-binding-row-step8",
+      "datetime": "2026-10-19T09:28:02Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151/160) for the T16 + T16b join 657e9e51 - ratcheted AFTER publication",
+      "summary": "Recount OK; step 8 5/48 (baseline); strict repo citations OK (158 cited/149 by a note/9 frozen); identity gate OK (982). The join was PUBLISHED before its ratchet finished: the Leader pushed Ruling 164 (146b2066) committed on top of the local join (DC-NEW-wl-leader2 7th instance, joint Owner/Leader cause). The ratchet vs bf2eebed then PASSED 0/49 (pack ruling-citations excluded, PD-1), so no fix-forward was needed. Release build at 146b2066 exit 0. Control: leader_precommit refuses a push carrying a join with no '<join>-step8' record.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding-row/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Record T16's post-publication ratchet",
+      "done_when": "ratchet PASS recorded; control in place",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T09:25:54Z",
+      "duration_seconds": 128.0
     }
   ],
   "changes": [
@@ -29421,6 +29445,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t16b-bindrow"
+    },
+    {
+      "id": "mail-01M59QHSP5NET34PS48XSJRY6Y",
+      "ts": "2026-10-19T09:23:14Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59QHSNVHVN9HWSBWTXP1XA6",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59QJSB2S546MBMWFFPZ9WP7",
+      "ts": "2026-10-19T09:23:47Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59QHSNVHVN9HWSBWTXP1XA6",
+      "session": "wl-owner-20261018"
     }
   ]
 };

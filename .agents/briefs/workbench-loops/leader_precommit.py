@@ -6,17 +6,23 @@ Ruling 160 before its heading was committed). docs-graph validate fails on a pro
 joins regenerate the index). The repo copy tools/verify-ruling-citations.py is strict (Ruling 160).
 Exit 0 = safe to push; 1 = do not push.
 If the commit touches tools/, src/ or tests/, run the full gate_ratchet.py instead (the fast set does not cover them).
-Usage: python -I leader_precommit.py <repo root> [<commit>]   (commit defaults to HEAD)
+It also refuses a push whose range (<base>..<commit>, base defaulting to origin/main) carries a join commit
+("chore(join): join-<name> - ...") with no "join-<name>-step8" audit entry in the pushed tree: a ruling commit
+stacked on an unpushed join once published the join before its step-8 ratchet ran (T16, 657e9e51).
+Usage: python -I leader_precommit.py <repo root> [<commit> [<base>]]   (commit defaults to HEAD)
 """
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
 
 ROOT = pathlib.Path(sys.argv[1])
 COMMIT = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
+BASE = sys.argv[3] if len(sys.argv) > 3 else "origin/main"
 PY = sys.executable
+JOIN_SUBJECT = re.compile(r"^chore\(join\): (join-\S+) - ")
 
 
 def git(*args, cwd=ROOT):
@@ -27,6 +33,16 @@ def run(tree, args):
     out = subprocess.run([PY, *args], cwd=tree, capture_output=True, text=True, encoding="utf-8", errors="replace")
     return out.returncode, (out.stdout or "") + (out.stderr or "")
 
+
+joins = [m.group(1) for line in git("log", "--format=%s", f"{BASE}..{COMMIT}").stdout.splitlines()
+         if (m := JOIN_SUBJECT.match(line))]
+if joins:
+    audit = git("show", f"{COMMIT}:docs/audit/audit-log.jsonl").stdout
+    unratcheted = [j for j in joins if f'"shortname": "{j}-step8"' not in audit]
+    if unratcheted:
+        print("leader-precommit: the push would publish join(s) with no step-8 ratchet record: " + ", ".join(unratcheted))
+        print("  run gate_ratchet.py and append '<join>-step8' before pushing, or push the other commit alone on origin/main")
+        sys.exit(1)
 
 changed = git("diff", "--name-only", COMMIT + "^", COMMIT).stdout.split()
 if any(p.startswith(("tools/", "src/", "tests/")) for p in changed):
