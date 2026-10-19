@@ -156,6 +156,13 @@ public sealed class PerspectiveShellTests
     // session document; with the Left collapsed, the Center's active tab the operator chose. Through
     // the product's DockHost and admission (DC-135). RED before the re-row: the initial host refused
     // the ledger (sp3/sh41-factory-red.txt).
+        // The Factory → Coordination group, derived from what the product admits: Factory's Center kinds
+    // opened from the derived View menu (the session Console is a verb, not a menu entry).
+    private static IEnumerable<(string Kind, string Title)> LoomkeeperKinds() =>
+        SurfaceContentFactory.Kinds
+            .Where(k => k.Perspectives.Contains(PerspectiveSet.Factory) && k.Zone == ZoneId.Center && k.Entry is SurfaceContentFactory.SurfaceEntry.Derived)
+            .Select(k => (k.Kind, k.Title));
+
     [Fact]
     public void TheFactoryLanding_IsTheSessionDocument_WhenTheCoordinationKindsOccupyItsCenter()
     {
@@ -163,7 +170,7 @@ public sealed class PerspectiveShellTests
         {
             var factory = DockHost.Create(PerspectiveSet.Initial, _ => new Border(), new RecordingAnnouncer(), (_, _) => { });
             Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
-            foreach (var (kind, title) in new[] { ("ledger", "Ledger"), ("leaderboard", "Leaderboard"), ("board", "Message board") })
+            foreach (var (kind, title) in LoomkeeperKinds())
             {
                 Assert.True(
                     factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface(kind, kind, title))).Applied,
@@ -203,7 +210,7 @@ public sealed class PerspectiveShellTests
         {
             var factory = new SurfaceContentFactory(null);
             var host = DockHost.Create(PerspectiveSet.Factory, factory.Create, new RecordingAnnouncer(), (_, _) => { });
-            foreach (var (kind, title) in new[] { ("sessions", "Terminal sessions"), ("ledger", "Ledger"), ("leaderboard", "Leaderboard"), ("board", "Message board"), ("daydreams", "Daydreams") })
+            foreach (var (kind, title) in LoomkeeperKinds())
             {
                 Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface(kind, kind, title))).Applied, kind);
             }

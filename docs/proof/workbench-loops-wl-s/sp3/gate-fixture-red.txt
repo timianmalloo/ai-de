@@ -1,0 +1,17 @@
+verify-fixture-derivation: FAILED — a test enumerates what the product declares (DC-021).
+
+  tests\AiDe.App.Tests\PerspectiveShellTests.cs:166
+    foreach (var (kind, title) in new[] { ("ledger", "Ledger"), ("leaderboard", "Leaderboard"), ("board", "Message board") })
+    names: board, leaderboard, ledger
+
+  tests\AiDe.App.Tests\PerspectiveShellTests.cs:206
+    foreach (var (kind, title) in new[] { ("sessions", "Terminal sessions"), ("ledger", "Ledger"), ("leaderboard", "Leaderboard"), ("board", "Message board"), ("day
+    names: board, leaderboard, ledger, sessions
+
+  tests\AiDe.App.Tests\SurfaceContentTests.cs:274
+    string[] loomkeeper = ["sessions", "board", "leaderboard", "ledger", "daydreams"];
+    names: board, leaderboard, ledger, sessions
+
+  Derive the set from the product instead — Layout.Default(), KnownKinds, the command
+  catalog — so the fixture cannot disagree with what ships. If the exact set is the point
+  of the test, say why in a comment containing: fixture-derivation: ok — <reason>

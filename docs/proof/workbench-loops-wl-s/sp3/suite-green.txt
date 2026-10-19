@@ -1,12 +1,28 @@
-# Whole affected suites at acfa04de + working tree (dotnet build AiDe.sln: exit 0 before this run)
-## tests/AiDe.Core.Tests
-Passed!  - Failed:     0, Passed:  2781, Skipped:     1, Total:  2782, Duration: 2 m 5 s - AiDe.Core.Tests.dll (net10.0)
-core exit=0
-## tests/AiDe.App.Tests
-  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
-Failed!  - Failed:     1, Passed:  1038, Skipped:     0, Total:  1039, Duration: 4 m 19 s - AiDe.App.Tests.dll (net10.0)
-app exit=1
 
-## Re-run of the one App failure (environmental: 'foreground not held; SendInput would prove another window' — the probe needs the foreground, which another window held during the full run)
-Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 20 s - AiDe.App.Tests.dll (net10.0)
-exit=0
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:03:05.17]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     1, Passed:  1025, Skipped:     0, Total:  1026, Duration: 3 m 51 s - AiDe.App.Tests.dll (net10.0)

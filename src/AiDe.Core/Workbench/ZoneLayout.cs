@@ -213,7 +213,7 @@ public sealed record WorkbenchLayout(
     /// (no <c>terminal.start</c> until the expand); the alternative — a started shell behind a rail
     /// — costs a process for a pane the operator's five screenshots never showed open.</para>
     /// <para>A default that seeds a kind its own host refuses is a drop at construction, which
-    /// <c>TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops</c> pins as a defect; every kind
+    /// <c>EveryPerspectivesDefault_SeedsCleanly_WithNoDrops</c> pins as a defect; every kind
     /// here is Factory's.</para>
     /// </remarks>
     private static WorkbenchLayout FactoryDefault()
