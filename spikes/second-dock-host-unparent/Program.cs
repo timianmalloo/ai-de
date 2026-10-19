@@ -165,6 +165,8 @@ internal static class Program
         var hostB = new DockingManager();
         hostB.Layout = new LayoutRoot { RootPanel = new LayoutPanel(paneB) };
 
+        DockingManager? hostC = null;
+
         var explore = new Border { Background = System.Windows.Media.Brushes.DarkSlateGray, Child = new TextBlock { Text = "explore (full-window surface)" } };
 
         var window = new Window
@@ -275,6 +277,32 @@ internal static class Program
         Check("Q5 Loaded fired more than once (the re-parents were real) while initialisation stayed once",
             loadedCount > 1 && ensureCalls == 1);
 
+        Header("Q6 - three hosts: A → B → C → A three times, then C → A → C");
+
+        async Task StepAsync(string label, DockingManager? host)
+        {
+            presenter.Content = host;
+            await Frames(8);
+            var nNow = await core.ExecuteScriptAsync("window.n");
+            var scrollNow = await core.ExecuteScriptAsync("Math.round(window.scrollY)");
+            Check($"{label}: presenter shows the host", host is not null && ReferenceEquals(presenter.Content, host));
+            Check($"{label}: WebView2 same object, state kept, one init",
+                ReferenceEquals(web.CoreWebView2, core) && nNow == "41" && scrollNow == "500" && ensureCalls == 1 && initCompleted == 1);
+            Check($"{label}: raw HwndHost same HWND, never rebuilt, responsive",
+                native.LastHandle == firstHandle && native.Builds == 1 && native.Destroys == 0 && native.Responsive);
+        }
+
+        for (var cycle = 1; cycle <= 3; cycle++)
+        {
+            await StepAsync($"Q6.{cycle} A", hostA);
+            await StepAsync($"Q6.{cycle} B", hostB);
+            await StepAsync($"Q6.{cycle} C", hostC);
+        }
+
+        await StepAsync("Q6.CAC C", hostC);
+        await StepAsync("Q6.CAC A", hostA);
+        await StepAsync("Q6.CAC C", hostC);
+
         Header("Findings");
         foreach (var finding in Findings)
         {
@@ -329,6 +357,11 @@ internal sealed class NativeChildHost : HwndHost
     public int Destroys { get; private set; }
     public long LastHandle { get; private set; }
 
+    /// <summary>True when the child window answers a message within a second (not hung, not destroyed).</summary>
+    public bool Responsive =>
+        LastHandle != 0
+        && SendMessageTimeout(new IntPtr(LastHandle), WmGetTextLength, IntPtr.Zero, IntPtr.Zero, SmtoAbortIfHung, 1000, out _) != IntPtr.Zero;
+
     protected override HandleRef BuildWindowCore(HandleRef hwndParent)
     {
         Builds++;
@@ -349,6 +382,8 @@ internal sealed class NativeChildHost : HwndHost
         DestroyWindow(hwnd.Handle);
     }
 
+    private const uint WmGetTextLength = 0x000E;
+    private const uint SmtoAbortIfHung = 0x0002;
     private const int WsChild = 0x40000000;
     private const int WsVisible = 0x10000000;
 
@@ -356,6 +391,10 @@ internal sealed class NativeChildHost : HwndHost
     private static extern IntPtr CreateWindowEx(
         int exStyle, string className, string windowName, int style, int x, int y, int width, int height,
         IntPtr parent, IntPtr menu, IntPtr instance, IntPtr param);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern IntPtr SendMessageTimeout(
+        IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam, uint flags, uint timeout, out IntPtr result);
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
