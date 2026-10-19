@@ -22251,7 +22251,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "47adfc53c306fb7fd7dbaf09f6c5ca03fb250119a437a94b73c61c1aeb643877"
+      "sourceSha256": "d33df5a0f53e7c4820dae41fc769d74895f96b3e40a79d4788ff06aa9046dbb6"
     },
     {
       "id": "proof-workbench-loops-20261018",
@@ -24321,5 +24321,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "9675744a033f7f7e4ab784fb3f19969cd78fddbb81accce96d75444d93c71f43"
+  "graphSha256": "a62243938fe5cff02af053dfe57d76525f1fcedb1abe4ad932a792709f88a8c0"
 };

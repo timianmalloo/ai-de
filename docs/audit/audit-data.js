@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T02:42:42Z",
+  "generated": "2026-10-19T02:55:11Z",
   "audit": [
     {
       "actor": null,
@@ -23211,6 +23211,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T02:34:02Z",
       "duration_seconds": 519.0
+    },
+    {
+      "id": "al-01M591B6SK4TW2BPYAC4ZSN0BR",
+      "shortname": "join-gate-hygiene-labels",
+      "datetime": "2026-10-19T02:55:10Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of gate-hygiene into main",
+      "summary": "Re-join for the RES-n residual labels (T13's R-n section labels were read by verify-ruling-citations as citations of undefined rulings R-1/R-2: the T13 ratchet's only refusal). Site-figure remedy confirmed: commit 18ed1bed changes 12 lines in 3 site files, all data-figure cells, 0 prose lines. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/residuals.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Burn down main's pre-existing red gates",
+      "done_when": "ratchet PASS vs 2390a99b",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T02:55:09Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
