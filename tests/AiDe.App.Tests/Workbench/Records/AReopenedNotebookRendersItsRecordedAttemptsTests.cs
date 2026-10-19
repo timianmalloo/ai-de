@@ -318,6 +318,7 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
                 held.Release();
                 await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
+                await surface.LastAdmission.WaitAsync(NotebookFixture.Bound);
                 await UntilAsync(window, () => surface.Thread.Rows.Count == 3 && Ended(model, 2),
                     () => $"{surface.Thread.Rows.Count} rows; [{string.Join(", ", surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words))}]");
 
