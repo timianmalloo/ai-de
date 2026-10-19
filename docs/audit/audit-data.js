@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T14:20:49Z",
+  "generated": "2026-10-19T14:34:14Z",
   "audit": [
     {
       "actor": null,
@@ -25312,6 +25312,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T14:20:46Z",
       "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M5A9B8C9PEB5E6TBGKY3KXM2",
+      "shortname": "join-wl1a-readback-step8",
+      "datetime": "2026-10-19T14:34:14Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T17d join fd68b3eb",
+      "summary": "Recount ran in full at step 4 (App 1147 counted, Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph \"foreground not held\" (probe exit 2). It refused alone on the join head e1280798 AND on the first parent 3802bb70 in a clean detached tree in the same environment, so it is excused under Ruling 155 (3) and NOT CHECKED. The join continued with --docs-only only to skip a re-run that cannot pass unattended (Owner confirmed the reading). Step 8 6/48 against the 5 baseline. The sixth gate is tools/verify-test-run.py: in the primary its .trx carries that same [Failed] probe result (the other two non-passes are the named expected skips KnowledgeModeRealProjectionTests and AttemptRealLaneStopTests). At the T20 join it was OK, because the probe passed then. It is one of Ruling 151 (3)'s never-ratcheted gates, and its red is the 155 (3)-excused refusal, so it is not a T17d green->red; the 5 baseline was not stale. Ratchet vs first parent 3802bb70 on clean trees, head fd68b3eb: PASS 0/49; no gate green->red; verify-derived-views and verify-site-figures went red->green. T17d (Opus, 4 nodes; Rulings 172, 175): read-back on host bind, once per bind, red through the real shell revive; bind-before-construction tests converted and guarded; a Send during the restore keeps the words, disables Send, never announces \"sent\", admits one turn as b3; a failed read-back keeps the words with its own sentence; host-open and read-back durations logged by default (shell-path medians 16.5 ms / 23.25 ms, n=10). Residual: one teardown NRE seen once in TheRowsAttemptBindingSurvivesRestartAndSequenceTests (not recurred, including this recount); T17e is next.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 172/175: WL-1a's restart step works in the running app",
+      "done_when": "ratchet PASS; sixth gate named; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T14:03:36Z",
+      "duration_seconds": 1838.0
     }
   ],
   "changes": [
