@@ -279,21 +279,48 @@ public sealed class NotebookRuns : IDisposable
 
     /// <summary>Cancel on the queued turn: dropped from the queue. True when it was the queued one.</summary>
     /// <remarks>
-    /// A successor held at the host is refused: <see cref="IAttemptHost"/> has no withdrawal (its Stop never cancels a
-    /// queued successor), so dropping it here would leave the host to launch a turn the operator cancelled. Seam
-    /// req-01M59ERYY7362ASCQ4E20XA4MA.
+    /// A successor held at the host is withdrawn there (<see cref="IAttemptHost.WithdrawAsync"/>): true only when the
+    /// store's receipt reads withdrawn. A withdraw the host refuses — its launch was already claimed — leaves the turn
+    /// as it is, and the refusal is a line of the turn.
     /// </remarks>
-    public bool Cancel(int ordinal)
+    public async Task<bool> CancelAsync(int ordinal)
     {
+        string? dispatchKey;
         lock (_gate)
         {
-            if (_queued is not { } held || held.Ordinal != ordinal || _held.ContainsKey(ordinal))
+            if (_queued is not { } held || held.Ordinal != ordinal)
             {
                 return false;
             }
 
-            _queued = null;
-            return true;
+            if (!_held.ContainsKey(ordinal))
+            {
+                _queued = null;
+                return true;
+            }
+
+            dispatchKey = _attempts.GetValueOrDefault(ordinal)?.DispatchKey;
+        }
+
+        if (_host is not { } bound || dispatchKey is null)
+        {
+            return false;
+        }
+
+        try
+        {
+            var receipt = await bound.Host.WithdrawAsync(dispatchKey, CancellationToken.None).ConfigureAwait(true);
+            lock (_gate)
+            {
+                _queued = null;
+            }
+
+            return receipt.IsWithdrawn;
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or WorkspaceStoreException or IpcRequestException)
+        {
+            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, "attempt-host", "stderr", $"Cancel: {error.GetType().Name}: {error.Message}", "run"));
+            return false;
         }
     }
 
@@ -407,6 +434,11 @@ public sealed class NotebookRuns : IDisposable
             var pump = FollowAsync(host, start.Receipt.DispatchKey, request.EngineId, ordinal, lines.Token);
             var receipt = await start.Completion.ConfigureAwait(false);
             Record(ordinal, receipt);
+            if (receipt.IsWithdrawn)
+            {
+                // The operator's Cancel concludes the turn (CancelAsync's caller); the host only wrote its terminal.
+                return;
+            }
 
             // The relay completes as the run ends, so the lines are in; the bound is for an attempt that never launched.
             lines.CancelAfter(LiveLinesGrace);

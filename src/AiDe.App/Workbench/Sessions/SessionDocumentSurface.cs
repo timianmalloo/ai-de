@@ -690,9 +690,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     }
 
     /// <summary>Cancel on the queued turn (Ruling 95): dropped from the queue, its row concluded cancelled, its envelope consumed, its words back in the editor.</summary>
-    private void CancelQueued(int ordinal)
+    private async void CancelQueued(int ordinal)
     {
-        if (!Notebook.Runs.Cancel(ordinal))
+        if (!await Notebook.Runs.CancelAsync(ordinal))
         {
             return;
         }

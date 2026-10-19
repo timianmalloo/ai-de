@@ -107,6 +107,7 @@ public sealed class TheHeldTurnIsWithdrawnTests : IDisposable
                 _fixture.ConfigureStub(document);
                 var second = await QueueBehindARunningTurnAsync(window, document, model);
 
+                await UntilAsync(window, () => document.Thread.Items.Count > 1, () => $"the feed holds {document.Thread.Items.Count} item(s), not the queued turn");
                 var cancel = Button(document, 1, ThreadAnnouncementPolicy.ActionWord(TurnActionKind.Cancel));
                 Assert.True(cancel is not null, "the host-held turn offers no Cancel");
                 cancel!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
