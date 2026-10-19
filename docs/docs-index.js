@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "95846f6aa66a30328d9333ae5d81e2b75febd1d2964e5f6400ef75d30975055d"
+      "sourceSha256": "fff34e13a496499830d4bd559cbf20ecb27e4c4bdd9f521800083daaa23122f2"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -3193,7 +3193,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 77 types, 151 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 80 types, 153 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3206,7 +3206,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "693e3b6bd687577e68343ff35ac06146b4931a99032f172cfccbdffe44e8bf0c"
+      "sourceSha256": "4b5aee1deaa6bcc49c45c8bc360c894defb9dca1296841b506f18adf82cfbe03"
     },
     {
       "id": "api-aide-core-workbench-records-folds",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "75d86a34397ae118f66af306fcbd570089cfa31df4a4f06c783c3940a521ed94"
+      "sourceSha256": "5059d49f3ffe208e06afc2125d7aa56852d1afbd96797907249bf0dd33c0a4cb"
     },
     {
       "id": "design-session-profiler",
@@ -22901,6 +22901,27 @@ window.DOCS_INDEX = {
       "sourceSha256": "a1402719d5bccc16e32b6798e8e584fa694db6754d811019b1f750c0a050dcad"
     },
     {
+      "id": "wl-s-float-guard-proof",
+      "path": "docs/proof/workbench-loops-wl-s/float-guard/README.md",
+      "title": "WL-S T20 float guard - proof pack",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Ruling 171 (1): workbench.floatPane refuses with a stated cause, and a restored floating window is docked with a report line; red and green for both checks.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e5b842133ae95c35079f4b80c1c5a5e08db71179de865a4215fb20197a364e33"
+    },
+    {
       "id": "spec-addendum-c-perspectives",
       "path": "docs/specs/addendum-c-perspectives.md",
       "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
@@ -24827,5 +24848,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "cb4583c9299ab60dd2a238d8634699f4645f0b2561e3a38444a0481d4c4d5b28"
+  "graphSha256": "af5e06c65dad22366723434b093b5fd611a8284871b2d850cc45e5b71bc9299f"
 };

@@ -162,7 +162,8 @@ public sealed class LayoutPersistence : IDisposable
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
                 // reports each drop; the announcement names caption, kind and the admitting
                 // perspective through the same result that reports a missing surface today.
-                var report = _zoneService.RestoreZones(zones);
+                var redock = FloatingRedock.Dock(zones);
+                var report = _zoneService.RestoreZones(redock.Layout);
                 LastRestoreDropped = report.Dropped;
 
                 // The first save after a migration keeps today's bytes once (ADR-0045 §7). That copy holds everything the
@@ -177,7 +178,7 @@ public sealed class LayoutPersistence : IDisposable
                     report.Dropped.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
                     [],
-                    DropAnnouncement(report));
+                    $"{DropAnnouncement(report)} {redock.Report(_zoneService.Zones)}".TrimEnd());
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;

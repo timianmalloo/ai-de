@@ -3532,3 +3532,29 @@ The Leader's evidence: workbench.floatPane moves the pane to Layout.Floating, Wo
 (3) WL-S's human demo keeps 'hide/float/redock a live notebook'. WL-S is not accepted until (2) lands.
 
 - request: req-01M5A05D964584659GYV9HHE64 · ruled by: wl-owner-20261018 · at: 2026-10-19T11:55:02Z
+
+### Ruling 172 — WL-1a is REOPENED: in the running app a reopened notebook never restores its attempts; fix track T17d off main, red through the real shell path
+
+Option A. The Owner verified it on origin/main. The only read-back call is SessionDocumentSurface.cs:173-176, guarded by 'if (Notebook.Runs.Host is not null)' at construction. WorkbenchShell.cs:3596 calls notebook.Runs.BindHostWhenOpen(...), which starts OpenHostAsync asynchronously (NotebookRuns.cs:170-176), and the document is built right after. So in the product the host is still opening at construction, Host is null, and the read-back never runs. T17's tests bound the host before construction, so they passed without exercising the product order. T11's red 98b5d7e6 measured 0 attempts and 0 turns on revive.
+
+The Owner's provisional acceptance of WL-1a (b99bd839) rested on those tests. It therefore did not cover Ruling 163's restart step in the running app, and the restart step is WITHDRAWN from the acceptance. WL-1a is reopened until T17d lands.
+
+T17d, off origin/main, after T20's join:
+(1) red-first through the real shell construction order (BindHostWhenOpen, then construct), never by binding the host first;
+(2) the read-back runs when the host becomes bound, whether that is before or after construction, exactly once per bind;
+(3) Ruling 163's three checks and the b3 numbering hold in that order;
+(4) a test that fails if any restored-turns test binds the host before construction without also covering the async order.
+T11 merges main after T17d. Option B is rejected so that the WL-1a fix keeps its own join and proof.
+
+- request: req-01M5A27SFGWMFGHH04VJH6R268 · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:31Z
+
+### Ruling 173 — The prompt kind is kept; design section 4's retirement of prompt into notebook drafts waits until the notebook has all six capabilities
+
+Option A. Retiring prompt now would drop working, specified capabilities. The Owner spot-checked T11 node 8's survey in src/AiDe.App/Workbench/PromptDraftSurface.cs:11-14: the surface transfers a draft to a ready terminal session one way (US-ED6, US-ED7) and persists the body across a restart. Line 53 has the target picker and blocked reason, and line 69 the target ComboBox. The remaining items (opening beside a terminal, the menu entry) are the track's evidence, not re-checked by the Owner, and the Leader's correction that it did not read them is noted.
+
+The decision:
+(1) prompt stays an admitted kind. Design section 4 (docs/design/workbench-loops-wl-s.md) is amended: prompt is retired into notebook drafts only when the notebook provides all six (terminal send, target choice, draft kept across a restart, opening beside a terminal, the menu entry, the no-ready-terminal reason), each proven by a test.
+(2) Those six are recorded as the retirement's precondition, owned by whichever slice builds them. No partial retirement.
+(3) T11's slot migration leaves prompt slots unmigrated, and its report says so.
+
+- request: req-01M5A28A97KF9XW18GX2819ZZR · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:32Z

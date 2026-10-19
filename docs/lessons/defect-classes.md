@@ -8400,9 +8400,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   - **Control:** `leader_precommit.py` refuses a push range in which any `chore(join):` or `join:` commit changes the
     rulings register. It was shown refusing `origin/main..backup/t18-join-61c9f4b0` (exit 1, naming `61c9f4b0`), and
     passing that check on `9c62f453`.
-  - **Residual:** the same staging step also sweeps other uncommitted Leader files, like `obligations.md`. The control
-    covers only the register. Before a join, commit or hold every Leader edit (pack defect candidate: step 7 stages
-    all files, not the join's own).
+  - **Residual, closed at the join's start (Owner, 2026-10-19):** the same staging step also swept other uncommitted
+    Leader files, like `obligations.md`. `.agents/briefs/workbench-loops/leader_prejoin.py` now runs before every
+    `conductor-join`. It refuses the start (exit 1) when anything outside the coordination ledgers (`.agents/log`,
+    `.agents/decisions`, `.agents/mail`, `.agents/joins`, `.agents/requests.jsonl`) is modified or untracked. On a
+    throwaway tree it was shown both ways: a clean tree and ledger-only changes → 0; the register modified or an
+    untracked Leader file → 1; no argument → 2. Pack defect candidate: step 7 stages all files, not only the join's own.
+  - **Mid-join rulings (both seats):** Rulings 172 and 173 were written into the register while the T20 join was at
+    step 4. The Leader saved the edit as a patch and restored the file before step 7, then committed each ruling alone
+    after the push (`438a0fd4`, `4b809219`). Owner side: no `coord decide rule` while a board "join in flight" post has
+    no matching "join done … pushed" or "join abandoned" post. If a deadline forces one, the Owner messages "ruled
+    mid-join, patch it". Leader side: a start post and an end post for every join, and DR deadlines of at least 2400 s.
 - **Thirteenth instance (the Leader, 2026-10-19): a full inbox bounced a track's done mail.** The Leader read mail but
   never acked it, so its inbox reached 50 queued, and T11 node 6's done mail was refused with `MAIL-FULL` (exit 3).
   The evidence survived only because the track also committed it to `handoff.md`. All 50 were then acked through
@@ -8411,7 +8419,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
     node prompts since T11 node 7 tell a track to put its done text in the hand-off if the mail is refused;
     `brief-common.md` does not say so yet.
   - **Status of this instance:** `open`. A recorded habit is a memoir until a check fails on it, so the candidate
-    control is a renew-loop line that warns when the Leader inbox is above 40 queued.
+    control is a renew-loop line that warns when the Leader inbox is above 40 queued. The cap counts unacked
+    messages (`coord-mail.py:312-313`, `QUEUE_CAP = 50` at `:71`), not lines; the lines advisory is PD-5.
+- **Fourteenth instance (the Leader, 2026-10-19): a verification claimed that was not done.** The evidence text of
+  decision request `req-01M5A28A97KF9XW18GX2819ZZR` (retiring `prompt`) said "the Leader spot-read the cited lines".
+  The Leader had not; the file:line survey was T11 node 8's. The Leader caught it on re-reading its own message, told
+  the Owner the same turn, and the Owner spot-checked the lines itself before Ruling 173.
+  - **Control (procedural):** a DR's evidence names who observed each fact ("T11 n8 measured", "the Leader read
+    origin/main"), and "verified" is written only after the read is done in this turn. No-guessing rule NG: a citation
+    or a sub-agent's report does not promote a claim.
+  - **Status of this instance:** `open`; a candidate mechanical check is a coord-decide lint that refuses "the Leader
+    read/spot-read/verified" in evidence with no file:line read logged in the session.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.
