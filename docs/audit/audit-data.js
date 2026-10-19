@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T04:40:20Z",
+  "generated": "2026-10-19T04:54:05Z",
   "audit": [
     {
       "actor": null,
@@ -23501,6 +23501,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T04:40:18Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5984Z7BG8W4EAPSJM9WPWEG",
+      "shortname": "join-t9-step8-ratchet",
+      "datetime": "2026-10-19T04:54:05Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 151/153 step-8 completion for the T9 spike join",
+      "summary": "T9 spike pushed e651d3e0 (b1c7b980..e651d3e0), spike-only diff joined --docs-only; ratchet PASS 0/48.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/second-dock-host-unparent/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T9 on main",
+      "done_when": "pushed with ratchet PASS",
+      "tier": "T1",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:15:02Z",
+      "duration_seconds": 27543.0
     }
   ],
   "changes": [
