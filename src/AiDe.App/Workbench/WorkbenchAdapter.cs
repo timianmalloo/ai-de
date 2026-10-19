@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AiDe.Core.Dispatch;
@@ -79,7 +80,11 @@ public sealed class WorkbenchAdapter
         Manager.LayoutUpdated += (_, _) =>
         {
             ApplyAccessibleNames();
-            DecorateTabs(Manager);
+            foreach (var root in TabRoots())
+            {
+                DecorateTabs(root);
+            }
+
             RaiseWhenTheViewArrangementChanged();
         };
 
@@ -620,7 +625,49 @@ public sealed class WorkbenchAdapter
     /// (verified, spikes/avalondock-a11y). A typed `TabItem` style setting the same property does
     /// **not** reach these items; that was tested and rejected. Walking the realized visual tree does.
     /// </remarks>
-    public void ApplyAccessibleNames() => NameTabs(Manager);
+    public void ApplyAccessibleNames()
+    {
+        foreach (var root in TabRoots())
+        {
+            NameTabs(root);
+        }
+    }
+
+    /// <summary>The roots of every tree this workbench draws tabs in: the manager's, and each floating window's content.</summary>
+    /// <remarks>
+    /// A floating window's tabs are not under <see cref="Manager"/>, and not under the window's own visual tree either:
+    /// AvalonDock 5 hosts the window's content in a child HWND (an <see cref="HwndHost"/>), and a visual walk stops at
+    /// it. Walking <see cref="Manager"/> alone left every floating tab with no accessible name and no menu, so a floated
+    /// pane could not be redocked from its tab (T21 n8 (B), red 74af5881).
+    /// </remarks>
+    private IEnumerable<DependencyObject> TabRoots() =>
+        Manager.FloatingWindows.SelectMany(HostedRoots).Prepend(Manager);
+
+    /// <summary>The root visual of each child HWND <paramref name="window"/>'s own tree hosts.</summary>
+    internal static IEnumerable<DependencyObject> HostedRoots(Window window)
+    {
+        var hosts = new List<HwndHost>();
+        Collect(window, hosts);
+        return hosts
+            .Where(h => h.Handle != IntPtr.Zero)
+            .Select(h => HwndSource.FromHwnd(h.Handle)?.RootVisual)
+            .OfType<DependencyObject>();
+
+        static void Collect(DependencyObject node, List<HwndHost> found)
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(node); i++)
+            {
+                var child = VisualTreeHelper.GetChild(node, i);
+                if (child is HwndHost host)
+                {
+                    found.Add(host);
+                    continue;
+                }
+
+                Collect(child, found);
+            }
+        }
+    }
 
     internal static int NameTabs(DependencyObject root)
     {
