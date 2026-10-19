@@ -49,3 +49,8 @@ App 1242 passed, 3 failed, 2 skipped.** On re-run, `SessionDocumentPlacementTest
 4. Rule 22's ratchet, ahead of T30's join.
 
 Ratchet (rule 22) not run: the next step is node 4, not a join.
+
+## Node 3b (pre-join): the Owner copy change and rule 22 ratchet
+
+1. `ComposerSurface.KeepHelp` is now exactly the Owner copy ("... a kept line stays in your draft until you send it. It is not yet kept when AI-DE restarts."). `DESIGN.md` row updated in the same commit (5c61cc29). Tests: NothingSaysAnUnsentDraftIsSavedTests, AKeptSuggestedLineIsKeptTests, ASentGoalLineSurvivesARestartTests = 7/7 green (`keep-copy-green.txt`). Board checked first: no demo in progress, no join in flight.
+2. Ratchet (origin/main 669cf746 vs head c3564d6d): one unexpected refusal, `verify-harness-diagnostics` (TheCompileModeControlTests declared an STA thread with no failure capture). Fixed in c3564d6d: the thread captures its failure and the creator rethrows it as itself. Gate OK; TheCompileModeControlTests 5/5. Rerun: 3 refusals, all the expected derived-view gates (docs-graph index drift, verify-derived-views, verify-site-figures). Lines in `ratchet.txt`; the `ratchet/` folder is not committed.
