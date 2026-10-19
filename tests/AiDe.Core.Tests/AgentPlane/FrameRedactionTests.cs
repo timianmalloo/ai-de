@@ -4,7 +4,8 @@ namespace AiDe.Core.Tests.AgentPlane;
 
 /// <summary>
 /// The ingest-side credential scan (ADR-0042 §6): a pure function of the frame text and the
-/// pattern-set version. Offsets are into the original frame. A sentinel that was never seen red
+/// pattern-set version. Offset is where the marker starts in the redacted (stored) frame; Len is the length of the
+/// original span the marker replaced. A sentinel that was never seen red
 /// is not evidence.
 /// Fails if: a sentinel survives, a non-sentinel byte moves, two overlapping matches stay two
 /// spans, or the result is not stamped <c>patterns v1</c>.
@@ -64,9 +65,10 @@ public sealed class FrameRedactionTests
         Assert.Equal(0, result.Redactions[0].Offset);
         Assert.Equal(sentinel.Length, result.Redactions[0].Len);
         Assert.Equal("test-sentinel", result.Redactions[0].PatternId);
-        Assert.Equal(sentinel.Length + " mid ".Length, result.Redactions[1].Offset);
+        Assert.Equal(FrameRedaction.Marker.Length + " mid ".Length, result.Redactions[1].Offset);
         Assert.Equal(sentinel.Length, result.Redactions[1].Len);
         Assert.Equal("test-sentinel", result.Redactions[1].PatternId);
+        AssertMarkersAtOffsets(result);
     }
 
     [Fact]
@@ -98,7 +100,8 @@ public sealed class FrameRedactionTests
         Assert.Equal(frame.IndexOf(sentinel, StringComparison.Ordinal), result.Redactions[0].Offset);
         Assert.Equal(sentinel.Length, result.Redactions[0].Len);
         Assert.Equal("test-sentinel", result.Redactions[0].PatternId);
-        Assert.Equal(result.Redactions[0].Offset + result.Redactions[0].Len, result.Redactions[1].Offset);
+        Assert.Equal(result.Redactions[0].Offset + FrameRedaction.Marker.Length, result.Redactions[1].Offset);
+        AssertMarkersAtOffsets(result);
         Assert.Equal(token.Length, result.Redactions[1].Len);
         Assert.Equal("github-token", result.Redactions[1].PatternId);
     }
@@ -127,6 +130,7 @@ public sealed class FrameRedactionTests
         Assert.Equal(frame.IndexOf("Bearer", StringComparison.Ordinal), span.Offset);
         Assert.Equal(bearer.Length, span.Len);
         Assert.Equal("bearer", span.PatternId);
+        AssertMarkersAtOffsets(result);
         Assert.Equal("Authorization: " + FrameRedaction.Marker + " end", result.Frame);
         Assert.DoesNotContain(key, result.Frame, StringComparison.Ordinal);
         Assert.DoesNotContain("Bearer", result.Frame, StringComparison.Ordinal);
@@ -156,6 +160,7 @@ public sealed class FrameRedactionTests
         Assert.Equal(2, span.Offset);
         Assert.Equal(secret.Length, span.Len);
         Assert.Equal(patternId, span.PatternId);
+        AssertMarkersAtOffsets(result);
         Assert.Equal("<<" + FrameRedaction.Marker + ">>", result.Frame);
         Assert.DoesNotContain(secret, result.Frame, StringComparison.Ordinal);
     }
@@ -182,6 +187,17 @@ public sealed class FrameRedactionTests
         Assert.Equal(frame.IndexOf(secret, StringComparison.Ordinal), span.Offset);
         Assert.Equal(secret.Length, span.Len);
         Assert.Equal(patternId, span.PatternId);
+        AssertMarkersAtOffsets(result);
         return span;
+    }
+
+    private static void AssertMarkersAtOffsets(RedactedFrame result)
+    {
+        foreach (var r in result.Redactions)
+        {
+            Assert.Equal(
+                FrameRedaction.Marker,
+                result.Frame.Substring(r.Offset, FrameRedaction.Marker.Length));
+        }
     }
 }
