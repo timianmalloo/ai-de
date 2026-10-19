@@ -8,10 +8,41 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 2 stopped at the rule-16 kick. 13 Left-dock tests are re-scoped to the Center notebook; 6 remain (1 focus finding, 1 copy seam, 2 probe tests owed to slot migration, CodingsLeftExtentTests x4 under Ruling 168). The execution kind is not started."
+summary: "Node 3: Ruling 168's measure retargeted (startup, wide and the cap green; the minimum row red on a seam), the Console focus return fixed, the copy test re-scoped. The execution kind waits on seam req-01M59XNJH52JRRZ1DAJYK40X9D."
 ---
 
-# T11 node 2 — hand-off
+# T11 node 3 — hand-off
+
+## Done
+
+- **Ruling 168.** `CodingsLeftExtentTests` became `TheThreadMeasureMovesWithTheNotebookTests` (red commit `d8746b1d`).
+  - The theory `TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched` has three rows: minimum, startup and wide.
+  - The density theory became `AtStartupSizeInTheCenterBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280`. Both of its rows are green.
+  - **The cap already exists on the product.** `ThreadFeed.cs:616` and `:858` set `MaxWidth = MeasureWidth`, so `ThreadFeed.cs` is unchanged.
+  - The mutation red shows that assertion (2) can fail (`8976dc86`, `R168-cap-mutation-red.txt`). With the words uncapped, the startup row fails ("the words (1258.0) run past the 96ch measure (672.6)"), and so does the wide row (1544.7).
+  - **The minimum row is red, and that is a product finding (`R168-measure-red.txt`).** At 820 × 520, the test fails with "minimum: the turn's row (706) cannot hold 96ch (673) plus its 40 px gutter and 12 px padding".
+  - The cause is the shell's chrome, not `ThreadFeed`: 71 px of activity bar plus 43 px of pane chrome. The words still wrap within one word of the measure (632 ≥ 613.8), and the cap holds.
+  - Seam `req-01M59XDZY6FSA83JGEXEJYCGB2` offers two options. (A, recommended) Change `MainWindow.xaml` MinWidth from 820 to 840. (B) Amend Ruling 168 (3) for the minimum.
+  - The wide row is the display's maximum, 1706 × 1066 DIPs. 2560 is not reachable on this display. At that size the column is 1557 and the words are 662.7, so the cap is the thing that holds the line.
+- **Console focus return.** The red is the existing test, `ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument` (`8e351e1c`). It read "Expected: ToggleButton Content:Console … Actual: ToggleButton Content:Goal · Done when · Not in scope".
+  - The focus-return code is `WorkbenchShell.OnSurfaceClosed`. After the layout pass, the deferred callback now tries the toggle again, and only then falls back to the landing (`e3ead08d`).
+  - The whole class is green (6/6). The mechanism is Inferred: `Focus()` fails while the notebook's tab is unrealized. That reading fits the green result, but it was not observed directly.
+- **The copy re-scope.** `CenterEmptyCopyTests.WhileASessionIsOpenAtLeft_…` became `WhileANotebookIsMovedToTheLeft_…`. The notebook opens in the Center, then a `MoveSurface` JoinStack drop moves it to the Left. The class is green (10/10, `997f21da`).
+
+## Not done
+
+- **The `execution` kind.** Seam `req-01M59XNJH52JRRZ1DAJYK40X9D` asks for `SessionDocumentSurface.cs:926-928`, where OpenLog shares a case with OpenConsoleAt and calls `OpenSplit` → the Console. It also asks for a `WorkbenchShell.cs` opener like `OpenSessionConsole`.
+  - The attempt's identity is `AttemptRow.DispatchKey`, read through `NotebookRuns.AttemptOf(ordinal)` (`NotebookRuns.cs:240`).
+  - Rule 14: today "Open log" opens the Console at the turn. Re-pointing it changes pinned behaviour.
+- **Owed to node 5's migration:** `ASessionDocumentIsShownWhereTheOperatorIsTests` (2).
+
+## Next step
+
+Node 4 or a re-run of node 3: answer the two seams, then build the execution kind red-first.
+
+---
+
+# T11 node 2 — hand-off (superseded in part by node 3 above)
 
 Node 2 stopped at the rule-16 kick. It finished item 1 in part. Items 2 and 3 are not started.
 
