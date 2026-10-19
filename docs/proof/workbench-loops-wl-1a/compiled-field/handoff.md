@@ -10,24 +10,26 @@ links:
   - { to: architecture, rel: implements }
 review-by: "2026-11-18"
 summary: >-
-  T28 after node 2: Ruling 181 (1)-(3) landed red then green through the user's gesture. The field keeps the sent turn,
-  headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; a second Ctrl+Enter sends nothing
-  (planted-leak mutation red); Ruling 96's tests are re-driven. Next is n3, the class gate.
+  T28 after node 3: a queued send shows its turn headed 'Compiled prompt — queued as b{n}', display-only, until the next
+  keystroke (red then green); a second press right after it queues and sends nothing, and after the drain sends nothing
+  (planted-leak mutation red M3); the class gate ComposerContentOraclesDriveTheGestureTests refuses a composer content
+  oracle that skips the gesture (red on a plant, green on the tree). Next is T30 (Ruling 180, the prefill).
 ---
 
-# Hand-off — T28 `wl1a-compiled-field`, after node 2
+# Hand-off — T28 `wl1a-compiled-field`, after node 3
 
-**Done (node 2, `/implement`, Ruling 181).** The commits are `eaf8966c` (red tests and the heading consts), `1edfc015` (the red evidence) and `5da5d032` (the fix, then green).
-- **(A)** The node-1 red tests (from `f3bdf334`) are **green**: `OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt` and `OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt`. Their oracle is unchanged: the field equals the sent prompt. They now also assert the heading `ComposerSurface.SentHeading("b1")` on the header, the field's UIA name and the disclosure's ItemStatus. New tests: `AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft` and `TheSentHeading_IsTheCopyDesignMdNames`. DESIGN.md:879 is amended, and the sent-state row is added after it.
-- **(B)** `TheSentPromptIsNeverResentTests` has 3 facts. They were red by the planted-leak mutation M1 (`B-red.txt`). Under M1 a second press resent b1 as b2, with 2 attempt rows.
-- **(C)** The two Ruling 96 tests and the `:381` sibling are re-driven through the gesture on a `SessionDocumentSurface`. The sibling is renamed `TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary`. The red is on the unfixed code (`C-red.txt`). The `IsOnScreen` test's red is mutation M2 (`C-red-mutation.txt`), which the original test survives.
-- The shared gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs`.
-- The whole suites are in `suite-node2.txt` (Core, then App), with the per-suite runs in `suite-node2-core.txt` and `suite-node2-app.txt`.
+**Done (node 3, `/implement`, Ruling 181 under the Owner's direction).** Commits, red then green:
+- **(A)** red `13b32da6`, green `1874cb5e`. The tests are `TheCompiledFieldAfterAQueuedSendTests` (3 facts). The heading const is `ComposerSurface.QueuedHeadingFormat` = `"Compiled prompt — queued as {0}"`. `BeginNextTurn` heads a queued submit with it. The DESIGN.md row *Compiled prompt — after a queued send* follows the sent-state row.
+- **(B)** mutation red `65bde9a9`, green `db516197`. The test is `TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing`, and it replaces node 2's `AQueuedSend_ShowsItsQueuedState_NotTheSentState`. Under M3 (the queued words kept in the draft), the press after the drain resent b2 as b3.
+- **(C)** red `d4995b84` (the plant), green `23c7c461` (the plant removed). **The gate is the test `tests/AiDe.App.Tests/Workbench/Composer/ComposerContentOraclesDriveTheGestureTests.cs`**, with 2 facts: the tree, and a self-test. It is a test rather than a `tools/` gate, because a new `tools/verify-*.py` needs a `.github/workflows` line, which is outside this track's paths. It has 3 `PreAdmit` entries, and the list may only shrink. `DC-NEW-wl-t28-compiled`'s Prevent line names the gate. Its status is `partially-controlled`, because the non-empty check is not mechanized.
+- The gesture helper gained `ComposerGesture.CtrlEnterThenWait` (the queued gesture) and `ComposerGesture.StatusLink`.
+- The whole suites are in `suite-node3.txt` (Core, then App).
 
-**Red, by design:** none of this node's tests.
+**Red, by design:** none.
 
 **Open:**
-- **Inferred design choice, not ruled:** a queued send shows the live, empty draft under the plain heading, with the queued sentence on the status line. It does not show "queued as b2" (README §5). If the Owner wants a queued heading, add one const.
-- **Seam `req-01M5AE5QGZMKFC36RA4C93QSPJ`** (node 1) is answered by Ruling 181. The Leader can close it.
+- **Inferred:** after the queue drains, the field keeps *queued as b2* until a keystroke. Nothing re-renders it on the drain, and no ruling names a queued-to-sent transition. One `ShowCompiled` call would add it if the Owner wants it.
+- **Rule 19 lapse (recorded):** four filtered App runs of the gate test (source scans, no window) started during the T11 join (from 17:32:18Z). The whole App suite waited for `join done`.
+- Seam `req-01M5AE5QGZMKFC36RA4C93QSPJ` (node 1) was answered by Ruling 181. The Leader can close it. No new seam request.
 
-**Next step (node 3, the class gate):** a content oracle on a user-visible composer field must drive the user's gesture, using `ComposerGesture` or the same verbs, and must not be set up by changing the fixture directly. The gate must be seen failing on the original Ruling 96 test (`2a89cf0b:tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs:107-142`) before it is green on the re-driven ones. After that, T30 (Ruling 180, the prefill) follows on `ComposerSurface.cs`.
+**Next step:** T30 (Ruling 180, the prefill) on `ComposerSurface.cs`. The class gate will hold its tests to the gesture.
