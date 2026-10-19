@@ -1407,6 +1407,18 @@ Copy added by this section (review oracles quote these strings):
 | RUN4 | Connection lost. The run outcome is unknown. |
 | RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
+| CHK1 | No obligations yet. Add the conditions this work must meet. (WL-1b checklist, empty; `ChecklistCopy` holds every CHK string) |
+| CHK2 | Evidence missing. — the row's evidence label with no link; the human state is a separate label (Not reviewed. · Acknowledged — not satisfied. Acknowledging is not evidence. · Deferred — acceptance stays blocked. · Needs a decision.) |
+| CHK3 | Satisfied by run {7-char key} (revision {n}). |
+| CHK4 | The evidence belongs to an earlier draft. Link evidence from the current draft. |
+| CHK5 | Evidence currentness is not recorded, so this does not count as current. |
+| CHK6 | Ready to accept. — or the first blocking gap, as the Core fold writes it (Blocked — “{obligation}” has no current evidence. · Blocked — intent revision {n} is not accepted. · Blocked — no obligations are declared for this work.) |
+| CHK7 | Accepted: the declared deliverable at intent revision {n}. This records acceptance of the deliverable only. It does not say the work is implemented or merged. (Ruling 179: the only string that may say "implemented" or "merged") |
+| CHK8 | Not accepted. {the gap sentences} — read out in the polite live region when *Accept deliverable* is pressed while blocked; the button is never disabled for a gap |
+| CHK9 | This notebook is unassigned (pre-workbench). Obligations need a work journey. |
+| CHK10 | This checklist belongs to work journey {journey}. Its notebook is not open. Reopen it from File → Recent sessions to review this checklist. |
+| CHK11 | No notebook is focused. Open a notebook in Factory, then open its checklist. |
+| CHK12 | Accept intent (revision {n}) · Intent revision {n} is accepted. · Accept deliverable |
 | DOCK1 | Pane hidden. The run continues. |
 | DOCK4 | Kept 1 prompt draft as it was: prompt drafts do not become notebooks. — plural: Kept {N} prompt drafts as they were: prompt drafts do not become notebooks. (Ruling 173: said once, on the restore that migrates a slot) |
 | AUTH1 | Signed in does not mean this route is qualified. |

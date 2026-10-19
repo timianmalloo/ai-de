@@ -78,6 +78,7 @@ public sealed class KindAllowListsTests
             ["prompt"] = ["factory"],
             ["search"] = ["factory"],
             ["codeviewer"] = ["factory", "understand"],
+            ["checklist"] = ["factory", "understand"],
             ["diagnostics"] = ["factory"],
             ["notebook"] = ["factory"],
             ["console"] = ["factory"],

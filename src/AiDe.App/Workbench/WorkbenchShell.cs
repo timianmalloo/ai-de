@@ -1785,6 +1785,14 @@ public sealed class WorkbenchShell : IDisposable
             }
         }
 
+        // simplify: one kind takes its identity from its owner — a checklist IS its journey (Ruling 176), so the focused
+        // notebook picks the journey here, at open only, and the surface id carries it. Ceiling: this one kind. Trigger:
+        // a second kind whose identity is its owner — then identity becomes a column on the row.
+        if (string.Equals(kind, Checklist.ChecklistSurface.Kind, StringComparison.Ordinal))
+        {
+            return OpenChecklist(target, from, row);
+        }
+
         // simplify: one kind places itself — a prompt draft opens beside a terminal (its transfer
         // target) when there is one, else in any stack, where every other kind follows the document
         // placement policy. A kind-keyed branch beside a row set is the shape Ruling 22 removes;
@@ -1802,6 +1810,57 @@ public sealed class WorkbenchShell : IDisposable
             Routed(target, from, $"{row.Title} opened"),
             $"There is no pane for {row.Title.ToLowerInvariant()}. Window → Reset workbench layout restores one.",
             intoStackId: besideTerminal);
+    }
+
+    /// <summary>
+    /// Opens the checklist of the focused notebook's journey — <c>checklist:&lt;sessionId&gt;</c>, one per journey in a
+    /// host, so a second open shows the one already there — or refuses when no notebook gives a journey.
+    /// </summary>
+    private string OpenChecklist(DockHost target, DockHost from, SurfaceContentFactory.SurfaceKind row)
+    {
+        if (FocusedNotebook() is not { } document)
+        {
+            return Checklist.ChecklistCopy.NoNotebook;
+        }
+
+        var surfaceId = Checklist.ChecklistSurface.SurfaceIdFor(document.Notebook.Session.SessionId);
+        ReconcileViewIntoModel(target);
+        if (target.Service.Zones.FindZoneOf(surfaceId) is { } holder)
+        {
+            if (target.Service.Zones.Zone(holder).Collapsed)
+            {
+                ExpandZone(target, holder);
+            }
+
+            var shown = target.Service.Apply(new LayoutOperation.ActivateSurface(surfaceId));
+            if (shown.Applied)
+            {
+                OpeningDocument(target);
+            }
+
+            target.Adapter.Render();
+            return shown.Applied ? Routed(target, from, $"{row.Title} shown") : shown.Announcement;
+        }
+
+        return OpenReferenceDocument(
+            target,
+            new Surface(surfaceId, row.Kind, Checklist.ChecklistSurface.CaptionFor(document.Notebook.Session.Title)),
+            Routed(target, from, $"{row.Title} opened"),
+            $"There is no pane for {row.Title.ToLowerInvariant()}. Window → Reset workbench layout restores one.");
+    }
+
+    /// <summary>
+    /// The notebook a checklist opened now takes its journey from: Factory's active notebook, the notebook of Factory's
+    /// active checklist, or the only notebook open; else null. Read at open only, never to rebind a checklist.
+    /// </summary>
+    private Sessions.SessionDocumentSurface? FocusedNotebook()
+    {
+        var active = Factory.Adapter.ActiveSurfaceId;
+        return BoundDocument(active)
+            ?? (active is not null && Checklist.ChecklistSurface.SessionIdOf(active) is { } sessionId
+                ? _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(sessionId))
+                : null)
+            ?? (_sessionDocuments.Count == 1 ? _sessionDocuments.Values.Single() : null);
     }
 
     /// <summary>The sentence a routed open says (spec §C5): where it opened, when that is not where it was asked.</summary>
@@ -3652,6 +3711,13 @@ public sealed class WorkbenchShell : IDisposable
             // hold the island (never a live document: ADR-0017) — and the next Render hands it this
             // document. A surface not in the layout is built fresh regardless.
             Adapter.Invalidate([document.SurfaceId]);
+
+            // The same for this journey's checklist, in whichever host restored it: until now it said its notebook is
+            // not open, and the next Render rebuilds it bound to this one (seam req-01M5B8W7NJRW7A1X4G21J2QKPT).
+            foreach (var each in Hosts)
+            {
+                each.Adapter.Invalidate([Checklist.ChecklistSurface.SurfaceIdFor(config.SessionId)]);
+            }
         }
         else
         {

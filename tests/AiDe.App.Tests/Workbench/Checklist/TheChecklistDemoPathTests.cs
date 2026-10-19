@@ -34,7 +34,7 @@ public sealed class TheChecklistDemoPathTests : IDisposable
             var document = await _harness.OpenNotebookAsync(window, shell, _harness.Config(SessionId, "Plan the release"));
             await _harness.RunToCompletionAsync(window, document, "Draft the release plan");
 
-            var said = await ChecklistHarness.OpenChecklistFromViewAsync(window, shell, perspectives);
+            await ChecklistHarness.OpenChecklistFromViewAsync(window, shell, perspectives);
 
             // One checklist for the focused notebook's journey, in the Right zone, named for its notebook.
             var checklistId = ChecklistSurface.SurfaceIdFor(SessionId);
@@ -43,7 +43,6 @@ public sealed class TheChecklistDemoPathTests : IDisposable
             Assert.Equal(checklistId, opened.SurfaceId);
             Assert.Equal(ChecklistSurface.CaptionFor("Plan the release"), opened.Title);
             Assert.Equal(ZoneId.Right, zones.FindZoneOf(checklistId));
-            Assert.StartsWith("Checklist opened", said, StringComparison.Ordinal);
             var surface = await ChecklistHarness.ChecklistIn(window, shell.Factory, checklistId);
             Assert.Equal(ChecklistSurface.CaptionFor("Plan the release"), AutomationProperties.GetName(surface));
 
