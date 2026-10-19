@@ -9,16 +9,20 @@ from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
 TARGET=ROOT/'docs/mockups/factory-workbench-v2.html'
 
-def main():
+def main(argv=None):
  parser=argparse.ArgumentParser(description=__doc__)
- parser.add_argument('--out',default='.git/ai-forward/workbench-loops-20261018/interactions.json')
- args=parser.parse_args();results=[];errors=[];requests=[];journey_completed=False
+ parser.add_argument('--out',default='artifacts/workbench-loops-20261018/interactions.json')
+ parser.add_argument('--target',default=str(TARGET))
+ parser.add_argument('--self-test',action='store_true',help='prove the gate can fail: a page with no workbench must fail the journey')
+ args=parser.parse_args(argv)
+ if args.self_test:return self_test()
+ target=Path(args.target);out=ROOT/args.out;results=[];errors=[];requests=[];journey_completed=False
  with sync_playwright() as pw:
   browser=pw.chromium.launch(headless=True)
   page=browser.new_page(viewport={'width':1440,'height':1000})
   page.on('pageerror',lambda e:errors.append(str(e)))
   page.on('request',lambda r:requests.append(r.url))
-  page.goto(TARGET.as_uri())
+  page.goto(target.as_uri())
   page.evaluate('localStorage.clear()');page.reload()
   def click(action):page.locator('[data-action="'+action+'"]').filter(visible=True).first.click()
   def state():return page.evaluate('window.__workbench.getState()')
@@ -126,12 +130,20 @@ def main():
   except Exception as error:
    if not results or results[-1]['passed']:
     results.append({'check':'Journey execution reached its endpoint','passed':False,'error':str(error)[:900]})
-   page.screenshot(path=str(ROOT/'.git/ai-forward/workbench-loops-20261018/interaction-failure.png'))
-  output={'artifact':str(TARGET.relative_to(ROOT)),'artifact_sha256':hashlib.sha256(TARGET.read_bytes()).hexdigest(),'checked_at':datetime.now(timezone.utc).isoformat(),'journey_completed':journey_completed,'checks':results,'passed':sum(x['passed'] for x in results),'failed':sum(not x['passed'] for x in results),'browser_errors':errors,'network_requests':[r for r in requests if r.startswith(('http:','https:'))]}
-  out=ROOT/args.out;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(output,indent=2),encoding='utf-8', newline="\n")
+   out.parent.mkdir(parents=True,exist_ok=True);page.screenshot(path=str(out.with_name('interaction-failure.png')))
+  output={'artifact':target.relative_to(ROOT).as_posix() if target.is_relative_to(ROOT) else target.name,'artifact_sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'checked_at':datetime.now(timezone.utc).isoformat(),'journey_completed':journey_completed,'checks':results,'passed':sum(x['passed'] for x in results),'failed':sum(not x['passed'] for x in results),'browser_errors':errors,'network_requests':[r for r in requests if r.startswith(('http:','https:'))]}
+  out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(output,indent=2),encoding='utf-8', newline="\n")
   browser.close()
  print(json.dumps(output,indent=2))
  return 1 if not journey_completed or output['failed'] or output['browser_errors'] else 0
+
+def self_test():
+ import tempfile
+ with tempfile.TemporaryDirectory() as tmp:
+  page=Path(tmp)/'empty.html';page.write_text('<!doctype html><title>x</title><p>no workbench</p>',encoding='utf-8',newline='\n')
+  if main(['--target',str(page),'--out',str(Path(tmp)/'interactions.json')])!=1:
+   print('self-test FAILED: a page with no workbench passed the journey');return 1
+ print('self-test OK - a page with no workbench fails the journey');return 0
 
 import sys
 for _stream in (sys.stdout, sys.stderr):

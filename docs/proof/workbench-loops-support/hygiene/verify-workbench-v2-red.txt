@@ -1,0 +1,4 @@
+Call log:
+  - navigating to "file:///C:/Users/malla/AppData/Local/docs/mockups/factory-workbench-v2.html", waiting until "load"
+
+exit (old script, same failure at HEAD)
