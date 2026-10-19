@@ -225,6 +225,115 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
             });
     }
 
+    /// <summary>
+    /// Ruling 175 (2), node 3 check B: a Send while the host opens, whose open then fails, keeps the words in the editor
+    /// and shows the open's own cause (Ruling 159's refusal), never the restoring sentence; nothing joins the thread. The
+    /// Retry binds the host, and a Send then sends the same words.
+    /// </summary>
+    [Fact]
+    public void ASendWhoseHostOpenFails_KeepsTheWords_AndShowsTheRefusalsOwnCause_AndSendsThemAfterTheRetry()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                _fixture.ReleaseRun();
+                var opening = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                var tries = 0;
+                AttemptHost? opened = null;
+                var model = _fixture.NewModel();
+                model.Runs.BindHostWhenOpen(
+                    async () =>
+                    {
+                        if (++tries == 1)
+                        {
+                            await opening.Task;
+                            throw new IOException("the lock file's folder is read-only");
+                        }
+
+                        return opened = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+                    },
+                    Scope);
+                var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = surface;
+                _fixture.ConfigureStub(surface);
+                await Settle(window, rounds: 5);
+                var send = SendButton(surface);
+
+                surface.Composer.Draft.SetFreeFormText("fourth words");
+                Assert.NotNull(surface.Composer.Send());
+                await Settle(window);
+                opening.SetResult();
+                await surface.LastAdmission.WaitAsync(NotebookFixture.Bound);
+                await Settle(window, rounds: 5);
+
+                Assert.Empty(model.Thread.Current.Turns);
+                Assert.Equal("fourth words", surface.Composer.Draft.SourceText);
+                Assert.Contains("the lock file's folder is read-only", surface.Composer.Status, StringComparison.Ordinal);
+                Assert.Equal(model.Runs.HostRefusal, surface.Composer.Status);
+                Assert.Equal(model.Runs.HostRefusal, AutomationProperties.GetHelpText(send));
+                Assert.False(send.IsEnabled, "Send was enabled while the host refused");
+
+                var retry = FindButton(surface.Composer, b => AutomationProperties.GetName(b) == AiDe.App.Workbench.Composer.ComposerSurface.RetryHostName)!;
+                retry.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                await UntilAsync(window, () => send.IsEnabled && model.Runs.Host is not null, () => "the Retry never bound the host");
+                Assert.Equal("fourth words", surface.Composer.Draft.SourceText);
+                Assert.NotNull(surface.Composer.Send());
+                await UntilAsync(window, () => Ended(model, 0), () => "the words sent after the Retry never ran");
+                Assert.Equal(["b1 fourth words"], surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words));
+                Close(window, opened!, model, surface);
+            });
+    }
+
+    /// <summary>
+    /// Ruling 175 (2), node 3 check B: a Send while the turns restore, whose read-back then fails, keeps the words in the
+    /// editor and shows the read-back's own cause in Ruling 159's refusal words, with the Retry; nothing joins the
+    /// thread. The Retry reads back again, the restored turns appear, and the same words then send as b3.
+    /// </summary>
+    [Fact]
+    public void ASendWhoseReadBackFails_KeepsTheWords_AndShowsTheFailuresOwnCause_AndTheRetryRestoresThenSendsB3()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                await RecordTwoAttemptsAsync(window);
+                var failing = true;
+                var (model, surface, opening, opened) = await ReopenWithTheOpenHeldAsync(
+                    window, host => FailingReads.Over(host, () => failing ? new IOException("the attempt store is locked by a backup") : null));
+                var send = SendButton(surface);
+
+                surface.Composer.Draft.SetFreeFormText("third words");
+                Assert.NotNull(surface.Composer.Send());
+                await Settle(window);
+                opening.SetResult();
+                await UntilAsync(window, () => model.Runs.Host is not null, () => "the host never bound");
+                await surface.LastAdmission.WaitAsync(NotebookFixture.Bound);
+                await Settle(window, rounds: 5);
+
+                Assert.Empty(model.Thread.Current.Turns);
+                Assert.Equal("third words", surface.Composer.Draft.SourceText);
+                Assert.Equal("Runs cannot be hosted in this window: the attempt store is locked by a backup Retry to open the host again.", surface.Composer.Status);
+                Assert.Equal(model.Runs.HostRefusal, AutomationProperties.GetHelpText(send));
+                Assert.False(send.IsEnabled, "Send was enabled after the read-back failed: a send now would number ahead of the unrestored turns");
+                var retry = FindButton(surface.Composer, b => AutomationProperties.GetName(b) == AiDe.App.Workbench.Composer.ComposerSurface.RetryHostName);
+                Assert.True(retry is { Visibility: Visibility.Visible }, "no Retry was offered after the read-back failed");
+
+                failing = false;
+                retry!.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                await UntilAsync(window, () => send.IsEnabled && surface.Thread.Rows.Count == 2,
+                    () => $"after the Retry: Send enabled={send.IsEnabled}, {surface.Thread.Rows.Count} rows");
+                Assert.Equal("third words", surface.Composer.Draft.SourceText);
+                Assert.NotNull(surface.Composer.Send());
+                await UntilAsync(window, () => surface.Thread.Rows.Count == 3 && Ended(model, 2), () => $"{surface.Thread.Rows.Count} rows");
+                Assert.Equal(["b1 first words", "b2 second words", "b3 third words"], surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words));
+                Close(window, opened()!, model, surface);
+            });
+    }
+
     /// <summary>Ruling 175 (1): the restoring sentence is DESIGN.md's copy, one row citing the ruling, pinned to the const.</summary>
     [Fact]
     public void TheRestoringSentence_IsOneDesignCopyRow_CitingRuling175()
@@ -433,6 +542,40 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
         {
             await Task.Delay(20);
             await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        }
+    }
+
+    /// <summary>The real host whose read-back call (<see cref="IAttemptHost.ReadAsync"/>) throws what <c>failure</c> returns, while non-null.</summary>
+    public class FailingReads : DispatchProxy
+    {
+        private IAttemptHost _inner = null!;
+        private Func<Exception?> _failure = null!;
+
+        public static IAttemptHost Over(IAttemptHost inner, Func<Exception?> failure)
+        {
+            var proxy = Create<IAttemptHost, FailingReads>();
+            ((FailingReads)(object)proxy)._inner = inner;
+            ((FailingReads)(object)proxy)._failure = failure;
+            return proxy;
+        }
+
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+        {
+            ArgumentNullException.ThrowIfNull(targetMethod);
+            if (targetMethod.Name == nameof(IAttemptHost.ReadAsync) && _failure() is { } failure)
+            {
+                return Task.FromException<AttemptReceipt?>(failure);
+            }
+
+            try
+            {
+                return targetMethod.Invoke(_inner, args);
+            }
+            catch (TargetInvocationException error) when (error.InnerException is { } inner)
+            {
+                ExceptionDispatchInfo.Throw(inner);
+                throw;
+            }
         }
     }
 
