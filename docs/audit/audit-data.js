@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T22:05:22Z",
+  "generated": "2026-10-19T22:16:45Z",
   "audit": [
     {
       "actor": null,
@@ -26477,23 +26477,101 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5B2CZCXX2BWJT68E02Z352E",
-      "shortname": "join-wls-float-n8",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T21:52:05Z",
-      "session": "wl-leader3-20261019",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Ruling 171 (3): a live notebook floats and redocks",
+      "id": "al-01M5B2CZCXX2BWJT68E02Z352E",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float-n8",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T21:52:04Z",
       "summary": "T21 n8 rest: (B) redock with state intact and focus in the notebook (c80e5fbd); (C) restore floating at bounds with read-back; floating tabs named with a menu (28c60d1f). Close condition 4 proved by test. RECOUNT 1 (failed): one Core nonportable failure, TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives ('the helper never wrote child-exited= to its report'); the src diff is one non-terminal file; it passed 3/3 alone on the head be5a497a and 3/3 on the parent aa8247ff. RECOUNT 2 (the ONE re-run the Owner allowed): Core 3116/2933/183 all Completed (the terminal-host test passed); App 1229 counted, only SolutionTreeChordTests and CtrlDigit refused 'foreground', each alone on the head be5a497a and the parent aa8247ff (Ruling 155 (3), NOT CHECKED). The load-only class is DC-NEW-wl-leader3-b (T31 measures rates). recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T22:05:22Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 90525.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "Ruling 171 (3): a live notebook floats and redocks",
+      "id": "al-01M5B359PJRHQV6Q80N8WYQ35X",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n8 join d9102cd3",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float-n8-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T20:56:37Z",
+      "summary": "TWO recounts, both recorded (Owner). RECOUNT 1 FAILED: Core nonportable TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives ('the helper never wrote child-exited= to its report'); the src diff is one non-terminal file; passed 3/3 alone on the join head be5a497a and 3/3 on the first parent aa8247ff; instance (2) of DC-NEW-wl-leader3-b (tests that fail only under full-suite load), rate to be measured by T31. RECOUNT 2, the one re-run the Owner allowed: Core 3116 / portable 2933 / nonportable 183 all Completed (the terminal-host test passed under load); App 1229 counted, only SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests refused 'foreground', each ALONE on the head be5a497a and the parent aa8247ff in a clean detached tree: Ruling 155 (3), NOT CHECKED; the Owner confirmed that 'fails anywhere' excludes these two. Step 8 strict 6/48. Ratchet vs aa8247ff, head d9102cd3: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Close condition 4 (Ruling 171 (3)) proved by test: a live notebook floats, redocks with its state intact and focus in it, and survives a restart floating with its read-back; floating tabs are named and have a menu. Demo step 5 is owed to the user's WL-S walk-through.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T19:05:50Z",
+      "done_when": "A, B, C red then green through the gesture; suites; ratchet",
+      "duration_seconds": 1800.0,
+      "fan_out": 0,
+      "goal": "the compiled field heading never states something false",
+      "id": "al-01M5ARWJDQJAJQQT23VZG16TXF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T28 n4: the compiled field heading never states something false (drain to sent)",
+      "session": "wl-t28-compiled",
+      "shortname": "wl-t28-compiled",
+      "skill": "implement",
+      "started_at": "2026-10-19T18:35:50Z",
+      "summary": "Queued heading switches to sent as b{n} when the queue drains with no keystroke; held drain keeps queued; resend guard holds; B and C mutation reds",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5B3T3JM7Q9MM53RK1RSJ3T8",
+      "shortname": "join-wl1a-compiled-field-n4",
+      "datetime": "2026-10-19T22:16:44Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "the join of wl1a-compiled-field into main",
+      "summary": "T28 n4 (Sonnet, Owner direction under Ruling 181): (A) when the queue drains and b2 is sent with no keystroke since, the heading switches from 'queued as b2' to 'Compiled prompt - sent as b2' (ComposerSurface.SetQueued; red 1a5150a0 -> green ed2a655e), and a typed draft stays live; (B) b1 failed or stopped so the drain is refused: the heading stays 'queued as b2' (mutation red fd8e5377); (C) after the switch, a press with no keystroke sends nothing (mutation red resent b2 as b3). Tests: TheCompiledFieldAfterTheQueueDrainsTests (4). Node ran Core 3046/0, App 1182/1 (the foreground probe); its rule-22 ratchet refused only verify-derived-views (expected). Residual (Inferred): if b2 finishes before the UI snapshot sees it in flight, the heading stays 'queued as b2'. recount_seconds=640 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Ruling 171 (3): a live notebook floats and redocks",
+      "goal": "Ruling 181: the compiled field's heading never states something false",
       "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -26502,33 +26580,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T21:52:04Z",
-      "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5B359PJRHQV6Q80N8WYQ35X",
-      "shortname": "join-wls-float-n8-step8",
-      "datetime": "2026-10-19T22:05:22Z",
-      "session": "wl-leader3-20261019",
-      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n8 join d9102cd3",
-      "summary": "TWO recounts, both recorded (Owner). RECOUNT 1 FAILED: Core nonportable TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives ('the helper never wrote child-exited= to its report'); the src diff is one non-terminal file; passed 3/3 alone on the join head be5a497a and 3/3 on the first parent aa8247ff; instance (2) of DC-NEW-wl-leader3-b (tests that fail only under full-suite load), rate to be measured by T31. RECOUNT 2, the one re-run the Owner allowed: Core 3116 / portable 2933 / nonportable 183 all Completed (the terminal-host test passed under load); App 1229 counted, only SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests refused 'foreground', each ALONE on the head be5a497a and the parent aa8247ff in a clean detached tree: Ruling 155 (3), NOT CHECKED; the Owner confirmed that 'fails anywhere' excludes these two. Step 8 strict 6/48. Ratchet vs aa8247ff, head d9102cd3: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Close condition 4 (Ruling 171 (3)) proved by test: a live notebook floats, redocks with its state intact and focus in it, and survives a restart floating with its read-back; floating tabs are named and have a menu. Demo step 5 is owed to the user's WL-S walk-through.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Ruling 171 (3): a live notebook floats and redocks",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T20:56:37Z",
-      "duration_seconds": 90525.0
+      "started_at": "2026-10-19T22:06:02Z",
+      "duration_seconds": 642.0
     }
   ],
   "changes": [
