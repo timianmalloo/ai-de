@@ -101,12 +101,61 @@ public static class AcceptanceFold
     private static ObligationEvaluation Evaluate(AcceptanceInput input, ObligationRow obligation)
     {
         var links = input.Links.GetValueOrDefault(obligation.ObligationId) ?? [];
-        var cited = links.Where(l => l.VerificationStatus == ObservedStatus).ToList();
-        var evidence = cited.Count > 0 ? EvidenceState.Satisfied : EvidenceState.Missing;
+        var verdicts = links
+            .Where(l => l.VerificationStatus == ObservedStatus)
+            .Select(l => (Link: l, Verdict: Judge(input, obligation, l)))
+            .ToList();
+        var cited = verdicts.Where(v => v.Verdict == EvidenceState.Satisfied).Select(v => v.Link).ToList();
         var human = LatestPerActor(input, obligation.ObligationId);
 
         return new ObligationEvaluation(
-            obligation.ObligationId, obligation.Text, obligation.Mandatory, evidence, ShownState(human), cited);
+            obligation.ObligationId, obligation.Text, obligation.Mandatory,
+            Strongest(verdicts.Select(v => v.Verdict)), ShownState(human), cited);
+    }
+
+    /// <summary>Satisfied beats Stale beats NotRecorded beats Missing: the state a reader can act on first.</summary>
+    private static EvidenceState Strongest(IEnumerable<EvidenceState> verdicts) =>
+        verdicts.DefaultIfEmpty(EvidenceState.Missing).MinBy(v => v switch
+        {
+            EvidenceState.Satisfied => 0,
+            EvidenceState.Stale => 1,
+            EvidenceState.NotRecorded => 2,
+            _ => 3,
+        });
+
+    /// <summary>Baseline and criterion first, then the attempt's currentness; an unknown attempt is never current.</summary>
+    private static EvidenceState Judge(AcceptanceInput input, ObligationRow now, EvidenceLinkRow link)
+    {
+        var baseline = AcceptanceBaseline.For(input.IntentNotebookId, input.IntentLatestRevisionNo);
+        if (!string.Equals(link.Baseline, baseline, StringComparison.Ordinal) || !CriterionUnchanged(input, now, link))
+        {
+            return EvidenceState.Stale;
+        }
+
+        if (!TryAttemptKey(link.ArtifactRef, out var key) || !input.LinkedAttempts.TryGetValue(key, out var attempt))
+        {
+            return EvidenceState.NotRecorded;
+        }
+
+        return CurrentnessFold.Evaluate(attempt, input.IntentLatestRevisionNo, input.LiveProjectionSha).State switch
+        {
+            Currentness.Current => EvidenceState.Satisfied,
+            Currentness.Stale => EvidenceState.Stale,
+            _ => EvidenceState.NotRecorded,
+        };
+    }
+
+    private static bool CriterionUnchanged(AcceptanceInput input, ObligationRow now, EvidenceLinkRow link)
+    {
+        var then = input.ObligationHistory.GetValueOrDefault(now.ObligationId)?.FirstOrDefault(o => o.Revision == link.SubjectRevision);
+        return then is not null && then.Text == now.Text && then.Mandatory == now.Mandatory;
+    }
+
+    private static bool TryAttemptKey(string artifactRef, out string key)
+    {
+        var prefix = AttemptStateFold.AttemptArtifactRef("");
+        key = artifactRef.StartsWith(prefix, StringComparison.Ordinal) ? artifactRef[prefix.Length..] : "";
+        return key.Length > 0;
     }
 
     private static List<DispositionRow> LatestPerActor(AcceptanceInput input, string obligationId) =>

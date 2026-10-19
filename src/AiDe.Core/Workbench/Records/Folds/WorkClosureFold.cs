@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AiDe.Core.Store.Records;
 
 namespace AiDe.Core.Workbench.Records.Folds;
@@ -13,6 +14,19 @@ public sealed record WorkClosure(WorkClosureState State, string? AcceptedBaselin
 /// <summary>Whether a journey's deliverable was accepted, derived from <c>subject_kind = work</c> dispositions only.</summary>
 public static class WorkClosureFold
 {
-    public static WorkClosure Evaluate(IReadOnlyList<DispositionRow> workDispositions, string currentBaseline) =>
-        throw new NotImplementedException();
+    public static WorkClosure Evaluate(IReadOnlyList<DispositionRow> workDispositions, string currentBaseline)
+    {
+        ArgumentNullException.ThrowIfNull(workDispositions);
+        var started = Stopwatch.GetTimestamp();
+
+        var accepted = workDispositions.Where(d => d.SubjectKind == "work" && d.Kind == "accepted").ToList();
+        var shown = accepted.FirstOrDefault(d => string.Equals(d.Baseline, currentBaseline, StringComparison.Ordinal))
+            ?? accepted.MaxBy(d => d.IngressSeq);
+        var result = shown is null
+            ? new WorkClosure(WorkClosureState.NotAccepted, null, false)
+            : new WorkClosure(WorkClosureState.Accepted, shown.Baseline, string.Equals(shown.Baseline, currentBaseline, StringComparison.Ordinal));
+
+        FoldSignal.Record("work-closure", Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+        return result;
+    }
 }
