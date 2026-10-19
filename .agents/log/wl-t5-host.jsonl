@@ -10,3 +10,13 @@
 {"agent": "wl-t5-host", "at": 1792387639.5012205, "kind": "claim", "path": "docs/design/workbench-loops-wl-1a.md", "seq": 10, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792388109.6797752, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 11, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792388527.2537029, "kind": "claim", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 12, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792388681.612812, "kind": "release", "path": "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs", "seq": 13, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388681.7074258, "kind": "release", "path": "src/AiDe.Core/Ipc/IWorkspaceDispatch.cs", "seq": 14, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388681.8190413, "kind": "release", "path": "src/AiDe.Core/Ipc/WorkspaceOperations.cs", "seq": 15, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388681.925749, "kind": "release", "path": "src/AiDe.Core/Ipc/WorkspaceClient.cs", "seq": 16, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.0363975, "kind": "release", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 17, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.1437984, "kind": "release", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 18, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.2614942, "kind": "release", "path": "src/AiDe.Core/Store/StoreWriter.cs", "seq": 19, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.3620605, "kind": "release", "path": "src/AiDe.Core/Store/StoreReader.cs", "seq": 20, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.5147667, "kind": "release", "path": "docs/design/workbench-loops-wl-1a.md", "seq": 21, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792388682.6360555, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 22, "session": "wl-t5-host", "wi": "WI-0"}

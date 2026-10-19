@@ -2718,7 +2718,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 67 types, 183 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 69 types, 187 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2731,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3ac4534ddd3b4eba8fbbdef3815d50a0b92ec3572c2e04e7afa8dcd07ac0533a"
+      "sourceSha256": "e2b9907d26b60ce0760880995d5df6ecec13321959e9fb51874ca4fc191dcca0"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -10614,7 +10614,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5b03f1856133ddee2917b893a67b8acc0ec985b8628939c1ec55a3b176003a46"
+      "sourceSha256": "4acaad2e75b5eac4c9124a7241f892bc061d0b24e156d74b0ebc96e9512f4c49"
     },
     {
       "id": "design-session-profiler",
@@ -18929,7 +18929,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e3473bd21bee1c37dd1d20903391df787ec4b37f4fb9456d783b7243fd01df87"
+      "sourceSha256": "1d5a56a85891b17b2bd5fb4ef4e10e2282d23989550ade2461c3e6189afbc592"
     },
     {
       "id": "coordination-workbench-loops-leader-handoff-1",
@@ -22284,7 +22284,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c74181efb6aa0c61d3356d9707808eec95cfc5387b575a71f722b84a07b827b2"
+      "sourceSha256": "6b7a77c2622b9edb7cf9aaf2ba397a7ffdc141c8a9171c43f03e8713cd2e2ca9"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -24405,5 +24405,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "d41f151c39e46a5601f8aa0c20d509bbd4c0d72ae2d2d5b8d8e938a34554eecf"
+  "graphSha256": "9cb48b1e1ce95c8b4ca010b1d45052c2f8ad9808faf98e3349dd4fe383826adb"
 };

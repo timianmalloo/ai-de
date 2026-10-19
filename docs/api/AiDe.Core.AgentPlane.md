@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 67 types, 183 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 69 types, 187 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**67 public types · 183 public members · 92% documented.**
+**69 public types · 187 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -858,6 +858,40 @@ adapter engines (`Adapter`); a native CLI's install command is shown as copy.
 *record* — `FirstUse.cs`
 
 What the install produced.
+
+## `FrameRedaction`
+
+*class* — `FrameRedaction.cs`
+
+Ingest-side credential-sentinel scan (ADR-0042 §6). Pure over the frame text and the
+pattern-set version: the same inputs always return the same redacted frame and spans.
+
+**Remarks.** `Offset` is where the marker starts in the **redacted** (stored) frame; `Len`
+is the length of the original span the marker replaced. The original is never retained
+(ADR-0042 §6), so only an offset into the stored frame can locate a redaction for disclosure
+(§8). The marker is longer or shorter than the secret, so each span's offset already counts
+the markers before it.
+
+
+
+
+v1 scans the raw frame text and does not decode JSON string values. That decode is
+the mapper's job (ADR-0042, consequences). Overlapping matches collapse to one span; the
+id kept is the match that starts earliest, then the longest, then the earlier pattern.
+Adjacent matches stay two spans. The marker is fixed and contains none of the secret.
+
+| Member | Summary |
+|---|---|
+| `string PatternsVersion = "patterns v1"` | The only pattern set this assembly scans with. Stamped on every result. |
+| `string Marker = "[REDACTED]"` | Fixed replacement. Matches no v1 pattern, so a second scan does not grow. |
+| `string TestSentinel = "aide-sentinel-credential-v1"` | Sentinel the tests plant. No credential-shaped sentinel literal exists under src/ or the fixture corpus, so v1 defines this one string and the tests are the fixtures that use it. |
+| `RedactedFrame Apply(string frame, string patternsVersion)` | Replace every v1 credential span in . Fails if  is not `PatternsVersion`: stamping a version that did not scan would record a scan that did not happen. |
+
+## `RedactedFrame`
+
+*record* — `FrameRedaction.cs`
+
+The redacted frame, the spans located in it, and the pattern set that scanned it.
 
 ## `RunBudget`
 

@@ -1,0 +1,11 @@
+{"agent": "wl-t8-bind", "at": 1792388822.6090553, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/model-rekey-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.6381843, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookModel.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.667726, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.6948588, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.7227607, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookFixture.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.7509148, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/StoreNotebookRevisions.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388822.7817934, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheModelOutlivesItsSurfaceTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388823.0894196, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/prepare-from-revision-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388823.1205678, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/PrepareFromRevisionTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388823.4092355, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/stale-marker-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792388823.4372923, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheOldResultIsMarkedStaleTests.cs", "session": "wl-t8-bind", "wi": ""}

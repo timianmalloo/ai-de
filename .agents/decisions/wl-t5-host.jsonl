@@ -25,3 +25,7 @@
 {"agent": "wl-t5-host", "at": 1792388562.679065, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792388562.7090976, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792388562.73964, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792388627.291342, "code": null, "kind": "allowed", "path": "docs/design/workbench-loops-wl-1a.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792388627.3209178, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792388671.2216785, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792388671.2496827, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
