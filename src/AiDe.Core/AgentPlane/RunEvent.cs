@@ -190,8 +190,8 @@ public sealed record RunEvent(
     [property: JsonPropertyName("scanned_with")] string? ScannedWith = null);
 
 /// <summary>One redacted span of a stored raw frame (ADR-0042 §6): where it was and which pattern matched.</summary>
-/// <param name="Offset">Start of the span in the redacted frame.</param>
-/// <param name="Len">Length of the span.</param>
+/// <param name="Offset">Start of the fixed redaction marker in the redacted (stored) frame.</param>
+/// <param name="Len">Length of the original span the marker replaced.</param>
 /// <param name="PatternId">Stable id of the pattern that matched.</param>
 public sealed record RunEventRedaction(
     [property: JsonPropertyName("offset")] int Offset,

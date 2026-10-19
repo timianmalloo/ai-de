@@ -29,7 +29,7 @@ where the attempt row and outcome rows are written (App ↔ daemon IPC: today's 
 prepared revision, queue, Stop, read an attempt and its events, subscribe). Name the patterns (Receipt Ledger
 4.3, Hot Path Bypass 1.4). Run the adversarial review as two read-only sub-agents and record their verdicts.
 Commit (`docs: design WL-1a`), then mail the Leader:
-`coord mail send --to wl-leader-20261018 --kind note --body "design committed <sha>"`.
+`coord mail send --to wl-leader2-20261019 --kind note --body "design committed <sha>"`.
 
 ## Stage 2 — implement. The lines this row builds (quoted, DC-189) — read `docs/adr/0041-execution-attempt-lifecycle.md` whole
 - §1: "`dispatch_key = sha256(envelope_id ‖ projection_sha ‖ queued_after_dispatch_key ‖ parent_dispatch_key)`"

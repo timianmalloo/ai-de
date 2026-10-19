@@ -336,3 +336,21 @@ It does not buy speed on the critical path.
 - **Pack defects logged as next steps (not drive work):** (1) the docs HTML surface cap at 100/100; (2)
   `verify-ruling-citations.py` reads only `docs/notes/rulings.md` while the Owner's register is
   `addendum-c-council-rulings.md`, so the two tools disagree about where the register lives (Owner, 2026-10-18).
+- **2026-10-19 05:09Z — Leader 2 (`wl-leader2-20261019`, epoch 2) resumed from hand-off 1.** Census: 0 open to the Leader.
+  Four stale T10 broadcasts were expired with their fallbacks. The briefs were re-rendered for epoch 2 (b4227154).
+  `coord doctor`'s "merge driver NOT EFFECTIVE" names only git's built-in `union`: a false positive, which the Owner
+  confirmed, filed as PD-3 (f0fe9a75).
+- **05:15Z — wave 2 dispatched.** T5 node 1 (Opus, from f1688dba). T7 on Grok via `coord-runner` (run `wl-t7-20261019b`,
+  identity `wl-t7-grok`, compiled `al-01M599DCZYYTFMD39XYKCX25BB`, base b256bcd2). T5's design commit 344f6420 and
+  host-interface commit 66ae2be7 both landed by 05:29Z, so T6 (Sonnet) and T8 node 1 (Opus) were dispatched at 05:34Z from
+  66ae2be7. T5's seam `req-01M599H0…` (new owned file `src/AiDe.App/Conductor/AttemptHost.cs`) was granted.
+- **05:36Z — T7 Grok run `ready_for_review`** (1198 s, 0 permission requests, 0 native tool errors; output truncated at
+  the 4 MiB cap). The Leader re-ran the tests (FrameRedaction 19/19; the saved Core suite shows 2954/0/1). **Read-back
+  finding:** offsets index the original frame, but `RunEventRedaction.Offset` on main is documented as the redacted
+  frame. The brief defect was the Leader's (DC-NEW-wl-leader2; control: brief rule 14). Fix-forward **T7b** (Sonnet,
+  same tree) aligns the code to the type on main. The red commit 2315ae16 was a compile failure, not an assertion
+  failure; T7b's red must be an assertion failure. Grok verdict for this drive so far: it delivered the brief as written.
+- **05:39Z — T6 done** (red 512f6f3f against throwing stubs, green 23c185ca, 31 tests; the Leader re-ran 31/31; suite
+  2966/0/1; measured 32 tool calls / about 128k / 363 s). Its seam `req-01M59AQ4…` (four fold inputs the design leaves
+  undefined) was forwarded to T5 as design owner. T6's `assume:` fallbacks stand meanwhile, and T6 does not join until T5
+  fixes them in the design. T5 node 2 also carries the `aide.attempt.fold` listener.

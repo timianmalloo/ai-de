@@ -1,0 +1,52 @@
+T7 wl-t7-grok done. Branch wl1a-redaction. Not pushed. Not merged.
+Audit: al-01M59AJ5R4NQ8QPG37VDF42JX4
+
+Commits:
+- 2315ae16fa14f67b433dba00d98e10402a162d3d test: red — sentinel positions, json, adjacent, clean, overlap, version, families
+- 3028aa161b53df6e8e8f9ac6c8396fa39e978d08 test: green — sentinel positions, json, adjacent, clean, overlap, version, families
+
+Tests in tests/AiDe.Core.Tests/AgentPlane/FrameRedactionTests.cs:
+- SentinelAtTheStart
+- SentinelInTheMiddle
+- SentinelAtTheEnd
+- SentinelTwice
+- SentinelInsideAJsonString
+- SentinelAdjacentToAnother
+- NoSentinel_IsIdenticalAndEmpty
+- OverlappingPatterns_AreOneSpan
+- PatternsVersion_IsStamped
+- EachCredentialFamily_IsRedacted (10 rows: anthropic, openai legacy, openai proj, xai, google, ghp_, gho_, github_pat_, bearer, test sentinel)
+
+Red: each filter exited 1. The project did not compile: CS0246 RedactedFrame could not be found.
+Green: each filter exited 0 and printed Passed.
+
+Proof:
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-at-the-start-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-at-the-start-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-in-the-middle-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-in-the-middle-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-at-the-end-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-at-the-end-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-twice-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-twice-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-inside-a-json-string-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-inside-a-json-string-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-adjacent-to-another-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/sentinel-adjacent-to-another-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/no-sentinel-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/no-sentinel-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/overlapping-patterns-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/overlapping-patterns-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/patterns-version-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/patterns-version-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/credential-families-red.txt
+- docs/proof/workbench-loops-wl-1a/redaction/credential-families-green.txt
+- docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt
+
+Suite: dotnet test tests/AiDe.Core.Tests -nologo
+Failed 0, Passed 2954, Skipped 1, Total 2955, EXIT=0
+
+Seam requests: none
+Not done: none
+Function: FrameRedaction.Apply(frame, patternsVersion) -> RedactedFrame(Frame, Redactions, ScannedWith)
+Offsets and lengths are into the original frame. ScannedWith is "patterns v1".
