@@ -1,0 +1,11 @@
+tests/AiDe.Core.Tests (dotnet test -nologo):
+
+Passed!  - Failed:     0, Passed:  3020, Skipped:     1, Total:  3021, Duration: 2 m 11 s - AiDe.Core.Tests.dll (net10.0)
+
+tests/AiDe.App.Tests (dotnet test -nologo):
+
+Failed!  - Failed:     1, Passed:  1125, Skipped:     1, Total:  1127, Duration: 4 m 45 s - AiDe.App.Tests.dll (net10.0)
+
+The one App failure is SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph: 'foreground not held; SendInput would prove another window' (the desktop did not hold foreground during the whole-suite run). It does not touch float; re-run alone it passes:
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 20 s - AiDe.App.Tests.dll (net10.0)

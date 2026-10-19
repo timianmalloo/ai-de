@@ -148,7 +148,7 @@ public sealed class WorkbenchControllerTests
         var (controller, announcer, service) = Build();
         service.IsLocked = true;
 
-        controller.Execute("workbench.floatPane");
+        controller.Execute("workbench.collapsePane");
 
         Assert.Contains("locked", announcer.Last, StringComparison.OrdinalIgnoreCase);
     }
