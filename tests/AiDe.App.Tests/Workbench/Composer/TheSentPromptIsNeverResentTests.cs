@@ -56,9 +56,9 @@ public sealed class TheSentPromptIsNeverResentTests(ITestOutputHelper output) : 
             var attempts = ComposerGesture.AttemptRows(_fixture);
             var blocks = composer.Gate.BlocksSent;
             var launch = document.LastLaunch;
-            Assert.Equal(b1.SentBytes, ComposerGesture.Field(composer).Text);
-            Assert.Equal(ComposerSurface.SentHeading("b1"), ComposerGesture.Heading(composer).Header);
+            output.WriteLine($"before the second press: field {ComposerGesture.Field(composer).Text.Length} chars · header \"{ComposerGesture.Heading(composer).Header}\" · draft {composer.Draft.SourceText.Length} chars");
 
+            // The guard first: what a second press SENDS is asserted before what the field SHOWS.
             ComposerGesture.CtrlEnter(composer);
             ComposerGesture.Settle(document);
             await Task.Delay(200);

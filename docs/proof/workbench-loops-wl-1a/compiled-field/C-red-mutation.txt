@@ -1,0 +1,140 @@
+MUTATION M2: ComposerSurface.ShowCompiled '_compiled.Text = text;' -> '_compiled.Text = string.Empty;' (the field is never written). Run 1: the re-driven TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount (typed draft, non-empty assertion).
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.50]     AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [FAIL]
+[xUnit.net 00:00:00.50]       0 turns: the open compiled field is empty over a typed draft of 69 chars
+[xUnit.net 00:00:00.50]       Stack Trace:
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(79,0): at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs(110,0): at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count)
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.50]       Output:
+[xUnit.net 00:00:00.50]         0 turns at 673×748: composer 628.4 · editor 402.6 · Compiled prompt header 558.5–582.5 · send row bottom 618.4
+[xUnit.net 00:00:00.50]         0 turns, compiled prompt open: composer 628.4 · editor 402.6 · compiled 48.0 · text 0 chars
+[xUnit.net 00:00:00.55]     AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [FAIL]
+[xUnit.net 00:00:00.55]       1 turns: the open compiled field is empty over a typed draft of 69 chars
+[xUnit.net 00:00:00.55]       Stack Trace:
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(79,0): at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs(110,0): at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count)
+[xUnit.net 00:00:00.55]            at InvokeStub_TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Object, Span`1)
+[xUnit.net 00:00:00.55]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.55]       Output:
+[xUnit.net 00:00:00.55]         1 turns at 673×748: composer 503.8 · editor 280.0 · Compiled prompt header 435.9–459.9 · send row bottom 493.8
+[xUnit.net 00:00:00.55]         1 turns, compiled prompt open: composer 551.8 · editor 280.0 · compiled 48.0 · text 0 chars
+  Failed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [297 ms]
+  Error Message:
+   0 turns: the open compiled field is empty over a typed draft of 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs:line 110
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Standard Output Messages:
+ 0 turns at 673×748: composer 628.4 · editor 402.6 · Compiled prompt header 558.5–582.5 · send row bottom 618.4
+ 0 turns, compiled prompt open: composer 628.4 · editor 402.6 · compiled 48.0 · text 0 chars
+
+
+  Failed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [51 ms]
+  Error Message:
+   1 turns: the open compiled field is empty over a typed draft of 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs:line 110
+   at InvokeStub_TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ 1 turns at 673×748: composer 503.8 · editor 280.0 · Compiled prompt header 435.9–459.9 · send row bottom 493.8
+ 1 turns, compiled prompt open: composer 551.8 · editor 280.0 · compiled 48.0 · text 0 chars
+
+
+[xUnit.net 00:00:05.96]     AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [FAIL]
+[xUnit.net 00:00:05.96]       40 turns: the open compiled field is empty over a typed draft of 69 chars
+[xUnit.net 00:00:05.96]       Stack Trace:
+[xUnit.net 00:00:05.96]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:05.96]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:05.96]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(79,0): at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds)
+[xUnit.net 00:00:05.96]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs(110,0): at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count)
+[xUnit.net 00:00:05.96]            at InvokeStub_TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Object, Span`1)
+[xUnit.net 00:00:05.96]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:05.96]       Output:
+[xUnit.net 00:00:05.96]         40 turns at 673×748: composer 503.8 · editor 280.0 · Compiled prompt header 435.9–459.9 · send row bottom 493.8
+[xUnit.net 00:00:05.96]         40 turns, compiled prompt open: composer 551.8 · editor 280.0 · compiled 48.0 · text 0 chars
+[xUnit.net 00:00:05.96]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [5 s]
+  Error Message:
+   40 turns: the open compiled field is empty over a typed draft of 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Int32 count) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs:line 110
+   at InvokeStub_TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ 40 turns at 673×748: composer 503.8 · editor 280.0 · Compiled prompt header 435.9–459.9 · send row bottom 493.8
+ 40 turns, compiled prompt open: composer 551.8 · editor 280.0 · compiled 48.0 · text 0 chars
+
+
+
+Test Run Failed.
+Total tests: 3
+     Failed: 3
+ Total time: 6.3700 Seconds
+run1 exit 1
+Run 2: the SAME mutation against Ruling 96's original test (2a89cf0b: no typing, oracle RenderView(draft).Text == box.Text over an empty draft) — it survives.
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [280 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [44 ms]
+[xUnit.net 00:00:05.79]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [5 s]
+
+Test Run Successful.
+Total tests: 3
+     Passed: 3
+ Total time: 6.1963 Seconds
+run2 exit 0

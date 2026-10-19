@@ -1,0 +1,17 @@
+C red, on the unfixed code (eaf8966c's tests over 2a89cf0b's ComposerSurface behaviour). Full output: A-red.txt (one run, all 12 new/changed tests). Extract:
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [307 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [52 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [5 s]
+[xUnit.net 00:00:06.57]     AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText [FAIL]
+[xUnit.net 00:00:06.57]       the compiled text is empty after the one-line message was sent
+--
+  Failed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText [672 ms]
+  Error Message:
+   the compiled text is empty after the one-line message was sent
+--
+  Failed AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary [365 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+
+C1 (IsOnScreen_AtEveryTurnCount) passes on the unfixed code by design: it types and does not submit. Its red is the mutation in C-red-mutation.txt, which the original test survives.

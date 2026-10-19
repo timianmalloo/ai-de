@@ -1,0 +1,275 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [307 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [52 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [5 s]
+[xUnit.net 00:00:06.57]     AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText [FAIL]
+[xUnit.net 00:00:06.57]       the compiled text is empty after the one-line message was sent
+[xUnit.net 00:00:06.57]       Stack Trace:
+[xUnit.net 00:00:06.57]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:06.57]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:06.57]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:06.57]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs(176,0): at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText()
+[xUnit.net 00:00:06.57]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:06.57]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:06.57]       Output:
+[xUnit.net 00:00:06.57]         document 489.55 × 598.13 · belt 517.13 · editor rest 280.00 · turns 1
+[xUnit.net 00:00:06.57]         at rest: composer 511.88 (desired 511.88, minimum 361.88) · editor 280.00 · lines 181.92 · compiled arrange-valid False height 0.00 text 0 chars
+[xUnit.net 00:00:06.57]         after the header click: toggle checked True · CompiledPromptOpen True · compiled arrange-valid True height 48.00 text 0 chars · lines 229.92
+[xUnit.net 00:00:06.57]         expanded: composer 517.13 (desired 517.13, minimum 409.88) · editor 237.25 · lines 229.92 · compiled arrange-valid True height 48.00 desired 48.00 max 142.00 text 0 chars · ExpandSite absent · header bottom 425.17 · send row top 477.17
+[xUnit.net 00:00:06.87]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft [FAIL]
+[xUnit.net 00:00:06.87]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:06.87]                                 ↓ (pos 15)
+[xUnit.net 00:00:06.87]       Expected: "Compiled prompt — sent as b1"
+[xUnit.net 00:00:06.87]       Actual:   "Compiled prompt"
+[xUnit.net 00:00:06.87]       Stack Trace:
+[xUnit.net 00:00:06.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:06.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:06.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:06.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(108,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft()
+[xUnit.net 00:00:06.87]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:06.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:06.89]       Output:
+[xUnit.net 00:00:06.89]         after the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+[xUnit.net 00:00:07.21]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [FAIL]
+[xUnit.net 00:00:07.21]       the open compiled field emptied on the submit; the prompt sent was 69 chars
+[xUnit.net 00:00:07.21]       Stack Trace:
+[xUnit.net 00:00:07.21]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:07.21]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:07.21]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:07.21]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(74,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt()
+[xUnit.net 00:00:07.21]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:07.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:07.21]       Output:
+[xUnit.net 00:00:07.21]         open, typed, before the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 69 chars
+[xUnit.net 00:00:07.21]         open, after the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+[xUnit.net 00:00:07.23]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames [FAIL]
+[xUnit.net 00:00:07.23]       Assert.Single() Failure: The collection did not contain any matching items
+[xUnit.net 00:00:07.23]       Expected:   (predicate expression)
+[xUnit.net 00:00:07.23]       Collection: ["---", "name: AI-DE Workspace", "description: Design language for the AI-DE desktop"···, "archetype: \"PerspectiveShell { Type:OLTP; Arch:Hu"···, "colors:", ···]
+[xUnit.net 00:00:07.23]       Stack Trace:
+[xUnit.net 00:00:07.23]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(143,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames()
+[xUnit.net 00:00:07.23]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:07.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText [672 ms]
+  Error Message:
+   the compiled text is empty after the one-line message was sent
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sessions\TheWriterKeepsItsRoomTests.cs:line 176
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ document 489.55 × 598.13 · belt 517.13 · editor rest 280.00 · turns 1
+ at rest: composer 511.88 (desired 511.88, minimum 361.88) · editor 280.00 · lines 181.92 · compiled arrange-valid False height 0.00 text 0 chars
+ after the header click: toggle checked True · CompiledPromptOpen True · compiled arrange-valid True height 48.00 text 0 chars · lines 229.92
+ expanded: composer 517.13 (desired 517.13, minimum 409.88) · editor 237.25 · lines 229.92 · compiled arrange-valid True height 48.00 desired 48.00 max 142.00 text 0 chars · ExpandSite absent · header bottom 425.17 · send row top 477.17
+
+
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft [304 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                          ↓ (pos 15)
+Expected: "Compiled prompt — sent as b1"
+Actual:   "Compiled prompt"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 108
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ after the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+
+
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [340 ms]
+  Error Message:
+   the open compiled field emptied on the submit; the prompt sent was 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 74
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ open, typed, before the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · draft 69 chars
+ open, after the submit: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+
+
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames [20 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: ["---", "name: AI-DE Workspace", "description: Design language for the AI-DE desktop"···, "archetype: \"PerspectiveShell { Type:OLTP; Arch:Hu"···, "colors:", ···]
+  Stack Trace:
+     at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 143
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:07.65]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [FAIL]
+[xUnit.net 00:00:07.65]       the opened compiled field is empty after the submit; the prompt sent was 69 chars
+[xUnit.net 00:00:07.65]       Stack Trace:
+[xUnit.net 00:00:07.65]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:07.65]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:07.65]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:07.65]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(31,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt()
+[xUnit.net 00:00:07.65]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:07.65]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:07.65]       Output:
+[xUnit.net 00:00:07.65]         before the submit: IsExpanded False · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · draft 69 chars
+[xUnit.net 00:00:07.65]         render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+[xUnit.net 00:00:07.65]         render → 0 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.BeginNextTurn ← SessionDocumentSurface.Admit ← SessionDocumentSurface.Launch ← ComposerSendGate.Send ← ComposerSurface.SendThroughTheGate ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+[xUnit.net 00:00:07.65]         after the submit, disclosure closed: IsExpanded False · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 0.00 · draft 0 chars
+[xUnit.net 00:00:07.65]         after the submit, disclosure opened: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+[xUnit.net 00:00:07.65]         sent prompt 69 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+[xUnit.net 00:00:08.02]     AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary [FAIL]
+[xUnit.net 00:00:08.02]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:08.02]                  ↓ (pos 0)
+[xUnit.net 00:00:08.02]       Expected: "line 0 of the prompt\nline 1 of the prompt"···
+[xUnit.net 00:00:08.02]       Actual:   ""
+[xUnit.net 00:00:08.02]       Stack Trace:
+[xUnit.net 00:00:08.02]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:08.02]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:08.02]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:08.02]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Composer\TheComposerRendersItsFieldLevelErrorsTests.cs(371,0): at AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary()
+[xUnit.net 00:00:08.02]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:08.02]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:08.36]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState [FAIL]
+[xUnit.net 00:00:08.36]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:08.36]                                 ↓ (pos 15)
+[xUnit.net 00:00:08.36]       Expected: "Compiled prompt — sent as b1"
+[xUnit.net 00:00:08.36]       Actual:   "Compiled prompt"
+[xUnit.net 00:00:08.36]       Stack Trace:
+[xUnit.net 00:00:08.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:08.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:08.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:08.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(87,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState()
+[xUnit.net 00:00:08.36]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:08.36]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:08.80]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [FAIL]
+[xUnit.net 00:00:08.80]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:08.80]                  ↓ (pos 0)
+[xUnit.net 00:00:08.80]       Expected: "why are we using grep? is graphify and ob"···
+[xUnit.net 00:00:08.80]       Actual:   ""
+[xUnit.net 00:00:08.80]       Stack Trace:
+[xUnit.net 00:00:08.80]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:08.80]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:08.80]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:08.80]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(41,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing()
+[xUnit.net 00:00:08.80]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:08.80]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [418 ms]
+  Error Message:
+   the opened compiled field is empty after the submit; the prompt sent was 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 31
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ before the submit: IsExpanded False · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · draft 69 chars
+ render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ render → 0 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.BeginNextTurn ← SessionDocumentSurface.Admit ← SessionDocumentSurface.Launch ← ComposerSendGate.Send ← ComposerSurface.SendThroughTheGate ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ after the submit, disclosure closed: IsExpanded False · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 0.00 · draft 0 chars
+ after the submit, disclosure opened: IsExpanded True · header "Compiled prompt" · UIA name "Compiled prompt — exactly what will be sent" · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · draft 0 chars
+ sent prompt 69 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+
+
+  Failed AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary [365 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "line 0 of the prompt\nline 1 of the prompt"···
+Actual:   ""
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Composer\TheComposerRendersItsFieldLevelErrorsTests.cs:line 371
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState [341 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                          ↓ (pos 15)
+Expected: "Compiled prompt — sent as b1"
+Actual:   "Compiled prompt"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 87
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [441 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "why are we using grep? is graphify and ob"···
+Actual:   ""
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:09.54]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [FAIL]
+[xUnit.net 00:00:09.55]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:09.55]                  ↓ (pos 0)
+[xUnit.net 00:00:09.55]       Expected: "held words"
+[xUnit.net 00:00:09.55]       Actual:   ""
+[xUnit.net 00:00:09.55]       Stack Trace:
+[xUnit.net 00:00:09.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:09.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:09.55]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(132,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted()
+[xUnit.net 00:00:09.55]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:09.55]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:09.55]       Output:
+[xUnit.net 00:00:09.55]         held: turns 0 · status "Restoring this notebook's turns. Your message sends when they are back." · header "Compiled prompt" · field 10 chars · draft "held words"
+[xUnit.net 00:00:09.55]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [741 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "held words"
+Actual:   ""
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 132
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ held: turns 0 · status "Restoring this notebook's turns. Your message sends when they are back." · header "Compiled prompt" · field 10 chars · draft "held words"
+
+
+
+Test Run Failed.
+Total tests: 12
+     Passed: 3
+     Failed: 9
+ Total time: 9.9567 Seconds
