@@ -80,6 +80,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly Button _send;
     private readonly Button _attach;
     private readonly Button _retry;
+    private readonly Button _retryHost;
+    private Func<Task>? _hostRetry;
     private readonly ComboBox _templatePicker;
     private string _taskClass = AiDe.Core.Watcher.TaskClasses.FreeForm;
     private string _leaseLine = ComposerCompiler.LeaseLine(null);
@@ -171,7 +173,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         FocusTarget = new EditorFocusTarget(new CanvasFocusTarget(_view, static () => false), () => _pageReady);
 
         _send = new Button { Content = "Send", Padding = new Thickness(14, 6, 14, 6), MinHeight = 24, MinWidth = 24 };
-        AutomationProperties.SetHelpText(_send, "Ctrl+Enter sends.");
+        AutomationProperties.SetHelpText(_send, SendHelp);
         _send.Click += (_, _) => Send();
 
         _attach = new Button { Content = "Attach file…", Padding = new Thickness(10, 4, 10, 4), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0) };
@@ -187,6 +189,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _retry = new Button { Content = "Retry", Padding = new Thickness(10, 4, 10, 4), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0), Visibility = Visibility.Collapsed };
         _retry.Click += async (_, _) => await RetryEditorAsync();
 
+        // Ruling 159(1): an attempt host this window could not open for any cause but another window's hold offers
+        // its own Retry, beside the editor's, so neither recovery hides the other.
+        _retryHost = new Button { Content = "Retry", Padding = new Thickness(10, 4, 10, 4), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0), Visibility = Visibility.Collapsed };
+        AutomationProperties.SetName(_retryHost, RetryHostName);
+        _retryHost.Click += async (_, _) => await RetryHostAsync();
+
         _templatePicker = BuildTemplatePicker();
         DockPanel.SetDock(_templatePicker, Dock.Top);
 
@@ -199,12 +207,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _sendRow.Children.Add(_send);
         _sendRow.Children.Add(_attach);
         _sendRow.Children.Add(_retry);
+        _sendRow.Children.Add(_retryHost);
         _sendRow.Children.Add(_status);
 
         // The tab order is the visual order — Attach · Retry (when shown) · the status (its link) ·
         // Send — not the children order the DockPanel's fill rule dictates (2.4.3).
         System.Windows.Input.KeyboardNavigation.SetTabIndex(_attach, 1);
         System.Windows.Input.KeyboardNavigation.SetTabIndex(_retry, 2);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_retryHost, 2);
         System.Windows.Input.KeyboardNavigation.SetTabIndex(_status, 3);
         System.Windows.Input.KeyboardNavigation.SetTabIndex(_send, 4);
 
@@ -597,6 +607,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         if (_context is null)
         {
             SetStatus("the composer is not wired to a session yet", Urgency.Assertive);
+            return null;
+        }
+
+        // Ruling 159(1): the accelerator obeys the disabled Send — a window that cannot host runs never sends one.
+        if (!_send.IsEnabled)
+        {
+            SetStatus(AutomationProperties.GetHelpText(_send), Urgency.Assertive);
+            _statusKind = StatusKind.Refusal;
             return null;
         }
 
@@ -1745,6 +1763,42 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         ComposerFieldWidget.Budget => "budget",
         _ => "text",
     };
+
+    /// <summary>The UIA name of the Retry that opens the attempt host again.</summary>
+    public const string RetryHostName = "Retry hosting runs";
+
+    private const string SendHelp = "Ctrl+Enter sends.";
+
+    /// <summary>
+    /// Ruling 159(1): why this window cannot host runs, or null once it can. While set, Send is disabled and its UIA
+    /// help text is the cause; <paramref name="retry"/>, when given, is offered as the Retry control. The read-only
+    /// views are untouched.
+    /// </summary>
+    public void ShowHostRefusal(string? refusal, Func<Task>? retry)
+    {
+        _hostRetry = refusal is null ? null : retry;
+        _send.IsEnabled = refusal is null;
+        AutomationProperties.SetHelpText(_send, refusal ?? SendHelp);
+        _retryHost.Visibility = _hostRetry is null ? Visibility.Collapsed : Visibility.Visible;
+        if (refusal is not null)
+        {
+            SetStatus(refusal, Urgency.Assertive);
+            _statusKind = StatusKind.Refusal;
+        }
+        else if (_statusKind == StatusKind.Refusal)
+        {
+            SetStatus(string.Empty, Urgency.Status);
+        }
+    }
+
+    private async Task RetryHostAsync()
+    {
+        if (_hostRetry is { } retry)
+        {
+            _retryHost.Visibility = Visibility.Collapsed;
+            await retry();
+        }
+    }
 
     /// <summary>The host's <c>init-failed</c> callback: names the cause and shows Retry (the mockup's <c>editorerror</c> state).</summary>
     private void OnHostInitFailed(string failure)

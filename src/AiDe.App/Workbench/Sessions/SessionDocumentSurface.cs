@@ -164,6 +164,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         // THE RUNS ARE THE MODEL'S (ADR-0045 §4): this surface only hears them — it attaches a lane, records the
         // envelope's consumed row — and a surface closed mid-run leaves the run to the next one bound here.
         Notebook.Runs.Observer = this;
+        Notebook.Runs.HostRefusalChanged += ShowHostRefusal;
+        ShowHostRefusal();
 
         // RESTART READ-BACK (AC-L01a): the host's attempts for this session's submitted envelopes, read from the store.
         if (Notebook.Runs.Host is not null)
@@ -371,6 +373,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
 
     /// <summary>The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is <see cref="LastRunFailure"/>.</summary>
     public Task LastLaunch => Notebook.Runs.LastRun;
+
+    /// <summary>Ruling 159(1): the composer's Send follows the host's refusal; a hold elsewhere has no Retry, it clears itself.</summary>
+    private void ShowHostRefusal()
+    {
+        var refusal = Notebook.Runs.HostRefusal;
+        Composer.ShowHostRefusal(refusal, refusal is null or NotebookRuns.HostedElsewhere ? null : Notebook.Runs.RetryHostAsync);
+    }
 
     /// <summary>What the last completed run reported, or null when none has completed.</summary>
     public GovernedRunResult? LastRunResult { get; private set; }
@@ -1581,6 +1590,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
 
         // THE RUN IS THE MODEL'S, NOT THE PANE'S (ADR-0045 §4; AC-D01a): closing the pane stops hearing the run and
         // leaves it running — the next surface bound to the model hears its end. Said once, so it is never silent.
+        Notebook.Runs.HostRefusalChanged -= ShowHostRefusal;
         if (ReferenceEquals(Notebook.Runs.Observer, this))
         {
             Notebook.Runs.Observer = null;

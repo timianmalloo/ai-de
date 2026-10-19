@@ -154,22 +154,47 @@ public sealed class NotebookRuns : IDisposable
     private (Func<Task<IAttemptHost>> Open, AttemptScope Scope)? _opener;
     private Task _hostOpening = Task.CompletedTask;
 
+    /// <summary>Raised on the model's home context each time <see cref="HostRefusal"/> is set or cleared.</summary>
+    public event Action? HostRefusalChanged;
+
+    /// <summary>How often a hosted-elsewhere window tries the open again, so the copy shows only while the holder lives.</summary>
+    public static readonly TimeSpan HolderProbe = TimeSpan.FromSeconds(1);
+
     private async Task OpenHostAsync(Func<Task<IAttemptHost>> open, AttemptScope scope)
     {
-        try
+        // Terminates: each pass binds, refuses with a cause that needs the operator's Retry, or ends with the workspace.
+        while (!_disposing.IsCancellationRequested)
         {
-            BindHost(await open().ConfigureAwait(false), scope);
-            HostRefusal = null;
+            try
+            {
+                BindHost(await open().ConfigureAwait(false), scope);
+                SetHostRefusal(null);
+                return;
+            }
+            catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)
+            {
+                // Only a live holder keeps the lock: the OS releases it with the holding process (AttemptHost.OpenAsync).
+                SetHostRefusal(HostedElsewhere);
+            }
+            catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
+            {
+                SetHostRefusal($"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.");
+                return;
+            }
+
+            await Task.Delay(HolderProbe, _disposing.Token).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
-        catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)
+    }
+
+    private void SetHostRefusal(string? refusal)
+    {
+        if (HostRefusal == refusal)
         {
-            // Only a live holder keeps the lock: the OS releases it with the holding process (AttemptHost.OpenAsync).
-            HostRefusal = HostedElsewhere;
+            return;
         }
-        catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
-        {
-            HostRefusal = $"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.";
-        }
+
+        HostRefusal = refusal;
+        Home(() => HostRefusalChanged?.Invoke());
     }
 
     /// <summary>Turn <paramref name="ordinal"/>'s attempt as the host last answered it, or null when it was not one.</summary>
