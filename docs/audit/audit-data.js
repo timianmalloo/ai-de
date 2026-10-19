@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T23:10:36Z",
+  "generated": "2026-10-19T23:22:18Z",
   "audit": [
     {
       "actor": null,
@@ -26723,6 +26723,35 @@ window.AUDIT_DATA = {
       "tier": "T1",
       "started_at": "2026-10-19T22:50:51Z",
       "duration_seconds": 1185.0
+    },
+    {
+      "id": "al-01M5B7J4EKTSF6YM4R8VRDKWCG",
+      "shortname": "join-wl-prefill",
+      "datetime": "2026-10-19T23:22:17Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "the join of wl-prefill into main",
+      "summary": "T30 (Opus n1-n3, Sonnet n3b), Rulings 180 and 182 (assessed by T29, docs/notes/wl-dr-prefill-goal-done.md). n1: the advisory default under gate 1 (injected gate input), the Compile mode control (keyboard and UIA; a refused rung disabled with the gate's reason), Keep writes the suggested line into the draft and it survives a re-prepare. n2: File > New Session and the real settings use the gate (CompileModeGateInput, seam req-01M5AWSSQZ...); the mark reads '? suggested' (DESIGN.md defines '?' as the glyph); the OwnWindow fixture (DC-NEW-wl-t30-prefill); the C1 restart measurement (a kept line does NOT survive a restart -> Ruling 182). n3: no saved-state copy anywhere (313 strings, mutation red); a sent turn's compiled prompt survives a restart (REAL red 19437c6e: 0 of 263 chars; fix 9234fc77 rebuilds through the send gate's projection via ComposerSendGate.SentBytesOf, shown only when sha256 equals Submitted.TextSha256, else 'Compiled prompt not recorded'; byte-change mutation red; no store change); the settings row states the gate's real refusal. n3b: KeepHelp in the Owner's words ('It is not yet kept when AI-DE restarts.'); a harness-diagnostics capture fix. Owed: n4 (Ruling 180 (4) cost line and first 50 calls, (6) compile-eval, the four sheet tests that read the real proof file). recount_seconds=627 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "AC-W01a: the user does not fill goal and done criteria by hand",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T23:11:48Z",
+      "duration_seconds": 629.0
     }
   ],
   "changes": [
@@ -32471,6 +32500,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5B5KPJA2GF3Z3Z6W5EE8DWP",
+      "ts": "2026-10-19T22:48:11Z",
+      "from": "wl-t30-prefill",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t30-prefill"
+    },
+    {
+      "id": "mail-01M5B6WWX4B5CV3FB8CM7GVE97",
+      "ts": "2026-10-19T23:10:41Z",
+      "from": "wl-t30-prefill",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t30-prefill"
     }
   ]
 };

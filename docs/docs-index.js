@@ -2643,7 +2643,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 138 members, 95% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 140 members, 95% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2656,7 +2656,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "27629418d0faf347ddf012e4062fb168073f28dae59a3db1f564587922460256"
+      "sourceSha256": "376c9786955483258fed3ed9fdbdd21f355987bcc192fc0c2a9a012971e6105b"
     },
     {
       "id": "api-aide-app-workbench-execution",
@@ -2718,7 +2718,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 53 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 54 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2731,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca41b9914eb62bf9ad48093f954743e72c2adfd38afe05aafd190eb9fe074a09"
+      "sourceSha256": "87c382f6f82d512e228370f5ea281a6416f4b7666f81b3b55a7711df0533bbe6"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2743,7 +2743,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 224 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 226 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2756,7 +2756,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "37d8b720defcb638afd1d44a8974f3fbc7792386be74e594589f62b0730c89a6"
+      "sourceSha256": "02f6b86fbd8210a48da806919de6610563f69be4a23ef941e0dee840d944f752"
     },
     {
       "id": "api-aide-core",
@@ -3018,7 +3018,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 159 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 160 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3031,7 +3031,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e4d5b6b48c734c85c5acb58662edbad474c1547402d0d924fd2ece3db9876623"
+      "sourceSha256": "7c4f407ac142531e0a0b2684c23fd7e180f566a0441b057f306b9b764fbe44b7"
     },
     {
       "id": "api-aide-core-projections",
@@ -3093,7 +3093,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 29 types, 88 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 29 types, 89 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3106,7 +3106,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b353923ada5dfdb2d62e570f2523974291b4bf40c9717c96b3fe9d00d48c83c9"
+      "sourceSha256": "4a56a9c7c583c54ab00a9e661ce167af522388f8b27a3c9ed9f61d84d4dcb888"
     },
     {
       "id": "api-aide-core-store",
@@ -8347,6 +8347,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "32af3d16f7728ec018d65067e3f8b7e3e52837b9a2e4bb872f7d04d2e7cf74ec"
     },
     {
+      "id": "note-wl-dr-prefill-goal-done",
+      "path": "docs/notes/wl-dr-prefill-goal-done.md",
+      "title": "Decision request — who fills Goal, Done when and Not in scope (AC-W01a): the compile step's model, on by default?",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The user wants the goal, done criteria and exclusions to come from an LLM reading of the prompt. The product already has that: Addendum D's compile call (CompileCallHost through ComposerSendGate.PrepareAsync) proposes the three structure lines as `derived` rows, with keep/edit marks and an eval gate (ADR-0036). It is off because the session default is mechanical-only (Ruling 68), and no control on main lets the user select agentic-advisory. The structure lines therefore open blank (StructureDeriver.Fake). The recommendation: expose the compile-mode control and default new sessions to agentic-advisory when Gate 1 admits, with four conditions. Nothing is built before the Owner rules.",
+      "tags": [
+        "decision",
+        "workbench-loops",
+        "composer",
+        "compile",
+        "ac-w01a",
+        "adr-0036",
+        "ai-systems"
+      ],
+      "links": [
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0042-native-harness-profile-binding",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9d9fd7b50261ef61b1bfa66c6402e999b6ba8725ec16fe7d87f53127883f5853"
+    },
+    {
       "id": "note-wl-dr-schema-v2-departures",
       "path": "docs/notes/wl-dr-schema-v2-departures.md",
       "title": "Decision request — T2 schema v2 departures from ADR-0039 (for Ruling 148)",
@@ -10837,7 +10882,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d225369bed17a2c2ff78ddb0a0c0775763659f6aaa45f9b1a39a3a4efc879c1a"
+      "sourceSha256": "e20be165622dd36d5eba6b24f8a95dcb389fe8905bbcbe44f98596881e549524"
     },
     {
       "id": "design-session-profiler",
@@ -19383,6 +19428,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "handoff-workbench-loops-wl-1a-prefill-n1",
+      "path": "docs/proof/workbench-loops-wl-1a/prefill/handoff.md",
+      "title": "Hand-off: WL-1a T30 node 3 (Ruling 182 (2)-(4); the gate's real reason)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "T30 n3: (A) no saved-state copy (mutation red), (B) a sent turn's compiled prompt survives a restart (real red; the restored disclosure was empty), (C) the settings row states the gate's refusal for a demoted rung. Residual line in the Proof Pack. Next: node 4 (cost line, first 50 calls, compile-eval, sheet-test gate seam, rule 22's ratchet).",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "handoff",
+        "compile-mode",
+        "ruling-180",
+        "ruling-182"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-workbench-loops-wl-1a-prefill",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d95e25b19646cb800b701ba6b26fadbf2a6fbd5f102f3c0aec7020a307bd1ea6"
+    },
+    {
       "id": "proof-accounts-and-first-use",
       "path": "docs/proof/accounts-and-first-use.md",
       "title": "Proof Pack — Rulings 105, 104, 97(i): accounts as the operator-facing unit, and first use",
@@ -22624,6 +22701,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ba4a76daba33ff0bb5e0804c8f87b9accf668fc42e14da3761d6f19371a2a1c"
     },
     {
+      "id": "proof-wl-prefill-assessment-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/prefill-assessment/handoff.md",
+      "title": "Hand-off — T29 wl-prefill-assessment node 1 (AC-W01a assessment, docs only)",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "T29 node 1 is done. It wrote the decision note docs/notes/wl-dr-prefill-goal-done.md, which answers the brief's five items with file:line citations. No code, no tests and no App runs. Next: the Leader raises the decision request to the Owner, and nothing is built until the Owner rules.",
+      "tags": [
+        "workbench-loops",
+        "proof",
+        "handoff",
+        "ac-w01a",
+        "compile"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "note-wl-dr-prefill-goal-done",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6430b031713351ff81860b409df1c36ed10e4b2a85c3c822a52ce82ab4a07ae5"
+    },
+    {
       "id": "proof-wl-s-kinds-node1-handoff",
       "path": "docs/proof/workbench-loops-wl-s/kinds/handoff.md",
       "title": "WL-S T11 kinds - node 1 hand-off (rule 16 kick)",
@@ -22740,7 +22848,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "43db723370f7e98ddacf1db4166c1b00882081c0fd91d513f89edf448e124be6"
+      "sourceSha256": "b04edf5d0fab71c217026f392913344a5542b373c00cb0ec13133ef529e35057"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -22945,6 +23053,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a3885e9ce99ffa97a7e45ec06477dfeee5d92ccf3928c1d7a8f1499dea6dd069"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-prefill",
+      "path": "docs/proof/workbench-loops-wl-1a/prefill/README.md",
+      "title": "Evidence: WL-1a T30 — goal and done criteria suggested by the compile step by default (Ruling 180 (1)-(3))",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "T30 node 1. (A) A new session opens agentic-advisory when Gate 1 admits it, mechanical-only otherwise; never agentic. (B) Session settings expose the compile mode as a keyboard combo box through SetCompileMode and the gate, a refused rung disabled with the gate's reason, and a line stating the mode in force and why. (C) Keep writes the suggested line into the draft, so a re-prepare never re-derives it. Each check red then green through the gesture, with a stubbed compile host. The product wiring of (A) and (B) waits on one seam request (two lines outside the owned paths).",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "evidence",
+        "implement",
+        "composer",
+        "compile-mode",
+        "ruling-180",
+        "ac-w01a"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "note-wl-dr-prefill-goal-done",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4d8b05dc58f3b70874b76a6b2a675745fba4700bfcd632020968ae87a3f48b52"
     },
     {
       "id": "proof-workbench-loops-wl-1a-readback",
@@ -23426,7 +23568,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a1ae4ae9776582040555d597910fb66e232524fd2e35cf030cc6c0921b2ab731"
+      "sourceSha256": "580bc3f4a653dcae426b49cd53635e7ef81289addd8785dfac37b6e0d3677643"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -25503,5 +25645,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "3027ac5faa40b9f14d66f86d180d0c5b459790409fc97b30a3b03722ae9f5adc"
+  "graphSha256": "1fc361d8eba94ac3a6f58b2b28544698f3a2283cee11a3b6b250ccc8bbafaeb4"
 };

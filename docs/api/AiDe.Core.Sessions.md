@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 29 types, 88 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 29 types, 89 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**29 public types · 88 public members · 91% documented.**
+**29 public types · 89 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -134,6 +134,7 @@ Terminal-internal concept.
 | `int DefaultFanOutCeiling = 2` | The ruled per-session default for `FanOutCeiling` — CT19's T1 cap, 2 — named once so the New Session sheet prefills what an unset file reads (derive, don't store; DM7). |
 | `RunBudget? BudgetCap { get; init; }` | An enforced request/token ceiling for this session, or `null` — the session is bounded by the subscription instead (Ruling 72; ADR-0033 §3's `budget_cap`). |
 | `string CompileMode { get; init; } = CompileModes.MechanicalOnly` | How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1; Ruling 68) — one of `CompileModes`. |
+| `string DefaultCompileModeFor(CompileModeAvailability? availability)` | The compile mode a new session opens in (Ruling 180 (1), amending Ruling 68's default only): `AgenticAdvisory` when Gate 1 admits it, so the compile step suggests Goal, Done when and Not in scope and the user keeps or… |
 | `string DefaultTaskClass { get; init; } = TaskClasses.FreeForm` | The task class a prompt in this session carries when it declares none of its own (Ruling 70; Ruling 72; ADR-0033 §4) — `default_task_class` in the ADR's vocabulary. |
 
 ### `bool AttachEnabled { get; init; }`
@@ -228,9 +229,10 @@ quantity is a defect signature (DM7).
 How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1;
 Ruling 68) — one of `CompileModes`.
 
-**Remarks.** Default `MechanicalOnly` (Ruling 68): a session opens with only the
-free, in-memory, mechanical pre-compile; the two agentic rungs are opt-in as the eval gate
-admits them.
+**Remarks.** The record's own value is `MechanicalOnly`: what a file with no
+`compileMode` reads, and what a caller that cannot evaluate the ladder writes. A NEW
+session is written with `DefaultCompileModeFor` (Ruling 180 (1), amending
+Ruling 68's default only).
 
 ### `string DefaultTaskClass { get; init; } = TaskClasses.FreeForm`
 
@@ -410,6 +412,7 @@ Creates the session: writes `session.json` and emits `session.open`.
 - **`budgetCap`** — An enforced cap, or `null` — bounded by the subscription (Ruling 72).
 - **`defaultTaskClass`** — The session's default task class; `null` writes `free-form` (Ruling 72).
 - **`origin`** — How this session came to exist — see `SessionOrigins`. **Defaulted to `Direct` deliberately:** F5 clause 1's claim is that the front door is distinguishable from every other way of reaching this method, and that is only checkable if something which did not come through it reads differently. The default is what makes the other value evidence.
+- **`compileModes`** — The compile-mode ladder as the gates read it now, or `null` when the caller cannot evaluate it. The session opens in `DefaultCompileModeFor` of it (Ruling 180 (1)).
 
 **Remarks.** The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply. The origin is F5's clause 1.
 

@@ -503,3 +503,16 @@
 {"agent": "wl-leader3-20261019", "at": 1792448210.7337794, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "wl-leader3-20261019", "wi": ""}
 {"agent": "wl-leader3-20261019", "at": 1792448210.7731829, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader3-20261019", "wi": ""}
 {"agent": "wl-leader3-20261019", "at": 1792448210.8107107, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.3984098, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader3-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.438545, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.4767, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.517238, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader3-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.5550249, "code": null, "kind": "allowed", "path": ".agents/log/wl-t30-prefill.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.5922542, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.634578, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449111.6740985, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449129.78234, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449179.1458068, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s.md", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792449509.41435, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s.md", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792450161.026245, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792450161.064945, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a.md", "session": "wl-leader3-20261019", "wi": ""}

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 138 members, 95% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 140 members, 95% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**16 public types · 138 public members · 95% documented.**
+**16 public types · 140 public members · 95% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -179,6 +179,7 @@ not two runs.
 | `void NextBlock()` | The block was accepted and the composer starts the next one (SC1: the session is a conversation of n turns through one composer). `SendCount` is per block — one block, one send — so it returns to zero; `BlocksSent` ke… |
 | `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)` | Renders the compiled view. Everything after this point is byte-for-byte what gets sent. |
 | `string CurrentProjectionSha(Envelope envelope)` | The envelope's projection sha now, by the same call the send projects through — the attempt gate's G1 read (ADR-0041) of a submitted envelope, so the sha it compares is this producer's, never a fourth call site. |
+| `string? SentBytesOf(Envelope envelope)` | The bytes an accepted send carried, rebuilt from the envelope's own fold by the call the send projects through (Ruling 182 (4): what was sent survives a restart). They are returned only when their sha256 equals the ac… |
 | `string EngineId { get; private set; } = Envelope.NotRecorded` | The engine every `opened` row names, and whose provider is the family; `NotRecorded` until bound. |
 | `string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm` | The session's `default_task_class` (Ruling 72) — `FreeForm` until bound, the vocabulary's one home. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
@@ -389,6 +390,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `long ClipboardReads { get; }` | How many times this control read the clipboard. It is zero, always, across typing, focus changes and sends — the observable behind "no clipboard access outside the paste gesture". |
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
+| `string? AdapterInstallRoot` | The bound session's adapter install root — the compile-mode gates read it; null until configured. |
 | `string Status` | The last thing that happened, in a sentence. |
 | `event Action<int>? TurnRequested` | Raised when the operator activates the in-flight turn's link in a refused-gesture reason (Ruling 77; SC8: the ordinal is a link to the turn) — the document focuses that turn's container. |
 | `double BeltHeight` | The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt yields — set by the document at its measure, its value **derived from the thread's need** (Ruling 80: the body less the empt… |

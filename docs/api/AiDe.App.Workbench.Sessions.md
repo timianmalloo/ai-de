@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 224 members, 76% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 226 members, 76% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**37 public types · 224 public members · 76% documented.**
+**37 public types · 226 public members · 76% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -800,6 +800,8 @@ refusal is announced (`THR-0002`), never silent.
 | `void OpenSplit(int? ordinal = null)` | Opens the Console — as the shell's Center document when `ConsoleRequested` is wired, else beside the thread — at 's heading, focused, or following the end. |
 | `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
 | `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14), its value derived from the thread's need (Ruling 80): at 0 turns the thread is its two-line caption and the composer takes the rest of the body — the editor fills, no scrollbar before the operator… |
+| `Func<CompileModeAvailability>? CompileModeLadder { get; set; }` | The compile-mode ladder as the gates read it now (ADR-0036 rule 1), evaluated at every open of the settings and at every change. A test may inject a whole ladder here. Left null (the product), the settings evaluate `C… |
+| `Func<string, CompileModeAvailability> CompileModeGateInput { get; set; } = CompileModeGate.Evaluate` | The gates over an adapter install root — `Evaluate(string)` in the product. With no `CompileModeLadder`, the settings evaluate it over the bound composer's `AdapterInstallRoot`; a test injects it so no test reads `~/.… |
 | `void Dispose()` | Closes the document: its runs are cancelled, its lanes stop, its composer's browser is released. |
 
 ### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 159 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 160 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**50 public types · 159 public members · 96% documented.**
+**50 public types · 160 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -318,6 +318,7 @@ the "Start from template" row, which would create a back-edge from the composer 
 | `string SignIn(string engineId)` | Launches the engine's own login flow and re-probes health on return, without leaving the sheet (R13 b2, Ruling 20). |
 | `NewSessionResult Create(DateTimeOffset now)` | Creates the session: writes `session.json`, emits `session.open`, and hands back the two fields a run also needs. |
 | `bool HealthWasReprobed` | The registry the sheet last read, so a re-probe is observable from outside. |
+| `Func<string, CompileModeAvailability> CompileModeGateInput { get; set; } = CompileModeGate.Evaluate` | The compile-mode gates over the adapter install root (`Evaluate(string)`); the created session's mode is their default (Ruling 180 (1)). A test injects it so no test reads `~/.aide/proof`. |
 
 ### `NewSessionSheetViewModel(`
 
