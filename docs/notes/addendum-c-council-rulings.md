@@ -3508,3 +3508,15 @@ The decision:
 The Leader's withdrawal of the 'docked at the left' deletion is endorsed: a drag can still dock a notebook Left, so the copy is reachable and its test is re-scoped. The Console focus-return defect found in T11 node 2 is a real product fix and goes red-first in node 3, as dispatched.
 
 - request: req-01M59X6EFREMF46BDWAN9MGCDJ · ruled by: wl-owner-20261018 · at: 2026-10-19T11:02:43Z
+
+### Ruling 170 — The minimum window width rises from 820 to 840 so the thread's measure fits at the minimum; the minimum is tied to the measure by a derived test
+
+Option A. Ruling 168 (3) fails at the 820x520 minimum by 18.6 px: the turn row gets 706 px, and the measure needs 724.6 (672.6 plus a 40 px gutter plus 12 px padding). The space goes to shell chrome (a 71 px activity bar and 43 px of pane chrome), not to ThreadFeed. The cap already holds (ThreadFeed.cs:616 and :858, mutation red 8976dc86). The Owner searched DESIGN.md, docs/specs/, docs/architecture.md, docs/adr/ and docs/notes/: none pins 820. The only hit is a line-number reference in front-door-ruling-49.md. MainWindow.xaml:11 is the single definition. Option B is rejected, because it relaxes a readability guarantee at exactly the size where it matters most.
+
+The decision:
+(1) MainWindow.xaml:11 MinWidth becomes 840.
+(2) A test derives the requirement instead of copying the number. At the window's MinWidth, the notebook's words column is at least ThreadFeed.MeasureWidth plus gutter plus padding. Later chrome growth then fails this test instead of silently clipping the measure. A test that only asserts 840 is not enough.
+(3) The minimum window size is recorded in DESIGN.md next to the measure, with its derivation, so the one number has one home.
+(4) Ruling 168 (3) then holds at the minimum, at startup and at the wide size.
+
+- request: req-01M59Y8DSSMBMFX4G0P42Q8PHC · ruled by: wl-owner-20261018 · at: 2026-10-19T11:22:37Z
