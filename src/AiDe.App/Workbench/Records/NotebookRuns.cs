@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using AiDe.App.Conductor;
 using AiDe.App.Workbench.Composer;
@@ -9,6 +10,8 @@ using AiDe.Core.Ipc;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.PromptCompilation;
 using AiDe.Core.Store;
+using AiDe.Core.Store.Records;
+using AiDe.Core.Workbench.Records.Folds;
 
 namespace AiDe.App.Workbench.Records;
 
@@ -243,9 +246,17 @@ public sealed class NotebookRuns : IDisposable
 
     /// <summary>
     /// Restart read-back: each submitted envelope's dispatch key is derived (<see cref="AttemptKey.For"/>, nothing
-    /// stored beside it) and read from the host; an envelope never attempted is skipped.
+    /// stored beside it) and read from the host; an envelope never attempted is skipped. Each concluded attempt this
+    /// notebook does not already hold becomes a turn (Ruling 163), in dispatch order, so the next turn sent continues
+    /// after it.
     /// </summary>
-    public async Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha)> submitted, CancellationToken cancellationToken)
+    /// <param name="submitted">Each submitted envelope, with the words it opened with (the restored row's words).</param>
+    /// <remarks>
+    /// assume: an attempt with no terminal row at read-back is live in this host (the host's startup sweep resolves every
+    /// other one), so its own dispatch still owns its turn. Confirm: the sweep's live-key exclusion
+    /// (<c>BoundaryDispatcher.SweepAttempts</c>). If false: an open attempt from another process has no row.
+    /// </remarks>
+    public async Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)> submitted, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(submitted);
         if (Host is not { } host)
@@ -253,17 +264,81 @@ public sealed class NotebookRuns : IDisposable
             return;
         }
 
-        List<AttemptReceipt> found = [];
-        foreach (var (envelopeId, projectionSha) in submitted)
+        List<(AttemptReceipt Receipt, string Words)> found = [];
+        foreach (var (envelopeId, projectionSha, words) in submitted)
         {
             if (await host.ReadAsync(AttemptKey.For(envelopeId, projectionSha, null, null), cancellationToken).ConfigureAwait(false) is { } receipt)
             {
-                found.Add(receipt);
+                found.Add((receipt, words));
             }
         }
 
-        ReadBack = found;
+        found.Sort((x, y) => x.Receipt.Attempt.IngressSeq.CompareTo(y.Receipt.Attempt.IngressSeq));
+        ReadBack = [.. found.Select(f => f.Receipt)];
+        foreach (var (receipt, words) in found)
+        {
+            if (receipt.Terminal is not null && !Holds(receipt.DispatchKey))
+            {
+                await RestoreAsync(host, receipt, words, cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
+
+    /// <summary>The copy a restored row ends with when its host was killed mid-run: how far the run's log got.</summary>
+    public const string RestoredLastEvent = "Last recorded event: seq {0} at {1}";
+
+    /// <summary>The same line when the attempt's run log holds no event.</summary>
+    public const string RestoredNoEvent = "Last recorded event: not recorded";
+
+    private bool Holds(string dispatchKey)
+    {
+        lock (_gate)
+        {
+            return _attempts.Values.Any(a => a.DispatchKey == dispatchKey);
+        }
+    }
+
+    /// <summary>
+    /// One concluded attempt as a turn: its words, its run log's events through the one fold (<see cref="FoldEvent"/>),
+    /// the host's failure line, and the state the Core fold derives from its rows (<see cref="AttemptStateFold"/>).
+    /// </summary>
+    private async Task RestoreAsync(IAttemptHost host, AttemptReceipt receipt, string words, CancellationToken cancellationToken)
+    {
+        var lane = receipt.Attempt.RouteFingerprint is { Length: > 0 } route ? RouteWords.For(route) : "attempt-host";
+        var ordinal = Thread.Accept(words, [], string.Empty, Timestamp(receipt.Attempt.AttemptedAt) ?? DateTimeOffset.Now);
+        Record(ordinal, receipt);
+
+        List<RunEvent> events = [];
+        var subscription = await host.SubscribeAsync(receipt.DispatchKey, cancellationToken).ConfigureAwait(false);
+        await foreach (var runEvent in subscription.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+        {
+            events.Add(runEvent);
+            FoldEvent(ordinal, lane, runEvent);
+        }
+
+        var state = AttemptStateFold.Evaluate(new AttemptStateInput(receipt.DispatchKey, events, receipt.Outcomes, [], [])).State;
+        if (state is not (TurnState.Completed or TurnState.Answered))
+        {
+            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, lane, "stderr", FailureLine(receipt.Terminal), "run"));
+        }
+
+        if (state == TurnState.DeliveryUnknown)
+        {
+            var last = events.Count == 0
+                ? RestoredNoEvent
+                : string.Format(CultureInfo.InvariantCulture, RestoredLastEvent, events[^1].Seq, events[^1].Ts.ToString("O", CultureInfo.InvariantCulture));
+            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, lane, "stderr", last, "run"));
+        }
+
+        Thread.Conclude(ordinal, state, Timestamp(receipt.Terminal?.RecordedAt) ?? DateTimeOffset.Now);
+    }
+
+    private static DateTimeOffset? Timestamp(string? recorded) =>
+        DateTimeOffset.TryParse(recorded, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var at) ? at : null;
+
+    /// <summary>The host's own words for a terminal that is not an answer: its state, stable code, cause and detail (Ruling 81).</summary>
+    private static string FailureLine(OutcomeRow? terminal) =>
+        $"{terminal?.State.ToString() ?? "no terminal"}: {terminal?.ErrorCode ?? "-"} {terminal?.Cause} {terminal?.Detail}".TrimEnd();
 
     /// <summary>The last run's own task — completed before the first. It never faults: a refusal is a line of the run.</summary>
     public Task LastRun { get; private set; } = Task.CompletedTask;
@@ -464,16 +539,21 @@ public sealed class NotebookRuns : IDisposable
         observed =>
         {
             relay.Publish(observed);
-
-            // One definition of a line's text (the console model's), one origin rule (the read model's), one reading of
-            // a tool frame's facts (Ruling 82).
-            var evt = observed.Event;
-            var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
-            Thread.Append(
-                ordinal,
-                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), CompileSignal.IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
-                cost);
+            FoldEvent(ordinal, lane, observed.Event);
         };
+
+    /// <summary>
+    /// One event into the turn's fold: one definition of a line's text (the console model's), one origin rule (the read
+    /// model's), one reading of a tool frame's facts (Ruling 82). A live run and a restored one fold through this alone.
+    /// </summary>
+    private void FoldEvent(int ordinal, string lane, RunEvent evt)
+    {
+        var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
+        Thread.Append(
+            ordinal,
+            new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), CompileSignal.IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
+            cost);
+    }
 
     private async Task RunAsync(GovernedRunRequest request, RunLaunch launch, RunEventRelay relay, int ordinal, CancellationTokenSource cancel)
     {
@@ -593,7 +673,7 @@ public sealed class NotebookRuns : IDisposable
             if (state != answered)
             {
                 // The host's own words: the stable code and cause it committed, as a line of the run (Ruling 81).
-                failure = $"{terminal?.State.ToString() ?? "no terminal"}: {terminal?.ErrorCode ?? "-"} {terminal?.Cause} {terminal?.Detail}".TrimEnd();
+                failure = FailureLine(terminal);
                 Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, request.EngineId, "stderr", failure, "run"));
             }
 

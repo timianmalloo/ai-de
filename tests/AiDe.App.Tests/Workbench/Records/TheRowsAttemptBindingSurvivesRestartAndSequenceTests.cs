@@ -44,7 +44,7 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
     }
 
     [Fact]
-    public void AfterARestart_TheStoreHoldsTheAttempt_ButTheThreadHasNoRowToSayOtherwise()
+    public void AfterARestart_TheStoreHoldsTheAttempt_AndTheThreadRestoresItsRow_WithTheLiveBindingLine()
     {
         Sta.Pump(
             create: () => new Border(),
@@ -79,11 +79,11 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                 window.Content = surface;
                 await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
 
-                // The premise of the Leader's gap 1, pinned: the store holds the attempt, but no production path restores turns
-                // into a reopened thread (it starts empty; a live turn's EnvelopeId is a placeholder, "turn-1"), so no row
-                // exists to say "not recorded". Restoring rows is a feature with its own seam, not a read-back mapping.
+                // T16b's premise turned around (Ruling 163, T17): the read-back restores the attempt as a row, built from the
+                // attempt's own fields, so its binding line is the one the live row showed.
                 Assert.Single(reopened.Runs.ReadBack);
-                Assert.Empty(reopened.Thread.Current.Turns);
+                var restored = Assert.Single(reopened.Thread.Current.Turns);
+                Assert.Equal(liveLine, LineOf(reopened.Runs, restored));
                 window.Content = null;
             });
     }

@@ -682,8 +682,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         }
     }
 
-    /// <summary>Every envelope this session submitted, as the pair its dispatch key derives from.</summary>
-    private List<(string EnvelopeId, string ProjectionSha)> SubmittedEnvelopes()
+    /// <summary>Every envelope this session submitted: the pair its dispatch key derives from, and the words it opened with.</summary>
+    private List<(string EnvelopeId, string ProjectionSha, string Words)> SubmittedEnvelopes()
     {
         lock (_envelopeGate)
         {
@@ -691,7 +691,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             {
                 return _envelopes is null
                     ? []
-                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha))];
+                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha, e.Opened?.SourceText ?? string.Empty))];
             }
             catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
             {
