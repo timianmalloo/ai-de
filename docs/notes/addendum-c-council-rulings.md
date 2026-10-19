@@ -3584,3 +3584,9 @@ The decision, one T17d node, each item red-first:
 (5) NoDispatchOutsideTheHostTests:47 is re-scoped to assert the words remain visible with the status, then the row appears with b3 once the read-back completes. That replaces an assertion that a row appears immediately.
 
 - request: req-01M5A55C99CWSEFYBCT7NX0VYT · ruled by: wl-owner-20261018 · at: 2026-10-19T13:21:52Z
+
+### Ruling 176 — WL-1b: a checklist's owning journey is its id (checklist_id = journey_id, one checklist per journey), enforced, not merely documented
+
+Option A, with an enforcement condition. ADR-0040:57 requires exactly one owning journey per checklist, and the spec's ownership rule (workbench-loops-ux.md:127) requires an owning context. Neither requires several checklists per journey, so one per journey is an admissible WL-1b constraint (YAGNI), with the precedent draft_id = notebook_id. checklist_obligation_fact has no owner column (WorkspaceSchema.cs:323-332), and option B would make WL-1b a migration slice. Conditions: (1) the alias is stated in ADR-0040's amendment of record (this ruling) and in the WL-1b design; (2) creating a second checklist for a journey is refused with a stable code, never merged silently, and a red-first test covers it; (3) the upgrade trigger is recorded: the first spec story needing two checklists in one journey requires the v3 owner column, with a backfill from the alias.
+
+- request: req-01M5AD6E2KGW7N7RAZKGCZMEY9 · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
