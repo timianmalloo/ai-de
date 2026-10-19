@@ -3440,3 +3440,17 @@ Conditions:
 - Red-first tests: a killed-host attempt renders the last recorded event's number and local time, and an attempt with no events renders 'not recorded'.
 
 - request: req-01M59QHSNVHVN9HWSBWTXP1XA6 · ruled by: wl-owner-20261018 · at: 2026-10-19T09:23:47Z
+
+### Ruling 165 — T17's intermittent IOException is an artefact of the in-process kill: the test awaits the killed launch before its own write, and a deterministic open-writer read test is added (T17c); then T17 joins
+
+Option A. This is case (a) of the Owner's guard. The Owner checked src/AiDe.Core/AgentPlane/RunLogStore.cs: the writer opens FileMode.Append, FileAccess.Write, FileShare.Read (line 64), and the product reader opens FileMode.Open, FileAccess.Read, FileShare.ReadWrite (line 110). So a product read already tolerates a still-open writer.
+
+The failing operation is the test's own File.WriteAllText (AReopenedNotebookRendersItsRecordedAttemptsTests.cs:196). It writes into the log after Close and races AttemptHost.LaunchAsync's finally, which disposes the writer (AttemptHost.cs:702). No product path writes a run log from outside its store. T17b ran 35 times (20 + 15) without reproducing it, against the Leader's 1 in 4. That is recorded as NOT REPRODUCED, not as fixed.
+
+T17c, a small Sonnet track:
+(1) The test awaits the killed launch's own completion task before its write. No sleep, no retry, no catch.
+(2) A deterministic test where RunLogStore.Read succeeds while a RunLogStore writer for the same path is open and has written. This pins line 110's share mode, so a later change to FileShare.Read or None fails it.
+(3) The mixed filter is re-run N≥15 after the change, with 0 failures recorded.
+Then T17 joins under Ruling 160. Option B is rejected because the full recount would stay flaky. Option C gains nothing over (1) and (2), since the cause is known by code reading.
+
+- request: req-01M59S63G76ZPF0V8KFMRZ2YGB · ruled by: wl-owner-20261018 · at: 2026-10-19T09:52:18Z
