@@ -3547,3 +3547,14 @@ T17d, off origin/main, after T20's join:
 T11 merges main after T17d. Option B is rejected so that the WL-1a fix keeps its own join and proof.
 
 - request: req-01M5A27SFGWMFGHH04VJH6R268 · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:31Z
+
+### Ruling 173 — The prompt kind is kept; design section 4's retirement of prompt into notebook drafts waits until the notebook has all six capabilities
+
+Option A. Retiring prompt now would drop working, specified capabilities. The Owner spot-checked T11 node 8's survey in src/AiDe.App/Workbench/PromptDraftSurface.cs:11-14: the surface transfers a draft to a ready terminal session one way (US-ED6, US-ED7) and persists the body across a restart. Line 53 has the target picker and blocked reason, and line 69 the target ComboBox. The remaining items (opening beside a terminal, the menu entry) are the track's evidence, not re-checked by the Owner, and the Leader's correction that it did not read them is noted.
+
+The decision:
+(1) prompt stays an admitted kind. Design section 4 (docs/design/workbench-loops-wl-s.md) is amended: prompt is retired into notebook drafts only when the notebook provides all six (terminal send, target choice, draft kept across a restart, opening beside a terminal, the menu entry, the no-ready-terminal reason), each proven by a test.
+(2) Those six are recorded as the retirement's precondition, owned by whichever slice builds them. No partial retirement.
+(3) T11's slot migration leaves prompt slots unmigrated, and its report says so.
+
+- request: req-01M5A28A97KF9XW18GX2819ZZR · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:32Z
