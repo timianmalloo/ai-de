@@ -11,6 +11,16 @@ review-by: 2026-11-19
 summary: "Node 12 (kicked, after the merge of main with T21 joined): the merge head 31077bb7 brought in no red, and both of the Leader's conflict resolutions hold; the DOCK4 plural is green (KeptPromptsSentence const, c25e3e90, mutation proved); the WL-S demo script has the attended list (Ruling 155 (3)) and the float step pending close condition 4; the node-10 seam guard is green at the merge head. suite-node12: Core 3046/0/1, App 1202/2/2 (the two foreground tests). Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
 ---
 
+# T11 node 13 - fix-forward for the refused join (complete)
+
+The ratchet against `bf7483e5` refused three gates. Each is red on the node-13 head (`a6739c3b`) and green after `38b6eedf`.
+
+- (A) `verify-cited-controls.py`: `ZoneLayoutTests.cs:14` cited the deleted `CodingsLeftExtentTests`. The successor `TheThreadMeasureMovesWithTheNotebookTests` measures the thread's 96ch measure on the composed tree (Ruling 168), not a Left extent, so the comment now says that. Sweep found one more stale cite in a doc comment, `src/AiDe.Core/Workbench/ZoneLayout.cs:135` (comment only, no code; the gate does not scan it). `session-contracts.md:2747` names the old test as history of a past CI run and stays.
+- (B) `verify-surface-ownership.py`: one row added to `session-contracts.md` §2, Design table, for `ExecutionSurface.cs` (a WPF rendering surface; the attempt record is the host's). No Notebook surface file exists, so there was no Notebook row to match; the row follows `TerminalSurface.cs`. The UNASSIGNED map is unchanged.
+- (C) `docs-graph.py validate`: `docs/proof/workbench-loops-wl-s.md` gained a `documents` link to `proof-wl-s-kinds-node1-handoff`. Orphans 0, problems 0; the remaining defects are index drift, which the join regenerates.
+
+Proof: `cited-controls-`, `surface-ownership-`, `docs-graph-` `{red,green}.txt`; `suite-node13.txt` (Core 3046 passed, 0 failed, 1 skipped); `ratchet.txt`. App suite not run (no product code changed).
+
 # T11 node 12 — hand-off (rule 16 kick at 17:00Z, during (A))
 
 ## Done
