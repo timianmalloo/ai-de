@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using AiDe.Core.Ipc;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.PromptCompilation;
 using AiDe.Core.Store;
@@ -28,8 +29,8 @@ public sealed record NotebookRevision(NotebookId Notebook, int RevisionNo, strin
 
 /// <summary>Where a notebook's revisions are saved: one store transaction per save, the row read back.</summary>
 /// <remarks>
-/// The App reaches the store only through the daemon (D1); the daemon op is seam request
-/// req-01M59AS2R0986PT82ARD0QZP8G. Until it lands the product passes no implementer and the model says so
+/// The App reaches the store only through the daemon (D1): the product implementer is
+/// <see cref="DaemonNotebookRevisions"/> over T14's ops. With no daemon the shell passes none and the model says so
 /// (<see cref="NotebookModel.RevisionState"/>), rather than keeping revisions in memory and calling them saved.
 /// </remarks>
 public interface INotebookRevisions
@@ -66,7 +67,7 @@ public sealed class NotebookModel : IDisposable
     public const string StaleCopy = "This output belongs to an earlier draft. Run again to refresh it.";
 
     /// <summary>Why revisions are not saved when no store is bound — shown, never silent.</summary>
-    public const string RevisionsNotRecorded = "notebook revisions are not recorded: this build has no notebook.revision.save operation";
+    public const string RevisionsNotRecorded = "notebook revisions are not recorded: no workspace daemon is connected";
 
     public const string DisposalActivitySource = "aide.notebook.model";
 
@@ -145,7 +146,7 @@ public sealed class NotebookModel : IDisposable
             {
                 saved = await _revisions.SaveAsync(Id, body, latest?.RevisionNo, cancellationToken).ConfigureAwait(false);
             }
-            catch (Exception error) when (error is WorkspaceStoreException or IOException or InvalidOperationException)
+            catch (Exception error) when (error is WorkspaceStoreException or IpcRequestException or IOException or InvalidOperationException)
             {
                 _saveFailure = "the draft was not saved as a revision — " + error.Message;
                 return null;

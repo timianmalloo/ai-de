@@ -3559,8 +3559,12 @@ public sealed class WorkbenchShell : IDisposable
             //
             // The notebook first, then the surface BOUND to it (ADR-0045 §4): the model is the workspace's, created
             // here once per session and disposed only with the shell; the surface never disposes it. Revisions are
-            // not recorded until the daemon op lands (seam request req-01M59AS2R0986PT82ARD0QZP8G) — the model says so.
-            var notebook = new Records.NotebookModel(model, revisions: null);
+            // saved over T14's daemon ops when the shell's queries are the workspace client; with no daemon (a test
+            // shell, a degraded start) none is passed and the model says "not recorded".
+            // simplify: a type test on the one client, because the notebook ops are declared on WorkspaceClient and on
+            // no IWorkspace* interface. Ceiling: one construction site. Upgrade when a second implementer of the ops exists.
+            var revisions = _queries is WorkspaceClient client ? new Records.DaemonNotebookRevisions(client, config.Name) : null;
+            var notebook = new Records.NotebookModel(model, revisions);
             _notebooks[notebook.Id] = notebook;
             var document = new Sessions.SessionDocumentSurface(notebook, store, Announcer);
 
