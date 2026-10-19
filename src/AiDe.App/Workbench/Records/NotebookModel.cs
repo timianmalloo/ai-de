@@ -4,6 +4,8 @@ using AiDe.Core.Ipc;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.PromptCompilation;
 using AiDe.Core.Store;
+using AiDe.Core.Store.Records;
+using AiDe.Core.Workbench.Records.Folds;
 
 namespace AiDe.App.Workbench.Records;
 
@@ -64,7 +66,7 @@ public enum ResultCurrentness
 public sealed class NotebookModel : IDisposable
 {
     /// <summary>Spec §C3's load-bearing copy for a result whose revision is no longer the draft.</summary>
-    public const string StaleCopy = "This output belongs to an earlier draft. Run again to refresh it.";
+    public const string StaleCopy = CurrentnessFold.StaleCopy;
 
     /// <summary>Why revisions are not saved when no store is bound — shown, never silent.</summary>
     public const string RevisionsNotRecorded = "notebook revisions are not recorded: no workspace daemon is connected";
@@ -223,14 +225,16 @@ public sealed class NotebookModel : IDisposable
             return ResultCurrentness.NotRecorded;
         }
 
-        if (latest is not null && latest.RevisionNo > ran.RevisionNo)
+        // The one definition (Ruling 178): the ran revision is the attempt's binding, the saved head is the current
+        // revision, and the draft's body sha is the live side. An empty draft is read as the ran bytes (see the assume).
+        var attempt = new AttemptRow(string.Empty, string.Empty, 0, ran.Notebook.Value, ran.RevisionNo, string.Empty, 0, ran.BodySha);
+        var liveSha = liveDraft.Length == 0 ? ran.BodySha : BodySha(liveDraft);
+        return CurrentnessFold.Evaluate(attempt, latest?.RevisionNo ?? ran.RevisionNo, liveSha).State switch
         {
-            return ResultCurrentness.Stale;
-        }
-
-        return liveDraft.Length == 0 || string.Equals(BodySha(liveDraft), ran.BodySha, StringComparison.Ordinal)
-            ? ResultCurrentness.Current
-            : ResultCurrentness.Stale;
+            Currentness.Current => ResultCurrentness.Current,
+            Currentness.Stale => ResultCurrentness.Stale,
+            _ => ResultCurrentness.NotRecorded,
+        };
     }
 
     /// <summary>The draft's sha by the envelope's one hash (sha256, UTF-8, lower hex) — the definition the store's <c>body_sha</c> uses; a test pins the two equal.</summary>

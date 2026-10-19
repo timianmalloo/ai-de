@@ -56,8 +56,8 @@ public sealed class OneCurrentnessDefinitionTests : IDisposable
             checklist = AcceptanceFold.Evaluate(ChecklistOver(ran, later)).Obligations.Single().Evidence;
         });
 
-        Assert.Equal(Currentness.Stale, notebook);
-        Assert.Equal(EvidenceState.Stale, checklist);
+        // One tuple, so a mutation of the fold shows both surfaces flipping at once.
+        Assert.Equal((Currentness.Stale, EvidenceState.Stale), (notebook, checklist));
         // Each surface asked CurrentnessFold: one "currentness" signal from the notice, one from the checklist's judge.
         Assert.Equal(2, folds.Count(f => f == "currentness"));
     }
