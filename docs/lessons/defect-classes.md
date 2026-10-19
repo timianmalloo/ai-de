@@ -8668,3 +8668,4 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Before this fix the next unrelated render reverted it the same way.
 - **Status:** `controlled` for the controller's routes. Candidate gate, not built: a sibling of
   `ComposerContentOraclesDriveTheGestureTests` for layout-command tests.
+- DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
