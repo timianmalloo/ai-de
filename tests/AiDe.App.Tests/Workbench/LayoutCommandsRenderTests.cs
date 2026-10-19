@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using AiDe.App.Tests.Shell;
@@ -42,6 +43,14 @@ public sealed class LayoutCommandsRenderTests
             Assert.True(window.IsVisible, "the floating window is not shown");
             Assert.True(FloatRenderTests.HostedBy(content, window), $"the floated pane is not drawn in its floating window; it said: {said.Last}");
             Assert.False(FloatRenderTests.HostedBy(content, main), "the floated pane is still drawn in the workbench window");
+
+            // The floating window's tab is a workbench tab: a screen reader hears its title, and it carries the menu that
+            // redocks it. Both used to be applied to the DockingManager's own tree only. The window's content is in a child
+            // HWND, so the walk crosses it as the adapter does.
+            var tab = WorkbenchAdapter.HostedRoots(window).SelectMany(ComposedCoding.Visuals<TabItem>).FirstOrDefault(t => t.DataContext is LayoutContent { ContentId: Second });
+            Assert.True(tab is not null, "the floating window draws no tab for the pane");
+            Assert.Equal("S2", AutomationProperties.GetName(tab!));
+            Assert.True(tab!.ContextMenu?.Items.OfType<MenuItem>().Any(i => Equals(i.Header, "Move to")) == true, "the floating tab carries no Move to menu");
 
             // A route that renders again after the command (MainWindow's reset renders after Shell.Execute) is harmless:
             // the reconcile keeps the same content, still in one floating window, and closes nothing.

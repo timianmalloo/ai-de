@@ -131,7 +131,7 @@ public sealed partial class ALiveNotebookFloatsAndRedocksTests : IDisposable
                     var attemptBefore = live.Model.Runs.AttemptOf(live.Ordinal)!;
 
                     // The redock: the floating tab's own menu, Move to → Center (the keyboard reaches it by the menu key).
-                    var tab = ComposedCoding.Visuals<TabItem>(floating).FirstOrDefault(t => Equals(t.Tag, live.SurfaceId));
+                    var tab = WorkbenchAdapter.HostedRoots(floating).SelectMany(ComposedCoding.Visuals<TabItem>).FirstOrDefault(t => Equals(t.Tag, live.SurfaceId));
                     Assert.True(tab?.ContextMenu is not null, $"the floating notebook's tab carries no menu (tab found: {tab is not null})");
                     var moveTo = tab!.ContextMenu!.Items.OfType<MenuItem>().Single(i => Equals(i.Header, "Move to"));
                     var center = moveTo.Items.OfType<MenuItem>().Single(i => Equals(i.Header, "_Center"));
@@ -256,7 +256,7 @@ public sealed partial class ALiveNotebookFloatsAndRedocksTests : IDisposable
                     Assert.Equal(moved, new LayoutRect(window2.Left, window2.Top, window2.Width, window2.Height));
                     var document = DocumentOf(shell, surfaceId);
                     Assert.True(FloatRenderTests.HostedBy(document, window2), "the restored notebook is not drawn in its floating window");
-                    var restoredTab = ComposedCoding.Visuals<TabItem>(window2).FirstOrDefault(t => Equals(t.Tag, surfaceId));
+                    var restoredTab = WorkbenchAdapter.HostedRoots(window2).SelectMany(ComposedCoding.Visuals<TabItem>).FirstOrDefault(t => Equals(t.Tag, surfaceId));
                     Assert.True(restoredTab?.ContextMenu?.Items.OfType<MenuItem>().Any(i => Equals(i.Header, "Move to")) == true,
                         $"the restored floating notebook's tab carries no Move to menu, so it cannot be redocked from its tab (tab found: {restoredTab is not null})");
 
