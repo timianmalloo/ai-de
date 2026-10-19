@@ -1,0 +1,63 @@
+T17d check 2 (red): the shell's order reproduced (BindHostWhenOpen, then the document) - send-before-bind waits and is b3; once per bind; retry reads back. Same run as check1-red.txt; base a05b0b2d, code unchanged.
+Command: dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~TheReadBackRunsWhenTheHostBindsTests -nologo (exit 1)
+
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-readback\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-readback\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-readback\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-readback\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.73]     AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheReadBackRunsOncePerBind_NotOncePerDocument_AndARebindReadsBackOnceMore [FAIL]
+  Failed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheReadBackRunsOncePerBind_NotOncePerDocument_AndARebindReadsBackOnceMore [2 s]
+  Error Message:
+   a second document over one bind read attempt A back 2 times
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheReadBackRunsOncePerBind_NotOncePerDocument_AndARebindReadsBackOnceMore() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 187
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:04.17]     AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ATurnSentWhileTheHostOpens_WaitsForTheReadBackTheBindRuns_AndIsB3_AndEachAttemptIsReadOnce [FAIL]
+  Failed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ATurnSentWhileTheHostOpens_WaitsForTheReadBackTheBindRuns_AndIsB3_AndEachAttemptIsReadOnce [1 s]
+  Error Message:
+   while the host opens the read-back is not pending, so a turn sent now takes b1 ahead of the restored turns
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.ATurnSentWhileTheHostOpens_WaitsForTheReadBackTheBindRuns_AndIsB3_AndEachAttemptIsReadOnce() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 124
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:25.19]     AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds [FAIL]
+  Failed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds [21 s]
+  Error Message:
+   the revived document renders 0 rows for 2 recorded attempts; host bound=True, read back=0
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 75
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 75
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 114
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:47.01]     AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AnOpenThatFails_ReadsNothingBack_AndTheRetryThatBinds_ReadsBackOnce [FAIL]
+  Failed AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AnOpenThatFails_ReadsNothingBack_AndTheRetryThatBinds_ReadsBackOnce [21 s]
+  Error Message:
+   after the retry bound the host the document renders 0 rows; read back=0
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheReadBackRunsWhenTheHostBindsTests.AnOpenThatFails_ReadsNothingBack_AndTheRetryThatBinds_ReadsBackOnce() in C:\Projects\ai-de-wl1a-readback\tests\AiDe.App.Tests\Workbench\Records\TheReadBackRunsWhenTheHostBindsTests.cs:line 230
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 46 s - AiDe.App.Tests.dll (net10.0)
