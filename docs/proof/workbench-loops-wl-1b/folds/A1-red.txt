@@ -1,0 +1,135 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl1b-folds\src\AiDe.Daemon\AiDe.Daemon.csproj (in 576 ms).
+  Restored C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 576 ms).
+  Restored C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 576 ms).
+  Restored C:\Projects\ai-de-wl1b-folds\src\AiDe.Mcp\AiDe.Mcp.csproj (in 576 ms).
+  Restored C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 576 ms).
+  1 of 6 projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.28]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcknowledgedWithNoLink_IsMissing_NotSatisfied [FAIL]
+[xUnit.net 00:00:00.29]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_IsResolvedOnlyByALaterRowFromTheSameActor [FAIL]
+[xUnit.net 00:00:00.29]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_GapsAreOrdered_ChecklistThenIntentThenObligationsThenIntentAcceptance [FAIL]
+[xUnit.net 00:00:00.29]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(kind: "deferred") [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(kind: "acknowledged") [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcceptancePolicy_CoversNoKind_OfAnySubject [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_BlocksEvenWithCurrentEvidence [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AFullyEvidencedScenario_IsEligible_AtTheNotebooksLatestBaseline [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AnEmptyChecklist_Blocks_BecauseNothingIsMandatory [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcknowledgedWithNoLink_IsMissing_NotSatisfied [2 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcknowledgedWithNoLink_IsMissing_NotSatisfied() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 50
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_IsResolvedOnlyByALaterRowFromTheSameActor [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_IsResolvedOnlyByALaterRowFromTheSameActor() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 100
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_GapsAreOrdered_ChecklistThenIntentThenObligationsThenIntentAcceptance [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_GapsAreOrdered_ChecklistThenIntentThenObligationsThenIntentAcceptance() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 145
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(kind: "deferred") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(String kind) in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 75
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(kind: "acknowledged") [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(String kind) in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 75
+   at InvokeStub_AcceptanceFoldTests.A1_NoHumanDisposition_RemovesAnEvidenceGap(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcceptancePolicy_CoversNoKind_OfAnySubject [4 ms]
+  Error Message:
+   Assert.All() Failure: 14 out of 14 items in the collection did not pass.
+[0]:  Item:  "acknowledged"
+      Error: The method or operation is not implemented.
+[1]:  Item:  "deferred"
+      Error: The method or operation is not implemented.
+[2]:  Item:  "needs-decision"
+      Error: The method or operation is not implemented.
+[3]:  Item:  "fixed"
+      Error: The method or operation is not implemented.
+[4]:  Item:  "false-positive"
+      Error: The method or operation is not implemented.
+[5]:  Item:  "intentional"
+      Error: The method or operation is not implemented.
+[6]:  Item:  "deferred"
+      Error: The method or operation is not implemented.
+[7]:  Item:  "needs-decision"
+      Error: The method or operation is not implemented.
+[8]:  Item:  "accepted"
+      Error: The method or operation is not implemented.
+[9]:  Item:  "answered"
+      Error: The method or operation is not implemented.
+[10]: Item:  "bounded-partial"
+      Error: The method or operation is not implemented.
+[11]: Item:  "unresolved"
+      Error: The method or operation is not implemented.
+[12]: Item:  "intent-accepted"
+      Error: The method or operation is not implemented.
+[13]: Item:  "unknown-kind"
+      Error: The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AcceptancePolicy_CoversNoKind_OfAnySubject() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 67
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_BlocksEvenWithCurrentEvidence [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_NeedsDecision_BlocksEvenWithCurrentEvidence() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 84
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AFullyEvidencedScenario_IsEligible_AtTheNotebooksLatestBaseline [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AFullyEvidencedScenario_IsEligible_AtTheNotebooksLatestBaseline() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 131
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AnEmptyChecklist_Blocks_BecauseNothingIsMandatory [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_AnEmptyChecklist_Blocks_BecauseNothingIsMandatory() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 122
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_TheObligationShowsTheMostRecentActorsLatestState [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_TheObligationShowsTheMostRecentActorsLatestState [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.AcceptanceFold.Evaluate(AcceptanceInput input) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\AcceptanceFold.cs:line 57
+   at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A1_TheObligationShowsTheMostRecentActorsLatestState() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 107
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    10, Passed:     0, Skipped:     0, Total:    10, Duration: 45 ms - AiDe.Core.Tests.dll (net10.0)
