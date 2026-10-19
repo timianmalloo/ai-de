@@ -1,0 +1,42 @@
+filter: FullyQualifiedName~AReopenedNotebookRendersItsRecordedAttemptsTests|FullyQualifiedName~TheRowsAttemptBindingSurvivesRestartAndSequenceTests|FullyQualifiedName~EveryExecutionStateKeepsTheUiaNameTests
+run 1: pass
+run 2: pass
+run 3: pass
+run 4: pass
+run 5: pass
+run 6: pass
+run 7: pass
+run 8: pass
+run 9: pass
+run 10: pass
+run 11: pass
+run 12: pass
+run 13: pass
+run 14: pass
+run 15: pass
+run 16: pass
+run 17: pass
+run 18: pass
+run 19: pass
+run 20: pass
+N=20 failures=0
+--- second batch ---
+filter: FullyQualifiedName~AReopenedNotebookRendersItsRecordedAttemptsTests|FullyQualifiedName~TheRowsAttemptBindingSurvivesRestartAndSequenceTests|FullyQualifiedName~EveryExecutionStateKeepsTheUiaNameTests
+run 1: pass
+run 2: pass
+run 3: pass
+run 4: pass
+run 5: pass
+run 6: pass
+run 7: pass
+run 8: pass
+run 9: pass
+run 10: pass
+run 11: pass
+run 12: pass
+run 13: pass
+run 14: pass
+run 15: pass
+N=15 failures=0
+TOTAL N=35 failures=0 : NOT REPRODUCED
+Static finding (Inferred, not reproduced): failing call is the test's own File.WriteAllText (AReopenedNotebookRendersItsRecordedAttemptsTests.cs:196) right after Close(); RunLogStore.Open holds FileShare.Read (RunLogStore.cs:61) until AttemptHost.LaunchAsync finally runs runLog.Dispose() (AttemptHost.cs:702), which runs after the ProcessDeath throw on another thread. Race: test proceeds on Died=true before unwind. RunLogStore.Read already uses FileShare.ReadWrite (RunLogStore.cs:99).
