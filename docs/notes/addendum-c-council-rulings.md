@@ -3590,3 +3590,9 @@ The decision, one T17d node, each item red-first:
 Option A, with an enforcement condition. ADR-0040:57 requires exactly one owning journey per checklist, and the spec's ownership rule (workbench-loops-ux.md:127) requires an owning context. Neither requires several checklists per journey, so one per journey is an admissible WL-1b constraint (YAGNI), with the precedent draft_id = notebook_id. checklist_obligation_fact has no owner column (WorkspaceSchema.cs:323-332), and option B would make WL-1b a migration slice. Conditions: (1) the alias is stated in ADR-0040's amendment of record (this ruling) and in the WL-1b design; (2) creating a second checklist for a journey is refused with a stable code, never merged silently, and a red-first test covers it; (3) the upgrade trigger is recorded: the first spec story needing two checklists in one journey requires the v3 owner column, with a backfill from the alias.
 
 - request: req-01M5AD6E2KGW7N7RAZKGCZMEY9 · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 177 — WL-1b: no disposition covers a mandatory obligation's evidence gap; 'deferred' keeps acceptance blocked
+
+Option A. ADR-0040 :115-117 defers coverage to a policy whose default is none, and AC-W03b allows only 'an authorized disposition explicitly permitted by policy'; WL-1b permits none. AC-W03c's plan deliverable is met by evidence, not by deferral. The policy is one Core table, AcceptancePolicy.Covers, empty for mandatory obligations, and a test pins it. Adding a kind later is a ruling, not an edit. T23's assume: marker for DR-2 is resolved by this ruling.
+
+- request: req-01M5AD6E7JA61TVJGM32MHCQKP · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
