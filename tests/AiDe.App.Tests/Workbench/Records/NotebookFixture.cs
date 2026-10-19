@@ -65,11 +65,14 @@ internal sealed class NotebookFixture : IDisposable
     /// The composer wired to <see cref="Conductor.StubAcpAdapter"/> installed under <see cref="Root"/>: a send runs the
     /// product's composition root, spawns the stub, and the turn stays running until <see cref="ReleaseRun"/>.
     /// </summary>
-    public void ConfigureStub(SessionDocumentSurface document)
+    public void ConfigureStub(SessionDocumentSurface document) => ConfigureStub(document.Composer);
+
+    /// <inheritdoc cref="ConfigureStub(SessionDocumentSurface)"/>
+    public void ConfigureStub(ComposerSurface composer)
     {
         var install = Path.Combine(Root, "install");
         Conductor.StubAcpAdapter.Install(install);
-        document.Composer.Configure(
+        composer.Configure(
             new SessionConfig(SessionId, "Binding", Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
             new ComposerSendContext(
                 RepositoryRoot: Root,
@@ -83,8 +86,8 @@ internal sealed class NotebookFixture : IDisposable
                 Providers: [new ProviderRow("anthropic", ProviderAuth.Subscription, [new ProviderAccount("max", AccountHealth.Ready)])]),
             ComposerFields.FreeForm(),
             new AttachmentGate(Root, new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max"));
-        document.Composer.Gate.Compiler = (_, _) => throw new OperationCanceledException();
-        document.Composer.Draft.SwitchTo(ComposerShape.FreeForm);
+        composer.Gate.Compiler = (_, _) => throw new OperationCanceledException();
+        composer.Draft.SwitchTo(ComposerShape.FreeForm);
     }
 
     /// <summary>Lets every held stub run answer.</summary>
