@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T11:58:37Z",
+  "generated": "2026-10-19T12:20:35Z",
   "audit": [
     {
       "actor": null,
@@ -25062,6 +25062,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T11:49:16Z",
       "duration_seconds": 560.0
+    },
+    {
+      "id": "al-01M5A1PHE0236WHR3KM2PHP32A",
+      "shortname": "join-wls-knowledge-mode-step8",
+      "datetime": "2026-10-19T12:20:35Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/160) for the T18 join 9c62f453",
+      "summary": "Recount OK (App floor 1125 -> 1130; the env-gated E2E is a named expected skip with provenance). Step 8 5/48 (baseline). Ratchet vs first parent 6a6be19a on clean trees, head 9c62f453: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). Joined before Ruling 171; diff off the float path; exempt from 171(1) (Owner, order (a): T18's src diff is CanvasPage.cs, CanvasSurface.cs and WorkbenchShell.cs, none on the float path). The join's chore commit was re-created as 9c62f453 because conductor-join's step 7 swept the uncommitted Ruling 171 register edit and obligations.md into 61c9f4b0 (never pushed; kept as backup/t18-join-61c9f4b0); the ratchet ran on both (0/49 each). T18 (Opus, 3 nodes): knowledge-inclusive toggle per canvas instance, default off, session-only (Rulings 166, 169); per-instance ExcludeKnowledge seam; one const each for the text and UIA name; DESIGN.md entry; design WL-S section 8 E2E over the real daemon (knowledge-hub, 45 typed edges; Leader re-run 5/5, 0 skipped).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T18 on main under Rulings 160 and 171 order (a)",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T12:15:10Z",
+      "duration_seconds": 325.0
     }
   ],
   "changes": [
@@ -29976,6 +30000,42 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M5A05D964584659GYV9HHE64",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A12QNQF1BRB7269B8JTAFQ",
+      "ts": "2026-10-19T12:09:46Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t20-floatguard",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A12QRBKCJF6VYR2Z08RT34",
+      "ts": "2026-10-19T12:09:47Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A1526RS4AGNEPTKKVX5243",
+      "ts": "2026-10-19T12:11:03Z",
+      "from": "wl-t20-floatguard",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t20-floatguard"
+    },
+    {
+      "id": "mail-01M5A15KMK7KQ1DX0KVFX8X3AR",
+      "ts": "2026-10-19T12:11:21Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
     }
   ]
 };
