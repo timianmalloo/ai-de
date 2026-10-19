@@ -24,11 +24,10 @@ public sealed class FloatGuardTests : IDisposable
     [Fact]
     public void FloatPane_RefusesWithAStatedCause_PaneStaysDockedAndFocused()
     {
-        var service = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        var service = new ZoneBackedLayoutService(WorkbenchLayout.Default());
         var announcer = new RecordingAnnouncer();
-        var stack = service.Current.AllStacks().First();
-        var surface = stack.Active;
-        var stackId = stack.Id;
+        var surface = service.Zones.AllSurfaces().First(s => service.Current.FindStackOf(s.SurfaceId) is not null);
+        var stackId = service.Current.FindStackOf(surface.SurfaceId)!.Id;
         var controller = new WorkbenchController(service, announcer)
         {
             FocusedStackId = stackId,
