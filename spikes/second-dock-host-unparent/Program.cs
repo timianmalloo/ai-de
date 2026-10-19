@@ -165,7 +165,12 @@ internal static class Program
         var hostB = new DockingManager();
         hostB.Layout = new LayoutRoot { RootPanel = new LayoutPanel(paneB) };
 
-        DockingManager? hostC = null;
+        var hostC = new DockingManager();
+        hostC.Layout = new LayoutRoot
+        {
+            RootPanel = new LayoutPanel(new LayoutDocumentPane(
+                new LayoutDocument { Title = "Understand", ContentId = "understand", Content = new TextBlock { Text = "understand host (C)" } })),
+        };
 
         var explore = new Border { Background = System.Windows.Media.Brushes.DarkSlateGray, Child = new TextBlock { Text = "explore (full-window surface)" } };
 
@@ -303,6 +308,56 @@ internal static class Program
         await StepAsync("Q6.CAC A", hostA);
         await StepAsync("Q6.CAC C", hostC);
 
+        Header("Q7 - private bytes per host (forced GC; this process, and the WebView2 browser process)");
+        var browser = System.Diagnostics.Process.GetProcessById((int)core.BrowserProcessId);
+        var hosts = new (string Name, DockingManager Host)[] { ("A", hostA), ("B", hostB), ("C", hostC) };
+        var idle = new Dictionary<string, (long Own, long Browser)>();
+        foreach (var (name, host) in hosts)
+        {
+            idle[name] = await MeasureAsync(host);
+            Console.WriteLine($"  idle   host {name}: process={Mib(idle[name].Own)} MiB  webview2-browser={Mib(idle[name].Browser)} MiB");
+        }
+
+        var notebook = new System.Text.StringBuilder();
+        while (notebook.Length < 100_000)
+        {
+            notebook.Append("notebook cell: the quick brown fox jumps over the lazy dog 0123456789\n");
+        }
+
+        notebook.Length = 100_000;
+        notebook.Insert(0, "<html><body style='margin:0;background:#1e293b;color:#e5e7eb;font:14px monospace'><pre>").Append("</pre></body></html>");
+        presenter.Content = hostB;
+        await Frames(5);
+        var loaded = new TaskCompletionSource();
+        EventHandler<CoreWebView2NavigationCompletedEventArgs> onLoaded = (_, _) => loaded.TrySetResult();
+        core.NavigationCompleted += onLoaded;
+        web.NavigateToString(notebook.ToString());
+        await loaded.Task.WaitAsync(TimeSpan.FromSeconds(30));
+        core.NavigationCompleted -= onLoaded;
+        var textLength = await core.ExecuteScriptAsync("document.body.textContent.length");
+        Console.WriteLine($"  document text length         : {textLength}");
+        Check("Q7 the 100k-character document is loaded in the WebView2", int.Parse(textLength) == 100_000);
+
+        foreach (var (name, host) in hosts)
+        {
+            var withNotebook = await MeasureAsync(host);
+            Console.WriteLine($"  100k   host {name}: process={Mib(withNotebook.Own)} MiB  webview2-browser={Mib(withNotebook.Browser)} MiB  "
+                + $"(delta vs idle: process {Mib(withNotebook.Own - idle[name].Own)}, browser {Mib(withNotebook.Browser - idle[name].Browser)})");
+        }
+
+        async Task<(long Own, long Browser)> MeasureAsync(DockingManager host)
+        {
+            presenter.Content = host;
+            await Frames(8);
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+            GC.WaitForPendingFinalizers();
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+            await Frames(2);
+            browser.Refresh();
+            using var self = System.Diagnostics.Process.GetCurrentProcess();
+            return (self.PrivateMemorySize64, browser.PrivateMemorySize64);
+        }
+
         Header("Findings");
         foreach (var finding in Findings)
         {
@@ -337,6 +392,8 @@ internal static class Program
             await Application.Current.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Render);
         }
     }
+
+    private static string Mib(long bytes) => (bytes / 1048576.0).ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
 
     private static void Header(string title)
     {
