@@ -1,0 +1,15 @@
+
+Test run for C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     AiDe.App.Tests.Canvas.KnowledgeModeTests.TheMode_TurnsTheExcludeKnowledgeSeamOff_ForThisCanvasOnly_AndTheDefaultStaysCodeOnly [FAIL]
+  Failed AiDe.App.Tests.Canvas.KnowledgeModeTests.TheMode_TurnsTheExcludeKnowledgeSeamOff_ForThisCanvasOnly_AndTheDefaultStaysCodeOnly [63 ms]
+  Error Message:
+   the mode did not turn the seam off
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Canvas.KnowledgeModeTests.TheMode_TurnsTheExcludeKnowledgeSeamOff_ForThisCanvasOnly_AndTheDefaultStaysCodeOnly() in C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\Workbench\Canvas\KnowledgeModeTests.cs:line 102
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 70 ms - AiDe.App.Tests.dll (net10.0)

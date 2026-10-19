@@ -220,6 +220,15 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// </summary>
     public void SetObscured(bool obscured) => _obscured = obscured;
 
+    /// <summary>True while this canvas is in its knowledge-inclusive mode (design WL-S §8).</summary>
+    public bool KnowledgeInclusive { get; private set; }
+
+    /// <summary>Sets this canvas's mode.</summary>
+    internal void SetKnowledgeInclusive(bool inclusive) => _ = inclusive;
+
+    /// <summary>Applies this canvas's mode to the <c>ExcludeKnowledge</c> seam of its graph.</summary>
+    internal void ApplyKnowledgeMode(CanvasGraphViewModel graph) => graph.ExcludeKnowledge = true;
+
     /// <summary>
     /// Navigates the started browser to the canvas page. Runs once per surface, through the host.
     /// </summary>
