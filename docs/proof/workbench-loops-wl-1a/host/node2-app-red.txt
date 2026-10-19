@@ -1,0 +1,126 @@
+
+Test run for C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.19]     AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.TheRelay_WritesTheSameInstanceToEverySubscriber_AndTracksTheHighWaterSeq [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.AnUnwritableRunLogLine_IsNotPublished_AndTheAttemptIsDeliveryUnknownRunLogUnwritable_WithAnIncident [FAIL]
+[xUnit.net 00:00:00.61]     AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.ARun_WritesItsRunLog_AndASubscriberSeesEveryEventOnceInOrder [FAIL]
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.TheRelay_WritesTheSameInstanceToEverySubscriber_AndTracksTheHighWaterSeq [3 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.TheRelay_WritesTheSameInstanceToEverySubscriber_AndTracksTheHighWaterSeq() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptRunLogTests.cs:line 95
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.AnUnwritableRunLogLine_IsNotPublished_AndTheAttemptIsDeliveryUnknownRunLogUnwritable_WithAnIncident [253 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: DeliveryUnknown
+Actual:   ResponseComplete
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.AnUnwritableRunLogLine_IsNotPublished_AndTheAttemptIsDeliveryUnknownRunLogUnwritable_WithAnIncident() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptRunLogTests.cs:line 75
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.ARun_WritesItsRunLog_AndASubscriberSeesEveryEventOnceInOrder [163 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: subscribe
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.SubscribeAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 269
+   at AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.ARun_WritesItsRunLog_AndASubscriberSeesEveryEventOnceInOrder() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptRunLogTests.cs:line 25
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:00.66]     AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheBackstopTimer_SweepsAndEmits_OnItsInterval [FAIL]
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheBackstopTimer_SweepsAndEmits_OnItsInterval [1 m]
+  Error Message:
+   the backstop never swept twice
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheBackstopTimer_SweepsAndEmits_OnItsInterval() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptQueueAndSweepTests.cs:line 94
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:00.69]     AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_BehindAPredecessorThatDidNotComplete_IsHeld_AndSendNowLaunchesItOnce [FAIL]
+[xUnit.net 00:01:00.71]     AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheStartupSweep_EmitsAttemptSweep_EvenAtZero [FAIL]
+[xUnit.net 00:01:00.81]     AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_LaunchesOnlyAfterItsPredecessorsResponseComplete [FAIL]
+[xUnit.net 00:01:01.02]     AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AnEngineExit_SweepsAnAbandonedDispatchedAttempt_ToRelayLost [FAIL]
+[xUnit.net 00:01:01.18]     AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.APermissionAskedDuringStop_IsAnsweredCancelled_AndRecordedAsPermissionCancelledByStop [FAIL]
+[xUnit.net 00:01:01.34]     AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_ThatIsNeverAcknowledged_IsDeliveryUnknownStopNotAcknowledged_AtTheDeadline [FAIL]
+[xUnit.net 00:01:01.50]     AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_SendsSessionCancel_AndTheEnginesCancelledReplyIsInterrupted [FAIL]
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_BehindAPredecessorThatDidNotComplete_IsHeld_AndSendNowLaunchesItOnce [33 ms]
+  Error Message:
+   System.NotSupportedException : a queued dispatch is WL-1a node 2 (docs/proof/workbench-loops-wl-1a/host/handoff.md)
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.DispatchAsync(AttemptDispatch dispatch, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 200
+   at AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_BehindAPredecessorThatDidNotComplete_IsHeld_AndSendNowLaunchesItOnce() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptQueueAndSweepTests.cs:line 54
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheStartupSweep_EmitsAttemptSweep_EvenAtZero [16 ms]
+  Error Message:
+   Assert.Single() Failure: The collection was empty
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.TheStartupSweep_EmitsAttemptSweep_EvenAtZero() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptQueueAndSweepTests.cs:line 79
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_LaunchesOnlyAfterItsPredecessorsResponseComplete [96 ms]
+  Error Message:
+   System.NotSupportedException : a queued dispatch is WL-1a node 2 (docs/proof/workbench-loops-wl-1a/host/handoff.md)
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.DispatchAsync(AttemptDispatch dispatch, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 200
+   at AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AQueuedSuccessor_LaunchesOnlyAfterItsPredecessorsResponseComplete() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptQueueAndSweepTests.cs:line 27
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AnEngineExit_SweepsAnAbandonedDispatchedAttempt_ToRelayLost [211 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: DeliveryUnknown
+Actual:   null
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptQueueAndSweepTests.AnEngineExit_SweepsAnAbandonedDispatchedAttempt_ToRelayLost() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptQueueAndSweepTests.cs:line 115
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.APermissionAskedDuringStop_IsAnsweredCancelled_AndRecordedAsPermissionCancelledByStop [166 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: Stop
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.StopAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 266
+   at AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.APermissionAskedDuringStop_IsAnsweredCancelled_AndRecordedAsPermissionCancelledByStop() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptStopTests.cs:line 59
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_ThatIsNeverAcknowledged_IsDeliveryUnknownStopNotAcknowledged_AtTheDeadline [158 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: Stop
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.StopAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 266
+   at AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_ThatIsNeverAcknowledged_IsDeliveryUnknownStopNotAcknowledged_AtTheDeadline() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptStopTests.cs:line 44
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_SendsSessionCancel_AndTheEnginesCancelledReplyIsInterrupted [158 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: Stop
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.StopAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 266
+   at AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.Stop_SendsSessionCancel_AndTheEnginesCancelledReplyIsInterrupted() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptStopTests.cs:line 24
+--- End of stack trace from previous location ---
+[xUnit.net 00:02:01.68]     AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.ATokenCancelAlone_TheHostsOwnTeardown_IsNeverInterrupted [FAIL]
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.ATokenCancelAlone_TheHostsOwnTeardown_IsNeverInterrupted [1 m]
+  Error Message:
+   System.TimeoutException : The operation has timed out.
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptStopTests.ATokenCancelAlone_TheHostsOwnTeardown_IsNeverInterrupted() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptStopTests.cs:line 78
+--- End of stack trace from previous location ---
+[xUnit.net 00:02:01.82]     AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.EveryAttempt_HasDispatchedAndTerminalTs_EventCount_Bytes_Outcome_AndUsage [FAIL]
+[xUnit.net 00:02:01.98]     AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AnAttemptWithNoUsage_ReadsNotRecorded_NeverZero [FAIL]
+[xUnit.net 00:02:02.00]     AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AFoldActivity_WritesFoldDurationMs_ToTheRollingLog [FAIL]
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.EveryAttempt_HasDispatchedAndTerminalTs_EventCount_Bytes_Outcome_AndUsage [146 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: NFR-11
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.MeasureAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 272
+   at AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.EveryAttempt_HasDispatchedAndTerminalTs_EventCount_Bytes_Outcome_AndUsage() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptObservabilityTests.cs:line 30
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AnAttemptWithNoUsage_ReadsNotRecorded_NeverZero [156 ms]
+  Error Message:
+   System.NotImplementedException : WL-1a node 2: Stop
+  Stack Trace:
+     at AiDe.App.Conductor.AttemptHost.StopAsync(String dispatchKey, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-attempt-host\src\AiDe.App\Conductor\AttemptHost.cs:line 266
+   at AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AnAttemptWithNoUsage_ReadsNotRecorded_NeverZero() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptObservabilityTests.cs:line 51
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AFoldActivity_WritesFoldDurationMs_ToTheRollingLog [21 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.App.Tests.Conductor.Attempts.AttemptObservabilityTests.AFoldActivity_WritesFoldDurationMs_ToTheRollingLog() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.App.Tests\Conductor\Attempts\AttemptObservabilityTests.cs:line 71
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:    15, Passed:     0, Skipped:     0, Total:    15, Duration: 2 m 1 s - AiDe.App.Tests.dll (net10.0)

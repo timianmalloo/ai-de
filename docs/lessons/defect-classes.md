@@ -8348,6 +8348,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Derive:** a sweep over a shared fact table names *whose* rows it owns in its predicate; "no outcome yet" alone is not ownership.
 - **Status:** `controlled`.
 
+### DC-NEW-wl-t5-host-n2 — A terminal mapped from a task's state before the task completed
+
+- **Shape:** an outcome is derived by *inspecting* a task (`IsCompletedSuccessfully`, `Exception`) instead of awaiting it, at a point reached by a different completion signal. The two signals are ordered at their source but not at the reader: `AcpPeer.RunAsync` fails every pending `TaskCompletionSource` and *then* completes the event queue, yet `RequestAsync`'s own task completes only when its async continuation runs (`RunContinuationsAsynchronously`), so a drain woken by the queue can read the prompt as still in flight. The mapper's fall-through arm then writes a plausible wrong terminal (`DeliveryUnknown{relay_lost}`, detail `cancelled`) instead of the real cause.
+- **Observed instance:** WL-1a node 2, `AttemptRunLogTests.AnUnwritableRunLogLine_IsNotPublished_AndTheAttemptIsDeliveryUnknownRunLogUnwritable_WithAnIncident` failed 4 of 6 runs under the parallel attempt suite (`relay_lost` instead of `run_log_unwritable`); `GovernedRunHost.SettleAsync` called `AttemptTerminal.For(prompt)` straight after `DrainAsync` returned on `!open`. Latent since node 1 for every pump-ended path (`EngineStreamEnded` too).
+- **Sweep:** readers of a task's state without an await in `src/AiDe.App/Conductor` and `src/AiDe.Core/AgentPlane`: `AttemptTerminal.For` (fixed); `WorktreeProvisioner.cs:103` reads `stdout` only on its timeout path by design (not this class).
+- **Control:** `SettleAsync` awaits the prompt (suppressing its exception) before mapping; `AttemptTerminal.For` throws `InvalidOperationException` on a task that is not completed, so the guess can no longer be written silently. Test: the run-log-unwritable test above, green 6 of 6 under the parallel suite.
+- **Derive:** map an outcome from an awaited task, never from a task's state at a moment some other signal chose.
+- **Status:** `controlled`.
+### DC-NEW-wl-leader2 — A brief defines a field from the ADR's wording when the type on main already defines it differently
+
 ### DC-NEW-wl-leader2-b — A node is sized by a budget cap, not by its scope, so every node overruns the cap
 
 - **Shape:** the Leader splits a long track into "nodes" and gives each one a call/context cap. But the node's *scope* (its

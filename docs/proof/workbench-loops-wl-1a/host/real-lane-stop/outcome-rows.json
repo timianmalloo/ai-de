@@ -1,0 +1,48 @@
+{
+  "Attempt": {
+    "DispatchKey": "25b6403423fb467b3604bc0f1e3ddab64b9fffb3d69bf40a9dcdbe8c59b9cd24",
+    "WorkspaceId": "ws-real",
+    "WorkspaceEpoch": 1,
+    "NotebookId": "nb-1",
+    "RevisionNo": 1,
+    "SessionId": "s-real",
+    "SessionGeneration": 1,
+    "ProjectionSha": "proj-real",
+    "RouteFingerprint": "acp:claude-code",
+    "ProfileKey": null,
+    "ScopeSnapshot": null,
+    "ParentDispatchKey": null,
+    "QueuedAfterDispatchKey": null,
+    "IngressSeq": 4,
+    "AttemptedAt": "2026-10-19T06:15:47.9234576\u002B00:00"
+  },
+  "Outcomes": [
+    {
+      "DispatchKey": "25b6403423fb467b3604bc0f1e3ddab64b9fffb3d69bf40a9dcdbe8c59b9cd24",
+      "State": 6,
+      "ErrorCode": null,
+      "Cause": null,
+      "Detail": null,
+      "IngressSeq": 5,
+      "RecordedAt": "2026-10-19T06:15:50.0090536\u002B00:00"
+    },
+    {
+      "DispatchKey": "25b6403423fb467b3604bc0f1e3ddab64b9fffb3d69bf40a9dcdbe8c59b9cd24",
+      "State": 7,
+      "ErrorCode": null,
+      "Cause": null,
+      "Detail": "{\u0022high_water_seq\u0022:86}",
+      "IngressSeq": 6,
+      "RecordedAt": "2026-10-19T06:16:06.5319351\u002B00:00"
+    },
+    {
+      "DispatchKey": "25b6403423fb467b3604bc0f1e3ddab64b9fffb3d69bf40a9dcdbe8c59b9cd24",
+      "State": 10,
+      "ErrorCode": null,
+      "Cause": null,
+      "Detail": "{\u0022stopReason\u0022:\u0022cancelled\u0022,\u0022usage\u0022:{\u0022inputTokens\u0022:0,\u0022outputTokens\u0022:0,\u0022cachedReadTokens\u0022:0,\u0022cachedWriteTokens\u0022:0,\u0022totalTokens\u0022:0}}",
+      "IngressSeq": 7,
+      "RecordedAt": "2026-10-19T06:16:06.5596105\u002B00:00"
+    }
+  ]
+}

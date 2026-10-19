@@ -73,7 +73,12 @@ public sealed class AcpRunEventMapper
     /// </exception>
     public RunEvent Map(string frameLine, DateTimeOffset receivedAt)
     {
-        var frame = Parse(frameLine);
+        // ADR-0042 §6: redacted at ingest, before the event exists, so no copy of the secret is ever built. The
+        // marker contains no JSON syntax and no v1 pattern matches a quote or a backslash, so the redacted line
+        // parses exactly as the raw one did. Acting on the frame (replies, permissions) reads the raw line in
+        // AcpPeer; only what is recorded and published is redacted.
+        var redacted = FrameRedaction.Apply(frameLine, FrameRedaction.PatternsVersion);
+        var frame = Parse(redacted.Frame);
         var ordinal = Interlocked.Increment(ref seq);
 
         var method = AcpJson.Text(frame["method"]);
@@ -129,7 +134,9 @@ public sealed class AcpRunEventMapper
             kind,
             cost,
             body,
-            frame);
+            frame,
+            redacted.Redactions,
+            redacted.ScannedWith);
     }
 
     /// <summary>
