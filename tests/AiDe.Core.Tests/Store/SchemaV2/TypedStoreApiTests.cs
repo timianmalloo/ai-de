@@ -114,14 +114,16 @@ public sealed class TypedStoreApiTests : IDisposable
             {
                 writer.AppendJourney(new JourneyRow("j1", "work", "t"));
                 writer.AppendJourney(new JourneyRow("j2", "work", "t2"));
-                writer.AppendNotebook(new NotebookRow("draft-a", "j1", Legacy: false));
+                // Ruling 156(3): adoption is refused until v3's adopted_by can record its actor; no version row is written.
+                var ex = Assert.Throws<WorkspaceStoreException>(() =>
+                    writer.AppendNotebook(new NotebookRow("draft-a", "j1", Legacy: false)));
+                Assert.Equal("AIDE-STORE-ADOPTION-NOT-OFFERED", ex.ErrorCode);
                 writer.Commit();
             }
 
-            using var again = migrated.BeginWrite();
-            var ex = Assert.Throws<WorkspaceStoreException>(() =>
-                again.AppendNotebook(new NotebookRow("draft-a", "j2", Legacy: false)));
-            Assert.Equal(StoreErrorCodes.Type0Violation, ex.ErrorCode);
+            using var reader = migrated.BeginRead();
+            var notebook = reader.ReadNotebook("draft-a")!;
+            Assert.Equal((1, true, (string?)null), (notebook.VersionNo, notebook.Legacy, notebook.OwnerJourneyId));
         }
         finally
         {
