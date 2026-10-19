@@ -1,0 +1,2 @@
+SELF-TEST FAIL: only the exact noreply@anthropic.com may pass, not the domain: []
+exit=1
