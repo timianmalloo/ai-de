@@ -124,7 +124,7 @@ public sealed class TheThreadAnnouncesByTransitionTests
         var stopped = policy.Next(Snapshot(2, true, Turn(1, TurnState.Failed, exitCode: 1), Turn(2, TurnState.Interrupted, spend: new Spend(3_000, 0, 900, 2))));
         Assert.Single(stopped);
         Assert.Equal(Urgency.Status, stopped[0].Urgency);
-        Assert.Equal("Turn b2 interrupted after 1 edit; 3,900 tokens. Send the same turn again as a new turn, or open the log.", stopped[0].Text);
+        Assert.Equal("Turn b2 stopped by you after 1 edit; 3,900 tokens. Send the same turn again as a new turn, or open the log.", stopped[0].Text);
 
         // Once by transition: the same terminal states again say nothing.
         Assert.Empty(policy.Next(Snapshot(3, true, Turn(1, TurnState.Failed, exitCode: 1), Turn(2, TurnState.Interrupted, spend: new Spend(3_000, 0, 900, 2)))));
