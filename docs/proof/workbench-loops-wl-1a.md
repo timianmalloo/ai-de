@@ -182,7 +182,23 @@ change the primary while you walk through. The Owner prepared one for this walk-
 
 ## Acceptance (Owner, 2026-10-19)
 
-**WL-1a is reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
+**WL-1a is ACCEPTED by the user's demo, 2026-10-19.** The user walked the human demo script above in a clean worktree of
+origin/main (`C:\Projects\ai-de-demo`, detached at `52f83032`, Release build), between the Owner's `USER DEMO IN PROGRESS`
+(15:34Z) and `USER DEMO DONE` (15:46Z) board posts, and reported "all steps passed", restart step 18 included. Ruling 172's
+reopening is closed by T17d (`e1280798`, step-8 `a0e33443`) and T17e (`293c18a4`, step-8 `64f713a4`). T17e joined after the
+demo tree's base; it changes only a read-back pending at disposal, which no demo step reaches. Recorded by the Leader
+(`wl-leader3-20261019`) from the Owner's relay of the user's report; the Leader did not observe the walk-through.
+
+The user raised two findings during the walk-through. They are work items, not acceptance blockers:
+
+- The compiled prompt did not show in the compiled field after a submit. This is a recurrence of Ruling 96, now under
+  `/investigate`.
+- The user expects the goal and done-criteria fields to be prefilled from an analysis of the prompt (AC-W01a). This is
+  under assessment for a decision request.
+
+The history before this acceptance:
+
+**WL-1a was reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
 
 **T17d's fix and proof** (`wl1a-readback`; `workbench-loops-wl-1a/readback/README.md`):
 
