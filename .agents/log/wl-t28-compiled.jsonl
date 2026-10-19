@@ -14,3 +14,11 @@
 {"agent": "wl-t28-compiled", "at": 1792427462.13954, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "seq": 14, "session": "wl-t28-compiled", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t28-compiled", "at": 1792427462.3573542, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheSentPromptIsNeverResentTests.cs", "seq": 15, "session": "wl-t28-compiled", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t28-compiled", "at": 1792427462.5751584, "kind": "claim", "path": "DESIGN.md", "seq": 16, "session": "wl-t28-compiled", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428978.998207, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 17, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.091588, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterASubmitTests.cs", "seq": 18, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.187898, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs", "seq": 19, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.307415, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs", "seq": 20, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.4064097, "kind": "release", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "seq": 21, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.511016, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheSentPromptIsNeverResentTests.cs", "seq": 22, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"agent": "wl-t28-compiled", "at": 1792428979.6219096, "kind": "release", "path": "DESIGN.md", "seq": 23, "session": "wl-t28-compiled", "wi": "workbench-loops"}
+{"at": 1792428991.452288, "from": "wl-t28-compiled", "kind": "done", "mail_id": "mail-01M5AHFRYWPS5G0PA5W0TB525V", "ref": null, "session": "wl-t28-compiled", "to": "wl-leader3-20261019", "type": "mail"}
