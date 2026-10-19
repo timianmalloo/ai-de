@@ -8592,3 +8592,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   every gate**, so a gate-only finding is caught only at the join, after a 20-minute recount.
 - **Control, extended:** brief rule 22 (`52b73c11`). A node that hands off for a join runs the step-8 ratchet from its
   own tree against origin/main and must PASS before its done mail.
+- **DC-NEW-wl-leader2, recurrence under wl-leader3 (2026-10-19):** four Leader messages carried values the Leader had not
+  read in that turn. Two were placeholder times ("15:4xZ", "16:2xZ"). One was a kick time written as 16:38Z; the mail's
+  own timestamp is 16:37:22Z. One was a commit sha written as "4d…" before the commit existed; it is 2f413c4e. Each was
+  corrected to the Owner in the next message. **Control (process, Leader):** a time or sha goes into a message or a
+  committed file only from command output printed earlier in the same turn. The send of a message that cites a sha
+  comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
+  `partially-controlled`.
