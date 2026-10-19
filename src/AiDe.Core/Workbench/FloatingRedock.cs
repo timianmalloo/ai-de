@@ -8,6 +8,15 @@ public sealed record RedockedPane(Surface Surface, ZoneId Zone, string ZoneName)
 /// <summary>A layout with no floating windows, and the panes that were docked to make it so.</summary>
 public sealed record FloatingRedockResult(WorkbenchLayout Layout, IReadOnlyList<RedockedPane> Redocked)
 {
+    /// <summary>The report for one docked pane: {0} the title, {1} the zone's user-facing label. DESIGN.md DOCK3 carries the same words.</summary>
+    internal const string SingularFormat = "{0} was floating in your saved layout. Floating is not available yet, so it is docked in {1}.";
+
+    /// <summary>The report for several docked panes: {0} the count, {1} the <see cref="PluralItemFormat"/> items joined by ", ".</summary>
+    internal const string PluralFormat = "{0} floating panes in your saved layout are docked because floating is not available yet: {1}.";
+
+    /// <summary>One item of the plural report: {0} the title, {1} the zone's user-facing label.</summary>
+    internal const string PluralItemFormat = "{0} in {1}";
+
     /// <summary>
     /// The report line for the panes that are still docked in <paramref name="restored"/> — a pane the
     /// host's admission dropped afterwards is reported as dropped, not as docked — or empty when none.
@@ -20,9 +29,8 @@ public sealed record FloatingRedockResult(WorkbenchLayout Layout, IReadOnlyList<
         return kept.Count switch
         {
             0 => string.Empty,
-            1 => $"{kept[0].Surface.Title} was floating in your saved layout. Floating is not available yet, so it is docked in {kept[0].ZoneName}.",
-            _ => $"{kept.Count} floating panes in your saved layout are docked because floating is not available yet: "
-                + string.Join(", ", kept.Select(r => $"{r.Surface.Title} in {r.ZoneName}")) + ".",
+            1 => string.Format(SingularFormat, kept[0].Surface.Title, kept[0].ZoneName),
+            _ => string.Format(PluralFormat, kept.Count, string.Join(", ", kept.Select(r => string.Format(PluralItemFormat, r.Surface.Title, r.ZoneName)))),
         };
     }
 }

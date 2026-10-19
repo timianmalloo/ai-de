@@ -1,0 +1,35 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float-guard\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float-guard\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float-guard\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.ThePluralSentence_IsExactlyThePinnedWording [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.TheDesignRowDock3_CarriesTheSameSentencesWordForWord [FAIL]
+  Failed AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.ThePluralSentence_IsExactlyThePinnedWording [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                                  ↓ (pos 48)
+Expected: ···"ed layout are docked: Terminal in the bot"···
+Actual:   ···"ed layout are docked because floating is "···
+                                  ↑ (pos 48)
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.ThePluralSentence_IsExactlyThePinnedWording() in C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.Tests\Workbench\FloatingRedockCopyTests.cs:line 38
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.TheDesignRowDock3_CarriesTheSameSentencesWordForWord [1 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "| DOCK3 | {Title} was floating in your sa"···
+Not found: "{N} floating panes in your saved layout a"···
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.FloatingRedockCopyTests.TheDesignRowDock3_CarriesTheSameSentencesWordForWord() in C:\Projects\ai-de-wls-float-guard\tests\AiDe.Core.Tests\Workbench\FloatingRedockCopyTests.cs:line 54
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     2, Skipped:     0, Total:     4, Duration: 32 ms - AiDe.Core.Tests.dll (net10.0)
