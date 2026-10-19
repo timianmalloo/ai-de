@@ -214,7 +214,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
     /// The session's rung set to <c>agentic-advisory</c>, the draft on the goal-block form (as
     /// <c>SessionComposerBinder.Bind</c> opens it), and a stub compile host that records each prompt.
     /// </summary>
-    private static List<string> UnderAdvisory(ComposerSurface composer)
+    internal static List<string> UnderAdvisory(ComposerSurface composer)
     {
         composer.Draft.SwitchTo(ComposerShape.GoalBlock);
         composer.Gate.BindSession(NotebookFixture.SessionId, CompileModes.AgenticAdvisory, "claude-code", "implement");
@@ -244,10 +244,10 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
     private static TextBox Line(ComposerSurface composer, string name) =>
         ComposerGesture.Logical<TextBox>(composer).Single(b => AutomationProperties.GetName(b) == name);
 
-    private static Button KeepButton(ComposerSurface composer, string name) =>
+    internal static Button KeepButton(ComposerSurface composer, string name) =>
         ComposerGesture.Logical<Button>(composer).Single(b => AutomationProperties.GetName(b) == "Keep " + name);
 
     /// <summary>The button's own click, through its automation peer.</summary>
-    private static void Invoke(Button button) =>
+    internal static void Invoke(Button button) =>
         ((IInvokeProvider)UIElementAutomationPeer.CreatePeerForElement(button).GetPattern(PatternInterface.Invoke)!).Invoke();
 }

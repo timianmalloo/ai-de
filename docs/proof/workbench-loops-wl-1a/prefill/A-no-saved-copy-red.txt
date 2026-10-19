@@ -1,0 +1,78 @@
+MUTATION RED (planted, not committed): no real saved-state copy exists on the tree; the first run passed there (C-gate-reason-red.txt, 313 strings). Planted diff:
+diff --git a/src/AiDe.App/Workbench/Composer/ComposerSurface.cs b/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
+index bf4e5d37..4e2c0cd9 100644
+--- a/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
++++ b/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
+@@ -2273,7 +2273,7 @@ internal sealed class StructureLine
+     private bool _showing;
+ 
+     /// <summary>The keep control's description (Ruling 180 (3); DESIGN.md SC6): the line is a suggestion until kept, and Keep makes it the user's.</summary>
+-    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft.";
++    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later.";
+ 
+     /// <summary>The mark of a line the model suggested and the user has not kept or edited (Ruling 180 (3); DESIGN.md's Derived structure row). UIA's ItemStatus reads the word without the glyph.</summary>
+     public const string ModelLineMark = "? suggested";
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.96]     AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved [FAIL]
+[xUnit.net 00:00:00.96]       saved-state copy is shown for an unsent draft or a kept line: an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]       Stack Trace:
+[xUnit.net 00:00:00.96]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\NothingSaysAnUnsentDraftIsSavedTests.cs(83,0): at AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved()
+[xUnit.net 00:00:00.96]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.96]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.96]       Output:
+[xUnit.net 00:00:00.96]         read 313 strings across 6 moments: an unsent draft 91, suggested lines 95, a kept line 95, the settings row 30, the composer page composer.html 1, the composer page composer-host.html 1
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]         SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+[xUnit.net 00:00:00.96]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved [740 ms]
+  Error Message:
+   saved-state copy is shown for an unsent draft or a kept line: an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later." | a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+  Stack Trace:
+     at AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\NothingSaysAnUnsentDraftIsSavedTests.cs:line 83
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ read 313 strings across 6 moments: an unsent draft 91, suggested lines 95, a kept line 95, the settings row 30, the composer page composer.html 1, the composer page composer-host.html 1
+ SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at an unsent draft: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at suggested lines: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+ SAVED-STATE COPY at a kept line: "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft. Kept for later."
+
+
+
+Test Run Failed.
+Total tests: 1
+     Failed: 1
+ Total time: 1.2936 Seconds
