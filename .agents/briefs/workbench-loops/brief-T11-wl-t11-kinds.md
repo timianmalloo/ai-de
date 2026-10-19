@@ -4,9 +4,16 @@
 **Done when:** the `notebook` + `execution` kinds bind T8's models; slot migration golden round-trip with `.bak` and a
 drop report; restore today's saved layout ⇒ report; `Ctrl+1/2/3` with focus inside a WebView2 page; hide/float/redock a
 live notebook; the WL-S Proof Pack `docs/proof/workbench-loops-wl-s.md`. **Plus the merge conditions below.**
-**Tier** T2 · **fan-out** 0 · **budget** 260 calls · 400k · 5 h, **split into two nodes** (GO9): node 1 = kinds + Landing
-flip; node 2 = slot migration + the knowledge mode + Proof Pack. At 200 calls or 300k, hand off.
-**Starts only when:** T4, T8 and T9 are on main. Design: `docs/design/workbench-loops-wl-s.md` (T4) §2, §6, §7, §8.
+**Tier** T2 · **fan-out** 0 · **re-cut by the Leader on 2026-10-19 (rule 16; DC-NEW-wl-leader2-b): nodes of ≤ 3 checks.**
+- **Node 1:** (A) the `notebook` + `execution` kinds bind T8's models, with the Ruling 152 D2 Landing flip in the
+  same change; (B) `Ctrl+1/2/3` with focus inside a WebView2 page; (C) hide/float/redock a live notebook.
+- **Node 2:** (D) slot migration: the golden round-trip with `.bak` + drop report, and restoring today's saved layout ⇒
+  report; (F) the WL-S Proof Pack, including Ruling 149 (1)'s interim-loss statement and T18's evidence.
+- **The knowledge mode (Ruling 149 (2)) is split out as WL-S track T18** (`wls-knowledge-mode`). It runs in parallel
+  with node 1 and stays a WL-S close condition.
+The kick is set from the node's measured rate (rule 16).
+**Starts only when:** T4, T8 and T9 are on main (all true). Design: `docs/design/workbench-loops-wl-s.md` (T4) §2, §4,
+§6, §7. The `ExcludeKnowledge` seam is now at `WorkbenchShell.cs:1398`, and it is T18's.
 
 ## Merge conditions (rulings — the slice does not close without them)
 - **Ruling 152 (D2):** flip Factory's `Landing` from Left to **Center** in the **same change** that docks `notebook` in
@@ -96,3 +103,6 @@ and a default.
     checks, or one check plus its real-lane run. At 120 tool calls or 200k context, commit what is green and write
     `handoff.md`, even if a check is half done. The Leader starts the next node fresh. Three Opus nodes in a row
     overran caps sized for twice their real scope (T5 n1 346k, T8 n1 285k, T5 n2 330k).
+17. **Add no `.html` file under `docs/`.** Do not render HTML views of your README, hand-off or proof files. The docs
+    graph's HTML knowledge-surface cap is full (`SURFACE_LIMIT = 100`, `docs-graph.py:82`; a pack defect), and one rendered
+    `handoff.html` stopped T8's join at step 6 (2026-10-19). Markdown stays canonical, and proof is `.md` and `.txt` only.

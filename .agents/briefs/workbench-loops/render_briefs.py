@@ -28,6 +28,7 @@ TRACKS = {
     "T15": ("wl-t15-idgate", "account-identity-gate", "docs/proof/workbench-loops-support/identity-gate", "Sonnet 5.5"),
     "T16": ("wl-t16-bindrow", "wl1a-attempt-binding-row", "docs/proof/workbench-loops-wl-1a/binding-row", "Sonnet 5.5"),
     "T17": ("wl-t17-restore", "wl1a-restored-turns", "docs/proof/workbench-loops-wl-1a/restored-turns", "Opus 5.5"),
+    "T18": ("wl-t18-knowledge", "wls-knowledge-mode", "docs/proof/workbench-loops-wl-s/knowledge-mode", "Opus 5.5"),
 }
 
 common = (HERE / "brief-common.md").read_text(encoding="utf-8")

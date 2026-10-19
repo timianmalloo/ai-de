@@ -354,3 +354,10 @@
 {"agent": "wl-leader2-20261019", "at": 1792404909.8761024, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792404909.9036887, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792404909.934956, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.5659986, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.5952158, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.6258104, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.6560977, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.6857266, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405654.71833, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/solution-tree-chord-solo-on-join-head.txt", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792405692.9546914, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a.md", "session": "wl-leader2-20261019", "wi": ""}
