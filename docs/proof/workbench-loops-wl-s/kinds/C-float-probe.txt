@@ -1,0 +1,11 @@
+# Check C float/redock probe (uncommitted probe test ZzFloatProbe, deleted after this run). WorkbenchShell(null) + OpenSessionDocument, 1440x900.
+# The product's float is LayoutOperation.MoveSurface(id, DropTarget("", DropKind.Float)) - the same operation as workbench.floatPane (Ctrl+K, F) -> SetStackState(Floating).
+docked: zone=Center; modelFloating=[]; viewFloatingWindows=0; ContentFor=Border; sameModel=True; liveRegion='Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs.'
+float: applied=True code= said='Binding is now floating.'
+floated: zone=none; modelFloating=[notebook:20261019T060000Z-binding1]; viewFloatingWindows=0; ContentFor=null; sameModel=True; liveRegion='Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs.'
+ReadLayoutFromView while floated: null
+saved floating json: { "schemaVersion": 1, "appVersion": "0.3.0", "savedUtc": "2026-10-19T11:49:26.5961584+00:00", "layout": { "zones": [ { "id": "Left", "extent": 0.5652173913043479, "collapsed": false }, { "id": "Right", "extent": 0.22, "collapsed": false }, { "id": "Bottom", "content": { "kind": "stack", "tabs": [ { "surfaceId": "terminal-1", "kind": "terminal", "title": "Terminal \u2014 pwsh" } ], "activeIndex": 0 }, "extent": 0.3, "collapsed": true }, { "id": "Center", "extent": 1, "collapsed": false } ], "floating": [ { "id": "float-1", "surfaces": [ { "surfaceId": "notebook:20261019T060000Z-binding1", "kind": "notebook", "title": "Binding" } ], "activeIndex": 0 } ] } }
+read back: refusal=None; floating=[notebook:20261019T060000Z-binding1]; docked zone=none
+redock JoinStack Center: applied=False code=AIDE-LAYOUT-SURFACE-UNKNOWN said='Cannot move: surface 'notebook:20261019T060000Z-binding1' is not docked.'
+after redock: zone=none; modelFloating=[notebook:20261019T060000Z-binding1]; viewFloatingWindows=0; ContentFor=null; sameModel=True; liveRegion='Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs.'
+SetStackState Center Docked: applied=False code= said='the center is already expanded.'
