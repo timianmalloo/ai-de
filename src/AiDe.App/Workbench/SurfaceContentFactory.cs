@@ -75,6 +75,9 @@ public sealed class SurfaceContentFactory(
 
         /// <summary>The kind's only door is the catalog entry verb <paramref name="CommandId"/> (<c>terminal.new</c>, <c>session.new</c>); nothing is derived.</summary>
         public sealed record Verb(string CommandId) : SurfaceEntry;
+
+        /// <summary>The opener is a turn's <paramref name="Action"/> on its notebook (the execution's <i>Open the log</i>); nothing is derived and no verb names it.</summary>
+        public sealed record TurnAction(AiDe.Core.Presentation.Sessions.TurnActionKind Action) : SurfaceEntry;
     }
 
     /// <summary>
@@ -246,6 +249,16 @@ public sealed class SurfaceContentFactory(
             static (f, s) => f.ConsoleDocument(s),
             Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("session.console"),
             Zone: ZoneId.Center),
+
+        // One attempt's execution (the WL-S design's §4): identity `execution:<DispatchKey>`, caption
+        // "Execution — <attempt>", one per attempt, in the Bottom. It binds the attempt host's record and never owns a
+        // token or a queue slot (ADR-0045 §4). Its only door is a turn's "Open the log".
+        new(AiDe.App.Workbench.Execution.ExecutionSurface.Kind, "Execution",
+            "One attempt's execution: its dispatch key and what the host recorded for it.",
+            static (_, s) => new AiDe.App.Workbench.Execution.ExecutionSurface(s.Title),
+            Perspectives: [PerspectiveSet.Factory], Instances.Many,
+            new SurfaceEntry.TurnAction(AiDe.Core.Presentation.Sessions.TurnActionKind.OpenLog),
+            Zone: ZoneId.Bottom),
 
         // ── Factory → Coordination: the fleet's panes (ADR-0045 §1(b)) ────────────────────────
 

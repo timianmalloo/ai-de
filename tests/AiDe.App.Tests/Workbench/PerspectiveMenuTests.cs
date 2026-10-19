@@ -214,6 +214,7 @@ public sealed class PerspectiveMenuTests
         {
             ("notebook", ["factory"], SurfaceContentFactory.Instances.Many),
             ("console",          ["factory"], SurfaceContentFactory.Instances.Many),   // Ruling 89: the session's Console as a document
+            ("execution",        ["factory"], SurfaceContentFactory.Instances.Many),   // the WL-S design's §4: one per attempt
             ("terminal",         ["factory"], SurfaceContentFactory.Instances.Many),
             ("prompt",           ["factory"], SurfaceContentFactory.Instances.Many),
             ("sessions",         ["factory"], SurfaceContentFactory.Instances.One),

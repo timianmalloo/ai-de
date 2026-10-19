@@ -35,12 +35,22 @@ public sealed class TheExecutionKindTests
         var name = Sta.Run(() =>
         {
             var content = new SurfaceContentFactory(null).Create(new Surface("execution:dk-1", "execution", "Execution — dk-1"));
-            return AutomationProperties.GetName(Unwrap(content));
+            var surface = Logical(content).FirstOrDefault(e => e.GetType().Name == "ExecutionSurface");
+            return surface is null ? "(no ExecutionSurface inside the island)" : AutomationProperties.GetName(surface);
         }, 30);
 
         Assert.Equal("Execution — dk-1", name);
     }
 
-    private static DependencyObject Unwrap(FrameworkElement content) =>
-        content is System.Windows.Controls.ContentControl { Content: FrameworkElement inner } && AutomationProperties.GetName(content) is "" ? inner : content;
+    private static IEnumerable<DependencyObject> Logical(DependencyObject root)
+    {
+        yield return root;
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            foreach (var inner in Logical(child))
+            {
+                yield return inner;
+            }
+        }
+    }
 }
