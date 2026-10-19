@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AiDe.App.Conductor;
 using AiDe.App.Workbench.Composer;
+using AiDe.App.Workbench.Records;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.PromptCompilation;
@@ -95,12 +96,18 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// headless test here still does — builds a document-owned polite live region so SC9 is never
     /// silent; the two are never both live.
     /// </param>
+    public SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+        : this(notebook.Session, store, announcer)
+    {
+    }
+
     public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
     {
         ArgumentNullException.ThrowIfNull(model);
         _store = store;
 
         Model = model;
+        Notebook = new NotebookModel(model);
         SurfaceId = SurfaceIdFor(model.SessionId);
 
         AutomationProperties.SetName(this, model.Title);
@@ -173,6 +180,16 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     /// <summary>This document's state.</summary>
     public SessionDocumentViewModel Model { get; }
+
+    public NotebookModel Notebook { get; }
+
+    public bool StaleNoticeVisible => false;
+
+    public string StaleNoticeText => string.Empty;
+
+    internal Task LastBinding => Task.CompletedTask;
+
+    internal TextBlock StaleNotice { get; } = new();
 
     /// <summary>The layout surface id.</summary>
     public string SurfaceId { get; }

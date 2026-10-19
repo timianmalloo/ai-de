@@ -3781,6 +3781,8 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     /// <param name="sessionId">The session whose document is open.</param>
     /// <returns>The composer, or null when no document for that session is open.</returns>
+    internal Records.NotebookModel? Notebook(Records.NotebookId id) => null;
+
     internal Composer.ComposerSurface? SessionComposer(string sessionId) =>
         _sessionDocuments
             .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
