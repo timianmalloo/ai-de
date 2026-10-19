@@ -7,7 +7,7 @@ owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam. Node 8: the float guard (d82df79e), every controller layout command renders (36884736, DC-NEW-wl-t21-float-d), floating tabs are named and carry the menu (28c60d1f); (A) and (C) green, (B) red on focus."
+summary: "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam. Node 8: the float guard (d82df79e), every controller layout command renders (36884736, DC-NEW-wl-t21-float-d), floating tabs are named and carry the menu (28c60d1f); (A), (B) and (C) green (c80e5fbd)."
 ---
 
 # T21 float, nodes 1, 1b, 2 (Ruling 171 (2)), 3 (Ruling 174) and 4
@@ -195,7 +195,7 @@ Branch head before the node: `2a49cdc5`. The Leader's priority order came first:
 | 0. Float guard (Owner's order) | `FloatPaneGuardTests.FloatPane_ByThePalette_RefusesWithDOCK2_AndThePaneStaysDockedDrawnAndFocused` | float-guard-red.txt (`9ba8572f`): "S1 is now floating." | float-guard-green.txt (`d82df79e`), 64/0 guard-touched App tests; Core 3115/0/1 (float-guard-core.txt). The Leader joins a branch cut there |
 | (A) green + the class sweep (DC-NEW-wl-t21-float-d) | `ALiveNotebookFloatsAndRedocksTests` (A); `LayoutCommandsRenderTests` (float, close, collapse, maximize, next tab) | command-render-red.txt (`626c7221`): close, collapse, maximize and next tab drew the layout before; float and (A) refused by the guard | command-render-green.txt (`36884736`), 8/8: `WorkbenchController.LayoutApplied` → `adapter.Render` in `DockHost.Create`; the guard and `FloatPaneGuardTests` removed |
 | Floating tabs named and decorated | `LayoutCommandsRenderTests.FloatPane_...` (name, menu); (B); (C)'s restored tab | floating-tabs-red.txt (`18f9c404`, run with the adapter's tab walk limited to the manager): name is the type name; no Move to menu | floating-tabs-green.txt (`28c60d1f`), 7/9: the two (B) cases red on focus only |
-| (B) redock, mid-run and after | `TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt` | live-redock-red.txt (`74af5881`): the floating tab had no menu; live-redock-focus-red.txt (`28c60d1f`): "the focus is not in the redocked notebook; it is on Window" | **not green** |
+| (B) redock, mid-run and after | `TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt` | live-redock-red.txt (`74af5881`): the floating tab had no menu; live-redock-focus-red.txt (`28c60d1f`): "the focus is not in the redocked notebook; it is on Window" | live-redock-green.txt (`c80e5fbd`), 4/4: `MoveToZone` focuses the moved pane's content at Loaded priority |
 | (C) restart with the notebook floating | `ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown` | live-restart-red.txt (wiring reverted: the float leg drew no window); live-restart-menu-red.txt (`74af5881`): the restored floating tab had no menu | floating-tabs-green.txt (`28c60d1f`) |
 
 ### What changed
@@ -215,9 +215,9 @@ Branch head before the node: `2a49cdc5`. The Leader's priority order came first:
   command and asserts the same content, one floating window and no surface closed.
 
 ### Not done, and residuals
-- (B)'s focus. Tried in the node and not kept: `ActivateInView(surfaceId)` after `MoveToZone`'s render left the focus on
-  the window as before. Next: find where the keyboard focus goes when the floating window closes, and focus the
-  notebook's content after the render (the content element, not only `LayoutDocument.IsActive`).
+- (B)'s focus, first try not kept: `ActivateInView(surfaceId)` after `MoveToZone`'s render left the focus on
+  the window as before (`LayoutDocument.IsActive` does not move the keyboard focus). The kept fix focuses the content
+  element after the layout pass (`c80e5fbd`). Suites at `c80e5fbd`: suite-node8.txt; ratchet: ratchet.txt.
 - `18f9c404` (a red commit) does not compile alone: its tests call `WorkbenchAdapter.HostedRoots`, which landed in
   `28c60d1f`. The red was run with `HostedRoots` present and the tab walk limited to the manager.
 - Residual (Inferred): a render after a command reverts a native within-pane tab reorder the model has not seen.

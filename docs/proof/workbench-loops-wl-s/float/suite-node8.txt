@@ -1,0 +1,17 @@
+T21 n8 whole suites at c80e5fbd (wls-float). App started 20:44:30Z after the board showed join-wls-float-fix abandoned (rule 19 hold lifted); no 'desktop hold is occupied' result, so desktop-hold.txt was not written.
+
+== tests/AiDe.App.Tests (20:44:30Z-20:50:23Z) ==
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+Failed!  - Failed:     2, Passed:  1225, Skipped:     2, Total:  1229, Duration: 5 m 46 s - AiDe.App.Tests.dll (net10.0)
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+--
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+The 2 failures are the two foreground probes on the Owner's attended list (Ruling 155 (3)), the same 2 as suite-node7.txt; both say the foreground was not held.
+
+== tests/AiDe.Core.Tests (20:50:31Z) ==
+Passed!  - Failed:     0, Passed:  3115, Skipped:     1, Total:  3116, Duration: 2 m 18 s - AiDe.Core.Tests.dll (net10.0)
