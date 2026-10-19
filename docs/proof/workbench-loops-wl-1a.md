@@ -199,8 +199,17 @@ The user raised two findings during the walk-through. They are work items, not a
 
 **Residual (Ruling 182 (3)):** until WL-2's draft store (ADR-0043), **unsent typing and kept suggestions are lost when
 the app restarts.** A revived notebook's composer starts empty (`ComposerSurface.cs:96`, measured by T30 n2 at
-`8afa3a58`). Whatever was **sent** survives: each sent turn's compiled prompt, including its goal block, is on the turn
-row's disclosure after a restart (Rulings 163, 181).
+`8afa3a58`).
+
+**Correction (2026-10-19, T30 n3):** this line first said that a sent turn's compiled prompt is on its row's disclosure
+after a restart. **On main that is false.** T30 n3 measured the restored row's disclosure **empty: 0 of the 263
+characters sent** (`19437c6e`, a real red through the shell's revive). The cause is that `NotebookRuns.RestoreAsync`
+accepted each restored turn with `string.Empty` (`NotebookRuns.cs:525`), and no store keeps the sent bytes, only their
+sha (`EnvelopeEvents.cs:218`). The fix is green on branch `wl-prefill` (`9234fc77`) and not yet joined. It rebuilds the
+sent bytes through the send gate's existing projection, and shows them only when their sha equals the one recorded at
+send; otherwise the row says *Compiled prompt not recorded*. A turn whose bytes included attachment bodies or a template
+cannot be rebuilt, so after a restart its row says *not recorded*. The turn rows themselves, their provenance lines and
+their outcomes did survive the restart, which is what WL-1a's step 18 checked.
 
 The history before this acceptance:
 

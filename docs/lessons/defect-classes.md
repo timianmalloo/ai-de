@@ -8697,3 +8697,4 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Leader, same session:** the Leader told the Owner "every WL-S track is on main (T4, T9, T11, T18, T20, T21)" before
   reading it in that turn. It was verified afterwards by `git branch --merged origin/main` and was true. It is the same
   unread-claim shape (the 6th recurrence under wl-leader3), and the claim was right by luck rather than by check.
+- **Update (2026-10-19, T30 n3):** the Owner instance above is now **Verified**. T30 observed a real red at `19437c6e`: the restored row's compiled-prompt disclosure was empty, 0 of 263 characters, through the shell's revive. It is fixed on branch `wl-prefill` at `9234fc77` (rebuild and verify, or 'not recorded'). The WL-1a Proof Pack's residual line had repeated the false premise, and it is corrected.
