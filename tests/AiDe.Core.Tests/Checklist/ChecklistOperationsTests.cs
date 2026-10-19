@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using System.Diagnostics;
 using AiDe.Core.Facts;
 using AiDe.Core.Ipc;
@@ -513,5 +514,64 @@ public sealed class ChecklistOperationsTests : IDisposable
             Service.Evaluate(new ChecklistEvaluateRequest("journey-nobody", "nb-none", LiveSha)));
 
         Assert.Equal(StoreErrorCodes.WorkNotAWorkJourney, ex.ErrorCode);
+    }
+
+    // ---- B: the five operations through the registered endpoint ---------------------------------
+
+    [Fact]
+    [SupportedOSPlatform("windows")]
+    public async Task B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal()
+    {
+        var journey = OpenWork();
+        Attempt("a1");
+        var pipe = "aide-cl-" + Guid.NewGuid().ToString("N");
+        var endpoint = new DaemonEndpoint(pipe, new CapabilityRegistry(), _ => _workspace.Store.CoreEpoch);
+        DaemonOperations.Register(endpoint, () => _workspace.Store.CoreEpoch);
+        WorkspaceOperations.RegisterChecklist(endpoint, Service);
+        var server = new IpcServer(pipe, endpoint, new IpcServerOptions(StartupGrace: TimeSpan.FromSeconds(45)));
+        using var life = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        var running = server.RunAsync(life.Token);
+        var principal = $"shell:{Environment.ProcessId}";
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(pipe, TimeSpan.FromSeconds(20), CancellationToken.None);
+            var none = CancellationToken.None;
+
+            var set = await client.SetObligationsAsync(
+                new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, "Tests pass", true)]), none);
+            string obligation;
+            using (var reader = _workspace.Store.BeginRead())
+            {
+                obligation = reader.ReadObligations(journey, set.Revision).Single().ObligationId;
+            }
+
+            var blocked = await Assert.ThrowsAsync<IpcRequestException>(() =>
+                client.AcceptWorkAsync(new WorkAcceptRequest(journey, "nb-1", LiveSha), none));
+            Assert.Equal(StoreErrorCodes.WorkAcceptanceBlocked, blocked.Code);
+
+            var unknown = await Assert.ThrowsAsync<IpcRequestException>(() => client.RecordDispositionAsync(
+                new DispositionRecordRequest(journey, "nb-1", "obl-nope", "deferred"), none));
+            Assert.Equal(StoreErrorCodes.WorkObligationUnknown, unknown.Code);
+
+            var intent = await client.RecordDispositionAsync(
+                new DispositionRecordRequest(journey, "nb-1", null, "intent-accepted"), none);
+            var link = await client.LinkEvidenceAsync(new EvidenceLinkRequest(journey, "nb-1", obligation, "a1", LiveSha), none);
+            var evaluated = await client.EvaluateChecklistAsync(new ChecklistEvaluateRequest(journey, "nb-1", LiveSha), none);
+            var accepted = await client.AcceptWorkAsync(new WorkAcceptRequest(journey, "nb-1", LiveSha), none);
+
+            Assert.Equal(1, set.Revision);
+            Assert.Equal(principal, intent.Disposition.Actor);
+            Assert.Equal(principal, link.Link.Producer);
+            Assert.True(evaluated.Evaluation.Eligible);
+            Assert.Equal(["a1"], evaluated.EvidenceCandidates);
+            Assert.Equal(WorkClosureState.Accepted, accepted.Closure.State);
+            Assert.Equal(principal, WorkRows(journey).Single().Actor);
+        }
+        finally
+        {
+            await life.CancelAsync();
+            try { await running; } catch (OperationCanceledException) { }
+        }
     }
 }
