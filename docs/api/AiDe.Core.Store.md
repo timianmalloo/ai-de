@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 15 types, 102 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 15 types, 104 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**15 public types · 102 public members · 59% documented.**
+**15 public types · 104 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -53,6 +53,7 @@ One search hit: the node, why it matched, and the text that matched.
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
@@ -298,6 +299,7 @@ graph costs (P1-PERF-02); an empty input reads nothing at all.
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
@@ -580,7 +582,8 @@ already exists (including the reserved `journey-terminal-drafts`) is refused wit
 
 **Remarks.** The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
 explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
-a new version row with `Legacy = false` and an owner.
+a new version row with `Legacy = false` and an owner. Both are refused (AIDE-STORE-ADOPTION-NOT-OFFERED)
+until v3's `adopted_by` column lands in the first slice that offers adoption (Ruling 156).
 
 ### `void UpsertNode(string nodeId, string nodeKind, string displayLabel)`
 
@@ -651,7 +654,8 @@ already exists (including the reserved `journey-terminal-drafts`) is refused wit
 
 **Remarks.** The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
 explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
-a new version row with `Legacy = false` and an owner.
+a new version row with `Legacy = false` and an owner. Both are refused (AIDE-STORE-ADOPTION-NOT-OFFERED)
+until v3's `adopted_by` column lands in the first slice that offers adoption (Ruling 156).
 
 ### `void UpsertNode(string nodeId, string nodeKind, string displayLabel)`
 
@@ -767,6 +771,7 @@ accident (spike S6).
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
@@ -1060,7 +1065,8 @@ already exists (including the reserved `journey-terminal-drafts`) is refused wit
 
 **Remarks.** The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
 explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
-a new version row with `Legacy = false` and an owner.
+a new version row with `Legacy = false` and an owner. Both are refused (AIDE-STORE-ADOPTION-NOT-OFFERED)
+until v3's `adopted_by` column lands in the first slice that offers adoption (Ruling 156).
 
 ### `void UpsertNode(string nodeId, string nodeKind, string displayLabel)`
 
@@ -1099,6 +1105,7 @@ Stable error codes this layer can raise. Never a bare exception message.
 | `string BodyHashRequired = "AIDE-STORE-BODY-HASH-REQUIRED"` | **(gap)** |
 | `string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD"` | **(gap)** |
 | `string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY"` | **(gap)** |
+| `string AdoptionNotOffered = "AIDE-STORE-ADOPTION-NOT-OFFERED"` | **(gap)** |
 | `string JourneyIdCollision = "AIDE-STORE-JOURNEY-ID-COLLISION"` | **(gap)** |
 
 ## `WorkspaceStoreException`

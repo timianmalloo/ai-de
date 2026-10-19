@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 19 types, 49 members, 88% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 20 types, 52 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**19 public types · 49 public members · 88% documented.**
+**20 public types · 52 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -108,6 +108,7 @@ every launch.
 | `Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<AttemptStart> SendNowAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<AttemptReceipt> StopAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<AttemptReceipt> WithdrawAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<AttemptMeasures> MeasureAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
 | `void Dispose()` | The host's own teardown — what a process death does, so a restarted host can take the lock. Live runs are cancelled by token, never by `session/cancel`, so a teardown-caused exit is never `Interrupted`. |
@@ -120,6 +121,16 @@ attempts.
 
 - **`hostLockFile`** — `<workspace>/.aide/attempt-host.lock`; the OS releases it when the process dies.
 - **`options`** — Null: the workspace is the lock file's `<workspace>` (the design fixes the lock's place) and every default holds.
+
+## `AttemptHostCodes`
+
+*class* — `AttemptHost.cs`
+
+The stable codes the attempt host itself refuses with.
+
+| Member | Summary |
+|---|---|
+| `string WithdrawRefused = "AIDE-ATTEMPT-WITHDRAW-REFUSED"` | A withdraw of an attempt that is not a held successor, or whose launch was already claimed. |
 
 ## `CompileRequest`
 
@@ -283,6 +294,7 @@ result and a transcript are also better evidence than scrollback: they can be re
 | `string OutArgument = "--out"` | Where to write the result. Defaults to the run file's name with `.result.json`. |
 | `bool IsRequested(IReadOnlyList<string> args)` | Whether these process arguments ask for a headless governed run. |
 | `Task<int> RunAsync(IReadOnlyList<string> args, CancellationToken cancellationToken = default)` | Runs what the file describes and writes the result beside it. Returns the process exit code. |
+| `Task<AttemptHost> OpenAttemptHostAsync(AiDe.Core.Ipc.IAttemptLedger ledger, string workspaceRoot, CancellationToken cancellationToken)` | Opens the workspace's one attempt host for the product shell (ADR-0041): the host lock at the place the design fixes, `<workspace>/.aide/attempt-host.lock`, over the ledger the shell is handed. |
 
 ### `Task<int> RunAsync(IReadOnlyList<string> args, CancellationToken cancellationToken = default)`
 
@@ -292,6 +304,16 @@ Runs what the file describes and writes the result beside it. Returns the proces
 comparable cell, **1** the run completed but its exit evidence does not hold, **3** the
 run did not complete, **64** the arguments were wrong. A failure that exits 0 is how a
 weak run passes.
+
+### `Task<AttemptHost> OpenAttemptHostAsync(AiDe.Core.Ipc.IAttemptLedger ledger, string workspaceRoot, CancellationToken cancellationToken)`
+
+Opens the workspace's one attempt host for the product shell (ADR-0041): the host lock at the place the design
+fixes, `<workspace>/.aide/attempt-host.lock`, over the ledger the shell is handed.
+
+**Throws `AgentPlaneException`.** `AIDE-ATTEMPT-HOST-NOT-SOLE`: another host holds the workspace's lock.
+
+**Remarks.** A door, like `RunAsync`, not a second composition root: the host it opens launches every attempt
+through `RunAsync`, so `CompositionRootLedger` still counts one root per run.
 
 ## `GovernedRunHost`
 

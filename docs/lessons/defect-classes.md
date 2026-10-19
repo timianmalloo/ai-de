@@ -8359,6 +8359,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `.agents/briefs/workbench-loops/`). It runs docs-graph validate (problems fail; index drift is allowed), the
   no-conflict-markers gate, the repo's ruling-citations gate and the account-identity gate. A commit that touches
   `tools/`, `src/` or `tests/` gets the full `gate_ratchet.py` against its parent instead.
+- **Sixth instance: the control checked the wrong tree (the Leader, 2026-10-19).** `leader_precommit.py` ran its gates on
+  the primary's WORKING TREE. Leader commit `4f62453b` cited Ruling 160 in `residuals.md` while the ruling's heading
+  sat uncommitted in the Owner's register in that working tree. The check passed, and main's strict repo
+  ruling-citations gate was red from `4f62453b` until the T8 join `fa71cd0a` swept the heading in. The T8 ratchet's
+  `parent=1 head=0` exposed it. **Control:** `leader_precommit.py` now runs the gates in a temporary detached worktree at
+  the commit being pushed. Shown refusing `4f62453b` (exit 1) and passing `79fc0372`. The derived rule: a pre-push check
+  reads the commit, never the working tree.
+  **Second control (Owner, 2026-10-19; the root cause is shared with the Owner's seat).** Every ruling lands
+  UNCOMMITTED in the primary's working tree, where it waits for the Leader's next commit. After every `coord decide
+  rule` is read back, the Leader commits the register ON ITS OWN, together with the ruling's decision mail, as the
+  next commit. This happens before any other commit that could cite it, the way Ruling 158 went in alone
+  (`dafcbee8`). If a join holds the tree, the ruling commits first thing after the join.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.

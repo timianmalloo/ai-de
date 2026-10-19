@@ -2568,7 +2568,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 19 types, 49 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 20 types, 52 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2581,7 +2581,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3d22fbfa85e1b7dd5dc742764c5e1e681b19f1bbeb488e1d05e36aa5c11c94d2"
+      "sourceSha256": "416b724cdeddd12567e39a201e193fa2f227ba582fdac00593f8f60bbe1b9f5f"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -2643,7 +2643,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 126 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 132 members, 95% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2656,7 +2656,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0c620d39a564871d33a989a90df173fb8a05f2f93fd3a010b65dfddb0270eac7"
+      "sourceSha256": "bc60b1de92b9018e3648d76f93ba5f33de39f9b8d4d216073b2ae766f4498877"
+    },
+    {
+      "id": "api-aide-app-workbench-records",
+      "path": "docs/api/AiDe.App.Workbench.Records.md",
+      "title": "API: AiDe.App.Workbench.Records",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 48 members, 85% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fb73f995c57bc1f301c62d2a62ccafcfd42c63e5a1d57289247e60baa945173"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2668,7 +2693,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 205 members, 74% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 210 members, 74% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2681,7 +2706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0dd1d46d8ab405e04ece06eb416b3ef5edd3d4653568213bdf89a935d19271a8"
+      "sourceSha256": "9c22861cd87e2849e39313e2c0db2843ac4feb34bc7a30e95bd94e7f05f7f93a"
     },
     {
       "id": "api-aide-core",
@@ -2743,7 +2768,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Dispatch: 19 types, 31 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Dispatch: 19 types, 34 members, 77% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2756,7 +2781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fbaeb079ee3dd8e26e29717c61fc2ede33af4d29375d438648969f65c2621fa"
+      "sourceSha256": "7d3ee177f0a8e6560cf941561cd8875f8ca97d089fd22ea88f11f35b3a0035c3"
     },
     {
       "id": "api-aide-core-extraction",
@@ -2843,7 +2868,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 63 types, 142 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 64 types, 144 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2856,7 +2881,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6b4c16990f563577ebdf40b92f1143e7897eef341cdad64f479560fb742ef2c8"
+      "sourceSha256": "2926523215c75d71738ca16a1702a54572da4274144a1842943e65e2732e0d18"
     },
     {
       "id": "api-aide-core-mcp",
@@ -3043,7 +3068,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 15 types, 102 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 15 types, 104 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3056,7 +3081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1b1aab8591d18de99a7a5b72daaf237495b99c307c5b502bffb3c5283c82c776"
+      "sourceSha256": "578c9e79ef805c3e7e6791dbbfe813adaa84df967b0fbb46e4ea06ba6c8e5fbe"
     },
     {
       "id": "api-aide-core-store-records",
@@ -10706,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bbf7da18bf6c18e853c5bf35636afb0dca612be0d6cd07d442e91de884944fad"
+      "sourceSha256": "9253812c4bc70dec1cc32e0b7190ce4bc11063deb894e389398f2b4f56d0988c"
     },
     {
       "id": "design-session-profiler",
@@ -12317,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2e343ffe18e14f3f1db4bf3c2fcee9a013969ffcff9ebec68ef0a3c9e3ca6204"
+      "sourceSha256": "f7b5a2271e0c97597025848f8bfd6142c87e820c5a277ece40bba31e97461012"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22430,7 +22455,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "88881b346234802289bf45758b90b31e23d61a18a52a9a046b8c6f926ea2e3d7"
+      "sourceSha256": "bc52b22f8eeed16c9b7b93101b26b6f4ce30d89dc5bdf668b7a638f10525089f"
     },
     {
       "id": "proof-wl-identity-gate",
@@ -22562,6 +22587,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "097207ce34585c8a1ed291136f0e6a7e53623e31f284d764912cdc9ba77dddea"
     },
     {
+      "id": "proof-workbench-loops-wl-1a-binding-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/binding/handoff.md",
+      "title": "Hand-off — WL-1a T8 nodes 4 and 5: withdraw a host-held turn, no dispatch outside the host, Send disabled",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T8 (wl-t8-bind) node 4: attempt.withdraw (Rejected/never_dispatched plus the completed command receipt in one store transaction) and Cancel on a host-held turn; Ruling 159 — a turn waits for the host's open, a window that cannot open it refuses and never runs directly, the epoch is read at dispatch. Node 5: the composer's Send is disabled with the host's refusal (UIA help text, Retry wired to RetryHostAsync); the no-client refusal, the pipe test, the execution-state UIA names and the withdrawn copy are handed to node 6. Node 6: the no-client refusal, the internal UnhostedForTests seam and its src/ census, withdraw over the pipe, and the withdrawn copy; check 3 to node 7.",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "t8",
+        "evidence",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0043-notebook-editor-codemirror-canonical-source",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-1a",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9b33f21d2f38ce5ee11add8263bc0aa24e085a0f32c9b3c5482cdbeaad0e12a6"
+    },
+    {
       "id": "proof-workbench-loops-wl-1a-host-handoff",
       "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md",
       "title": "WL-1a host (T5) — hand-off after node 2: (a)–(g) green, real-lane Stop Interrupted",
@@ -22594,7 +22654,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "91f674f19ae9360fb497515e3a7ff69fa8646977ecd5006cad2f4bbe9f24dddd"
+      "sourceSha256": "a3885e9ce99ffa97a7e45ec06477dfeee5d92ccf3928c1d7a8f1499dea6dd069"
     },
     {
       "id": "proof-workbench-loops-wl-1a-real-lane-stop",
@@ -24658,5 +24718,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "992e5fb41d593af2ee5dcb07e56ff9df7761445af4fd5f037e9f78f5b501e9c8"
+  "graphSha256": "e1e07faee445bf3c59067df1c4102478dd87ff91a8fd73811ceefd027dea8612"
 };
