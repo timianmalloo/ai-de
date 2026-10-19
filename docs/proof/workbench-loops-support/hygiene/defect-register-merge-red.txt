@@ -1,0 +1,6 @@
+test-defect-register-merge: FAIL
+  - merge exited 1: Auto-merging docs/lessons/defect-classes.md
+CONFLICT (content): Merge conflict in docs/lessons/defect-classes.md
+Automatic merge failed; fix conflicts and then commit the result.
+  - conflict markers in the merged register
+exit 1
