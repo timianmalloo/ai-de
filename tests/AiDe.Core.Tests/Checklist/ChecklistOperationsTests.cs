@@ -574,4 +574,43 @@ public sealed class ChecklistOperationsTests : IDisposable
             try { await running; } catch (OperationCanceledException) { }
         }
     }
+
+    // ---- C: Ruling 176 is enforced where the row is written -------------------------------------
+
+    [Theory]
+    [InlineData("checklist-b")]
+    [InlineData("journey-inv")]
+    public void C_TheWriterRefusesAChecklistThatIsNotAWorkJourneysId_AndWritesNothing(string checklistId)
+    {
+        using (var seed = _workspace.Store.BeginWrite())
+        {
+            seed.AppendJourney(new JourneyRow("journey-inv", "investigation", "Why is it slow"));
+            seed.Commit();
+        }
+
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            var ex = Assert.Throws<WorkspaceStoreException>(() =>
+                writer.AppendObligation(new ObligationRow("obl-x", checklistId, 1, "Tests pass", true)));
+            Assert.Equal(StoreErrorCodes.WorkSecondChecklist, ex.ErrorCode);
+        }
+
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Empty(reader.ReadObligationHistory(checklistId));
+    }
+
+    [Fact]
+    public void C_TheWriterTakesAWorkJourneysId_AsItsOneChecklist()
+    {
+        var journey = OpenWork();
+
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            writer.AppendObligation(new ObligationRow("obl-x", journey, 1, "Tests pass", true));
+            writer.Commit();
+        }
+
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Single(reader.ReadObligations(journey, 1));
+    }
 }
