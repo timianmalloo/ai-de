@@ -19,6 +19,7 @@ public static class StoreErrorCodes
     public const string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD";
     public const string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY";
     public const string AdoptionNotOffered = "AIDE-STORE-ADOPTION-NOT-OFFERED";
+    public const string JourneyIdCollision = "AIDE-STORE-JOURNEY-ID-COLLISION";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>

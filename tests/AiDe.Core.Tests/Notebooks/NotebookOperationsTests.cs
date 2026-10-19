@@ -4,6 +4,8 @@ using System.Text;
 using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
 using AiDe.Core.Store;
+using AiDe.Core.Store.Records;
+using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Tests.Notebooks;
 
@@ -58,6 +60,56 @@ public sealed class NotebookOperationsTests : IDisposable
         Assert.Equal(seqAfterFirst, after.ReadNotebook("nb-1")!.IngressSeq);
         Assert.Equal(journeysAfterFirst, after.ListJourneys().Count);
         Assert.Equal("Fix the login bug", after.ReadJourney(first.JourneyId!)!.Title);
+    }
+
+    [Fact]
+    public void Open_WhenTheDerivedJourneyAlreadyExists_IsRefusedAndWritesNothing()
+    {
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            writer.AppendJourney(new JourneyRow("journey-nb-9", "work", "Someone else's journey"));
+            writer.Commit();
+        }
+
+        var refusal = Assert.Throws<WorkspaceStoreException>(
+            () => Service.Open(new NotebookOpenRequest("nb-9", "Mine")));
+
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Equal(StoreErrorCodes.JourneyIdCollision, refusal.ErrorCode);
+        Assert.Null(reader.ReadNotebook("nb-9"));
+        Assert.Equal(1, reader.ReadJourney("journey-nb-9")!.VersionNo);
+        Assert.Equal("Someone else's journey", reader.ReadJourney("journey-nb-9")!.Title);
+    }
+
+    [Fact]
+    public void Open_OfTheReservedTerminalDraftsId_IsRefused()
+    {
+        var refusal = Assert.Throws<WorkspaceStoreException>(
+            () => Service.Open(new NotebookOpenRequest("terminal-drafts", "Mine")));
+
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Equal(StoreErrorCodes.ReservedJourney, refusal.ErrorCode);
+        Assert.Null(reader.ReadNotebook("terminal-drafts"));
+    }
+
+    [Fact]
+    public void Open_WhenTheNotebookInsertFails_LeavesNoJourneyRow()
+    {
+        var connectionString = new SqliteConnectionStringBuilder { DataSource = _workspace.DatabasePath }.ToString();
+        using (var seam = new SqliteConnection(connectionString))
+        {
+            seam.Open();
+            using var command = seam.CreateCommand();
+            command.CommandText = "CREATE TRIGGER test_fail_notebook BEFORE INSERT ON notebook_dim "
+                + "BEGIN SELECT RAISE(ABORT, 'test-forced-notebook-failure'); END;";
+            command.ExecuteNonQuery();
+        }
+
+        Assert.ThrowsAny<Exception>(() => Service.Open(new NotebookOpenRequest("nb-f", "Mine")));
+
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Null(reader.ReadJourney("journey-nb-f"));
+        Assert.Null(reader.ReadNotebook("nb-f"));
     }
 
     // ---- notebook.revision.save
