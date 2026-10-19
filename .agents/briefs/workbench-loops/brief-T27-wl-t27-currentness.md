@@ -1,43 +1,40 @@
-# Brief — T27 `wl1b-currentness` (slice WL-1b, Ruling 178) · Claude Code · Sonnet · node 1
+# Brief — T27 `wl1b-currentness` (slice WL-1b, Rulings 178 and 180 (5)) · Claude Code · Sonnet · node 2
 
-**Goal (Ruling 178, read it in `docs/notes/addendum-c-council-rulings.md`):** currentness gets **one** definition.
-`NotebookModel.CurrentnessOf` (`src/AiDe.App/Workbench/Records/NotebookModel.cs:210`; its one caller is
-`SessionDocumentSurface.cs:1560`) becomes a thin call to `CurrentnessFold` (`src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs`)
-over the same inputs. The stale sentence keeps **one** const (today it is in both `NotebookModel.cs:67` and
-`CurrentnessFold.cs:27`). The old body is deleted (HYG-A).
-**Done when, each red then green:**
-- **(A)** a test asserts that the notebook's stale notice and the checklist's evidence state (T23's `AcceptanceFold`, on
-  this branch) come from the **same fold**. For one scenario that turns a result stale, both read Stale, through
-  `CurrentnessFold`. A mutation of the fold flips both.
-- **(B)** `CurrentnessOf`'s existing behaviour holds through the delegation, including the empty-draft clause and its
-  `assume:` (`NotebookModel.cs:202-208`). Keep or move that clause **explicitly**. A behaviour change is a seam request,
-  never silent.
-- **(C)** one stale-sentence const, and no second copy anywhere in `src/` (a test or a grep-based guard).
-**The bound (Ruling 178):** the two definitions take different inputs today. The App compares the draft's body sha with
-the ran revision's; the fold takes `(AttemptRow, currentRevisionNo, liveProjectionSha)`. If the fold needs an input that
-`NotebookModel` cannot supply without a **new store read or IPC**, **stop** and send a seam request. It names what is
-missing, with file:line. Ruling 178's option B (an agreement test) is then the interim. Do not add the read.
-Extending the fold's input (a pure Core change, such as an overload that takes the body shas) is allowed. State it in
-handoff.md.
+**Goal:** currentness has **one** definition, and each of its inputs means **one** thing.
+**Node 1 is done** (4a5fc9cb): `CurrentnessOf` delegates to `CurrentnessFold`, the stale sentence is one literal, and a
+mutation flips both surfaces. Core 3052/0; App 1150/1 (SolutionTreeChord, foreground).
+
+**The Leader's read-back of 4a5fc9cb (16:04Z):** `NotebookModel.CurrentnessOf` builds a placeholder
+`new AttemptRow(string.Empty, string.Empty, 0, …, ran.BodySha)`, and its last slot is the row's **projection sha**. That
+slot now carries a **body sha**. A record built from placeholder ids, and one field holding two meanings, is the defect
+signature that rule 14 and DM7 forbid. It also collides with **Ruling 180 (5)**: currentness reads `projection_sha` from
+**stored** rows (T29's C2). Ruling 178 allowed the honest form: "extending the fold's input (a pure Core change, e.g. an
+overload taking the body shas) is allowed".
+
+**This node (n2), each red then green:**
+- **(A) No placeholder record and no reused field.** Give `CurrentnessFold` an explicit, additive input that names what it
+  compares. For example: `Evaluate(int ranRevisionNo, int? currentRevisionNo, string ranSha, string? liveSha, ShaKind kind)`,
+  or one small value type. The `AttemptRow` overload becomes a thin call into it, passing `ProjectionSha` as a projection
+  sha. `NotebookModel` calls the new form with body shas, labelled as body shas. Red: a test (reflection or source) that
+  fails while any caller constructs an `AttemptRow` outside the store's readers. Keep node 1's A, B and C green.
+- **(B) Ruling 180 (5) / C2.** The attempt path of the currentness answer reads `projection_sha` from **stored** rows,
+  never from a fresh compile or prepare call. A re-rolled suggestion therefore never marks a result stale without a user
+  edit. Find every caller that passes a live projection sha into the fold, with file:line. Red: a test where a re-prepare
+  yields a different projection sha with the draft unchanged, and the result must stay Current. If the answer needs a
+  store read the caller does not have, **stop and send a seam request** (Ruling 178's bound).
+- **(C) SolutionTreeChord on the base.** Run
+  `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` alone on a clean detached tree of `27e761b7`,
+  your branch's base. Use a short path such as `C:/Projects/rt-t27`, and remove it afterwards. Record whether it refuses
+  there too, so "pre-existing" is observed, not Inferred. This is a measurement, not a red/green check.
+
 **Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 12 min by mail.
 
-## Base
-Your branch is off `wl1b-folds` (T23 n1 head `a81b0050`), so `AcceptanceFold` is present.
-
 ## Owned authored paths
-`src/AiDe.App/Workbench/Records/NotebookModel.cs` (`CurrentnessOf` and `StaleCopy` only);
-`src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs` (an additive overload or input only; its existing callers'
-behaviour is unchanged); new `tests/AiDe.App.Tests/Workbench/Records/OneCurrentnessDefinitionTests.cs`; new or existing
-`CurrentnessFold` tests under `tests/AiDe.Core.Tests/Workbench/Folds/`; `docs/proof/workbench-loops-wl-1b/currentness/**`. The caller at
-`SessionDocumentSurface.cs:1560` is **read only**: if its call must change, send a seam request.
-
-## UI tests
-This track's App tests are model-level and must open **no shown window**. The UI-test slots are T21 and T28 (Owner's
-fan-out note). Run the App suite only after checking the board (rules 19 and 20). A "desktop hold occupied" result is
-re-run, never counted as a pass or a fail. Log each one in `docs/proof/workbench-loops-wl-1b/currentness/desktop-hold.txt`.
+As in node 1. `CurrentnessFold.cs` may now gain the additive input in (A), but its existing overload's behaviour is
+unchanged. For (B), any caller outside these paths is a seam request.
 
 ## Not in scope
-The service (T24), the checklist kind (T26), and any change to the stale notice's copy or placement.
+The prefill track (T30, Ruling 180 (1)–(4) and (6)), the service (T24), the checklist kind (T26).
 
 ## Standing rules for this track (CTX-F — every line binds)
 
