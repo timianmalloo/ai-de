@@ -59,6 +59,43 @@ public sealed class AttemptWithdrawTests : IDisposable
         Assert.True(retried.Receipt.IsWithdrawn);
     }
 
+    /// <summary>The withdraw over the real daemon pipe (the client the shell holds), as T14's notebook ops are proved.</summary>
+    [Fact]
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    public async Task AWithdraw_RoundTripsOverThePipe_AndTheStoreReadsWithdrawn()
+    {
+        var row = Held();
+        var pipe = "aide-wd-" + Guid.NewGuid().ToString("N");
+        var endpoint = new DaemonEndpoint(pipe, new CapabilityRegistry(), _ => _workspace.Store.CoreEpoch);
+        DaemonOperations.Register(endpoint, () => _workspace.Store.CoreEpoch);
+        WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(_workspace.Store));
+        var server = new IpcServer(pipe, endpoint, new IpcServerOptions(StartupGrace: TimeSpan.FromSeconds(45)));
+        using var life = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        var running = server.RunAsync(life.Token);
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(pipe, TimeSpan.FromSeconds(20), CancellationToken.None);
+
+            var withdrawn = await client.WithdrawAttemptAsync(row.DispatchKey, CancellationToken.None);
+            var retried = await client.WithdrawAttemptAsync(row.DispatchKey, CancellationToken.None);
+            var readBack = await client.ReadAttemptAsync(row.DispatchKey, CancellationToken.None);
+
+            Assert.True(withdrawn.Committed);
+            Assert.Equal((DispatchState.Rejected, "never_dispatched"), (withdrawn.Receipt.Terminal?.State, withdrawn.Receipt.Terminal?.Cause));
+            Assert.True(withdrawn.Receipt.IsWithdrawn);
+            Assert.False(retried.Committed);
+            Assert.True(readBack!.IsWithdrawn);
+            Assert.Null(readBack.Dispatched);
+            Assert.True(Gate.ReadAttempt(row.DispatchKey)!.IsWithdrawn);
+        }
+        finally
+        {
+            await life.CancelAsync();
+            try { await running; } catch (OperationCanceledException) { }
+        }
+    }
+
     [Fact]
     public void TheSameTerminal_WithNoWithdrawCommand_IsNotWithdrawn()
     {
