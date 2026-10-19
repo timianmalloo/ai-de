@@ -153,4 +153,172 @@ public sealed class ChecklistOperationsTests : IDisposable
 
         Assert.Contains("work.accept", seen);
     }
+
+    // ---- B2: evidence link guards ----------------------------------------------------------------
+
+    private WorkspaceStoreException LinkRefusal(string journeyId, string obligationId, string key, string? liveSha = LiveSha) =>
+        Assert.Throws<WorkspaceStoreException>(() =>
+            Service.LinkEvidence(new EvidenceLinkRequest(journeyId, "nb-1", obligationId, key, liveSha), Actor));
+
+    private IReadOnlyList<EvidenceLinkRow> Links(string obligationId)
+    {
+        using var reader = _workspace.Store.BeginRead();
+        return reader.ReadEvidenceLinksForSubject("obligation", obligationId);
+    }
+
+    [Fact]
+    public void B2_AnAttemptOfAnotherJourneysNotebook_IsRefusedNotThisJourney()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        OpenWork("nb-2");
+        Attempt("dk-other", "nb-2");
+
+        var ex = LinkRefusal(journey, obligation, "dk-other");
+
+        Assert.Equal(StoreErrorCodes.WorkEvidenceNotEligible, ex.ErrorCode);
+        Assert.StartsWith("not-this-journey", ex.Message);
+        Assert.Empty(Links(obligation));
+    }
+
+    [Theory]
+    [InlineData(DispatchState.Failed)]
+    [InlineData(DispatchState.Interrupted)]
+    [InlineData(DispatchState.Rejected)]
+    public void B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(DispatchState terminal)
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-bad", terminal: terminal);
+
+        var ex = LinkRefusal(journey, obligation, "dk-bad");
+
+        Assert.Equal(StoreErrorCodes.WorkEvidenceNotEligible, ex.ErrorCode);
+        Assert.StartsWith("not-complete", ex.Message);
+        Assert.Empty(Links(obligation));
+    }
+
+    [Fact]
+    public void B2_AStillRunningAttempt_IsRefusedNotComplete()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            writer.AppendAttempt(new AttemptRow("dk-run", "w", _workspace.Store.CoreEpoch, "nb-1", 1, "s", 1, LiveSha));
+            writer.AppendOutcome(new OutcomeRow("dk-run", DispatchState.Dispatched));
+            writer.Commit();
+        }
+
+        var ex = LinkRefusal(journey, obligation, "dk-run");
+
+        Assert.StartsWith("not-complete", ex.Message);
+    }
+
+    [Fact]
+    public void B2_AStaleAttempt_IsRefusedNotCurrent()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-old");
+        new NotebookService(_workspace.Store).SaveRevision(new NotebookSaveRequest("nb-1", "intent v2"));
+
+        var ex = LinkRefusal(journey, obligation, "dk-old");
+
+        Assert.Equal(StoreErrorCodes.WorkEvidenceNotEligible, ex.ErrorCode);
+        Assert.StartsWith("not-current", ex.Message);
+        Assert.Empty(Links(obligation));
+    }
+
+    [Fact]
+    public void B2_WithNoLiveProjection_CurrentnessIsNotRecorded_AndTheLinkIsRefusedNotCurrent()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-1");
+
+        var ex = LinkRefusal(journey, obligation, "dk-1", liveSha: null);
+
+        Assert.StartsWith("not-current", ex.Message);
+    }
+
+    [Fact]
+    public void B2_AGoodLink_StoresTheAttemptArtifactRef_AndTheAttemptFoldReadsHasEvidence()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-1");
+
+        var written = Service.LinkEvidence(new EvidenceLinkRequest(journey, "nb-1", obligation, "dk-1", LiveSha), Actor).Link;
+
+        var stored = Assert.Single(Links(obligation));
+        Assert.Equal(AttemptStateFold.AttemptArtifactRef("dk-1"), stored.ArtifactRef);
+        Assert.Equal(written.LinkId, stored.LinkId);
+        Assert.Equal((AcceptanceFold.ObservedStatus, Actor, "intent:nb-1@1", 1),
+            (stored.VerificationStatus, stored.Producer, stored.Baseline, stored.SubjectRevision));
+        using var reader = _workspace.Store.BeginRead();
+        var state = AttemptStateFold.Evaluate(new AttemptStateInput(
+            "dk-1", [], reader.ReadOutcomes("dk-1"), [], reader.ReadEvidenceLinksForSubject("obligation", obligation)));
+        Assert.True(state.HasEvidence);
+    }
+
+    [Fact]
+    public void B2_LinkingTheSameAttemptTwice_ReturnsTheExistingLink_AndWritesNothing()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-1");
+        var first = Service.LinkEvidence(new EvidenceLinkRequest(journey, "nb-1", obligation, "dk-1", LiveSha), Actor);
+
+        var second = Service.LinkEvidence(new EvidenceLinkRequest(journey, "nb-1", obligation, "dk-1", LiveSha), Actor);
+
+        Assert.Equal(first, second);
+        Assert.Single(Links(obligation));
+    }
+
+    [Fact]
+    public void B2_AnObligationOutsideTheChecklist_IsRefusedUnknown_OnEveryOperationThatNamesOne()
+    {
+        var journey = OpenWork();
+        MandatoryObligation(journey);
+        Attempt("dk-1");
+
+        Assert.Equal(StoreErrorCodes.WorkObligationUnknown, LinkRefusal(journey, "obl-nope", "dk-1").ErrorCode);
+        Assert.Equal(StoreErrorCodes.WorkObligationUnknown, Assert.Throws<WorkspaceStoreException>(() =>
+            Service.RecordDisposition(new DispositionRecordRequest(journey, "nb-1", "obl-nope", "acknowledged"), Actor)).ErrorCode);
+        Assert.Equal(StoreErrorCodes.WorkObligationUnknown, Assert.Throws<WorkspaceStoreException>(() =>
+            Service.SetObligations(new ObligationsSetRequest(journey, "nb-1", [new ObligationInput("obl-nope", "x", true)]))).ErrorCode);
+    }
+
+    [Fact]
+    public void B2_ADispositionKindOutsideTheSubjectsList_IsRefusedAsAVocabularyViolation()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+
+        var ex = Assert.Throws<WorkspaceStoreException>(() =>
+            Service.RecordDisposition(new DispositionRecordRequest(journey, "nb-1", obligation, "accepted"), Actor));
+
+        Assert.Equal(StoreErrorCodes.VocabularyViolation, ex.ErrorCode);
+    }
+
+    [Fact]
+    public void B2_TextAndReasonOverTwoThousandCharacters_AreRefused_AndExactlyTwoThousandIsKept()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        var atCap = new string('a', 2000);
+        var overCap = new string('a', 2001);
+
+        var text = Assert.Throws<WorkspaceStoreException>(() =>
+            Service.SetObligations(new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, overCap, true)])));
+        var reason = Assert.Throws<WorkspaceStoreException>(() =>
+            Service.RecordDisposition(new DispositionRecordRequest(journey, "nb-1", obligation, "deferred", overCap), Actor));
+
+        Assert.Equal(StoreErrorCodes.WorkFieldTooLong, text.ErrorCode);
+        Assert.Equal(StoreErrorCodes.WorkFieldTooLong, reason.ErrorCode);
+        Assert.Equal(atCap, Service.RecordDisposition(
+            new DispositionRecordRequest(journey, "nb-1", obligation, "deferred", atCap), Actor).Disposition.Reason);
+        Assert.Equal(2, Service.SetObligations(new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, atCap, true)])).Revision);
+    }
 }

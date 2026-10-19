@@ -1,0 +1,134 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-service\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-service\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-service\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStillRunningAttempt_IsRefusedNotComplete [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Interrupted) [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Failed) [FAIL]
+[xUnit.net 00:00:00.47]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Rejected) [FAIL]
+[xUnit.net 00:00:00.50]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStaleAttempt_IsRefusedNotCurrent [FAIL]
+[xUnit.net 00:00:00.59]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_ADispositionKindOutsideTheSubjectsList_IsRefusedAsAVocabularyViolation [FAIL]
+[xUnit.net 00:00:00.63]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnObligationOutsideTheChecklist_IsRefusedUnknown_OnEveryOperationThatNamesOne [FAIL]
+[xUnit.net 00:00:00.66]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_TextAndReasonOverTwoThousandCharacters_AreRefused_AndExactlyTwoThousandIsKept [FAIL]
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStillRunningAttempt_IsRefusedNotComplete [69 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStillRunningAttempt_IsRefusedNotComplete() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 213
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Interrupted) [33 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(DispatchState terminal) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 194
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Failed) [32 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(DispatchState terminal) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 194
+   at InvokeStub_ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(terminal: Rejected) [32 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(DispatchState terminal) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 194
+   at InvokeStub_ChecklistOperationsTests.B2_AnAttemptThatDidNotEndResponseComplete_IsRefusedNotComplete(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStaleAttempt_IsRefusedNotCurrent [31 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AStaleAttempt_IsRefusedNotCurrent() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 226
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_ADispositionKindOutsideTheSubjectsList_IsRefusedAsAVocabularyViolation [30 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(Microsoft.Data.Sqlite.SqliteException)
+---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: (subject_kind = 'obligation' AND kind IN ('acknowledged', 'deferred', 'needs-decision')) OR (subject_kind = 'assessment' AND kind IN ('fixed', 'false-positive', 'intentional', 'deferred', 'needs-decision')) OR (subject_kind = 'work' AND kind IN ('accepted')) OR (subject_kind = 'investigation' AND kind IN ('answered', 'bounded-partial', 'unresolved')) OR (subject_kind = 'intent' AND kind IN ('intent-accepted') AND notebook_id IS NOT NULL AND revision_no IS NOT NULL)'.
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_ADispositionKindOutsideTheSubjectsList_IsRefusedAsAVocabularyViolation() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 299
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Store\WorkspaceStore.cs:line 405
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Store\StoreWriter.cs:line 292
+   at AiDe.Core.Store.StoreWriter.AppendDisposition(DispositionRow row) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 155
+   at AiDe.Core.Ipc.ChecklistService.RecordDisposition(DispositionRecordRequest request, String actor) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 106
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass28_0.<B2_ADispositionKindOutsideTheSubjectsList_IsRefusedAsAVocabularyViolation>b__0() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 300
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnObligationOutsideTheChecklist_IsRefusedUnknown_OnEveryOperationThatNamesOne [35 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnObligationOutsideTheChecklist_IsRefusedUnknown_OnEveryOperationThatNamesOne() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 286
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_TextAndReasonOverTwoThousandCharacters_AreRefused_AndExactlyTwoThousandIsKept [28 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_TextAndReasonOverTwoThousandCharacters_AreRefused_AndExactlyTwoThousandIsKept() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 313
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.70]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_LinkingTheSameAttemptTwice_ReturnsTheExistingLink_AndWritesNothing [FAIL]
+[xUnit.net 00:00:00.73]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_WithNoLiveProjection_CurrentnessIsNotRecorded_AndTheLinkIsRefusedNotCurrent [FAIL]
+[xUnit.net 00:00:00.78]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptOfAnotherJourneysNotebook_IsRefusedNotThisJourney [FAIL]
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_LinkingTheSameAttemptTwice_ReturnsTheExistingLink_AndWritesNothing [42 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: EvidenceLinkResult { Link = EvidenceLinkRow { LinkId = lnk-8bf53fcdcd97430f8ba44bde2ec24db7, SubjectKind = obligation, SubjectId = obl-b9e8193bc2ba40e799cebe2655a7b5bc, SubjectRevision = 1, ArtifactRef = attempt://dk-1, Producer = shell:4242, Baseline = intent:nb-1@1, VerificationStatus = observed, Limitations = , IngressSeq = 0, RecordedAt =  } }
+Actual:   EvidenceLinkResult { Link = EvidenceLinkRow { LinkId = lnk-d14259834d1c42bfa07823d325bbc992, SubjectKind = obligation, SubjectId = obl-b9e8193bc2ba40e799cebe2655a7b5bc, SubjectRevision = 1, ArtifactRef = attempt://dk-1, Producer = shell:4242, Baseline = intent:nb-1@1, VerificationStatus = observed, Limitations = , IngressSeq = 0, RecordedAt =  } }
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_LinkingTheSameAttemptTwice_ReturnsTheExistingLink_AndWritesNothing() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 275
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_WithNoLiveProjection_CurrentnessIsNotRecorded_AndTheLinkIsRefusedNotCurrent [32 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_WithNoLiveProjection_CurrentnessIsNotRecorded_AndTheLinkIsRefusedNotCurrent() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 240
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptOfAnotherJourneysNotebook_IsRefusedNotThisJourney [45 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.LinkRefusal(String journeyId, String obligationId, String key, String liveSha) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 160
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B2_AnAttemptOfAnotherJourneysNotebook_IsRefusedNotThisJourney() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 177
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    11, Passed:     1, Skipped:     0, Total:    12, Duration: 480 ms - AiDe.Core.Tests.dll (net10.0)
