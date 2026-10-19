@@ -8,7 +8,49 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 3: Ruling 168's measure retargeted (startup, wide and the cap green; the minimum row red on a seam), the Console focus return fixed, the copy test re-scoped. The execution kind waits on seam req-01M59XNJH52JRRZ1DAJYK40X9D."
+summary: "Node 4 (kicked at 12 min): the execution kind's row is red then green (Factory, Many, Bottom, TurnAction(OpenLog), UIA caption). The Open log opener, checks B and C and the node 4 suite run are not started."
+---
+
+# T11 node 4 — hand-off (rule 16 kick, about 12 minutes)
+
+## Done (check A, row half)
+
+- **Red** `610f4b9b`, `A-execution-kind-red.txt`: 3 assertion failures. These were no `execution` row, no `execution` in the
+  `KindAllowListsTests` column, and an empty UIA name.
+- **Green** `c500f9d8`, `A-execution-kind-green.txt`: 65 of 65 across `TheExecutionKindTests`, `KindAllowListsTests`,
+  `SurfaceContentTests`, `PerspectiveMenu*` and `MainMenuTests`.
+  - **The row:** `execution`, title "Execution", Factory only, `Instances.Many`, `Zone: Bottom`.
+  - **New entry variant:** `SurfaceEntry.TurnAction(TurnActionKind.OpenLog)`, because the row record only had `Derived`
+    (a View-menu entry) and `Verb` (a catalog command), and neither fits a turn-action opener (rule 14: the code has
+    two variants).
+  - **New surface:** `src/AiDe.App/Workbench/Execution/ExecutionSurface.cs`, which carries `Kind`,
+    `SurfaceIdFor(dispatchKey)` = `execution:<key>` and `CaptionFor(key)` = "Execution — <key>". `SurfaceContentFactory.Create`
+    names it by its title, the same as every surface.
+  - **Re-scoped in the same change:** `PerspectiveMenuTests.TheAllowListsEqualTheSpecsTable` (20 → 21 rows; an `execution` row).
+- **Defect, my own:** the first UIA assertion read the factory's island wrapper, not the surface, so its red ("" for the
+  name) came from the test and not from the product. The green commit fixes the test to find the `ExecutionSurface`
+  inside the island. That corrected assertion was **never seen red** (Inferred: on the red tree it would print
+  "(no ExecutionSurface inside the island)"). The row assertion's red was valid.
+- **The claim was refused:** `coord claim --path src/AiDe.App/Workbench/SurfaceContentFactory.cs` →
+  `COORD-CLAIM-STALE-CONTROLS` (one origin/main commit touches the controls; remedy `git merge origin/main`). Rule 9
+  forbids me to merge, so I edited the owned file unclaimed. The Leader decides whether this tree takes main before node 5.
+
+## Not done
+
+- **Check A, opener half (seam req-01M59XNJH52JRRZ1DAJYK40X9D, granted).**
+  1. In `SessionDocumentSurface.cs:922-928`, split `OpenLog` from `OpenConsoleAt`. `OpenLog` calls a new
+     `ExecutionRequested(ordinal)` callback, and `OpenConsoleAt` stays on `OpenSplit`.
+  2. Add `WorkbenchShell.OpenExecution(document, ordinal)` beside `OpenSessionConsole` (:3715). It reads
+     `document.Notebook.Runs.AttemptOf(ordinal)?.Attempt.DispatchKey`; with no attempt it refuses with a sentence and
+     opens nothing. Otherwise it adds `execution:<key>` in `ZonesToTree.StackIdOf(ZoneId.Bottom)` with
+     `ExecutionSurface.CaptionFor(key)`, or activates the one already open. Wire it at :3607.
+  3. The red test needs a shell notebook with a real attempt. The pattern is
+     `AReopenedNotebookRendersItsRecordedAttemptsTests` (`AttemptHost.OpenAsync` + `Runs.BindHost`). No existing
+     test presses "Open the log", so none is expected to turn red (grep over `tests/**/*.cs`).
+- **Check B** (Ctrl+1/2/3 with focus inside WebView2) and **check C** (hide/float/redock a live notebook) are not started.
+  Node 1's notes on their patterns still hold.
+- **`suite-node4.txt` was not run** (the kick). The last whole-suite run is `suite-node3.txt`.
+
 ---
 
 # T11 node 3 — hand-off
