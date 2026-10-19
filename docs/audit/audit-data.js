@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T22:16:45Z",
+  "generated": "2026-10-19T22:31:50Z",
   "audit": [
     {
       "actor": null,
@@ -26582,6 +26582,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T22:06:02Z",
       "duration_seconds": 642.0
+    },
+    {
+      "id": "al-01M5B4NRV6C975ENPWDGMWPAYA",
+      "shortname": "join-wl1a-compiled-field-n4-step8",
+      "datetime": "2026-10-19T22:31:50Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T28 n4 join 0d474634",
+      "summary": "Recount fully green: App 1233/1233 (both foreground probes passed; the desktop was free), Core 3116 / portable 2933 / nonportable 183 Completed. Step 8 strict 5/48 (was 6). Ratchet vs 8f9d4b5c, head 0d474634: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. T28 n4 (Sonnet, Owner direction under Ruling 181): when the queue drains and b2 is sent with no keystroke since, the heading reads 'Compiled prompt - sent as b2'; a refused drain keeps 'queued as b2'; the resend guard holds after the switch (mutation reds recorded). T28 is complete: the user's WL-1a compiled-field report is fixed at its verified root cause, for a send, a queued send and a drain, with the gesture-oracle class gate on main.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 181: the compiled field's heading never states something false",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T22:06:11Z",
+      "duration_seconds": 1539.0
     }
   ],
   "changes": [
