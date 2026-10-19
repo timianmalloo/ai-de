@@ -213,6 +213,7 @@ notebook does not already hold becomes a turn (Ruling 163), in dispatch order, s
 after it.
 
 - **`submitted`** — Each submitted envelope, with the words it opened with (the restored row's words).
+- **`cancellationToken`** — The notebook's lifetime on a bind's read-back. It is checked after each read and before each thread write, because a read already on its way to the store cannot be recalled. So a disposed notebook takes no turn (T17e).
 
 **Remarks.** assume: an attempt with no terminal row at read-back is live in this host (the host's startup sweep resolves every
 other one), so its own dispatch still owns its turn. Confirm: the sweep's live-key exclusion

@@ -1,0 +1,8 @@
+{"agent": "wl-leader2-20261019", "at": 1792420479.5983434, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t17e-dispose", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl1a-dispose-race"}
+{"agent": "wl-t17e-dispose", "at": 1792420778.0319197, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Records/AReadBackPendingAtDisposalEndsQuietlyTests.cs", "seq": 2, "session": "wl-t17e-dispose", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17e-dispose", "at": 1792420912.7774448, "kind": "claim", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 3, "session": "wl-t17e-dispose", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17e-dispose", "at": 1792421019.2326748, "kind": "release", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 4, "session": "wl-t17e-dispose", "wi": "workbench-loops"}
+{"agent": "wl-t17e-dispose", "at": 1792421019.3251224, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/AReadBackPendingAtDisposalEndsQuietlyTests.cs", "seq": 5, "session": "wl-t17e-dispose", "wi": "workbench-loops"}
+{"agent": "wl-t17e-dispose", "at": 1792421047.1853814, "kind": "claim", "path": "docs/proof/workbench-loops-wl-1a.md", "seq": 6, "session": "wl-t17e-dispose", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17e-dispose", "at": 1792421061.630072, "kind": "release", "path": "docs/proof/workbench-loops-wl-1a.md", "seq": 7, "session": "wl-t17e-dispose", "wi": "workbench-loops"}
+{"at": 1792421582.9753962, "from": "wl-t17e-dispose", "kind": "done", "mail_id": "mail-01M5AADP3Z6FDWHW0GCM3W32CH", "ref": null, "session": "wl-t17e-dispose", "to": "wl-leader2-20261019", "type": "mail"}

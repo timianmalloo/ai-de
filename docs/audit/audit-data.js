@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T14:52:52Z",
+  "generated": "2026-10-19T15:08:55Z",
   "audit": [
     {
       "actor": null,
@@ -25360,6 +25360,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T14:35:24Z",
       "duration_seconds": 1048.0
+    },
+    {
+      "id": "al-01M5ABAQP7GT0Q6V10ZEDG0S1R",
+      "shortname": "join-wl1a-dispose-race",
+      "datetime": "2026-10-19T15:08:54Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T17e (Opus, 1 node): the read-back-at-disposal race reproduced with a gate on the unit path and through WorkbenchShell.Dispose (red 31b61650), fixed in NotebookRuns.cs (green d7e0ac1b): the read-back runs under the notebook's lifetime token, checks it after each read and before each thread write, and ends as notebook.read-back outcome 'ended' with no refusal and no turn. Recount ran in full (App 1150 counted; Core 3025/2842/183 completed); its only refusal was SolutionTreeChordTests 'Ruling 115 desktop hold is occupied' by a concurrent track suite (PID 40900); the probe then PASSED alone on the join head 293c18a4 (1/1, 20 s), so --continue --docs-only skips a re-run only. T17d's teardown NRE stays open. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/dispose-race/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Owner 14:15Z: a read-back pending at disposal ends quietly, no NRE, no turn",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T15:08:53Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -30595,6 +30624,60 @@ window.AUDIT_DATA = {
       "ts": "2026-10-19T14:08:06Z",
       "from": "wl-t21-float",
       "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5AA1FKAQ0GCNPQ0X0TBRFXH",
+      "ts": "2026-10-19T14:46:23Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "unblocked",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AA3CAB0QC1B51JHX32YX7R",
+      "ts": "2026-10-19T14:47:25Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17e-dispose",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AADP3Z6FDWHW0GCM3W32CH",
+      "ts": "2026-10-19T14:53:02Z",
+      "from": "wl-t17e-dispose",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17e-dispose"
+    },
+    {
+      "id": "mail-01M5AAFRD0C4AAMNCZGVC4W6BP",
+      "ts": "2026-10-19T14:54:10Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AAFRG61ZC5VZ93TWTBR0WN",
+      "ts": "2026-10-19T14:54:10Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5AB1BK7RV9JHH5E39Q3W4B3",
+      "ts": "2026-10-19T15:03:47Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader3-20261019",
       "kind": "done",
       "ref": null,
       "session": "wl-t21-float"
