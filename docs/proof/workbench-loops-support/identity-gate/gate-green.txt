@@ -1,0 +1,2 @@
+verify-no-account-identity: OK (874 tracked files scanned under docs/proof/ and .agents/)
+exit=0

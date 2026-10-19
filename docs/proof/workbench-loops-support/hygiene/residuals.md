@@ -69,3 +69,5 @@ Steps I would add to the `ubuntu-latest` gates job in `.github/workflows/build.y
   `.agents/**`.
 - **Upgrade trigger (Ruling 157 (4)):** ingest redaction (patterns v2 removing account identity in the mapper) the
   moment the tool goes multi-user or uploads, shares or exports run logs.
+
+**RES-1 addendum (Leader, 2026-10-19):** `tools/verify-no-account-identity.py` (T15, Ruling 157) joins this list. It runs in `python tools/run-verify-gates.py`, but no `.github/workflows/*.yml` step invokes it, so `verify-project-coverage` names it, and Ruling 151(3) never ratchets that gate. The step to add beside the others: `python tools/verify-no-account-identity.py` in the gates job. The workflow edit is the user's call, the same as for the two gates above.

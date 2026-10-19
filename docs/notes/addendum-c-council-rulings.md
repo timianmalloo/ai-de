@@ -3355,3 +3355,15 @@ On Ruling 156: T8's change to the adoption step in the 3 older Core tests, so th
 T8 node 3's seam in T5's ConductorEntry and CompositionRootLedger is agreed, because T5 is finished. It is held within rule 16's three items.
 
 - request: req-01M59E463DZEPBDFCRBPS7C7AX · ruled by: wl-owner-20261018 · at: 2026-10-19T06:38:58Z
+
+### Ruling 159 — A window that cannot open the workspace's AttemptHost refuses Send with a stated reason; no turn ever runs unrecorded as an attempt
+
+Option A. Option B is rejected because it breaks ADR-0041's load-bearing invariant. Every dispatch is write-ahead, and a turn run directly through GovernedRunHost.RunAsync has no dispatch_key idempotency, no sweep and no Stop rule: at-most-once is lost silently. The current fallback in WorkbenchShell.BindAttemptHostAsync (wl1a-notebook-binding at eb520443) is removed, together with the sentence it announces, which no spec defines.
+
+Conditions, each red-first:
+(1) When OpenAttemptHostAsync fails because another window holds the host (AttemptHostTests.ASecondHost_IsRefused), Send is disabled. It shows the state copy 'This workspace's runs are hosted in another window. Send from that window, or close it to host runs here.' The copy is never blank. Read-only views keep working. The disabled Send exposes the reason to UI Automation, by its name or help text.
+(2) Any OTHER open failure, not 'held by another window', refuses Send with its own stated cause and a retry. It never falls back to a direct run.
+(3) A holder that is gone must not lock the user out. If the holding process has exited or crashed, the next open succeeds, or offers an explicit take-over with the reason shown, and a test proves it. Show the 'hosted in another window' copy only while a live holder exists.
+(4) The early-Send race (a turn sent before the host finishes opening) is fixed in T8 node 4 as planned: the composer waits for the open, and is never given a direct path.
+
+- request: req-01M59FX8EAK66B8PQEDQR4TRGN · ruled by: wl-owner-20261018 · at: 2026-10-19T07:11:02Z

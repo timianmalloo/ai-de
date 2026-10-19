@@ -8349,6 +8349,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 - **Shape:** a Leader writes a track brief from the ADR text and adds a precise meaning the ADR does not state. Here the ADR says `{offset, len, pattern_id}` and nothing more, and the brief added "offsets into the **original** frame". The type the track must use is already on main, and its doc comment gives the field a different meaning ("Start of the span in the redacted frame"). The worker follows the brief, its tests encode the brief, the suite is green, and the producer now disagrees with the envelope every consumer reads. That leaves two definitions of one quantity (the sibling of DC-NEW-wl-t2-sp1).
 - **Observed instance:** T7 `wl1a-redaction` (Grok, run wl-t7-20261019b, green 3028aa16): `FrameRedaction` recorded original-frame offsets against `RunEventRedaction` (`src/AiDe.Core/AgentPlane/RunEvent.cs:193`). The Leader's read-back found it. The tests could not, because they asserted the brief.
+- **Second instance (the Leader, 2026-10-19):** ruling a seam request, the Leader named a new outcome cause `withdrawn_by_operator` without opening `dispatch_outcome_fact.cause`. That column is a closed CHECK in frozen v2 (`WorkspaceSchema.cs:374-375`), so the insert would have aborted. The Owner caught it on report 8, before any code was written. The control now covers the Leader too: a seam ruling that names a stored value cites the declaration it read (file:line) in the ruling text.
+- **Third and fourth instances (the Owner, then the Leader, 2026-10-19):** the Owner's overrule said the operator's withdraw "is already recorded" by a completed `command_receipt_fact` row, after checking the table (`WorkspaceSchema.cs:134`) but not its writer. The Leader's node-4 brief repeated it ("read how T5's attempt.* ops write command receipts"). `StoreWriter.RecordCommandReceipt` (`StoreWriter.cs:114`) has no caller in `src`. T8 caught it by rule 14 before writing code. **Control, extended to both seats:** a ruling or brief that says a row *is written* cites its writer by file:line, not just the table, and a writer with no caller is not a writer.
+- **Fifth instance: Leader commits bypass the join gate (the Leader, 2026-10-19).** The Leader's direct record commits to
+  main (ledger, rulings, proposals, join records) never pass `conductor-join.py` step 8. `f323f2b1` carried a proposal
+  with `type: proposal`, unknown to docs-graph, and main's docs-graph line was red until the T15 join's step 8 found it.
+  **Control (Owner, on report 10; it covers the Owner's rulings too, which land through Leader commits):** before
+  pushing any non-join Leader commit, run `leader_precommit.py` (the Leader's brief tools, copied from
+  `.agents/briefs/workbench-loops/`). It runs docs-graph validate (problems fail; index drift is allowed), the
+  no-conflict-markers gate, the repo's ruling-citations gate and the account-identity gate. A commit that touches
+  `tools/`, `src/` or `tests/` gets the full `gate_ratchet.py` against its parent instead.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.
@@ -8379,4 +8389,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   three checks per node, and a hand-off at 120 calls or 200k, even mid-check. The Leader's reports state each node's
   budget from the harness `usage` line, never from the agent's own count. T8 node 2 was re-capped live at 120 / 200k, and
   T11 is re-cut into nodes of three checks or fewer before dispatch (Owner, on report 6).
-- **Status:** `controlled` (always-loaded brief rule; Leader reporting rule).
+- **Fourth and fifth instances:** T8 node 2 measured 174 calls / 311k against 180 / 280k (the cap was lowered mid-node),
+  and T8 node 3 measured 133 / 254k against 120 / 200k. That is a fourth overrun with rule 16 already in the brief, so a
+  brief rule alone does not hold.
+- **Control, extended (Owner, 2026-10-19):** the Leader's wall-clock kick ladder is the interim hard stop. The hand-off
+  kick goes at 120 × the track's fastest measured seconds per call, then `TaskStop` 8 minutes later. The rate is
+  re-derived from each node's harness `usage`: T5 n1 13.2 s, T8 n1 10.5 s, T5 n2 18.5 s, T8 n2 12.1 s, T8 n3 13.5 s per
+  call, so T8's kick goes at about 21 min. The seam-level control, a PreToolUse call-budget hook, is drafted unwired in
+  `docs/coordination/proposal-call-budget-hook.md` for the user's decision.
+- **Token rate added (Owner, after T8 node 4: 88 calls but 228k context):** the kick time is the earlier of
+  120 × (fastest s/call) and 200k ÷ (fastest tokens/min). T8's token rates are n1 10.5k, n2 8.9k, n3 8.5k and
+  n4 9.3k tokens/min, so 200k is reached at about 19 min, earlier than the 21-min call kick. T8's kick is therefore
+  at about 19 min, and both rates are re-derived after every node.
+- **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).

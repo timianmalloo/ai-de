@@ -1,0 +1,2 @@
+24:  ok     verify-no-account-identity.py                   0.2 s  verify-no-account-identity: OK (874 tracked files scanned under docs/proof/ and .agents/)
+run-verify-gates overall: exit 1 on this tree, from gates unrelated to this gate (missing .trx results, stale site figures, derived views, pre-existing); this gate's row is ok
