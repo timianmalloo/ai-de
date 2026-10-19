@@ -369,3 +369,14 @@
 {"agent": "wl-leader-20261018", "at": 1792375836.5324905, "code": null, "kind": "allowed", "path": ".agents/log/wl-t12-census.jsonl", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792375836.5571454, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792375836.5839312, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376371.9329395, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376371.9559531, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376371.9784853, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.0035005, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.0265665, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.0495665, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.0726128, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.0966575, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.1201797, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.1431828, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792376372.1661882, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader-20261018", "wi": ""}

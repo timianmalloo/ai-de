@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T02:19:27Z",
+  "generated": "2026-10-19T02:33:22Z",
   "audit": [
     {
       "actor": null,
@@ -22999,6 +22999,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T02:10:48Z",
       "duration_seconds": 518.0
+    },
+    {
+      "id": "al-01M59039JVN6TN0N9H6Z7XADC6",
+      "shortname": "join-t12c-and-cond-b",
+      "datetime": "2026-10-19T02:33:22Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Owner 151(3) condition (b) for T3, after T12c",
+      "summary": "T12c pushed 45c9b940 (051160d6..45c9b940): ratchet PASS 0/48, recount green with no census failures. Condition (b) on main at 45c9b940: TerminalHostInLifePath+TerminalHostExitPath 4/4 passed, AppWindowCloseLeavesNoTerminalHost 1/1 passed, no NOT CHECKED - T3 is not reopened. Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/control-char-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T12c and discharge 151(3) condition (b)",
+      "done_when": "pushed; the three TerminalHost/AppWindowClose tests pass on main",
+      "tier": "T1",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:30:17Z",
+      "duration_seconds": 18185.0
     }
   ],
   "changes": [
