@@ -1624,6 +1624,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 RenderCompiledView();
             }, () =>
             {
+                // KEEP WRITES THE DRAFT (Ruling 180 (3), C1): the kept line becomes the user's own, so the next prepare
+                // seeds it as an operator row and never asks the model for it again. Before, only the prepared
+                // envelope held it and a re-prepare re-derived it.
+                if (_gate.DerivedLines.TryGetValue(field, out var kept))
+                {
+                    _draft.SetGoalValue(field, kept);
+                }
+
                 _gate.KeepLine(field);
                 RenderCompiledView();
             });
@@ -2349,7 +2357,7 @@ internal sealed class StructureLine
         RenderMark();
     }
 
-    /// <summary>The keep control's act: an operator row with the derived value, the mark <i>kept</i>.</summary>
+    /// <summary>The keep control's act: the derived value written into the draft and as an operator row, the mark <i>kept</i>.</summary>
     public void Keep()
     {
         if (_derived is null)

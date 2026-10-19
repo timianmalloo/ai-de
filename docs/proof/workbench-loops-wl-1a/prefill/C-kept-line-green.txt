@@ -1,0 +1,46 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [697 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [212 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ANeedsLoginCompileEntersPreparedCompiledMechanicallyAndTheSecondGestureSends [5 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.UnderAdvisoryAKeptLineProjectsAndAnEditedLineCarriesTheEdit [2 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFailedCallIsCalledAgainOnPrepareAgain [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AToolCallMarksTheCompileSuspectAndItsLinesStillArrive [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ALeaseProposalIsDroppedAndCountedAndTheLeaseIsUnchanged [5 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic", reaches: True) [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic-advisory", reaches: False) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnchangedDraftAfterASuccessReusesWithZeroRequests [6 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic", keep: False) [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic-advisory", keep: True) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AQuestionWithNothingProposedIsSucceededNoStructureAndSendsAsAMessage [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.MechanicalOnlyStillSendsOnOneGestureWithNoCompileLine [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFullySuppliedStructureSkipsTheCallAndSaysWhoSuppliedIt [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ASendOnOtherBytesThanThePreparedOnesIsRefusedAsStale [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AGestureDuringPreparingIsIgnoredAndCancelYieldsAMechanicalEnvelopeThatSends [3 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.TheFourStatesEachCarryAReasonAndANextAction [68 ms]
+[xUnit.net 00:00:01.25]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.KeepingADerivedLineMarksItKeptAndItReachesTheRun [7 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.ADegradedCallShowsItsReasonAndPrepareAgainAndStillSends [5 ms]
+
+Test Run Successful.
+Total tests: 20
+     Passed: 20
+ Total time: 1.6377 Seconds
