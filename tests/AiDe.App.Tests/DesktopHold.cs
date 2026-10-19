@@ -18,11 +18,13 @@ internal static class DesktopHold
         foreach (var record in ParseRequests(requestLines))
         {
             var contract = record.Contract ?? "";
-            if (contract.Contains("desktop START", StringComparison.OrdinalIgnoreCase))
+            if (contract.StartsWith("R115 desktop ", StringComparison.OrdinalIgnoreCase)
+                && contract.EndsWith(" START", StringComparison.OrdinalIgnoreCase))
             {
                 lastStart = $"{record.Session} {contract} {record.Reason}";
             }
-            else if (contract.Contains("desktop END", StringComparison.OrdinalIgnoreCase))
+            else if (contract.StartsWith("R115 desktop ", StringComparison.OrdinalIgnoreCase)
+                && contract.Contains(" END", StringComparison.OrdinalIgnoreCase))
             {
                 lastStart = null;
             }
