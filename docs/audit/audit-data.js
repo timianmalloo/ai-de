@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:29:00Z",
+  "generated": "2026-10-19T06:47:55Z",
   "audit": [
     {
       "actor": null,
@@ -24102,6 +24102,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T06:09:38Z",
       "duration_seconds": 1162.0
+    },
+    {
+      "id": "al-01M59ENCCHAV5F43KHG0ATXQ53",
+      "shortname": "wl-t15-idgate",
+      "datetime": "2026-10-19T06:47:55Z",
+      "session": "wl-t15-idgate",
+      "prompt": "T15 account-identity gate",
+      "summary": "tools/verify-no-account-identity.py with masked findings, exact allow-list, self-test; red-first",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-no-account-identity.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "public repo never receives an account email via proof or ledger files",
+      "done_when": "gate exists, self-test proves refusal, green on tree, runs in run-verify-gates",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:33:38Z",
+      "duration_seconds": 857.0
     }
   ],
   "changes": [
