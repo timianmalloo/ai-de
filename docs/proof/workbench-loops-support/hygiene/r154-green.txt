@@ -1,0 +1,18 @@
+  gated   DESIGN.md: 0 finding(s), 0 at or above Major
+  gated   src/AiDe.App/Web: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/conversation-composer.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/explore-graph-and-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench-notes.html: 6 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench-v2.html: 3 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/first-use-accounts.html: 6 finding(s), 0 at or above Major
+  gated   docs/mockups/new-session-sheet.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/perspective-shell.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-conversation.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-front-door.html: 5 finding(s), 0 at or above Major
+  gated   docs/mockups/solution-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/workbench-design-language.html: 6 finding(s), 0 at or above Major
+verify-ui-craft-floor: OK - every gated artifact is clean at its threshold, over committed source.
+exit 0
+self-test: 4 cases - build-output target refused, absent target refused, threshold discriminates, colour exemption scoped to its rule.
+self-test exit 0

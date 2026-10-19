@@ -1,0 +1,17 @@
+  gated   DESIGN.md: 0 finding(s), 0 at or above Major
+  gated   src/AiDe.App/Web: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/conversation-composer.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/explore-graph-and-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench-notes.html: 7 finding(s), 1 at or above Major
+  gated   docs/mockups/factory-workbench-v2.html: 3 finding(s), 0 at or above Major
+  gated   docs/mockups/factory-workbench.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/first-use-accounts.html: 6 finding(s), 0 at or above Major
+  gated   docs/mockups/new-session-sheet.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/perspective-shell.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-conversation.html: 0 finding(s), 0 at or above Major
+  gated   docs/mockups/session-front-door.html: 5 finding(s), 0 at or above Major
+  gated   docs/mockups/solution-tree.html: 1 finding(s), 0 at or above Major
+  gated   docs/mockups/workbench-design-language.html: 6 finding(s), 0 at or above Major
+verify-ui-craft-floor: FAILED - 1 finding(s) at or above the gated severity.
+  - docs/mockups/factory-workbench-notes.html: [Major] undersized-ui-text (U16) - Undersized functional text - `9px functional text "tiny" (below 11px floor)`
+exit 1
