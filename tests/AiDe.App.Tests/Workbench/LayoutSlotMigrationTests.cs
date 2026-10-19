@@ -145,6 +145,69 @@ public sealed class LayoutSlotMigrationTests : IDisposable
     // The report's sentence for a kept prompt draft (Ruling 173 (3)); the Owner confirmed it, and DESIGN.md's DOCK4 carries it.
     private const string KeptPromptSentence = "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.";
 
+    // Today's Factory slot with TWO prompt drafts beside a session's pane: the restore says DOCK4's plural.
+    private const string TodaysSlotWithTwoPromptDrafts = """
+        {
+          "schemaVersion": 1,
+          "appVersion": "0.4.0",
+          "savedUtc": "2026-10-18T22:33:53+00:00",
+          "layout": {
+            "zones": [
+              { "id": "Left", "extent": 0.22, "collapsed": false },
+              { "id": "Right", "extent": 0.22, "collapsed": false },
+              { "id": "Bottom", "extent": 0.3, "collapsed": false },
+              { "id": "Center", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "session-document:20260911T125502Z-bd59855b", "kind": "session-document", "title": "Binding" },
+                  { "surfaceId": "prompt-1", "kind": "prompt", "title": "Prompt draft" },
+                  { "surfaceId": "prompt-2", "kind": "prompt", "title": "Prompt draft" } ], "activeIndex": 1 },
+                "extent": 1.0, "collapsed": false }
+            ],
+            "floating": []
+          }
+        }
+        """;
+
+    [Fact]
+    public void TwoKeptPromptDrafts_SayDock4sPluralSentence_WordForWord()
+    {
+        Directory.CreateDirectory(_dir);
+        File.WriteAllText(Slot, TodaysSlotWithTwoPromptDrafts);
+
+        var host = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        using var persistence = PersistenceFor(host);
+        var result = persistence.Restore();
+
+        Assert.Equal(["prompt-1", "prompt-2"], host.Zones.AllSurfaces().Where(s => s.Kind == "prompt").Select(s => s.SurfaceId));
+        var plural = Dock4Plural().Replace("{N}", "2", StringComparison.Ordinal);
+        Assert.True(
+            result.Announcement.Contains(plural, StringComparison.Ordinal),
+            $"the restore of two kept drafts does not say DOCK4's plural \"{plural}\": \"{result.Announcement}\"");
+    }
+
+    /// <summary>DESIGN.md's DOCK4 row (Ruling 173 (3)).</summary>
+    private static string Dock4Row()
+    {
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root is not null && !File.Exists(Path.Combine(root.FullName, "AiDe.sln")))
+        {
+            root = root.Parent;
+        }
+
+        Assert.NotNull(root);
+        var row = File.ReadAllLines(Path.Combine(root!.FullName, "DESIGN.md"))
+            .SingleOrDefault(l => l.StartsWith("| DOCK4 |", StringComparison.Ordinal));
+        Assert.True(row is not null, "DESIGN.md has no DOCK4 row for the kept-prompt sentence");
+        return row!;
+    }
+
+    /// <summary>DOCK4's plural, with its <c>{N}</c>: the text after "plural: " up to the row's parenthesised note.</summary>
+    private static string Dock4Plural()
+    {
+        var row = Dock4Row();
+        var start = row.IndexOf("plural: ", StringComparison.Ordinal) + "plural: ".Length;
+        return row[start..row.IndexOf(" (Ruling", start, StringComparison.Ordinal)];
+    }
+
     [Fact]
     public void APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once()
     {
@@ -343,20 +406,15 @@ public sealed class LayoutSlotMigrationTests : IDisposable
     [Fact]
     public void TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord()
     {
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "AiDe.sln")))
-        {
-            root = root.Parent;
-        }
+        var row = Dock4Row();
 
-        Assert.NotNull(root);
-        var row = File.ReadAllLines(Path.Combine(root!.FullName, "DESIGN.md"))
-            .SingleOrDefault(l => l.StartsWith("| DOCK4 |", StringComparison.Ordinal));
-
-        Assert.True(row is not null, "DESIGN.md has no DOCK4 row for the kept-prompt sentence");
         Assert.Contains(KeptPromptSentence, row, StringComparison.Ordinal);
-        Assert.Contains("Kept {N} prompt drafts as they were: prompt drafts do not become notebooks.", row, StringComparison.Ordinal);
         Assert.Contains("Ruling 173", row, StringComparison.Ordinal);
+
+        // The product's plural is ONE const, and DOCK4 carries it word for word.
+        var constant = typeof(LayoutPersistence).GetField("KeptPromptsSentence", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        Assert.True(constant is { IsLiteral: true }, "LayoutPersistence has no KeptPromptsSentence const: its plural is an inline string no test pins (LayoutPersistence.cs:391)");
+        Assert.Equal(Dock4Plural(), (string)constant!.GetRawConstantValue()!);
     }
 
     public void Dispose()
