@@ -31,10 +31,21 @@ public sealed record ZoneContentDto(
     [property: JsonPropertyName("children")] List<ZoneContentDto>? Children,
     [property: JsonPropertyName("weights")] List<double>? Weights);
 
+/// <summary>One floating stack. The four float fields are its window's bounds (Ruling 174).</summary>
+/// <remarks>
+/// The bounds are device-independent pixels in virtual-screen coordinates. They are optional and
+/// additive, so schema 1 is kept: an older file has none, and an older reader ignores them. They are
+/// read all-or-none, as the tree store reads its own (<see cref="LayoutStore"/>), and a width or height
+/// of zero or less counts as no bounds.
+/// </remarks>
 public sealed record ZoneStackDto(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
-    [property: JsonPropertyName("activeIndex")] int ActiveIndex);
+    [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+    [property: JsonPropertyName("floatX")] double? FloatX = null,
+    [property: JsonPropertyName("floatY")] double? FloatY = null,
+    [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+    [property: JsonPropertyName("floatHeight")] double? FloatHeight = null);
 
 public sealed record ZoneSurfaceDto(
     [property: JsonPropertyName("surfaceId")] string SurfaceId,
@@ -220,7 +231,8 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
     };
 
     private static ZoneStackDto ToStackDto(StackNode s) =>
-        new(s.Id, [.. s.Surfaces.Select(ToDto)], s.ActiveIndex);
+        new(s.Id, [.. s.Surfaces.Select(ToDto)], s.ActiveIndex,
+            s.FloatingBounds?.X, s.FloatingBounds?.Y, s.FloatingBounds?.Width, s.FloatingBounds?.Height);
 
     private static ZoneSurfaceDto ToDto(Surface s) => new(s.SurfaceId, s.Kind, s.Title);
 
@@ -264,7 +276,10 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
     private static StackNode? FromStackDto(ZoneStackDto dto, Func<ZoneSurfaceDto, bool> available)
     {
         var surfaces = dto.Surfaces.Where(available).Select(FromDto).ToImmutableList();
-        return surfaces.Count == 0 ? null : new StackNode(dto.Id, surfaces, dto.ActiveIndex, StackState.Floating);
+        var bounds = dto is { FloatX: { } x, FloatY: { } y, FloatWidth: { } w and > 0, FloatHeight: { } h and > 0 }
+            ? new LayoutRect(x, y, w, h)
+            : (LayoutRect?)null;
+        return surfaces.Count == 0 ? null : new StackNode(dto.Id, surfaces, dto.ActiveIndex, StackState.Floating, floatingBounds: bounds);
     }
 
     private static Surface FromDto(ZoneSurfaceDto s) => new(s.SurfaceId, s.Kind, s.Title);
