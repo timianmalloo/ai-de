@@ -164,6 +164,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         // THE RUNS ARE THE MODEL'S (ADR-0045 §4): this surface only hears them — it attaches a lane, records the
         // envelope's consumed row — and a surface closed mid-run leaves the run to the next one bound here.
         Notebook.Runs.Observer = this;
+
+        // RESTART READ-BACK (AC-L01a): the host's attempts for this session's submitted envelopes, read from the store.
+        if (Notebook.Runs.Host is not null)
+        {
+            LastReadBack = Notebook.Runs.ReadBackAsync(SubmittedEnvelopes(), CancellationToken.None);
+        }
+
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
         Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
@@ -601,7 +608,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         Composer.BeginNextTurn();
 
         // The run is the MODEL's (ADR-0045 §4): queued or started there, so closing this pane leaves it running.
-        var launch = new RunLaunch(LastBinding, submission?.TaskClassSource);
+        var envelopeId = submission?.EnvelopeId;
+        var launch = new RunLaunch(LastBinding, submission?.TaskClassSource, envelopeId, submission?.ProjectionSha,
+            () => envelopeId is null ? null : CurrentProjectionOf(envelopeId));
         if (queue)
         {
             Notebook.Runs.Queue(ordinal, request, launch);
@@ -630,8 +639,54 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         }
 
         LastRunFailure = end.Failure;
+        if (end.Attempt is { } attempt)
+        {
+            // An attempt's run id IS its dispatch key (design: run_id := dispatch_key); its outcome is the host's terminal.
+            RecordConsumed(end.Ordinal, attempt.DispatchKey, null, attempt.Terminal?.State.ToString() ?? Envelope.NotRecorded, end.ConsumedReason);
+            return;
+        }
+
         var outcome = end.ConsumedReason == ConsumedReasons.StoppedByOperator ? "Abandoned" : Envelope.NotRecorded;
         RecordConsumed(end.Ordinal, Envelope.NotRecorded, null, outcome, end.ConsumedReason);
+    }
+
+    /// <summary>The restart read-back's task: the host's attempts for this session's submitted envelopes (completed when no host is bound).</summary>
+    internal Task LastReadBack { get; private set; } = Task.CompletedTask;
+
+    /// <summary>The envelope fold's projection of <paramref name="envelopeId"/> now (G1) — null when it cannot be read, which the gate refuses as stale.</summary>
+    private string? CurrentProjectionOf(string envelopeId)
+    {
+        lock (_envelopeGate)
+        {
+            try
+            {
+                return _envelopes?.Read().Envelopes.FirstOrDefault(e => e.EnvelopeId == envelopeId) is { } envelope
+                    ? Projection.Project(envelope).ProjectionSha
+                    : null;
+            }
+            catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>Every envelope this session submitted, as the pair its dispatch key derives from.</summary>
+    private List<(string EnvelopeId, string ProjectionSha)> SubmittedEnvelopes()
+    {
+        lock (_envelopeGate)
+        {
+            try
+            {
+                return _envelopes is null
+                    ? []
+                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha))];
+            }
+            catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
+            {
+                return [];
+            }
+        }
     }
 
     /// <summary>Cancel on the queued turn (Ruling 95): dropped from the queue, its row concluded cancelled, its envelope consumed, its words back in the editor.</summary>

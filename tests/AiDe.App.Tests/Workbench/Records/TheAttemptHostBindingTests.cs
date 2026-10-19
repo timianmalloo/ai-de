@@ -9,6 +9,7 @@ using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Facts;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
 
 namespace AiDe.App.Tests.Records;
 
@@ -42,6 +43,9 @@ public sealed class TheAttemptHostBindingTests : IDisposable
             {
                 string dispatchKey;
                 int revisionNo;
+
+                // The session's home, as session creation makes it: the envelope store (the gate's G1 fold) lives there.
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
 
                 var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
                 using (host)
