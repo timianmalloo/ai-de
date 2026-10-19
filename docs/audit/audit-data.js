@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T03:07:36Z",
+  "generated": "2026-10-19T03:22:05Z",
   "audit": [
     {
       "actor": null,
@@ -23269,6 +23269,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T03:07:34Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M592WGGVH0MVSWSEG4P76JCA",
+      "shortname": "join-t13-step8-ratchet",
+      "datetime": "2026-10-19T03:22:05Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 151/153/154 step-8 completion for the T13 gate-hygiene join",
+      "summary": "T13 pushed 34e82fc4 (2390a99b..34e82fc4): strict step 8 now 5 of 47 red (was 10-14). Ratchet PASS 0/48 on the third attempt: attempt 1 refused 2 verify-ruling-citations findings from residuals.md R-n section labels (renamed RES-n, f363b8fa); attempt 2 refused 1 from pack-defects.md 'Rulings 1 to 153' prose (reworded). Ruling 154: mockups scanned, design-system-colour-only exemption, machine-path opt-outs accepted. Owner -X ours condition: three-way diff of site/collaboration.html and site/index.html (base 2de9d373, main 4c3e4b0c, T13 77e5a222) showed only data-figure cells discarded; main's side taken; verify-site-figures --update (18ed1bed) changed 12 lines in 3 site files, ALL data-figure cells, 0 prose lines (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025). Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T13 under Rulings 151/153/154",
+      "done_when": "pushed with ratchet PASS and the site-figure diff recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:15:02Z",
+      "duration_seconds": 22023.0
     }
   ],
   "changes": [
