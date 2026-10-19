@@ -130,7 +130,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
         Assert.Equal(
             ending == TurnState.Failed
                 ? "b1 lane exited 1; b2 is waiting — Send it or cancel it"
-                : "b1 interrupted; b2 is waiting — Send it or cancel it",
+                : "b1 stopped by you; b2 is waiting — Send it or cancel it",
             TurnCopy.QueuedSentence(snapshot));
     }
 

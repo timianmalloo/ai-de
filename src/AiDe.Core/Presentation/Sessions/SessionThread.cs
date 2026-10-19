@@ -286,7 +286,7 @@ public static class TurnCopy
         TurnState.Failed => exitCode is { } code
             ? string.Create(CultureInfo.InvariantCulture, $"lane exited {code}")
             : "failed",
-        TurnState.Interrupted => "interrupted",
+        TurnState.Interrupted => "stopped by you",
         TurnState.Preparing => "preparing",
         TurnState.StopRequested => "stop requested",
         TurnState.DeliveryUnknown => "delivery unknown",
@@ -343,7 +343,7 @@ public static class TurnCopy
                     CultureInfo.InvariantCulture,
                     $"The lane exited {code} after {EditsText(turn.Outcome.Edits)}. Send the same turn again as a new turn, or open the log.")
                 : $"The lane failed after {EditsText(turn.Outcome.Edits)}. Send the same turn again as a new turn, or open the log.",
-            TurnState.Interrupted => $"Interrupted after {EditsText(turn.Outcome!.Edits)}; {SpendText(turn.Outcome.Spend)}. Send the same turn again as a new turn, or open the log.",
+            TurnState.Interrupted => $"Stopped by you after {EditsText(turn.Outcome!.Edits)}; {SpendText(turn.Outcome.Spend)}. Send the same turn again as a new turn, or open the log.",
             TurnState.StopRequested => "Stop requested. Waiting for the harness to acknowledge.",
             TurnState.DeliveryUnknown => "Delivery is unknown: the harness may or may not have received this turn. Open the log before sending it again.",
             TurnState.Rejected => "The harness rejected this turn before it ran. Send the same turn again as a new turn, or open the log.",
