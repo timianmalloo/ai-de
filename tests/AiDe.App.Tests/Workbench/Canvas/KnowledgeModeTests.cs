@@ -68,11 +68,19 @@ public sealed class KnowledgeModeTests
         Assert.Fail("timed out waiting for " + what);
     }
 
+    // EvaluateAsync returns its failure as a string, so a page that never loaded would read as an answer.
+    private static async Task<string> Eval(CanvasSurface canvas, string script)
+    {
+        var result = await canvas.EvaluateAsync(script);
+        Assert.False(result.StartsWith("(evaluate failed", StringComparison.Ordinal), "the page could not be asked: " + result);
+        return result;
+    }
+
     private static async Task<bool> Drawn(CanvasSurface canvas, string id) =>
-        await canvas.EvaluateAsync($"document.querySelector('.node[data-id=\"{id}\"]') !== null") == "true";
+        await Eval(canvas, $"document.querySelector('.node[data-id=\"{id}\"]') !== null") == "true";
 
     private static Task<string> Attr(CanvasSurface canvas, string attribute) =>
-        canvas.EvaluateAsync($"(function(){{var b=document.getElementById('knowledge');return b?b.getAttribute('{attribute}'):'(no control)';}})()");
+        Eval(canvas, $"(function(){{var b=document.getElementById('knowledge');return b?b.getAttribute('{attribute}'):'(no control)';}})()");
 
     [Fact]
     public void TheSelector_OffersAKnowledgeInclusiveMode_ThatShowsThenHidesKnowledgeNodes_OnTheOneCanvas() =>
@@ -82,19 +90,19 @@ public sealed class KnowledgeModeTests
             await WaitFor(() => Drawn(canvas, CodeNode), "the code-only default to draw");
             Assert.False(await Drawn(canvas, KnowledgeNode), "the default drew a knowledge node");
 
-            var control = await canvas.EvaluateAsync("document.getElementById('knowledge') !== null");
+            var control = await Eval(canvas, "document.getElementById('knowledge') !== null");
             Assert.True(control == "true", "the canvas offers no knowledge-inclusive mode control");
 
-            await canvas.EvaluateAsync("document.getElementById('knowledge').click()");
+            await Eval(canvas, "document.getElementById('knowledge').click()");
             await WaitFor(() => Drawn(canvas, KnowledgeNode), "the knowledge node to draw in the mode");
             Assert.True(canvas.KnowledgeInclusive);
 
-            await canvas.EvaluateAsync("document.getElementById('knowledge').click()");
+            await Eval(canvas, "document.getElementById('knowledge').click()");
             await WaitFor(async () => !await Drawn(canvas, KnowledgeNode), "the knowledge node to hide again");
             Assert.False(canvas.KnowledgeInclusive);
 
             // One surface, one page: the mode is on this canvas, never a second graph surface.
-            Assert.Equal("1", await canvas.EvaluateAsync("document.querySelectorAll('#stage').length"));
+            Assert.Equal("1", await Eval(canvas, "document.querySelectorAll('#stage').length"));
         });
 
     [Fact]
@@ -127,11 +135,11 @@ public sealed class KnowledgeModeTests
             await WaitFor(() => Task.FromResult(canvas.Ready), "the canvas page");
 
             // A native <button> is in the Tab order and maps to a UIA Toggle through aria-pressed.
-            Assert.Equal("\"BUTTON\"", await canvas.EvaluateAsync("(document.getElementById('knowledge')||{}).tagName||'none'"));
+            Assert.Equal("\"BUTTON\"", await Eval(canvas, "(document.getElementById('knowledge')||{}).tagName||'none'"));
             Assert.Equal("\"Knowledge-inclusive mode\"", await Attr(canvas, "aria-label"));
             Assert.Equal("\"false\"", await Attr(canvas, "aria-pressed"));
 
-            await canvas.EvaluateAsync("document.getElementById('knowledge').focus()");
+            await Eval(canvas, "document.getElementById('knowledge').focus()");
             Assert.True(await canvas.SendKeyAsync("Enter", 0x0D, text: "\r"), "the key could not be sent");
 
             await WaitFor(() => Task.FromResult(canvas.KnowledgeInclusive), "Enter to choose the mode");
@@ -159,6 +167,6 @@ public sealed class KnowledgeModeTests
             Assert.Equal("\"false\"", await Attr(canvas, "aria-pressed"));
             Assert.False(await Drawn(canvas, KnowledgeNode), "the default drew a knowledge node");
             Assert.Equal($"\"{Const("KnowledgeModeName")}\"", await Attr(canvas, "aria-label"));
-            Assert.Equal($"\"{Const("KnowledgeModeText")}\"", await canvas.EvaluateAsync("document.getElementById('knowledge').textContent"));
+            Assert.Equal($"\"{Const("KnowledgeModeText")}\"", await Eval(canvas, "document.getElementById('knowledge').textContent"));
         });
 }
