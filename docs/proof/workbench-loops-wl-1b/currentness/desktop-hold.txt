@@ -1,0 +1,1 @@
+2026-10-19T16:00Z  tests/AiDe.App.Tests (whole suite)  SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph  "foreground not held; SendInput would prove another window" (exit 2; not the Ruling 115 hold text)  re-run alone 16:02Z: same failure. Not counted as a pass. This track touches no UI or foreground code.
