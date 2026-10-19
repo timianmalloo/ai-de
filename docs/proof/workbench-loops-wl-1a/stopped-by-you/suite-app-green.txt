@@ -1,0 +1,38 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.App\AiDe.App.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 158 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 158 ms).
+  3 of 11 projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:37.62]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
+[xUnit.net 00:04:34.38]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     1, Passed:  1123, Skipped:     1, Total:  1125, Duration: 4 m 36 s - AiDe.App.Tests.dll (net10.0)

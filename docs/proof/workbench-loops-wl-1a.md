@@ -117,12 +117,12 @@ GUI steps not yet run by a person are **owed to the user**.*
     refresh it."*. It is also announced politely to a screen reader. b1's provenance line still names revision 1
     and its own request (AC-R01a).
 
-### 4. Stop on the real lane: StopRequested, then Interrupted
+### 4. Stop on the real lane: StopRequested, then stopped by you
 11. Send a long turn, b2, e.g. *"Write the numbers from 1 to 400 as English words, one per line. Do not use any
     tools."*. While it runs, reach its row and its **Stop this turn** button (the row's first action; **rehearse**
     whether Shift+Tab lands on it directly). Press **Space**.
 12. **Expect:** the outcome first reads *stop requested* (box "Stop requested. Waiting for the harness to
-    acknowledge."), then *interrupted* (box "Interrupted after {N edits}; {spend}. Send the same turn again as a new
+    acknowledge."), then *stopped by you* (box "Stopped by you after {N edits}; {spend}. Send the same turn again as a new
     turn, or open the log."). If the adapter does not acknowledge within 10 s, the honest terminal is *delivery
     unknown* (`stop_not_acknowledged`), which is a correct result, not a failure.
 

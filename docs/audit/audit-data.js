@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T10:27:34Z",
+  "generated": "2026-10-19T10:51:07Z",
   "audit": [
     {
       "actor": null,
@@ -24908,6 +24908,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T10:05:32Z",
       "duration_seconds": 1322.0
+    },
+    {
+      "id": "al-01M59WJPMNAXBXK66HQ0ZPBNAH",
+      "shortname": "wl-t19-stopword",
+      "datetime": "2026-10-19T10:51:07Z",
+      "session": "wl-t19-stopword",
+      "prompt": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "summary": "OutcomeWord(Interrupted), box sentence and announcement read 'stopped by you'; 3 tests re-pinned red-first; guard test; WL-1a demo Stop step updated",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Sessions/SessionThread.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "done_when": "word changed, tests red then green, suites green, demo updated",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T10:42:49Z",
+      "duration_seconds": 498.0
     }
   ],
   "changes": [
@@ -29633,6 +29657,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t17c-restore"
+    },
+    {
+      "id": "mail-01M59VQGC61X193X5AW9R4N76T",
+      "ts": "2026-10-19T10:36:16Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59VQGBWQN4AB0DHWNYE6587",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59VTEAX4KQ9TWNXBDPXRXMQ",
+      "ts": "2026-10-19T10:37:52Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59VQGBWQN4AB0DHWNYE6587",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59VXQ6KRKGWT45GN0VYNMMB",
+      "ts": "2026-10-19T10:39:39Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59VXQ699GXNXYWY5E547PGJ",
+      "session": "wl-leader2-20261019"
     }
   ]
 };
