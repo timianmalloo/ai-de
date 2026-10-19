@@ -89,7 +89,7 @@ public sealed class WorkbenchShell : IDisposable
 
     // The workspace's one attempt host (ADR-0041), opened the first time a session document needs it; null inside the
     // task when it could not be opened, which the shell announced. Disposed in Dispose, after every notebook.
-    private Task<Conductor.AttemptHost?>? _attemptHost;
+    private Task<Conductor.AttemptHost>? _attemptHost;
 
     // The open console documents (Ruling 89), keyed by their surface id (`console:<sessionId>`):
     // each hosts its session document's own split in the Center and follows the thread until it
@@ -3414,13 +3414,13 @@ public sealed class WorkbenchShell : IDisposable
         _notebooks.Clear();
 
         // ...then the attempt host the notebooks were bound to, which releases the workspace's host lock.
-        if (_attemptHost is { IsCompleted: true } opened)
+        if (_attemptHost is { IsCompletedSuccessfully: true } opened)
         {
-            opened.Result?.Dispose();
+            opened.Result.Dispose();
         }
         else
         {
-            _attemptHost?.ContinueWith(opening => opening.Result?.Dispose(), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+            _attemptHost?.ContinueWith(opening => opening.Result.Dispose(), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
         foreach (var console in _consoles.Values)
         {
@@ -3583,10 +3583,15 @@ public sealed class WorkbenchShell : IDisposable
             _notebooks[notebook.Id] = notebook;
 
             // The run is the host's (ADR-0041; ADR-0045 §4): the notebook binds to the workspace's attempt host over the
-            // same client, so a sent turn is an attempt of its revision. With no client its turns run directly.
+            // same client, so a sent turn is an attempt of its revision; a turn sent while the host opens waits for it,
+            // and a window that cannot open it refuses Send (Ruling 159). With no client its turns run directly.
             if (client is not null)
             {
-                _ = BindAttemptHostAsync(notebook, client, root);
+                // assume: a session document has no PTY generation, so its attempts carry generation 1 (one lifetime per
+                // session id). Confirm: the design names a native session's generation. If false: re-key here.
+                notebook.Runs.BindHostWhenOpen(
+                    () => OpenAttemptHostAsync(client, root),
+                    new Records.AttemptScope(_dispatchScopeId ?? "workspace", client.Epoch, SessionGeneration: 1) { RefreshEpoch = client.RefreshEpochAsync });
             }
 
             var document = new Sessions.SessionDocumentSurface(notebook, store, Announcer);
@@ -3622,33 +3627,24 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     /// <summary>
-    /// Opens the workspace's attempt host once (<see cref="Conductor.ConductorEntry.OpenAttemptHostAsync"/>) and binds
-    /// <paramref name="notebook"/> to it; a turn sent before the host is open runs directly. A host that cannot be
-    /// opened is announced, never swallowed.
+    /// Opens the workspace's attempt host once (<see cref="Conductor.ConductorEntry.OpenAttemptHostAsync"/>) for every
+    /// notebook; a failed open is announced and is tried again by the next caller — a refusal's retry.
     /// </summary>
-    private async Task BindAttemptHostAsync(Records.NotebookModel notebook, WorkspaceClient client, string root)
+    private async Task<Conductor.IAttemptHost> OpenAttemptHostAsync(WorkspaceClient client, string root)
     {
-        _attemptHost ??= OpenAttemptHostAsync(client, root);
-
-        // assume: a session document has no PTY generation, so its attempts carry generation 1 (one lifetime per session
-        // id). Confirm: the design names a native session's generation. If false: re-key here, at the one binding site.
-        var scope = new Records.AttemptScope(_dispatchScopeId ?? "workspace", client.Epoch, SessionGeneration: 1);
-        if (await _attemptHost is { } host)
+        if (_attemptHost is null or { IsFaulted: true } or { IsCanceled: true })
         {
-            notebook.Runs.BindHost(host, scope);
+            _attemptHost = Conductor.ConductorEntry.OpenAttemptHostAsync(client, root, CancellationToken.None);
         }
-    }
 
-    private async Task<Conductor.AttemptHost?> OpenAttemptHostAsync(WorkspaceClient client, string root)
-    {
         try
         {
-            return await Conductor.ConductorEntry.OpenAttemptHostAsync(client, root, CancellationToken.None);
+            return await _attemptHost;
         }
         catch (Exception error) when (error is AiDe.Core.AgentPlane.AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException)
         {
-            Announcer.Announce($"Runs are not recorded as attempts in this window: {error.Message}");
-            return null;
+            Announcer.Announce($"Runs cannot be hosted in this window: {error.Message}");
+            throw;
         }
     }
 

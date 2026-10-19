@@ -28,7 +28,14 @@ public interface INotebookRunObserver
 public sealed record NotebookRunEnd(int Ordinal, GovernedRunResult? Result, string? Failure, string ConsumedReason, AttemptReceipt? Attempt = null);
 
 /// <summary>The attempt identity the workspace gives a notebook's dispatches (<see cref="AttemptDispatch"/>'s own fields).</summary>
-public sealed record AttemptScope(string WorkspaceId, long WorkspaceEpoch, long SessionGeneration);
+public sealed record AttemptScope(string WorkspaceId, long WorkspaceEpoch, long SessionGeneration)
+{
+    /// <summary>
+    /// Reads the workspace epoch at each dispatch — the current handshake's, so a daemon restart after bind is seen.
+    /// Null: <see cref="WorkspaceEpoch"/> holds for the binding's life.
+    /// </summary>
+    public Func<CancellationToken, Task<long>>? RefreshEpoch { get; init; }
+}
 
 /// <summary>What a turn's launch carries from the composer, captured at Send (never read back from the gate later).</summary>
 /// <param name="Revision">The revision binding (<see cref="NotebookModel.BindResult"/>) — awaited before a host dispatch.</param>
@@ -118,6 +125,53 @@ public sealed class NotebookRuns : IDisposable
         _host = (host, scope);
     }
 
+    /// <summary>Ruling 159(1): the copy Send shows while another window holds the workspace's attempt host.</summary>
+    public const string HostedElsewhere = "This workspace's runs are hosted in another window. Send from that window, or close it to host runs here.";
+
+    /// <summary>The refusal when the host's open ended with no cause this binding knows.</summary>
+    public const string NotOpened = "Runs cannot be hosted in this window: the attempt host did not open. Retry to open the host again.";
+
+    /// <summary>Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly.</summary>
+    public string? HostRefusal { get; private set; }
+
+    /// <summary>
+    /// Binds to the workspace's attempt host once <paramref name="open"/> completes (Ruling 159): a turn sent before then
+    /// waits for it, and a host that cannot be opened refuses every send with its cause — never a direct run, which would
+    /// break ADR-0041's write-ahead invariant.
+    /// </summary>
+    public void BindHostWhenOpen(Func<Task<IAttemptHost>> open, AttemptScope scope)
+    {
+        ArgumentNullException.ThrowIfNull(open);
+        ArgumentNullException.ThrowIfNull(scope);
+        _opener = (open, scope);
+        _hostOpening = OpenHostAsync(open, scope);
+    }
+
+    /// <summary>The refusal's retry: opens the host again. Completes once this try bound the host or set its refusal.</summary>
+    public Task RetryHostAsync() =>
+        _host is null && _opener is { } opener ? _hostOpening = OpenHostAsync(opener.Open, opener.Scope) : Task.CompletedTask;
+
+    private (Func<Task<IAttemptHost>> Open, AttemptScope Scope)? _opener;
+    private Task _hostOpening = Task.CompletedTask;
+
+    private async Task OpenHostAsync(Func<Task<IAttemptHost>> open, AttemptScope scope)
+    {
+        try
+        {
+            BindHost(await open().ConfigureAwait(false), scope);
+            HostRefusal = null;
+        }
+        catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)
+        {
+            // Only a live holder keeps the lock: the OS releases it with the holding process (AttemptHost.OpenAsync).
+            HostRefusal = HostedElsewhere;
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
+        {
+            HostRefusal = $"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.";
+        }
+    }
+
     /// <summary>Turn <paramref name="ordinal"/>'s attempt as the host last answered it, or null when it was not one.</summary>
     public AttemptReceipt? AttemptOf(int ordinal)
     {
@@ -171,6 +225,11 @@ public sealed class NotebookRuns : IDisposable
         if (_host is { } bound)
         {
             return LastRun = DispatchAsync(bound.Host, bound.Scope, request, launch, ordinal, cancel, queuedAfter: null);
+        }
+
+        if (_opener is not null)
+        {
+            return LastRun = AfterTheHostOpensAsync(request, launch, ordinal, cancel);
         }
 
         var relay = new RunEventRelay();
@@ -420,7 +479,9 @@ public sealed class NotebookRuns : IDisposable
             }
 
             var start = await host.DispatchAsync(
-                new AttemptDispatch(request, scope.WorkspaceId, scope.WorkspaceEpoch, envelopeId, projectionSha,
+                new AttemptDispatch(request, scope.WorkspaceId,
+                    scope.RefreshEpoch is { } refresh ? await refresh(CancellationToken.None).ConfigureAwait(false) : scope.WorkspaceEpoch,
+                    envelopeId, projectionSha,
                     _notebook.Id.Value, revision.RevisionNo, _notebook.Session.SessionId, scope.SessionGeneration, current,
                     QueuedAfterDispatchKey: queuedAfter),
                 CancellationToken.None).ConfigureAwait(false);
@@ -484,6 +545,25 @@ public sealed class NotebookRuns : IDisposable
 
             cancel.Dispose();
         }
+    }
+
+    /// <summary>Ruling 159(4): a turn sent while the host opens waits for it; one the host cannot take is refused.</summary>
+    private async Task AfterTheHostOpensAsync(GovernedRunRequest request, RunLaunch launch, int ordinal, CancellationTokenSource cancel)
+    {
+        await _hostOpening.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        if (_host is { } bound)
+        {
+            await DispatchAsync(bound.Host, bound.Scope, request, launch, ordinal, cancel, queuedAfter: null).ConfigureAwait(false);
+            return;
+        }
+
+        lock (_gate)
+        {
+            _runs.Remove(ordinal);
+        }
+
+        cancel.Dispose();
+        Fail(ordinal, request.EngineId, HostRefusal ?? NotOpened);
     }
 
     /// <summary>How long a run's lines may trail its terminal row before the follow is let go.</summary>

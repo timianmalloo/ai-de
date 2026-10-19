@@ -30,9 +30,8 @@ public sealed class NoDispatchOutsideTheHostTests : IDisposable
 
     private AttemptScope Scope => new("ws-t8", _fixture.Store.CoreEpoch, SessionGeneration: 1);
 
-    private Task<IAttemptHost> OpenHost() =>
-        AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None).ContinueWith(
-            opened => (IAttemptHost)opened.Result, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
+    private async Task<IAttemptHost> OpenHost() =>
+        await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
 
     [Fact]
     public void ATurnSentBeforeTheHostOpens_WaitsForIt_AndRunsAsAnAttempt()
