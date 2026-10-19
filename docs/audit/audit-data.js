@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T12:35:20Z",
+  "generated": "2026-10-19T12:46:53Z",
   "audit": [
     {
       "actor": null,
@@ -25163,6 +25163,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T12:26:10Z",
       "duration_seconds": 549.0
+    },
+    {
+      "id": "al-01M5A36P40WAKZSRSV0ASXHXBF",
+      "shortname": "join-wls-float-guard-step8",
+      "datetime": "2026-10-19T12:46:53Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/160) for the T20 join 4748cdb2",
+      "summary": "Recount OK. Step 8 5/48 (baseline). Ratchet vs first parent eda6aeff on clean trees, head 4748cdb2: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). No foreign file in the join commit: Rulings 172/173, written mid-join, were saved as a patch and the register restored before step 7. T20 (Sonnet, 2 nodes; Ruling 171 (1)): workbench.floatPane refuses with DOCK2 and leaves the layout unchanged; a layout restored with floating windows docks each pane into its kind's zone (FloatingRedock, Core) with the DOCK3 report line through RestoreResult; copy confirmed by the Owner, singular/plural consts pinned against DESIGN.md:1384-1385; zone label ZoneLayoutService.ZoneName (:272-279), pinned for every ZoneId. Lands before any later WL-S join.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T20 on main before any later WL-S join (Ruling 171 (1))",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T12:23:47Z",
+      "duration_seconds": 1386.0
     }
   ],
   "changes": [
