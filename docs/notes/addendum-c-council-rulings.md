@@ -3496,3 +3496,15 @@ The Center inverts the risk. A Left zone could clip the measure, but a Center zo
 If ThreadFeed does not cap today, (2) is a red-first product change within T11's notebook-kind scope. Node 2's re-scoping of Ruling 83's 19 Left-dock tests to Center, and its deletion of the unreachable 'The session is docked at the left' empty copy with its test (HYG-A), are accepted.
 
 - request: req-01M59W9DMM0YKGB8V72JMZB9CC · ruled by: wl-owner-20261018 · at: 2026-10-19T10:46:57Z
+
+### Ruling 169 — Ruling 166(2) amended: the knowledge-inclusive toggle is session-only per instance, like Group actually is; persisted per-surface view state is one later designed feature
+
+Option A. Ruling 166(2) asserted that Group persists with the layout without opening it. The Owner checked origin/main. Group is page-local state, 'var grouped = false;' (CanvasPage.cs:133). The layout's Surface record holds only SurfaceId, Kind and Title (LayoutModel.cs:10). The factory builds CanvasSurface with no view state (SurfaceContentFactory.cs:142, per the Leader). So 'like Group' means session-only. This is an Owner instance of DC-NEW-wl-leader2: a ruling asserted behaviour by analogy without reading the analogue.
+
+The decision:
+(1) The toggle is per canvas instance, default OFF, and session-only. It resets on reopen exactly as Group does. No layout schema change.
+(2) Per-instance non-leak is tested red-first: toggling one canvas instance does not change another.
+(3) Persisted per-surface view state (Group, 2D/3D and knowledge-inclusive together) is recorded as one future designed feature, owned by the slice that first needs restored view state. It needs a layout schema change and the Data and Persistence review. Option B is rejected for now, because adding it to one toggle alone would give three view options with three different persistence rules.
+The Leader's withdrawal of the 'docked at the left' deletion is endorsed: a drag can still dock a notebook Left, so the copy is reachable and its test is re-scoped. The Console focus-return defect found in T11 node 2 is a real product fix and goes red-first in node 3, as dispatched.
+
+- request: req-01M59X6EFREMF46BDWAN9MGCDJ · ruled by: wl-owner-20261018 · at: 2026-10-19T11:02:43Z
