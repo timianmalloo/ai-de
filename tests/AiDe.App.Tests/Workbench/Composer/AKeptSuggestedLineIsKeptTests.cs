@@ -14,7 +14,7 @@ namespace AiDe.App.Tests.Composer;
 
 /// <summary>
 /// <b>T30 (C) — Ruling 180 (3), C1: a suggested line counts only when kept, and a kept line is kept.</b> Under
-/// <c>agentic-advisory</c> the compile step suggests Goal, Done when and Not in scope, each marked <i>? derived</i> with
+/// <c>agentic-advisory</c> the compile step suggests Goal, Done when and Not in scope, each marked <i>? suggested</i> with
 /// a <i>keep</i> control. T29 found that Keep appended an operator row to the prepared envelope but never wrote the
 /// draft, so the next prepare re-opened the line and the model re-derived it (<c>ComposerSurface.cs</c>'s keep
 /// callback). Every step is the user's gesture on the product's composition (<see cref="ComposerGesture"/>): the words
@@ -46,7 +46,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
             ComposerGesture.CtrlEnter(composer);
             await composer.Preparing!.WaitAsync(NotebookFixture.Bound);
             ComposerGesture.Settle(document);
-            Assert.Equal("? derived", composer.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.Equal(StructureLine.SuggestedMark, composer.StructureMarks[GoalBlockFields.GoalKey]);
             Assert.Equal(Suggestion(1, "goal"), Line(composer, "Goal").Text);
 
             Assert.Equal(StructureLine.KeepHelp, AutomationProperties.GetHelpText(KeepButton(composer, "Goal")));
@@ -69,7 +69,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
 
             // The unkept lines were suggested again, and are still only suggestions: never in the draft.
             Assert.Equal(Suggestion(2, "done_when"), Line(composer, "Done when").Text);
-            Assert.Equal("? derived", composer.StructureMarks[GoalBlockFields.DoneWhenKey]);
+            Assert.Equal(StructureLine.SuggestedMark, composer.StructureMarks[GoalBlockFields.DoneWhenKey]);
             Assert.False(composer.Draft.GoalValues.TryGetValue(GoalBlockFields.DoneWhenKey, out var doneWhen) && doneWhen.Length > 0, $"an unkept suggestion reached the draft: \"{doneWhen}\"");
         });
     }

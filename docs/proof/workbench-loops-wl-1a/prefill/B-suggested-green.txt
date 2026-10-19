@@ -1,0 +1,36 @@
+
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [819 ms]
+  Standard Output Messages:
+ compile calls 2; after the second prepare: Goal "Suggestion 1 for goal." marked "✓ kept"; draft goal "Suggestion 1 for goal."; Done when "Suggestion 2 for done_when." marked "? suggested"
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [337 ms]
+[xUnit.net 00:00:02.77]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AModelDerivedLine_IsMarkedSuggested_OnScreenAndInUia_AndAKeptLineIsNot [450 ms]
+  Standard Output Messages:
+ suggested: mark "? suggested" · UIA ItemStatus "suggested"
+ kept: mark "✓ kept" · UIA ItemStatus "kept"
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AKeptGoal_IsInNeitherTheStoredRevisionNorTheRevivedDraft_AfterARestartThroughTheShellsRevive [795 ms]
+  Standard Output Messages:
+ before restart: draft goal "Suggestion 1 for goal."; mark "✓ kept"; editor "Rename the helper in the parser. Keep the public names."
+ stored head revision 2: body "Rename the helper in the parser. Keep the public names."
+ after restart: draft goal ""; shape FreeForm; editor ""
+
+
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.TheFourStatesEachCarryAReasonAndANextAction [78 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.KeepingADerivedLineMarksItKeptAndItReachesTheRun [56 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.ADegradedCallShowsItsReasonAndPrepareAgainAndStillSends [11 ms]
+
+Test Run Successful.
+Total tests: 7
+     Passed: 7
+ Total time: 3.1785 Seconds
