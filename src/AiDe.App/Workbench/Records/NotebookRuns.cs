@@ -153,15 +153,23 @@ public sealed class NotebookRuns : IDisposable
 
     /// <summary>
     /// Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly.
-    /// With neither a host nor an opener the window has no workspace client: <see cref="NoWorkspace"/>.
+    /// With neither a host nor an opener the window has no workspace client: <see cref="NoWorkspace"/>. With a host bound
+    /// whose restart read-back failed, the read-back's cause (Ruling 175(2)): a turn sent now would number ahead of the
+    /// turns it did not restore.
     /// </summary>
     public string? HostRefusal =>
-        _host is not null || _unhosted ? null : _openFailure ?? (_opener is null ? NoWorkspace : null);
+        _host is not null ? _readBackFailure : _unhosted ? null : _openFailure ?? (_opener is null ? NoWorkspace : null);
 
-    /// <summary>True while a retry can help: the refusal came from an open that may succeed on another try.</summary>
-    public bool CanRetryHost => _host is null && _opener is not null && _openFailure is not null and not HostedElsewhere;
+    /// <summary>True while a retry can help: an open that may succeed on another try, or a read-back that failed.</summary>
+    public bool CanRetryHost => _host is null
+        ? _opener is not null && _openFailure is not null and not HostedElsewhere
+        : _readBackFailure is not null;
 
     private string? _openFailure;
+    private string? _readBackFailure;
+
+    /// <summary>Ruling 159(2)'s refusal of a failure that a retry may clear, with that failure's own cause.</summary>
+    private static string CannotHost(string cause) => $"Runs cannot be hosted in this window: {cause} Retry to open the host again.";
 
     /// <summary>
     /// Binds to the workspace's attempt host once <paramref name="open"/> completes (Ruling 159): a turn sent before then
@@ -176,9 +184,30 @@ public sealed class NotebookRuns : IDisposable
         StartOpening(open, scope);
     }
 
-    /// <summary>The refusal's retry: opens the host again. Completes once this try bound the host or set its refusal.</summary>
-    public Task RetryHostAsync() =>
-        _host is null && _opener is { } opener ? StartOpening(opener.Open, opener.Scope) : Task.CompletedTask;
+    /// <summary>
+    /// The refusal's retry: opens the host again, or, bound with a failed read-back, reads back again for this bind.
+    /// Completes once this try bound the host or set its refusal, or the read-back ended.
+    /// </summary>
+    public Task RetryHostAsync()
+    {
+        if (_host is not null)
+        {
+            if (_readBackFailure is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            lock (_gate)
+            {
+                _readBackFor = 0;
+            }
+
+            ReadBackForTheBind();
+            return ReadingBack;
+        }
+
+        return _opener is { } opener ? StartOpening(opener.Open, opener.Scope) : Task.CompletedTask;
+    }
 
     private (Func<Task<IAttemptHost>> Open, AttemptScope Scope)? _opener;
     private Task _hostOpening = Task.CompletedTask;
@@ -277,10 +306,29 @@ public sealed class NotebookRuns : IDisposable
 
             _readBackFor = _binds;
             read = new Task<Task>(() => ReadBackAsync(submitted(), CancellationToken.None));
-            _bindReadBack = read.Unwrap();
+            _bindReadBack = KeepingTheFailureAsync(read.Unwrap());
         }
 
         read.RunSynchronously(TaskScheduler.Default);
+    }
+
+    /// <summary>
+    /// The bind's read-back, its failure kept as the refusal Send shows (Ruling 175(2)): Ruling 159's words with the
+    /// read-back's own cause, and the Retry that reads back again. A read-back that ends clears it.
+    /// </summary>
+    private async Task KeepingTheFailureAsync(Task read)
+    {
+        string? failure = null;
+        try
+        {
+            await read.ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
+        {
+            failure = CannotHost(error.Message);
+        }
+
+        ChangeRefusal(() => _readBackFailure = failure, inline: false);
     }
 
     /// <summary>Raised on the model's home context each time <see cref="HostRefusal"/> is set or cleared.</summary>
@@ -308,7 +356,7 @@ public sealed class NotebookRuns : IDisposable
             }
             catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
             {
-                ChangeRefusal(() => _openFailure = $"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.", inline: false);
+                ChangeRefusal(() => _openFailure = CannotHost(error.Message), inline: false);
                 return;
             }
 
