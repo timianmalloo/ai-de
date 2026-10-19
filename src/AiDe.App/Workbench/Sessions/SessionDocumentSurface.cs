@@ -661,7 +661,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             try
             {
                 return _envelopes?.Read().Envelopes.FirstOrDefault(e => e.EnvelopeId == envelopeId) is { } envelope
-                    ? Projection.Project(envelope).ProjectionSha
+                    ? ComposerSendGate.CurrentProjectionSha(envelope)
                     : null;
             }
             catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
