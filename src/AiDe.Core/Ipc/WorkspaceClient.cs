@@ -121,6 +121,22 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
     public Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
         QueryAsync<AttemptSweepResult>(WorkspaceOperations.AttemptSweep, request, cancellationToken);
 
+    /// <summary>Opens a notebook and its owning journey; idempotent on the notebook id.</summary>
+    public Task<NotebookOpenResult> OpenNotebookAsync(string notebookId, string journeyTitle, CancellationToken cancellationToken) =>
+        QueryAsync<NotebookOpenResult>(WorkspaceOperations.NotebookOpen, new NotebookOpenRequest(notebookId, journeyTitle), cancellationToken);
+
+    /// <summary>Saves a body as the next immutable revision; the latest body again returns that revision.</summary>
+    public Task<NotebookSaveResult> SaveNotebookRevisionAsync(
+        string notebookId, string body, int? parentRevisionNo, CancellationToken cancellationToken) =>
+        QueryAsync<NotebookSaveResult>(
+            WorkspaceOperations.NotebookRevisionSave, new NotebookSaveRequest(notebookId, body, parentRevisionNo), cancellationToken);
+
+    /// <summary>The latest revision of a notebook, or null when it has none.</summary>
+    public async Task<NotebookRevisionRow?> ReadLatestNotebookRevisionAsync(string notebookId, CancellationToken cancellationToken) =>
+        (await QueryAsync<NotebookLatestResult>(
+            WorkspaceOperations.NotebookRevisionLatest, new NotebookLatestRequest(notebookId), cancellationToken)
+            .ConfigureAwait(false)).Revision;
+
     /// <summary>What re-indexing has cost in this daemon so far.</summary>
     /// <remarks>
     /// The measurement the sub-scope-incrementality decision is blocked on: whether a re-index is an

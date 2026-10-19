@@ -298,6 +298,26 @@ public static class WorkspaceOperations
             Refusable(() => Handle<AttemptSweepRequest>(request, dispatcher.SweepAttempts)));
     }
 
+    public const string NotebookOpen = "notebook.open";
+    public const string NotebookRevisionSave = "notebook.revision.save";
+    public const string NotebookRevisionLatest = "notebook.revision.latest";
+
+    /// <summary>Registers the three notebook operations (open, save a revision, read the latest) on <paramref name="endpoint"/>.</summary>
+    public static void RegisterNotebook(DaemonEndpoint endpoint, NotebookService notebooks)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(notebooks);
+
+        endpoint.Register(NotebookOpen, (request, _) =>
+            Refusable(() => Handle<NotebookOpenRequest>(request, notebooks.Open)));
+
+        endpoint.Register(NotebookRevisionSave, (request, _) =>
+            Refusable(() => Handle<NotebookSaveRequest>(request, notebooks.SaveRevision)));
+
+        endpoint.Register(NotebookRevisionLatest, (request, _) =>
+            Refusable(() => Handle<NotebookLatestRequest>(request, notebooks.LatestRevision)));
+    }
+
     /// <summary>
     /// Turns a domain refusal into a stable error response instead of letting it escape.
     /// </summary>

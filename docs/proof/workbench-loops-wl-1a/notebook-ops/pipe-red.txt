@@ -1,0 +1,32 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.TheThreeOperations_RoundTripOverThePipe [FAIL]
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.TheThreeOperations_RoundTripOverThePipe [73 ms]
+  Error Message:
+   System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Ipc.NotebookService.Open(NotebookOpenRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 27
+   at AiDe.Core.Ipc.WorkspaceOperations.Handle[TRequest](IpcRequest request, Func`2 project) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\WorkspaceOperations.cs:line 394
+   at AiDe.Core.Ipc.WorkspaceOperations.<>c__DisplayClass28_1.<RegisterNotebook>b__3() in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\WorkspaceOperations.cs:line 312
+   at AiDe.Core.Ipc.WorkspaceOperations.Refusable(Func`1 operation) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\WorkspaceOperations.cs:line 356
+   at AiDe.Core.Ipc.WorkspaceOperations.<>c__DisplayClass28_0.<RegisterNotebook>b__0(IpcRequest request, IpcPeer _) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\WorkspaceOperations.cs:line 312
+   at AiDe.Core.Ipc.DaemonEndpoint.Invoke(IpcRequest request, IpcPeer peer) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\DaemonEndpoint.cs:line 139
+   at AiDe.Core.Ipc.IpcServer.Handle(String raw, IpcPeer peer) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 326
+   at AiDe.Core.Ipc.IpcServer.ServeAsync(NamedPipeServerStream pipe, CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 287
+   at AiDe.Core.Ipc.IpcServer.ListenAsync(CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 198
+   at AiDe.Core.Ipc.IpcServer.ListenAsync(CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 210
+   at AiDe.Core.Ipc.IpcServer.Swallow(Task task) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 424
+   at AiDe.Core.Ipc.IpcServer.RunAsync(CancellationToken cancellationToken) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\IpcServer.cs:line 148
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.TheThreeOperations_RoundTripOverThePipe() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 185
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 83 ms - AiDe.Core.Tests.dll (net10.0)
