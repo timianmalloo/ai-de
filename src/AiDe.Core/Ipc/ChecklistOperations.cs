@@ -59,6 +59,7 @@ public sealed class ChecklistService(WorkspaceStore store)
         ArgumentNullException.ThrowIfNull(request);
 
         using var reader = store.BeginRead();
+        RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
         var evaluation = Assess(reader, request.JourneyId, request.IntentNotebookId, request.LiveProjectionSha);
         var closure = WorkClosureFold.Evaluate(reader.ReadDispositions("work", request.JourneyId), evaluation.Baseline);
         var headRevision = reader.ReadLatestNotebookRevision(request.IntentNotebookId)?.RevisionNo;
@@ -75,6 +76,17 @@ public sealed class ChecklistService(WorkspaceStore store)
 
         using var writer = store.BeginWrite();
         using var reader = store.BeginRead();
+        RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
+
+        // simplify: one checklist per journey, checklist_id = journey_id (Ruling 176). Ceiling: WL-1b and WL-1c need no
+        // more. Upgrade trigger: the first spec story that needs two checklists in one journey requires the v3 owner
+        // column on checklist_obligation_fact, backfilled from this alias.
+        if (request.ChecklistId is not null && request.ChecklistId != request.JourneyId)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.WorkSecondChecklist,
+                $"'{request.ChecklistId}' would be a second checklist for journey '{request.JourneyId}'; a journey has one");
+        }
+
         var latest = reader.ReadLatestChecklistRevision(request.JourneyId);
         var current = latest is { } revision ? reader.ReadObligations(request.JourneyId, revision) : [];
         foreach (var o in request.Obligations)
@@ -114,6 +126,7 @@ public sealed class ChecklistService(WorkspaceStore store)
 
         using var writer = store.BeginWrite();
         using var reader = store.BeginRead();
+        RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
         var head = reader.ReadLatestNotebookRevision(request.IntentNotebookId);
         var baseline = AcceptanceBaseline.For(request.IntentNotebookId, head?.RevisionNo);
         var isIntent = request.Kind == "intent-accepted";
@@ -142,6 +155,7 @@ public sealed class ChecklistService(WorkspaceStore store)
 
         using var writer = store.BeginWrite();
         using var reader = store.BeginRead();
+        RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
         var head = reader.ReadLatestNotebookRevision(request.IntentNotebookId);
         RequireKnownObligation(reader, request.JourneyId, request.ObligationId);
         RequireEligibleAttempt(reader, request, head?.RevisionNo);
@@ -177,6 +191,7 @@ public sealed class ChecklistService(WorkspaceStore store)
         {
             using var writer = store.BeginWrite();
             using var reader = store.BeginRead();
+            RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
             var evaluation = Assess(reader, request.JourneyId, request.IntentNotebookId, request.LiveProjectionSha);
             var revision = reader.ReadLatestNotebookRevision(request.IntentNotebookId)?.RevisionNo;
             var existing = reader.ReadDispositions("work", request.JourneyId)
@@ -230,6 +245,22 @@ public sealed class ChecklistService(WorkspaceStore store)
             links.ToDictionary(p => p.Key, p => (IReadOnlyList<EvidenceLinkRow>)p.Value, StringComparer.Ordinal),
             dispositions.ToDictionary(p => p.Key, p => (IReadOnlyList<DispositionRow>)p.Value, StringComparer.Ordinal),
             reader.ReadDispositions("intent", journeyId), attempts, liveProjectionSha));
+    }
+
+    /// <summary>
+    /// The journey must be a real work journey (not the standing terminal-drafts owner) that owns the intent
+    /// notebook. A legacy, terminal or investigation notebook is refused, never adopted (Ruling 156).
+    /// </summary>
+    private static void RequireWorkJourney(StoreReader reader, string journeyId, string notebookId)
+    {
+        var journey = reader.ReadJourney(journeyId);
+        var notebook = reader.ReadNotebook(notebookId);
+        if (journey is null || journey.Purpose != "work" || journeyId == WorkspaceSchema.TerminalJourneyId
+            || notebook?.OwnerJourneyId != journeyId)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.WorkNotAWorkJourney,
+                $"'{notebookId}' is not the intent notebook of a work journey '{journeyId}'");
+        }
     }
 
     private static void RequireWithinCap(string? value, string field)
