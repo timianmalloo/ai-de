@@ -79,5 +79,5 @@ The class: **a content oracle that is set up by fixture mutation never drives th
 
 - `reproduction.txt` — the numbers, the observed writer, and Ruling 96's tests' own output.
 - `compiled-after-submit-red.txt` — `TheCompiledFieldAfterASubmitTests`, 2 failed (red commit `f3bdf334`).
-- `suite-node1.txt` — the whole Core and App suites at this node's head.
+- `suite-node1-core.txt`, `suite-node1-app.txt`, `suite-node1-exits.txt` — the whole Core and App suites at this node's head, run in this tree.
 - `handoff.md` — the state and the next step.

@@ -24,7 +24,12 @@ summary: >-
 - Red test: `tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterASubmitTests.cs` (namespace `AiDe.App.Tests.Composer`).
   `OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt` and
   `OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt`, both red at `f3bdf334` (`compiled-after-submit-red.txt`).
-- Whole suites at the node head: `suite-node1.txt`. The two red facts are the expected App failures.
+- Whole suites at the node head: `suite-node1-core.txt`, `suite-node1-app.txt` (exit codes in `suite-node1-exits.txt`).
+  The two red facts are the expected App failures.
+- **Finding (coordination, not this node's class):** the session scratchpad is shared across the Leader's sub-agents. A
+  first suite run wrote `core.txt` / `app.txt` there, and T21's run in `C:\Projects\ai-de-wls-float` overwrote both files
+  with its own results (its build paths are in them). That run was discarded. The suites were re-run with output written
+  into this tree's proof folder. Briefs could require per-track scratch file names.
 
 **Red, by design:** the two facts above. Nothing else this node added is red.
 
