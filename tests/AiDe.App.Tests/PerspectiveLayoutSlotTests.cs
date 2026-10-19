@@ -234,7 +234,10 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     public void TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters(Type live, Type frozen)
     {
         // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as
-        // surely as a removed member does.
+        // surely as a removed member does. The frozen parameters are the live constructor's exact
+        // prefix. A parameter after them is an additive field, which schema 1 admits (Ruling 174's
+        // floating bounds) only when it is optional, nullable and null by default, so a file without
+        // it still reads.
         static string[] Parameters(Type t) =>
             t.GetConstructors().Single().GetParameters()
                 .Select(p => $"{p.Name}:{p.ParameterType.Name}:{Wire(t, p.Name!)}")
@@ -243,7 +246,15 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         static string Wire(Type t, string parameter) =>
             t.GetProperty(parameter)?.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? "(none)";
 
-        Assert.Equal(Parameters(frozen), Parameters(live));
+        var frozenParameters = Parameters(frozen);
+        Assert.Equal(frozenParameters, Parameters(live).Take(frozenParameters.Length));
+        var added = live.GetConstructors().Single().GetParameters().Skip(frozenParameters.Length);
+        Assert.All(added, p =>
+        {
+            Assert.True(p.HasDefaultValue && p.DefaultValue is null, $"{live.Name}.{p.Name} is added to schema 1 without a null default");
+            Assert.True(Nullable.GetUnderlyingType(p.ParameterType) is not null || !p.ParameterType.IsValueType,
+                $"{live.Name}.{p.Name} is added to schema 1 as a non-nullable {p.ParameterType.Name}");
+        });
     }
 
     // Test 6, the backup: the .pre-perspectives.bak exists after the first post-drop save and equals
