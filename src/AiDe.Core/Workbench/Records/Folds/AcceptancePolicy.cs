@@ -12,5 +12,5 @@ public static class AcceptancePolicy
     /// <summary>The one table: the disposition kinds that cover a mandatory obligation. Empty by default.</summary>
     public static readonly IReadOnlySet<string> CoveringKinds = new HashSet<string>(StringComparer.Ordinal);
 
-    public static bool Covers(string dispositionKind) => throw new NotImplementedException();
+    public static bool Covers(string dispositionKind) => CoveringKinds.Contains(dispositionKind);
 }
