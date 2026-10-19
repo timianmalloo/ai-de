@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T12:20:35Z",
+  "generated": "2026-10-19T12:35:20Z",
   "audit": [
     {
       "actor": null,
@@ -25035,23 +25035,124 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5A0E8VWGKVE57VX2G15XN86",
-      "shortname": "join-wls-knowledge-mode",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T11:58:36Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "merged on main, recount and step 8 ratchet PASS, pushed",
+      "duration_seconds": 560.0,
+      "fan_out": 0,
+      "goal": "WL-S close condition Ruling 149 (2): the knowledge-inclusive mode with its E2E green",
+      "id": "al-01M5A0E8VWGKVE57VX2G15XN86",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wls-knowledge-mode",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T11:49:16Z",
       "summary": "T18 (Opus, 3 nodes): knowledge-inclusive toggle per canvas instance, default off, session-only (Ruling 169); ExcludeKnowledge seam per instance; one const each for text and UIA name; DESIGN.md entry; §8 E2E over the real daemon (knowledge-hub, 45 typed edges; env-gated AIDE_REAL_PROJECTION_ROOT; Leader re-run 5/5, 0 skipped). Leader fix at recount: expectedSkips gains the env-gated E2E with its provenance. recount_seconds=558 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T12:20:35Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 325.0,
+      "fan_out": 0,
+      "goal": "Land T18 on main under Rulings 160 and 171 order (a)",
+      "id": "al-01M5A1PHE0236WHR3KM2PHP32A",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/160) for the T18 join 9c62f453",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wls-knowledge-mode-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T12:15:10Z",
+      "summary": "Recount OK (App floor 1125 -> 1130; the env-gated E2E is a named expected skip with provenance). Step 8 5/48 (baseline). Ratchet vs first parent 6a6be19a on clean trees, head 9c62f453: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). Joined before Ruling 171; diff off the float path; exempt from 171(1) (Owner, order (a): T18's src diff is CanvasPage.cs, CanvasSurface.cs and WorkbenchShell.cs, none on the float path). The join's chore commit was re-created as 9c62f453 because conductor-join's step 7 swept the uncommitted Ruling 171 register edit and obligations.md into 61c9f4b0 (never pushed; kept as backup/t18-join-61c9f4b0); the ratchet ran on both (0/49 each). T18 (Opus, 3 nodes): knowledge-inclusive toggle per canvas instance, default off, session-only (Rulings 166, 169); per-instance ExcludeKnowledge seam; one const each for the text and UIA name; DESIGN.md entry; design WL-S section 8 E2E over the real daemon (knowledge-hub, 45 typed edges; Leader re-run 5/5, 0 skipped).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/FloatingRedock.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T12:11:02Z",
+      "done_when": "two checks red then green",
+      "duration_seconds": 823.0,
+      "fan_out": 0,
+      "goal": "no pane can vanish via float",
+      "id": "al-01M5A151JEF6WFJ3PG6KXC6NAX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T20 float guard: floatPane refuses; restore docks floating windows (Ruling 171 (1))",
+      "session": "wl-t20-floatguard",
+      "shortname": "wl-t20-floatguard",
+      "skill": "implement",
+      "started_at": "2026-10-19T11:57:19Z",
+      "summary": "floatPane refuses with a stated cause; restored floating windows dock into their kind's zone with a report line; DOCK2/DOCK3 copy rows",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T12:25:03Z",
+      "done_when": "red/green for both checks, suites run",
+      "duration_seconds": 583.0,
+      "fan_out": 0,
+      "goal": "Pin DOCK3 wording and zone label",
+      "id": "al-01M5A1YPYZ9F583MDTW95DHQWV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T20 node 2: DOCK3 plural wording exact and zone label pinned to ZoneLayoutService.ZoneName",
+      "session": "wl-t20-floatguard",
+      "shortname": "wl-t20-floatguard-n2",
+      "skill": "implement",
+      "started_at": "2026-10-19T12:15:20Z",
+      "summary": "Plural sentence per Owner; consts + tests; DESIGN.md DOCK3 row; suite Core 3024 / App 1125 + 1 flake passing alone",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5A2HGRHJ753ZYQMEQ0SC709",
+      "shortname": "join-wls-float-guard",
+      "datetime": "2026-10-19T12:35:19Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wls-float-guard into main",
+      "summary": "T20 (Sonnet, 2 nodes): workbench.floatPane refuses with DOCK2 and leaves the layout unchanged; a layout restored with floating windows docks each pane into its kind's zone (FloatingRedock, Core) with the DOCK3 report line through RestoreResult; copy confirmed by the Owner, consts pinned against DESIGN.md:1384-1385; zone label = ZoneLayoutService.ZoneName (:272-279), pinned for every ZoneId. Lands before any later WL-S join (Ruling 171 (1)). recount_seconds=548 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "WL-S close condition Ruling 149 (2): the knowledge-inclusive mode with its E2E green",
+      "goal": "Ruling 171 (1): no pane on main can vanish by floating",
       "done_when": "merged on main, recount and step 8 ratchet PASS, pushed",
       "tier": "T1",
       "fan_out": 0,
@@ -25060,32 +25161,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T11:49:16Z",
-      "duration_seconds": 560.0
-    },
-    {
-      "id": "al-01M5A1PHE0236WHR3KM2PHP32A",
-      "shortname": "join-wls-knowledge-mode-step8",
-      "datetime": "2026-10-19T12:20:35Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Rulings 151/160) for the T18 join 9c62f453",
-      "summary": "Recount OK (App floor 1125 -> 1130; the env-gated E2E is a named expected skip with provenance). Step 8 5/48 (baseline). Ratchet vs first parent 6a6be19a on clean trees, head 9c62f453: PASS 0/49 (repo citations strict ok; pack copy excluded PD-1). Joined before Ruling 171; diff off the float path; exempt from 171(1) (Owner, order (a): T18's src diff is CanvasPage.cs, CanvasSurface.cs and WorkbenchShell.cs, none on the float path). The join's chore commit was re-created as 9c62f453 because conductor-join's step 7 swept the uncommitted Ruling 171 register edit and obligations.md into 61c9f4b0 (never pushed; kept as backup/t18-join-61c9f4b0); the ratchet ran on both (0/49 each). T18 (Opus, 3 nodes): knowledge-inclusive toggle per canvas instance, default off, session-only (Rulings 166, 169); per-instance ExcludeKnowledge seam; one const each for the text and UIA name; DESIGN.md entry; design WL-S section 8 E2E over the real daemon (knowledge-hub, 45 typed edges; Leader re-run 5/5, 0 skipped).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T18 on main under Rulings 160 and 171 order (a)",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T12:15:10Z",
-      "duration_seconds": 325.0
+      "started_at": "2026-10-19T12:26:10Z",
+      "duration_seconds": 549.0
     }
   ],
   "changes": [
@@ -30036,6 +30113,78 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A1YZJGNZFD7R60N5554GRA",
+      "ts": "2026-10-19T12:25:12Z",
+      "from": "wl-t20-floatguard",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t20-floatguard"
+    },
+    {
+      "id": "mail-01M5A205SJKNE95EXQ425CY3TY",
+      "ts": "2026-10-19T12:25:51Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "unblocked",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A21H020AAGK5MYXBP7EPGS",
+      "ts": "2026-10-19T12:26:35Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A25DK9XW8P3R2AR1K6X3F0",
+      "ts": "2026-10-19T12:28:43Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A27SFT3R1QSR430KDYJSNM",
+      "ts": "2026-10-19T12:30:01Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A27SFGWMFGHH04VJH6R268",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A28A9JF2HCYXG02DDE79Q6",
+      "ts": "2026-10-19T12:30:18Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A28A97KF9XW18GX2819ZZR",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A2AJ30XCPXBGHHN3TE4J92",
+      "ts": "2026-10-19T12:31:31Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A27SFGWMFGHH04VJH6R268",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A2AJ8ARH6TP6ZCQWZB0PQM",
+      "ts": "2026-10-19T12:31:32Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A28A97KF9XW18GX2819ZZR",
+      "session": "wl-owner-20261018"
     }
   ]
 };

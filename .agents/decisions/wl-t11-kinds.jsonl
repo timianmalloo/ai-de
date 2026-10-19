@@ -92,3 +92,7 @@
 {"agent": "wl-t11-kinds", "at": 1792412330.4277265, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/D1-probe-green.txt", "session": "wl-t11-kinds", "wi": ""}
 {"agent": "wl-t11-kinds", "at": 1792412330.4689188, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/D1-probe-mutation-red.txt", "session": "wl-t11-kinds", "wi": ""}
 {"agent": "wl-t11-kinds", "at": 1792412330.5080497, "code": null, "kind": "allowed", "path": "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792412832.6609387, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/D2-execution-at-revive-red.txt", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792412832.694522, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Notebook/ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792412899.8679283, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/handoff.md", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792412912.806445, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t11-kinds", "wi": ""}

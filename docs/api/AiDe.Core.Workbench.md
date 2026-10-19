@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 77 types, 151 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 80 types, 153 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**77 public types · 151 public members · 59% documented.**
+**80 public types · 153 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -214,6 +214,38 @@ The rectangle to highlight for a destination — what the user sees before relea
 
 **Remarks.** Derived from the same target the drop will apply, so the highlight cannot promise one
 destination while the drop performs another.
+
+## `RedockedPane`
+
+*record* — `FloatingRedock.cs`
+
+One pane docked back from a floating window, and where it landed.
+
+## `FloatingRedockResult`
+
+*record* — `FloatingRedock.cs`
+
+A layout with no floating windows, and the panes that were docked to make it so.
+
+| Member | Summary |
+|---|---|
+| `string Report(WorkbenchLayout restored)` | The report line for the panes that are still docked in  — a pane the host's admission dropped afterwards is reported as dropped, not as docked — or empty when none. |
+
+## `FloatingRedock`
+
+*class* — `FloatingRedock.cs`
+
+Docks every floating window of a restored layout back into a zone (Ruling 171 (1)).
+
+**Remarks.** Floating is not drawn yet (T21 makes it real), so a restored floating pane would be invisible and
+unreachable. Each pane goes to the zone its kind belongs to (`ClassifyStack`);
+a kind with no zone of its own falls to that classifier's default, and the host's admission still
+runs afterwards, so a kind the perspective does not admit is dropped with the existing report.
+Upgrade trigger: T21 removes this call when floating windows restore as windows.
+
+| Member | Summary |
+|---|---|
+| `FloatingRedockResult Dock(WorkbenchLayout layout)` | **(gap)** |
 
 ## `LayoutMigration`
 
