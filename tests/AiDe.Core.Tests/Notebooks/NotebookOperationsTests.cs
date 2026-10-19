@@ -88,7 +88,7 @@ public sealed class NotebookOperationsTests : IDisposable
             () => Service.Open(new NotebookOpenRequest("terminal-drafts", "Mine")));
 
         using var reader = _workspace.Store.BeginRead();
-        Assert.Equal(StoreErrorCodes.JourneyIdCollision, refusal.ErrorCode);
+        Assert.Equal(StoreErrorCodes.ReservedJourney, refusal.ErrorCode);
         Assert.Null(reader.ReadNotebook("terminal-drafts"));
     }
 

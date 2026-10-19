@@ -12,8 +12,9 @@ public sealed partial class StoreWriter
     /// untouched and its current owner (null for an unadopted legacy notebook) is returned.
     /// </summary>
     /// <remarks>
-    /// assume: the journey id <c>journey-{notebookId}</c> is unused. Confirm: <c>ReadJourney</c> returns null
-    /// before the append. If false: <see cref="AppendJourney"/> would add a version to someone else's journey.
+    /// The journey id <c>journey-{notebookId}</c> must be unused: a notebook with no row whose derived journey
+    /// already exists (including the reserved <c>journey-terminal-drafts</c>) is refused with
+    /// <see cref="StoreErrorCodes.JourneyIdCollision"/> before anything is written.
     /// </remarks>
     public string? OpenNotebook(string notebookId, string journeyTitle)
     {
@@ -25,6 +26,12 @@ public sealed partial class StoreWriter
         }
 
         var journeyId = $"journey-{notebookId}";
+        if (ScalarRow("SELECT 1 FROM journey_dim WHERE journey_id = $id LIMIT 1;", ("$id", journeyId)) is not null)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.JourneyIdCollision,
+                $"notebook '{notebookId}' would derive journey '{journeyId}', which already exists");
+        }
+
         AppendJourney(new JourneyRow(journeyId, "work", journeyTitle));
         AppendNotebook(new NotebookRow(notebookId, journeyId, Legacy: false));
         return journeyId;
