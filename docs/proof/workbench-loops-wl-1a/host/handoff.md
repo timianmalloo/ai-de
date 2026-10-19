@@ -29,8 +29,9 @@ Tree `C:\Projects\ai-de-wl1a-attempt-host`, branch `wl1a-attempt-host`, base `f1
 | `344f6420` | `docs: design WL-1a` — Simplifier PASS-WITH-CONDITIONS; Distributed Systems VETO, cleared on re-review (gate record in the design) |
 | `66ae2be7` | host interface: `IAttemptHost`, `AttemptDispatch`, `AttemptStart`, `AttemptRun`; `IAttemptLedger` (`IWorkspaceDispatch.cs`); `AttemptKey`, `AttemptReceipt`, `AttemptErrorCodes` (`BoundaryDispatcher.cs`); IPC ops `attempt.begin/outcome/read/sweep`; `RunAsync(..., AttemptRun? attempt = null)` |
 | `6aad0db4` | `test: red` — 17 tests, red evidence `*-red.txt` |
-| _green_ | the gate (see below), `*-green.txt`, `DC-NEW-wl-t5-host` |
-| _refactor_ | host types moved to `src/AiDe.App/Conductor/AttemptHost.cs` (seam request `req-01M599H0364THVM23WJJ68R11S` granted) |
+| `8d6e6153` | green: the gate (see below), `*-green.txt`, `suite-green.txt`, `DC-NEW-wl-t5-host` |
+| `9717c1a7` | refactor: host types moved to `src/AiDe.App/Conductor/AttemptHost.cs` (seam request `req-01M599H0364THVM23WJJ68R11S` granted) |
+| `68f3a753` | design: "Fold inputs" for T6 (Leader delegation) and the `FrameRedaction.Apply` signature |
 
 Checks, red then green (test names exact):
 
