@@ -136,6 +136,99 @@ public sealed class TheCompileModeControlTests(ITestOutputHelper output) : IDisp
         });
     }
 
+    /// <summary>
+    /// T30 n2 (C), DC-NEW-wl-t30-prefill: the settings query reads this test's own window only. Two concurrent windows are
+    /// forced open first, each with an open popup holding a control named <i>Compile mode</i>: one on another STA thread
+    /// (another test's, in the whole suite) and one on this thread. The control found must be this document's.
+    /// </summary>
+    [Fact]
+    public void TheSettingsQuery_ReadsThisTestsOwnWindow_WithConcurrentWindowsOpen()
+    {
+        using var otherThread = ConcurrentWindow.OnAnotherThread();
+        ComposerGesture.Drive(_fixture, (window, document) =>
+        {
+            var config = NewSession(GateOneAdmits());
+            document.CompileModeLadder = GateOneAdmits;
+            document.Composer.Gate.BindSession(config.SessionId, config.CompileMode, "claude-code", "implement");
+            var sameThread = ConcurrentWindow.Open();
+            try
+            {
+                var picker = OpenSettings(document);
+                var owner = OwnerOf(picker);
+                output.WriteLine($"found the \"Compile mode\" control of window \"{owner?.Title}\" (this test's: \"{window.Title}\")");
+                Assert.True(ReferenceEquals(window, owner), $"the settings query read another window's control: \"{owner?.Title}\"");
+            }
+            finally
+            {
+                sameThread.Close();
+            }
+
+            return Task.CompletedTask;
+        });
+    }
+
+    /// <summary>The window a control in an open popup belongs to: the popup's placement target's window.</summary>
+    private static Window? OwnerOf(FrameworkElement element)
+    {
+        DependencyObject? node = element;
+        while (node is not null and not System.Windows.Controls.Primitives.Popup)
+        {
+            node = LogicalTreeHelper.GetParent(node) ?? System.Windows.Media.VisualTreeHelper.GetParent(node);
+        }
+
+        return node is System.Windows.Controls.Primitives.Popup { PlacementTarget: { } target } ? Window.GetWindow(target) : null;
+    }
+
+    /// <summary>A window with an open popup that holds a combo box named <i>Compile mode</i> — another test's window, forced.</summary>
+    private sealed class ConcurrentWindow : IDisposable
+    {
+        private readonly Thread? _thread;
+        private readonly System.Windows.Threading.Dispatcher? _dispatcher;
+
+        private ConcurrentWindow(Thread thread, System.Windows.Threading.Dispatcher dispatcher)
+        {
+            _thread = thread;
+            _dispatcher = dispatcher;
+        }
+
+        /// <summary>Opens one on this thread and returns it; the caller closes it.</summary>
+        public static Window Open()
+        {
+            var anchor = new Button { Content = "Session settings" };
+            var window = new Window { Title = "a concurrent window", Content = anchor, Width = 300, Height = 200, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false };
+            window.Show();
+            var combo = new ComboBox();
+            AutomationProperties.SetName(combo, "Compile mode");
+            _ = new System.Windows.Controls.Primitives.Popup { PlacementTarget = anchor, Child = combo, StaysOpen = true, IsOpen = true };
+            ComposerGesture.Settle(anchor);
+            return window;
+        }
+
+        /// <summary>Opens one on its own STA thread, held open until disposed.</summary>
+        public static ConcurrentWindow OnAnotherThread()
+        {
+            var ready = new ManualResetEventSlim();
+            System.Windows.Threading.Dispatcher? dispatcher = null;
+            var thread = new Thread(() =>
+            {
+                Open();
+                dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                ready.Set();
+                System.Windows.Threading.Dispatcher.Run();
+            }) { IsBackground = true };
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            Assert.True(ready.Wait(TimeSpan.FromSeconds(30)), "the concurrent window on another thread did not open");
+            return new ConcurrentWindow(thread, dispatcher!);
+        }
+
+        public void Dispose()
+        {
+            _dispatcher?.InvokeShutdown();
+            _thread?.Join(TimeSpan.FromSeconds(10));
+        }
+    }
+
     /// <summary>The header's <i>Session settings</i> button through its invoke peer, then the open popup's compile-mode control.</summary>
     private static ComboBox OpenSettings(SessionDocumentSurface document)
     {
