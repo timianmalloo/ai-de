@@ -1,60 +1,57 @@
 ---
 id: wl-s-float-handoff-n1
-title: "WL-S T21 float - node 5 hand-off"
+title: "WL-S T21 float - node 6 hand-off"
 type: proof-pack
 status: active
 owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "T21 node 5: the partial-read sentence names the left-out surfaces by title, a null element in any saved-layout list loads with a report line, and floating-window ids are unique across a restore (close condition 2). The App suite is owed under rule 20; next is close condition 3, the focused-tab float."
+summary: "T21 node 6: the owed App suite at node 5's head is 1165/1/2 (the known SolutionTreeChord precondition); floatPane floats the focused tab (close condition 3); a saved floating stack whose id is in use loads with the partial-read sentence; a native float never takes a restored float-view id. Core 3046/0/1, App 1166/1/2. Next is the T21 join, before T11."
 ---
 
-# T21 node 5 hand-off
+# T21 node 6 hand-off
 
-Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. The node 4
-hand-off is in git history at ba6b0768. Node 5 stopped at the Leader's 15:35Z rule-16 kick, after
-check (C)'s green. No check is half done.
+Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. The node 5
+hand-off is in git history at 715fe108. The Leader's rule-16 kick came at 16:01Z, while check (B)'s
+green was one step away. (B) green was committed, then both whole suites ran. No check is half done.
 
 ## Done (green, committed)
 
-- Nodes 1 to 4: see README.md.
-- Check (A), the partial-read sentence names what was left out: red f6e7842e, green 733391b6.
-- Check (B), a null element in a saved-layout list loads with the sentence and never throws: red 8c533157, green 3b12744f.
-- Check (C), floating-window ids are unique across a restore (close condition 2): red f3d14d3b, green 4d43a871.
-- Core suite (suite-node5-core.txt, at 4d43a871): 3043 passed / 0 failed / 1 skipped. That is node 4's 3034 plus 9 new: 2 in (A), 6 in (B), 1 in (C).
+- Nodes 1 to 5: see README.md.
+- (0) The owed App suite at f21fdf95 (suite-node5-app.txt, db19c117): 1165 passed / 1 failed / 2 skipped. The failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` at its precondition ("foreground not held"), as in nodes 1b to 4. Node 5 caused no App red.
+- (A) floatPane floats the focused tab (close condition 3): red 2a590c8a, green 3c433c3f.
+- (B) A saved floating stack whose id is in use loads with the partial-read sentence and never throws at restore: red 5327d810, green 51ae8820 (with DC-NEW-wl-t21-float-c).
+- (C) A native float after a restart never takes a restored window's `float-view` id: red f5fc73b0, green 9973a1ce. The collision was real.
+- Suites at 51ae8820 (suite-node6.txt): Core 3046 / 0 / 1 skipped; App 1166 / 1 / 2 skipped (the same precondition failure).
+- No "desktop hold is occupied" result occurred, so `desktop-hold.txt` was not written.
 
-## Owed: the App suite (rule 20)
+## (C): what the code does
 
-The Owner posted USER DEMO IN PROGRESS at 15:34Z, so no App run was made after that. The App tests
-of (A) and (B) were run red and green before 15:34Z (in the check's red and green files). The whole
-App suite was not run in this node. When the board shows USER DEMO DONE and no open join, run:
+The Leader's grep for `float-view` in `src/AiDe.App` found nothing because the literal is never
+written. At f21fdf95, `WorkbenchAdapter.MapFloatingWindow` (`WorkbenchAdapter.cs:1008`) called
+`NewNodeId("float")`, and `NewNodeId` (`:1102`) returns `$"{prefix}-view-{N}"` from the static
+`_nodeSeq` (`:1101`). That counter is shared with the split and stack ids and restarts with the
+process. Node 5's README and hand-off line was right, so it needs no correction.
 
-```
-cd C:\Projects\ai-de-wls-float && dotnet test tests/AiDe.App.Tests -nologo > docs/proof/workbench-loops-wl-s/float/suite-node5-app.txt 2>&1
-```
+## Next
 
-Expected from node 4's 1155 / 1 / 2: plus 6 (one named Fact, and five rows added to the plain-form
-Theory). This is a prediction, not a result. The one known failure is the SolutionTreeChord probe at
-its precondition, as in nodes 1b to 4.
+1. The T21 join, before T11 (Owner). T11 rebases onto T21, since both edit `LayoutPersistence.cs`.
+2. Close condition 4 (a live notebook floats and redocks) after T11 is on main.
 
-## Next node (n6): close condition 3, then the join
+## Seam requests (node 6)
 
-1. **floatPane floats the focused tab.** `SetState` passes `Surfaces().FirstOrDefault()` to `Float` (`ZoneBackedLayoutService.cs:593` at 4d43a871; it was :584 before this node's change to `Float`).
-2. T21 joins before T11 (Owner). T11 rebases onto T21, since both edit `LayoutPersistence.cs`.
-3. Close condition 4 (a live notebook floats and redocks) after T11 is on main.
-
-## Seam requests (node 5)
-
-- req-01M5ACJG6ZCRGJ3BDBPCYW0WJJ (open): the sentence names a left-out surface by its saved title (`ZoneSurfaceDto.Title`). A renamed tab shows `IHasDisplayName.DisplayName` instead (`WorkbenchAdapter.cs:1128` and `:216`; `IHasDisplayName.cs:9`). The display name is session state and is not in the zone file. After a restart the restored tab also shows the saved title, so the sentence matches the tab the user sees next. The fallback, built: name the saved title. Saving the display name would need a schema-1 field and a ruling.
+None.
 
 ## Findings (not fixed)
 
-- **Two floating stacks with one id in a saved file** (hand-edited) pass `ZoneLayoutStore.Read`. The zone invariant checks surface ids only. The tree projection's invariant (`Layout.AssertInvariant`, `LayoutModel.cs:199`) then throws "duplicate node id", the same exception check (C)'s red shows. Found by reading, not tested. It is a sibling of check (C) and of the reader's never-throws promise.
-- **`float-view-N` ids** (`WorkbenchAdapter.NewNodeId`, `:1102`, used at `:1008` for a natively floated window) come from a static counter that restarts with the process. A restored `float-view-1` and the next native float in a new process could share an id. Found by reading, not tested. It needs an App test, so it waits for USER DEMO DONE.
-- **A zone content with no `"tabs"` field** reads as an empty zone without a report (`tabs ?? []`). It holds nothing, so nothing is lost. Not changed.
-- **A null scalar** (`surfaceId`, a floating stack's `id`) is not dereferenced by `Read`. It is passed into the model. Recorded in DC-NEW-wl-t21-float as outside that class.
-- The "No surface “”." placeholder copy (floatPane on the empty center) is unchanged. Out of scope.
-- DESIGN.md:277 still has an older form of the off-screen sentence ("Display 2 is not connected. …"). The code says "“X” moved onto this display because the saved display is not connected." Out of scope.
-- No test references `ZoneLayoutService.ZoneName`.
-- A move followed by a crash, before the next layout pass or the shutdown flush, is not saved (`WorkbenchShell.cs`, no grant). Inferred.
+- **A kept `float-` pane id the model does not hold.** If a read maps a native window first and
+  mints an id, and a later window in the same read keeps that same id from its pane name, both are
+  kept. A render names panes from the model, so this is not reachable from a render. Inferred.
+- **The welcome placeholder's surface id.** While the Center is empty, the projection shows the
+  surface `welcome`. A saved floating surface with id `welcome` would repeat a surface id in the tree.
+  Found by reading; `welcome` is not a restorable kind, so it is not tested.
+- From node 5, still open: a zone content with no `"tabs"` field reads as an empty zone without a
+  report; a null scalar is passed into the model; the "No surface “”." copy; DESIGN.md:277's older
+  off-screen sentence; no test references `ZoneLayoutService.ZoneName`; a move followed by a crash
+  is not saved (`WorkbenchShell.cs`, no grant, Inferred).
