@@ -8,7 +8,68 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 7 (kicked at 12 min): C-hide is green, and its once-per-close shutdown case is red then green. D, the slot migration, is red then green on its own test, but it is committed as wip: the session-render probe needs seam req-01M5A13XF0SK5F69EKH25C6C93, and until then 5 operator tests exit 33. D6, the Proof Pack and suite-node7 are not started."
+summary: "Node 8 (rule 16 kick): D1, the slot migration's operator probe, is red then green (6 of 6), with a mutation check. D2, execution at revive, is red; its green waits on seam req-01M5A1ZRD0ZCKDMCX2DK0174DR, because the shell's revive path never reads attempts back. D3, prompt retirement, is not done on purpose: a notebook does not cover the Prompt surface's terminal send, so seam req-01M5A239STYBXMC6TRWYBDVTR8 asks for a ruling. suite-node8 was not run."
+---
+
+# T11 node 8 — hand-off (rule 16 kick, about 12 minutes)
+
+## Done
+
+- **D1, the slot migration's operator probe (seam req-01M5A13XF0SK5F69EKH25C6C93, granted for two lines).**
+  - Red `0da0c3be`, `D1-probe-red.txt`: 6 of 6 `ASessionDocumentIsShownWhereTheOperatorIsTests` exit 33. The probe expected the Center `[ledger,leaderboard,board]`; the shell held the two migrated notebooks as well, at `@4`. The handoff's "5" was wrong: the class has 6 tests.
+  - Green `863c2df4`, `D1-probe-green.txt`: 6 of 6.
+    - `Program.SessionRender.cs:258` states the expectation independently: string literals rename each `session-document:<id>` tab to `notebook:<id>`, keeping zone, tab position and caption. Then `Admission.Filter` runs as before. It never calls `NotebookSlotMigration`.
+    - The one statement at `:258` now spans 11 lines, with a two-line comment. Nothing else in the file changed.
+    - `:173`'s literal is now `active in view=notebook:`.
+  - **Mutation check** `D1-probe-mutation-red.txt`. The mutation was uncommitted and reverted: the migration reset each stack's `ActiveIndex` to 0. The probe failed: expected `zone-center@4[...]`, held `@0`. A migration defect therefore fails the probe.
+- **Merge:** the Leader merged main at `a0ea44c0`, after claims were refused `COORD-CLAIM-STALE-CONTROLS` (req-01M5A1VYQQEMTE32JFF8QNAZ4T).
+
+## Red or not done
+
+- **D2, execution at revive: red `98b5d7e6`, `D2-execution-at-revive-red.txt`.**
+  - **The test:** `ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose`, a theory over `diedMidRun`.
+    - Lifetime 1 is today's window. Its host is bound over T17's `DyingAtTheTerminal` shape (a private copy in the test). The run either dies at the terminal write, or concludes Answered.
+    - Lifetime 2 is the product shell, over a real `WorkspaceClient` to a daemon on the same store. It restores today's slot (`session-document:<sid>` in the Center, empty Bottom) through `LayoutPersistence`, then calls `ReviveRestoredSessionDocuments`, as `MainWindow.AttachWorkspace` does.
+    - The test asserts:
+      - The revived notebook reads one turn, `DeliveryUnknown` when the run died and `Answered` when it concluded.
+      - When it died: exactly one `execution:<key>` in the Bottom, captioned `Execution — <key>`.
+      - When it concluded: no execution.
+      - In both cases, the Center's active tab stays `notebook:<sid>`.
+  - **What the red measured.** Both cases fail at the first assertion: `the revived notebook reads 0 turn(s) [], host bound=True, read back=0`.
+    - The shell's revive path never runs `NotebookRuns.ReadBackAsync`. `SessionDocumentSurface.cs:178-181` reads back only when `Runs.Host` is bound at construction, and the shell binds through `BindHostWhenOpen` (async).
+    - Every T17 read-back test binds the host synchronously first (`AReopenedNotebookRendersItsRecordedAttemptsTests:56-63`, `TheAttemptHostBindingTests:87-92`).
+    - **So in the real app, a revived notebook shows none of its recorded attempts (Ruling 163).** This is a T17 gap on the shell path, and it goes beyond D2.
+  - **The store answers "was live" with no schema change.** An attempt open at close is swept by the next host's startup sweep to `DeliveryUnknown` with cause `host_restart` (`AttemptHost.cs:605`; `BoundaryDispatcher.cs:316-338`). The read-back then restores it as the notebook's last turn, so `AttemptOf(ordinal)` and node 5's `OpenExecution` can reach it.
+  - **Seam req-01M5A1ZRD0ZCKDMCX2DK0174DR (open) asks for two changes:**
+    1. In `WorkbenchShell.ReviveRestoredSessionDocuments`, after `RegisterSessionDocument`, await the document's read-back. Then open the execution with `OpenExecution(document, ordinal)` plus a new `activate: false` parameter, so the revive does not move focus.
+    2. `SessionDocumentSurface.cs:178-181` reads back once the host opens. This uses one read-only `NotebookRuns.HostOpening`.
+  - **The planned rule:** the last read-back receipt, in dispatch order, has a terminal `DeliveryUnknown`/`host_restart`. The predicate goes in `src/AiDe.App/Workbench/Execution/` (owned).
+    - A residual risk to record: a notebook reopened twice with no new turn reopens the execution each time.
+- **D3, `prompt` retirement: not retired, by design. Seam req-01M5A239STYBXMC6TRWYBDVTR8 (open) asks for an Owner product call.**
+  - **The survey.** An Explore sub-agent did it; I spot-checked (1) and (3) by grep.
+  - **Lost if retired:**
+    1. Transfer writes the draft into a ready terminal's PTY (`PromptDraftSurface.cs:57-65,171-193`; `PromptDraftViewModel.cs:50-86`; `WorkbenchShell.cs:1569-1630`). The notebook sends only a governed agent run (`SessionDocumentSurface.cs:604-675`; `NotebookRuns.cs:345,389`).
+    2. Choosing the target terminal (`PromptDraftSurface.cs:69-81,161-169`).
+    3. Unsent text kept per keystroke across a restart (`PromptDraftStore.cs:48-72`, `.aide/prompt-drafts.json`). The notebook's `ComposerDraftStore` is used nowhere in `src`.
+    4. Opening beside a terminal (`WorkbenchShell.cs:1791-1801`).
+    5. The `_Prompt` "New prompt draft" entry (`SurfaceContentFactory.cs:206-209`).
+    6. The "no ready terminal" blocked reason (`PromptDraftViewModel.cs:54-58`).
+  - **What the notebook adds** (none of it is a terminal send): compile, stale marking, attach, templates, history.
+  - **Where `prompt` is registered:**
+    - Its row: `SurfaceContentFactory.cs:206-209`, in `KnownKinds`/`RestorableKinds` (`:307`, `:338`).
+    - `TreeToZones.cs:22` (`CenterKinds`).
+    - `KindAllowListsTests.cs:78`.
+    - `RetiredKinds` (`SurfaceContentFactory.cs:320-330`) does not hold it.
+- **`suite-node8.txt`: not run** (the kick said to skip it). The last whole-suite run is `suite-node3.txt`.
+- **Not in scope and not touched:** the §7 rename and fold, D6, the Proof Pack, and floating windows.
+
+## Next step
+
+1. When req-01M5A1ZRD0ZCKDMCX2DK0174DR is granted, build the two changes and the `Execution/` predicate, and turn D2 green.
+2. Take the ruling on req-01M5A239STYBXMC6TRWYBDVTR8 (D3).
+3. Run the whole App and Core suites into `suite-node8.txt` (re-run `SolutionTreeChordTests` alone if it flakes).
+4. Node 9: the §7 rename and fold, D6, and the WL-S Proof Pack.
+
 ---
 
 # T11 node 7 — hand-off (rule 16 kick, dispatched 11:58Z)
