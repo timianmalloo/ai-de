@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:58:31Z",
+  "generated": "2026-10-19T01:23:50Z",
   "audit": [
     {
       "actor": null,
@@ -22711,24 +22711,77 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58TNJX0QVXXYH6ZZTN4ZWHM",
-      "shortname": "join-census-flake",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/census-green.txt"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T00:58:30Z",
-      "session": "wl-leader-20261018",
+      "done_when": "transient read absorbed, real leak still fails, persistent failure explained; suites green",
+      "duration_seconds": 520.0,
+      "fan_out": 0,
+      "goal": "Make the console-host census read the process table reliably under concurrent test load",
+      "id": "al-01M58TNJX0QVXXYH6ZZTN4ZWHM",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-census-flake",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:49:50Z",
       "summary": "T12: ConsoleHostCensus.Take retries only the WMI read (3 attempts, 300 ms backoff); persistent failure NOT CHECKED with cause; a good read showing a leak still fails at once. Joined before T3 (T3's recount failed on 6 census reads). Register EOF conflict kept both. Step 8 per Rulings 151/153. recount_seconds=518 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:14:23Z",
+      "done_when": "gate exit 0, suites green, committed",
+      "duration_seconds": 175.0,
+      "fan_out": 0,
+      "goal": "gate green",
+      "id": "al-01M58VJNVPBHZZQR4VZKW9XC8K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "fix-forward census-flake: harness-diagnostics gate red on ConsoleHostCensusTests",
+      "session": "wl-t12-census",
+      "shortname": "wl-t12-census",
+      "skill": "implement",
+      "started_at": "2026-10-19T01:11:28Z",
+      "summary": "Gate false positive on an inline throw lambda; moved to a named method; gate 0, Core 2788 pass",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M58W3YTZXPV8ZJ9XCGT7XD0Z",
+      "shortname": "join-census-flake-fix",
+      "datetime": "2026-10-19T01:23:49Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of census-flake into main",
+      "summary": "T12 fix-forward 5daac116: the census test's lambda throw tripped verify-harness-diagnostics (green->red at the first T12 join ratchet); moved into a named method. Step 8 per Rulings 151/153. recount_seconds=543 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-support/census/census-green.txt"
+        "docs/proof/workbench-loops-support/census/gate-harness-green.txt"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
       "goal": "Make the console-host census read the process table reliably under concurrent test load",
-      "done_when": "transient read absorbed, real leak still fails, persistent failure explained; suites green",
+      "done_when": "ratchet PASS vs origin/main 2de9d373",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -22736,8 +22789,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T00:49:50Z",
-      "duration_seconds": 520.0
+      "started_at": "2026-10-19T01:14:45Z",
+      "duration_seconds": 544.0
     }
   ],
   "changes": [
@@ -27018,6 +27071,15 @@ window.AUDIT_DATA = {
       "kind": "blocked",
       "ref": null,
       "session": "wl-t10-e1"
+    },
+    {
+      "id": "mail-01M58VJPGQP9F5YHNSSHFA7ZTC",
+      "ts": "2026-10-19T01:14:24Z",
+      "from": "wl-t12-census",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t12-census"
     }
   ]
 };
