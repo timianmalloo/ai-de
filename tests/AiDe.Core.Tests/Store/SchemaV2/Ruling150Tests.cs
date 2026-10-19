@@ -114,13 +114,16 @@ public sealed class Ruling150StandingJourneyUseTests : IDisposable
         {
             writer.SavePromptRevision("pty-draft", 1, "hello");
             writer.AppendJourney(new JourneyRow("j-real", "work", "a real journey"));
-            writer.AppendNotebook(new NotebookRow("pty-draft", "j-real", Legacy: false));
+            // Ruling 156(3): adoption is refused until v3's adopted_by can record its actor; no version row is written.
+            var ex = Assert.Throws<WorkspaceStoreException>(() =>
+                writer.AppendNotebook(new NotebookRow("pty-draft", "j-real", Legacy: false)));
+            Assert.Equal("AIDE-STORE-ADOPTION-NOT-OFFERED", ex.ErrorCode);
             writer.Commit();
         }
 
         using var raw = SchemaV2Support.OpenRaw(_workspace.DatabasePath, readOnly: true);
-        Assert.Equal(1, SchemaV2Support.Count(raw,
-            "SELECT count(*) FROM notebook_dim WHERE notebook_id = 'pty-draft' AND version_no = 2 AND owner_journey_id = 'j-real'"));
+        Assert.Equal(0, SchemaV2Support.Count(raw,
+            "SELECT count(*) FROM notebook_dim WHERE notebook_id = 'pty-draft' AND version_no > 1"));
         Assert.Equal(1, SchemaV2Support.Count(raw, "SELECT count(*) FROM prompt_revision_fact WHERE draft_id = 'pty-draft'"));
     }
 }

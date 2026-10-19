@@ -52,4 +52,11 @@ public interface IAttemptLedger
 
     /// <summary>Resolves abandoned native attempts to <c>DeliveryUnknown{cause}</c>; the caller names what it still runs.</summary>
     Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// The operator's withdraw of a never-launched attempt: one transaction appends <c>Rejected{never_dispatched}</c>
+    /// and the withdraw command's completed receipt (command id = the dispatch key). An attempt that already has a
+    /// <c>Dispatched</c> row or a terminal commits nothing — so a retry returns the original outcome.
+    /// </summary>
+    Task<AttemptAppendResult> WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken);
 }

@@ -101,6 +101,21 @@ public static class ConductorEntry
         }
     }
 
+    /// <summary>
+    /// Opens the workspace's one attempt host for the product shell (ADR-0041): the host lock at the place the design
+    /// fixes, <c>&lt;workspace&gt;/.aide/attempt-host.lock</c>, over the ledger the shell is handed.
+    /// </summary>
+    /// <remarks>
+    /// A door, like <see cref="RunAsync"/>, not a second composition root: the host it opens launches every attempt
+    /// through <see cref="GovernedRunHost.RunAsync"/>, so <see cref="CompositionRootLedger"/> still counts one root per run.
+    /// </remarks>
+    /// <exception cref="AgentPlaneException"><c>AIDE-ATTEMPT-HOST-NOT-SOLE</c>: another host holds the workspace's lock.</exception>
+    public static Task<AttemptHost> OpenAttemptHostAsync(AiDe.Core.Ipc.IAttemptLedger ledger, string workspaceRoot, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(workspaceRoot);
+        return AttemptHost.OpenAsync(ledger, Path.Combine(workspaceRoot, ".aide", "attempt-host.lock"), cancellationToken);
+    }
+
     /// <summary>Turns the run file into the request the composition root takes.</summary>
     internal static GovernedRunRequest Read(string json)
     {

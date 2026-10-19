@@ -49,6 +49,15 @@ public interface IAttemptHost
     /// <exception cref="KeyNotFoundException">The key was never attempted.</exception>
     Task<AttemptReceipt> StopAsync(string dispatchKey, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Withdraws a held queued successor before it launches (Ruling 95's Cancel on a host-held turn): under the gate
+    /// lock it takes the one launch claim — so neither the drainer nor Send now launches it — and the store writes the
+    /// existing terminal <c>Rejected{never_dispatched}</c> with the withdraw command's receipt. No process starts.
+    /// </summary>
+    /// <exception cref="AgentPlaneException"><see cref="AttemptHostCodes.WithdrawRefused"/>: not a successor this host holds, or its
+    /// launch was already claimed (the drainer or Send now won) — nothing changes and a launched attempt stays live.</exception>
+    Task<AttemptReceipt> WithdrawAsync(string dispatchKey, CancellationToken cancellationToken);
+
     /// <summary>The attempt's events: the run log so far, then the live relay, each seq once and in order.</summary>
     /// <exception cref="KeyNotFoundException">The key was never attempted.</exception>
     Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken);
@@ -499,6 +508,36 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
         return await live.Done.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<AttemptReceipt> WithdrawAsync(string dispatchKey, CancellationToken cancellationToken)
+    {
+        LiveAttempt? live;
+        AttemptAppendResult withdrawn;
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            live = _live.GetValueOrDefault(dispatchKey);
+            if (live?.Dispatch.QueuedAfterDispatchKey is null || !live.TryClaimLaunch())
+            {
+                throw new AgentPlaneException(AttemptHostCodes.WithdrawRefused,
+                    $"attempt {dispatchKey}: not a queued successor held by this host, or already launched; nothing changed");
+            }
+
+            withdrawn = await _ledger.WithdrawAttemptAsync(dispatchKey, CancellationToken.None).ConfigureAwait(false);
+            _live.Remove(dispatchKey);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+
+        live.Relay.Complete();
+        live.Done.TrySetResult(withdrawn.Receipt);
+        return withdrawn.Receipt.IsWithdrawn
+            ? withdrawn.Receipt
+            : throw new AgentPlaneException(AttemptHostCodes.WithdrawRefused,
+                $"attempt {dispatchKey}: already concluded {withdrawn.Receipt.Terminal?.State}; nothing changed");
+    }
+
     public async Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken)
     {
         var live = await FindLiveAsync(dispatchKey, cancellationToken).ConfigureAwait(false);
@@ -842,6 +881,13 @@ internal sealed class AttemptRollingLog(string path, long capBytes = 1 << 20)
             }
         }
     }
+}
+
+/// <summary>The stable codes the attempt host itself refuses with.</summary>
+public static class AttemptHostCodes
+{
+    /// <summary>A withdraw of an attempt that is not a held successor, or whose launch was already claimed.</summary>
+    public const string WithdrawRefused = "AIDE-ATTEMPT-WITHDRAW-REFUSED";
 }
 
 /// <summary>Why a sweep ran — the <c>trigger</c> of <c>attempt.sweep</c>.</summary>

@@ -130,7 +130,7 @@ public sealed class ThreadAnnouncementPolicy
                 now, "Turn " + now.DisplayOrdinal + " queued; it sends after the turn in flight.", AnnouncementKind.ItemAdded, label),
 
             TurnState.Cancelled => Status(
-                now, "Turn " + now.DisplayOrdinal + " " + LowerFirst(TurnCopy.ReasonSentence(now)), AnnouncementKind.Aborted, label),
+                now, "Turn " + TurnCopy.ReasonSentence(now), AnnouncementKind.Aborted, label),
 
             TurnState.Waiting when was is null => Accepted(now, label),
             TurnState.Waiting => new Announcement(

@@ -1,0 +1,29 @@
+
+Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.22]     AiDe.App.Tests.Records.PrepareFromRevisionTests.TheAttemptForAPreparedRevision_IsBoundByTheStore_AndAnUnsavedRevisionIsRefused [FAIL]
+[xUnit.net 00:00:00.23]     AiDe.App.Tests.Records.PrepareFromRevisionTests.APrepare_SavesOneImmutableRevisionPerDistinctBody [FAIL]
+[xUnit.net 00:00:00.68]     AiDe.App.Tests.Records.PrepareFromRevisionTests.ThePrepareGesture_SavesTheRevisionFirst_AndTheSentTurnIsBoundToIt [FAIL]
+  Failed AiDe.App.Tests.Records.PrepareFromRevisionTests.TheAttemptForAPreparedRevision_IsBoundByTheStore_AndAnUnsavedRevisionIsRefused [41 ms]
+  Error Message:
+   System.NullReferenceException : Object reference not set to an instance of an object.
+  Stack Trace:
+     at AiDe.App.Tests.Records.PrepareFromRevisionTests.TheAttemptForAPreparedRevision_IsBoundByTheStore_AndAnUnsavedRevisionIsRefused() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\PrepareFromRevisionTests.cs:line 56
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Records.PrepareFromRevisionTests.APrepare_SavesOneImmutableRevisionPerDistinctBody [12 ms]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at AiDe.App.Tests.Records.PrepareFromRevisionTests.APrepare_SavesOneImmutableRevisionPerDistinctBody() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\PrepareFromRevisionTests.cs:line 27
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Records.PrepareFromRevisionTests.ThePrepareGesture_SavesTheRevisionFirst_AndTheSentTurnIsBoundToIt [452 ms]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.PrepareFromRevisionTests.ThePrepareGesture_SavesTheRevisionFirst_AndTheSentTurnIsBoundToIt() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\PrepareFromRevisionTests.cs:line 75
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 514 ms - AiDe.App.Tests.dll (net10.0)

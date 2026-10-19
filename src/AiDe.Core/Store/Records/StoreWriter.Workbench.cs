@@ -53,7 +53,8 @@ public sealed partial class StoreWriter
     /// <remarks>
     /// The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
     /// explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
-    /// a new version row with <c>Legacy = false</c> and an owner.
+    /// a new version row with <c>Legacy = false</c> and an owner. Both are refused (AIDE-STORE-ADOPTION-NOT-OFFERED)
+    /// until v3's <c>adopted_by</c> column lands in the first slice that offers adoption (Ruling 156).
     /// </remarks>
     public void AppendNotebook(NotebookRow row)
     {
@@ -64,10 +65,14 @@ public sealed partial class StoreWriter
         {
             var wasLegacy = Convert.ToInt64(previous[2]) == 1;
             var adoptable = wasLegacy && previous[1] is null || previous[1] as string == WorkspaceSchema.TerminalJourneyId;
-            if (!adoptable)
+            if (adoptable)
             {
-                RequireSame("notebook_dim", row.NotebookId, [("owner_journey_id", previous[1], row.OwnerJourneyId)]);
+                // Ruling 156(3): no adoption is written until v3's adopted_by column can record its actor.
+                throw new WorkspaceStoreException(StoreErrorCodes.AdoptionNotOffered,
+                    $"notebook '{row.NotebookId}': adoption is not offered until the store can record its actor (Ruling 156)");
             }
+
+            RequireSame("notebook_dim", row.NotebookId, [("owner_journey_id", previous[1], row.OwnerJourneyId)]);
         }
 
         InsertNotebook(row, previous is null ? 1 : Convert.ToInt32(previous[0]) + 1);

@@ -92,12 +92,15 @@ public sealed class MigrationGoldenTests : IDisposable
         using var store = WorkspaceStore.Open(Path_);
         SchemaV2Support.SeedEveryV2Table(store);
         using var writer = store.BeginWrite();
-        writer.AppendNotebook(new NotebookRow("draft-a", "j1", Legacy: false));
+        // Ruling 156(3): adoption is refused until v3's adopted_by can record its actor; no version row is written.
+        var ex = Assert.Throws<WorkspaceStoreException>(() =>
+            writer.AppendNotebook(new NotebookRow("draft-a", "j1", Legacy: false)));
+        Assert.Equal("AIDE-STORE-ADOPTION-NOT-OFFERED", ex.ErrorCode);
         writer.Commit();
 
         using var reader = store.BeginRead();
-        Assert.False(reader.ReadNotebook("draft-a")!.Legacy);
-        Assert.Equal(2, reader.ReadNotebook("draft-a")!.VersionNo);
+        Assert.True(reader.ReadNotebook("draft-a")!.Legacy);
+        Assert.Equal(1, reader.ReadNotebook("draft-a")!.VersionNo);
     }
 
     [Fact]

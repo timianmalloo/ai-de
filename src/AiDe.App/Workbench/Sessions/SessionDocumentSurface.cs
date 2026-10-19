@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AiDe.App.Conductor;
 using AiDe.App.Workbench.Composer;
+using AiDe.App.Workbench.Records;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.PromptCompilation;
@@ -39,7 +40,7 @@ namespace AiDe.App.Workbench.Sessions;
 /// when open. Focus lands in the editor on open unless the operator has already acted (K7); every
 /// refusal is announced (<c>THR-0002</c>), never silent.</para>
 /// </remarks>
-public sealed class SessionDocumentSurface : ContentControl, IDisposable
+public sealed class SessionDocumentSurface : ContentControl, IDisposable, INotebookRunObserver
 {
     /// <summary>
     /// The least the thread keeps once it has turns — half a turn (the words line and its
@@ -58,6 +59,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly TextBlock? _ownLiveRegion;
     private readonly TextBlock _outsideText;
     private readonly TextBlock _stoppedRow;
+    private readonly StackPanel _notices = new();
+    private readonly bool _ownsNotebook;
     private readonly TextBlock _templateWord;
     private readonly TextBlock _budgetState;
     private readonly Button _jumpButton;
@@ -73,12 +76,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly ColumnDefinition _splitterColumn = new() { Width = new GridLength(0) };
     private readonly Border _composerHost = new() { BorderThickness = new Thickness(0, 1, 0, 0), SnapsToDevicePixels = true };
     private readonly GridSplitter _splitter = new();
-    private readonly CancellationTokenSource _closing = new();
-    private readonly Dictionary<int, CancellationTokenSource> _runs = [];
     private readonly Dictionary<int, (string EnvelopeId, string TaskClassSource)> _envelopeByOrdinal = [];
-
-    /// <summary>The one queued turn's request, by ordinal (Ruling 95: exactly one); null when nothing is queued.</summary>
-    private (int Ordinal, GovernedRunRequest Request)? _queued;
     private readonly Lock _envelopeGate = new();
     private EnvelopeStore? _envelopes;
     private readonly SessionDocumentStore? _store;
@@ -96,11 +94,34 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// silent; the two are never both live.
     /// </param>
     public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+        : this(new NotebookModel(model ?? throw new ArgumentNullException(nameof(model))), ownsNotebook: true, store, announcer)
     {
-        ArgumentNullException.ThrowIfNull(model);
+    }
+
+    /// <summary>
+    /// A surface that <b>binds</b> to a workspace-owned model (ADR-0045 §4): disposing the surface leaves the model, its
+    /// thread and its revisions to the next surface built over it. The shell's construction site uses this one.
+    /// </summary>
+    /// <param name="notebook">The model; its owner (the shell) disposes it, never this surface.</param>
+    /// <param name="store">As the other constructor's.</param>
+    /// <param name="announcer">As the other constructor's.</param>
+    public SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+        : this(notebook ?? throw new ArgumentNullException(nameof(notebook)), ownsNotebook: false, store, announcer)
+    {
+    }
+
+    /// <param name="ownsNotebook">
+    /// True for a surface built from a bare view model (every headless test, and nothing in the product): it built its
+    /// model, so it disposes it. False when bound to a model someone else owns.
+    /// </param>
+    private SessionDocumentSurface(NotebookModel notebook, bool ownsNotebook, SessionDocumentStore? store, IWorkbenchAnnouncer? announcer)
+    {
+        var model = notebook.Session;
         _store = store;
+        _ownsNotebook = ownsNotebook;
 
         Model = model;
+        Notebook = notebook;
         SurfaceId = SurfaceIdFor(model.SessionId);
 
         AutomationProperties.SetName(this, model.Title);
@@ -115,9 +136,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         _announcer = announcer;
 
-        // The read model (CV-1: the run channel, caught up from construction — a live session has
-        // no history to replay until the envelope store lands in CV-2).
-        _thread = new RunChannelSessionThread(caughtUp: true);
+        // The read model is the NOTEBOOK's (ADR-0045 §4), so a surface built later over the same model shows the same
+        // turns; CV-1's run channel, caught up from construction.
+        _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;
@@ -133,6 +154,25 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
 
         Composer.Gate.Sent += Launch;
+
+        // PREPARE FROM A REVISION (WL-1a; ADR-0043 §2 — the page protocol is unchanged): the draft is saved as an
+        // immutable notebook revision before the envelope opens, so what is prepared is a row the attempt can bind to.
+        Composer.RevisionPreparer = text => Notebook.PrepareRevisionAsync(text, CancellationToken.None);
+        Composer.DraftChanged += RenderStale;
+        Notebook.Changed += OnNotebookChanged;
+
+        // THE RUNS ARE THE MODEL'S (ADR-0045 §4): this surface only hears them — it attaches a lane, records the
+        // envelope's consumed row — and a surface closed mid-run leaves the run to the next one bound here.
+        Notebook.Runs.Observer = this;
+        Notebook.Runs.HostRefusalChanged += ShowHostRefusal;
+        ShowHostRefusal();
+
+        // RESTART READ-BACK (AC-L01a): the host's attempts for this session's submitted envelopes, read from the store.
+        if (Notebook.Runs.Host is not null)
+        {
+            LastReadBack = Notebook.Runs.ReadBackAsync(SubmittedEnvelopes(), CancellationToken.None);
+        }
+
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
         Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
@@ -171,8 +211,26 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>The surface kind <c>SurfaceContentFactory</c> builds this for — <c>session-document</c>, never <c>session</c> (Ruling 18).</summary>
     public const string Kind = "session-document";
 
+    /// <summary>Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a).</summary>
+    public const string PaneHiddenCopy = "Pane hidden. The run continues.";
+
     /// <summary>This document's state.</summary>
     public SessionDocumentViewModel Model { get; }
+
+    /// <summary>The notebook this surface is bound to (ADR-0045 §4) — the shell's, or this surface's own when built from a bare view model.</summary>
+    public NotebookModel Notebook { get; }
+
+    /// <summary>Whether the latest result is marked stale (spec §C3).</summary>
+    public bool StaleNoticeVisible => StaleNotice.Visibility == Visibility.Visible;
+
+    /// <summary>The stale mark's words while it shows; empty otherwise.</summary>
+    public string StaleNoticeText => StaleNoticeVisible ? StaleNotice.Text : string.Empty;
+
+    /// <summary>The last send's revision binding — the save (or reuse) of the sent bytes as a revision, and the turn bound to it.</summary>
+    internal Task LastBinding { get; private set; } = Task.CompletedTask;
+
+    /// <summary>The stale mark: the latest result belongs to an earlier draft. Named for UIA by its own sentence.</summary>
+    internal TextBlock StaleNotice { get; } = BuildStaleNotice();
 
     /// <summary>The layout surface id.</summary>
     public string SurfaceId { get; }
@@ -314,7 +372,14 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     }
 
     /// <summary>The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is <see cref="LastRunFailure"/>.</summary>
-    public Task LastLaunch { get; private set; } = Task.CompletedTask;
+    public Task LastLaunch => Notebook.Runs.LastRun;
+
+    /// <summary>
+    /// Ruling 159: the composer's Send follows the host's refusal. Retry is offered only where it can help — a hold
+    /// elsewhere clears itself, and a window with no workspace client has nothing to retry.
+    /// </summary>
+    private void ShowHostRefusal() =>
+        Composer.ShowHostRefusal(Notebook.Runs.HostRefusal, Notebook.Runs.CanRetryHost ? Notebook.Runs.RetryHostAsync : null);
 
     /// <summary>What the last completed run reported, or null when none has completed.</summary>
     public GovernedRunResult? LastRunResult { get; private set; }
@@ -529,6 +594,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         // the turn joins the thread queued. It is sent by the drain when the turn in flight ends
         // Completed or Answered, by Send now after a Stop or a failure, or not at all (Cancel).
         var queue = _thread.Current.InFlight is not null;
+        var sourceText = Composer.Draft.SourceText;
         var ordinal = queue
             ? _thread.Enqueue(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend)
             : _thread.Accept(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend);
@@ -543,68 +609,103 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             }
         }
 
+        // THE TURN RUNS A REVISION (WL-1a): the sent bytes are bound to the notebook revision they are — captured with
+        // the ordinal here, before the composer clears for the next block.
+        LastBinding = BindRevisionAsync(ordinal, sourceText);
+
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
         Composer.BeginNextTurn();
 
+        // The run is the MODEL's (ADR-0045 §4): queued or started there, so closing this pane leaves it running.
+        var envelopeId = submission?.EnvelopeId;
+        var launch = new RunLaunch(LastBinding, submission?.TaskClassSource, envelopeId, submission?.ProjectionSha,
+            () => envelopeId is null ? null : CurrentProjectionOf(envelopeId));
         if (queue)
         {
-            _queued = (ordinal, request);
+            Notebook.Runs.Queue(ordinal, request, launch);
             return;
         }
 
-        LastLaunch = Run(request, ordinal);
+        Notebook.Runs.Start(ordinal, request, launch);
     }
 
-    /// <summary>One run for one accepted turn: the lane, the relay, the cancellation, and the run itself.</summary>
-    private Task Run(GovernedRunRequest request, int ordinal)
-    {
-        var relay = new RunEventRelay();
-        var lane = new SessionLane($"lane:{Model.SessionId}:{ordinal}", request.EngineId, relay.Reader, Model, Marshal);
-        AttachLane(lane);
-        LastRelay = relay;
-
-        var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
-        _runs[ordinal] = cancel;
-        return RunOneAsync(request, relay, ordinal, cancel);
-    }
-
-    /// <summary>
-    /// The drain (Ruling 95): the queued turn is sent when the turn it waited behind ended
-    /// <c>Completed</c> or <c>Answered</c> — and only then. After a Stop or a failure it stays
-    /// queued, waiting on the operator (<i>Send now</i>); a closing document sends nothing.
-    /// </summary>
-    private void DrainAfter(TurnState ending)
-    {
-        if (ending is not (TurnState.Completed or TurnState.Answered) || _closing.IsCancellationRequested)
+    /// <summary>A run of this notebook started: the lane that renders it is this surface's, held for its lifetime.</summary>
+    void INotebookRunObserver.RunStarted(int ordinal, string engineId, RunEventRelay relay) =>
+        Marshal(() =>
         {
+            AttachLane(new SessionLane($"lane:{Model.SessionId}:{ordinal}", engineId, relay.Reader, Model, Marshal));
+            LastRelay = relay;
+        });
+
+    /// <summary>A run of this notebook ended: the readouts, and the envelope's one consumed row (E6).</summary>
+    void INotebookRunObserver.RunEnded(NotebookRunEnd end)
+    {
+        if (end.Result is { } result)
+        {
+            LastRunResult = result;
+            RecordConsumed(end.Ordinal, result.RunId, result.EpisodeId, result.Outcome, end.ConsumedReason);
             return;
         }
 
-        StartQueued();
+        LastRunFailure = end.Failure;
+        if (end.Attempt is { } attempt)
+        {
+            // An attempt's run id IS its dispatch key (design: run_id := dispatch_key); its outcome is the host's terminal.
+            RecordConsumed(end.Ordinal, attempt.DispatchKey, null, attempt.Terminal?.State.ToString() ?? Envelope.NotRecorded, end.ConsumedReason);
+            return;
+        }
+
+        var outcome = end.ConsumedReason == ConsumedReasons.StoppedByOperator ? "Abandoned" : Envelope.NotRecorded;
+        RecordConsumed(end.Ordinal, Envelope.NotRecorded, null, outcome, end.ConsumedReason);
     }
 
-    /// <summary>Sends the queued turn now — the drain's act, and <i>Send now</i>'s. Nothing to send, or a turn in flight: no act.</summary>
-    private void StartQueued()
-    {
-        if (_queued is not { } queued || _thread.Current.InFlight is not null)
-        {
-            return;
-        }
+    /// <summary>The restart read-back's task: the host's attempts for this session's submitted envelopes (completed when no host is bound).</summary>
+    internal Task LastReadBack { get; private set; } = Task.CompletedTask;
 
-        _queued = null;
-        _thread.Start(queued.Ordinal, DateTimeOffset.Now);
-        LastLaunch = Run(queued.Request, queued.Ordinal);
+    /// <summary>The envelope fold's projection of <paramref name="envelopeId"/> now (G1) — null when it cannot be read, which the gate refuses as stale.</summary>
+    private string? CurrentProjectionOf(string envelopeId)
+    {
+        lock (_envelopeGate)
+        {
+            try
+            {
+                return _envelopes?.Read().Envelopes.FirstOrDefault(e => e.EnvelopeId == envelopeId) is { } envelope
+                    ? ComposerSendGate.CurrentProjectionSha(envelope)
+                    : null;
+            }
+            catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>Every envelope this session submitted, as the pair its dispatch key derives from.</summary>
+    private List<(string EnvelopeId, string ProjectionSha)> SubmittedEnvelopes()
+    {
+        lock (_envelopeGate)
+        {
+            try
+            {
+                return _envelopes is null
+                    ? []
+                    : [.. _envelopes.Read().Envelopes.Where(e => e.Submitted is not null).Select(e => (e.EnvelopeId, e.Submitted!.ProjectionSha))];
+            }
+            catch (Exception error) when (error is EnvelopeStoreException or ObjectDisposedException or IOException)
+            {
+                return [];
+            }
+        }
     }
 
     /// <summary>Cancel on the queued turn (Ruling 95): dropped from the queue, its row concluded cancelled, its envelope consumed, its words back in the editor.</summary>
-    private void CancelQueued(int ordinal)
+    private async void CancelQueued(int ordinal)
     {
-        if (_queued is not { } queued || queued.Ordinal != ordinal)
+        if (!await Notebook.Runs.CancelAsync(ordinal))
         {
             return;
         }
 
-        _queued = null;
         var turn = _thread.Current.Turns.First(t => t.Ordinal == ordinal);
         _thread.Conclude(ordinal, TurnState.Cancelled, DateTimeOffset.Now);
         RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.CancelledByOperator);
@@ -617,62 +718,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// call, so the two can never disagree. Internal so a test can hand the product's own sink to a
     /// hand-wired lane and prove the relay → fold leg (DC-135: construct what the product constructs).
     /// </summary>
-    internal Action<ObservedRunEvent> RunSink(string lane, RunEventRelay relay, int ordinal) =>
-        observed =>
-        {
-            relay.Publish(observed);
-
-            // The fold reads the same event the lane dispatches — one definition of a line's text
-            // (the console model's), one origin rule (the read model's), one reading of a tool
-            // frame's facts (Ruling 82: the call and its results are one item, joined by id).
-            var evt = observed.Event;
-            var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
-            _thread.Append(
-                ordinal,
-                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
-                cost);
-        };
-
-    private async Task RunOneAsync(GovernedRunRequest request, RunEventRelay relay, int ordinal, CancellationTokenSource cancel)
-    {
-        var sink = RunSink(request.EngineId, relay, ordinal);
-
-        try
-        {
-            var result = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
-            LastRunResult = result;
-            var ending = request.Goal is null ? TurnState.Answered : TurnState.Completed;
-            _thread.Conclude(ordinal, ending, DateTimeOffset.Now);
-            var consumed = RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
-            StampTaskClassSource(request.DataDirectory, result, consumed?.TaskClassSource);
-            Marshal(() => DrainAfter(ending));
-        }
-        catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
-        {
-            LastRunFailure = "OperationCanceledException: stopped by the operator";
-            // Our own token cancel is not a native acknowledgment, so the turn is StopRequested, never Interrupted (ADR-0041 §2).
-            _thread.RequestStop(ordinal);
-            RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.StoppedByOperator);
-        }
-        catch (Exception error) when (error is AgentPlaneException or IOException or OperationCanceledException)
-        {
-            // Reported, never thrown away. These are the three refusals ConductorEntry already
-            // treats as "the run did not complete", and the operator is owed the same sentence.
-            LastRunFailure = $"{error.GetType().Name}: {error.Message}";
-
-            // The sentence is a line of the run, under the lane that refused, in the one stream the
-            // fold and the Console both read (Ruling 81) — never a text stored beside the outcome.
-            _thread.Append(ordinal, new EventLine(DateTimeOffset.Now, request.EngineId, "stderr", LastRunFailure, "run"));
-            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null);
-            RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.LaneExited(null));
-        }
-        finally
-        {
-            relay.Complete();
-            _runs.Remove(ordinal);
-            cancel.Dispose();
-        }
-    }
+    internal Action<ObservedRunEvent> RunSink(string lane, RunEventRelay relay, int ordinal) => Notebook.Runs.Sink(lane, relay, ordinal);
 
     /// <summary>
     /// Appends the envelope's <c>consumed</c> row — the pair (outcome, reason) by identity (E6) —
@@ -824,8 +870,6 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return outcome;
     }
 
-    private static bool IsCompileEvent(RunEvent evt) => CompileSignal.IsCompileEvent(evt);
-
     private void OnTurnAction(TurnAction action)
     {
         var turn = _thread.Current.Turns.FirstOrDefault(t => t.Ordinal == action.Ordinal);
@@ -833,11 +877,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         switch (action.Kind)
         {
             case TurnActionKind.Stop:
-                if (_runs.TryGetValue(action.Ordinal, out var cancel))
-                {
-                    cancel.Cancel();
-                }
-
+                Notebook.Runs.Stop(action.Ordinal);
                 break;
 
             case TurnActionKind.SendAgain:
@@ -863,11 +903,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 break;
 
             case TurnActionKind.SendNow:
-                if (_queued is { } queued && queued.Ordinal == action.Ordinal)
-                {
-                    StartQueued();
-                }
-
+                Notebook.Runs.SendNow(action.Ordinal);
                 break;
 
             default:
@@ -906,6 +942,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         }
 
         RenderHeader(snapshot);
+        RenderStale();
         Composer.SetInFlight(snapshot.InFlight);
         Composer.SetQueued(snapshot.Queued, snapshot.Queued is null ? null : TurnCopy.QueuedSentence(snapshot), snapshot.QueuedAwaitsYou);
         if (IsSplitOpen)
@@ -1002,8 +1039,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Grid.SetRow(threadHost, 0);
         column.Children.Add(threadHost);
 
-        Grid.SetRow(_stoppedRow, 1);
-        column.Children.Add(_stoppedRow);
+        // The rows between the thread and the composer: the stopped sentence and the stale mark (spec §C3).
+        _notices.Children.Add(_stoppedRow);
+        _notices.Children.Add(StaleNotice);
+        Grid.SetRow(_notices, 1);
+        column.Children.Add(_notices);
 
         _composerHost.Child = Composer;
         _composerHost.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
@@ -1057,11 +1097,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             var atWidth = new Size(constraint.Width, double.PositiveInfinity);
             _header.Measure(atWidth);
             _permissionBanner.Measure(atWidth);
-            _stoppedRow.Measure(atWidth);
+            _notices.Measure(atWidth);
             var body = constraint.Height
                 - _header.DesiredSize.Height
                 - _permissionBanner.DesiredSize.Height
-                - _stoppedRow.DesiredSize.Height
+                - _notices.DesiredSize.Height
                 - _composerHost.BorderThickness.Top;
 
             // The thread's need: the caption at 0 turns (wrapped at the column the split leaves it —
@@ -1408,6 +1448,63 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return row;
     }
 
+    /// <summary>The stale mark (spec §C3): text, not colour alone, and its sentence is its UIA name (UI-04).</summary>
+    private static TextBlock BuildStaleNotice()
+    {
+        var notice = new TextBlock
+        {
+            Text = NotebookModel.StaleCopy,
+            FontSize = 12,
+            Margin = new Thickness(52, 6, 12, 6),
+            Visibility = Visibility.Collapsed,
+            TextWrapping = TextWrapping.Wrap,
+        };
+        notice.SetResourceReference(TextBlock.ForegroundProperty, "StaleBrush");
+        AutomationProperties.SetName(notice, NotebookModel.StaleCopy);
+        AutomationProperties.SetLiveSetting(notice, AutomationLiveSetting.Polite);
+        return notice;
+    }
+
+    /// <summary>A revision saved or a turn bound — possibly off the UI thread (the save's continuation).</summary>
+    private void OnNotebookChanged()
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(RenderStale);
+            return;
+        }
+
+        RenderStale();
+    }
+
+    /// <summary>
+    /// Derives the stale mark from the latest turn that ran a recorded revision and the editor's bytes now — never a
+    /// flag kept beside them (DM: derive, don't store).
+    /// </summary>
+    private void RenderStale()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        var latest = _thread.Current.Turns.LastOrDefault(t => Notebook.RevisionOf(t.Ordinal) is not null);
+        var stale = latest is not null
+            && Notebook.CurrentnessOf(latest.Ordinal, Composer.Draft.SourceText) == ResultCurrentness.Stale;
+        StaleNotice.Visibility = stale ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Binds turn <paramref name="ordinal"/> to the revision its bytes are: the prepared one when Prepare saved it,
+    /// else a new one (a direct send on the mechanical rung prepares at Send). Not cancelled by this surface closing:
+    /// the binding is the model's, and the model outlives the surface.
+    /// </summary>
+    private async Task BindRevisionAsync(int ordinal, string sourceText)
+    {
+        var revision = await Notebook.PrepareRevisionAsync(sourceText, CancellationToken.None).ConfigureAwait(false);
+        Notebook.BindResult(ordinal, revision);
+    }
+
     private void BuildPermissionBanner()
     {
         _permissionText.TextWrapping = TextWrapping.Wrap;
@@ -1466,6 +1563,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.PageReady -= PlaceFocusInTheEditor;
         Composer.FocusLeftBackward -= OnComposerLeftBackward;
         Composer.CompiledPromptOpenChanged -= RecordCompiledPromptOpen;
+        Composer.DraftChanged -= RenderStale;
+        Composer.RevisionPreparer = null;
+        Notebook.Changed -= OnNotebookChanged;
         _feed.Dispose();
 
         // A RUN MAY OUTLIVE ITS DOCUMENT — ONE LIFETIME RULE (ADR-0034 rule 7): the store's lifetime
@@ -1488,10 +1588,18 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             _envelopes?.Dispose();
         }
 
-        // The run is bound to the document that started it: closing the pane cancels it rather than
-        // leaving an engine process owned by a surface nobody is showing.
-        _closing.Cancel();
-        _closing.Dispose();
+        // THE RUN IS THE MODEL'S, NOT THE PANE'S (ADR-0045 §4; AC-D01a): closing the pane stops hearing the run and
+        // leaves it running — the next surface bound to the model hears its end. Said once, so it is never silent.
+        Notebook.Runs.HostRefusalChanged -= ShowHostRefusal;
+        if (ReferenceEquals(Notebook.Runs.Observer, this))
+        {
+            Notebook.Runs.Observer = null;
+        }
+
+        if (!_ownsNotebook && Notebook.Runs.InFlight)
+        {
+            _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
+        }
 
         foreach (var lane in _lanes)
         {
@@ -1500,5 +1608,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         // The composer hosts a WebView2, which is a child PROCESS. It is disposed here and nowhere else.
         Composer.Dispose();
+
+        // A bound model is its owner's (the shell's) to dispose — create, move, hide and close never reach it (ADR-0045 §4).
+        if (_ownsNotebook)
+        {
+            Notebook.Dispose();
+        }
     }
 }

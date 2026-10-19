@@ -358,6 +358,14 @@ public sealed class SurfaceContentFactory(
     {
         if (sessionDocumentFor?.Invoke(surface) is FrameworkElement document)
         {
+            // A RETAINED DOCUMENT IN A NEW PANE (a reopen after its tab closed — ADR-0045 §4: close never disposes the
+            // session) is still the logical child of the island its closed pane wrapped it in, and WPF refuses a
+            // second parent. The stale island lets go here, where the new one is about to take it (DC-NEW-wl-t8-bind).
+            if (document.Parent is Decorator staleIsland)
+            {
+                staleIsland.Child = null;
+            }
+
             return document;
         }
 

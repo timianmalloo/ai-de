@@ -276,8 +276,42 @@ public sealed class BoundaryDispatcher(WorkspaceStore store) : IAttemptLedger
 
         using var reader = store.BeginRead();
         var attempt = reader.ReadAttempt(dispatchKey);
-        return attempt is null ? null : new AttemptReceipt(attempt, reader.ReadOutcomes(dispatchKey));
+        return attempt is null
+            ? null
+            : new AttemptReceipt(attempt, reader.ReadOutcomes(dispatchKey),
+                reader.HasCompletedCommand(attempt.WorkspaceId, AttemptReceipt.WithdrawCommand, dispatchKey));
     }
+
+    /// <summary>The operator's withdraw of a never-launched attempt (<see cref="IAttemptLedger.WithdrawAttemptAsync"/>).</summary>
+    /// <remarks>
+    /// One writer transaction: the effect (<c>Rejected{never_dispatched}</c>) and its command receipt commit together or
+    /// not at all. Only an attempt with no <c>Dispatched</c> row and no terminal is admitted, so a retried withdraw —
+    /// whose first try already wrote the terminal — commits nothing and reads back the original outcome.
+    /// </remarks>
+    public AttemptAppendResult WithdrawAttempt(string dispatchKey, CallerPrincipal caller)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(dispatchKey);
+        ArgumentNullException.ThrowIfNull(caller);
+
+        var workspaceId = ReadAttempt(dispatchKey)?.Attempt.WorkspaceId
+            ?? throw new KeyNotFoundException($"attempt {dispatchKey} was never attempted");
+        var committed = false;
+        using (var writer = store.BeginWrite())
+        {
+            if (!writer.HasOutcome(dispatchKey, [DispatchState.Dispatched, .. AttemptReceipt.TerminalStates]))
+            {
+                writer.AppendOutcome(new OutcomeRow(dispatchKey, DispatchState.Rejected, Cause: "never_dispatched", Detail: AttemptReceipt.WithdrawCommand));
+                writer.RecordCommandReceipt(workspaceId, caller, AttemptReceipt.WithdrawCommand, dispatchKey, "completed", null);
+                writer.Commit();
+                committed = true;
+            }
+        }
+
+        return new AttemptAppendResult(ReadAttempt(dispatchKey)!, committed);
+    }
+
+    /// <summary>The principal an in-process host withdraws as; over the pipe the daemon names the connected shell.</summary>
+    private static readonly CallerPrincipal InProcessHost = new("attempt-host", CallerKind.Shell);
 
     /// <summary>Resolves every abandoned native attempt to <see cref="DispatchState.DeliveryUnknown"/> with a cause.</summary>
     /// <remarks>
@@ -323,6 +357,9 @@ public sealed class BoundaryDispatcher(WorkspaceStore store) : IAttemptLedger
 
     Task<AttemptSweepResult> IAttemptLedger.SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
         Task.FromResult(SweepAttempts(request));
+
+    Task<AttemptAppendResult> IAttemptLedger.WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        Task.FromResult(WithdrawAttempt(dispatchKey, InProcessHost));
 }
 
 /// <summary>The stable codes of the native-route attempt gate (docs/design/workbench-loops-wl-1a.md).</summary>
@@ -362,9 +399,17 @@ public static class AttemptKey
 }
 
 /// <summary>One attempt as the store holds it: the attempt row and its outcome events in total order.</summary>
-/// <remarks>Every member past the two fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.</remarks>
-public sealed record AttemptReceipt(AttemptRow Attempt, IReadOnlyList<OutcomeRow> Outcomes)
+/// <remarks>Every member past the three fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.</remarks>
+/// <param name="WithdrawCompleted">The operator's withdraw command for this key completed: its <c>command_receipt_fact</c> row exists.</param>
+public sealed record AttemptReceipt(AttemptRow Attempt, IReadOnlyList<OutcomeRow> Outcomes, bool WithdrawCompleted = false)
 {
+    /// <summary>The <c>command_type</c> of the operator's withdraw; its <c>command_id</c> is the dispatch key.</summary>
+    public const string WithdrawCommand = "attempt.withdraw";
+
+    /// <summary>Withdrawn by the operator: <c>Rejected{never_dispatched}</c> AND the completed withdraw command — never the terminal alone.</summary>
+    [JsonIgnore]
+    public bool IsWithdrawn => WithdrawCompleted && Terminal is { State: DispatchState.Rejected, Cause: "never_dispatched" };
+
     /// <summary>The terminal states — exactly the set the store's <c>ux_outcome_one_terminal</c> index names.</summary>
     public static readonly IReadOnlySet<DispatchState> TerminalStates = new HashSet<DispatchState>
     {

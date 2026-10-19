@@ -112,6 +112,10 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
     public Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken) =>
         QueryAsync<AttemptAppendResult>(WorkspaceOperations.AttemptOutcome, new AttemptOutcomeRequest(outcome), cancellationToken);
 
+    /// <summary>The operator's withdraw, answered in one store transaction by the daemon.</summary>
+    public Task<AttemptAppendResult> WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        QueryAsync<AttemptAppendResult>(WorkspaceOperations.AttemptWithdraw, new AttemptWithdrawRequest(dispatchKey), cancellationToken);
+
     /// <summary>The attempt and its outcome events, read back from the store.</summary>
     public async Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
         (await QueryAsync<AttemptReadResult>(WorkspaceOperations.AttemptRead, new AttemptReadRequest(dispatchKey), cancellationToken)

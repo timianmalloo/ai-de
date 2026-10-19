@@ -52,7 +52,7 @@ public sealed class ASendWhileATurnRunsOffersWaitOrParallelTests
             StubAcpAdapter.Install(Install, mode);
 
             var config = new SessionConfig("20260914T180000Z-r95", "r95", Repository, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { CompileMode = compileMode };
-            Document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, Repository, [CanvasModeCatalog.ConsoleModeId]), null, new RecordingAnnouncer());
+            Document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, Repository, [CanvasModeCatalog.ConsoleModeId]), null, new RecordingAnnouncer()).Unhosted();
             Document.Composer.Configure(
                 config,
                 new ComposerSendContext(

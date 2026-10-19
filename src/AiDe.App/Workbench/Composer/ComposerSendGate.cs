@@ -253,6 +253,16 @@ public sealed class ComposerSendGate
         return RenderedView;
     }
 
+    /// <summary>
+    /// The envelope's projection sha now, by the same call the send projects through — the attempt gate's G1 read
+    /// (ADR-0041) of a submitted envelope, so the sha it compares is this producer's, never a fourth call site.
+    /// </summary>
+    /// <exception cref="EnvelopeStoreException">The fold has no <c>opened</c> row.</exception>
+    public static string CurrentProjectionSha(Envelope envelope) => ProjectForSend(envelope, draft: null, template: null).ProjectionSha;
+
+    private static CompiledProjection ProjectForSend(Envelope envelope, ComposerDraft? draft, PromptTemplate? template) =>
+        Projection.Project(envelope, draft, template);
+
     /// <summary>The engine every <c>opened</c> row names, and whose provider is the family; <see cref="Envelope.NotRecorded"/> until bound.</summary>
     public string EngineId { get; private set; } = Envelope.NotRecorded;
 
@@ -365,7 +375,7 @@ public sealed class ComposerSendGate
                 envelope = TryAppend(rows) ? Envelope.Fold(_stamped)[0] : Envelope.Pending(rows);
             }
 
-            var projection = Projection.Project(envelope, draft, template);
+            var projection = ProjectForSend(envelope, draft, template);
 
             // RULING 75 UNDER A DERIVED SHAPE: the draft's own validation ran over the draft's lines;
             // the projected block may have been filled by the model (kept, or confirmed under agentic)

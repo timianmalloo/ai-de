@@ -80,6 +80,9 @@ public sealed record AttemptOutcomeRequest(OutcomeRow Outcome);
 /// <summary>One attempt and its outcome events, by key.</summary>
 public sealed record AttemptReadRequest(string DispatchKey);
 
+/// <summary>The operator's withdraw of a never-launched attempt; the dispatch key is the command id.</summary>
+public sealed record AttemptWithdrawRequest(string DispatchKey);
+
 /// <summary>The answer to <see cref="AttemptReadRequest"/>: a null receipt means the key was never attempted.</summary>
 public sealed record AttemptReadResult(AttemptReceipt? Receipt);
 
@@ -178,6 +181,7 @@ public static class WorkspaceOperations
     public const string AttemptOutcome = "attempt.outcome";
     public const string AttemptRead = "attempt.read";
     public const string AttemptSweep = "attempt.sweep";
+    public const string AttemptWithdraw = AttemptReceipt.WithdrawCommand;
     public const string IndexSolution = "index.solution";
 
     /// <summary>
@@ -296,6 +300,9 @@ public static class WorkspaceOperations
 
         endpoint.Register(AttemptSweep, (request, _) =>
             Refusable(() => Handle<AttemptSweepRequest>(request, dispatcher.SweepAttempts)));
+
+        endpoint.Register(AttemptWithdraw, (request, peer) =>
+            Refusable(() => Handle<AttemptWithdrawRequest>(request, body => dispatcher.WithdrawAttempt(body.DispatchKey, peer.ToPrincipal()))));
     }
 
     public const string NotebookOpen = "notebook.open";

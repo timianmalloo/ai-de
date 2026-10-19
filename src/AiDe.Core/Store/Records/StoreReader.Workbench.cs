@@ -124,6 +124,15 @@ public sealed partial class StoreReader
         },
         ("$key", dispatchKey));
 
+    /// <summary>Whether a mutating command completed, by any caller: its <c>command_receipt_fact</c> row exists.</summary>
+    public bool HasCompletedCommand(string workspaceId, string commandType, string commandId) => ReadOne("""
+        SELECT command_id FROM command_receipt_fact
+        WHERE workspace_id = $ws AND command_type = $type AND command_id = $id
+        LIMIT 1;
+        """,
+        r => r.GetString(0),
+        ("$ws", workspaceId), ("$type", commandType), ("$id", commandId)) is not null;
+
     /// <summary>Every outcome event of an attempt, oldest first. The caller folds them.</summary>
     public IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey) => ReadMany(SqlReadOutcomes,
         r => new OutcomeRow(

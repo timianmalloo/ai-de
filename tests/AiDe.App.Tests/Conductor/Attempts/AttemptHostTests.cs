@@ -166,6 +166,9 @@ public sealed class AttemptHostTests
 
         public Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
             inner.SweepAttemptsAsync(request, cancellationToken);
+
+        public Task<AttemptAppendResult> WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+            inner.WithdrawAttemptAsync(dispatchKey, cancellationToken);
     }
 
     /// <summary>A repository with the stub adapter installed and released, a real store seeded with a revision.</summary>

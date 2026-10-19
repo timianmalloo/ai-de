@@ -577,6 +577,7 @@ internal static partial class Program
                 {
                     order.Add("opened");
                     var said = shell.OpenSessionDocument(created.Config);
+                    shell.Notebook(AiDe.App.Workbench.Records.NotebookId.ForSession(created.Config.SessionId))!.Runs.UnhostedForTests();
                     composer = shell.SessionComposer(created.Config.SessionId);
                     said = said + " " + SessionComposerBinder.Bind(
                         shell, created.Config, created.TaskClass,
