@@ -17,7 +17,7 @@ summary: >-
 
 # T13 residuals
 
-## R-1 Two gates no workflow invokes (verify-project-coverage stays red on these two lines)
+## RES-1 Two gates no workflow invokes (verify-project-coverage stays red on these two lines)
 
 `tools/verify-project-coverage.py` reads `tools/(verify-[\w-]+)\.py` in `.github/workflows/*.yml`. Neither gate below appears there.
 The Leader declined the workflow edit for T13; this is the next step for the Owner. `.github/workflows` was not touched.
@@ -47,11 +47,11 @@ Steps I would add to the `ubuntu-latest` gates job in `.github/workflows/build.y
   Either step satisfies the coverage regex.
 - Decision for the Owner: add the playwright install (extra minutes per push, maybe ~1 to 2 min, Inferred) or run only the self-test and a local-only journey.
 
-## R-2 Gates still red, with cause
+## RES-2 Gates still red, with cause
 
 | Gate | Cause | State |
 |---|---|---|
 | verify-ruling-citations (pack copy) | pack reads only docs/notes/rulings.md | pack defect PD-1 |
 | verify-portable-text-io, verify-subprocess-utf8 | one byte-frozen oracle, no pack exemption | pack defect PD-2 |
 | verify-audit-capture | 5 entries from drive tracks (wl-owner x2, wl-leader, wl-t1, wl-t2); each needs a superseding entry with goal, done-when and evidence from its owner | returned to those sessions |
-| verify-project-coverage | R-1 above | residual |
+| verify-project-coverage | RES-1 above | residual |
