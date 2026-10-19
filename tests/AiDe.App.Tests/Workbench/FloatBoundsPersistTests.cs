@@ -105,6 +105,67 @@ public sealed class FloatBoundsPersistTests : IDisposable
                     "the restored pane is not drawn in the floating window");
             });
 
+    /// <summary>
+    /// Check 3 (Ruling 174 (3), AC-D01b): a floating window saved at a rectangle outside the virtual
+    /// screen (its display is gone) comes back with no bounds, opens at the default placement near the
+    /// workbench, and the restore report says so. The display test is the product's own,
+    /// <c>VirtualScreen.IsOnAConnectedDisplay</c>, which the tree path already applies.
+    /// </summary>
+    [Fact]
+    public void AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo() =>
+        Sta.Pump(
+            create: () => new DockingManager(),
+            configure: window =>
+            {
+                // On the work area, so the default placement (48 into the workbench) is a usable one.
+                window.Left = SystemParameters.WorkArea.Left + 40;
+                window.Top = SystemParameters.WorkArea.Top + 40;
+                window.Width = 900;
+                window.Height = 600;
+            },
+            body: async (main, manager) =>
+            {
+                Directory.CreateDirectory(_dir);
+                var layoutPath = Path.Combine(_dir, "layout.json");
+                var offScreen = new LayoutRect(
+                    SystemParameters.VirtualScreenLeft - 100_000, SystemParameters.VirtualScreenTop - 100_000, 640, 420);
+
+                // Before the restart: "sessions" floats at a rectangle no display covers, and is saved.
+                var before = new ZoneBackedLayoutService();
+                var ids = before.Zones.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+                var floated = before.Apply(new LayoutOperation.MoveSurface("sessions", new DropTarget(string.Empty, DropKind.Float)));
+                Assert.True(floated.Applied, floated.Announcement);
+                var stack = Assert.Single(before.Zones.Floating);
+                before.RestoreZones(before.Zones with { Floating = [stack with { FloatingBounds = offScreen }] });
+                Assert.Equal(offScreen, Assert.Single(before.Zones.Floating).FloatingBounds);
+                using (var first = new LayoutPersistence(before, layoutPath, ids, restorableKinds: SurfaceContentFactory.RestorableKinds))
+                {
+                    first.SaveNow();
+                    Assert.Null(first.LastSaveFailure);
+                }
+
+                // The restart: LayoutPersistence's real restore with the real display test, and a render.
+                var host = new ZoneBackedLayoutService();
+                using var persistence = new LayoutPersistence(host, layoutPath, ids, restorableKinds: SurfaceContentFactory.RestorableKinds);
+                var result = persistence.Restore();
+                var adapter = new WorkbenchAdapter(manager, host, surface => new TextBox { Text = surface.SurfaceId });
+                adapter.Render();
+                await Task.Delay(500);
+
+                var restored = Assert.Single(host.Zones.Floating);
+                Assert.True(restored.FloatingBounds is null,
+                    $"the restore kept the off-screen rectangle {restored.FloatingBounds}; it said: {result.Announcement}");
+                var window = Assert.Single(manager.FloatingWindows);
+                Assert.True(window.IsVisible, "the recovered floating window is not shown");
+                var expected = WorkbenchAdapter.DefaultFloatingSize with { X = main.Left + 48, Y = main.Top + 48 };
+                Assert.Equal(expected, new LayoutRect(window.Left, window.Top, window.Width, window.Height));
+                Assert.Equal(["Sessions"], result.RehomedFloating);
+                Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
+                Assert.Equal(
+                    "Restored your saved workbench arrangement. “Sessions” moved onto this display because the saved display is not connected.",
+                    result.Announcement);
+            });
+
     [DllImport("user32.dll", EntryPoint = "SendMessageW")]
     private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 }
