@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:34:53Z",
+  "generated": "2026-10-19T07:49:27Z",
   "audit": [
     {
       "actor": null,
@@ -24376,6 +24376,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T07:10:52Z",
       "duration_seconds": 1441.0
+    },
+    {
+      "id": "al-01M59J61XEVMGMZ2D75ATX3ZDE",
+      "shortname": "wl-t8-bind",
+      "datetime": "2026-10-19T07:49:27Z",
+      "session": "wl-t8-bind",
+      "prompt": "T8 node 5: Ruling 159(1) Send disabled; no-client refusal; UIA names; withdrawn copy",
+      "summary": "Node 5: Send disabled with the host refusal as UIA help text, Retry wired, hosted-elsewhere re-probe (372778c5 red, 629be5ac green). Check 2, check 3 and the withdrawn copy handed to node 6 with two questions.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Bind the session document to a notebook revision and an attempt, so a run outlives its pane",
+      "done_when": "Ruling 159(1) Send disabled with UIA cause and Retry, red then green; rest handed off",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T07:36:29Z",
+      "duration_seconds": 778.0
     }
   ],
   "changes": [
