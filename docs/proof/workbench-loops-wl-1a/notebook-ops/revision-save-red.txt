@@ -1,0 +1,63 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ADifferentBody_IsTheNextRevisionAndKeepsItsParent [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_AnEarlierBodyAfterALaterOne_IsANewRevision [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheFirstBody_IsRevisionOneWithItsHash [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ToAnUnopenedNotebook_IsRefusedWithAStableCode [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheLatestBodyAgain_WritesNoRowAndReturnsThatRevision [FAIL]
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ADifferentBody_IsTheNextRevisionAndKeepsItsParent [48 ms]
+  Error Message:
+   System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Ipc.NotebookService.Open(NotebookOpenRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 27
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ADifferentBody_IsTheNextRevisionAndKeepsItsParent() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 80
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_AnEarlierBodyAfterALaterOne_IsANewRevision [12 ms]
+  Error Message:
+   System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Ipc.NotebookService.Open(NotebookOpenRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 27
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_AnEarlierBodyAfterALaterOne_IsANewRevision() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 109
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheFirstBody_IsRevisionOneWithItsHash [10 ms]
+  Error Message:
+   System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Ipc.NotebookService.Open(NotebookOpenRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 27
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheFirstBody_IsRevisionOneWithItsHash() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 68
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ToAnUnopenedNotebook_IsRefusedWithAStableCode [11 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_ToAnUnopenedNotebook_IsRefusedWithAStableCode() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 121
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Ipc.NotebookService.SaveRevision(NotebookSaveRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 29
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.<Save_ToAnUnopenedNotebook_IsRefusedWithAStableCode>b__11_0() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 122
+  Failed AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheLatestBodyAgain_WritesNoRowAndReturnsThatRevision [10 ms]
+  Error Message:
+   System.NotImplementedException : 1
+  Stack Trace:
+     at AiDe.Core.Ipc.NotebookService.Open(NotebookOpenRequest request) in C:\Projects\ai-de-wl1a-notebook-ops\src\AiDe.Core\Ipc\NotebookOperations.cs:line 27
+   at AiDe.Core.Tests.Notebooks.NotebookOperationsTests.Save_TheLatestBodyAgain_WritesNoRowAndReturnsThatRevision() in C:\Projects\ai-de-wl1a-notebook-ops\tests\AiDe.Core.Tests\Notebooks\NotebookOperationsTests.cs:line 96
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     5, Passed:     0, Skipped:     0, Total:     5, Duration: 102 ms - AiDe.Core.Tests.dll (net10.0)
