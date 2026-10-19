@@ -2,7 +2,10 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
 using AiDe.App.Tests.Sessions.Thread;
@@ -201,6 +204,89 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 Assert.Equal(expected, AutomationProperties.GetHelpText(ThreadFixtures.Container(surface.Thread, 0)));
                 Close(window, host, model, surface);
             });
+    }
+
+    /// <summary>
+    /// Brief check 3: a restored row's events are reached from the row by keyboard the way a live row's are — Tab from
+    /// the row's container to its fold, Space opens it — and every folded event line is exposed to UI Automation.
+    /// </summary>
+    [Fact]
+    public void ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                _fixture.ReleaseRun();
+
+                var (host, model, surface) = await ReopenAsync(window);
+                surface.Composer.Draft.SetFreeFormText("first words");
+                await NotebookFixture.SendAndSettleAsync(surface);
+                await UntilAsync(window, () => Ended(model, 0), () => "A never ended");
+                Close(window, host, model, surface);
+
+                (host, model, surface) = await ReopenAsync(window);
+                await UntilAsync(window, () => surface.Thread.Rows.Count >= 1, () => "the reopened notebook renders no row");
+                var feed = surface.Thread;
+                var row = Assert.Single(feed.Rows);
+                Assert.NotEmpty(row.View.Events);
+                Assert.False(row.IsFoldOpen);
+                feed.UpdateLayout();
+
+                // From the row's container, Tab reaches its fold header, as on a live row.
+                Assert.True(feed.FocusItem(0));
+                var container = ThreadFixtures.Container(feed, 0);
+                Assert.Same(container, Keyboard.FocusedElement);
+                ToggleButton? fold = null;
+                List<string> stops = [];
+                for (var i = 0; i < 8 && fold is null; i++)
+                {
+                    ((UIElement)Keyboard.FocusedElement).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    var focused = (DependencyObject)Keyboard.FocusedElement;
+                    stops.Add(AutomationProperties.GetName(focused));
+                    if (AutomationProperties.GetName(focused) == row.FoldHeader)
+                    {
+                        fold = focused as ToggleButton;
+                    }
+                }
+
+                Assert.True(fold is not null, $"Tab from the restored row reached [{string.Join(", ", stops)}], never its fold \"{row.FoldHeader}\"");
+
+                // Space opens the fold.
+                var source = PresentationSource.FromVisual(fold)!;
+                fold.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyDownEvent });
+                fold.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyUpEvent });
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                feed.UpdateLayout();
+                Assert.True(row.IsFoldOpen, "Space on the restored row's fold did not open it");
+
+                // Every folded event line is in the row's UI Automation tree.
+                var names = new List<string>();
+                Collect(UIElementAutomationPeer.CreatePeerForElement(container), names);
+                Assert.NotEmpty(row.FoldedEvents);
+                foreach (var line in row.FoldedEvents)
+                {
+                    Assert.True(names.Any(n => n.Contains(line.Text, StringComparison.Ordinal)), $"the event \"{line.Text}\" is not exposed to UIA under the restored row");
+                }
+
+                Close(window, host, model, surface);
+            });
+    }
+
+    private static void Collect(AutomationPeer? peer, List<string> names)
+    {
+        if (peer is null)
+        {
+            return;
+        }
+
+        names.Add(peer.GetName());
+        foreach (var child in peer.GetChildren() ?? [])
+        {
+            Collect(child, names);
+        }
     }
 
     /// <summary>Stands in for the process dying: thrown where no host or notebook code catches it.</summary>
