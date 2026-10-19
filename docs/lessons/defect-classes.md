@@ -8294,3 +8294,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Observed instance:** a session-long git HEAD was the only key for a scope snapshot, so a forced reindex of an edited scope returned early as already current; separately, a 1,254-row cap let 2,000-character rows build a 5 MB reply.
 - **Sweep:** every reuse guard keyed on a caller-supplied identifier; every item cap guarding a byte-limited transport.
 - **Control:** `DirtyEditSurvivesReindexTests` (same revision, edited file) and `EveryOperationFitsTheFrameTests.EntryPointsRowsAreBoundedByBytesNotOnlyByCount`.
+
+### DC-NEW-wl-t2-sp1 — A constraint lives in prose or in one consumer, so a second consumer checks a different thing
+
+- **Shape:** a reference or vocabulary rule SQLite cannot declare (ALTER, versioned key) is enforced by one path only: the migration gate ran the reference queries, the purge path ran none, the v2 DDL was rebuilt from live lists, a body hash had two writers and one of them skipped it, and a dimension's version order lived in the writer, not the store. Each path passed its own test.
+- **Observed instance:** Ruling 148 (Oct 18): the Data & Persistence review found eight such gaps in schema v2 that the green suite could not see, because the suite read the same text or the same writer on both sides.
+- **Sweep:** every trigger-enforced reference (one query list, `WorkspaceSchema.ReferenceChecks`, run by the migration gate and the compactor), every closed vocabulary (frozen v2 DDL, pinned hash), every dimension (version-order trigger), every revision writer (`StoreWriter.BodySha`, store trigger refuses NULL).
+- **Control:** `tests/AiDe.Core.Tests/Store/SchemaV2/Ruling148Tests.cs` (one refusing test per condition, run through Microsoft.Data.Sqlite's bundled engine), including `TheV2MigrationDdl_IsPinnedByHash` and `EveryLiveVocabularyValue_IsAlreadyInTheFrozenDdl_SoGrowthFailsHereUntilV3Exists`.

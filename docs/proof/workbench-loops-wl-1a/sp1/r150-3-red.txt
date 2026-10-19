@@ -1,0 +1,125 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.31]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"HAS-EVIDENCE\":true}") [FAIL]
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"satisfiedBy\":\"d1\"}") [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"proposed\":true}") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"has evidence\":true}") [FAIL]
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"findings\":[{\"id\":\"f\",\"Proposed\":1}]}") [FAIL]
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"hasEvidence\":true}") [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"HAS-EVIDENCE\":true}") [35 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"satisfiedBy\":\"d1\"}") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"proposed\":true}") [9 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"has evidence\":true}") [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"findings\":[{\"id\":\"f\",\"Proposed\":1}]}") [9 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"hasEvidence\":true}") [9 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"satisfied_by\":\"d1\"}") [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(payload: "{\"state\":\"running\"}") [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(payload: "{\"status\":\"missing\"}") [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.TheForbiddenList_IsPinnedToAdr0039Section3 [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(payload: "{\"satisfied_by\":\"d1\"}") [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 19
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 161
+   at InvokeStub_Ruling150PayloadGuardTests.ADerivedName_InAnyCaseOrSeparator_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(payload: "{\"state\":\"running\"}") [10 ms]
+  Error Message:
+   AiDe.Core.Store.WorkspaceStoreException : an assessment payload must be valid JSON that holds no derived state
+---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'AIDE-STORE-DERIVED-STATE-IN-PAYLOAD'.
+  Stack Trace:
+     at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 251
+   at AiDe.Core.Store.StoreWriter.AppendAssessment(AssessmentRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 120
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 173
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 392
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 246
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(payload: "{\"status\":\"missing\"}") [10 ms]
+  Error Message:
+   AiDe.Core.Store.WorkspaceStoreException : an assessment payload must be valid JSON that holds no derived state
+---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'AIDE-STORE-DERIVED-STATE-IN-PAYLOAD'.
+  Stack Trace:
+     at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 251
+   at AiDe.Core.Store.StoreWriter.AppendAssessment(AssessmentRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 120
+   at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 173
+   at InvokeStub_Ruling150PayloadGuardTests.AResourceStateFinding_IsNotADerivedName_AndIsAccepted(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 392
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 246
+  Failed AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.TheForbiddenList_IsPinnedToAdr0039Section3 [16 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                            ↓ (pos 5)
+Expected: [···, "eligible", "has_evidence", "proposed", "ready", "satisfied", ···]
+Actual:   [···, "eligible", "has_evidence", "ready", "satisfied", "stale", ···]
+                                            ↑ (pos 5)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling150PayloadGuardTests.TheForbiddenList_IsPinnedToAdr0039Section3() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling150Tests.cs:line 145
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    10, Passed:     3, Skipped:     0, Total:    13, Duration: 176 ms - AiDe.Core.Tests.dll (net10.0)

@@ -1,0 +1,46 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_CreatesTheNotebook_AsAnOwnedNonLegacyOne [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_SetsBodySha_EqualToSha256OfTheBody [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionWithoutABodyHash_IsRefusedByTheStore [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionForANotebookThatDoesNotExist_IsRefused [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_CreatesTheNotebook_AsAnOwnedNonLegacyOne [49 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   0
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_CreatesTheNotebook_AsAnOwnedNonLegacyOne() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 291
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_SetsBodySha_EqualToSha256OfTheBody [25 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1394eadb7cdd68ab0a7a7727885d5055ce1e7537c00dd12610e4d181be5204b6
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ThePtySavePath_SetsBodySha_EqualToSha256OfTheBody() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 260
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionWithoutABodyHash_IsRefusedByTheStore [14 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionWithoutABodyHash_IsRefusedByTheStore() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 313
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionForANotebookThatDoesNotExist_IsRefused [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148BodyShaAndNotebookTests.ARevisionForANotebookThatDoesNotExist_IsRefused() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 298
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     1, Skipped:     0, Total:     5, Duration: 141 ms - AiDe.Core.Tests.dll (net10.0)
+exit=1

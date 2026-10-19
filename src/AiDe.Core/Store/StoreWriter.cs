@@ -1,4 +1,5 @@
 using AiDe.Core.Facts;
+using AiDe.Core.Store.Records;
 using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Store;
@@ -12,7 +13,7 @@ namespace AiDe.Core.Store;
 /// INSERT OR REPLACE / UPSERT on a fact table: REPLACE is the documented bypass of the immutability
 /// triggers (spike S4), so forbidding it in the writer API is the control, and the pragma is the net.
 /// </remarks>
-public sealed class StoreWriter : IDisposable
+public sealed partial class StoreWriter : IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly SemaphoreSlim _gate;
@@ -131,39 +132,49 @@ public sealed class StoreWriter : IDisposable
         string dispatchKey, string workspaceId, long workspaceEpoch, string draftId, int revisionNo,
         string sessionId, long sessionGeneration)
     {
-        var seq = NextIngressSequence();
-        Exec("""
-            INSERT INTO dispatch_attempt_fact
-                (dispatch_key, workspace_id, workspace_epoch, draft_id, revision_no,
-                 session_id, session_generation, attempted_at, ingress_seq)
-            VALUES ($key, $ws, $epoch, $draft, $rev, $session, $gen, $at, $seq);
-            """,
-            ("$key", dispatchKey), ("$ws", workspaceId), ("$epoch", workspaceEpoch),
-            ("$draft", draftId), ("$rev", revisionNo), ("$session", sessionId), ("$gen", sessionGeneration),
-            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+        // PTY dispatches keep route_fingerprint = 'pty' (ADR-0039 §1).
+        AppendAttempt(new AttemptRow(
+            dispatchKey, workspaceId, workspaceEpoch, draftId, revisionNo, sessionId, sessionGeneration,
+            RouteFingerprint: "pty"));
     }
 
     /// <summary>Appends an outcome event. Never rewrites a prior row — a late acceptance appends.</summary>
-    public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)
-    {
-        var seq = NextIngressSequence();
-        Exec("""
-            INSERT INTO dispatch_outcome_fact (dispatch_key, ingress_seq, state, error_code, recorded_at)
-            VALUES ($key, $seq, $state, $err, $at);
-            """,
-            ("$key", dispatchKey), ("$seq", seq), ("$state", state.ToString()),
-            ("$err", errorCode), ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)));
-    }
+    public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode) =>
+        AppendOutcome(new OutcomeRow(dispatchKey, state, errorCode));
 
+    /// <summary>
+    /// The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it
+    /// under <see cref="WorkspaceSchema.TerminalJourneyId"/>: a non-legacy notebook with an owner, because a legacy row comes only
+    /// from the migration backfill (Ruling 148 c, d). The body hash is set here as on the typed path.
+    /// </summary>
     public void SavePromptRevision(string draftId, int revisionNo, string body)
     {
+        EnsureTerminalNotebook(draftId);
         var seq = NextIngressSequence();
         Exec("""
-            INSERT INTO prompt_revision_fact (draft_id, revision_no, body, saved_at, ingress_seq)
-            VALUES ($draft, $rev, $body, $at, $seq);
+            INSERT INTO prompt_revision_fact (draft_id, revision_no, body, saved_at, ingress_seq, body_sha)
+            VALUES ($draft, $rev, $body, $at, $seq, $sha);
             """,
             ("$draft", draftId), ("$rev", revisionNo), ("$body", body),
-            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq));
+            ("$at", WorkspaceStore.Iso(DateTimeOffset.UtcNow)), ("$seq", seq), ("$sha", BodySha(body)));
+    }
+
+    private void EnsureTerminalNotebook(string draftId)
+    {
+        if (WorkspaceStore.ExecuteScalar(_connection, "SELECT 1 FROM notebook_dim WHERE notebook_id = $id LIMIT 1;",
+                _transaction, ("$id", draftId)) is not null)
+        {
+            return;
+        }
+
+        if (WorkspaceStore.ExecuteScalar(_connection, "SELECT 1 FROM journey_dim WHERE journey_id = $id LIMIT 1;",
+                _transaction, ("$id", WorkspaceSchema.TerminalJourneyId)) is null)
+        {
+            InsertJourney(new JourneyRow(WorkspaceSchema.TerminalJourneyId, "work", WorkspaceSchema.TerminalJourneyTitle,
+                OriginScope: WorkspaceSchema.TerminalJourneyOriginScope), version: 1);
+        }
+
+        InsertNotebook(new NotebookRow(draftId, WorkspaceSchema.TerminalJourneyId, Legacy: false), version: 1);
     }
 
     public void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)
@@ -232,12 +243,27 @@ public sealed class StoreWriter : IDisposable
         {
             WorkspaceStore.Execute(_connection, sql, _transaction, parameters);
         }
-        catch (SqliteException ex) when (ex.Message.Contains(StoreErrorCodes.ImmutableViolation, StringComparison.Ordinal))
+        catch (SqliteException ex) when (FindTriggerCode(ex.Message) >= 0)
         {
-            throw new WorkspaceStoreException(StoreErrorCodes.ImmutableViolation,
-                "facts are append-only; correction is a superseding fact", ex);
+            var known = TriggerCodes[FindTriggerCode(ex.Message)];
+            throw new WorkspaceStoreException(known.Code, known.Meaning, ex);
         }
     }
+
+    /// <summary>The stable codes a store trigger raises, and what each means to a caller.</summary>
+    private static readonly (string Code, string Meaning)[] TriggerCodes =
+    [
+        (StoreErrorCodes.ImmutableViolation, "facts are append-only; correction is a superseding fact"),
+        (StoreErrorCodes.VocabularyViolation, "the value is not in the closed vocabulary of this column"),
+        (StoreErrorCodes.ReferenceViolation, "the row references a revision, parent, notebook or journey that does not exist"),
+        (StoreErrorCodes.Type0Violation, "the attribute is Type-0 (or the legacy flag) and cannot change this way"),
+        (StoreErrorCodes.VersionOrderViolation, "a dimension version must be the next version with a greater ingress sequence"),
+        (StoreErrorCodes.BodyHashRequired, "a prompt revision must carry the sha256 of its body"),
+        (StoreErrorCodes.DerivedStateInPayload, "an assessment payload must be valid JSON that holds no derived state"),
+    ];
+
+    private static int FindTriggerCode(string message) =>
+        Array.FindIndex(TriggerCodes, c => message.Contains(c.Code, StringComparison.Ordinal));
 
     public void Dispose()
     {

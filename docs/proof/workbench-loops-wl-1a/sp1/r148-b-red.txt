@@ -1,0 +1,96 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "harness_profile_dim") [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "journey_dim") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "notebook_dim") [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "harness_profile_dim") [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "journey_dim") [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "notebook_dim") [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "harness_profile_dim") [41 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 150
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "journey_dim") [12 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 150
+   at InvokeStub_Ruling148VersionOrderTests.AVersionCannotSkipAhead(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(table: "notebook_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.AVersionCannotSkipAhead(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 150
+   at InvokeStub_Ruling148VersionOrderTests.AVersionCannotSkipAhead(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "harness_profile_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 163
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "journey_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 163
+   at InvokeStub_Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(table: "notebook_dim") [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 163
+   at InvokeStub_Ruling148VersionOrderTests.ANextVersionCannotTieOrPrecedeTheLatestIngressSequence(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "notebook_dim") [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "harness_profile_dim") [FAIL]
+[xUnit.net 00:00:00.46]     AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "journey_dim") [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "notebook_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 137
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "harness_profile_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 137
+   at InvokeStub_Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(table: "journey_dim") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 137
+   at InvokeStub_Ruling148VersionOrderTests.ANewKeyMustStartAtVersionOne(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     9, Passed:     3, Skipped:     0, Total:    12, Duration: 176 ms - AiDe.Core.Tests.dll (net10.0)
+exit=1
