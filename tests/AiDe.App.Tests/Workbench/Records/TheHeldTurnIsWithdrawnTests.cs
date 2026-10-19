@@ -102,7 +102,8 @@ public sealed class TheHeldTurnIsWithdrawnTests : IDisposable
                 using var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
                 using var model = _fixture.NewModel();
                 model.Runs.BindHost(host, Scope);
-                using var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                var said = new RecordingAnnouncer();
+                using var document = new SessionDocumentSurface(model, null, said);
                 window.Content = document;
                 _fixture.ConfigureStub(document);
                 var second = await QueueBehindARunningTurnAsync(window, document, model);
@@ -118,6 +119,16 @@ public sealed class TheHeldTurnIsWithdrawnTests : IDisposable
                 Assert.Equal((DispatchState.Rejected, "never_dispatched"), (attempt.Terminal?.State, attempt.Terminal?.Cause));
                 Assert.Null(attempt.Dispatched);
                 Assert.Equal("cancelled by you", TurnCopy.OutcomeWord(model.Thread.Current.Turns[1].State, null));
+
+                // The Owner's copy (Leader ruling, node 6): the turn's own label; the row's UIA help text carries it
+                // (Owner: HelpText, the Name stays ordinal + words), and the announcer speaks it unfocused, as Stop's is.
+                var row = document.Thread.Rows[1];
+                Assert.Equal("b2 cancelled by you before it was sent.", row.HelpText);
+                Assert.DoesNotContain("stopped by you", row.HelpText, StringComparison.Ordinal);
+                Assert.False(row.HelpText.StartsWith("Refused before it started", StringComparison.Ordinal), row.HelpText);
+                await UntilAsync(window, () => said.Messages.Any(m => m.Contains("b2 cancelled by you before it was sent.", StringComparison.Ordinal)),
+                    () => $"the withdraw was never announced; heard: {string.Join(" | ", said.Messages)}");
+                Assert.DoesNotContain(said.Messages, m => m.Contains("b2 b2", StringComparison.Ordinal));
 
                 _fixture.ReleaseRun();
                 await UntilAsync(window, () => model.Thread.Current.Turns[0].State == TurnState.Answered,
@@ -157,6 +168,8 @@ public sealed class TheHeldTurnIsWithdrawnTests : IDisposable
 
                 Assert.Equal(TurnState.Rejected, model.Thread.Current.Turns[1].State);
                 Assert.NotEqual("cancelled by you", TurnCopy.OutcomeWord(model.Thread.Current.Turns[1].State, null));
+                Assert.DoesNotContain("cancelled by you", document.Thread.Rows[1].HelpText, StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain("cancelled by you", document.Thread.Rows[1].OutcomeWord, StringComparison.OrdinalIgnoreCase);
                 window.Content = null;
             });
     }
