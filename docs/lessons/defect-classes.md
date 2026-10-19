@@ -8630,3 +8630,21 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   committed file only from command output printed earlier in the same turn. The send of a message that cites a sha
   comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
   `partially-controlled`.
+
+### DC-NEW-wl-t30-prefill — a UI test that reads process-wide WPF state passes alone and fails in the suite
+
+- **Instance (2026-10-19, T30 n1):** `TheCompileModeControlTests` found the open settings popup through
+  `PresentationSource.CurrentSources`. Run alone (2 tests) it passed. In the whole App suite both tests failed with
+  *"The calling thread cannot access this object because a different thread owns it"*: the list is process-wide, and
+  other tests' STA threads still held windows whose `RootVisual` throws on this thread.
+- **Class:** a test oracle that reads **process-global** UI state (presentation sources, `Application.Current.Windows`,
+  static caches) without scoping it to the test's own thread or window is order- and suite-dependent. A filtered run is
+  not evidence for the suite.
+- **Sweep:** `grep -rn "CurrentSources" tests src` (2026-10-19) finds this one reader only; it now filters with
+  `HwndSource.CheckAccess()`. `Application.Current.Windows` readers were not swept in this node.
+- **Derive:** a filtered red/green is a claim about the filtered set; rule 7's whole-suite run is what catches this
+  shape, and it did.
+- **Prevent (control):** instance, the filter at `TheCompileModeControlTests.OpenSettings`, green in the whole suite
+  (`docs/proof/workbench-loops-wl-1a/prefill/suite-node1.txt`). Class: **not built** — a source scan that refuses an
+  unscoped `CurrentSources` / `Application.Current.Windows` read in `tests/AiDe.App.Tests` is the next step.
+- **Status:** `open` (instance fixed; the class control is not built).

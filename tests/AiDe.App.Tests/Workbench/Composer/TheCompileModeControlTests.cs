@@ -113,7 +113,9 @@ public sealed class TheCompileModeControlTests(ITestOutputHelper output) : IDisp
         var button = ComposerGesture.Logical<Button>(document).Single(b => AutomationProperties.GetName(b) == "Session settings");
         ((IInvokeProvider)UIElementAutomationPeer.CreatePeerForElement(button).GetPattern(PatternInterface.Invoke)!).Invoke();
         ComposerGesture.Settle(document);
-        var popups = PresentationSource.CurrentSources.OfType<HwndSource>().Select(s => s.RootVisual).OfType<FrameworkElement>().ToList();
+        // THIS THREAD'S SOURCES ONLY: CurrentSources is process-wide, and in the whole suite it holds other STA threads'
+        // windows, whose RootVisual throws on this thread (DC-NEW-wl-t30-prefill).
+        var popups = PresentationSource.CurrentSources.OfType<HwndSource>().Where(s => s.CheckAccess()).Select(s => s.RootVisual).OfType<FrameworkElement>().ToList();
         var picker = popups.SelectMany(ComposerGesture.Logical<ComboBox>).Concat(popups.SelectMany(ThreadFixtureVisuals))
             .FirstOrDefault(c => AutomationProperties.GetName(c) == "Compile mode");
         Assert.True(picker is not null, "the open session settings carry no control named \"Compile mode\"");
