@@ -85,3 +85,26 @@ re-run after 2 min (20:05:37Z) and failed the same way. Neither test touches thi
   my first red passed for a fixture reason; the tests here switch the shape as the binder does. Not edited (not mine).
 - **DC-NEW-wl-t30-prefill** (`docs/lessons/defect-classes.md`): `PresentationSource.CurrentSources` is process-wide;
   the B tests passed alone and failed in the whole suite until filtered to this thread.
+
+## Node 2 — the default reaches the user; the mark reads "suggested"; the window fixture
+
+**Result:** (A), (B) and (C) green, each observed red first; (0) measured and stopped as the brief says. No test calls a
+model and no node-2 test reads `~/.aide/proof`.
+
+| Item | Red | Green | Tests |
+|---|---|---|---|
+| **(0)** C1 restart, measured | — | `8afa3a58` · `c1-restart-measure.txt`, `c1-restart-measure-run.txt` | `AKeptSuggestedLineIsKeptTests.AKeptGoal_IsInNeitherTheStoredRevisionNorTheRevivedDraft_AfterARestartThroughTheShellsRevive` (pins the measured fact) |
+| **(A)** settings over the bound adapter | `63843967` · `A-settings-red.txt` (gate asked about `[]`, advisory disabled) | `2cf4172e` · `A-settings-green.txt` | `TheCompileModeControlTests.WithNoLadderInjected_TheSettingsEvaluateTheGateOverTheBoundAdapter_AndOfferAgenticAdvisory` |
+| **(A)** File → New Session | `b26f08a2` · `A-new-session-red.txt` (asked `[]`; stored `mechanical-only`) | `7748a0ca` · `A-new-session-green.txt` (37 with the sheet and front-door tests) | `FileNewSessionOpensInTheGatesDefaultTests` (2) |
+| **(B)** "suggested" | `4dfb5785` · `B-suggested-red.txt` (mark `? derived`, UIA `derived`) | `138a9419`, rename `f2b382fa` · `B-suggested-green.txt` (mark `? suggested`, UIA `suggested`; kept: `✓ kept`, UIA `kept`) | `AKeptSuggestedLineIsKeptTests.AModelDerivedLine_IsMarkedSuggested_OnScreenAndInUia_AndAKeptLineIsNot` |
+| **(C)** own-window fixture | `e230377e` · `C-own-window-red.txt` (read *a concurrent window*'s control) | `f664eddb` · `C-own-window-green.txt` | `TheCompileModeControlTests.TheSettingsQuery_ReadsThisTestsOwnWindow_WithConcurrentWindowsOpen` |
+
+Whole suites (`suite-node2.txt`): **Core 3119 passed, 0 failed, 1 skipped; App 1230 passed, 3 failed, 2 skipped.**
+Re-run after 2 min (20:59:34Z): `TheSentPromptIsNeverResentTests` passed (its suite failure was *the composer editor
+could not start*); `SolutionTreeChordTests` refused (the Ruling 115 desktop hold was held by the Leader's probe);
+`CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` failed, foreground not held. The last two are node 1's two.
+
+**Code:** `NewSessionSheetViewModel.CompileModeGateInput` and the `compileModes:` argument (`Create`); `ComposerSurface`
+— `AdapterInstallRoot` getter, `StructureLine.ModelLineMark` (`? suggested`); `SessionDocumentSurface.CompileModeGateInput`,
+used when no ladder is injected; `tests/AiDe.App.Tests/OwnWindow.cs`. DESIGN.md: the *Derived structure* row now
+defines the mark as the `?` glyph + the word *suggested* (Ruling 180 (3)). `ComposerGesture.cs` was not changed.
