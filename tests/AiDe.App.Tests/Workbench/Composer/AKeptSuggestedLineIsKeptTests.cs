@@ -74,6 +74,36 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
         });
     }
 
+    /// <summary>
+    /// T30 n2 (B), the Owner under Ruling 180 (3): a model-derived line is marked <i>suggested</i>, on screen and in UIA
+    /// (the line's ItemStatus), and a kept line no longer says it.
+    /// </summary>
+    [Fact]
+    public void AModelDerivedLine_IsMarkedSuggested_OnScreenAndInUia_AndAKeptLineIsNot()
+    {
+        ComposerGesture.Drive(_fixture, async (window, document) =>
+        {
+            var composer = document.Composer;
+            UnderAdvisory(composer);
+
+            ComposerGesture.Type(composer, Words);
+            ComposerGesture.Settle(document);
+            ComposerGesture.CtrlEnter(composer);
+            await composer.Preparing!.WaitAsync(NotebookFixture.Bound);
+            ComposerGesture.Settle(document);
+            output.WriteLine($"suggested: mark \"{composer.StructureMarks[GoalBlockFields.GoalKey]}\" · UIA ItemStatus \"{AutomationProperties.GetItemStatus(Line(composer, "Goal"))}\"");
+            Assert.Equal("? suggested", composer.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.Equal("suggested", AutomationProperties.GetItemStatus(Line(composer, "Goal")));
+
+            Invoke(KeepButton(composer, "Goal"));
+            ComposerGesture.Settle(document);
+            output.WriteLine($"kept: mark \"{composer.StructureMarks[GoalBlockFields.GoalKey]}\" · UIA ItemStatus \"{AutomationProperties.GetItemStatus(Line(composer, "Goal"))}\"");
+            Assert.Equal("✓ kept", composer.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.DoesNotContain("suggested", AutomationProperties.GetItemStatus(Line(composer, "Goal")), StringComparison.Ordinal);
+            Assert.Equal("? suggested", composer.StructureMarks[GoalBlockFields.DoneWhenKey]);
+        });
+    }
+
     /// <summary>A suggested line that is never kept never reaches the draft, so it cannot project (Envelope.cs's Confirmed).</summary>
     [Fact]
     public void ASuggestedLineThatIsNotKept_NeverReachesTheDraft()
