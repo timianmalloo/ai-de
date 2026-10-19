@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -771,7 +772,20 @@ public sealed class WorkbenchAdapter
     {
         _service.Apply(new LayoutOperation.MoveSurface(surfaceId, new DropTarget(zoneStackId, DropKind.JoinStack)));
         Render();
+        FocusContentOnceRealized(surfaceId);
     }
+
+    // The moved pane is the one the user was working in. A render that closes the floating window holding the keyboard
+    // focus leaves it on the main window (T21 n8 (B), measured: "it is on Window"; activating the LayoutDocument did not
+    // move it), so the focus goes into the pane's content after the layout pass that realizes its new place.
+    private void FocusContentOnceRealized(string surfaceId) =>
+        Manager.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+        {
+            if (ContentFor(surfaceId) is { IsKeyboardFocusWithin: false } content && !content.Focus())
+            {
+                content.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+            }
+        });
 
     private void CloseSurface(string surfaceId)
     {
