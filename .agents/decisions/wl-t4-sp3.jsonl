@@ -108,3 +108,14 @@
 {"agent": "wl-t4-sp3", "at": 1792367785.1117387, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/suite-app-policy-delete.txt", "session": "wl-t4-sp3", "wi": ""}
 {"agent": "wl-t4-sp3", "at": 1792367785.1402855, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/HtmlSandboxPolicy.cs", "session": "wl-t4-sp3", "wi": ""}
 {"agent": "wl-t4-sp3", "at": 1792367785.1680818, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/HtmlSandboxPolicyTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.3409455, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/gate-cited-green.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.3654728, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/gate-cited-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.390054, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/gate-fixture-green.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.4180264, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/gate-fixture-red.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.4436104, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/sp3/suite-green.txt", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.4695494, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/ZoneLayout.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.4937537, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/PerspectiveShellTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.5197604, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382179.5449076, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/SurfaceContentTests.cs", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382180.0977137, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t4-sp3", "wi": ""}
+{"agent": "wl-t4-sp3", "at": 1792382180.1227157, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t4-sp3", "wi": ""}
