@@ -69,7 +69,7 @@ public sealed class TerminalHostInLifePathTests(ITestOutputHelper output)
 
             await Task.Delay(SettleAfterState);
             var after = ConsoleHostCensus.Take();
-            Assert.True(after.Readable, "the process table could not be read");
+            Assert.True(after.Readable, after.NotChecked("after the owner exited"));
             var survivors = after.HeadlessHostsOwnedBy(pid);
             afterCount = survivors.Count;
             afterRows = ConsoleHostCensus.Describe(survivors);

@@ -3274,3 +3274,14 @@ On verify-workbench-v2: the comparator fix may normalise only the tree-root path
 ERRATUM to Ruling 152: its last paragraph should read 'This ruling and Ruling 149 together are ADR-0045's amendment of record for WL-S'. Ruling 151 is the join gate policy and does not amend ADR-0045. Ruling 152 is otherwise unchanged and is not edited in place.
 
 - request: req-01M58PX7A6BXNH5TP6RHEHTMWE · ruled by: wl-owner-20261018 · at: 2026-10-18T23:53:12Z
+
+### Ruling 154 — T13's two gate exemptions are accepted: the machine-path opt-outs as written; the two proposal mockups only with a non-colour floor kept on them
+
+(2) verify-no-machine-paths: ACCEPTED as written. .agents/requests.jsonl is the append-only coordination ledger, and .agents/sessions/copilot-main-watch.md is a verbatim transcript. Rewriting a recorded path would falsify the record. The opt-out is the route the gate names, and it covers only those two capture files, so authored files and source stay checked.
+
+(1) verify-ui-craft-floor: ACCEPTED WITH A CONDITION. The Owner read tools/verify-ui-craft-floor.py in the T13 tree. A name in LEGACY_ADVISORY is NOT SCANNED at all (lines 52, 96), so the exemption also drops the accessibility and structure rules on those pages. Its stated reason covers only the palette. The 11 measured Majors are all design-system-color, so the reason is sound for that rule and for no other.
+Condition, before T13 joins: workbench-design-language.html and factory-workbench-notes.html stay scanned. Every Major finding on them other than design-system-color still fails, either by a per-rule exemption or by a test asserting that every Major they produce is design-system-color. Their promotion trigger stays as written: they become fully gated when the workbench design language is adopted into DESIGN.md, or when the pages are retired.
+
+Audit-capture: the Owner's two entries are corrected by superseders al-01M58WCRBWDKPAEBZKBEEMMCN8 and al-01M58WCRGVJK5X7QK9SYP37AG2. The project-coverage CI step stays out of T13's scope as the Leader decided. It is a next step for the user, because it changes what runs on every push.
+
+- request: req-01M58WAMA58T3GFHN8E5P0PT9T · ruled by: wl-owner-20261018 · at: 2026-10-19T01:28:48Z

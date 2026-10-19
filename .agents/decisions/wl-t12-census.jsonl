@@ -14,3 +14,10 @@
 {"agent": "wl-t12-census", "at": 1792364741.7997549, "code": null, "kind": "allowed", "path": "tests/Shared/ConsoleHostCensus.cs", "session": "wl-t12-census", "wi": ""}
 {"agent": "wl-t12-census", "at": 1792364742.927201, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t12-census", "wi": ""}
 {"agent": "wl-t12-census", "at": 1792364742.9533014, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372308.9649775, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/gate-harness-red.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.269346, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/census-green.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.2938602, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/gate-harness-green.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.3168602, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/census/suite-green.txt", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.3418725, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.9382463, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t12-census", "wi": ""}
+{"agent": "wl-t12-census", "at": 1792372463.9632785, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t12-census", "wi": ""}

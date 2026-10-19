@@ -1,0 +1,10 @@
+Census failure measurement (T12, 2026-10-18)
+Harness: scratchpad census-loop.py (not committed) - the exact Query of tests/Shared/ConsoleHostCensus.cs run via powershell.exe, recording exit code, stderr line 1, JSON parse.
+Run 1: 150 queries while 'dotnet test tests/AiDe.Core.Tests' ran (2783 passed, 2m07s).  ok=150 bad=0
+Run 2: 8 parallel loops x 100 queries while 'dotnet test --filter Terminal' ran (109 passed).  ok=800 bad=0
+Total: 950 queries, 0 failures. The transient failure did NOT reproduce on this machine under this load.
+Cause of the Leader-reported "process table could not be read": INFERRED (a start failure, non-zero exit, or non-JSON stdout under four-worktree load); not observed.
+Consequence: the fix adds no cause-specific handling. It adds (a) a bounded retry, justified by the report not by a measurement, and (b) the failure's cause in the snapshot so the next occurrence is observed instead of inferred.
+
+After the fix (same shape of load): a temporary test (not committed) called ConsoleHostCensus.Take() 150 times while the full Core suite ran in a second process: reads=150 unreadable=0.
+Read-failure rate: before 0/950 raw queries (0%), after 0/150 census reads (0%). Both zero: the failure is not reproducible here, so the retry's effect is shown only by the injected-runner tests, not by this rate.

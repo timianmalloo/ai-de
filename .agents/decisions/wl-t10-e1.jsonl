@@ -43,3 +43,4 @@
 {"agent": "wl-t10-e1", "at": 1792370327.419208, "code": null, "kind": "allowed", "path": "spikes/notebook-editor-e1/page/latency-harness.mjs", "session": "wl-t10-e1", "wi": ""}
 {"agent": "wl-t10-e1", "at": 1792370327.4440703, "code": null, "kind": "allowed", "path": "spikes/notebook-editor-e1/page/notebook-entry.mjs", "session": "wl-t10-e1", "wi": ""}
 {"agent": "wl-t10-e1", "at": 1792370327.4708188, "code": null, "kind": "allowed", "path": "spikes/notebook-editor-e1/page/notebook.bundle.mjs", "session": "wl-t10-e1", "wi": ""}
+{"agent": "wl-t10-e1", "at": 1792370348.9024284, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t10-e1", "wi": ""}

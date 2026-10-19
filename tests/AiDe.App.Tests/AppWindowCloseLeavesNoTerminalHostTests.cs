@@ -79,13 +79,13 @@ public sealed class AppWindowCloseLeavesNoTerminalHostTests(ITestOutputHelper ou
             // The App attaches the workspace on Loaded and opens its terminal then; give it a real
             // interval on a busy machine.
             var first = await ConsoleHostCensus.WaitForHeadlessHostAsync(process.Id, TimeSpan.FromSeconds(40));
-            Assert.True(first.Readable, "the process table could not be read while the App ran");
+            Assert.True(first.Readable, first.NotChecked("while the App ran"));
 
             // The host appears a beat before the shell (CreatePseudoConsole, then CreateProcess);
             // settle, then take the census the assertions read.
             await Task.Delay(TimeSpan.FromSeconds(2));
             var live = ConsoleHostCensus.Take();
-            Assert.True(live.Readable, "the process table could not be read while the App ran");
+            Assert.True(live.Readable, live.NotChecked("while the App ran"));
             var owned = live.HeadlessHostsOwnedBy(process.Id);
             liveCount = owned.Count;
             output.WriteLine($"App {process.Id} live; headless hosts it owns: {liveCount} {ConsoleHostCensus.Describe(owned)}");
@@ -110,7 +110,7 @@ public sealed class AppWindowCloseLeavesNoTerminalHostTests(ITestOutputHelper ou
 
             await Task.Delay(TimeSpan.FromSeconds(5));
             var after = ConsoleHostCensus.Take();
-            Assert.True(after.Readable, "the process table could not be read after the App exited");
+            Assert.True(after.Readable, after.NotChecked("after the App exited"));
             var survivors = after.HeadlessHostsOwnedBy(process.Id);
             afterCount = survivors.Count;
             afterRows = ConsoleHostCensus.Describe(survivors);

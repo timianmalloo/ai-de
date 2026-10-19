@@ -1,0 +1,2 @@
+verify-harness-diagnostics: 2 file(s) declare an STA thread = 1 wrapping + 0 plain rethrow(s) + 1 whose subject is an exception.
+verify-harness-diagnostics: OK — 1 wrapping harness(es), every one rethrows an assertion failure as itself.

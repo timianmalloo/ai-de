@@ -1,0 +1,20 @@
+{"agent": "wl-leader-20261018", "at": 1792371307.1645367, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t13-hygiene", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-gate-hygiene"}
+{"agent": "wl-t13-hygiene", "at": 1792371595.418277, "kind": "claim", "path": ".gitattributes", "seq": 2, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792371615.019112, "kind": "release", "path": ".gitattributes", "seq": 3, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792371643.4973543, "kind": "claim", "path": "tests/AiDe.App.Tests/DesktopHold.cs", "seq": 4, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792371676.2015803, "kind": "release", "path": "tests/AiDe.App.Tests/DesktopHold.cs", "seq": 5, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792371769.7696097, "kind": "claim", "path": ".gitattributes", "seq": 6, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792371777.1377206, "kind": "release", "path": ".gitattributes", "seq": 7, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792371984.5132964, "kind": "claim", "path": "tools/verify-ui-craft-floor.py", "seq": 8, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792371993.4332368, "kind": "release", "path": "tools/verify-ui-craft-floor.py", "seq": 9, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792372903.3894167, "kind": "claim", "path": "spikes/extraction-containment/ExtractionContainmentSpike.csproj", "seq": 10, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792372903.5806174, "kind": "claim", "path": "spikes/extraction-fidelity/ExtractionFidelitySpike.csproj", "seq": 11, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792372903.7677925, "kind": "claim", "path": "spikes/msbuild-task-execution/MsBuildTaskSpike.csproj", "seq": 12, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792372903.993302, "kind": "claim", "path": "spikes/roslyn-msbuild-workspace/RoslynMsBuildSpike.csproj", "seq": 13, "session": "wl-t13-hygiene", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t13-hygiene", "at": 1792372935.1785505, "kind": "release", "path": "spikes/extraction-containment/ExtractionContainmentSpike.csproj", "seq": 14, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792372935.28629, "kind": "release", "path": "spikes/extraction-fidelity/ExtractionFidelitySpike.csproj", "seq": 15, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792372935.3980513, "kind": "release", "path": "spikes/msbuild-task-execution/MsBuildTaskSpike.csproj", "seq": 16, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792372935.5071437, "kind": "release", "path": "spikes/roslyn-msbuild-workspace/RoslynMsBuildSpike.csproj", "seq": 17, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"agent": "wl-t13-hygiene", "at": 1792372935.619968, "kind": "release", "path": "tools/verify-ui-craft-floor.py", "seq": 18, "session": "wl-t13-hygiene", "wi": "WI-0"}
+{"action": "add", "agent": "wl-t13-hygiene", "at": 1792372935.7227788, "deadline_at": 1792374735.7227788, "id": "req-01M58W131E19CB9H3810ZAN1PG", "kind": "request", "path": "-", "seq": 19, "session": "wl-t13-hygiene", "to": "wl-leader-20261018", "type": "request", "wi": "WI-0"}
+{"at": 1792373215.5362642, "from": "wl-t13-hygiene", "kind": "done", "mail_id": "mail-01M58W9M9GBPKXDCJA3R78K59F", "ref": null, "session": "wl-t13-hygiene", "to": "wl-leader-20261018", "type": "mail"}

@@ -12,3 +12,5 @@
 {"agent": "wl-t12-census", "at": 1792364742.3362052, "kind": "release", "path": "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs", "seq": 12, "session": "wl-t12-census", "wi": "WI-0"}
 {"agent": "wl-t12-census", "at": 1792364742.43019, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 13, "session": "wl-t12-census", "wi": "WI-0"}
 {"at": 1792364743.222663, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58M72HP63VY4DTDJGZQ8JCD", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}
+{"at": 1792372464.1514502, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58VJPGQP9F5YHNSSHFA7ZTC", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}
+{"agent": "wl-t12-census", "at": 1792372467.5219364, "kind": "release", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "seq": 16, "session": "wl-t12-census", "wi": "WI-0"}
