@@ -1,0 +1,33 @@
+# write-ahead-crash-windows — red
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_SkipsLiveAttempts [27 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.ThePtySweep_NeverTouchesANativeAttempt [27 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_ResolvesEachAbandonedAttempt_ToDeliveryUnknownWithItsCause [50 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_SkipsAQueuedSuccessorWhosePredecessorLacksResponseComplete [34 ms]
+  Error Message:
+   Assert.True() Failure
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W1, cause: "never_dispatched", promptsBeforeTheCrash: 0) [67 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W2, cause: "never_dispatched", promptsBeforeTheCrash: 0) [197 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W3, cause: "host_restart", promptsBeforeTheCrash: 0) [144 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W4, cause: "host_restart", promptsBeforeTheCrash: 1) [173 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+
+runs:
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 324 ms - AiDe.Core.Tests.dll (net10.0)
+Failed!  - Failed:     8, Passed:     0, Skipped:     0, Total:     8, Duration: 1 s - AiDe.App.Tests.dll (net10.0)
