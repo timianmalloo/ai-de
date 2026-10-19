@@ -1,0 +1,10 @@
+{
+  "DispatchKey": "25b6403423fb467b3604bc0f1e3ddab64b9fffb3d69bf40a9dcdbe8c59b9cd24",
+  "DispatchedAt": "2026-10-19T06:15:50.0090536+00:00",
+  "TerminalAt": "2026-10-19T06:16:06.5596105+00:00",
+  "Duration": "00:00:16.5505569",
+  "Events": 144,
+  "Bytes": 121228,
+  "Outcome": "Interrupted",
+  "Usage": "{\u0022inputTokens\u0022:0,\u0022outputTokens\u0022:0,\u0022cachedReadTokens\u0022:0,\u0022cachedWriteTokens\u0022:0,\u0022totalTokens\u0022:0}"
+}
