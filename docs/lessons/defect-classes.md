@@ -8669,3 +8669,20 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled` for the controller's routes. Candidate gate, not built: a sibling of
   `ComposerContentOraclesDriveTheGestureTests` for layout-command tests.
 - DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
+
+### DC-NEW-wl-leader3-b — Tests that fail only under full-suite load, and so are read as flakes and waved through
+- **Class:** a test that passes when run alone but fails inside the whole suite. A green re-run is taken as proof that
+  nothing is wrong, so the failure is never measured, and a real ordering, timing or shared-resource defect hides.
+- **Instances (2026-10-19):** (1) `NoDispatchOutsideTheHostTests.ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds`
+  failed in T28 n3's App suite (`suite-node3.txt`, `cecc0245`) and passed alone (`suite-node3-rerun-app.txt`). (2)
+  `TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives` failed in the T21 n8
+  join's first recount ("the helper never wrote 'child-exited=' to its report"), passed 3/3 alone on the join head
+  `be5a497a`, and 3/3 on the first parent `aa8247ff`. The join's source diff touches no terminal-host or process code.
+- **Sweep:** every test the recounts and track suites have shown failing under load but passing alone.
+- **Derive:** a green re-run is not evidence of absence; a failure RATE is. A load-only failure is a defect until a
+  deterministic repro, or NOT REPRODUCED with N stated, says otherwise.
+- **Control:** (a) Owner rule: one full re-run per join at most; a second failure stops the join. (b) A measurement
+  track, scheduled after the WL-S joins and ahead of T25's perf bench, both needing a quiet machine. It runs the full
+  Core and App suites N ≥ 10 times on a clean origin/main, with no join in flight and rule 19 respected. It records each
+  failing test's rate, then for each one a deterministic repro under load, or NOT REPRODUCED with N stated.
+- **Status:** `partially-controlled`, until the measurement track reports.

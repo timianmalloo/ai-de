@@ -1,39 +1,38 @@
-# Brief — T30 `wl-prefill` (AC-W01a, Ruling 180) · Claude Code · Opus · node 2
+# Brief — T30 `wl-prefill` (AC-W01a, Rulings 180 and 182) · Claude Code · Opus · node 3
 
-**Goal (Ruling 180):** goal, done criteria and exclusions are prefilled by the model by default, visibly suggested, and
-kept when kept. This node makes it reach the user.
-**Node 1 is accepted as a branch node** (bd8ef0d7): the advisory default with an injected gate, the Compile mode control,
-and Keep writing into the draft across a re-prepare. **It is not user-visible yet:** File > New Session still opens
-mechanical-only.
+**Goal (Rulings 180 and 182):** the prefill is the default, visibly suggested, kept across a prepare, and it never claims
+more than it does.
+**Node 2 is accepted as a branch node** (07103c7c). File > New Session and the settings use the gate. The mark reads
+`? suggested`, and DESIGN.md defines `?` as the glyph. The OwnWindow fixture is in. Item (0) measured that a kept line
+does **not** survive a restart, and **Ruling 182** (on main) amends Ruling 180 (3): survival across the next prepare is
+required now, and restart survival is WL-2's. **Build no persistence.**
 
-**This node (n2), in this order:**
-- **(0) Measure C1's restart half before anything is decided (rule 14).** Keep a suggested line, prepare (stub), then
-  restart through the shell's revive path, as T17d's tests reopen a notebook. Read the composer draft. Node 1 found
-  `ComposerDraftStore` has no caller in `src/AiDe.App`, but a notebook revision saved at prepare may carry the draft.
-  Record in `{PROOF}/c1-restart-measure.txt` whether the kept line survives, and through which path (file:line). If it
-  does not survive, **stop that item**, say so in handoff.md with the evidence, and the Leader brings the Owner a DR on
-  draft persistence. Do not build persistence.
-- **(A) Wire the default into the real app**, red first through the real menu: **File > New Session** opens
-  `agentic-advisory` when gate 1 admits, and the real session settings evaluate the gate over the bound adapter. Use
-  the two granted lines from seam `req-01M5ATGTTQS78NG5W7ZMZE8G00`: the `compileModes` argument at
-  `NewSessionSheetViewModel.cs:556`, and a read-only `ComposerSurface.AdapterInstallRoot` getter. The sheet's gate
-  input is injected so the red is deterministic. No real `~/.aide/proof` read happens in a test.
-- **(B) The visible mark reads "suggested" (Owner, under Ruling 180 (3)).** "suggested" replaces "? derived" for
-  model-derived lines, as one const; UIA uses the same word; DESIGN.md is amended at the row that defines "? derived".
-  Keep "? derived" only if DESIGN.md uses it for a different, non-model derivation, and cite that row. Red: a
-  model-derived line shows "suggested", and a kept line no longer shows it.
-- **(C) DC-NEW-wl-t30-prefill, the class control (Owner).** Add a fixture that scopes window queries to the test's own
-  window, so a test never reads another test thread's window. Red: one test that fails under the whole-suite interleave
-  (or a forced concurrent window), then green through the fixture. Sweep the App tests that query windows globally;
-  name them in handoff.md and move each one you can onto the fixture.
-**Node 3 (not this one):** Ruling 180 (4), the cost line and the first 50 calls; (6) compile-eval; the Proof Pack; rule 22.
+**This node (n3), each red then green, through the real gesture:**
+- **(A) Ruling 182 (2): nothing implies the draft is saved.** No composer text, badge or UIA name may say an unsent draft
+  or a kept line is saved: not "saved", "draft saved", "kept for later", or similar. Red: a test that refuses
+  saved-state copy on the composer, its suggested and kept marks, and the settings row. Make it red by planting such a
+  string as a mutation, if no real one exists, and record it as a mutation red. Then green on the tree.
+- **(B) Ruling 182 (4): what was sent survives.** Send a turn whose compiled prompt includes a goal line (kept or typed),
+  then restart through the shell's revive path, as T17d's tests reopen a notebook. The restored turn row's
+  compiled-prompt disclosure shows that goal line (Rulings 163 and 181). Red first. If it already holds, the red is a
+  mutation that drops the goal block from the restored row, recorded as one.
+- **(C) The settings row states the gate's real reason.** Node 2 found that `CompileModeWhy` says "Gate 1 admits it" for
+  any session stored as `agentic-advisory`, even when the gate now refuses that mode. Red: a session stored advisory,
+  with the gate refusing, must state the gate's refusal reason, and must not claim admission. Then green.
+- **Then:** the prefill Proof Pack gets Ruling 182 (3)'s residual line, the same words as the WL-1a Proof Pack's
+  (`aa8247ff`): unsent typing and kept suggestions are lost on restart until WL-2.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Node 1 measured 275k, the fourth node over cap this
-epoch: **hand off at 150k**, measured from your own usage. **Kick** at 12 min by mail.
-**Rules 19, 20, 21 apply.** No real model call in any test.
+**Node 4 (not this one):**
+- Ruling 180 (4), the cost line and the first 50 calls.
+- Ruling 180 (6), compile-eval.
+- The four sheet tests that read the real `~/.aide/proof`; the Leader grants the seam to inject the gate in them at node
+  4's dispatch.
+- Rule 22's ratchet, ahead of T30's join.
+
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Node 2 measured 255k, so **hand off at 150k** by your
+own measured usage. **Kick** at 12 min by mail.
+**Rules 19, 20, 21 apply.** A join may be in flight: check the board before every App run. No real model call in any test.
 
 ## Owned authored paths
-As in node 1, plus the two granted lines, the new fixture and the tests moved onto it under
-`tests/AiDe.App.Tests/`, the DESIGN.md "? derived" row, and `docs/lessons/defect-classes.md` (your DC-NEW entry only).
-`ComposerGesture.cs` (T28's helper) may be extended for the binder's goal-block form; node 1's finding is that it
-leaves the draft free-form. Say what you changed.
+As in node 2. The restored-row disclosure is read only (T28's and T17's code); if (B) needs an edit there, send a seam
+request.
