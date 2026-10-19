@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T12:11:02Z",
+  "generated": "2026-10-19T12:25:03Z",
   "audit": [
     {
       "actor": null,
@@ -25009,6 +25009,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T11:57:19Z",
       "duration_seconds": 823.0
+    },
+    {
+      "id": "al-01M5A1YPYZ9F583MDTW95DHQWV",
+      "shortname": "wl-t20-floatguard-n2",
+      "datetime": "2026-10-19T12:25:03Z",
+      "session": "wl-t20-floatguard",
+      "prompt": "T20 node 2: DOCK3 plural wording exact and zone label pinned to ZoneLayoutService.ZoneName",
+      "summary": "Plural sentence per Owner; consts + tests; DESIGN.md DOCK3 row; suite Core 3024 / App 1125 + 1 flake passing alone",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float-guard/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Pin DOCK3 wording and zone label",
+      "done_when": "red/green for both checks, suites run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T12:15:20Z",
+      "duration_seconds": 583.0
     }
   ],
   "changes": [
