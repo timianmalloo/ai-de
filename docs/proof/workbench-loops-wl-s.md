@@ -114,10 +114,13 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
    The run continues." once.
 2. Reopen it from **File → Recent sessions** (**Alt**, then the arrow keys). **See:** the run's end is in the thread.
 
-### 5. Float and redock a live notebook — **pending T21**
-1. With a run going, focus the notebook and press **Ctrl+K, F**. *Until T21 lands, this refuses with a stated
-   cause (T20's guard).* After T21: **see** the notebook in its own window, the run still going.
-2. Redock it to the Center (T21 names the gesture). **See:** the same notebook, same thread, focus on it.
+### 5. Float and redock a live notebook — **pending: close condition 4, the live-notebook float after the T11 join**
+T21 is joined (`8608d4eb`), so *Float pane* no longer refuses. Floating and redocking a **live notebook** is T21's
+close condition 4 (`workbench-loops-wl-s/float/handoff.md`, Next step 2). It is owed after this track joins, as a
+T21 node. Do not count this step until that node lands.
+1. With a run going, focus the notebook and press **Ctrl+K, F**. **See:** the notebook in its own window, the run
+   still going.
+2. Redock it to the Center (the T21 node names the gesture). **See:** the same notebook, same thread, focus on it.
 
 ### 6. Restore an older layout
 1. Close the app, then start it again with step 0's older layout folder.
@@ -140,6 +143,16 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
 1. Press **Ctrl+3**, then **Ctrl+K, Shift+G** to focus the canvas.
 2. **Tab** to the *Knowledge-inclusive* toggle and press **Space**. **See:** knowledge and spec nodes with their
    typed edges. Press **Space** again. **See:** they are hidden.
+
+### Attended list (Owner, Ruling 155 (3))
+These two tests send real keyboard input, so they need the foreground. No unattended run on this branch could take
+it ("foreground held=False", "foreground not held"), so both are **NOT CHECKED** until you run them at the desk.
+Run each from a terminal in this repository's root. Start it, then do not touch the mouse or keyboard until it ends.
+A pass is `Passed!` with `Failed: 0`.
+1. Ctrl+1/2/3 with the focus inside a WebView2 page (step 2's oracle):
+   `dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests" -nologo`
+2. Ctrl+Enter on a file in the solution tree asks to reveal it in the graph:
+   `dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName=AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph" -nologo`
 
 ## Flagged risks
 
