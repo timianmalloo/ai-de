@@ -8,7 +8,51 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 8 (rule 16 kick): D1, the slot migration's operator probe, is red then green (6 of 6), with a mutation check. D2, execution at revive, is red; its green waits on seam req-01M5A1ZRD0ZCKDMCX2DK0174DR, because the shell's revive path never reads attempts back. D3, prompt retirement, is not done on purpose: a notebook does not cover the Prompt surface's terminal send, so seam req-01M5A239STYBXMC6TRWYBDVTR8 asks for a ruling. suite-node8 was not run."
+summary: "Node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test)."
+---
+
+# T11 node 9 — hand-off
+
+## Done
+
+- **P, `prompt` is kept (Ruling 173).**
+  - Red `94c374d6`, `P-prompt-kept-red.txt`. The test is `LayoutSlotMigrationTests.APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once`. The prompt draft was already kept and not dropped. The red was the report: it said only "Restored your saved workbench arrangement."
+  - Green `7383f868`, `P-prompt-kept-green.txt` (14/14 slot and persistence tests). `NotebookSlotMigration.Migrate` now also returns `KeptPrompts`. `LayoutPersistence.KeptPromptsReport` adds "Kept 1 prompt draft as it was: prompt drafts do not become notebooks." (plural "Kept N prompt drafts as they were: …"). The sentence appears only on the restore that migrates a slot, so it is said once. The test asserts that a later restore does not repeat it.
+  - No report wording existed for "kept", so seam **req-01M5A3FJRCNCXBRTB6RQKVMPMA** (open) proposes the sentence. It is built with the proposed sentence as the fallback.
+  - Design `31c75c3f`: §4 keeps `prompt` and lists the six capabilities from node 8's survey as the retirement's precondition (Ruling 173). **D6** (after D5) names the three openers, Derived, Verb and TurnAction, citing the Owner's review of 2026-10-19. Its rule is that a switch over `SurfaceEntry` names all three, with no default arm.
+  - **D6 carries a marked `assume:`.** C# 14 does not treat `SurfaceEntry` as a closed hierarchy. So a switch *expression* with no discard arm should raise CS8509, which `TreatWarningsAsErrors` makes a build error. Not verified: no switch over `SurfaceEntry` exists in `src/`. The first reader confirms it and asks the Owner which form to use.
+- **R, the §7 rename and fold.**
+  - Red `54863920`, `R-rename-fold-red.txt`. In the rename test, `SlotPathFor(Understand)` was still `.architecture`. In the fold test, the Center held only `[notebook:…]`.
+  - Green `c56da52c`, `R-rename-fold-green.txt`. Two tests, both new in `LayoutSlotMigrationTests`:
+    - `UnderstandsSlot_IsRenamedFromArchitecture_ReadingTheOldNameOnce_KeepingAOneTimeBak_AndRoundTrips`
+    - `CoordinationsSlot_FoldsIntoFactorysCenter_AsTabs_NeverItsLeft_LandingOnTheNotebook_DropsWithAReport_AndRoundTrips`
+  - **Rename:** T4's alias and its `simplify:` marker are gone, and `SlotPathFor(Understand)` is `<layout>.understand.zones.json`. The restore reads the new name and falls back to `.architecture` only when the new file is absent. The first save moves the old file onto the new name, then saves through `ZoneLayoutStore.Save(layout, <old>.bak)`, so `File.Replace` keeps the old bytes once.
+  - **Fold:** Factory's restore appends every surface of `<layout>.coordination.zones.json` to its Center as tabs, in zone order then floating, skipping ids Factory already holds. The Left `sessions` goes to the Center too. Factory's Left and the Center's active tab do not change. Admission drops and reports what Factory refuses (the graph, naming Understand). The first save then moves the coordination file to `<file>.bak`. `explore` had no zone slot, so nothing maps to it.
+  - **The oracle under rule 14.** §7's oracle says "Factory's Left holding a session". Since node 1, the session is a notebook in the **Center** (ADR-0045 §1(a)). So the oracle is: the notebook is active in the Center, and the folded `sessions` and `leaderboard` come after it, with the notebook still active.
+  - A new `simplify:` marker on the two read arms names their ceiling and their upgrade trigger: delete them when no supported build can have left either file.
+  - **Red by design:** `PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew` (`PerspectiveLayoutSlotTests.cs:73`, not an owned path) pins the alias. Seam **req-01M5A3V1Q07WEFR57AGDMQKD92** (open) proposes a 3-line re-pin to `.understand`.
+- **F, the WL-S Proof Pack** `docs/proof/workbench-loops-wl-s.md` (`1b1894b6`): 17 rows, each with its red and green commits; a keyboard-only demo, with float/redock marked pending T21 and the restart step pending T17d; Ruling 149 (1)'s interim loss under Flagged risks, with `docs/index.html` as the interim path; and the open items. It states that WL-S is not accepted until T21 lands. `docs-graph.py validate`: 0 problems. F has no assertion-red form: it is a document, and its gates are `docs-graph.py validate` and `verify-no-account-identity.py` (OK).
+
+## Suites (`suite-node9.txt`)
+
+Running at the rule-16 kick (started before it, so it is allowed to finish). The result is recorded here when it ends.
+
+## Not done / open
+
+- **D2** (`ARevivedNotebookReopensItsLiveAttemptsExecutionTests…`, red `98b5d7e6`) is an expected red until T17d is merged in (Ruling 172). The shell part is granted. Do not fix the read-back in this branch.
+- **Float/redock** is T21's (Ruling 171 (2)).
+- Two seam requests are open: the wording one, and the alias re-pin.
+- **Residuals** (also in the Proof Pack):
+  - A fold whose `.bak` already exists leaves the coordination file in place, so the fold re-runs. It is skipped by id, but the drop report repeats.
+  - An unreadable `.architecture` file is left unread.
+- **Process breach:** node 9 wrote the check-P edit script (`p_green.py`, in the scratchpad) with a heredoc, against the brief. This is an instance of CT27, not a new class. Later scripts used the Write tool.
+
+## Next step
+
+1. Grant or answer the two seam requests. On the alias grant, re-pin `PerspectiveLayoutSlotTests.cs:73` (3 lines).
+2. After the Leader merges T17d: build D2's granted shell change (`ReviveRestoredSessionDocuments` → `OpenExecution(document, ordinal, activate:false)`) and the `Execution/` predicate, and turn D2 green.
+3. After T21: fill Proof Pack row 10 and demo step 5. Then the Owner runs the demo.
+
 ---
 
 # T11 node 8 — hand-off (rule 16 kick, about 12 minutes)
