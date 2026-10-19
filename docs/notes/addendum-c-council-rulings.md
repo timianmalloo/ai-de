@@ -3596,3 +3596,9 @@ Option A, with an enforcement condition. ADR-0040:57 requires exactly one owning
 Option A. ADR-0040 :115-117 defers coverage to a policy whose default is none, and AC-W03b allows only 'an authorized disposition explicitly permitted by policy'; WL-1b permits none. AC-W03c's plan deliverable is met by evidence, not by deferral. The policy is one Core table, AcceptancePolicy.Covers, empty for mandatory obligations, and a test pins it. Adding a kind later is a ruling, not an edit. T23's assume: marker for DR-2 is resolved by this ruling.
 
 - request: req-01M5AD6E7JA61TVJGM32MHCQKP · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 178 — WL-1b: currentness gets ONE definition now; NotebookModel.CurrentnessOf delegates to CurrentnessFold
+
+Option C, bounded. Two definitions of one quantity is a defect signature (DM7), and option B's agreement test would keep both alive. The Owner measured the size on origin/main: CurrentnessFold (src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs) is 52 lines with no caller, and NotebookModel.CurrentnessOf (NotebookModel.cs:210) has one caller (SessionDocumentSurface.cs:1560). In a WL-1b track, red-first: CurrentnessOf becomes a thin call to CurrentnessFold over the same inputs, the stale sentence keeps one const, and the old body is deleted (HYG-A). A test asserts the notebook's stale notice and the checklist's evidence state come from the same fold. Bound: if the fold needs inputs NotebookModel cannot supply without a new store read or IPC, the track stops and brings it back as a seam request, and option B is then the interim.
+
+- request: req-01M5AD6ECD82SXWFSTCXA8EMM6 · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
