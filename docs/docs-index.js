@@ -3184,6 +3184,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "693e3b6bd687577e68343ff35ac06146b4931a99032f172cfccbdffe44e8bf0c"
     },
     {
+      "id": "api-aide-core-workbench-records-folds",
+      "path": "docs/api/AiDe.Core.Workbench.Records.Folds.md",
+      "title": "API: AiDe.Core.Workbench.Records.Folds",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Workbench.Records.Folds: 7 types, 5 members, 75% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f56d1156a011f620808353d586e1eaccee70af9ee62b0bbf87f4455a973b9a37"
+    },
+    {
       "id": "api-aide-mcp",
       "path": "docs/api/AiDe.Mcp.md",
       "title": "API: AiDe.Mcp",
@@ -8216,6 +8241,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffa5f5177804a2f2fa7d086e9880a2357e6afd6d8c1aa256450743990cb508d1"
     },
     {
+      "id": "note-wl-dr-adoption-actor",
+      "path": "docs/notes/wl-dr-adoption-actor.md",
+      "title": "Decision request — where Ruling 148's notebook adoption actor lives (v3 column vs fact row)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Ruling 148 obliges T8 to record who adopted a legacy notebook. notebook_dim has no actor column and the v2 DDL is frozen. Within the Owner's two admissible shapes, the Data & Persistence Architect (Adversary, read-only) recommends (a) a v3 expand-only migration adding notebook_dim.adopted_by, enforced by one BEFORE INSERT trigger. It does not block WL-1a unless T8 writes an adoption row. The Leader recommends (a), landed in the first slice that offers adoption to the user.",
+      "tags": [
+        "decision",
+        "workbench-loops",
+        "schema",
+        "adr-0039",
+        "ruling-148"
+      ],
+      "links": [
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "32af3d16f7728ec018d65067e3f8b7e3e52837b9a2e4bb872f7d04d2e7cf74ec"
+    },
+    {
       "id": "note-wl-dr-schema-v2-departures",
       "path": "docs/notes/wl-dr-schema-v2-departures.md",
       "title": "Decision request — T2 schema v2 departures from ADR-0039 (for Ruling 148)",
@@ -12261,7 +12317,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80d4a4c654091bdb2c3e63531f1d906b5e3cabfa2d14c6275a602dda2a23a0ae"
+      "sourceSha256": "03ebad87b02aea604a0acdc822ea4906d58a80a44299a96ad1dd6611ca58f66c"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22320,7 +22376,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6b7a77c2622b9edb7cf9aaf2ba397a7ffdc141c8a9171c43f03e8713cd2e2ca9"
+      "sourceSha256": "4aabadac0cc1f6908bde10a0dfa6a854a9c91e1223c42c173bdb92261d32b187"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -24474,5 +24530,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "f8620d6187bbbd24c0fd8fada1d2728682cce0f7c8a99f6970f1fbb95970cdef"
+  "graphSha256": "8eb2481038d29e9cd9dbe723ed6e618df7b507fbb25bb97d1c441eabdd46680d"
 };

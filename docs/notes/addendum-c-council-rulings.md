@@ -3325,3 +3325,21 @@ The v3 text is frozen like v2, with a fresh-versus-migrated test. Invariant 5 is
 (4) This discharges how Ruling 148's tracked obligation (the adoption actor at T8's binding) lands. T8's brief carries the refusal, and the adopting slice's brief carries v3.
 
 - request: req-01M59C8HM5DG2YX6XHPHE4SJXZ · ruled by: wl-owner-20261018 · at: 2026-10-19T06:06:44Z
+
+### Ruling 157 — Run-log identity: the local log keeps the adapter's account email and organization as a recorded residual; the control is at the commit boundary, as brief rule 15 AND a gate now, because the repository is public
+
+Option B, with the gate brought forward to now. It replaces the default (rule 15 only).
+
+Why not A: ADR-0042 section 6's ingest redaction covers credentials, and the run log is local to a single-user tool. That matches the recorded single-user-local posture: security stays at the spec floors, and residuals are recorded, not mitigated. Widening ingest redaction to identity would change ADR-0042's scope for a threat this tool does not face locally.
+
+Why the gate now: gh repo view reports timianmalloo/ai-de as PUBLIC. A real-lane run log copied under docs/proof/ and pushed publishes the account email and organization. The commit boundary is therefore the only exposure that matters. A prose rule alone is a memoir (CI6).
+
+The Owner checked, on origin/main and on wl1a-attempt-host-n2 (53d529ce): no tracked file contains the account email. The only email-shaped string under docs/proof/ is the placeholder redacted@example.invalid (compile-pin-spike.md:93).
+
+The decision:
+(1) Local run logs keep the _auth/status_update identity values. This is a recorded residual in the WL-1a Proof Pack and in docs/proof/workbench-loops-support/hygiene/residuals.md.
+(2) Brief rule 15, now: a real-lane proof copy scrubs identity values to placeholders and records the original's sha256 and the scrubbed field names.
+(3) A gate, now, before any further real-lane proof is committed. It is a small hygiene track, red-first, wired into run-verify-gates. It refuses an email-shaped string in tracked files under docs/proof/ and .agents/, with an explicit allow-list: *@example.invalid, example.com and example.org, and GitHub users.noreply addresses. Its self-test plants one real-shaped address and shows it refused.
+(4) Option C's ingest redaction stays available if the tool ever becomes multi-user or uploads logs. Record that as the upgrade trigger.
+
+- request: req-01M59DPQZM7BQ4CRNDQ7DVQE3D · ruled by: wl-owner-20261018 · at: 2026-10-19T06:32:12Z

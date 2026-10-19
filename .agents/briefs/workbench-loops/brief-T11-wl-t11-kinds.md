@@ -87,3 +87,12 @@ and a default.
     your brief describes, open its declaration and doc comment on main. If they disagree with the brief, follow the code.
     Send a seam request naming both texts, and do not build to the brief's wording. A brief that described an offset
     differently from `RunEventRedaction`'s doc comment sent T7 the wrong way (DC-NEW-wl-leader2, 2026-10-19).
+15. **A real-lane proof copy never carries account identity (Ruling 157; the repo is public).** Before you commit any file
+    captured from a real harness (run logs, frames, transcripts), replace every account email, organization or user-identity
+    value with `[scrubbed before commit]`. Record in that folder's README the original's sha256 and the scrubbed field
+    names. The gate `tools/verify-no-account-identity.py` refuses email-shaped strings in tracked `docs/proof/**` and
+    `.agents/**`. Only `*@example.invalid`, `example.com`/`example.org` and GitHub `users.noreply` addresses pass.
+16. **Node size is set by scope, not only by a cap (DC-NEW-wl-leader2-b).** A node carries at most three red-then-green
+    checks, or one check plus its real-lane run. At 120 tool calls or 200k context, commit what is green and write
+    `handoff.md`, even if a check is half done. The Leader starts the next node fresh. Three Opus nodes in a row
+    overran caps sized for twice their real scope (T5 n1 346k, T8 n1 285k, T5 n2 330k).

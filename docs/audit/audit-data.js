@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:29:00Z",
+  "generated": "2026-10-19T06:38:35Z",
   "audit": [
     {
       "actor": null,
@@ -24051,24 +24051,101 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59CQ4EZBGR187SGDP5PSNQ1",
-      "shortname": "join-wl1a-attempt-host-n1",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/host/handoff.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T06:13:55Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green (SolutionTreeChordTests solo on head per Owner); ratchet PASS; pushed",
+      "duration_seconds": 548.0,
+      "fan_out": 0,
+      "goal": "join T5 node 1 to main",
+      "id": "al-01M59CQ4EZBGR187SGDP5PSNQ1",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl1a-attempt-host-n1 into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-attempt-host-n1",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:04:47Z",
       "summary": "T5 node 1 (Opus): design WL-1a + host interface + gate/idempotency/stale-prepare/W1-W4/sole-host red->green; DC-NEW-wl-t5-host recount_seconds=546 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:29:00Z",
+      "done_when": "ratchet PASS; solo SolutionTree PASS recorded; pushed; Release green",
+      "duration_seconds": 1162.0,
+      "fan_out": 0,
+      "goal": "Land T5 node 1 on main under Ruling 151",
+      "id": "al-01M59DJRXBJRZD82NWD68Y6SPT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T5 node 1 join 22d2484e",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-attempt-host-n1-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:09:38Z",
+      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6c9782ca: PASS, 0 refusals over 48 gates (Ruling 153 filter dropped parent=106 head=107; +1 = Ruling 156's heading, PD-1). Pushed 22d2484e:main; Release build exit 0 (AiDe.App.dll 06:18:07Z). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED SOLO on the join head (21 s, T4 present): per the Owner's correction on report 3 this is PASS and DISCHARGES Ruling 155(2)'s attended-run debt for this test; the WL-0 GUI demo and the IME check stay owed. Ruling 156 (Owner register) was swept into the join commit by step 7's staging. Proof: docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/Records/Folds/AttemptStateFold.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T05:38:58Z",
+      "done_when": "folds, currentness, fold.duration_ms tests green",
+      "duration_seconds": 333.0,
+      "fan_out": 0,
+      "goal": "Derive non-terminal attempt state and currentness as pure folds",
+      "id": "al-01M59AQ4JQ4DBG00N0KY6GWFX5",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T6 wl1a-folds: derive attempt state and currentness as pure folds",
+      "session": "wl-t6-folds",
+      "shortname": "wl-t6-folds",
+      "skill": "implement",
+      "started_at": "2026-10-19T05:33:25Z",
+      "summary": "AttemptStateFold, CurrentnessFold, FoldSignal; 31 tests red then green; suite 2966 pass",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59E48ZSVZ56YTGM3ABCW6FY",
+      "shortname": "join-wl1a-folds",
+      "datetime": "2026-10-19T06:38:34Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-folds into main",
+      "summary": "T6 (Sonnet): AttemptStateFold + CurrentnessFold, 31 tests red->green; fold inputs fixed by T5's design 68f3a753 (all T6 assumptions adopted) recount_seconds=559 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/host/handoff.md"
+        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T5 node 1 to main",
-      "done_when": "recount green (SolutionTreeChordTests solo on head per Owner); ratchet PASS; pushed",
+      "goal": "join T6 wl1a-folds to main",
+      "done_when": "recount green; ratchet PASS; pushed",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -24076,32 +24153,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T06:04:47Z",
-      "duration_seconds": 548.0
-    },
-    {
-      "id": "al-01M59DJRXBJRZD82NWD68Y6SPT",
-      "shortname": "join-wl1a-attempt-host-n1-step8",
-      "datetime": "2026-10-19T06:29:00Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Ruling 151) for the T5 node 1 join 22d2484e",
-      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6c9782ca: PASS, 0 refusals over 48 gates (Ruling 153 filter dropped parent=106 head=107; +1 = Ruling 156's heading, PD-1). Pushed 22d2484e:main; Release build exit 0 (AiDe.App.dll 06:18:07Z). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED SOLO on the join head (21 s, T4 present): per the Owner's correction on report 3 this is PASS and DISCHARGES Ruling 155(2)'s attended-run debt for this test; the WL-0 GUI demo and the IME check stay owed. Ruling 156 (Owner register) was swept into the join commit by step 7's staging. Proof: docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T5 node 1 on main under Ruling 151",
-      "done_when": "ratchet PASS; solo SolutionTree PASS recorded; pushed; Release green",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T06:09:38Z",
-      "duration_seconds": 1162.0
+      "started_at": "2026-10-19T06:29:14Z",
+      "duration_seconds": 560.0
     }
   ],
   "changes": [
@@ -28575,6 +28628,42 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t14b-nbops"
+    },
+    {
+      "id": "mail-01M59DM4D4JPTX70NPFFK05E9C",
+      "ts": "2026-10-19T06:29:45Z",
+      "from": "wl-t5-host",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t5-host"
+    },
+    {
+      "id": "mail-01M59DPR00PPTG0FFDVYGFD8ZJ",
+      "ts": "2026-10-19T06:31:11Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59DPQZM7BQ4CRNDQ7DVQE3D",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59DRKV748VG3KMJKEWW7K3N",
+      "ts": "2026-10-19T06:32:12Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59DPQZM7BQ4CRNDQ7DVQE3D",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59E463QMHEWPKZFJ2SJK85V",
+      "ts": "2026-10-19T06:38:31Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59E463DZEPBDFCRBPS7C7AX",
+      "session": "wl-leader2-20261019"
     }
   ]
 };

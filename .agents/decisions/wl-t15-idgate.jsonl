@@ -1,0 +1,3 @@
+{"agent": "wl-t15-idgate", "at": 1792391627.9446642, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/gate-red.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792391627.9797428, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/identity-gate/self-test-red.txt", "session": "wl-t15-idgate", "wi": ""}
+{"agent": "wl-t15-idgate", "at": 1792391628.0178697, "code": null, "kind": "allowed", "path": "tools/verify-no-account-identity.py", "session": "wl-t15-idgate", "wi": ""}

@@ -29,3 +29,14 @@
 {"agent": "wl-t5-host", "at": 1792389264.32152, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 29, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792389264.5082421, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "seq": 30, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792390302.897718, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs", "seq": 31, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792391385.5089571, "from": "wl-t5-host", "kind": "done", "mail_id": "mail-01M59DM4D4JPTX70NPFFK05E9C", "ref": null, "session": "wl-t5-host", "to": "wl-leader2-20261019", "type": "mail"}
+{"agent": "wl-t5-host", "at": 1792391393.0481746, "kind": "release", "path": "src/AiDe.Core/AgentPlane/AcpPeer.cs", "seq": 33, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.167829, "kind": "release", "path": "src/AiDe.Core/AgentPlane/AcpLaneClient.cs", "seq": 34, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.2716386, "kind": "release", "path": "src/AiDe.Core/AgentPlane/RunLogStore.cs", "seq": 35, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.3890831, "kind": "release", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 36, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.4937282, "kind": "release", "path": "src/AiDe.App/Conductor/RunEventRelay.cs", "seq": 37, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.5983317, "kind": "release", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 38, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.7195554, "kind": "release", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 39, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.8189301, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "seq": 40, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391393.9405282, "kind": "release", "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs", "seq": 41, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792391394.0787084, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 42, "session": "wl-t5-host", "wi": "WI-0"}

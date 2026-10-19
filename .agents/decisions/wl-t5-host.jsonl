@@ -61,3 +61,11 @@
 {"agent": "wl-t5-host", "at": 1792390611.777444, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/run-log.jsonl", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792390611.804063, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/test-run.txt", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792390611.8321059, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRealLaneStopTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.2862759, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.3160543, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.350079, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/suite-app-node2-chord-rerun.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.3838015, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/suite-app-node2.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.4168038, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/suite-core-node2.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391373.449279, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptObservabilityTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391374.05047, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792391374.081056, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t5-host", "wi": ""}

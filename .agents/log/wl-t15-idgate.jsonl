@@ -1,0 +1,2 @@
+{"agent": "wl-leader2-20261019", "at": 1792391593.2751217, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t15-idgate", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-account-identity-gate"}
+{"action": "add", "agent": "wl-t15-idgate", "at": 1792391811.4329743, "deadline_at": 1792393611.4329743, "id": "req-01M59E14BB9BYWT86CA660TSJJ", "kind": "request", "path": "-", "seq": 2, "session": "wl-t15-idgate", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
