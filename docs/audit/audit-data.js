@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T01:41:53Z",
+  "generated": "2026-10-19T02:42:42Z",
   "audit": [
     {
       "actor": null,
@@ -23005,28 +23005,212 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58X50Q23YY06XV2BX88XF4V",
-      "shortname": "wl-t13-hygiene",
-      "datetime": "2026-10-19T01:41:52Z",
-      "session": "wl-t13-hygiene",
-      "prompt": "T13 condition gate-hygiene, Ruling 154 (1): keep the two workbench mockups scanned",
-      "summary": "verify-ui-craft-floor.py: the two pages leave LEGACY_ADVISORY and are scanned; only design-system-color exempt (COLOR_EXEMPT_RULES); self-test case added; red proof by planted undersized-ui-text",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tools/verify-ui-craft-floor.py"
       ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:41:52Z",
+      "done_when": "r154 red then green; gates-after-r154 saved",
+      "duration_seconds": 311.0,
+      "fan_out": 0,
+      "goal": "Both pages stay scanned; non-colour Majors fail",
+      "id": "al-01M58X50Q23YY06XV2BX88XF4V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 condition gate-hygiene, Ruling 154 (1): keep the two workbench mockups scanned",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-hygiene",
+      "skill": "implement",
+      "started_at": "2026-10-19T01:36:41Z",
+      "summary": "verify-ui-craft-floor.py: the two pages leave LEGACY_ADVISORY and are scanned; only design-system-color exempt (COLOR_EXEMPT_RULES); self-test case added; red proof by planted undersized-ui-text",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T22:45:07Z",
+      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, dotnet test green",
+      "duration_seconds": 1282.0,
+      "fan_out": 0,
+      "goal": "Extend RunEvent envelope and TurnState once",
+      "id": "al-01M58K1BX2VRNZMX3KJB5XC2MV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T3 sp2-runevent-vocab: extend RunEvent envelope and TurnState once",
+      "session": "wl-t3-sp2",
+      "shortname": "wl-t3-sp2",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:23:45Z",
+      "summary": "TurnState +6 values, Stopped->Interrupted, RunEvent redactions/scanned_with, native.frame, TurnState-never-serialized guard; Core green",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:56:07Z",
+      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, ratchet PASS",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Extend the RunEvent envelope and TurnState once, so folds, host and UI share one vocabulary",
+      "id": "al-01M58XZ3GTX9ZAHH3RZXB2JMMJ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp2-runevent-vocab",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:56:06Z",
+      "summary": "T3 landed. The recount ran (step 4) and its only failures were 3 TerminalHost census reads reported NOT CHECKED with T12's cause (JSON parse error: 0x15 in a process CommandLine, unescaped by ConvertTo-Json) - green under Ruling 151(3); continued with --docs-only so the recount is not re-run; root-cause fix T12c dispatched. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T02:10:36Z",
+      "done_when": "pushed with ratchet PASS and the Owner ruling recorded verbatim",
+      "duration_seconds": 855.0,
+      "fan_out": 0,
+      "goal": "Land T3 on main under the Owner's 151(3) reading",
+      "id": "al-01M58YSKBXAGW8JG364ZZQJYEE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Owner on report #13: T3 may push, under my reading of 151(3), not yours. Record this message verbatim in T3's join audit entry and on the board.\n151(3)'s exception covers a census read that is transiently unreadable. The 0x15 parse error is a different cause: deterministic and content-driven, so on this machine those tests check nothing until it is fixed. That alone would not excuse them. I allow it for T3 only because T3's diff against its merge base (8 files: SessionDocumentSurface, ThreadFeed, TurnItem, AcpRunEventMapper, RunEvent, RunChannelSessionThread, SessionThread, ThreadAnnouncementPolicy) touches no terminal-host or process-lifecycle code. The three unchecked TerminalHost tests reference none of T3's types, so they could not have caught a T3 defect.\nConditions:\n(a) T12c joins NEXT, before T13.\n(b) After T12c is on main, re-run TerminalHostInLifePath, TerminalHostExitPath and AppWindowClose on main. They must PASS, not report NOT CHECKED. If any fails, T3 is reopened.\n(c) A join whose diff DOES touch terminal-host or process-lifecycle code gets no such allowance while the parse error stands.\nT13b's `-X ours` on site/collaboration.html and site/index.html is a concern. `-X ours` silently drops main's side of every conflicting hunk, and no gate checks for lost content. Before T13 joins, diff both files three ways (merge-base, origin/main, T13 head). Restore or justify every main-side change it discarded, and record that in T13's join audit.\nOrder: T3 (push), T12c, T13, then T4, T9, T10.",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t3-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:56:21Z",
+      "summary": "T3 pushed d35aae27 (4c3e4b0c..d35aae27) under the Owner's reading of Ruling 151(3) recorded verbatim in this entry's prompt field. Recount: only failures were 3 TerminalHost census reads NOT CHECKED (0x15 JSON parse error, deterministic); allowed for T3 only because T3's 8-file diff touches no terminal-host/process-lifecycle code. Ratchet PASS 0/48 (Ruling 153 filter 105/105). Conditions: T12c joins next; after it, TerminalHostInLifePath/ExitPath/AppWindowClose must PASS on main or T3 reopens; no allowance for a terminal-host-touching join while the parse error stands. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/Shared/ConsoleHostCensus.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T02:02:13Z",
+      "done_when": "new case red then green; census, TerminalHost x2, Core suite green",
+      "duration_seconds": 349.0,
+      "fan_out": 0,
+      "goal": "census parses a CommandLine containing 0x15",
+      "id": "al-01M58YA8M9249H8F4BKATAT5HE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T12c: fix census JSON parse error on raw control chars",
+      "session": "wl-t12-census",
+      "shortname": "wl-t12-census",
+      "skill": "implement",
+      "started_at": "2026-10-19T01:56:24Z",
+      "summary": "ConsoleHostCensus escapes raw C0 chars in JSON strings before parsing; red/green test; register cause Verified",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/control-char-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T02:19:26Z",
+      "done_when": "control-character case red then green; TerminalHost tests pass (not NOT CHECKED); ratchet PASS",
+      "duration_seconds": 518.0,
+      "fan_out": 0,
+      "goal": "Make the console-host census read the process table reliably",
+      "id": "al-01M58Z9SGTW8CNM6G9JM41VMRV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of census-flake into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-census-flake-root",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T02:10:48Z",
+      "summary": "T12c: raw C0 characters inside census JSON strings escaped to \\u00XX before parsing (root cause of the TerminalHost NOT CHECKED reads: a live CommandLine held 0x15, unescaped by PowerShell 5.1 ConvertTo-Json). Red d5511086, fix ba20965d. Joined next per the Owner's 151(3) condition (a). Step 8 per Rulings 151/153. recount_seconds=517 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/control-char-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T02:33:22Z",
+      "done_when": "pushed; the three TerminalHost/AppWindowClose tests pass on main",
+      "duration_seconds": 18185.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "Land T12c and discharge 151(3) condition (b)",
+      "id": "al-01M59039JVN6TN0N9H6Z7XADC6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Owner 151(3) condition (b) for T3, after T12c",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t12c-and-cond-b",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T21:30:17Z",
+      "summary": "T12c pushed 45c9b940 (051160d6..45c9b940): ratchet PASS 0/48, recount green with no census failures. Condition (b) on main at 45c9b940: TerminalHostInLifePath+TerminalHostExitPath 4/4 passed, AppWindowCloseLeavesNoTerminalHost 1/1 passed, no NOT CHECKED - T3 is not reopened. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M590MBEP2MRBMHYDJ16PHY5H",
+      "shortname": "join-gate-hygiene",
+      "datetime": "2026-10-19T02:42:41Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of gate-hygiene into main",
+      "summary": "T13 (Ruling 151; exemptions per Ruling 154): register merge=union with a two-branch test; DesktopHold.Occupant contract; audit-capture, portable-text-io, preservation-policy, workbench-v2, gate-self-tests, project-coverage(spikes), site-figures fixed red-first; machine-path opt-outs accepted; mockups scanned with a design-system-colour-only exemption. Owner condition on T13b's -X ours: three-way diff of site/collaboration.html and site/index.html showed only data-figure cells discarded (no prose); main's side taken, then verify-site-figures --update recomputed 6 figures from source (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025, model.html 1 cell). Step 8 per Rulings 151/153. recount_seconds=517 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt"
+      ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Both pages stay scanned; non-colour Majors fail",
-      "done_when": "r154 red then green; gates-after-r154 saved",
-      "tier": "T2",
+      "goal": "Burn down main's pre-existing red gates and remove the join-time defect classes",
+      "done_when": "red set shrinks, no green->red, ratchet PASS",
+      "tier": "T1",
       "fan_out": 0,
-      "started_at": "2026-10-19T01:36:41Z",
-      "duration_seconds": 311.0
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T02:34:02Z",
+      "duration_seconds": 519.0
     }
   ],
   "changes": [
@@ -27343,6 +27527,24 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58X51G5X2AG9GMFE4E882EW",
+      "ts": "2026-10-19T01:41:53Z",
+      "from": "wl-t13-hygiene",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t13-hygiene"
+    },
+    {
+      "id": "mail-01M58YA9DCS999B1QS9VS42GST",
+      "ts": "2026-10-19T02:02:14Z",
+      "from": "wl-t12-census",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t12-census"
     }
   ]
 };

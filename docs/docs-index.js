@@ -2718,7 +2718,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 65 types, 181 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 67 types, 183 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2731,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "172bcb77276d0efacfa0be8bec3beb6ab79a03846f98d702e145ede86c0b9a9b"
+      "sourceSha256": "3ac4534ddd3b4eba8fbbdef3815d50a0b92ec3572c2e04e7afa8dcd07ac0533a"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2943,7 +2943,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 158 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 159 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2956,7 +2956,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7bef9fb152625252b4bc5caa388d8de1fb313457811ef580e349639effb3f72f"
+      "sourceSha256": "e4d5b6b48c734c85c5acb58662edbad474c1547402d0d924fd2ece3db9876623"
     },
     {
       "id": "api-aide-core-projections",
@@ -10584,7 +10584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7e0a5f7f2a327bae9e2c8f67df43ebfb335fefb7da3df9248d0ed15b967418ec"
+      "sourceSha256": "569f0bb5c1a0b49a149a796d0ad57dfd98129554c098864179ba6125f26ccfdd"
     },
     {
       "id": "design-session-profiler",
@@ -12195,7 +12195,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "997f01994a9906b5ac226f87f6976639f7fa2a062c8dfc79d817d5a0691e0202"
+      "sourceSha256": "e55e79678612a894bddbaa14355bbbdd3a271ccf5f9efbd7a31de895b8e8d84f"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22342,6 +22342,30 @@ window.DOCS_INDEX = {
       "sourceSha256": "b12f4e89200a31bb6e50ca4163431fd1e97df6d260861c6297dfc8fbba81c72a"
     },
     {
+      "id": "proof-workbench-loops-wl-1a-sp2",
+      "path": "docs/proof/workbench-loops-wl-1a/sp2/README.md",
+      "title": "Evidence — WL-1a spine T3: RunEvent and TurnState vocabulary",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T3's red and green evidence for the TurnState extension, the Stopped-to-Interrupted rename and the RunEvent redaction envelope; cited by the WL-1a Proof Pack.",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
+    },
+    {
       "id": "proof-worktree-cleanup-20261017",
       "path": "docs/proof/worktree-cleanup-20261017.md",
       "title": "AI-DE worktree preservation and retirement",
@@ -24297,5 +24321,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "b0493b552ea6c9845114b24b2c96d003f7aebdae1f1587b794433f110c021de0"
+  "graphSha256": "9675744a033f7f7e4ab784fb3f19969cd78fddbb81accce96d75444d93c71f43"
 };
