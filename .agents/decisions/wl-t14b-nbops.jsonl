@@ -1,0 +1,10 @@
+{"agent": "wl-t14b-nbops", "at": 1792390234.5954862, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/journey-collision-red.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.625551, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/open-atomicity-not-red.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.6567414, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.6838176, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Notebooks/NotebookOperationsTests.cs", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390532.4670663, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/journey-collision-green.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390532.500067, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/suite-green.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390532.5340707, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Store/Records/StoreWriter.Notebook.cs", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390532.5675843, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Notebooks/NotebookOperationsTests.cs", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390533.161842, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390533.1923995, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t14b-nbops", "wi": ""}

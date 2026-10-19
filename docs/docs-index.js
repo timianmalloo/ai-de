@@ -2568,7 +2568,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 11 types, 28 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 16 types, 34 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2581,7 +2581,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b8fe07c91d9f96707e800c0bbcb9b1d8f85ecd162e98466ebdb15f963a8a9cb3"
+      "sourceSha256": "d1d7c1601fa504e8e9f5af528febde176083c99d6ac2b7b8978273e8ed4e9280"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -2743,7 +2743,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Dispatch: 12 types, 17 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Dispatch: 19 types, 31 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2756,7 +2756,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2e31a00a6d344294935b401244c8cbef5a759284221b16898895ce4d8988e0ca"
+      "sourceSha256": "4fbaeb079ee3dd8e26e29717c61fc2ede33af4d29375d438648969f65c2621fa"
     },
     {
       "id": "api-aide-core-extraction",
@@ -2843,7 +2843,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 124 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 56 types, 132 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2856,7 +2856,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9253a94460004af3afb15b6a7a35cfd4b1b33534bbac6483a18c1b865632ac8d"
+      "sourceSha256": "1b6ebe976666c09450cbb1a7f11867f8533524975b36b54f1b03148d9286696b"
     },
     {
       "id": "api-aide-core-mcp",
@@ -3043,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 13 types, 95 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 13 types, 98 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3056,7 +3056,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3a8d816f8a020c07f585e7f3492bba00d4a11d31a09963dcfbbb920ab1275d6b"
+      "sourceSha256": "a68e72c5b1f38674ff3d95a4fd9092d9ba3d5f1a7a50977f6904756607847f1b"
     },
     {
       "id": "api-aide-core-store-records",
@@ -10075,6 +10075,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "19e50784f6ce1f58cebee32fd631dba02848e23bf9ba69db194289b6b9d4642a"
     },
     {
+      "id": "design-workbench-loops-wl-1a",
+      "path": "docs/design/workbench-loops-wl-1a.md",
+      "title": "Design: WL-1a — the revision ↔ attempt seam (ADR-0041 gate, write-ahead, sweep, run log, Stop, host interface)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops / WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The detailed design of the WL-1a seam. A stateful AttemptHost owns the live registry, the gate choreography, queue, Stop and subscriptions, and calls GovernedRunHost.RunAsync, which stays the one composition root. The store-side gate (read-before-write in one transaction, partial unique indexes as the net, the sweep predicate) lives in BoundaryDispatcher behind an IAttemptLedger seam that the daemon answers over IPC. It fixes the crash windows W1–W4, the terminal mapping, the run-log line format and the host interface that T6, T7 and T8 build to.",
+      "tags": [
+        "design",
+        "execution",
+        "attempt",
+        "idempotency",
+        "write-ahead",
+        "sweep",
+        "run-log",
+        "stop",
+        "workbench-loops",
+        "wl-1a"
+      ],
+      "links": [
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ca3e5bd1ebdfdadefd94abd1c2f89e9c649e90505ccdde5d23d57e6e35c7d697"
+    },
+    {
       "id": "design-workbench-loops-wl-s",
       "path": "docs/design/workbench-loops-wl-s.md",
       "title": "Design: WL-S — Factory · Review · Understand perspectives, FullWindow retired, kinds, hosts, named layouts and slot migration (ADR-0045)",
@@ -10614,7 +10650,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4acaad2e75b5eac4c9124a7241f892bc061d0b24e156d74b0ebc96e9512f4c49"
+      "sourceSha256": "362cd5843ce71ccd70d3a5c037095cd9a98635aa29125875fa54c7cf5129b362"
     },
     {
       "id": "design-session-profiler",
@@ -12225,7 +12261,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b651508aae1e24c0f7858a7645071260ea929ede4d4a1f8848218f7bc45c301f"
+      "sourceSha256": "80d4a4c654091bdb2c3e63531f1d906b5e3cabfa2d14c6275a602dda2a23a0ae"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22378,6 +22414,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "f78b5f78940915ac886915e28a3bc54320d1447c2594d2e5853a90b3d0292118"
     },
     {
+      "id": "proof-workbench-loops-wl-1a-host-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md",
+      "title": "WL-1a host (T5) — node 1 hand-off: gate, write-ahead, W1–W4 green; node 2 next",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T5 node 1 (GO9 split) is done: design committed with both adversary verdicts, the host-interface commit, and the gate, dispatch_key idempotency, stale-prepare, W1–W4 crash-window and sole-host checks, each red then green. Node 2 (Stop, sweep triggers and emission, run log, redaction wiring, queue, NFR-11, the slice Proof Pack) starts from here in the same tree.",
+      "tags": [
+        "proof",
+        "handoff",
+        "attempt",
+        "gate",
+        "workbench-loops",
+        "wl-1a",
+        "t5"
+      ],
+      "links": [
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-1a",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4c5c415fa63c0bb3d2801692a0168983a8594e60abf5c834159c9846a15bd776"
+    },
+    {
       "id": "proof-workbench-loops-wl-1a-sp1",
       "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md",
       "title": "Evidence — WL-1a spine T2: WorkspaceSchema v2",
@@ -24405,5 +24474,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "9cb48b1e1ce95c8b4ca010b1d45052c2f8ad9808faf98e3349dd4fe383826adb"
+  "graphSha256": "f8620d6187bbbd24c0fd8fada1d2728682cce0f7c8a99f6970f1fbb95970cdef"
 };

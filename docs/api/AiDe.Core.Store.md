@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 13 types, 95 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 13 types, 98 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**13 public types · 95 public members · 58% documented.**
+**13 public types · 98 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -308,6 +308,9 @@ graph costs (P1-PERF-02); an empty input reads nothing at all.
 | `void CommitSnapshot(` | Commits a complete snapshot and its assertions in ONE transaction, but only when the worker's (generation, revision) pair still equals the durable desired pair. A late or stale worker is rejected here rather than bein… |
 | `void RecordCommandReceipt(` | Records a completed command. Its uniqueness is what makes a retry return the original outcome. |
 | `void RecordDispatchAttempt(` | The write-ahead half of ADR-0010: durable BEFORE any byte leaves the process. |
+| `bool AttemptExists(string dispatchKey)` | Whether an attempt row exists for . |
+| `bool HasOutcome(string dispatchKey, IEnumerable<DispatchState> states)` | Whether the attempt already has an outcome row in one of . |
+| `IReadOnlyList<(string DispatchKey, bool Dispatched)> UnresolvedNativeAttempts()` | The sweep's candidates (ADR-0041 §4): native attempts (route not PTY) with no terminal row, except a queued successor whose predecessor has no `ResponseComplete` row; each with whether it has a `Dispatched` row. |
 | `void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)` | Appends an outcome event. Never rewrites a prior row — a late acceptance appends. |
 | `void SavePromptRevision(string draftId, int revisionNo, string body)` | The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it under `TerminalJourneyId`: a non-legacy notebook with an owner, because a legacy row comes only from the migration… |
 | `void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)` | **(gap)** |
@@ -701,6 +704,9 @@ triggers (spike S4), so forbidding it in the writer API is the control, and the 
 | `void CommitSnapshot(` | Commits a complete snapshot and its assertions in ONE transaction, but only when the worker's (generation, revision) pair still equals the durable desired pair. A late or stale worker is rejected here rather than bein… |
 | `void RecordCommandReceipt(` | Records a completed command. Its uniqueness is what makes a retry return the original outcome. |
 | `void RecordDispatchAttempt(` | The write-ahead half of ADR-0010: durable BEFORE any byte leaves the process. |
+| `bool AttemptExists(string dispatchKey)` | Whether an attempt row exists for . |
+| `bool HasOutcome(string dispatchKey, IEnumerable<DispatchState> states)` | Whether the attempt already has an outcome row in one of . |
+| `IReadOnlyList<(string DispatchKey, bool Dispatched)> UnresolvedNativeAttempts()` | The sweep's candidates (ADR-0041 §4): native attempts (route not PTY) with no terminal row, except a queued successor whose predecessor has no `ResponseComplete` row; each with whether it has a `Dispatched` row. |
 | `void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)` | Appends an outcome event. Never rewrites a prior row — a late acceptance appends. |
 | `void SavePromptRevision(string draftId, int revisionNo, string body)` | The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it under `TerminalJourneyId`: a non-legacy notebook with an owner, because a legacy row comes only from the migration… |
 | `void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)` | **(gap)** |

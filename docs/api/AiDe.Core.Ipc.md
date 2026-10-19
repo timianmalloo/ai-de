@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 51 types, 124 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 56 types, 132 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**51 public types · 124 public members · 64% documented.**
+**56 public types · 132 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -210,6 +210,17 @@ call failing.
 **The side effect is deliberately not here.** Writing to the terminal is the shell's
 job — it owns the process (D1) — so this interface covers only what must be durable, and
 `BeginAndWriteAsync` is what orders the three steps.
+
+## `IAttemptLedger`
+
+*interface* — `IWorkspaceDispatch.cs`
+
+The store half of a native-route execution attempt (ADR-0041 §1), as the host sees it.
+
+**Remarks.** **Two implementers, one gate.** `BoundaryDispatcher` answers it in-process (the daemon, and the
+tests over a real store); `WorkspaceClient` answers it over the daemon boundary (the App, which never
+opens the store, D1). Each call is one store transaction on the daemon side, so the gate is the same code either
+way (docs/design/workbench-loops-wl-1a.md, "The gate and the write order").
 
 ## `IpcClient`
 
@@ -911,6 +922,10 @@ epoch would defeat it while appearing to work.
 | `Task<ImpactResult> ImpactAsync(` | **(gap)** |
 | `Task<DispatchBeginResult> DispatchBeginAsync(` | Phase 1 of a dispatch, answered by the daemon that owns the store. |
 | `Task<DispatchReceipt> DispatchFinalizeAsync(` | Phase 2 of a dispatch. Idempotent: a retried finalize returns the existing receipt. |
+| `Task<AttemptBeginResult> BeginAttemptAsync(AttemptRow attempt, CancellationToken cancellationToken)` | G0 of a native-route attempt, answered in one store transaction by the daemon. |
+| `Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken)` | G1–G3: one outcome event; `Committed` says whether the store took it. |
+| `Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken)` | The attempt and its outcome events, read back from the store. |
+| `Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken)` | The host's sweep, run by the daemon over the host's own live set. |
 | `Task<RefreshMetrics> RefreshMetricsAsync(CancellationToken cancellationToken)` | What re-indexing has cost in this daemon so far. |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
@@ -1043,6 +1058,30 @@ Phase 1 of a dispatch: make the attempt durable before any byte leaves the shell
 
 Phase 2 of a dispatch: record the outcome the shell observed.
 
+## `AttemptBeginRequest`
+
+*record* — `WorkspaceOperations.cs`
+
+G0 of a native-route attempt (ADR-0041 §1): the attempt row, written only when its key is new.
+
+## `AttemptOutcomeRequest`
+
+*record* — `WorkspaceOperations.cs`
+
+G1–G3 of a native-route attempt: one outcome event.
+
+## `AttemptReadRequest`
+
+*record* — `WorkspaceOperations.cs`
+
+One attempt and its outcome events, by key.
+
+## `AttemptReadResult`
+
+*record* — `WorkspaceOperations.cs`
+
+The answer to `AttemptReadRequest`: a null receipt means the key was never attempted.
+
 ## `IndexSolutionRequest`
 
 *record* — `WorkspaceOperations.cs`
@@ -1116,6 +1155,10 @@ bound, and two definitions of one quantity is a defect signature.
 | `string EntryPoints = "entry-points"` | D-1 entry-point listing (unclassified until classifier exists). |
 | `string DispatchBegin = "dispatch.begin"` | **(gap)** |
 | `string DispatchFinalize = "dispatch.finalize"` | **(gap)** |
+| `string AttemptBegin = "attempt.begin"` | **(gap)** |
+| `string AttemptOutcome = "attempt.outcome"` | **(gap)** |
+| `string AttemptRead = "attempt.read"` | **(gap)** |
+| `string AttemptSweep = "attempt.sweep"` | **(gap)** |
 | `string IndexSolution = "index.solution"` | **(gap)** |
 | `JsonSerializerOptions Wire { get; } = new(JsonSerializerDefaults.Web)` | How every payload on this boundary is encoded. |
 | `void Register(DaemonEndpoint endpoint, ProjectionService projections)` | Registers the read projections on . |

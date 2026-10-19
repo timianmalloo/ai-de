@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Dispatch: 12 types, 17 members, 76% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Dispatch: 19 types, 31 members, 76% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Dispatch`
 
-**12 public types · 17 public members · 76% documented.**
+**19 public types · 31 public members · 76% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -58,6 +58,10 @@ while the daemon lives. Every one of those leaves a `Pending` row, which
 | `DispatchReceipt Finalize(string dispatchKey, DispatchState state, string? errorCode)` | Phase 2 — record the outcome of the side effect the caller performed. Runs where the STORE is. |
 | `(DispatchState State, string? ErrorCode) Outcome(PtyWriteResult result)` | Maps a pty result onto the durable outcome. One place, so both hosting modes agree. |
 | `Task<DispatchReceipt> BeginAndWriteAsync(` | The caller's side of the choreography: begin, write to the session it owns, finalize. |
+| `AttemptBeginResult BeginAttempt(AttemptRow attempt)` | G0 — make the attempt durable, or return the attempt that already holds this key. |
+| `AttemptAppendResult AppendAttemptOutcome(OutcomeRow outcome)` | G1–G3 — append one outcome event to an attempt, unless the attempt may not take it. |
+| `AttemptReceipt? ReadAttempt(string dispatchKey)` | The attempt row and every outcome event on it, in total order; null when the key was never attempted. |
+| `AttemptSweepResult SweepAttempts(AttemptSweepRequest request)` | Resolves every abandoned native attempt to `DeliveryUnknown` with a cause. |
 
 ### `DispatchBeginResult Begin(DispatchCommand command)`
 
@@ -86,6 +90,94 @@ The caller's side of the choreography: begin, write to the session it owns, fina
 to a daemon and a core talking to itself run **the same ordering**. A second copy of this
 sequence for the remote case is how the two modes would drift into disagreeing about when the
 attempt becomes durable.
+
+### `AttemptBeginResult BeginAttempt(AttemptRow attempt)`
+
+G0 — make the attempt durable, or return the attempt that already holds this key.
+
+**Remarks.** Read-before-write inside ONE writer transaction: the existence check and the insert cannot be split by another
+writer, because the writer holds the store's single-writer semaphore. Any prior attempt wins, even after the
+epoch moved — exactly `Begin`'s rule, so a retry after a lost reply returns the receipt.
+
+### `AttemptAppendResult AppendAttemptOutcome(OutcomeRow outcome)`
+
+G1–G3 — append one outcome event to an attempt, unless the attempt may not take it.
+
+**Remarks.** Refused (not committed, never thrown): a second `Dispatched`; a
+`Dispatched` after a terminal — a sweep that resolved the attempt first wins, and no prompt may follow it
+(design, DSA Blocker 1); a second terminal — the first stands (ADR-0041 §2). The checks run in the writer
+transaction; the partial unique indexes are the net, and their violation maps to the same answer.
+
+### `AttemptSweepResult SweepAttempts(AttemptSweepRequest request)`
+
+Resolves every abandoned native attempt to `DeliveryUnknown` with a cause.
+
+**Remarks.** One writer transaction: the candidates are selected, the cause computed and the rows inserted inside it (design,
+DSA 4) — never the PTY sweep's read-then-write. The caller's live set is excluded; so is a queued successor whose
+predecessor has no `ResponseComplete` (it folds to "Queued — awaits you"). PTY rows are not candidates.
+
+## `AttemptErrorCodes`
+
+*class* — `BoundaryDispatcher.cs`
+
+The stable codes of the native-route attempt gate (docs/design/workbench-loops-wl-1a.md).
+
+| Member | Summary |
+|---|---|
+| `string StalePrepare = "AIDE-ATTEMPT-STALE-PREPARE"` | G1: the envelope's current projection is not the one the attempt was prepared from (AC-E04b). |
+| `string NotDispatched = "AIDE-ATTEMPT-NOT-DISPATCHED"` | The attempt ended before its `Dispatched` row committed: no prompt was sent, so Retry is safe. |
+| `string SecondTerminal = "AIDE-ATTEMPT-SECOND-TERMINAL"` | A second terminal was offered for an attempt that already has one; the first stands. |
+| `string HostNotSole = "AIDE-ATTEMPT-HOST-NOT-SOLE"` | Another attempt host already holds this workspace; a second one can neither dispatch nor sweep. |
+
+## `AttemptKey`
+
+*class* — `BoundaryDispatcher.cs`
+
+The native-route dispatch key (ADR-0041 §1). One home: the host and the binding compute the same key.
+
+| Member | Summary |
+|---|---|
+| `string For(string envelopeId, string projectionSha, string? queuedAfterDispatchKey, string? parentDispatchKey)` | `sha256(envelope_id ‖ projection_sha ‖ queued_after_dispatch_key ‖ parent_dispatch_key)`, lower-case hex, 64 characters. Deterministic from the prepared envelope, so a retried click or a lost reply recomputes it. |
+
+## `AttemptReceipt`
+
+*record* — `BoundaryDispatcher.cs`
+
+One attempt as the store holds it: the attempt row and its outcome events in total order.
+
+**Remarks.** Every member past the two fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlySet<DispatchState> TerminalStates = new HashSet<DispatchState>` | The terminal states — exactly the set the store's `ux_outcome_one_terminal` index names. |
+| `string DispatchKey` | **(gap)** |
+| `OutcomeRow? Dispatched` | The one `Dispatched` row, or null when the prompt was never launched. |
+| `OutcomeRow? Terminal` | The one terminal row (the lowest ingress sequence wins, ADR-0041 §2), or null while the attempt is open. |
+| `bool IsPending` | An attempt row with no outcome event yet — the PTY path's meaning of Pending, kept. |
+
+## `AttemptBeginResult`
+
+*record* — `BoundaryDispatcher.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AttemptAppendResult`
+
+*record* — `BoundaryDispatcher.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AttemptSweepRequest`
+
+*record* — `BoundaryDispatcher.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AttemptSweepResult`
+
+*record* — `BoundaryDispatcher.cs`
+
+*No doc comment on this type.* **(gap)**
 
 ## `DispatchErrorCodes`
 

@@ -3302,3 +3302,26 @@ Conditions:
 (4) Feed the 'foreground not held' class to T13's successor: the probe should report NOT CHECKED with its cause rather than fail, matching the census pattern (Ruling 151, T12).
 
 - request: req-01M595E2W3YNRRCXEKMCKA3YTQ · ruled by: wl-owner-20261018 · at: 2026-10-19T04:08:29Z
+
+### Ruling 156 — Ruling 148's adoption actor lands as a v3 expand-only column notebook_dim.adopted_by with one trigger, in the first slice that offers adoption; until then the store refuses adoption; invariant 5 is accepted
+
+Option A, with invariant 5, not the default's 1-4. The Data and Persistence review is PASS-WITH-CONDITIONS for shape (a), and the Owner checked its evidence on main.
+
+What the Owner checked:
+- ApplyMigrations runs only m.Version > from (WorkspaceStore.cs:206), so an edit to the pinned V2Sql (WorkspaceSchema.cs:230) would never reach a migrated file. It is BLOCKED, as Ruling 148(f) already requires.
+- disposition_fact's subject_kind and kind CHECKs (WorkspaceSchema.cs:336, :348) are v2 table CHECKs and cannot be extended. So shape (b) also needs a v3 migration and gains nothing over (a).
+- trg_notebook_legacy_flag (WorkspaceSchema.cs:413-418) still admits a version>1 row with legacy=1 while no legacy=0 row exists.
+
+The decision:
+(1) v3, expand-only: ALTER TABLE notebook_dim ADD COLUMN adopted_by TEXT NULL. One BEFORE INSERT trigger, raising AIDE-STORE-ADOPTION-VIOLATION, refuses five cases, each with a red test through Microsoft.Data.Sqlite:
+  - a NULL or blank adopted_by on the adoption row, a version>1 row that sets owner_journey_id from NULL;
+  - adopted_by on version 1;
+  - adoption into journey-terminal-drafts (Ruling 150(1));
+  - a second adoption of the same notebook;
+  - an adoption row with legacy=1.
+The v3 text is frozen like v2, with a fresh-versus-migrated test. Invariant 5 is the explicit tightening: Ruling 148 (3) and (c) make adoption the single 1-to-0 transition, so an adoption that leaves legacy=1 is a contradiction, not a case to admit.
+(2) Backfill writes nothing; existing rows report 'actor not recorded' through StoreOpenReport. Rollback is the snapshot restore, plus a tested down step.
+(3) Timing: v3 lands in the first slice that offers adoption, red-first in that slice. Until it lands, AppendNotebook's adoption branch refuses with a stable code, so no unattributed adoption is ever written. If T8 or any WL-1a track must write a notebook_dim row with version>1 that is an adoption, v3 lands inside that track first.
+(4) This discharges how Ruling 148's tracked obligation (the adoption actor at T8's binding) lands. T8's brief carries the refusal, and the adopting slice's brief carries v3.
+
+- request: req-01M59C8HM5DG2YX6XHPHE4SJXZ · ruled by: wl-owner-20261018 · at: 2026-10-19T06:06:44Z
