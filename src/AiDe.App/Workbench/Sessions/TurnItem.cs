@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Store.Records;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -130,6 +131,11 @@ public sealed class TurnItem : INotifyPropertyChanged
     /// </summary>
     public IReadOnlyList<ConversationRow> Conversation => _conversation;
     public string SentBytes => _view.SentBytes;
+    /// <summary>The attempt this turn ran as, read from the attempt host by the feed; null when none is recorded.</summary>
+    public AttemptRow? Attempt { get; set; }
+
+    /// <summary>Stub.</summary>
+    public string BindingLine => string.Empty;
     public string ProvenanceName => "Provenance of " + _view.DisplayOrdinal;
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;
 
