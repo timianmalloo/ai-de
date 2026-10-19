@@ -1,5 +1,6 @@
 using System.IO;
 using AiDe.App.Workbench.Composer;
+using AiDe.Core.AgentPlane;
 using AiDe.App.Workbench.Records;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Presentation.Composer;
@@ -59,6 +60,38 @@ internal sealed class NotebookFixture : IDisposable
         document.Composer.Gate.Compiler = (_, _) => throw new OperationCanceledException();
         document.Composer.Draft.SwitchTo(ComposerShape.FreeForm);
     }
+
+    /// <summary>
+    /// The composer wired to <see cref="Conductor.StubAcpAdapter"/> installed under <see cref="Root"/>: a send runs the
+    /// product's composition root, spawns the stub, and the turn stays running until <see cref="ReleaseRun"/>.
+    /// </summary>
+    public void ConfigureStub(SessionDocumentSurface document)
+    {
+        var install = Path.Combine(Root, "install");
+        Conductor.StubAcpAdapter.Install(install);
+        document.Composer.Configure(
+            new SessionConfig(SessionId, "Binding", Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
+            new ComposerSendContext(
+                RepositoryRoot: Root,
+                DataDirectory: Path.Combine(Root, "data"),
+                AdapterInstallRoot: install,
+                EngineId: "claude-code",
+                Model: "claude-sonnet-5",
+                AccountLabel: "max",
+                TaskClass: "implement",
+                ProofPackArtifacts: [],
+                Providers: [new ProviderRow("anthropic", ProviderAuth.Subscription, [new ProviderAccount("max", AccountHealth.Ready)])]),
+            ComposerFields.FreeForm(),
+            new AttachmentGate(Root, new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max"));
+        document.Composer.Gate.Compiler = (_, _) => throw new OperationCanceledException();
+        document.Composer.Draft.SwitchTo(ComposerShape.FreeForm);
+    }
+
+    /// <summary>Lets every held stub run answer.</summary>
+    public void ReleaseRun() => Conductor.StubAcpAdapter.Release(Root);
+
+    /// <summary>Whether a stub run opened its ACP session — the run is live at the far end.</summary>
+    public bool RunOpened => Conductor.StubAcpAdapter.SessionOpened(Root);
 
     /// <summary>Sends the draft and waits for both halves of the launch: the revision binding and the run.</summary>
     public static async Task SendAndSettleAsync(SessionDocumentSurface document)

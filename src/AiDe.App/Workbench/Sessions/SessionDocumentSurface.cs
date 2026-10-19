@@ -203,6 +203,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>The surface kind <c>SurfaceContentFactory</c> builds this for — <c>session-document</c>, never <c>session</c> (Ruling 18).</summary>
     public const string Kind = "session-document";
 
+    /// <summary>Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a).</summary>
+    public const string PaneHiddenCopy = "Pane hidden. The run continues.";
+
     /// <summary>This document's state.</summary>
     public SessionDocumentViewModel Model { get; }
 
