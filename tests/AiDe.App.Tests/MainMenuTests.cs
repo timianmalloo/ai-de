@@ -21,7 +21,7 @@ public sealed class MainMenuTests
     private static void OnSta(Action work) =>
         Sta.Run(work, 60);
 
-    private static (Menu Menu, RecordingAnnouncer Announcer) Build() => Build(PerspectiveSet.Coding);
+    private static (Menu Menu, RecordingAnnouncer Announcer) Build() => Build(PerspectiveSet.Factory);
 
     private static (Menu Menu, RecordingAnnouncer Announcer) Build(Perspective perspective)
     {
@@ -144,48 +144,41 @@ public sealed class MainMenuTests
         }
     });
 
-    // ADR-0030 test 3 as amended by Ruling 84 — the mutation test, through the REAL builder: the
-    // Loomkeeper entries are in Coordination's View menu and nowhere else. Coordination's View lists
-    // the five Show entries in the kind rows' order and the ledger verb (`watcher.raiseDispute`,
-    // scoped `Admits("leaderboard")`, so it follows the leaderboard by construction); Coding's View
-    // lists none of the six and keeps its own derived group; Coordination has no Prompt menu (a host
-    // without the composer — spec §B3 rule 3). Then the mutation: a test-time kind row admitted only
-    // by Coordination is rendered in Coordination's menu and in no other, with no edit to the
-    // builder. RED before the allow-lists moved: Coding's View listed all six, Coordination's none.
+    // ADR-0030 test 3 under ADR-0045 §1(b) — the mutation test, through the REAL builder: the
+    // Loomkeeper entries are in Factory's View menu (Factory → Coordination) and nowhere else.
+    // Factory's View lists its own derived group first and then the five Show entries in the kind
+    // rows' order, with the ledger verb (`watcher.raiseDispute`, scoped to an admitted Loomkeeper
+    // kind) among the catalog rows before both. Then the mutation: a test-time kind row admitted
+    // only by Factory is rendered in Factory's menu and in no other, with no edit to the builder.
+    // RED before the allow-lists moved: Factory's View listed none of the six.
     [Fact]
-    public void CoordinationsViewMenu_ListsTheFiveShowEntriesAndTheDisputeVerb_AndCodingsListsNeither() => OnSta(() =>
+    public void FactorysViewMenu_ListsItsOwnEntries_ThenTheFiveShowEntries_AndTheDisputeVerb() => OnSta(() =>
     {
-        var coordination = PerspectiveSet.All.Single(p => p.Id == "coordination");
+        var factory = PerspectiveSet.Factory;
         string[] loomkeeper = ["Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"];
         const string dispute = "Raise score dispute on the latest scored episode";
 
-        var (menu, _) = Build(coordination);
-        var headers = menu.Items.OfType<MenuItem>().Select(m => m.Header?.ToString()).ToList();
-        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], headers);
-
+        var (menu, _) = Build(factory);
         var view = ViewTitles(menu);
         Assert.Equal(loomkeeper, view.Where(loomkeeper.Contains).ToList());          // all five, in row order
         Assert.Contains(dispute, view);
         Assert.True(view.IndexOf(dispute) < view.IndexOf(loomkeeper[0]), "the catalog verb precedes the derived group (PS-M2)");
+        Assert.Equal(
+            ["New search", "New code viewer", "Show diagnostics", .. loomkeeper],
+            view.Where(t => t.StartsWith("New ", StringComparison.Ordinal) || t.StartsWith("Show ", StringComparison.Ordinal)).ToList());
 
-        var (coding, _) = Build(PerspectiveSet.Coding);
-        var codingView = ViewTitles(coding);
-        Assert.DoesNotContain(codingView, loomkeeper.Contains);
-        Assert.DoesNotContain(dispute, codingView);
-        Assert.Equal(["New search", "New code viewer", "Show diagnostics"], codingView.Where(t => t.StartsWith("New ", StringComparison.Ordinal) || t.StartsWith("Show ", StringComparison.Ordinal)).ToList());
-
-        foreach (var other in new[] { PerspectiveSet.Explore, PerspectiveSet.Architecture })
+        foreach (var other in new[] { PerspectiveSet.Review, PerspectiveSet.Understand })
         {
             var (menuOfOther, _) = Build(other);
             Assert.DoesNotContain(ViewTitles(menuOfOther), loomkeeper.Contains);
             Assert.DoesNotContain(dispute, ViewTitles(menuOfOther));
         }
 
-        // The mutation: one appended row, admitted by Coordination only.
+        // The mutation: one appended row, admitted by Factory only.
         var mutant = new SurfaceContentFactory.SurfaceKind(
-            "fleet-mutant", "Fleet mutant", "A test-time kind admitted by Coordination alone.",
+            "fleet-mutant", "Fleet mutant", "A test-time kind admitted by Factory alone.",
             static (_, _) => new System.Windows.Controls.Border(),
-            Perspectives: [coordination], SurfaceContentFactory.Instances.One, new SurfaceContentFactory.SurfaceEntry.Derived("_View"));
+            Perspectives: [factory], SurfaceContentFactory.Instances.One, new SurfaceContentFactory.SurfaceEntry.Derived("_View"));
         var kinds = SurfaceContentFactory.Kinds.Append(mutant).ToList();
 
         foreach (var perspective in PerspectiveSet.All)
@@ -196,7 +189,7 @@ public sealed class MainMenuTests
             MainMenuBuilder.Build(rendered, controller, PerspectiveMenu.For(perspective, kinds, WorkbenchCommandCatalog.All));
             var titles = ViewTitles(rendered);
 
-            if (perspective == coordination)
+            if (perspective == factory)
             {
                 Assert.Contains("Show fleet mutant", titles);
             }
@@ -265,7 +258,7 @@ public sealed class MainMenuTests
         var menu = new Menu();
         var exited = false;
 
-        MainMenuBuilder.Build(menu, controller, PerspectiveMenu.For(PerspectiveSet.Coding), () => exited = true);
+        MainMenuBuilder.Build(menu, controller, PerspectiveMenu.For(PerspectiveSet.Factory), () => exited = true);
 
         var exit = menu.Items.OfType<MenuItem>()
             .First(m => Equals(m.Header, "_File"))

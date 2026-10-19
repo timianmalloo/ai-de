@@ -41,7 +41,6 @@ internal static class MainMenuBuilder
             _ when id.Contains("terminal", StringComparison.Ordinal) => "IconTerminal",
             _ when id.Contains("prompt", StringComparison.Ordinal) || id.Contains("dispatch", StringComparison.Ordinal) => "IconSend",
             "workspace.open" => "IconFolderOpen",
-            "perspective.explore" => "IconExplore",
             _ when id.StartsWith("perspective.", StringComparison.Ordinal) => "IconLayout",
             _ when id.Contains("search", StringComparison.Ordinal) => "IconSearch",
             _ when id.Contains("index", StringComparison.Ordinal) => "IconGraph",

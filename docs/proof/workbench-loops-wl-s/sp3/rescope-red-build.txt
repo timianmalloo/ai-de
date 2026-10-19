@@ -1,0 +1,394 @@
+# Compile red after the src re-row, before re-scoping tests (dotnet build of the probes + Core tests, then App tests)
+tests/AiDe.App.CanvasProbe/Program.cs:298 CS0246 The type or namespace name 'ExplorerSurface' could not be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:150 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:247 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:265 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:289 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:369 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs:184 CS0103 The name 'PerspectiveBody' does not exist in the current context
+tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs:184 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs:184 CS1061 'Perspective' does not contain a definition for 'Body' and no accessible extension method 'Body' accepting a first argument of type 'Perspective' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs:192 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs:216 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/SurfaceAdmissionTests.cs:19 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/SurfaceAdmissionTests.cs:20 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.Core.Tests/TheArchitectureDefaultIsGraphAndTreeTests.cs:32 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.Core.Tests/TheArchitectureDefaultIsGraphAndTreeTests.cs:43 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.Core.Tests/TheArchitectureDefaultIsGraphAndTreeTests.cs:60 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.Core.Tests/TheArchitectureDefaultIsGraphAndTreeTests.cs:87 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.Core.Tests/Workbench/ReconcileTests.cs:168 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/Workbench/ReconcileTests.cs:207 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/Workbench/ReconcileTests.cs:231 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/Workbench/ReconcileTests.cs:258 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/Workbench/ZoneLayoutTests.cs:21 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.Core.Tests/Workbench/ZoneLayoutTests.cs:55 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+
+# tests/AiDe.App.Tests compile errors (343) by file
+     64 tests/AiDe.App.Tests/PerspectiveShellTests.cs
+     37 tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs
+     33 tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs
+     27 tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs
+     22 tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs
+     22 tests/AiDe.App.Tests/PerspectiveRailTests.cs
+     19 tests/AiDe.App.Tests/WorkbenchShellTests.cs
+     19 tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs
+     16 tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs
+     14 tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs
+     13 tests/AiDe.App.Tests/SurfaceContentTests.cs
+     12 tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs
+      9 tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs
+      7 tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs
+      6 tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs
+      5 tests/AiDe.App.Tests/MainMenuTests.cs
+      4 tests/AiDe.App.Tests/Workbench/ComposedCoding.cs
+      4 tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs
+      3 tests/AiDe.App.Tests/Sessions/TheFrontDoorIsInTheFileMenuTests.cs
+      2 tests/AiDe.App.Tests/ShellContrastCensusTests.cs
+      2 tests/AiDe.App.Tests/OpeningATerminalWithNoneOpenTests.cs
+      1 tests/AiDe.App.Tests/Sessions/AParallelSessionIsADerivedSiblingTests.cs
+      1 tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs
+      1 tests/AiDe.App.Tests/AppWindowCloseLeavesNoTerminalHostTests.cs
+
+tests/AiDe.App.Tests/AppWindowCloseLeavesNoTerminalHostTests.cs:145 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs:17 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/MainMenuTests.cs:171 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/MainMenuTests.cs:177 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/MainMenuTests.cs:177 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/MainMenuTests.cs:24 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/MainMenuTests.cs:268 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/OpeningATerminalWithNoneOpenTests.cs:34 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/OpeningATerminalWithNoneOpenTests.cs:44 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:119 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:136 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:137 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:147 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:148 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:174 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:179 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:195 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:22 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:24 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:258 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:282 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:321 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:348 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:367 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:381 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:403 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:404 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:405 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:421 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:422 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:473 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:474 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:495 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:496 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:497 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs:95 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:106 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:139 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:158 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:158 CS1061 'PerspectiveRail' does not contain a definition for 'ShowFailure' and no accessible extension method 'ShowFailure' accepting a first argument of type 'PerspectiveRail' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:159 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:160 CS1061 'PerspectiveRailItem' does not contain a definition for 'HasFailure' and no accessible extension method 'HasFailure' accepting a first argument of type 'PerspectiveRailItem' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:163 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:168 CS1061 'PerspectiveRailItem' does not contain a definition for 'HasFailure' and no accessible extension method 'HasFailure' accepting a first argument of type 'PerspectiveRailItem' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:197 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:200 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:237 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:242 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:343 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:346 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:353 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:353 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:398 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:399 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:400 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:401 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:465 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:466 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:100 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:106 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:109 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:235 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:292 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:292 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:292 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:318 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:322 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:322 CS1061 'PerspectiveShell' does not contain a definition for 'Previous' and no accessible extension method 'Previous' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:324 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:325 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:326 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:329 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:329 CS1061 'PerspectiveShell' does not contain a definition for 'Previous' and no accessible extension method 'Previous' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:343 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:345 CS1061 'PerspectiveShell' does not contain a definition for 'Escape' and no accessible extension method 'Escape' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:346 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:348 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:349 CS1061 'PerspectiveShell' does not contain a definition for 'Escape' and no accessible extension method 'Escape' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:350 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:368 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:369 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:370 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:377 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:379 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:38 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:39 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:390 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:415 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:419 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:424 CS0117 'PerspectiveShell' does not contain a definition for 'NoHostCode'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:43 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:438 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:441 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:442 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:443 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:446 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:447 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:463 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:464 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:465 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:503 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:503 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:520 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:521 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:522 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:525 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:562 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:567 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:590 CS0246 The type or namespace name 'PerspectiveBodyFailure' could not be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:591 CS1061 'PerspectiveShell' does not contain a definition for 'BodyFailed' and no accessible extension method 'BodyFailed' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:595 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:597 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:602 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:602 CS1061 'PerspectiveBodyFailure?' does not contain a definition for 'Perspective' and no accessible extension method 'Perspective' accepting a first argument of type 'PerspectiveBodyFailure?' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:606 CS0117 'PerspectiveShell' does not contain a definition for 'BodyFailedCode'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:608 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:609 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:623 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:624 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:625 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:90 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/PerspectiveShellTests.cs:93 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Sessions/AParallelSessionIsADerivedSiblingTests.cs:219 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:106 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:119 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:121 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:122 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:124 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:150 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:152 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:153 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:156 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:157 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:161 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:162 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:184 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:185 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:192 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:194 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:212 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:221 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:224 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:245 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:246 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:247 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:276 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:56 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:62 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:71 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:77 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:87 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:88 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:92 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:95 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:96 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:97 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:163 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:164 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:200 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:215 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:216 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:217 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs:218 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:108 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:110 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:116 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:117 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:129 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:130 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:132 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:195 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:197 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:198 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:201 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:203 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:204 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:36 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:41 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:58 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:59 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:78 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs:83 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/TheFrontDoorIsInTheFileMenuTests.cs:115 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/TheFrontDoorIsInTheFileMenuTests.cs:218 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/TheFrontDoorIsInTheFileMenuTests.cs:45 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:116 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:36 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'after'.
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:36 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'before'.
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:65 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:87 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'after'.
+tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs:87 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'before'.
+tests/AiDe.App.Tests/ShellContrastCensusTests.cs:97 CS0103 The name 'PerspectiveBody' does not exist in the current context
+tests/AiDe.App.Tests/ShellContrastCensusTests.cs:97 CS1061 'Perspective' does not contain a definition for 'Body' and no accessible extension method 'Body' accepting a first argument of type 'Perspective' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:557 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:563 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:565 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:569 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:594 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:601 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:638 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:645 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:653 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:656 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:686 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:693 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:695 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:696 CS1061 'PerspectiveShell' does not contain a definition for 'ExplorerSurface' and no accessible extension method 'ExplorerSurface' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:697 CS1061 'PerspectiveShell' does not contain a definition for 'ExplorerSurface' and no accessible extension method 'ExplorerSurface' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:698 CS1061 'PerspectiveShell' does not contain a definition for 'ExplorerSurface' and no accessible extension method 'ExplorerSurface' accepting a first argument of type 'PerspectiveShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:700 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:734 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:741 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:796 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:803 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs:842 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:212 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:218 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:274 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:276 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:300 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:303 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:304 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:347 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:348 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:349 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:377 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:378 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/SurfaceContentTests.cs:379 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:110 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:111 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:124 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:149 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:181 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:59 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:80 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:81 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:84 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:85 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:89 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CenterEmptyCopyTests.cs:90 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:112 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:113 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:227 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:228 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:101 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:44 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:45 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:47 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:51 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:52 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:54 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:57 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:58 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:60 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:89 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:90 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:93 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:95 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:98 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs:99 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/ComposedCoding.cs:117 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/ComposedCoding.cs:53 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/ComposedCoding.cs:61 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/ComposedCoding.cs:93 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:197 CS0103 The name 'PerspectiveBody' does not exist in the current context
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:197 CS1061 'Perspective' does not contain a definition for 'Body' and no accessible extension method 'Body' accepting a first argument of type 'Perspective' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:204 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:299 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:321 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:329 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:344 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:427 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:458 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:460 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:476 CS0117 'PerspectiveSet' does not contain a definition for 'Coordination'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:509 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:523 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:587 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:656 CS1729 'PerspectiveShell' does not contain a constructor that takes 4 arguments
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:663 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:670 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:673 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:674 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:676 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:678 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:679 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:681 CS0117 'PerspectiveSet' does not contain a definition for 'Explore'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:683 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:684 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:689 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:690 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:691 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:696 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:697 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:699 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:700 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:702 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:706 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:707 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:709 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs:711 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:108 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:109 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:141 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:143 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:162 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:203 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:204 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:66 CS0117 'PerspectiveSet' does not contain a definition for 'Coding'
+tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs:67 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:325 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:37 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:377 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:452 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'firstOpen'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:452 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'firstRecords'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:452 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'secondOpen'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:452 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'secondRecords'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:468 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:519 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'onScreen'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:519 CS8130 Cannot infer the type of implicitly-typed deconstruction variable 'reopened'.
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:534 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:539 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:540 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs:544 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:179 CS1061 'WorkbenchShell' does not contain a definition for 'Coordination' and no accessible extension method 'Coordination' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:235 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:241 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:292 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:293 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:304 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:305 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:311 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:313 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:318 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:319 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:344 CS1061 'WorkbenchShell' does not contain a definition for 'Coordination' and no accessible extension method 'Coordination' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:416 CS1061 'WorkbenchShell' does not contain a definition for 'Coordination' and no accessible extension method 'Coordination' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:418 CS1061 'WorkbenchShell' does not contain a definition for 'Coordination' and no accessible extension method 'Coordination' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:49 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:50 CS1061 'WorkbenchShell' does not contain a definition for 'Coding' and no accessible extension method 'Coding' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:51 CS1061 'WorkbenchShell' does not contain a definition for 'Architecture' and no accessible extension method 'Architecture' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:52 CS1061 'WorkbenchShell' does not contain a definition for 'Coordination' and no accessible extension method 'Coordination' accepting a first argument of type 'WorkbenchShell' could be found (are you missing a using directive or an assembly reference?)
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:72 CS0117 'PerspectiveSet' does not contain a definition for 'Architecture'

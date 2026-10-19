@@ -180,8 +180,9 @@ internal static class ShellContrastCensus
         //     switched to that host's perspective so its body is the one on screen, every surface
         //     is activated and walked — the rail's destination for that perspective is then in its
         //     SELECTED state, measured beside the others' rest state — and the presenter returns to
-        //     Coding before the session document opens there. A kind no host admits is logged.
-        foreach (var row in PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost && p != PerspectiveSet.Coding))
+        //     the initial host (Factory) before the session document opens there. A kind no host
+        //     admits is logged.
+        foreach (var row in PerspectiveSet.All.Where(p => p != PerspectiveSet.Initial))
         {
             var host = shell.Hosts.Single(h => h.Row == row);
             var already = host.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Kind)
@@ -189,7 +190,7 @@ internal static class ShellContrastCensus
 
             foreach (var kind in SurfaceContentFactory.Kinds)
             {
-                if (already.Contains(kind.Kind) || !kind.Perspectives.Contains(row) || kind.Perspectives.Contains(PerspectiveSet.Coding)) continue;
+                if (already.Contains(kind.Kind) || !kind.Perspectives.Contains(row) || kind.Perspectives.Contains(PerspectiveSet.Initial)) continue;
 
                 var result = host.Service.Apply(new LayoutOperation.AddSurface(
                     ZonesToTree.CenterStackId, new Surface($"census:{row.Id}:{kind.Kind}", kind.Kind, $"Census {kind.Kind}")));
@@ -213,7 +214,7 @@ internal static class ShellContrastCensus
             }
         }
 
-        log.Add($"switch to {PerspectiveSet.Coding.Title}: {shell.Execute(PerspectiveSet.Coding.CommandId)}");
+        log.Add($"switch to {PerspectiveSet.Initial.Title}: {shell.Execute(PerspectiveSet.Initial.CommandId)}");
         await Settle(window);
 
         // 3. The session document, with every registered canvas mode shown in turn.

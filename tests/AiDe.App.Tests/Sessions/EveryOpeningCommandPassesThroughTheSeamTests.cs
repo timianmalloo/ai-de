@@ -160,8 +160,8 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             {
                 var mode = Presenter();
 
-                mode.Activate(PerspectiveSet.Explore, "perspective.explore");
-                mode.Activate(PerspectiveSet.Coding, "document-opening");
+                mode.Activate(PerspectiveSet.Review, "perspective.review");
+                mode.Activate(PerspectiveSet.Factory, "document-opening");
             }, 30);
         }
         finally
@@ -175,11 +175,11 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
 
         // The perspective's stable id, never its title (ADR-0030; the rename of Ruling 50).
         Assert.Equal(2, modes.Count);
-        Assert.Equal("explore", modes[0].GetProperty("mode").GetString());
-        Assert.Equal("coding", modes[0].GetProperty("from").GetString());
-        Assert.Equal("perspective.explore", modes[0].GetProperty("trigger").GetString());
-        Assert.Equal("coding", modes[1].GetProperty("mode").GetString());
-        Assert.Equal("explore", modes[1].GetProperty("from").GetString());
+        Assert.Equal("review", modes[0].GetProperty("mode").GetString());
+        Assert.Equal("factory", modes[0].GetProperty("from").GetString());
+        Assert.Equal("perspective.review", modes[0].GetProperty("trigger").GetString());
+        Assert.Equal("factory", modes[1].GetProperty("mode").GetString());
+        Assert.Equal("review", modes[1].GetProperty("from").GetString());
         Assert.Equal("document-opening", modes[1].GetProperty("trigger").GetString());
     }
 
@@ -197,7 +197,7 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             {
                 var mode = Presenter();
 
-                mode.Activate(PerspectiveSet.Coding, "document-opening");
+                mode.Activate(PerspectiveSet.Factory, "document-opening");
             }, 30);
         }
         finally
@@ -212,10 +212,10 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
     private static PerspectiveShell Presenter()
     {
         var announcer = new WorkbenchAnnouncer(new TextBlock());
-        var a = DockHost.Create(PerspectiveSet.Coding, _ => new Border(), announcer, (_, _) => { });
-        var b = DockHost.Create(PerspectiveSet.Architecture, _ => new Border(), announcer, (_, _) => { });
-        var c = DockHost.Create(PerspectiveSet.Coordination, _ => new Border(), announcer, (_, _) => { });
-        return new PerspectiveShell(new ContentControl(), [a, b, c], () => new Grid(), announcer);
+        var a = DockHost.Create(PerspectiveSet.Factory, _ => new Border(), announcer, (_, _) => { });
+        var b = DockHost.Create(PerspectiveSet.Understand, _ => new Border(), announcer, (_, _) => { });
+        var c = DockHost.Create(PerspectiveSet.Review, _ => new Border(), announcer, (_, _) => { });
+        return new PerspectiveShell(new ContentControl(), [a, b, c], announcer);
     }
 
     private static List<int> Occurrences(string text, string token)

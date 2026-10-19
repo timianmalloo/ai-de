@@ -43,11 +43,11 @@ public sealed class PerspectiveRailTests
         return args;
     }
 
-    // US-C1 as amended (Ruling 84) — the rail has exactly the four destinations, in order, each with
-    // the constant accessible name "<Title> perspective" (no state suffix), each a 44 × 44 target
-    // (SC 2.5.8), and Coding selected initially. "Tests" stays reserved and absent (AR3).
+    // US-C1 under ADR-0045 — the rail has exactly the three destinations, in order, each with the
+    // constant accessible name "<Title> perspective" (no state suffix), each a 44 × 44 target
+    // (SC 2.5.8), and Factory selected initially. "Tests" stays reserved and absent (AR3).
     [Fact]
-    public void TheRail_HasFourDestinationsInOrder_NamedConstantly_WithCodingSelected()
+    public void TheRail_HasThreeDestinationsInOrder_NamedConstantly_WithFactorySelected()
     {
         Sta.Run(() =>
         {
@@ -55,9 +55,9 @@ public sealed class PerspectiveRailTests
             try
             {
                 var items = rail.Destinations.ToList();
-                Assert.Equal(4, items.Count);
+                Assert.Equal(3, items.Count);
                 Assert.Equal(
-                    ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective"],
+                    ["Factory perspective", "Review perspective", "Understand perspective"],
                     items.Select(i => AutomationProperties.GetName(i)).ToList());
                 Assert.True(items[0].IsSelected);
                 Assert.Equal(1, items.Count(i => i.IsSelected));
@@ -94,19 +94,18 @@ public sealed class PerspectiveRailTests
                 Assert.False(items[1].IsSelected);
 
                 Press(items[1], Key.Down);
-                Press(items[2], Key.Down);
-                Press(items[3], Key.Down);                     // wraps after the last (Ruling 84: the fourth)
+                Press(items[2], Key.Down);                     // wraps after the last (the third)
                 Assert.True(items[0].IsKeyboardFocused);
                 Press(items[0], Key.Up);
-                Assert.True(items[3].IsKeyboardFocused);
+                Assert.True(items[2].IsKeyboardFocused);
                 Assert.Empty(requested);
 
-                var enter = Press(items[3], Key.Enter);
+                var enter = Press(items[2], Key.Enter);
                 Assert.True(enter.Handled);
-                Assert.Equal([PerspectiveSet.Coordination], requested);
+                Assert.Equal([PerspectiveSet.Understand], requested);
                 Assert.True(items[0].IsSelected);              // the rail follows the presenter, never the key
 
-                Press(items[3], Key.Space);
+                Press(items[2], Key.Space);
                 Assert.Equal(2, requested.Count);
                 return 0;
             }
@@ -136,7 +135,7 @@ public sealed class PerspectiveRailTests
                 items[2].RaiseEvent(args);
 
                 Assert.True(args.Handled);
-                Assert.Equal([PerspectiveSet.Architecture], requested);
+                Assert.Equal([PerspectiveSet.Understand], requested);
                 Assert.True(items[0].IsSelected);
                 Assert.False(items[2].IsSelected);
                 return 0;
@@ -146,27 +145,22 @@ public sealed class PerspectiveRailTests
     }
 
     // The selection has one writer: Reflect, from the presenter's change event; exactly one item is
-    // selected after it, and a failure state set on a destination clears when it is reflected.
+    // selected after it, and the item's name never carries the state. (The rail's error state left
+    // with the full-window body: no switch can fail to build a body — ADR-0045 §1(b).)
     [Fact]
-    public void Reflect_SelectsExactlyOneDestination_AndClearsItsFailure()
+    public void Reflect_SelectsExactlyOneDestination()
     {
         Sta.Run(() =>
         {
             var (rail, window) = Shown();
             try
             {
-                rail.ShowFailure(PerspectiveSet.Explore, "the graph substrate is not ready");
-                var explore = rail.ItemFor(PerspectiveSet.Explore)!;
-                Assert.True(explore.HasFailure);
-                Assert.Equal("Couldn't open Explore: the graph substrate is not ready. Activate to try again.", AutomationProperties.GetItemStatus(explore));
-
-                rail.Reflect(PerspectiveSet.Explore);
+                rail.Reflect(PerspectiveSet.Review);
 
                 var items = rail.Destinations.ToList();
                 Assert.True(items[1].IsSelected);
                 Assert.Equal(1, items.Count(i => i.IsSelected));
-                Assert.False(explore.HasFailure);
-                Assert.Equal("Explore perspective", AutomationProperties.GetName(explore));   // never suffixed
+                Assert.Equal("Review perspective", AutomationProperties.GetName(items[1]));   // never suffixed
                 return 0;
             }
             finally { window.Close(); }
@@ -188,17 +182,17 @@ public sealed class PerspectiveRailTests
 
                 var children = peer.GetChildren();
                 Assert.Equal(PerspectiveSet.All.Count, children.Count);
-                Assert.Equal(4, children.Count);
+                Assert.Equal(3, children.Count);
                 Assert.All(children, c => Assert.Equal(AutomationControlType.TabItem, c.GetAutomationControlType()));
 
                 var selection = children.Select(c => (ISelectionItemProvider)c.GetPattern(PatternInterface.SelectionItem)!).ToList();
-                Assert.Equal([true, false, false, false], selection.Select(s => s.IsSelected).ToList());
+                Assert.Equal([true, false, false], selection.Select(s => s.IsSelected).ToList());
 
-                rail.Reflect(PerspectiveSet.Architecture);
-                Assert.Equal([false, false, true, false], selection.Select(s => s.IsSelected).ToList());
+                rail.Reflect(PerspectiveSet.Understand);
+                Assert.Equal([false, false, true], selection.Select(s => s.IsSelected).ToList());
 
-                rail.Reflect(PerspectiveSet.Coordination);
-                Assert.Equal([false, false, false, true], selection.Select(s => s.IsSelected).ToList());
+                rail.Reflect(PerspectiveSet.Review);
+                Assert.Equal([false, true, false], selection.Select(s => s.IsSelected).ToList());
                 return 0;
             }
             finally { window.Close(); }
@@ -234,12 +228,12 @@ public sealed class PerspectiveRailTests
             window.UpdateLayout();
             try
             {
-                rail.Reflect(PerspectiveSet.Architecture);
+                rail.Reflect(PerspectiveSet.Understand);
                 Assert.True(button.Focus());
 
                 Assert.True(button.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
                 var entered = Assert.IsType<PerspectiveRailItem>(Keyboard.FocusedElement);
-                Assert.Same(PerspectiveSet.Architecture, entered.Row);                 // enters on the selected destination
+                Assert.Same(PerspectiveSet.Understand, entered.Row);                 // enters on the selected destination
 
                 Assert.True(entered.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
                 Assert.Same(after, Keyboard.FocusedElement);                          // one stop, then out
@@ -277,18 +271,19 @@ public sealed class PerspectiveRailTests
         Assert.DoesNotContain("TabNavigation=\"Once\"", rail, StringComparison.Ordinal);
     }
 
-    // Escape reaches the perspective level on the BUBBLING route only — the canvas, the reader and
-    // any text box inside Explore consume theirs first — never on the tunnelling one, where the
-    // window would see the key before the control that owns it.
+    // The WL-S design's D4: Escape never switches the perspective from any host (US-C1's "never
+    // from a host"), and with the full-window body retired no route to the perspective level is
+    // left — the presenter has no Escape and no previous-perspective slot, and the window wires no
+    // Escape to the presenter. A route added back without a body that needs it fails here.
     [Fact]
-    public void TheWindowsEscapeHandler_IsOnTheBubblingRoute()
+    public void EscapeHasNoPerspectiveLevelRoute_ThePresenterHasNoEscapeOrPreviousSlot()
     {
+        Assert.Null(typeof(PerspectiveShell).GetMethod("Escape"));
+        Assert.Null(typeof(PerspectiveShell).GetProperty("Previous"));
+
         var window = File.ReadAllText(Path.Combine(RepoRoot(), "src", "AiDe.App", "MainWindow.xaml.cs"));
-        var at = window.IndexOf("_perspectives.Escape()", StringComparison.Ordinal);
-        Assert.True(at > 0, "the window has no Escape-from-Explore handler");
-        var handler = window[Math.Max(0, at - 700)..at];
-        Assert.Contains("KeyDown += (_, e) =>", handler, StringComparison.Ordinal);
-        Assert.DoesNotContain("PreviewKeyDown += (_, e) =>", handler, StringComparison.Ordinal);
+        Assert.DoesNotContain("_perspectives.Escape", window, StringComparison.Ordinal);
+        Assert.DoesNotContain("Key.Escape", window, StringComparison.Ordinal);
     }
 
     private static string RepoRoot()
@@ -340,17 +335,17 @@ public sealed class PerspectiveRailTests
                 Assert.False(rail.IsTextSearchEnabled);
 
                 // A programmatic selection is reverted and becomes an activation request.
-                rail.SelectedItem = PerspectiveSet.Explore;
+                rail.SelectedItem = PerspectiveSet.Review;
                 Assert.True(items[0].IsSelected);
                 Assert.False(items[1].IsSelected);
-                Assert.Equal([PerspectiveSet.Explore], requested);
+                Assert.Equal([PerspectiveSet.Review], requested);
 
                 // The UIA pattern's Select() is an activation request, never a write.
                 var peer = UIElementAutomationPeer.CreatePeerForElement(rail)!;
                 var third = (ISelectionItemProvider)peer.GetChildren()[2].GetPattern(PatternInterface.SelectionItem)!;
                 third.Select();
                 Assert.True(items[0].IsSelected);
-                Assert.Equal([PerspectiveSet.Explore, PerspectiveSet.Architecture], requested);
+                Assert.Equal([PerspectiveSet.Review, PerspectiveSet.Understand], requested);
                 Assert.True(((ISelectionProvider)peer.GetPattern(PatternInterface.Selection)!).IsSelectionRequired);
                 return 0;
             }
@@ -358,10 +353,10 @@ public sealed class PerspectiveRailTests
         }, 30);
     }
 
-    // PS-R4 — every destination's glyph resolves from the registry the window can see: the two
-    // geometries kept in the window's resources this horizon and the application's IconExplore
-    // alike. RED before the fix: Application.TryFindResource never searches a Window's dictionary,
-    // so Coding and Architecture rendered as blank pills (the WPF lens's finding).
+    // PS-R4 — every destination's glyph resolves from the registry the window can see (the
+    // geometries kept in the window's resources this horizon). RED before the fix:
+    // Application.TryFindResource never searches a Window's dictionary, so two destinations rendered
+    // as blank pills (the WPF lens's finding).
     [Fact]
     public void EveryDestinationsGlyph_ResolvesFromTheWindowsOrTheApplicationsRegistry()
     {
@@ -391,24 +386,22 @@ public sealed class PerspectiveRailTests
     }
 
     // PS-R4 / US-C10 b3 — the tooltip's keystroke is the bound gesture's display string, never a
-    // typed chord; every destination's tooltip carries its bound gesture (Ruling 84: Ctrl+4).
+    // typed chord; every destination's tooltip carries its bound gesture.
     [Fact]
     public void TheTooltip_RendersTheBoundGesturesDisplayString()
     {
-        Assert.Equal("Coding — Ctrl+1", PerspectiveRailItem.TooltipFor(PerspectiveSet.Coding));
-        Assert.Equal("Explore — graph & reader — Ctrl+2", PerspectiveRailItem.TooltipFor(PerspectiveSet.Explore));
-        Assert.Equal("Architecture — Ctrl+3", PerspectiveRailItem.TooltipFor(PerspectiveSet.Architecture));
-        Assert.Equal("Coordination — Ctrl+4", PerspectiveRailItem.TooltipFor(PerspectiveSet.Coordination));
+        Assert.Equal("Factory — Ctrl+1", PerspectiveRailItem.TooltipFor(PerspectiveSet.Factory));
+        Assert.Equal("Review — Ctrl+2", PerspectiveRailItem.TooltipFor(PerspectiveSet.Review));
+        Assert.Equal("Understand — Ctrl+3", PerspectiveRailItem.TooltipFor(PerspectiveSet.Understand));
     }
 
-    // PS-R4's recorded deviation, extended by Ruling 84 (P7): the rail glyph `IconCoordination` is a
-    // keyed Geometry in MainWindow.xaml's registry beside `IconCoding` and `IconArchitecture` (the
-    // Addendum C rows; IconExplore is App.xaml's), and every row of the closed set has a glyph that
-    // parses to a non-empty geometry in one of the two registries — read from the markup, the way
-    // RailButtonsDoNotLieTests reads it, so a row added tomorrow without a glyph fails here rather
-    // than rendering a blank pill. RED before the resource existed: no `IconCoordination` key.
+    // PS-R4's recorded deviation under ADR-0045: the three rail glyphs `IconFactory`, `IconReview`
+    // and `IconUnderstand` are keyed Geometries in MainWindow.xaml's registry, defined once (not also
+    // in App.xaml), and every row of the closed set has a glyph that parses to a non-empty geometry —
+    // read from the markup, the way RailButtonsDoNotLieTests reads it, so a row added tomorrow
+    // without a glyph fails here rather than rendering a blank pill. The retired rows' glyphs are gone.
     [Fact]
-    public void IconCoordination_IsAKeyedGeometryBesideIconCoding_AndEveryRowsGlyphParses()
+    public void EveryRowsGlyph_IsAKeyedGeometryInTheWindowsRegistry_AndParses()
     {
         var window = XDocument.Load(XamlPath("MainWindow.xaml"));
         var app = XDocument.Load(XamlPath("App.xaml"));
@@ -423,25 +416,21 @@ public sealed class PerspectiveRailTests
         var windowRegistry = Keyed(window, pres, xaml);
         var appRegistry = Keyed(app, pres, xaml);
 
-        // Beside IconCoding: the same dictionary (Window.Resources), the same element kind.
-        Assert.Contains("IconCoding", windowRegistry.Keys);
-        Assert.Contains("IconArchitecture", windowRegistry.Keys);
-        Assert.Contains("IconCoordination", windowRegistry.Keys);
-        Assert.DoesNotContain("IconCoordination", appRegistry.Keys);   // one definition, not two
-
         foreach (var row in PerspectiveSet.All)
         {
             var key = $"Icon{row.Title}";
-            var data = windowRegistry.TryGetValue(key, out var w) ? w : appRegistry.TryGetValue(key, out var a) ? a : null;
-            Assert.True(data is not null, $"no glyph '{key}' in MainWindow.xaml or App.xaml for the '{row.Id}' row — a blank pill on the rail");
+            Assert.True(windowRegistry.TryGetValue(key, out var data), $"no glyph '{key}' in MainWindow.xaml for the '{row.Id}' row — a blank pill on the rail");
+            Assert.DoesNotContain(key, appRegistry.Keys);   // one definition, not two
 
             var geometry = Sta.Run(() => Geometry.Parse(data!).Bounds, 30);
             Assert.False(geometry.IsEmpty, $"'{key}' parses to an empty geometry");
             Assert.True(geometry.Width > 0 && geometry.Height > 0, $"'{key}' has no extent");
         }
 
-        // The ring with three nodes: one closed ring and three small circles (four sub-paths).
-        Assert.Equal(4, windowRegistry["IconCoordination"].Count(c => c == 'M'));
+        foreach (var retired in new[] { "IconCoding", "IconArchitecture", "IconCoordination" })
+        {
+            Assert.DoesNotContain(retired, windowRegistry.Keys);
+        }
     }
 
     private static string XamlPath(string file)
@@ -462,7 +451,7 @@ public sealed class PerspectiveRailTests
     [Fact]
     public void TheWindowTitle_NamesTheWorkspaceAndTheActivePerspective()
     {
-        Assert.Equal("Coding — AI-DE", MainWindow.TitleFor(null, PerspectiveSet.Coding));
-        Assert.Equal("ai-de — Architecture — AI-DE", MainWindow.TitleFor("ai-de", PerspectiveSet.Architecture));
+        Assert.Equal("Factory — AI-DE", MainWindow.TitleFor(null, PerspectiveSet.Factory));
+        Assert.Equal("ai-de — Understand — AI-DE", MainWindow.TitleFor("ai-de", PerspectiveSet.Understand));
     }
 }

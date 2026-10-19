@@ -62,7 +62,7 @@ public sealed class TheRegionCycleCommandsReachTheFocusedDocumentTests : IDispos
                 Assert.NotNull(document);
 
                 document!.FocusRegion(SessionDocumentSurface.Region.Header);
-                shell.Coding.Controller.FocusedSurfaceId = document.SurfaceId;
+                shell.Factory.Controller.FocusedSurfaceId = document.SurfaceId;
 
                 var beforeRegion = document.CurrentRegion;
                 Assert.True(shell.Execute("session.cycleRegion"));
@@ -113,7 +113,7 @@ public sealed class TheRegionCycleCommandsReachTheFocusedDocumentTests : IDispos
                 Assert.NotNull(document);
 
                 document!.FocusRegion(SessionDocumentSurface.Region.Header);
-                shell.Coding.Controller.FocusedSurfaceId = document.SurfaceId;
+                shell.Factory.Controller.FocusedSurfaceId = document.SurfaceId;
 
                 var beforeRegion = document.CurrentRegion;
                 Assert.True(shell.Execute("session.cycleRegionBack"));

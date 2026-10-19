@@ -4,63 +4,99 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Tests.Perspectives;
 
 /// <summary>
-/// <b>ADR-0030 rule 2 as amended by Ruling 84</b> — the allow-list column's fifth column: the five
-/// Loomkeeper kinds (<c>sessions · board · leaderboard · ledger · daydreams</c>) are admitted by
-/// Coordination and by nothing else, as a set; Coding admits none of them; a Loomkeeper open from
-/// any other perspective resolves to Coordination. Over the PRODUCT's rows and the product's
+/// <b>ADR-0045 §1(b) and the WL-S design's §3</b> — the allow-list column after the re-row: the five
+/// Loomkeeper kinds (<c>sessions · board · leaderboard · ledger · daydreams</c>) are admitted under
+/// Factory → Coordination, as a contiguous group; no kind is lost (every row is admitted by at least
+/// one perspective); Review admits none until WL-5. Over the PRODUCT's rows and the product's
 /// admission (<see cref="DockHost.AdmissionFor(Perspective)"/>), never a test copy (DC-135). Seen red
-/// first — every row read <c>[Coding]</c>: <c>docs/proof/coordination-perspective.md</c>.
+/// first against Ruling 84's Coordination-only column:
+/// <c>docs/proof/workbench-loops-wl-s/sp3/kind-census-red.txt</c>.
 /// </summary>
 public sealed class KindAllowListsTests
 {
-    // fixture-derivation: ok — Ruling 84 names these five as THE set; deriving them from the rows would make the oracle the column under test
+    // fixture-derivation: ok — ADR-0045 §1(b) names these five as THE set; deriving them from the rows would make the oracle the column under test
     private static readonly string[] Loomkeeper = ["sessions", "board", "leaderboard", "ledger", "daydreams"];
 
+    private static Perspective Row(string id) => Assert.Single(PerspectiveSet.All, p => p.Id == id);
+
     [Fact]
-    public void TheFiveLoomkeeperKinds_AreAdmittedByCoordinationOnly_AndCodingAdmitsNone()
+    public void TheFiveLoomkeeperKinds_AreAdmittedUnderFactory_AsOneContiguousGroup()
     {
-        var coordination = PerspectiveSet.All.Single(p => p.Id == "coordination");
-        var coding = DockHost.AdmissionFor(PerspectiveSet.Coding);
-        var architecture = DockHost.AdmissionFor(PerspectiveSet.Architecture);
-        var host = DockHost.AdmissionFor(coordination);
+        var factory = Row("factory");
+        var host = DockHost.AdmissionFor(factory);
 
         foreach (var kind in Loomkeeper)
         {
             var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == kind);
 
-            // The column, literally: one perspective, and it is Coordination.
-            Assert.Equal(["coordination"], row.Perspectives.Select(p => p.Id));
+            // The column, literally: one perspective, and it is Factory.
+            Assert.Equal(["factory"], row.Perspectives.Select(p => p.Id));
             Assert.Equal(SurfaceContentFactory.Instances.One, row.Instances);
 
-            // The admission the hosts enforce, from the same rows.
-            Assert.False(coding.Admits(kind), $"Coding admits '{kind}' — Ruling 84: Coding admits no Loomkeeper kind");
-            Assert.False(architecture.Admits(kind), $"Architecture admits '{kind}'");
-            Assert.True(host.Admits(kind), $"Coordination does not admit '{kind}'");
+            // The zone rule: an open docks it in the Center, never beside the session document in the
+            // Left, where it would take Factory's landing (SH-4.2; the design's §3).
+            Assert.Equal(ZoneId.Center, row.Zone);
+
+            Assert.True(host.Admits(kind), $"Factory does not admit '{kind}'");
             Assert.True(host.IsOneInstance(kind));
 
-            // Where an open lands (US-C3; ADR-0030 Resolve): from anywhere, Coordination.
-            Assert.Same(coordination, PerspectiveMenu.Resolve(kind, PerspectiveSet.Coding));
-            Assert.Same(coordination, PerspectiveMenu.Resolve(kind, PerspectiveSet.Architecture));
-            Assert.Same(coordination, PerspectiveMenu.Resolve(kind, PerspectiveSet.Explore));
-            Assert.Same(coordination, PerspectiveMenu.Resolve(kind, coordination));
-
-            // What the drop report names for a Coding envelope that carries the kind.
-            Assert.Same(coordination, coding.AdmittedBy(kind));
+            // Where an open lands (US-C3): from every perspective, Factory.
+            foreach (var active in PerspectiveSet.All)
+            {
+                Assert.Same(factory, PerspectiveMenu.Resolve(kind, active));
+            }
         }
 
-        // The oracle the review names verbatim.
-        Assert.Same(coordination, PerspectiveMenu.Resolve("ledger", PerspectiveSet.Coding));
+        // "Factory → Coordination" is a group: the five rows are contiguous in the kind list, in the
+        // View menu's order, so the derived menu lists them together.
+        var order = SurfaceContentFactory.Kinds.Select(k => k.Kind).ToList();
+        var first = order.IndexOf("sessions");
+        Assert.Equal(Loomkeeper, order.Skip(first).Take(Loomkeeper.Length));
+    }
 
-        // As a SET: Coordination admits exactly these five and no other kind — a sixth row naming
-        // Coordination, or one of the five naming a second perspective, fails here.
-        Assert.Equal(
-            Loomkeeper.OrderBy(k => k, StringComparer.Ordinal),
-            SurfaceContentFactory.Kinds.Where(k => k.Perspectives.Contains(coordination)).Select(k => k.Kind).OrderBy(k => k, StringComparer.Ordinal));
+    // No kind silently lost by the re-row (ADR-0045 §1; the brief's "keep every existing kind admitted
+    // somewhere"), and the whole column, literally, so a row moved between perspectives fails here.
+    [Fact]
+    public void EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable()
+    {
+        var expected = new Dictionary<string, string[]>(StringComparer.Ordinal)
+        {
+            ["canvas"] = ["understand"],
+            ["view"] = ["understand"],
+            ["classdiagram"] = ["understand"],
+            ["sequence"] = ["understand"],
+            ["contexts"] = ["understand"],
+            ["joins"] = ["understand"],
+            ["solution-tree"] = ["understand"],
+            ["entry-points"] = ["understand"],
+            ["terminal"] = ["factory"],
+            ["sessions"] = ["factory"],
+            ["board"] = ["factory"],
+            ["leaderboard"] = ["factory"],
+            ["ledger"] = ["factory"],
+            ["daydreams"] = ["factory"],
+            ["prompt"] = ["factory"],
+            ["search"] = ["factory"],
+            ["codeviewer"] = ["factory", "understand"],
+            ["diagnostics"] = ["factory"],
+            ["session-document"] = ["factory"],
+            ["console"] = ["factory"],
+        };
 
-        // Coding's remaining column: what it keeps after the five leave (the re-cut of its default is
-        // SH-4.2's; the column is this slice's).
-        Assert.Equal(
-            ["codeviewer", "console", "diagnostics", "prompt", "search", "session-document", "terminal"],
-            SurfaceContentFactory.Kinds.Where(k => k.Perspectives.Contains(PerspectiveSet.Coding)).Select(k => k.Kind).OrderBy(k => k, StringComparer.Ordinal));
+        Assert.Equal(expected.Keys.Order(StringComparer.Ordinal), SurfaceContentFactory.Kinds.Select(k => k.Kind).Order(StringComparer.Ordinal));
+
+        foreach (var row in SurfaceContentFactory.Kinds)
+        {
+            Assert.NotEmpty(row.Perspectives);
+            Assert.Equal(expected[row.Kind], row.Perspectives.Select(p => p.Id).Order(StringComparer.Ordinal));
+        }
+
+        // Review admits no kind until WL-5 lands its own (the design's D3).
+        Assert.DoesNotContain(SurfaceContentFactory.Kinds, k => k.Perspectives.Any(p => p.Id == "review"));
+
+        // The one shared kind routes to the reading host from Review, and stays where it is admitted.
+        Assert.Same(Row("understand"), PerspectiveMenu.Resolve("codeviewer", Row("review")));
+        Assert.Same(Row("factory"), PerspectiveMenu.Resolve("codeviewer", Row("factory")));
+        Assert.Same(Row("understand"), PerspectiveMenu.Resolve("codeviewer", Row("understand")));
     }
 }

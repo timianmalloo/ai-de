@@ -19,9 +19,9 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
 
     private string LayoutPath => Path.Combine(_dir, "layout.json");
 
-    private string CodingSlot => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Coding);
+    private string CodingSlot => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Factory);
 
-    private string ArchitectureSlot => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Architecture);
+    private string ArchitectureSlot => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Understand);
 
     // What the shell hands LayoutPersistence (Ruling 94): the buildable kinds plus the retired ones, so a
     // saved envelope carrying a retired kind is dropped by the host WITH a report, never by the store in silence.
@@ -59,22 +59,28 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         return dir?.FullName ?? throw new InvalidOperationException("AiDe.sln was not found above the test directory");
     }
 
-    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function; Coding's
-    // empty suffix is the grandfathering decision (a pre-C file IS the Coding slot); Explore has no file.
+    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function. The WL-S
+    // design's §7 "expand" step: the re-rowed ids read and write TODAY's files until T11's migration
+    // renames them — Factory is Coding's grandfathered empty suffix, Understand is Architecture's
+    // sibling, Review is new. Seen red before the alias: sp3/slot-alias-red.txt.
     [Fact]
-    public void SlotPathFor_GrandfathersCodingToTodaysFile_AndGivesArchitectureASibling()
+    public void SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew()
     {
-        Assert.Equal(Path.Combine(_dir, "layout.zones.json"), CodingSlot);
-        Assert.Equal(Path.Combine(_dir, "layout.architecture.zones.json"), ArchitectureSlot);
-        Assert.Throws<ArgumentException>(() => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Explore));
+        Assert.Equal(
+            [
+                Path.Combine(_dir, "layout.zones.json"),
+                Path.Combine(_dir, "layout.review.zones.json"),
+                Path.Combine(_dir, "layout.architecture.zones.json"),
+            ],
+            PerspectiveSet.All.Select(p => LayoutPersistence.SlotPathFor(LayoutPath, p)));
+        Assert.Equal(["factory", "review", "understand"], PerspectiveSet.All.Select(p => p.Id));
     }
 
-    // Test 1 — the pre-C file's restore into Coding — lives in ZoneLayoutSlotsTests
-    // (RestoringAPreCCodingEnvelope_DropsTheFiveLoomkeeperKinds_AndReportsNamingCoordination) since
-    // Ruling 84 extended it: the four Loomkeeper kinds the fixture carries are dropped beside the
-    // seven Architecture kinds, reported naming Coordination.
+    // (RestoringAPreCCodingEnvelope_KeepsTheLoomkeeperKindsInFactory_AndReportsTheReadingKindsNamingUnderstand):
+    // since ADR-0045 the four Loomkeeper kinds the fixture carries are kept in Factory; the
+    // reading kinds, reported naming Understand.
 
-    // Test 2 — an envelope whose every surface is inadmissible restores the Coding default and says so.
+    // Test 2 — an envelope whose every surface is inadmissible restores the Factory default and says so.
     [Fact]
     public void AnEnvelopeWithNothingCodingAdmits_RestoresTheDefault_AndSaysSo()
     {
@@ -85,7 +91,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
                 new Surface("contexts", "contexts", "Contexts"),
             ]), 1.0, Collapsed: false));
         new ZoneLayoutStore(CodingSlot).Save(onlyArchitecture);
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -93,7 +99,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.True(result.WasDefaulted);
         Assert.NotEmpty(host.Zones.AllSurfaces());
         Assert.Contains(host.Zones.AllSurfaces(), s => s.Kind == "terminal");
-        Assert.Equal("Your saved layout had no panes Coding can show, so Coding opened with its default layout.", result.Announcement);
+        Assert.Equal("Your saved layout had no panes Factory can show, so Factory opened with its default layout.", result.Announcement);
     }
 
     // Test 3 — two surfaces of a one-instance kind with distinct ids: the first is kept, the second
@@ -109,7 +115,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
                 new Surface("terminal-1", "terminal", "Terminal"),
             ]), 0.3, Collapsed: false));
         new ZoneLayoutStore(CodingSlot).Save(twice);
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -118,7 +124,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Equal("diagnostics#1", host.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId);
         var dropped = Assert.Single(persistence.LastRestoreDropped);
         Assert.Equal(DropReason.DuplicateOneInstance, dropped.Reason);
-        Assert.Contains("1 pane from your saved layout isn't available in Coding", result.Announcement, StringComparison.Ordinal);
+        Assert.Contains("1 pane from your saved layout isn't available in Factory", result.Announcement, StringComparison.Ordinal);
         Assert.Contains("a second Diagnostics", result.Announcement, StringComparison.Ordinal);
     }
 
@@ -126,8 +132,8 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     [Fact]
     public void EachHostSlot_IsWrittenAndRestoredIndependently()
     {
-        var a1 = Host(PerspectiveSet.Coding);
-        var b1 = Host(PerspectiveSet.Architecture);
+        var a1 = Host(PerspectiveSet.Factory);
+        var b1 = Host(PerspectiveSet.Understand);
         a1.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
         b1.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("seq#1", "sequence", "Sequence diagram")));
 
@@ -137,8 +143,8 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.True(File.Exists(CodingSlot));
         Assert.True(File.Exists(ArchitectureSlot));
 
-        var a2 = Host(PerspectiveSet.Coding);
-        var b2 = Host(PerspectiveSet.Architecture);
+        var a2 = Host(PerspectiveSet.Factory);
+        var b2 = Host(PerspectiveSet.Understand);
         using var pa2 = PersistenceFor(a2);
         using var pb2 = PersistenceFor(b2);
         pa2.Restore();
@@ -149,7 +155,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.DoesNotContain(a2.Zones.AllSurfaces(), s => s.Kind == "sequence");   // A never took B's surface
         Assert.True(a2.Zones.Zone(ZoneId.Center).IsEmpty);                           // nor B's Center (Ruling 140: Graph + Tree)
 
-        // B's Left is B's own. Ruling 140 collapses Architecture's Left by default, so `Collapsed`
+        // B's Left is B's own. Ruling 140 collapses Understand's Left by default, so `Collapsed`
         // can no longer tell A's collapse from B's default — the EXTENT still can: a zone is one
         // record in the slot, so A's Left arriving in B's would bring A's extent with it.
         Assert.Equal(WorkbenchLayout.ArchitectureLeftExtent, b2.Zones.Zone(ZoneId.Left).Extent, precision: 3);
@@ -158,18 +164,18 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Equal(["graph", "tree"], b2.Zones.Zone(ZoneId.Center).Surfaces().Select(s => s.SurfaceId));
     }
 
-    // Test 5 — dropped surfaces are not carried into another slot: after a Coding-era restore the
-    // Architecture file is absent and Architecture opens with its default.
+    // Test 5 — dropped surfaces are not carried into another slot: after a Factory-era restore the
+    // Understand file is absent and Understand opens with its default.
     [Fact]
     public void DroppedSurfaces_AreNotCarriedIntoTheArchitectureSlot()
     {
         WritePreAddendumCFile();
-        var coding = Host(PerspectiveSet.Coding);
+        var coding = Host(PerspectiveSet.Factory);
         using (var pa = PersistenceFor(coding)) { pa.Restore(); pa.SaveNow(); }
 
         Assert.False(File.Exists(ArchitectureSlot));
 
-        var architecture = Host(PerspectiveSet.Architecture);
+        var architecture = Host(PerspectiveSet.Understand);
         using var pb = PersistenceFor(architecture);
         var result = pb.Restore();
 
@@ -178,14 +184,14 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.DoesNotContain(architecture.Zones.AllSurfaces(), s => s.SurfaceId == "classdiagram#a1b2c3");
     }
 
-    // Test 6 — the rollback golden round-trip. The post-ADR Coding file deserialises with the frozen
+    // Test 6 — the rollback golden round-trip. The post-ADR Factory file deserialises with the frozen
     // schema-1 DTO into the same arrangement; the DTO constructors carry exactly their schema-1
     // parameters (a removed member breaks a rollback build; an added one is ignored).
     [Fact]
     public void ThePostAdrCodingFile_DeserialisesWithTheFrozenSchema1Dto()
     {
         WritePreAddendumCFile();
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using (var persistence = PersistenceFor(host))
         {
             persistence.Restore();
@@ -248,7 +254,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         WritePreAddendumCFile();
         var original = File.ReadAllBytes(CodingSlot);
         var bak = CodingSlot + ".pre-perspectives.bak";
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
         persistence.Restore();
 
@@ -264,7 +270,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Equal(original, File.ReadAllBytes(bak));
     }
 
-    // Test 6, fail-safe: with the backup target unwritable, SaveNow leaves the Coding file's bytes
+    // Test 6, fail-safe: with the backup target unwritable, SaveNow leaves the Factory file's bytes
     // unchanged and reports — it never writes over the only original.
     [Fact]
     public void WithTheBackupTargetUnwritable_SaveNowLeavesTheOriginalUnchanged_AndReports()
@@ -272,7 +278,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         WritePreAddendumCFile();
         var original = File.ReadAllBytes(CodingSlot);
         Directory.CreateDirectory(CodingSlot + ".pre-perspectives.bak");   // a directory where the file must go
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
         persistence.Restore();
         string? reported = null;
@@ -311,7 +317,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             _ => DuplicateIdFile(),
         };
         File.WriteAllText(CodingSlot, refused);
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -338,7 +344,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         var refused = "{\"schemaVersion\":2,\"appVersion\":\"9.9.9\",\"savedUtc\":\"2026-09-12T00:00:00+00:00\",\"layout\":{\"zones\":[],\"floating\":[]}}";
         File.WriteAllText(CodingSlot, refused);
         File.WriteAllText(CodingSlot + ".bak", "{ an older refusal's bytes }");
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -357,7 +363,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     {
         Directory.CreateDirectory(_dir);
         File.WriteAllText(CodingSlot, "{\"schemaVersion\":0,\"appVersion\":\"0.0.1\",\"savedUtc\":\"2026-09-12T00:00:00+00:00\",\"layout\":{\"zones\":[],\"floating\":[]}}");
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -371,7 +377,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     [Fact]
     public void TheOneInstanceRule_KeepsTheFirstInZoneWalkOrder_AcrossAllZonesThenFloating()
     {
-        var host = Host(PerspectiveSet.Coding);
+        var host = Host(PerspectiveSet.Factory);
         var saved = WorkbenchLayout.Empty()
             .WithZone(new ZoneState(ZoneId.Center, new ZoneStack([new Surface("d-center", "diagnostics", "Diagnostics")]), 1.0, Collapsed: false))
             .WithZone(new ZoneState(ZoneId.Bottom, new ZoneStack([new Surface("d-bottom", "diagnostics", "Diagnostics")]), 0.3, Collapsed: false))
@@ -388,19 +394,18 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
 
     // SH-2's interim default seeded EVERY host from one combined WorkbenchLayout.Default() and
     // filtered it per host, which reported "domain" (kind "view") as a duplicate of "explore" in
-    // Architecture. SH-3's WorkbenchLayout.Default(perspective) seeds each host from its OWN §B4
-    // table (ZoneLayout.cs), so construction has nothing left to drop — this pins that retirement.
+    // Understand. SH-3's WorkbenchLayout.Default(perspective) seeds each host from its OWN §B4
+    // table (ZoneLayout.cs), so construction has nothing left to drop — this pins that retirement,
+    // for every row of ADR-0045's set (a row given another row's table would drop its kinds here).
     [Fact]
-    public void TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops()
+    public void EveryPerspectivesDefault_SeedsCleanly_WithNoDrops()
     {
-        Assert.Empty(Host(PerspectiveSet.Architecture).DefaultDropped);
-        Assert.Empty(Host(PerspectiveSet.Coding).DefaultDropped);
-        Assert.Empty(Host(PerspectiveSet.Coordination).DefaultDropped);   // Ruling 84: host C seeds from its own table too
+        Assert.All(PerspectiveSet.All, p => Assert.Empty(Host(p).DefaultDropped));
     }
 
     // Ruling 140, amending Ruling 94 (F-C) — the operator: "the right-side-views for the
     // architecture explorer need to be Graph and Tree - where tree is the more familiar dev view
-    // like in vs code." Architecture's default is Center = Graph (active), Tree at extent 1.0 · Left
+    // like in vs code." Understand's default is Center = Graph (active), Tree at extent 1.0 · Left
     // EMPTY and collapsed, because the Graph has exactly one home · Right and Bottom empty and
     // collapsed, unchanged from Ruling 94. Contexts and Domain leave the default and stay admitted,
     // exactly as Evidence does under 94; the `inspector` kind is still retired from the product.
@@ -411,8 +416,8 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     [Fact]
     public void TheArchitectureDefault_IsCenterGraphThenTree_LeftRightAndBottomEmptyAndCollapsed()
     {
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Architecture);
-        var admitted = DockHost.AdmissionFor(PerspectiveSet.Architecture);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Understand);
+        var admitted = DockHost.AdmissionFor(PerspectiveSet.Understand);
 
         Assert.Equal("Left:-/collapsed|Right:-/collapsed|Bottom:-/collapsed|Center:[graph+tree@0]|float:", layout.Shape());
         Assert.Equal(1.0, layout.Zone(ZoneId.Center).Extent, precision: 3);
@@ -447,7 +452,7 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     }
 
     // Ruling 94 CONDITION (2) — ADR-0032 test 1's shape for the retired kind: every operator who ran
-    // the previous build has an Architecture slot file carrying Provenance (`inspector`) at Right.
+    // the previous build has an Understand slot file carrying Provenance (`inspector`) at Right.
     // It restores with that surface dropped and REPORTED, naming this ruling — never a crash, never
     // a silent reset — and everything else in the file survives.
     [Fact]
@@ -463,8 +468,8 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
                 new Surface("domain", "classdiagram", "Domain"),
                 new Surface("contexts", "contexts", "Contexts"),
             ]), 1.0, Collapsed: false));
-        new ZoneLayoutStore(LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Architecture)).Save(pre94);
-        var host = Host(PerspectiveSet.Architecture);
+        new ZoneLayoutStore(LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Understand)).Save(pre94);
+        var host = Host(PerspectiveSet.Understand);
         using var persistence = PersistenceFor(host);
 
         var result = persistence.Restore();
@@ -479,15 +484,15 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Null(dropped.AdmittedBy);                                    // no perspective admits a retired kind
         Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
         Assert.Equal(
-            "1 pane from your saved layout isn't available in Architecture — Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row).",
+            "1 pane from your saved layout isn't available in Understand — Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row).",
             result.Announcement);
     }
 
     public static IEnumerable<object[]> HostPerspectives()
     {
-        yield return [PerspectiveSet.Coding];
-        yield return [PerspectiveSet.Architecture];
-        yield return [PerspectiveSet.Coordination];
+        yield return [PerspectiveSet.Factory];
+        yield return [PerspectiveSet.Review];
+        yield return [PerspectiveSet.Understand];
     }
 
     // The one-instance invariant SH-2 named: WorkbenchLayout.Default(perspective) must place only
@@ -514,9 +519,10 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     }
 
     // ADR-0032 test 1's last clause / US-C12 b3 — the event carries the dropped count and kinds,
-    // per host, through the real shell's workspace-open restore: Coding drops eleven from the pre-C
-    // file (seven Architecture kinds and, since Ruling 84, the four Loomkeeper kinds); Architecture
-    // and Coordination keep current (no file); and the seed's own drop is on record.
+    // per host, through the real shell's workspace-open restore: Factory (Coding's file) drops seven
+    // from the pre-C file — the six reading kinds and the retired `inspector` — and KEEPS the four
+    // Loomkeeper kinds, admitted under Factory since ADR-0045 §1(b); Understand and Review keep
+    // current (no file); and no seed drop is on record.
     [Fact]
     public void TheWorkspaceOpenRestore_WritesOneRestoreEventPerHost_WithTheDroppedCountAndKinds()
     {
@@ -541,25 +547,25 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             .Where(e => e.GetProperty("evt").GetString() == "layout.restore")
             .ToList();
 
-        var coding = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "coding" && e.GetProperty("placement").GetString() == "restore-zones");
-        Assert.Equal(11, coding.GetProperty("dropped_count").GetInt32());
-        var droppedKinds = coding.GetProperty("dropped_kinds").EnumerateArray().Select(k => k.GetString()).ToList();
+        var factory = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "factory" && e.GetProperty("placement").GetString() == "restore-zones");
+        Assert.Equal(7, factory.GetProperty("dropped_count").GetInt32());
+        var droppedKinds = factory.GetProperty("dropped_kinds").EnumerateArray().Select(k => k.GetString()).ToList();
         Assert.Contains("classdiagram", droppedKinds);
         Assert.Contains("canvas", droppedKinds);
-        Assert.Contains("sessions", droppedKinds);      // Ruling 84: the Loomkeeper kinds leave Coding
-        Assert.Contains("ledger", droppedKinds);
-        Assert.Equal(LayoutErrorCodes.PartialRestore, coding.GetProperty("error_code").GetString());   // a drop is a partial restore
+        Assert.DoesNotContain("sessions", droppedKinds);   // ADR-0045 §1(b): the Loomkeeper kinds are Factory's
+        Assert.DoesNotContain("ledger", droppedKinds);
+        Assert.Equal(LayoutErrorCodes.PartialRestore, factory.GetProperty("error_code").GetString());   // a drop is a partial restore
 
-        var architecture = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "architecture" && e.GetProperty("placement").GetString() == "keep-current");
-        Assert.Equal(0, architecture.GetProperty("dropped_count").GetInt32());
-
-        var coordination = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "coordination" && e.GetProperty("placement").GetString() == "keep-current");
-        Assert.Equal(0, coordination.GetProperty("dropped_count").GetInt32());
+        foreach (var id in new[] { "understand", "review" })
+        {
+            var other = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == id && e.GetProperty("placement").GetString() == "keep-current");
+            Assert.Equal(0, other.GetProperty("dropped_count").GetInt32());
+        }
 
         // SH-3: each host seeds from its OWN §B4 table (ZoneLayout.cs), so construction drops
         // nothing for either host and no "default-filtered" event is logged at all — unlike the
         // interim combined-and-filtered seed this pins the retirement of (see
-        // TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops).
+        // EveryPerspectivesDefault_SeedsCleanly_WithNoDrops).
         Assert.DoesNotContain(restores, e => e.GetProperty("placement").GetString() == "default-filtered");
     }
 

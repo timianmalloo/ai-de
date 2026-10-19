@@ -1,0 +1,30 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     AiDe.App.Tests.Perspectives.ZoneLayoutSlotsTests.ReviewPersistsToItsOwnFile_AndItsDefaultIsFourEmptyZones [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ZoneLayoutSlotsTests.ReviewPersistsToItsOwnFile_AndItsDefaultIsFourEmptyZones [5 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                                       ↓ (pos 87)
+Expected: ···"ac9348e5dc55ccd4\\layout.review.zones.json"
+Actual:   ···"115454bac9348e5dc55ccd4\\layout.zones.json"
+                                              ↑ (pos 87)
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.ZoneLayoutSlotsTests.ReviewPersistsToItsOwnFile_AndItsDefaultIsFourEmptyZones() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\Workbench\ZoneLayoutSlotsTests.cs:line 60
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 14 ms - AiDe.App.Tests.dll (net10.0)

@@ -9,7 +9,7 @@ namespace AiDe.App.Workbench;
 /// <summary>
 /// The Center's empty copy — what the projection's placeholder renders while a host's Center holds
 /// no document (Ruling 83 condition 2; DESIGN.md's <i>"The empty states — the Center's copy in
-/// Coding"</i> row, and the <i>Nothing open here</i> row). <b>Two true sentences, by state</b>: the
+/// Coding"</i> row — Factory's since ADR-0045 — and the <i>Nothing open here</i> row). <b>True sentences, by state</b>: the
 /// copy is a function of the host's zones and of which session surfaces have a live document, so it
 /// is derived at every render rather than kept in step.
 /// </summary>
@@ -36,10 +36,12 @@ public static class CenterEmptyState
 
     /// <summary>
     /// The copy for <paramref name="host"/>'s empty Center over <paramref name="zones"/>:
-    /// Coding with no session document in the layout → <i>No session open.</i> + the action;
-    /// with one open elsewhere in the frame → <i>The session is docked at the &lt;zone&gt;.</i>;
-    /// with a session surface whose document could not be revived → <i>Nothing open here.</i>;
-    /// any other host → <i>Nothing open here.</i> and the View menu.
+    /// a host that admits session documents (Factory) with none in the layout → <i>No session
+    /// open.</i> + the action; with one open elsewhere in the frame → <i>The session is docked at the
+    /// &lt;zone&gt;.</i>; with a session surface whose document could not be revived → <i>Nothing open
+    /// here.</i>; a host that offers a kind in its View menu (Understand) → <i>Nothing open here.</i>
+    /// and the View menu; a host that admits no kind (Review until WL-5) → <i>Nothing opens here
+    /// yet.</i> and the perspectives that do, by gesture.
     /// </summary>
     /// <param name="isLive">Whether a session surface id has a live document behind it (the shell's registry).</param>
     public static Copy CopyFor(Perspective host, WorkbenchLayout zones, Func<string, bool> isLive)
@@ -48,9 +50,22 @@ public static class CenterEmptyState
         ArgumentNullException.ThrowIfNull(zones);
         ArgumentNullException.ThrowIfNull(isLive);
 
-        if (host != PerspectiveSet.Coding)
+        // Derived from admission, never from the perspective's identity (the WL-S design's §1): the
+        // session copy where a session document can dock; the View menu where it offers a kind; and
+        // for a host that admits no kind yet (Review until WL-5) the rows that do, by their gestures —
+        // the copy promises nothing this build cannot do.
+        if (!PerspectiveMenu.Admits(host, SessionDocumentSurface.Kind))
         {
-            return new Copy("Nothing open here.", "Open a view from the View menu.", OffersNewSession: false);
+            if (SurfaceContentFactory.Kinds.Any(k => k.Entry is SurfaceContentFactory.SurfaceEntry.Derived && k.Perspectives.Contains(host)))
+            {
+                return new Copy("Nothing open here.", "Open a view from the View menu.", OffersNewSession: false);
+            }
+
+            var elsewhere = PerspectiveSet.All
+                .Where(p => p != host && SurfaceContentFactory.Kinds.Any(k => k.Perspectives.Contains(p)))
+                .Select(p => $"{p.Title} ({p.Gesture})")
+                .ToList();
+            return new Copy("Nothing opens here yet.", $"Switch to {string.Join(" or ", elsewhere)}.", OffersNewSession: false);
         }
 
         var sessions = Enum.GetValues<ZoneId>()

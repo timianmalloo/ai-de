@@ -1,0 +1,42 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.28]     AiDe.App.Tests.Perspectives.KindAllowListsTests.TheFiveLoomkeeperKinds_AreAdmittedUnderFactory_AsOneContiguousGroup [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable [FAIL]
+  Failed AiDe.App.Tests.Perspectives.KindAllowListsTests.TheFiveLoomkeeperKinds_AreAdmittedUnderFactory_AsOneContiguousGroup [6 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: [Perspective { Id = coding, Title = Coding, Order = 1, Body = DockHost, CommandId = perspective.coding, Description = Agentic coding: the session documents, terminals and prompt drafts. The perspective the tool starts in., Landing = Left, Gesture = Ctrl+1 }, Perspective { Id = explore, Title = Explore, Order = 2, Body = FullWindow, CommandId = perspective.explore, Description = Knowledge exploration: the full-window graph and reader. The other perspectives are retained, never rebuilt., Landing = , Gesture = Ctrl+2 }, Perspective { Id = architecture, Title = Architecture, Order = 3, Body = DockHost, CommandId = perspective.architecture, Description = Code and architecture understanding: the evidence, class, sequence, context and join views., Landing = Center, Gesture = Ctrl+3 }, Perspective { Id = coordination, Title = Coordination, Order = 4, Body = DockHost, CommandId = perspective.coordination, Description = Fleet observation: the Loomkeeper watcher's terminal sessions, ledger, leaderboard, message board and daydreams. Read in parallel; no composer on this bench., Landing = Left, Gesture = Ctrl+4 }]
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.KindAllowListsTests.Row(String id) in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\Workbench\KindAllowListsTests.cs:line 20
+   at AiDe.App.Tests.Perspectives.KindAllowListsTests.TheFiveLoomkeeperKinds_AreAdmittedUnderFactory_AsOneContiguousGroup() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\Workbench\KindAllowListsTests.cs:line 25
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                           ↓ (pos 0)
+Expected: string[]                        ["understand"]
+Actual:   OrderedIterator<string, string> ["architecture"]
+                                           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.App.Tests\Workbench\KindAllowListsTests.cs:line 91
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 35 ms - AiDe.App.Tests.dll (net10.0)
+exit=1

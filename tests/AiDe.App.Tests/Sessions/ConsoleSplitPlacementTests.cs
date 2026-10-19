@@ -53,13 +53,13 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             var sessionId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             var document = frame.Document(sessionId);
-            Assert.Equal(ZoneId.Left, shell.Coding.Service.Zones.FindZoneOf(sessionId));
+            Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(sessionId));
 
             // The header's toggle — the operator's gesture — dispatches the verb.
             Press(document.ConsoleToggle);
             frame.Settle();
 
-            var zones = shell.Coding.Service.Zones;
+            var zones = shell.Factory.Service.Zones;
             var console = Assert.Single(zones.AllSurfaces(), s => s.Kind == "console");
             Assert.Equal(ConsoleId(config.SessionId), console.SurfaceId);
             Assert.Equal("Console — payments extraction", console.Title);
@@ -68,13 +68,13 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.Equal(console.SurfaceId, ((ZoneStack)zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
 
             // Rendered in the Center pane, focused, holding the document's own split — not a second one.
-            var content = shell.Coding.Adapter.ContentFor(console.SurfaceId);
+            var content = shell.Factory.Adapter.ContentFor(console.SurfaceId);
             Assert.NotNull(content);
             var split = ComposedCoding.Visuals<ConsoleSurface>(content!).SingleOrDefault();
             Assert.True(split is not null, "the console document renders no ConsoleSurface");
             Assert.Same(document.Split, split);
             Assert.False(document.IsSplitOpen, "the split still opened inside the session document's own grid");
-            Assert.Equal(console.SurfaceId, shell.Coding.Adapter.ActiveSurfaceId);
+            Assert.Equal(console.SurfaceId, shell.Factory.Adapter.ActiveSurfaceId);
             Assert.True(document.ConsoleToggle.IsChecked == true);
             Assert.StartsWith("Console open, ", shell.LiveRegion.Text, StringComparison.Ordinal);
             // The toggle's name says where the Console lives now; the CV-5.2 name said "beside the thread".
@@ -84,17 +84,17 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.Null(frame.CenterEmpty());
 
             // One per session: a second RUN of the verb focuses the existing one, never adds a second.
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.ActivateSurface(sessionId)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.ActivateSurface(sessionId)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             System.Windows.Input.Keyboard.Focus(document.ConsoleToggle);
             frame.Settle();
-            Assert.Equal(sessionId, shell.Coding.Controller.FocusedSurfaceId);
+            Assert.Equal(sessionId, shell.Factory.Controller.FocusedSurfaceId);
             Assert.True(shell.Execute("session.console"));
             frame.Settle();
-            Assert.Single(shell.Coding.Service.Zones.AllSurfaces(), s => s.SurfaceId == ConsoleId(config.SessionId));
-            Assert.Equal(1, shell.Coding.Service.Zones.AllSurfaces().Count(s => s.Kind == "console"));
-            Assert.Equal(console.SurfaceId, shell.Coding.Adapter.ActiveSurfaceId);
+            Assert.Single(shell.Factory.Service.Zones.AllSurfaces(), s => s.SurfaceId == ConsoleId(config.SessionId));
+            Assert.Equal(1, shell.Factory.Service.Zones.AllSurfaces().Count(s => s.Kind == "console"));
+            Assert.Equal(console.SurfaceId, shell.Factory.Adapter.ActiveSurfaceId);
             Assert.StartsWith("Console shown, ", shell.LiveRegion.Text, StringComparison.Ordinal);
             Assert.True(document.ConsoleToggle.IsChecked == true);
 
@@ -103,7 +103,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             // returns to the toggle, and the strip says so (the UX lens's Blocker on SH-4.2).
             Press(document.ConsoleToggle);
             frame.Settle();
-            Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
+            Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "console");
             Assert.Equal("Console closed.", shell.LiveRegion.Text);
             // The document's own focus scope, not the process-wide keyboard device: in a full run
             // another class's window can hold the keyboard between two Settle()s, and the oracle
@@ -116,12 +116,12 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             // Open again: the same split instance, hosted anew; then it closes with its session.
             Press(document.ConsoleToggle);
             frame.Settle();
-            var reopened = shell.Coding.Adapter.ContentFor(ConsoleId(config.SessionId));
+            var reopened = shell.Factory.Adapter.ContentFor(ConsoleId(config.SessionId));
             Assert.True(reopened is not null && ReferenceEquals(document.Split, ComposedCoding.Visuals<ConsoleSurface>(reopened).SingleOrDefault()), "the reopened console does not host the document's own split");
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(sessionId)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(sessionId)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
-            Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
+            Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "console");
             Assert.True(document.ConsoleToggle.IsChecked == false);
             Assert.NotNull(frame.CenterEmpty());
             return 0;
@@ -147,19 +147,19 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             var document = frame.Document(SessionDocumentSurface.SurfaceIdFor(config.SessionId));
             Press(document.ConsoleToggle);
             frame.Settle();
-            Assert.Equal(ZoneId.Center, shell.Coding.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
+            Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
 
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
 
-            Assert.Equal(ZoneId.Center, shell.Coding.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
-            Assert.NotNull(shell.Coding.Adapter.ContentFor(ConsoleId(config.SessionId)));
+            Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
+            Assert.NotNull(shell.Factory.Adapter.ContentFor(ConsoleId(config.SessionId)));
 
             // The tab's close with the Left collapsed: "Console closed.", and focus on the landing
             // (the Center's copy — its heading), not dropped on the window.
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             Assert.Equal("Console closed.", shell.LiveRegion.Text);
             var focused = System.Windows.Input.Keyboard.FocusedElement;
@@ -181,17 +181,17 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             var shell = frame.Shell;
             shell.OpenSessionDocument(config);
             var sessionId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.MoveSurface(sessionId, new DropTarget(ZonesToTree.CenterStackId, DropKind.JoinStack))).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.MoveSurface(sessionId, new DropTarget(ZonesToTree.CenterStackId, DropKind.JoinStack))).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             var document = frame.Document(sessionId);
 
             Press(document.ConsoleToggle);
             frame.Settle();
 
-            var center = (ZoneStack)shell.Coding.Service.Zones.Zone(ZoneId.Center).Content!;
+            var center = (ZoneStack)shell.Factory.Service.Zones.Zone(ZoneId.Center).Content!;
             Assert.Equal([sessionId, ConsoleId(config.SessionId)], center.Tabs.Select(t => t.SurfaceId));
-            Assert.Null(shell.Coding.Service.Zones.Zone(ZoneId.Left).Content);
+            Assert.Null(shell.Factory.Service.Zones.Zone(ZoneId.Left).Content);
             return 0;
         }, 60);
     }
@@ -209,7 +209,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
 
             Assert.True(shell.Execute("session.console"));
             Assert.Equal("No session document is focused.", shell.LiveRegion.Text);
-            Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
+            Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "console");
 
             shell.OpenSessionDocument(config);
             frame.Settle();
@@ -218,10 +218,10 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             var document = frame.Document(sessionId);
             System.Windows.Input.Keyboard.Focus(document.ConsoleToggle);
             frame.Settle();
-            Assert.Equal(sessionId, shell.Coding.Controller.FocusedSurfaceId);
+            Assert.Equal(sessionId, shell.Factory.Controller.FocusedSurfaceId);
             Assert.True(shell.Execute("session.console"));
             frame.Settle();
-            Assert.Equal(ZoneId.Center, shell.Coding.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
+            Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
             Assert.StartsWith("Console open", shell.LiveRegion.Text, StringComparison.Ordinal);
             return 0;
         }, 60);
@@ -234,7 +234,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == "console");
         Assert.Equal("Console", row.Title);
         Assert.Equal("One session's Console: every wire frame, one row per message.", row.Summary);
-        Assert.Equal(["coding"], row.Perspectives.Select(p => p.Id));
+        Assert.Equal(["factory"], row.Perspectives.Select(p => p.Id));
         Assert.Equal(SurfaceContentFactory.Instances.Many, row.Instances);
         Assert.Equal("session.console", Assert.IsType<SurfaceContentFactory.SurfaceEntry.Verb>(row.Entry).CommandId);
         Assert.Equal(ZoneId.Center, row.Zone);
@@ -242,9 +242,9 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
         var verb = Assert.Single(WorkbenchCommandCatalog.All, c => c.Id == "session.console");
         Assert.Equal("_View", verb.Menu);
         Assert.Equal(CommandScope.Admits(SessionDocumentSurface.Kind), verb.Scope);
-        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Coding).Admits("console"));
-        Assert.False(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("console"));
-        Assert.False(DockHost.AdmissionFor(PerspectiveSet.Coordination).Admits("console"));
+        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Factory).Admits("console"));
+        Assert.False(DockHost.AdmissionFor(PerspectiveSet.Understand).Admits("console"));
+        Assert.False(DockHost.AdmissionFor(PerspectiveSet.Review).Admits("console"));
     }
 
     /// <summary>
@@ -273,7 +273,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
                 frame.Settle();
             }
 
-            var titles = shell.Coding.Service.Zones.AllSurfaces()
+            var titles = shell.Factory.Service.Zones.AllSurfaces()
                 .Where(s => s.Kind is SessionDocumentSurface.Kind or ConsoleDocumentHost.Kind)
                 .Select(s => s.Title)
                 .OrderBy(t => t, StringComparer.Ordinal)

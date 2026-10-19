@@ -29,9 +29,9 @@ internal static partial class Program
     /// <para><b>Why a replay and not a fresh shell.</b> Three times on 2026-09-11 a harness passed
     /// against a state the product was not in (DC-135). The operator's log carries the state: a
     /// workspace-open restore whose zone payload is quoted here verbatim, a session document opened
-    /// before that restore and dropped by it, and — the line that names the mechanism — an
-    /// <c>explorer-graph</c> surface initialising nine seconds before the New Session that showed
-    /// nothing. Each step is optional so the run that omits one is the control for the one that
+    /// before that restore and dropped by it, and — the line that named the mechanism — another
+    /// body (then the full-window Explorer, retired by ADR-0045; now the Understand host) on screen
+    /// nine seconds before the New Session that showed nothing. Each step is optional so the run that omits one is the control for the one that
     /// includes it.</para>
     ///
     /// <para><b>Measured, never inferred.</b> WPF's own <c>Loaded</c> on the composer, the product's
@@ -42,15 +42,15 @@ internal static partial class Program
     private static class SessionRender
     {
         /// <param name="PriorDocument">Replay 22:33:28Z — a session document opened with no workspace in the window (its composer refused, never configured), then dropped by the restore.</param>
-        /// <param name="Explorer">Replay 22:34:00Z — enter Explorer mode through the product's controller before New Session.</param>
-        /// <param name="ReturnToWorkbench">After New Session, leave Explorer mode and measure again (the necessity half).</param>
+        /// <param name="Away">Replay 22:34:00Z — make another host (Understand) the body through the product's presenter before New Session.</param>
+        /// <param name="ReturnToWorkbench">After New Session, activate Factory explicitly and measure again (the necessity half).</param>
         /// <param name="Reopen">Run the reopen choreography (MainWindow.ReopenSessionAsync's one shell call) instead of New Session.</param>
         /// <param name="Sibling">In the same state, open a code viewer — a sibling dock document — and measure whether it loads.</param>
         /// <param name="BindOnRestore">Run the workspace-open choreography for restored session documents (MainWindow.AttachWorkspace's revive-and-bind) instead of New Session.</param>
         /// <param name="Chooser">Run File → New Session with NO workspace open — the chooser interposes — through the product's NewSessionFlow, then a second run with the chooser cancelled.</param>
         /// <param name="WindowHeight">The window's height; 720 is the operator's.</param>
         private sealed record Options(
-            bool PriorDocument, bool Explorer, bool ReturnToWorkbench, bool Reopen, bool Sibling, bool BindOnRestore, bool Chooser, double WindowHeight);
+            bool PriorDocument, bool Away, bool ReturnToWorkbench, bool Reopen, bool Sibling, bool BindOnRestore, bool Chooser, double WindowHeight);
 
         /// <summary>
         /// The <c>layout.mutation</c> line the operator's shell wrote at 2026-09-11T22:33:53.717Z
@@ -107,7 +107,7 @@ internal static partial class Program
         {
             var options = new Options(
                 PriorDocument: args.Contains("--prior-document", StringComparer.Ordinal),
-                Explorer: args.Contains("--explorer", StringComparer.Ordinal),
+                Away: args.Contains("--away", StringComparer.Ordinal),
                 ReturnToWorkbench: args.Contains("--return-to-workbench", StringComparer.Ordinal),
                 Reopen: args.Contains("--reopen", StringComparer.Ordinal),
                 Sibling: args.Contains("--sibling", StringComparer.Ordinal),
@@ -127,7 +127,7 @@ internal static partial class Program
 
             // THE PRODUCT'S COMPOSITION ROOT, from MainWindow's constructor: the shell; its docking
             // host as the body, held by a ContentControl; the dark dock theme; the key bindings; and
-            // the mode controller over that same ContentControl, with the same Explorer factory.
+            // the presenter over that same ContentControl.
             var shell = new WorkbenchShell(null);
             var body = new ContentControl();
             var window = new Window
@@ -145,13 +145,9 @@ internal static partial class Program
                 DockRoundedTabs.Apply(host.Manager);
             }
 
-            // The presenter over both hosts and the Explore factory (ADR-0031), as MainWindow builds
-            // it, and its router as the shell's command entry.
-            var mode = new PerspectiveShell(
-                body,
-                shell.Hosts,
-                () => new ExplorerSurface(shell.CreateExplorerGraph(), new NodeReaderView()),
-                shell.Announcer);
+            // The presenter over the three hosts (ADR-0031; ADR-0045), as MainWindow builds it, and
+            // its router as the shell's command entry.
+            var mode = new PerspectiveShell(body, shell.Hosts, shell.Announcer);
             shell.CommandRouter = mode.Execute;
             shell.Bind(window);
 
@@ -208,7 +204,7 @@ internal static partial class Program
             Window window, WorkbenchShell shell, PerspectiveShell mode, string root, Options options)
         {
             Console.Out.WriteLine(
-                $"options: priorDocument={options.PriorDocument} explorer={options.Explorer} returnToWorkbench={options.ReturnToWorkbench} "
+                $"options: priorDocument={options.PriorDocument} away={options.Away} returnToWorkbench={options.ReturnToWorkbench} "
                 + $"reopen={options.Reopen} sibling={options.Sibling} bindOnRestore={options.BindOnRestore} chooser={options.Chooser} windowHeight={options.WindowHeight}");
 
             await Task.Delay(800);
@@ -244,7 +240,7 @@ internal static partial class Program
             var dataDirectory = Path.Combine(root, "shell-state");
             Directory.CreateDirectory(dataDirectory);
             var layoutPath = Path.Combine(dataDirectory, "layout.json");
-            new ZoneLayoutStore(LayoutPersistence.SlotPathFor(layoutPath, PerspectiveSet.Coding)).Save(arrangement);
+            new ZoneLayoutStore(LayoutPersistence.SlotPathFor(layoutPath, PerspectiveSet.Initial)).Save(arrangement);
 
             var available = shell.Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
@@ -256,13 +252,13 @@ internal static partial class Program
             shell.Adapter.Render();
             await Task.Delay(1500);
 
-            // The operator's file was written before perspectives; read into the Coding slot it
-            // restores the surfaces Coding admits and drops the rest with a report (ADR-0032 rule 2:
+            // The operator's file was written before perspectives; read into the Factory slot it
+            // restores the surfaces Factory admits and drops the rest with a report (ADR-0032 rule 2:
             // the graph, the two evidence views, provenance, contexts and joins belong to
             // Architecture). The state the replay must reach is that projection of the log line —
             // the product's own filter over the product's own rows — not the pre-perspective file.
             var restoredShape = Shape(shell);
-            var expectedShape = Shape(shell.Coding.Service.Admission.Filter(arrangement).Layout);
+            var expectedShape = Shape(shell.Factory.Service.Admission.Filter(arrangement).Layout);
             Console.Out.WriteLine(
                 $"restore (22:33:53Z replay): applied-saved={persistence.LastRestoreAppliedASavedArrangement} announced='{restore.Announcement}' "
                 + $"dropped={persistence.LastRestoreDropped.Count} zones={restoredShape}");
@@ -283,14 +279,14 @@ internal static partial class Program
                 $"restored active document: surface={restoredActiveId} live-document={shell.Adapter.SurfaceContent<SessionDocumentSurface>(restoredActiveId) is not null} "
                 + $"renders='{restoredActiveText}'");
 
-            // ---- 22:34:00Z. explorer-graph initialising: Explorer mode entered. ----
-            if (options.Explorer)
+            // ---- 22:34:00Z. Another body on screen: the Understand host. ----
+            if (options.Away)
             {
-                mode.Activate(PerspectiveSet.Explore, "replay-22:34:00Z");
-                await WaitAsync(() => Count("explorer-graph", "initialising") >= 1, TimeSpan.FromSeconds(20));
+                mode.Activate(PerspectiveSet.Understand, "replay-22:34:00Z");
+                window.UpdateLayout();
                 await Task.Delay(500);
                 Console.Out.WriteLine(
-                    $"explorer (22:34:00Z replay): mode={mode.Active.Id} explorer-graph initialising={Count("explorer-graph", "initialising")} "
+                    $"away (22:34:00Z replay): mode={mode.Active.Id} "
                     + $"workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible} parent={shell.WorkbenchRoot.Parent?.GetType().Name ?? "(none)"}");
             }
 
@@ -366,7 +362,7 @@ internal static partial class Program
             if (options.ReturnToWorkbench)
             {
                 // THE NECESSITY HALF: remove the suspected cause and see whether the failure goes.
-                mode.Activate(PerspectiveSet.Coding, "replay-return-to-workbench");
+                mode.Activate(PerspectiveSet.Factory, "replay-return-to-workbench");
                 window.UpdateLayout();
                 await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
                 await Task.Delay(1500);

@@ -142,7 +142,7 @@ public sealed class AppWindowCloseLeavesNoTerminalHostTests(ITestOutputHelper ou
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "AiDe", "workspaces", IpcPipeName.ForWorkspace(workspace));
         Directory.CreateDirectory(dataDirectory);
-        var expanded = ZoneLayoutService.ExpandZone(WorkbenchLayout.Default(PerspectiveSet.Coding), ZoneId.Bottom);
+        var expanded = ZoneLayoutService.ExpandZone(WorkbenchLayout.Default(PerspectiveSet.Factory), ZoneId.Bottom);
         Assert.True(expanded.Applied, "the default Bottom was not collapsed — the seed is redundant (DC-016)");
         new ZoneLayoutStore(Path.Combine(dataDirectory, "layout.zones.json")).Save(expanded.Layout);
     }

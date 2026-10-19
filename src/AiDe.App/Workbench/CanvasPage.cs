@@ -74,8 +74,8 @@ internal static class CanvasPage
              before), 696/863 at the 1440x900 startup size, 315/519 stacked at 720x900. The chrome
              above and below measures 149-204px depending on width; the stage is the rest.
              THE FLOOR IS 0 AND THAT IS THE MEASURED VALUE (Ruling 133(b)). 240px was measured
-             putting a 240px stage inside a 200px pane at the stacked row's own MinHeight
-             (ExplorerSurface.cs:198), forcing a scrollbar; no positive floor fits there, because the
+             putting a 240px stage inside a 200px pane at the stacked row's MinHeight of the retired
+             full-window Explorer, forcing a scrollbar; no positive floor fits there, because the
              chrome alone already exceeds that pane. Same idiom as composer.html:41. */
           #stage { position: relative; flex: 1 1 auto; min-height: 0; margin-top: 10px; border-radius: 10px;
                    background: #0D1014; overflow: hidden; }

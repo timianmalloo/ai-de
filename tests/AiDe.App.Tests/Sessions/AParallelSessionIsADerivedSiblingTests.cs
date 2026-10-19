@@ -216,7 +216,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
 
             // The sibling exists, docked in the Left zone beside the parent, bound, and sent.
             Assert.Equal(["payments (2)"], bound);
-            var zones = shell.Coding.Service.Zones;
+            var zones = shell.Factory.Service.Zones;
             var siblingSurface = zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId)
                 .Single(id => id != parentSurface && SessionDocumentSurface.SessionIdOf(id) is not null);
             Assert.Equal(ZoneId.Left, zones.FindZoneOf(parentSurface));

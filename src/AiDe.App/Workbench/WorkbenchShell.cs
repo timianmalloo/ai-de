@@ -28,9 +28,9 @@ namespace AiDe.App.Workbench;
 /// unreachable — the window still showed the superseded fixed grid, so a user could not touch any
 /// of it. A capability nobody can open is not delivered.</para>
 ///
-/// <para><b>Two hosts, one of each shared thing (ADR-0031).</b> Host A (<see cref="Coding"/>) is
-/// today's instances, unchanged in mechanism; host B (<see cref="Architecture"/>) and host C (<see cref="Coordination"/>, Ruling 84) are the same
-/// <see cref="DockHost"/> unit composed a second time. Each host owns its service, manager, adapter,
+/// <para><b>Three hosts, one of each shared thing (ADR-0031; ADR-0045 §3).</b> Host A
+/// (<see cref="Factory"/>) is today's instances, unchanged in mechanism; <see cref="Review"/> and
+/// <see cref="Understand"/> are the same <see cref="DockHost"/> unit composed again. Each host owns its service, manager, adapter,
 /// controller, rails and persistence slot; the shell owns both units and every workspace-level
 /// member — the factory, the session documents, the watcher, dispatch, the canvas binding. A pane
 /// binder walks <i>both</i> hosts, because the kind it binds lives in whichever host admits it.
@@ -186,17 +186,17 @@ public sealed class WorkbenchShell : IDisposable
         // arrive AFTER the window exists: the shell is built synchronously and shown immediately;
         // reaching a daemon may take a cold start, and a window that appears only once a process
         // has launched looks like a failure to launch.
-        Coding = DockHost.Create(PerspectiveSet.Coding, surface => ContentFor(PerspectiveSet.Coding, surface), Announcer, ExpandZone);
-        Architecture = DockHost.Create(PerspectiveSet.Architecture, surface => ContentFor(PerspectiveSet.Architecture, surface), Announcer, ExpandZone);
-        Coordination = DockHost.Create(PerspectiveSet.Coordination, surface => ContentFor(PerspectiveSet.Coordination, surface), Announcer, ExpandZone);
-        Hosts = [Coding, Architecture, Coordination];
+        Factory = DockHost.Create(PerspectiveSet.Factory, surface => ContentFor(PerspectiveSet.Factory, surface), Announcer, ExpandZone);
+        Review = DockHost.Create(PerspectiveSet.Review, surface => ContentFor(PerspectiveSet.Review, surface), Announcer, ExpandZone);
+        Understand = DockHost.Create(PerspectiveSet.Understand, surface => ContentFor(PerspectiveSet.Understand, surface), Announcer, ExpandZone);
+        Hosts = [Factory, Review, Understand];
 
         foreach (var host in Hosts)
         {
             // What the host's DEFAULT dropped to satisfy its own invariant is on record, never
             // silent (the D&P reviewer's finding). SH-3's WorkbenchLayout.Default(perspective)
             // seeds each host from its OWN §B4 table, so a well-formed build drops nothing here —
-            // the interim combined-and-filtered seed's "Architecture keeps one `view`" duplicate is
+            // the interim combined-and-filtered seed's "Understand keeps one `view`" duplicate is
             // retired. The guard stays: an empty drop list is not worth an event, and a future
             // regression that DOES seed a drop is still reported by the same line.
             if (host.Service.DefaultDropped.Count > 0)
@@ -239,7 +239,7 @@ public sealed class WorkbenchShell : IDisposable
         // them to the initial host's controller, so their delegates are wired there and there only.
         Controller.NewAgentTerminalRequested = agent =>
         {
-            ReconcileViewIntoModel(Coding);
+            ReconcileViewIntoModel(Factory);
 
             // The harness is CHOSEN, not discovered. The previous command took whatever was first on
             // PATH, so it could not say which harness it had started — and a session's harness cannot
@@ -294,7 +294,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStackId, new Surface(id, "terminal", title)));
             if (result.Applied)
             {
-                OpeningDocument(Coding);   // document first, then the switch (US-C5, US-C11)
+                OpeningDocument(Factory);   // document first, then the switch (US-C5, US-C11)
             }
 
             Adapter.Render();
@@ -311,7 +311,7 @@ public sealed class WorkbenchShell : IDisposable
         };
         Controller.NewTerminalRequested = () =>
         {
-            ReconcileViewIntoModel(Coding);
+            ReconcileViewIntoModel(Factory);
             // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
             // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
             // output").
@@ -337,7 +337,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStackId, new Surface(id, "terminal", "Terminal")));
             if (result.Applied)
             {
-                OpeningDocument(Coding);   // document first, then the switch (US-C5, US-C11)
+                OpeningDocument(Factory);   // document first, then the switch (US-C5, US-C11)
             }
 
             Adapter.Render();
@@ -384,14 +384,14 @@ public sealed class WorkbenchShell : IDisposable
         PersistOnEveryChange();
     }
 
-    /// <summary>Host A — Coding: today's instances, unchanged in mechanism (ADR-0031).</summary>
-    public DockHost Coding { get; }
+    /// <summary>Host A — Factory (ADR-0045 §1): today's instances, re-rowed, plus the Loomkeeper kinds under Factory → Coordination.</summary>
+    public DockHost Factory { get; }
 
-    /// <summary>Host B — Architecture: the same unit composed a second time, over its own allow-list and slot.</summary>
-    public DockHost Architecture { get; }
+    /// <summary>Host B — Review: the same unit composed again, over its own allow-list (no kind until WL-5) and slot.</summary>
+    public DockHost Review { get; }
 
-    /// <summary>Host C — Coordination (Ruling 84): the same unit composed a third time, over the Loomkeeper kinds' allow-list and its own slot.</summary>
-    public DockHost Coordination { get; }
+    /// <summary>Host C — Understand: the same unit composed again, over the reading kinds' allow-list and the Architecture-named slot file (until T11's migration).</summary>
+    public DockHost Understand { get; }
 
     /// <summary>Every host, in rail order.</summary>
     public IReadOnlyList<DockHost> Hosts { get; }
@@ -412,22 +412,22 @@ public sealed class WorkbenchShell : IDisposable
     public bool Execute(string commandId) => (CommandRouter ?? Controller.Execute)(commandId);
 
     /// <summary>Host A's layout service (the one-host shell's member, kept for its callers).</summary>
-    public ILayoutService Service => Coding.Service;
+    public ILayoutService Service => Factory.Service;
 
     /// <summary>Host A's docking manager.</summary>
-    public DockingManager Manager => Coding.Manager;
+    public DockingManager Manager => Factory.Manager;
 
     /// <summary>
     /// Host A's docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of
     /// <see cref="Manager"/> so a collapsed tool zone shows a one-click rail back.
     /// </summary>
-    public FrameworkElement WorkbenchRoot => Coding.Root;
+    public FrameworkElement WorkbenchRoot => Factory.Root;
 
     /// <summary>Host A's adapter.</summary>
-    public WorkbenchAdapter Adapter => Coding.Adapter;
+    public WorkbenchAdapter Adapter => Factory.Adapter;
 
     /// <summary>Host A's controller — where the entry verbs' and workspace verbs' delegates are wired.</summary>
-    public WorkbenchController Controller => Coding.Controller;
+    public WorkbenchController Controller => Factory.Controller;
 
     public IWorkbenchAnnouncer Announcer { get; }
 
@@ -451,7 +451,7 @@ public sealed class WorkbenchShell : IDisposable
         {
             // Host A's controller handles its own resize session inside Bind; every other host's
             // controller is asked here, so a keyboard resize begun in host B or C receives its keys.
-            foreach (var other in Hosts.Where(h => !ReferenceEquals(h, Coding)))
+            foreach (var other in Hosts.Where(h => !ReferenceEquals(h, Factory)))
             {
                 if (other.Controller.HandleResizeKey(e.Key))
                 {
@@ -795,7 +795,7 @@ public sealed class WorkbenchShell : IDisposable
                     .Describe();
         }
 
-        if (!string.IsNullOrEmpty(dataDirectory) && Coding.Persistence is null)
+        if (!string.IsNullOrEmpty(dataDirectory) && Factory.Persistence is null)
         {
             // Readiness markers are workspace state, like the layout: the agent a team runs and the
             // prompt it draws are properties of the repository being worked on, not of the machine.
@@ -1354,7 +1354,7 @@ public sealed class WorkbenchShell : IDisposable
         var canvas = OpenCanvas();
 
         // The focus router and the drag-state hand-off belong to the host that HOLDS the canvas —
-        // Architecture's, by its allow-list (ADR-0030) — since `workbench.focusCanvas` is routed to
+        // Understand's, by its allow-list (ADR-0030) — since `workbench.focusCanvas` is routed to
         // the host that admits the kind and a drag is a per-host gesture.
         var owner = canvas is null ? null : HostOf(canvas.SurfaceId);
         if (canvas is null || owner is null)
@@ -1380,11 +1380,9 @@ public sealed class WorkbenchShell : IDisposable
         // make navigation cost scale with the map.
         graph.ContextLookup = BuildContextLookup();
 
-        // Architecture's kind-filtered second instance (Ruling 53; US-C8): this docked "canvas" kind
-        // is admitted only to Architecture, so BindCanvas always binds ITS graph, never the
-        // Explorer's own (CreateExplorerGraph, which stays unfiltered — Explore reads every kind).
-        // A parameter on the existing neighbourhood query, never a second store or an in-surface
-        // toggle.
+        // Understand's kind-filtered second instance (Ruling 53; US-C8): this docked "canvas" kind
+        // is admitted only to Understand, so BindCanvas always binds ITS graph. A parameter on the
+        // existing neighbourhood query, never a second store or an in-surface toggle.
         graph.ExcludeKnowledge = true;
 
         canvas.GraphSource = (rootId, ct) => LoadRouted(graph, rootId, ct);
@@ -1444,8 +1442,8 @@ public sealed class WorkbenchShell : IDisposable
     private void OpenNodeView(string nodeId, NodeViewKind kind)
     {
         // In-body node actions act in the RAISING body (US-C3 b2): the kind opens in the host that
-        // holds the graph — Architecture's — and only routes away when that host does not admit it.
-        var raising = OpenCanvas() is { } graph ? HostOf(graph.SurfaceId) ?? Architecture : Architecture;
+        // holds the graph — Understand's — and only routes away when that host does not admit it.
+        var raising = OpenCanvas() is { } graph ? HostOf(graph.SurfaceId) ?? Understand : Understand;
 
         switch (kind)
         {
@@ -1513,32 +1511,9 @@ public sealed class WorkbenchShell : IDisposable
 
     private CanvasSurface? OpenCanvas() => SurfaceContents<CanvasSurface>().FirstOrDefault();
 
-    /// <summary>
-    /// Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME
-    /// workspace queries the workbench canvas reads — two graph-shaped APIs would be two answers that
-    /// can disagree. A dedicated instance: the workbench's canvas is a pane in the docking tree and is
-    /// never reparented across visual trees (the WebView2 airspace trap).
-    /// </summary>
-    public CanvasSurface CreateExplorerGraph()
-    {
-        var canvas = new CanvasSurface("explorer-graph", "Graph");
-
-        // Read _queries AND the context map LIVE at load time, not captured once: the Explorer
-        // surface is created lazily and then retained (US-E6), so a canvas built before the workspace
-        // attached would otherwise stay bound to a null queries forever (DC-040) — and, symmetrically,
-        // a VM built without the context lookup renders every node grey because colour comes from
-        // context (the Explorer-graph-monochrome defect). Wiring ContextLookup here makes the Explorer
-        // graph colour-consistent with the workbench graph.
-        canvas.GraphSource = (rootId, ct) =>
-            LoadRouted(
-                new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() }, rootId, ct);
-
-        return canvas;
-    }
-
     // The canvas asks for three kinds of view through one GraphSource seam: a described node (a real
     // id), the grouped semantic-zoom overview (GroupedOverviewRoot), or one group's contents
-    // (GroupRootPrefix + id). Routed here so both canvas wirings agree on what a sentinel means, and so
+    // (GroupRootPrefix + id). Routed here so the canvas wiring has one meaning per sentinel, and so
     // the flat default (a null/real root) is unchanged.
     private static Task<CanvasGraph> LoadRouted(
         CanvasGraphViewModel vm, string? rootId, CancellationToken ct)
@@ -1559,7 +1534,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>
     /// Builds the context lookup that colours graph nodes, from the current workspace's declared
     /// bounded-context map. Returns a lookup that yields null (no colour) when there is no workspace
-    /// or no map. Shared by the workbench canvas and the Explorer canvas so the two colour identically.
+    /// or no map.
     /// </summary>
     private Func<string, string?> BuildContextLookup()
     {
@@ -1706,13 +1681,13 @@ public sealed class WorkbenchShell : IDisposable
     /// </summary>
     /// <remarks>
     /// <para><b>The shell does not know which body is on screen, and this is how it stops needing
-    /// to (INV-0009, DC-148).</b> The window swaps the body between the docking host and the
-    /// full-body Explorer (ADR-0017); every opening command here mutates the layout model, renders
-    /// the docking manager and announces from the result, all of which is true of the model whether
-    /// or not the host is in a visual tree. Two session documents were opened that way into a host
-    /// that was unparented, announced as <i>opened … maximized</i>, and never seen. The window
-    /// handles this event by making the workbench the body — the Explorer surface is retained, not
-    /// rebuilt — so a document is only ever opened into a body that is on screen.</para>
+    /// to (INV-0009, DC-148).</b> The window swaps the body between the perspectives' docking hosts
+    /// (ADR-0017; ADR-0045); every opening command here mutates the layout model, renders the docking
+    /// manager and announces from the result, all of which is true of the model whether or not the
+    /// host is in a visual tree. Two session documents were opened that way into a host that was
+    /// unparented, announced as <i>opened … maximized</i>, and never seen. The window handles this
+    /// event by making the document's host the body — the other hosts are retained, not rebuilt — so
+    /// a document is only ever opened into a body that is on screen.</para>
     ///
     /// <para><b>One seam, not a per-command check.</b> Every opening command calls
     /// <see cref="OpeningDocument"/> with the host it added into, immediately after an
@@ -1996,7 +1971,7 @@ public sealed class WorkbenchShell : IDisposable
             // Host A's sentence is the one the operator hears (its body is on screen); host B's is
             // heard only when it dropped or refused something (ADR-0032 rules 2 and 4) — a live
             // region read twice in a row for two hosts is two interruptions for one open.
-            if (ReferenceEquals(host, Coding) || restore.ErrorCode is not null)
+            if (ReferenceEquals(host, Factory) || restore.ErrorCode is not null)
             {
                 Announcer.Announce(restore.Announcement);
             }
@@ -2179,11 +2154,11 @@ public sealed class WorkbenchShell : IDisposable
             case NodeViewKind.Source:
             case NodeViewKind.Read:
                 _lastSelectedNodeId = request.NodeId;
-                Announcer.Announce(OpenKind(Architecture, "codeviewer", false));
+                Announcer.Announce(OpenKind(Understand, "codeviewer", false));
                 _ = ShowNodeInCodeViewersAsync(request.NodeId, OpenCodeViewers());
                 break;
             case NodeViewKind.GraphNeighbourhood:
-                Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+                Announcer.Announce(OpenKind(Understand, "canvas", showExisting: true));
                 var canvas = OpenCanvas();
                 if (canvas is not null)
                 {
@@ -2357,11 +2332,11 @@ public sealed class WorkbenchShell : IDisposable
                 case NodeViewKind.Source:
                 case NodeViewKind.Read:
                     _lastSelectedNodeId = request.NodeId;
-                    Announcer.Announce(OpenKind(Architecture, "codeviewer", false));
+                    Announcer.Announce(OpenKind(Understand, "codeviewer", false));
                     await ShowNodeInCodeViewersAsync(request.NodeId, OpenCodeViewers(), propagateFailure: true);
                     break;
                 case NodeViewKind.GraphNeighbourhood:
-                    Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+                    Announcer.Announce(OpenKind(Understand, "canvas", showExisting: true));
                     var canvas = OpenCanvas()
                         ?? throw new InvalidOperationException("Could not reveal in graph.");
                     await CentreOnAsync(canvas, request.NodeId, request.NodeId, propagateFailure: true);
@@ -2384,7 +2359,7 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     private void OnSolutionTreeShowGraphRequested(object? sender, EventArgs e) =>
-        Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+        Announcer.Announce(OpenKind(Understand, "canvas", showExisting: true));
 
     private void OnSolutionTreeRetryRequested(object? sender, EventArgs e)
     {
@@ -2453,23 +2428,6 @@ public sealed class WorkbenchShell : IDisposable
 
     private readonly INodeContentSource _mockNodeContent = new MockNodeContentSource();
     private CoreNodeContentSource? _coreNodeContent;
-
-    /// <summary>
-    /// The Explorer reader's content query (Ruling 93): Core's <c>NodeContentAsync</c> through the
-    /// client seam, read live so a reader built before the workspace attached still reaches it
-    /// (DC-040). With no workspace the answer is an honest <c>None</c> — never the labelled SAMPLE
-    /// the code viewer's stand-in returns (DC-073).
-    /// </summary>
-    internal Task<NodeContent> ReadNodeContentAsync(string nodeId, CancellationToken cancellationToken)
-    {
-        if (_queries is null)
-        {
-            return Task.FromResult(new NodeContent(
-                nodeId, NodeContentKind.None, null, string.Empty, "No workspace is open."));
-        }
-
-        return (_coreNodeContent ??= new CoreNodeContentSource(_queries)).GetAsync(nodeId, cancellationToken);
-    }
 
     // The last node the user selected in the graph, so a Source pane opened AFTER a selection shows
     // that node rather than a blank — the "code viewer opened but no source" case (smoke 9-1).
@@ -2604,7 +2562,7 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     internal TerminalSurface? FocusedTerminal()
     {
-        // Terminals are Coding's kind (ADR-0030), so the focused one is host A's controller's.
+        // Terminals are Factory's kind (ADR-0030), so the focused one is host A's controller's.
         var focused = Controller.FocusedSurfaceId;
         return focused is null ? null : Adapter.ContentFor(focused) as TerminalSurface;
     }
@@ -3476,10 +3434,10 @@ public sealed class WorkbenchShell : IDisposable
 
         var surfaceId = RegisterSessionDocument(config);
 
-        // A session document is Coding's kind (ADR-0030): it opens in host A — in the Left zone by
+        // A session document is Factory's kind (ADR-0030): it opens in host A — in the Left zone by
         // the row's zone rule (Ruling 83), docked — and the seam brings host A's body on screen if
         // another body is showing (US-C5, document first).
-        var host = ResolveHost(Coding, Sessions.SessionDocumentSurface.Kind);
+        var host = ResolveHost(Factory, Sessions.SessionDocumentSurface.Kind);
         var said = OpenReferenceDocument(
             host,
             new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
@@ -3681,7 +3639,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <param name="ordinal">A turn to land the caret on (<i>Open the log</i>), or null to keep it.</param>
     private string OpenSessionConsole(Sessions.SessionDocumentSurface document, int? ordinal)
     {
-        var host = HostOf(document.SurfaceId) ?? Coding;
+        var host = HostOf(document.SurfaceId) ?? Factory;
         ReconcileViewIntoModel(host);
 
         var sessionId = Sessions.SessionDocumentSurface.SessionIdOf(document.SurfaceId) ?? document.SurfaceId;
@@ -3715,7 +3673,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Closes the session's Console document — the toggle unchecked, or the tab's close by another route — and says so.</summary>
     private string CloseSessionConsole(Sessions.SessionDocumentSurface document)
     {
-        var host = HostOf(document.SurfaceId) ?? Coding;
+        var host = HostOf(document.SurfaceId) ?? Factory;
         var sessionId = Sessions.SessionDocumentSurface.SessionIdOf(document.SurfaceId) ?? document.SurfaceId;
         var consoleId = Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId);
         if (host.Service.Zones.FindZoneOf(consoleId) is null)

@@ -165,7 +165,7 @@ public sealed class ReconcileTests
     public void TheSessionDraggedIntoTheEmptyCenterAndBack_IsAppliedBothWays_AndThePlaceholderNeverEntersTheModel()
     {
         var session = new Surface("session:s1", "session-document", "S1");
-        var opened = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        var opened = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Factory), session, ZoneId.Left).Layout;
         var svc = new ZoneBackedLayoutService(opened);
         Assert.True(svc.Zones.Zone(ZoneId.Bottom).Collapsed);
 
@@ -204,7 +204,7 @@ public sealed class ReconcileTests
     {
         var session = new Surface("session:s1", "session-document", "S1");
         var viewer = new Surface("codeviewer#1", "codeviewer", "Router.cs");
-        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Factory), session, ZoneId.Left).Layout;
         layout = ZoneLayoutService.OpenPane(layout, viewer, ZoneId.Center).Layout;
         var svc = new ZoneBackedLayoutService(layout);
 
@@ -228,7 +228,7 @@ public sealed class ReconcileTests
     {
         var session = new Surface("session:s1", "session-document", "S1");
         var viewer = new Surface("codeviewer#1", "codeviewer", "Router.cs");
-        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Factory), session, ZoneId.Left).Layout;
         layout = ZoneLayoutService.OpenPane(layout, viewer, ZoneId.Center).Layout;
         var svc = new ZoneBackedLayoutService(layout);
         Assert.True(svc.Zones.Zone(ZoneId.Bottom).Collapsed);
@@ -255,7 +255,7 @@ public sealed class ReconcileTests
     {
         var session = new Surface("session:s1", "session-document", "S1");
         var viewer = new Surface("codeviewer#1", "codeviewer", "Router.cs");
-        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Factory), session, ZoneId.Left).Layout;
         layout = ZoneLayoutService.OpenPane(layout, viewer, ZoneId.Center).Layout;
         var svc = new ZoneBackedLayoutService(layout);
         var before = svc.Zones.Shape();

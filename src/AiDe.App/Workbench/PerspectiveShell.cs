@@ -10,14 +10,11 @@ namespace AiDe.App.Workbench;
 /// <summary>One perspective switch, as the presenter reports it: from, to, and what asked for it.</summary>
 public sealed record PerspectiveChange(Perspective From, Perspective To, string Trigger);
 
-/// <summary>A body that could not be built: which perspective, and why (Addendum C §A9 Reliability; the rail's error state).</summary>
-public sealed record PerspectiveBodyFailure(Perspective Perspective, string Reason);
-
 /// <summary>
 /// The shell-level presenter and command router (ADR-0017 as amended; ADR-0031 rule 2): owns the
-/// active <see cref="Perspective"/>, the four bodies — host A, host B, host C and the full-window
-/// Explore surface — the one <i>previous-perspective</i> slot (US-C1), and the body-content swap that
-/// realises a switch. Every catalog command enters through <see cref="Execute"/>, which resolves
+/// active <see cref="Perspective"/>, the three bodies — one docking host per row (ADR-0045 §3) —
+/// and the body-content swap that realises a switch. Every catalog command enters through
+/// <see cref="Execute"/>, which resolves
 /// the host a body-conditional command reaches and delegates to that host's
 /// <see cref="WorkbenchController"/>.
 /// </summary>
@@ -27,10 +24,10 @@ public sealed record PerspectiveBodyFailure(Perspective Perspective, string Reas
 /// <c>HwndHost</c>/<c>WebView2</c> child alive rather than destroying it — measured for a second
 /// docking host holding a live WebView2 and a raw <c>HwndHost</c> by
 /// <c>spikes/second-dock-host-unparent</c> (same <c>CoreWebView2</c>, HWND identical, zero
-/// <c>DestroyWindowCore</c> across A → B → A → B ×3 and B → Explore → B) — so the swap is a view
-/// change, not a session loss. The Explore surface is created on first entry and then held.</para>
+/// <c>DestroyWindowCore</c> across A → B → A → B ×3) — so the swap is a view change, not a session
+/// loss. Every host is built at construction, so a switch never builds a body.</para>
 ///
-/// <para><b>The router is table-driven, bounded (the Tech Lead's ruling).</b> Active and previous,
+/// <para><b>The router is table-driven, bounded (the Tech Lead's ruling).</b> The active perspective,
 /// the bodies, <see cref="Execute"/> = resolve the host then delegate, the perspective commands, the
 /// entry-verb rule. The host a command reaches is read from the command's own
 /// <see cref="CommandScope"/> and the kind rows' allow-lists — <b>a <c>switch</c> on any other
@@ -46,17 +43,9 @@ public sealed record PerspectiveBodyFailure(Perspective Perspective, string Reas
 /// </remarks>
 public sealed class PerspectiveShell
 {
-    /// <summary>The stable error code of a switch whose body could not be built.</summary>
-    public const string BodyFailedCode = "AIDE-PERSPECTIVE-BODY-FAILED";
-
-    /// <summary>The stable error code of a body-conditional command run where no docking host is the body.</summary>
-    public const string NoHostCode = "AIDE-PERSPECTIVE-NO-HOST";
-
     private readonly ContentControl _body;
     private readonly IReadOnlyDictionary<Perspective, DockHost> _hosts;
-    private readonly Func<UIElement> _explorerFactory;
     private readonly IWorkbenchAnnouncer _announcer;
-    private UIElement? _explorer;
 
     // The stop edge still pending from the last switch: the body it was armed on and the handler.
     // A switch superseded before its body's first layout pass is NOT recorded (IO12: never a
@@ -64,22 +53,19 @@ public sealed class PerspectiveShell
     private (FrameworkElement Body, RoutedEventHandler Handler)? _pendingShown;
 
     /// <param name="body">The region the docking host occupies; its content is the active perspective's projection.</param>
-    /// <param name="hosts">One <see cref="DockHost"/> per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).</param>
-    /// <param name="explorerFactory">Builds the full-window Explore surface, once, on first entry.</param>
-    /// <param name="announcer">The one live region every switch, refusal and failure is announced through.</param>
+    /// <param name="hosts">One <see cref="DockHost"/> per row of <see cref="PerspectiveSet.All"/> (ADR-0045 §3).</param>
+    /// <param name="announcer">The one live region every switch is announced through.</param>
     public PerspectiveShell(
         ContentControl body,
         IReadOnlyList<DockHost> hosts,
-        Func<UIElement> explorerFactory,
         IWorkbenchAnnouncer announcer)
     {
         _body = body ?? throw new ArgumentNullException(nameof(body));
         ArgumentNullException.ThrowIfNull(hosts);
-        _explorerFactory = explorerFactory ?? throw new ArgumentNullException(nameof(explorerFactory));
         _announcer = announcer ?? throw new ArgumentNullException(nameof(announcer));
 
         _hosts = hosts.ToDictionary(h => h.Row, h => h);
-        foreach (var row in PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost))
+        foreach (var row in PerspectiveSet.All)
         {
             if (!_hosts.ContainsKey(row))
             {
@@ -93,63 +79,45 @@ public sealed class PerspectiveShell
     /// <summary>The active perspective; <see cref="PerspectiveSet.Initial"/> until a switch.</summary>
     public Perspective Active { get; private set; } = PerspectiveSet.Initial;
 
-    /// <summary>
-    /// The one previous-perspective slot (US-C1): what Escape-from-Explore and the drill-to-node
-    /// return restore. Initialised to Coding; after A → B → A it holds B.
-    /// </summary>
-    public Perspective Previous { get; private set; } = PerspectiveSet.Initial;
+    /// <summary>The host of <paramref name="perspective"/> — every row has one.</summary>
+    public DockHost HostFor(Perspective perspective) =>
+        _hosts[perspective ?? throw new ArgumentNullException(nameof(perspective))];
 
-    /// <summary>The host of <paramref name="perspective"/>, or null for a full-window perspective.</summary>
-    public DockHost? HostFor(Perspective perspective) =>
-        _hosts.TryGetValue(perspective ?? throw new ArgumentNullException(nameof(perspective)), out var host) ? host : null;
+    /// <summary>The active perspective's host.</summary>
+    public DockHost ActiveHost => HostFor(Active);
 
-    /// <summary>The active perspective's host, or null while a full-window body is showing.</summary>
-    public DockHost? ActiveHost => HostFor(Active);
-
-    /// <summary>The Explore surface once it has been created; null until first entry.</summary>
-    public UIElement? ExplorerSurface => _explorer;
-
-    /// <summary>Raised after the active perspective changes. Never for a no-op, never for a failed switch.</summary>
+    /// <summary>Raised after the active perspective changes. Never for a no-op.</summary>
     public event EventHandler<PerspectiveChange>? Changed;
-
-    /// <summary>Raised when a switch could not build its body; the active perspective is unchanged.</summary>
-    public event EventHandler<PerspectiveBodyFailure>? BodyFailed;
 
     /// <summary>
     /// Where focus lands after a switch, once the new body has had its first layout pass (spec §C5:
-    /// Coding — the active document; Explore — the reader, never the canvas trap; Architecture —
-    /// the Center's active tab). Set by the window, which knows the bodies' insides; returns true
+    /// the row's <see cref="Perspective.Landing"/> zone's active tab — <see cref="LandingSurfaceFor"/>). Set by the window, which knows the bodies' insides; returns true
     /// when it placed focus. Unset, focus goes to the body's first focusable.
     /// </summary>
     public Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }
 
     /// <summary>
     /// The surface a switch to <paramref name="host"/>'s perspective lands focus on (spec §C5): the
-    /// active tab of the row's <see cref="Perspective.Landing"/> zone when the row names one and the
-    /// arrangement has that zone open with content; else the Center's active tab — the document
-    /// region, and for an empty Center its empty copy (the placeholder the shell renders, Ruling 83
-    /// condition 2); else the body's active surface as the view reports it. The window's
+    /// active tab of the row's <see cref="Perspective.Landing"/> zone when the arrangement has that
+    /// zone open with content; else the Center's active tab — the document region, and for an empty
+    /// Center its empty copy (the placeholder the shell renders, Ruling 83 condition 2); else the
+    /// body's active surface as the view reports it. The window's
     /// <see cref="EntryFocus"/> reads this, then moves focus into that surface's content.
     /// </summary>
     public static string? LandingSurfaceFor(DockHost host)
     {
         ArgumentNullException.ThrowIfNull(host);
 
-        if (host.Row.Landing is { } zoneId)
+        var zone = host.Service.Zones.Zone(host.Row.Landing);
+        if (!zone.Collapsed && FirstActive(zone.Content) is { } landing)
         {
-            var zone = host.Service.Zones.Zone(zoneId);
-            if (!zone.Collapsed && FirstActive(zone.Content) is { } landing)
-            {
-                return landing.SurfaceId;
-            }
-
-            // The landing zone is empty or collapsed: the Center's active tab is a chosen landing
-            // where the view's "active" is whichever pane realized last (DC-194).
-            var center = host.Service.Zones.Zone(ZoneId.Center);
-            return center.IsEmpty ? ZonesToTree.WelcomePlaceholder.SurfaceId : FirstActive(center.Content)?.SurfaceId ?? host.Adapter.ActiveSurfaceId;
+            return landing.SurfaceId;
         }
 
-        return host.Adapter.ActiveSurfaceId;
+        // The landing zone is empty or collapsed: the Center's active tab is a chosen landing
+        // where the view's "active" is whichever pane realized last (DC-194).
+        var center = host.Service.Zones.Zone(ZoneId.Center);
+        return center.IsEmpty ? ZonesToTree.WelcomePlaceholder.SurfaceId : FirstActive(center.Content)?.SurfaceId ?? host.Adapter.ActiveSurfaceId;
 
         static Surface? FirstActive(ZoneContent? content) => content switch
         {
@@ -185,11 +153,10 @@ public sealed class PerspectiveShell
 
     /// <summary>
     /// Makes <paramref name="perspective"/> the active one and returns what to announce. Activating
-    /// the active perspective is a no-op that emits nothing (US-C1); a body that fails to build
-    /// leaves the active perspective, the focus and the other bodies as they were and reports why.
+    /// the active perspective is a no-op that emits nothing (US-C1).
     /// </summary>
     /// <param name="perspective">The perspective to show.</param>
-    /// <param name="trigger">What asked for it — a catalog command id, <c>rail</c>, <c>escape</c>, <c>document-opening</c>, a replay step.</param>
+    /// <param name="trigger">What asked for it — a catalog command id, <c>rail</c>, <c>document-opening</c>, a replay step.</param>
     public string Activate(Perspective perspective, string trigger)
     {
         ArgumentNullException.ThrowIfNull(perspective);
@@ -204,42 +171,14 @@ public sealed class PerspectiveShell
 
         var started = Stopwatch.GetTimestamp();
         var from = Active;
-        FrameworkElement body;
-        var firstEntry = false;
+        var body = _hosts[perspective].Root;
 
-        if (perspective.Body == PerspectiveBody.FullWindow)
-        {
-            if (_explorer is null)
-            {
-                try
-                {
-                    _explorer = _explorerFactory();   // created once, then retained (US-E6)
-                    firstEntry = true;
-                }
-                catch (Exception error) when (error is not OutOfMemoryException)
-                {
-                    // C7: the other perspectives stay usable, the rail item shows the error, and the
-                    // active perspective is unchanged (spec §C4's build-failure state).
-                    WorkbenchDiagnostics.ShellMode(from, perspective, trigger, firstEntry: true, outcome: "failed", errorCode: BodyFailedCode);
-                    BodyFailed?.Invoke(this, new PerspectiveBodyFailure(perspective, error.Message));
-                    return $"Couldn't open {perspective.Title} — {error.Message}.";
-                }
-            }
-
-            body = (FrameworkElement)_explorer;
-        }
-        else
-        {
-            body = _hosts[perspective].Root;
-        }
-
-        Previous = from;
         Active = perspective;
-        WorkbenchDiagnostics.ShellMode(from, perspective, trigger, firstEntry, outcome: "switched", errorCode: null);
+        WorkbenchDiagnostics.ShellMode(from, perspective, trigger);
 
         // The stop edge of the switch (US-C12): the new body's first Loaded after the presenter set
         // its content. Loaded fires on every re-attach of a retained body, so it is the edge for
-        // first entries and returns alike; a body with no presentation source (headless) never
+        // every switch; a body with no presentation source (headless) never
         // fires it, and the duration is then simply not recorded — never modelled. A switch that
         // is superseded before its edge fires is detached here and never measured either.
         if (_pendingShown is { } stale)
@@ -288,21 +227,6 @@ public sealed class PerspectiveShell
     }
 
     /// <summary>
-    /// Escape from the Explore surface's root restores the previous perspective (US-C1). Returns
-    /// false — and does nothing — from a host, where Escape keeps its other roles.
-    /// </summary>
-    public bool Escape()
-    {
-        if (Active.Body != PerspectiveBody.FullWindow)
-        {
-            return false;
-        }
-
-        _announcer.Announce(Activate(Previous, "escape"));
-        return true;
-    }
-
-    /// <summary>
     /// The shell's <c>DocumentOpening</c> seam (ADR-0017 amendment clause 4, generalised): a dock
     /// document is about to open in <paramref name="host"/>'s body; if that body is not on screen,
     /// it becomes the body — document first, then the switch, as one transaction. Retained, never
@@ -322,8 +246,8 @@ public sealed class PerspectiveShell
     /// Runs a catalog command by id: a perspective command switches; a derived opener and a
     /// kind-scoped command reach the host that admits the kind (the active one when it does,
     /// else the first in routing order — ADR-0030 <c>Resolve</c>); a host-scoped command reaches
-    /// the active host, or is refused with a reason while no host is the body; everything else —
-    /// entry verbs, workspace verbs — reaches the initial host's controller. Returns false only for
+    /// the active host; everything else — entry verbs, workspace verbs — reaches the initial host's
+    /// controller. Returns false only for
     /// an id no controller knows.
     /// </summary>
     public bool Execute(string commandId)
@@ -346,8 +270,7 @@ public sealed class PerspectiveShell
         var row = WorkbenchCommandCatalog.All.FirstOrDefault(c => string.Equals(c.Id, commandId, StringComparison.Ordinal));
         return row?.Scope.Kind switch
         {
-            CommandScopeKind.DockHost when ActiveHost is { } host => host.Controller.Execute(commandId),
-            CommandScopeKind.DockHost => RefuseWithoutHost(row),
+            CommandScopeKind.DockHost => ActiveHost.Controller.Execute(commandId),
             CommandScopeKind.Admits => RouteByKind(row.Scope.SurfaceKind ?? string.Empty, commandId, initial),
             _ => initial.Controller.Execute(commandId),
         };
@@ -355,27 +278,13 @@ public sealed class PerspectiveShell
 
     private bool RouteByKind(string kind, string commandId, DockHost fallback)
     {
-        var target = PerspectiveMenu.Resolve(kind, Active) is { } resolved ? HostFor(resolved) : null;
-        return (target ?? fallback).Controller.Execute(commandId);
+        var target = PerspectiveMenu.Resolve(kind, Active) is { } resolved ? HostFor(resolved) : fallback;
+        return target.Controller.Execute(commandId);
     }
 
-    private bool RefuseWithoutHost(WorkbenchCommand row)
-    {
-        WorkbenchDiagnostics.ShellMode(Active, Active, row.Id, firstEntry: false, outcome: "refused", errorCode: NoHostCode);
-        var hosts = PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost).Select(p => p.Title).ToList();
-        var named = hosts.Count > 1 ? $"{string.Join(", ", hosts[..^1])} or {hosts[^1]}" : hosts[0];
-        _announcer.Announce($"{row.Title} needs a docking host; {Active.Title} has none. Switch to {named} first.");
-        return true;
-    }
-
-    /// <summary>What a switch says (spec §C5's copy): the perspective, and for a host how many panes it shows.</summary>
+    /// <summary>What a switch says (spec §C5's copy): the perspective, and how many panes its host shows.</summary>
     private string Announcement(Perspective perspective)
     {
-        if (perspective.Body == PerspectiveBody.FullWindow)
-        {
-            return $"{perspective.Title} perspective: graph and reader. The workbench is retained, not closed.";
-        }
-
         var panes = _hosts[perspective].Service.Zones.AllSurfaces().Count();
         return panes == 1
             ? $"{perspective.Title} perspective — 1 pane."

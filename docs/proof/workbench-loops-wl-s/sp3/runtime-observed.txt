@@ -1,0 +1,19 @@
+# Runtime observation — Release build, launched and driven through UI Automation (scratchpad drive-app.ps1); evidence, not the Owner's demo
+# observed 2026-10-18T23:15:06Z on branch sp3-perspective-rerow at acfa04de; no workspace open (Inferred, not checked: no layout slot was written — DockHost.cs says a host persists its slot only once a workspace attaches)
+exe: C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.App\bin\Release\net10.0-windows\AiDe.App.exe built 2026-10-18T23:14:15.0373671Z
+title: Factory — AI-DE
+rail (3 items): Factory perspective [selected] | Review perspective | Understand perspective
+after Ctrl+2
+title: Review — AI-DE
+rail (3 items): Factory perspective | Review perspective [selected] | Understand perspective
+after Ctrl+3
+title: Understand — AI-DE
+rail (3 items): Factory perspective | Review perspective | Understand perspective [selected]
+after Ctrl+1
+title: Factory — AI-DE
+rail (3 items): Factory perspective [selected] | Review perspective | Understand perspective
+invoked View -> Show ledger
+title: Factory — AI-DE
+rail (3 items): Factory perspective [selected] | Review perspective | Understand perspective
+ledger pane in the window: True
+app exited: True

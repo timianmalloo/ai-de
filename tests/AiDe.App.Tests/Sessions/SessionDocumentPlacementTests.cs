@@ -33,12 +33,12 @@ public sealed class SessionDocumentPlacementTests : IDisposable
         {
             using var frame = ComposedCoding.Show(1440, 900);
             var shell = frame.Shell;
-            var zonesBefore = shell.Coding.Service.Zones;
+            var zonesBefore = shell.Factory.Service.Zones;
 
             var said = shell.OpenSessionDocument(config);
             frame.Settle();
 
-            var zones = shell.Coding.Service.Zones;
+            var zones = shell.Factory.Service.Zones;
             var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             Assert.Equal(ZoneId.Left, zones.FindZoneOf(surfaceId));
             Assert.Null(zones.Maximized);
@@ -55,8 +55,8 @@ public sealed class SessionDocumentPlacementTests : IDisposable
 
             // The rendered surface: the document is on screen in the Left pane, active — you open it
             // to type in it — and no "maximized" is announced.
-            Assert.NotNull(shell.Coding.Adapter.ContentFor(surfaceId));
-            Assert.Equal(surfaceId, shell.Coding.Adapter.ActiveSurfaceId);
+            Assert.NotNull(shell.Factory.Adapter.ContentFor(surfaceId));
+            Assert.Equal(surfaceId, shell.Factory.Adapter.ActiveSurfaceId);
             Assert.DoesNotContain("aximized", said, StringComparison.Ordinal);
             Assert.StartsWith("Session “Front door” opened.", said, StringComparison.Ordinal);
             return 0;
@@ -75,12 +75,12 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             using var frame = ComposedCoding.Show(1440, 900);
             var shell = frame.Shell;
             shell.OpenSessionDocument(first);
-            var shapeBefore = shell.Coding.Service.Zones.Shape();
+            var shapeBefore = shell.Factory.Service.Zones.Shape();
 
             shell.OpenSessionDocument(reopened);   // the reopen path in MainWindow is exactly this call
             frame.Settle();
 
-            var zones = shell.Coding.Service.Zones;
+            var zones = shell.Factory.Service.Zones;
             Assert.Equal(ZoneId.Left, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(reopened.SessionId)));
             Assert.Equal(ZoneId.Left, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(first.SessionId)));   // a sibling tab; the first stays
             Assert.Null(zones.Maximized);
@@ -105,16 +105,16 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             using var frame = ComposedCoding.Show(1440, 900);
             var shell = frame.Shell;
 
-            var empty = PerspectiveShell.LandingSurfaceFor(shell.Coding);
+            var empty = PerspectiveShell.LandingSurfaceFor(shell.Factory);
             Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, empty);
-            var copy = shell.Coding.Adapter.ContentFor(empty!);
+            var copy = shell.Factory.Adapter.ContentFor(empty!);
             Assert.True(copy is not null && HasFocusTarget(copy), "the Center's empty copy has no focus target — the landing falls through");
 
             shell.OpenSessionDocument(config);
             frame.Settle();
             var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
-            Assert.Equal(surfaceId, PerspectiveShell.LandingSurfaceFor(shell.Coding));
-            var content = shell.Coding.Adapter.ContentFor(surfaceId);
+            Assert.Equal(surfaceId, PerspectiveShell.LandingSurfaceFor(shell.Factory));
+            var content = shell.Factory.Adapter.ContentFor(surfaceId);
             Assert.True(content is not null && HasFocusTarget(content), "the session document has no focus target");
 
             // The window's entry focus: into the EDITOR (the first action), not the header's first
@@ -126,10 +126,10 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             Assert.True(focused is not null && IsInside(focused, document.Composer), $"focus landed on {focused?.GetType().Name ?? "(none)"}, not inside the composer");
 
             // And the Center's copy's landing: its heading, with the sentence as the name.
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
-            var fallback = shell.Coding.Adapter.ContentFor(PerspectiveShell.LandingSurfaceFor(shell.Coding)!);
+            var fallback = shell.Factory.Adapter.ContentFor(PerspectiveShell.LandingSurfaceFor(shell.Factory)!);
             Assert.True(fallback is not null && PerspectiveShell.FocusLanding(fallback));
             frame.Settle();
             var landed = System.Windows.Input.Keyboard.FocusedElement as System.Windows.Controls.TextBlock;
@@ -192,16 +192,16 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             var document = frame.Document(surfaceId);
             var closed = new List<string>();
-            shell.Coding.Adapter.SurfaceClosed += (id, _) => closed.Add(id);
+            shell.Factory.Adapter.SurfaceClosed += (id, _) => closed.Add(id);
 
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             Assert.Empty(closed);
-            Assert.True(shell.Coding.Rails.RailVisible(ZoneId.Left));
+            Assert.True(shell.Factory.Rails.RailVisible(ZoneId.Left));
 
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             Assert.Same(document, frame.Document(surfaceId));
             Assert.Empty(closed);

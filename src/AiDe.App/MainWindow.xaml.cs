@@ -49,17 +49,11 @@ public partial class MainWindow : Window
         // The palette overlays the whole window, above the docking host.
         RootLayer.Children.Add(Shell.Palette.Root);
 
-        // The presenter (ADR-0017 as amended; ADR-0031): the three bodies — host A, host B and the
-        // full-window Explore surface — under the body region, and the router every catalog command
+        // The presenter (ADR-0017 as amended; ADR-0031; ADR-0045): the three docking hosts —
+        // Factory, Review, Understand — under the body region, and the router every catalog command
         // goes through. The shell is held for the window's life, so a switch only unparents the
-        // body showing — the workbench (and a running terminal) survive.
-        _perspectives = new PerspectiveShell(
-            WorkbenchHost,
-            Shell.Hosts,
-            () => new ExplorerSurface(
-                Shell.CreateExplorerGraph(),
-                new NodeReaderView { ContentSource = Shell.ReadNodeContentAsync }),
-            Shell.Announcer);
+        // body showing — the other hosts (and a running terminal) survive.
+        _perspectives = new PerspectiveShell(WorkbenchHost, Shell.Hosts, Shell.Announcer);
         Shell.CommandRouter = _perspectives.Execute;
 
         // Ruling 95: a composer's "Start a parallel session" runs this flow — the window owns the
@@ -80,17 +74,7 @@ public partial class MainWindow : Window
             // The menu bar and the palette are projections of the active perspective (ADR-0030):
             // one derived model, handed to both, so they cannot disagree (E12).
             RebuildMenu();
-
-            // Reload the Explorer graph with the CURRENT workspace when entering. The surface is
-            // retained (US-E6), so without this a surface first created before a workspace opened
-            // would keep showing "No workspace is open" on every later entry. No-ops on the very
-            // first entry (the canvas is not Ready yet); its own NavigationCompleted does that load.
-            if (change.To == PerspectiveSet.Explore && _perspectives.ExplorerSurface is ExplorerSurface explorer)
-            {
-                _ = explorer.Graph.RefreshAsync();
-            }
         };
-        _perspectives.BodyFailed += (_, failure) => Rail.ShowFailure(failure.Perspective, failure.Reason);
         _perspectives.EntryFocus = EntryFocusFor;
         ReflectPerspective(PerspectiveSet.Initial);
 
@@ -98,23 +82,6 @@ public partial class MainWindow : Window
         // the menu, the palette and the gesture cannot drift apart); the presenter's change event
         // then reflects the selection back, so the rail follows the body and never leads it.
         Rail.ActivationRequested += (_, perspective) => Shell.Execute(perspective.CommandId);
-
-        // Escape from the Explore surface's root restores the previous perspective (US-C1) — only
-        // there, only when no in-surface control owned it (the palette and the prompt bar consume
-        // theirs first in Shell.Bind's tunnelling handler; the canvas, the reader and any text box
-        // consume theirs on the bubbling route before it reaches the window — a handled key never
-        // arrives here), and never from a host, where Escape keeps its other roles.
-        KeyDown += (_, e) =>
-        {
-            if (e.Key == System.Windows.Input.Key.Escape
-                && _perspectives.ExplorerSurface is ExplorerSurface explore
-                && explore.IsKeyboardFocusWithin
-                && !explore.Graph.IsKeyboardFocusWithin   // inside the canvas the page owns Escape (ADR-0015's trap exit, the search dismiss)
-                && _perspectives.Escape())
-            {
-                e.Handled = true;
-            }
-        };
 
         // A dock document opens into a body that is on screen (INV-0009, DC-148; ADR-0017 amendment
         // clause 4, generalised to two hosts). Every opening command in the shell raises this just
@@ -298,7 +265,7 @@ public partial class MainWindow : Window
 
                 var opened = Shell.OpenSessionDocument(created.Config);
                 // Both halves, in the order the operator experiences them: the document opens —
-                // docked in Coding's Left zone by the kind's zone rule (Ruling 83; Ruling 47's
+                // docked in Factory's Left zone by the kind's zone rule (Ruling 83; Ruling 47's
                 // maximize-on-create is superseded by the operator's own gesture) — and its
                 // composer is bound. One sentence, because a live region read twice in a row is
                 // two interruptions.
@@ -606,11 +573,11 @@ public partial class MainWindow : Window
 
     internal WorkbenchShell Shell { get; }
 
-    /// <summary>Resets the ACTIVE host's slot (US-C9 scopes the command to it); from Explore the initial host's.</summary>
+    /// <summary>Resets the ACTIVE host's slot (US-C9 scopes the command to it).</summary>
     private void OnResetLayout(object sender, RoutedEventArgs e)
     {
         Shell.Execute("workbench.resetLayout");
-        (_perspectives.ActiveHost ?? Shell.Coding).Adapter.Render();
+        _perspectives.ActiveHost.Adapter.Render();
     }
 
     /// <summary>The rail's one primary action, on the same catalog command as File → New Session.</summary>
@@ -627,25 +594,18 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Where focus lands after a switch (spec §C5): Explore — the reader (the first non-canvas
-    /// focusable, so entry never lands inside the ADR-0015 canvas trap; the canvas is reached by
-    /// <c>workbench.focusCanvas</c> or Tab); a host — the row's landing zone's active tab
-    /// (Architecture: the Center's, Coordination: the Left's — <see cref="PerspectiveShell.LandingSurfaceFor"/>),
-    /// else its active document's content, else the body's first focusable.
+    /// Where focus lands after a switch (spec §C5): the row's landing zone's active tab (Factory: the
+    /// Left's; Review and Understand: the Center's — <see cref="PerspectiveShell.LandingSurfaceFor"/>),
+    /// else nothing here and the presenter falls back to the body's first focusable.
     /// </summary>
     private bool EntryFocusFor(Perspective perspective, FrameworkElement body)
     {
-        if (perspective == PerspectiveSet.Explore)
-        {
-            return body is ExplorerSurface explorer && explorer.Reader.FocusReader();
-        }
-
         var host = _perspectives.HostFor(perspective);
-        var landing = host is null ? null : PerspectiveShell.LandingSurfaceFor(host);
-        var active = landing is { } id ? host!.Adapter.ContentFor(id) : null;
+        var landing = PerspectiveShell.LandingSurfaceFor(host);
+        var active = landing is { } id ? host.Adapter.ContentFor(id) : null;
         if (active is not null && landing is not null)
         {
-            host!.Adapter.ActivateInView(landing);   // the view's notion of active follows the landing, so the next switch back returns here
+            host.Adapter.ActivateInView(landing);   // the view's notion of active follows the landing, so the next switch back returns here
         }
 
         return active is not null && PerspectiveShell.FocusLanding(active);

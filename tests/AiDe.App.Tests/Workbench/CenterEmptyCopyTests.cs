@@ -28,6 +28,25 @@ public sealed class CenterEmptyCopyTests : IDisposable
     private static IEnumerable<string> Texts(FrameworkElement root) =>
         ComposedCoding.Visuals<TextBlock>(root).Select(t => t.Text).Where(t => t.Length > 0);
 
+    // The WL-S design's §1 copy table: the Center's empty copy is derived from ADMISSION, never from
+    // the perspective's identity. Understand offers kinds in its View menu, so it says so; Review
+    // admits no kind until WL-5 (D3), so its copy names only the perspectives that do, by the rows'
+    // own titles and gestures — and its View menu really offers no derived entry (the copy promises
+    // nothing this build cannot do).
+    [Fact]
+    public void TheCopy_IsDerivedFromAdmission_UnderstandOffersTheViewMenu_ReviewNamesTheHostsThatAdmitAKind()
+    {
+        Assert.Equal(
+            new CenterEmptyState.Copy("Nothing open here.", "Open a view from the View menu.", OffersNewSession: false),
+            CenterEmptyState.CopyFor(PerspectiveSet.Understand, WorkbenchLayout.Default(PerspectiveSet.Understand), _ => false));
+
+        Assert.Equal(
+            new CenterEmptyState.Copy("Nothing opens here yet.", "Switch to Factory (Ctrl+1) or Understand (Ctrl+3).", OffersNewSession: false),
+            CenterEmptyState.CopyFor(PerspectiveSet.Review, WorkbenchLayout.Default(PerspectiveSet.Review), _ => false));
+
+        Assert.DoesNotContain(PerspectiveMenu.For(PerspectiveSet.Review).Menus, m => m.Derived.Count > 0);
+    }
+
     [Fact]
     public void WhileASessionIsOpenAtLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen()
     {
@@ -56,7 +75,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
             // State 2 — a session open at Left: the docked sentence, the View-menu line, NO first action.
             shell.OpenSessionDocument(config);
             frame.Settle();
-            Assert.Equal(ZoneId.Left, shell.Coding.Service.Zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(config.SessionId)));
+            Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(config.SessionId)));
             var docked = frame.CenterEmpty();
             Assert.NotNull(docked);
             texts = Texts(docked!).ToList();
@@ -77,17 +96,17 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.DoesNotContain(ComposedCoding.Visuals<Grid>(docked!), g => g.Focusable);
 
             // The Left collapsed with the session held: still docked there, behind its rail — said.
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             Assert.Contains("The session is docked at the left, collapsed — expand the rail to reach it.", Texts(frame.CenterEmpty()!));
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
 
             // State 1 again after the session closes: the copy follows the model, render by render.
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(SessionDocumentSurface.SurfaceIdFor(config.SessionId))).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(SessionDocumentSurface.SurfaceIdFor(config.SessionId))).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
             var again = frame.CenterEmpty();
             Assert.NotNull(again);
@@ -107,8 +126,8 @@ public sealed class CenterEmptyCopyTests : IDisposable
 
             // A saved arrangement's session surface, restored with no live document behind it (the factory's island).
             var gone = new Surface(SessionDocumentSurface.SurfaceIdFor("20260101T000000Z-gone"), SessionDocumentSurface.Kind, "gone");
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, gone)).Applied);
-            shell.Coding.Adapter.Render();
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, gone)).Applied);
+            shell.Factory.Adapter.Render();
             frame.Settle();
 
             var copy = frame.CenterEmpty();
@@ -121,7 +140,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
 
             // And the island at Left names the session and the same way out — never "No session is
             // open" one pane over from a Center that says one is here.
-            var island = shell.Coding.Adapter.ContentFor(gone.SurfaceId);
+            var island = shell.Factory.Adapter.ContentFor(gone.SurfaceId);
             Assert.NotNull(island);
             var islandTexts = Texts(island!).ToList();
             Assert.Contains(islandTexts, t => t.StartsWith("“gone” could not be restored", StringComparison.Ordinal) && t.Contains("File → Recent sessions", StringComparison.Ordinal));
@@ -146,7 +165,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
     {
         var s1 = new Surface("session:a", SessionDocumentSurface.Kind, "A");
         var s2 = new Surface("session:b", SessionDocumentSurface.Kind, "B");
-        var layout = WorkbenchLayout.Default(PerspectiveSet.Coding);
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Factory);
         var live = new HashSet<string>(StringComparer.Ordinal);
         switch (state)
         {
@@ -178,7 +197,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
                 break;
         }
 
-        var copy = CenterEmptyState.CopyFor(PerspectiveSet.Coding, layout, live.Contains);
+        var copy = CenterEmptyState.CopyFor(PerspectiveSet.Factory, layout, live.Contains);
         Assert.Equal(heading, copy.Heading);
         Assert.Equal(state == "none", copy.OffersNewSession);
         if (state == "two-dead")

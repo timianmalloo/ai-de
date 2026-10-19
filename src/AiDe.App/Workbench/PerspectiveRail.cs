@@ -85,8 +85,6 @@ public sealed class PerspectiveRail : ListBox
             _reflecting = false;
         }
 
-        ItemFor(active)?.ClearFailure();
-
         // Tab enters the group on the selected destination (WAI-ARIA tabs), not on the first — by
         // TAB INDEX, never by clearing IsTabStop: the rail is a Once group that re-enters on its
         // last-focused item, and a last-focused item that is not a tab stop makes the whole group
@@ -126,9 +124,6 @@ public sealed class PerspectiveRail : ListBox
             Activate(attempted);
         }
     }
-
-    /// <summary>Puts a destination into its error state (spec §C4): the body failed to build; activation retries.</summary>
-    public void ShowFailure(Perspective perspective, string reason) => ItemFor(perspective)?.ShowFailure(reason);
 
     protected override DependencyObject GetContainerForItemOverride() => new PerspectiveRailItem();
 
@@ -277,19 +272,12 @@ public sealed class PerspectiveRail : ListBox
 /// <summary>
 /// One destination on the rail: its row, its constant accessible name (<i>"&lt;Title&gt; perspective"</i>
 /// — never suffixed with state), its tooltip with the keystroke rendered from the bound gesture
-/// (PS-R4), and its error state. The visual states are the item style in <c>MainWindow.xaml</c>.
+/// (PS-R4). The visual states are the item style in <c>MainWindow.xaml</c>; there is no error state —
+/// every body is a docking host built at construction, so no switch can fail to build one (ADR-0045 §1(b)).
 /// </summary>
 public sealed class PerspectiveRailItem : ListBoxItem
 {
-    /// <summary>The body-failure reason while the destination is in its error state; null otherwise.</summary>
-    public static readonly DependencyProperty FailureProperty = DependencyProperty.Register(
-        nameof(Failure), typeof(string), typeof(PerspectiveRailItem), new PropertyMetadata(null));
-
-    /// <summary>True while <see cref="Failure"/> is set — what the item style's error trigger reads.</summary>
-    public static readonly DependencyProperty HasFailureProperty = DependencyProperty.Register(
-        nameof(HasFailure), typeof(bool), typeof(PerspectiveRailItem), new PropertyMetadata(false));
-
-    /// <summary>The glyph, resolved from the icon registry by the row's title (<c>IconCoding</c>, <c>IconExplore</c>, <c>IconArchitecture</c>, <c>IconCoordination</c> — PS-R4).</summary>
+    /// <summary>The glyph, resolved from the icon registry by the row's title (<c>IconFactory</c>, <c>IconReview</c>, <c>IconUnderstand</c> — PS-R4).</summary>
     public static readonly DependencyProperty GlyphProperty = DependencyProperty.Register(
         nameof(Glyph), typeof(Geometry), typeof(PerspectiveRailItem), new PropertyMetadata(null));
 
@@ -306,18 +294,6 @@ public sealed class PerspectiveRailItem : ListBoxItem
 
     public Perspective? Row { get; private set; }
 
-    public string? Failure
-    {
-        get => (string?)GetValue(FailureProperty);
-        private set
-        {
-            SetValue(FailureProperty, value);
-            SetValue(HasFailureProperty, value is not null);
-        }
-    }
-
-    public bool HasFailure => (bool)GetValue(HasFailureProperty);
-
     public Geometry? Glyph => (Geometry?)GetValue(GlyphProperty);
 
     /// <summary>The tooltip's text: the title and the bound gesture's display string — never a typed chord (US-C10 b3).</summary>
@@ -327,8 +303,7 @@ public sealed class PerspectiveRailItem : ListBoxItem
 
         var command = WorkbenchCommandCatalog.All.First(c => string.Equals(c.Id, row.CommandId, StringComparison.Ordinal));
         var bound = KeyGestures.For(command).FirstOrDefault()?.GetDisplayStringForCulture(CultureInfo.CurrentCulture);
-        var what = row.Body == PerspectiveBody.FullWindow ? $"{row.Title} — graph & reader" : row.Title;
-        return bound is null ? what : $"{what} — {bound}";
+        return bound is null ? row.Title : $"{row.Title} — {bound}";
     }
 
     internal void Bind(Perspective row)
@@ -340,29 +315,9 @@ public sealed class PerspectiveRailItem : ListBoxItem
         // tooltip's HelpText (the UX & Accessibility lens, SH-4.1).
         AutomationProperties.SetAcceleratorKey(this, row.Gesture);
         // A resource REFERENCE, resolved when the item enters the tree: it walks the window's
-        // dictionary (where IconCoding/IconArchitecture live this horizon) and the application's
-        // (IconExplore). Application.TryFindResource never searches a Window's resources — the WPF
+        // dictionary (where IconFactory/IconReview/IconUnderstand live this horizon) and the
+        // application's. Application.TryFindResource never searches a Window's resources — the WPF
         // lens's finding: two of three glyphs resolved to null and rendered as blank pills.
         SetResourceReference(GlyphProperty, $"Icon{row.Title}");
-    }
-
-    internal void ShowFailure(string reason)
-    {
-        var status = $"Couldn't open {Row?.Title}: {reason}. Activate to try again.";
-        Failure = status;
-        AutomationProperties.SetItemStatus(this, status);
-        ToolTip = status;
-    }
-
-    internal void ClearFailure()
-    {
-        if (Failure is null)
-        {
-            return;
-        }
-
-        Failure = null;
-        AutomationProperties.SetItemStatus(this, string.Empty);
-        ToolTip = Row is null ? null : TooltipFor(Row);
     }
 }

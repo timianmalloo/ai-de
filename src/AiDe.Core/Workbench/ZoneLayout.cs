@@ -172,32 +172,32 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN
-    /// table, never the combined seed <see cref="Default()"/> filtered down (the trap
+    /// The per-perspective default (Addendum C §B4; Rulings 54/59/60/61; ADR-0045 §1) — each docking
+    /// host's OWN table, never the combined seed <see cref="Default()"/> filtered down (the trap
     /// <c>ZoneBackedLayoutService</c> named: filtering one shared seed re-points "Domain" at the
     /// Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).
     /// </summary>
     /// <remarks>
-    /// Coding, Architecture and Coordination have a docking host (<see cref="PerspectiveBody.DockHost"/>);
-    /// Explore's full-window body has no zone layout and no caller ever asks this for it
-    /// (<c>DockHost.Create</c> refuses a non-host perspective first) — so anything other than
-    /// Architecture or Coordination falls back to Coding's table, which is the only other member of
-    /// the closed set this method is ever actually asked for.
+    /// One arm per row of the closed set, and no fall-back: a perspective this table does not name is
+    /// a defect, refused here rather than silently given another host's table (the WL-S design's
+    /// Patterns-Expert finding 5).
     /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">The perspective is not a row of <see cref="PerspectiveSet"/>.</exception>
     public static WorkbenchLayout Default(Perspective perspective)
     {
         ArgumentNullException.ThrowIfNull(perspective);
 
         return perspective.Id switch
         {
-            "architecture" => ArchitectureDefault(),
-            "coordination" => CoordinationDefault(),
-            _ => CodingDefault(),
+            "factory" => FactoryDefault(),
+            "review" => ReviewDefault(),
+            "understand" => UnderstandDefault(),
+            _ => throw new ArgumentOutOfRangeException(nameof(perspective), perspective.Id, "not a row of the closed Perspective set"),
         };
     }
 
     /// <summary>
-    /// Coding's default (Ruling 60 as re-cut by Rulings 83, 84 and 88; US-C6): <b>Left = session
+    /// Factory's default — Coding's table, unchanged by the re-row (Ruling 60 as re-cut by Rulings 83, 84 and 88; US-C6; ADR-0045 §1): <b>Left = session
     /// documents</b> — empty until one opens (an empty <see cref="ZoneStack"/> is not constructible,
     /// so the content is null and the zone renders as its rail), cut at <see cref="CodingLeftExtent"/>
     /// so the thread's 96ch measure fits at the startup size · <b>Center = the empty state</b> — the
@@ -214,9 +214,9 @@ public sealed record WorkbenchLayout(
     /// — costs a process for a pane the operator's five screenshots never showed open.</para>
     /// <para>A default that seeds a kind its own host refuses is a drop at construction, which
     /// <c>TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops</c> pins as a defect; every kind
-    /// here is Coding's.</para>
+    /// here is Factory's.</para>
     /// </remarks>
-    private static WorkbenchLayout CodingDefault()
+    private static WorkbenchLayout FactoryDefault()
     {
         var bottom = new ZoneStack([new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
 
@@ -234,7 +234,7 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// Architecture's default (<b>Ruling 140</b>, amending Ruling 94 — the operator: <i>"the
+    /// Understand's default — Architecture's table, unchanged by the re-row (<b>Ruling 140</b>, amending Ruling 94 — the operator: <i>"the
     /// right-side-views for the architecture explorer need to be Graph and Tree, where tree is the
     /// more familiar dev view like in vs code"</i>): <b>Center = Graph (active), Tree</b> at extent
     /// 1.0 · <b>Left, Right and Bottom = empty, collapsed</b>.
@@ -257,7 +257,7 @@ public sealed record WorkbenchLayout(
     /// <c>docs/proof/perspective-content.md</c>. It stays reachable from the derived View menu
     /// either way; re-add it here as a Center tab the moment the check finds real content.</para>
     /// </remarks>
-    private static WorkbenchLayout ArchitectureDefault()
+    private static WorkbenchLayout UnderstandDefault()
     {
         // Ruling 140 amends Ruling 94's layout line to the operator's own words: "the right-side-views
         // for the architecture explorer need to be Graph and Tree - where tree is the more familiar dev
@@ -299,33 +299,11 @@ public sealed record WorkbenchLayout(
     public const double ArchitectureLeftExtent = 0.22;
 
     /// <summary>
-    /// Coordination's default (Ruling 84; §B4's third table — the Owner's arrangement, Inferred until
-    /// the operator runs it): the watcher's Terminal sessions list alone in the Left (the master list;
-    /// the switch lands here), Ledger · Leaderboard · Message board as three Center tabs — Ledger
-    /// first, its rows are the widest — the Right empty, the Bottom empty and collapsed. Daydreams is
-    /// admitted and reachable from the View menu, not in the default. Nothing on this bench takes
-    /// typed input: no terminal, no session document, no prompt draft (none is admitted).
+    /// Review's default (the WL-S design's §1, D3): four empty zones. Review admits no kind until
+    /// WL-5 lands the change packet, so there is nothing to seed; the Center renders its empty copy and
+    /// every other zone its rail.
     /// </summary>
-    private static WorkbenchLayout CoordinationDefault()
-    {
-        var left = new ZoneStack([new Surface("sessions", "sessions", "Terminal sessions")]);
-        var center = new ZoneStack(
-        [
-            new Surface("ledger", "ledger", "Ledger"),
-            new Surface("leaderboard", "leaderboard", "Leaderboard"),
-            new Surface("board", "board", "Message board"),
-        ]);
-
-        var zones = ImmutableDictionary.CreateRange(new[]
-        {
-            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
-            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
-            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
-            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, center, Extent: 1.0, Collapsed: false)),
-        });
-
-        return new WorkbenchLayout(zones, [], Maximized: null);
-    }
+    private static WorkbenchLayout ReviewDefault() => Empty();
 
     /// <summary>An empty frame — all four zones present, none with content. Used by the converter as a base.</summary>
     public static WorkbenchLayout Empty()

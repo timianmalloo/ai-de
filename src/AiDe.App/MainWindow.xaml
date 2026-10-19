@@ -15,23 +15,20 @@
         FontFamily="Segoe UI Variable Text, Segoe UI"
         FontSize="13">
     <Window.Resources>
-        <!--  PS-R4: every rail glyph is a registry entry, resolved by the row's title (Icon<Title>).
-              IconExplore and IconAdd live in App.xaml's registry; these three are the rows Addendum C
-              adds, kept beside the rail until they join that registry (seam request: App.xaml).
-              IconCoordination (Ruling 84; DESIGN.md errata after Rulings 83-84): a ring with three
-              nodes on it - a round table - round where Architecture's blocks are square and
-              Explore's folder is a tab; the fleet as sessions in one circle. Stroked, like its
-              neighbours (the item template strokes the glyph; it fills nothing): the nodes are
-              r=0.8 circles, which the 1.6 stroke fills into solid beads (the mockup's filled
-              nodes) rather than r=2 rings the ring's arc would bisect; bounds 16 x 16.8, so
-              Stretch=Uniform scales it in step with IconCoding's 16 x 14.  -->
-        <Geometry x:Key="IconCoding">M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14</Geometry>
-        <Geometry x:Key="IconArchitecture">M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5M9.5 11h5</Geometry>
-        <Geometry x:Key="IconCoordination">M4 12a8 8 0 1 0 16 0a8 8 0 1 0-16 0zM11.2 4a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M4.3 16a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M18.1 16a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0</Geometry>
+        <!--  PS-R4: every rail glyph is a registry entry, resolved by the row's title (Icon<Title>),
+              kept beside the rail until they join App.xaml's registry. ADR-0045 re-rows the set:
+              IconFactory is the former Coding glyph (the code brackets - where the change is made),
+              IconUnderstand the former Architecture glyph (the building), and IconReview a document
+              with a tick - the verdict on a change. Stroked, like its neighbours (the item template
+              strokes the glyph; it fills nothing); bounds about 11 x 16, so Stretch=Uniform scales it
+              in step with IconFactory's 16 x 14.  -->
+        <Geometry x:Key="IconFactory">M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14</Geometry>
+        <Geometry x:Key="IconReview">M7 4h7l4 4v12H7zM14 4v4h4M9.5 14l2 2 3.5-4</Geometry>
+        <Geometry x:Key="IconUnderstand">M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5M9.5 11h5</Geometry>
 
         <!--  The rail destination (DESIGN.md PS-R2 state table): rest - text-muted on the sunken
               rail; hover - text on surface-raised; selected - accent glyph on surface-raised with
-              the 3px accent bar; focus - a 2px outer focus ring; error - a danger badge. The leaf
+              the 3px accent bar; focus - a 2px outer focus ring. The leaf
               never states its own ink: the container pairs, the glyph inherits (PS-T1's rule).
               No disabled state exists (AR3). 44 x 44 target (SC 2.5.8).  -->
         <Style TargetType="wb:PerspectiveRailItem">
@@ -52,13 +49,9 @@
                             <Border x:Name="FocusRing" Margin="4,-2,4,-2" CornerRadius="12" BorderThickness="2"
                                     BorderBrush="{StaticResource FocusBrush}" Visibility="Collapsed" />
                             <Border x:Name="Pill" Margin="6,0,6,0" CornerRadius="10" Background="{TemplateBinding Background}">
-                                <Grid>
-                                    <Path Width="22" Height="22" Stretch="Uniform" Data="{TemplateBinding Glyph}"
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
-                                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                                    <Ellipse x:Name="ErrorBadge" Width="8" Height="8" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                             Margin="0,4,4,0" Fill="{StaticResource DangerBrush}" Visibility="Collapsed" />
-                                </Grid>
+                                <Path Width="22" Height="22" Stretch="Uniform" Data="{TemplateBinding Glyph}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                                      StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -73,9 +66,6 @@
                             </Trigger>
                             <Trigger Property="IsKeyboardFocused" Value="True">
                                 <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
-                            </Trigger>
-                            <Trigger Property="HasFailure" Value="True">
-                                <Setter TargetName="ErrorBadge" Property="Visibility" Value="Visible" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -157,7 +147,7 @@
                           StrokeThickness="1.8" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 </Button>
                 <Border Height="1" Margin="12,4,12,6" Background="{StaticResource BorderBrush}" />
-                <!--  AR1 / PS-R2 - THE DESTINATIONS: Coding · Explore · Architecture · Coordination, one selected,
+                <!--  AR1 / PS-R2 - THE DESTINATIONS: Factory · Review · Understand, one selected,
                       manual activation (Up/Down move focus; Enter, Space or a click activate; Tab
                       leaves the rail once). A vertical tab list to UIA, its selected state the real
                       one - never a "(active)" name suffix. AR3: a destination that cannot be

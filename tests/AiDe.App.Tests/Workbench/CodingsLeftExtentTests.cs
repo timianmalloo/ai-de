@@ -109,8 +109,8 @@ public sealed class CodingsLeftExtentTests(ITestOutputHelper output) : IDisposab
         shell.OpenSessionDocument(config);
         frame.Settle();
         var document = frame.Document(SessionDocumentSurface.SurfaceIdFor(config.SessionId));
-        Assert.Equal(ZoneId.Left, shell.Coding.Service.Zones.FindZoneOf(document.SurfaceId));   // the row's precondition: docked at Left (Ruling 83)
-        Assert.True(shell.Coding.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
+        Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(document.SurfaceId));   // the row's precondition: docked at Left (Ruling 83)
+        Assert.True(shell.Factory.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
         Feed(document, turns);
         document.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
         frame.Settle();
@@ -224,8 +224,8 @@ public sealed class CodingsLeftExtentTests(ITestOutputHelper output) : IDisposab
         shell.OpenSessionDocument(config);
         frame.Settle();
         var document = frame.Document(SessionDocumentSurface.SurfaceIdFor(config.SessionId));
-        Assert.Equal(ZoneId.Left, shell.Coding.Service.Zones.FindZoneOf(document.SurfaceId));   // the row's precondition: docked at Left, Bottom collapsed
-        Assert.True(shell.Coding.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
+        Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(document.SurfaceId));   // the row's precondition: docked at Left, Bottom collapsed
+        Assert.True(shell.Factory.Service.Zones.Zone(ZoneId.Bottom).Collapsed);
         Feed(document, turns);
         document.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
         frame.Settle();

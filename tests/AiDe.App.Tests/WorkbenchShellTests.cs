@@ -45,17 +45,17 @@ public sealed class WorkbenchShellTests
     [Fact]
     public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossAllHosts()
     {
-        var (coding, codingRendered, architecture, coordination) = WithShell((shell, _) => (
-            shell.Coding.Service.Zones.AllSurfaces().Select(s => s.Title).ToList(),
-            shell.Coding.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
-            shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
-            shell.Coordination.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
+        var (coding, codingRendered, architecture, review) = WithShell((shell, _) => (
+            shell.Factory.Service.Zones.AllSurfaces().Select(s => s.Title).ToList(),
+            shell.Factory.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
+            shell.Understand.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
+            shell.Review.Service.Zones.AllSurfaces().Select(s => s.Title).ToList()));
 
         // Coding's terminal is in the model, held by the collapsed Bottom (Ruling 88) — and so
         // absent from the projection until the rail is expanded (CollapsedBottomTests).
         Assert.Contains("Terminal — pwsh", coding);
         Assert.DoesNotContain("Terminal — pwsh", codingRendered);
-        Assert.DoesNotContain("Terminal sessions", coding);   // Ruling 84: the Loomkeeper kinds left Coding
+        Assert.DoesNotContain("Terminal sessions", coding);   // admitted under Factory, not in its default (Ruling 55d)
         Assert.DoesNotContain("Graph", coding);
 
         // Ruling 140: Architecture's default Center is Graph (active) then Tree, and the Graph has
@@ -69,18 +69,13 @@ public sealed class WorkbenchShellTests
         // composed default is the claim; absence from admission would be an envelope drop.
         Assert.DoesNotContain("Contexts", architecture);
         Assert.DoesNotContain("Domain", architecture);
-        var admitted = DockHost.AdmissionFor(PerspectiveSet.Architecture);
+        var admitted = DockHost.AdmissionFor(PerspectiveSet.Understand);
         Assert.True(admitted.Admits("contexts"));
         Assert.True(admitted.Admits("classdiagram"));
         Assert.True(admitted.Admits("solution-tree"));
         Assert.DoesNotContain("Terminal — pwsh", architecture);
 
-        Assert.Contains("Terminal sessions", coordination);   // Ruling 62's caption, on its new bench
-        Assert.Contains("Ledger", coordination);
-        Assert.Contains("Leaderboard", coordination);
-        Assert.Contains("Message board", coordination);
-        Assert.DoesNotContain("Terminal — pwsh", coordination);
-        Assert.DoesNotContain("Graph", coordination);
+        Assert.Empty(review);   // Review admits no kind until WL-5 (the WL-S design's D3)
     }
 
     // The whole point of composing in one place: keyboard, view and model must share ONE service, or
@@ -164,23 +159,25 @@ public sealed class WorkbenchShellTests
     [Fact]
     public void FindSurfaceId_WalksUpToTheOwningSurface()
     {
-        var found = WithShell((shell, _) =>
+        var (expected, found) = WithShell((shell, _) =>
         {
+            Assert.True(shell.Controller.Execute("surface.show.sessions"));   // ADR-0045 §1(b): admitted under Factory, not defaulted
+            var sessionsId = shell.Factory.Service.Zones.AllSurfaces().Single(s => s.Kind == "sessions").SurfaceId;
             AvalonDock.Layout.LayoutDocument? doc = null;
             void Walk(AvalonDock.Layout.ILayoutElement e)
             {
-                if (e is AvalonDock.Layout.LayoutDocument d && d.ContentId == "sessions") { doc = d; }
+                if (e is AvalonDock.Layout.LayoutDocument d && d.ContentId == sessionsId) { doc = d; }
                 if (e is AvalonDock.Layout.ILayoutContainer c)
                 {
                     foreach (var child in c.Children) { Walk(child); }
                 }
             }
 
-            Walk(shell.Coordination.Manager.Layout);   // Ruling 84: the sessions pane is host C's
-            return doc?.ContentId;
+            Walk(shell.Factory.Manager.Layout);   // ADR-0045 §1(b): the sessions pane opens in Factory
+            return (sessionsId, doc?.ContentId);
         });
 
-        Assert.Equal("sessions", found);
+        Assert.Equal(expected, found);
     }
 
     /// <summary>A concrete no-op workspace read surface for attach tests (base defaults, nothing thrown).</summary>
@@ -232,13 +229,13 @@ public sealed class WorkbenchShellTests
         // through host B's controller — the one a code viewer opened from the graph reaches.
         var (before, after, wentElsewhere) = WithShell((shell, _) =>
         {
-            var service = shell.Architecture.Service;
+            var service = shell.Understand.Service;
             var centre = service.Current.AllStacks()
                 .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
 
             var was = centre.Surfaces[centre.ActiveIndex].SurfaceId;
 
-            Assert.True(shell.Architecture.Controller.Execute("surface.new.codeviewer"));
+            Assert.True(shell.Understand.Controller.Execute("surface.new.codeviewer"));
 
             var centreNow = service.Current.AllStacks()
                 .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
@@ -254,6 +251,31 @@ public sealed class WorkbenchShellTests
         Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
     }
 
+    // SH-4.1/4.2 on the Factory host (the WL-S design's §3 oracle 2): "Show ledger" with a session
+    // document active in the Left docks the ledger in the Center by the kind's zone rule — never
+    // tabbed beside the session by the placement policy, where it would become the Left's active tab
+    // and so Factory's landing. RED before the re-row: the ledger was not admitted by the initial host
+    // (sp3/sh41-factory-red.txt).
+    [Fact]
+    public void ShowLedger_InFactory_WithASessionActiveInTheLeft_DocksInTheCenter_AndTheLandingStaysTheSession()
+    {
+        var (zone, landing) = WithShell((shell, _) =>
+        {
+            var factory = shell.Hosts[0];
+            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            factory.Adapter.Render();
+            factory.Adapter.ActivateInView("session:s1");
+
+            Assert.True(factory.Controller.Execute("surface.show.ledger"));
+
+            var ledger = factory.Service.Zones.AllSurfaces().SingleOrDefault(s => s.Kind == "ledger");
+            return (ledger is null ? null : factory.Service.Zones.FindZoneOf(ledger.SurfaceId), PerspectiveShell.LandingSurfaceFor(factory));
+        });
+
+        Assert.Equal(ZoneId.Center, zone);
+        Assert.Equal("session:s1", landing);
+    }
+
     // The D&P reviewer's finding on the one-instance rule at open: a "Show <one-instance kind>" whose
     // only instance sits in a COLLAPSED zone must expand that zone and activate it — never add a
     // second (now refused) and never leave nothing on screen. RED before the fix: the Show branch
@@ -264,8 +286,8 @@ public sealed class WorkbenchShellTests
         var (count, collapsed, said) = WithShell((shell, _) =>
         {
             Assert.True(shell.Controller.Execute("surface.show.diagnostics"));
-            var zone = shell.Coding.Service.Zones.FindZoneOf(
-                shell.Coding.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId)!.Value;
+            var zone = shell.Factory.Service.Zones.FindZoneOf(
+                shell.Factory.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId)!.Value;
             var stackId = zone switch
             {
                 ZoneId.Left => ZonesToTree.LeftStackId,
@@ -276,22 +298,22 @@ public sealed class WorkbenchShellTests
             if (zone == ZoneId.Center)
             {
                 // The Center never collapses; move the pane to a tool zone so the case is reachable.
-                shell.Coding.Service.Apply(new LayoutOperation.MoveSurface(
-                    shell.Coding.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId,
+                shell.Factory.Service.Apply(new LayoutOperation.MoveSurface(
+                    shell.Factory.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId,
                     new DropTarget(ZonesToTree.BottomStackId, DropKind.JoinStack)));
                 zone = ZoneId.Bottom;
                 stackId = ZonesToTree.BottomStackId;
             }
 
-            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Collapsed)).Applied);
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Collapsed)).Applied);
             shell.Adapter.Render();
-            Assert.True(shell.Coding.Service.Zones.Zone(zone).Collapsed);
+            Assert.True(shell.Factory.Service.Zones.Zone(zone).Collapsed);
 
             Assert.True(shell.Controller.Execute("surface.show.diagnostics"));
 
             return (
-                shell.Coding.Service.Zones.AllSurfaces().Count(s => s.Kind == "diagnostics"),
-                shell.Coding.Service.Zones.Zone(zone).Collapsed,
+                shell.Factory.Service.Zones.AllSurfaces().Count(s => s.Kind == "diagnostics"),
+                shell.Factory.Service.Zones.Zone(zone).Collapsed,
                 shell.Announcer.Last);
         });
 
@@ -311,14 +333,15 @@ public sealed class WorkbenchShellTests
     {
         var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said, siblingKind) = WithShell((shell, _) =>
         {
-            // Daydreams tabs into an occupied stack of host C (the placement policy's last rule —
-            // any stack; measured: the Left, beside Terminal sessions), so it is NOT the first tab
-            // of its stack: the shell reconciles the view into the model before a Show, and a
-            // reconcile that lands on tab 0 would hand a mutated Show its answer for free (measured
-            // — the Test Architect's finding that the "focuses it" half had no failing input).
-            var host = shell.Coordination;
+            // Daydreams docks in Factory's Center by its zone rule (ADR-0045 §1(b)), opened AFTER the
+            // ledger so it is NOT the first tab of its stack: the shell reconciles the view into the
+            // model before a Show, and a reconcile that lands on tab 0 would hand a mutated Show its
+            // answer for free (measured — the Test Architect's finding that the "focuses it" half
+            // had no failing input).
+            var host = shell.Factory;
+            Assert.True(shell.Controller.Execute("surface.show.ledger"));
             Assert.True(shell.Controller.Execute("surface.show.daydreams"));
-            Assert.DoesNotContain(shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces), s => s.Kind == "daydreams");   // never in Coding
+            Assert.DoesNotContain(shell.Understand.Service.Current.AllStacks().SelectMany(st => st.Surfaces), s => s.Kind == "daydreams");   // only where it is admitted
             var home = host.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == "daydreams"));
             var daydreamsTab = home.Surfaces.ToList().FindIndex(s => s.Kind == "daydreams");
             Assert.True(home.Surfaces.Count > 1 && daydreamsTab > 0, "daydreams did not land in an occupied stack as a later tab — this test would prove nothing (DC-016)");
@@ -388,9 +411,11 @@ public sealed class WorkbenchShellTests
             var status = WithShell((shell, _) =>
             {
                 shell.AttachWorkspace(new BareQueries(), dataDir);
-                shell.Coordination.Adapter.Render();
+                Assert.True(shell.Controller.Execute("surface.show.sessions"));   // ADR-0045 §1(b): admitted under Factory, not defaulted
+                shell.Factory.Adapter.Render();
 
-                var content = shell.Coordination.Adapter.ContentFor("sessions");   // Ruling 84: host C's pane
+                var sessionsId = shell.Factory.Service.Zones.AllSurfaces().Single(s => s.Kind == "sessions").SurfaceId;
+                var content = shell.Factory.Adapter.ContentFor(sessionsId);
                 var unwrapped = content is System.Windows.Controls.Border { Child: FrameworkElement inner } ? inner : content;
                 var stack = Assert.IsType<StackPanel>(unwrapped);
                 return stack.Children.OfType<TextBlock>().Last().Text;

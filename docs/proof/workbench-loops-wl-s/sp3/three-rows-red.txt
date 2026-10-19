@@ -1,0 +1,60 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp3-perspective-rerow\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.PerspectiveSetTests.EachRowHasItsOwnLandingZone_FactoryLeftUntilTheNotebook_ReviewAndUnderstandCenter [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.PerspectiveSetTests.TheRoutingOrderIsUnderstandThenReviewThenFactory [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.PerspectiveSetTests.All_HasExactlyThreeRows_FactoryReviewUnderstand_EachWithABoundGesture [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Workbench.PerspectiveSetTests.ThePerspectiveGesturesAreCtrlPlusTheRailDigit_AndNothingElseUsesThem [FAIL]
+  Failed AiDe.Core.Tests.Workbench.PerspectiveSetTests.EachRowHasItsOwnLandingZone_FactoryLeftUntilTheNotebook_ReviewAndUnderstandCenter [10 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                           ↓ (pos 1)
+Expected: <generated>                               [Left, Center, Center]
+Actual:   IListSelectIterator<Perspective, ZoneId?> [Left, null, Center, Left]
+                                                           ↑ (pos 1)
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.PerspectiveSetTests.EachRowHasItsOwnLandingZone_FactoryLeftUntilTheNotebook_ReviewAndUnderstandCenter() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\Workbench\PerspectiveSetTests.cs:line 51
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.PerspectiveSetTests.TheRoutingOrderIsUnderstandThenReviewThenFactory [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                    ↓ (pos 0)
+Expected: <generated>                              ["understand", "review", "factory"]
+Actual:   IListSelectIterator<Perspective, string> ["architecture", "coding", "coordination"]
+                                                    ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.PerspectiveSetTests.TheRoutingOrderIsUnderstandThenReviewThenFactory() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\Workbench\PerspectiveSetTests.cs:line 123
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.PerspectiveSetTests.All_HasExactlyThreeRows_FactoryReviewUnderstand_EachWithABoundGesture [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                    ↓ (pos 0)
+Expected: <generated>                              ["factory", "review", "understand"]
+Actual:   IListSelectIterator<Perspective, string> ["coding", "explore", "architecture", "coordination"]
+                                                    ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.PerspectiveSetTests.All_HasExactlyThreeRows_FactoryReviewUnderstand_EachWithABoundGesture() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\Workbench\PerspectiveSetTests.cs:line 28
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.PerspectiveSetTests.ThePerspectiveGesturesAreCtrlPlusTheRailDigit_AndNothingElseUsesThem [6 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Filter matched in collection
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ↓ (pos 13)
+Collection: [···, WorkbenchCommand { Id = perspective.explore, Title = Explore perspective, Gesture = Ctrl+2, OperationKind = , Hint = Knowledge exploration: the full-window graph and reader. The other perspectives are retained, never rebuilt., Menu = _View, Scope = CommandScope { Kind = Global, SurfaceKind =  } }, WorkbenchCommand { Id = perspective.architecture, Title = Architecture perspective, Gesture = Ctrl+3, OperationKind = , Hint = Code and architecture understanding: the evidence, class, sequence, context and join views., Menu = _View, Scope = CommandScope { Kind = Global, SurfaceKind =  } }, WorkbenchCommand { Id = perspective.coordination, Title = Coordination perspective, Gesture = Ctrl+4, OperationKind = , Hint = Fleet observation: the Loomkeeper watcher's terminal sessions, ledger, leaderboard, message board and daydreams. Read in parallel; no composer on this bench., Menu = _View, Scope = CommandScope { Kind = Global, SurfaceKind =  } }, WorkbenchCommand { Id = workbench.nextSurface, Title = Next tab in pane, Gesture = Ctrl+PageDown, OperationKind = ActivateSurface, Hint = Moves to the next surface in the focused pane., Menu = _View, Scope = CommandScope { Kind = DockHost, SurfaceKind =  } }, WorkbenchCommand { Id = workbench.previousSurface, Title = Previous tab in pane, Gesture = Ctrl+PageUp, OperationKind = ActivateSurface, Hint = Moves to the previous surface in the focused pane., Menu = _View, Scope = CommandScope { Kind = DockHost, SurfaceKind =  } }, ···]
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.PerspectiveSetTests.ThePerspectiveGesturesAreCtrlPlusTheRailDigit_AndNothingElseUsesThem() in C:\Projects\ai-de-sp3-perspective-rerow\tests\AiDe.Core.Tests\Workbench\PerspectiveSetTests.cs:line 115
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 30 ms - AiDe.Core.Tests.dll (net10.0)
+exit=1
