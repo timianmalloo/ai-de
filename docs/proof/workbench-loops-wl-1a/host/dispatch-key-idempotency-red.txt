@@ -1,0 +1,21 @@
+# dispatch-key-idempotency — red
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.BeginAgain_AfterTheEpochMoved_StillReturnsTheExistingReceipt [24 ms]
+  Error Message:
+   AiDe.Core.Store.WorkspaceStoreException : attempt epoch 8 is not the current 1
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.BeginTwice_WritesOneAttemptRow_AndTheSecondIsAlreadyAttempted [21 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'UNIQUE constraint failed: dispatch_attempt_fact.dispatch_key'.
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.SameDispatchKeyTwice_LaunchesOnce [275 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'UNIQUE constraint failed: dispatch_attempt_fact.dispatch_key'.
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.TwoConcurrentDispatchesOfOneKey_LaunchOnce [38 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'UNIQUE constraint failed: dispatch_attempt_fact.dispatch_key'.
+
+runs:
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 324 ms - AiDe.Core.Tests.dll (net10.0)
+Failed!  - Failed:     8, Passed:     0, Skipped:     0, Total:     8, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

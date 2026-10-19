@@ -1,0 +1,15 @@
+# suite — node 1 green (tree at the green commit's content, before the AttemptHost.cs move)
+
+dotnet test tests/AiDe.Core.Tests -nologo
+Passed!  - Failed:     0, Passed:  2944, Skipped:     1, Total:  2945, Duration: 2 m 9 s - AiDe.Core.Tests.dll (net10.0)
+
+dotnet test tests/AiDe.App.Tests -nologo
+Failed!  - Failed:     1, Passed:  1033, Skipped:     0, Total:  1034, Duration: 3 m 58 s - AiDe.App.Tests.dll (net10.0)
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+The one App failure is a desktop-foreground probe (SendInput could not hold the foreground while other
+worktrees ran suites); untouched by this track. Re-run alone:
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~SolutionTreeChordTests -nologo
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 20 s - AiDe.App.Tests.dll (net10.0)

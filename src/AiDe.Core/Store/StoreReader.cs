@@ -689,6 +689,7 @@ public sealed partial class StoreReader : IDisposable
         using var command = Command("""
             SELECT a.dispatch_key FROM dispatch_attempt_fact a
             WHERE NOT EXISTS (SELECT 1 FROM dispatch_outcome_fact o WHERE o.dispatch_key = a.dispatch_key)
+              AND (a.route_fingerprint IS NULL OR a.route_fingerprint = 'pty')
             ORDER BY a.ingress_seq;
             """);
         using var reader = command.ExecuteReader();

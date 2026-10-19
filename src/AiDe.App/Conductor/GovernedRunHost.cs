@@ -2,6 +2,9 @@ using System.IO;
 using System.Text.Json.Nodes;
 using AiDe.App.Workbench;
 using AiDe.Core.AgentPlane;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
+using AiDe.Core.Store.Records;
 using AiDe.Core.Watcher;
 
 namespace AiDe.App.Conductor;
@@ -126,7 +129,8 @@ public static class GovernedRunHost
     public static async Task<GovernedRunResult> RunAsync(
         GovernedRunRequest request,
         CancellationToken cancellationToken = default,
-        Action<ObservedRunEvent>? sink = null)
+        Action<ObservedRunEvent>? sink = null,
+        AttemptRun? attempt = null)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -140,7 +144,8 @@ public static class GovernedRunHost
         var diagnostics = new System.Collections.Concurrent.ConcurrentQueue<string>();
         void Report(string line) => diagnostics.Enqueue(line);
 
-        var runId = "run-" + Guid.NewGuid().ToString("n")[..8];
+        // ADR-0041 §1: an attempt's run_id IS its dispatch key; a headless run (no envelope) mints its own.
+        var runId = attempt?.DispatchKey ?? "run-" + Guid.NewGuid().ToString("n")[..8];
         var laneId = "lane-" + Guid.NewGuid().ToString("n")[..8];
         var time = TimeProvider.System;
 
@@ -226,10 +231,12 @@ public static class GovernedRunHost
             var readOnlySession = await OpenReadOnlySessionAsync(client, request.RepositoryRoot, runId, laneId, spawn.Binding, Report, cancellationToken)
                 .ConfigureAwait(false);
 
+            await DispatchedGateAsync(attempt, Report, cancellationToken).ConfigureAwait(false);
             var readOnlyPrompt = client.PromptAsync(readOnlySession, request.Prompt, cancellationToken);
 
             var readOnlyDrained = await DrainAsync(peer.Events, readOnlyPrompt, seams: null, Report, sink, cancellationToken)
                 .ConfigureAwait(false);
+            await SettleAsync(attempt, readOnlyPrompt, Report).ConfigureAwait(false);
 
             var readOnlyOutcome = EpisodeOutcome.Completed;
             try
@@ -310,6 +317,13 @@ public static class GovernedRunHost
         }
 
         worktree = provisioner.Provision(request.RepositoryRoot, spawn.Binding.EngineId, laneId);
+        if (attempt is not null)
+        {
+            await attempt.Ledger.AppendAttemptOutcomeAsync(
+                new OutcomeRow(attempt.DispatchKey, DispatchState.WorktreeProvisioned,
+                    Detail: new JsonObject { ["path"] = worktree.Path, ["branch"] = worktree.Branch }.ToJsonString()),
+                cancellationToken).ConfigureAwait(false);
+        }
         Report($"worktree: {worktree.Branch} at {worktree.Path} (coord install: {worktree.CoordInstalled})");
 
         var seams = new LeaseMonitor(request.Lease!, worktree.Path);
@@ -330,10 +344,12 @@ public static class GovernedRunHost
         var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, spawn.Binding, Report, cancellationToken)
             .ConfigureAwait(false);
 
+        await DispatchedGateAsync(attempt, Report, cancellationToken).ConfigureAwait(false);
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);
 
         var drained = await DrainAsync(peer.Events, prompt, seams, Report, sink, cancellationToken)
             .ConfigureAwait(false);
+        await SettleAsync(attempt, prompt, Report).ConfigureAwait(false);
 
         var outcome = EpisodeOutcome.Completed;
         try
@@ -406,6 +422,46 @@ public static class GovernedRunHost
             EngineExited: engine.HasExited,
             EnvironmentFindings: engine.EnvironmentFindings,
             Diagnostics: [.. diagnostics]);
+    }
+
+    /// <summary>
+    /// G2 (ADR-0041 §1): the attempt's <c>Dispatched</c> row, written immediately before the consequential
+    /// <c>session/prompt</c>. No attempt (the headless entry): nothing to gate.
+    /// </summary>
+    private static async Task DispatchedGateAsync(AttemptRun? attempt, Action<string> report, CancellationToken cancellationToken)
+    {
+        if (attempt is null)
+        {
+            return;
+        }
+
+        // The host launches only when ITS OWN Dispatched row committed (partial unique index). Not committed — a
+        // second launcher, or a sweep that resolved the attempt first — means no prompt is sent.
+        var dispatched = await attempt.Ledger.AppendAttemptOutcomeAsync(
+            new OutcomeRow(attempt.DispatchKey, DispatchState.Dispatched), cancellationToken).ConfigureAwait(false);
+        if (!dispatched.Committed)
+        {
+            throw new AgentPlaneException(AttemptErrorCodes.NotDispatched,
+                $"attempt {attempt.DispatchKey}: the Dispatched row did not commit; no prompt is sent");
+        }
+
+        report($"attempt {attempt.DispatchKey}: Dispatched");
+    }
+
+    /// <summary>
+    /// G3: the one terminal row, from this host's own awaited prompt (ADR-0041 §2) — written after the drain, so
+    /// every event the prompt produced was observed first.
+    /// </summary>
+    private static async Task SettleAsync(AttemptRun? attempt, Task<JsonObject> prompt, Action<string> report)
+    {
+        if (attempt is null)
+        {
+            return;
+        }
+
+        var terminal = AttemptTerminal.For(attempt.DispatchKey, prompt);
+        await attempt.Ledger.AppendAttemptOutcomeAsync(terminal, CancellationToken.None).ConfigureAwait(false);
+        report($"attempt {attempt.DispatchKey}: {terminal.State} {terminal.Cause ?? terminal.ErrorCode ?? ""}".TrimEnd());
     }
 
     /// <summary>
