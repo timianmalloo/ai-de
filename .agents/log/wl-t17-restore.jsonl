@@ -10,3 +10,16 @@
 {"agent": "wl-t17-restore", "at": 1792401916.646754, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 10, "session": "wl-t17-restore", "wi": "workbench-loops"}
 {"agent": "wl-t17-restore", "at": 1792401916.7639132, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "seq": 11, "session": "wl-t17-restore", "wi": "workbench-loops"}
 {"agent": "wl-t17-restore", "at": 1792401916.8691597, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/StoreNotebookRevisions.cs", "seq": 12, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402136.8713357, "kind": "claim", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 13, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402137.0427945, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "seq": 14, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402137.2188747, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 15, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402137.4214683, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 16, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402137.5945864, "kind": "claim", "path": "DESIGN.md", "seq": 17, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402137.7697458, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "seq": 18, "session": "wl-t17-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.4545665, "kind": "release", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 19, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.5444283, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "seq": 20, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.657485, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 21, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.7543662, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 22, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.8615575, "kind": "release", "path": "DESIGN.md", "seq": 23, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17-restore", "at": 1792402940.9685013, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "seq": 24, "session": "wl-t17-restore", "wi": "workbench-loops"}
+{"at": 1792402941.2109294, "from": "wl-t17-restore", "kind": "done", "mail_id": "mail-01M59RMS8T5K4QGWQ6WNXAZA12", "ref": null, "session": "wl-t17-restore", "to": "wl-leader2-20261019", "type": "mail"}

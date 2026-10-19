@@ -4,7 +4,7 @@ Runs the fast gates on a temporary DETACHED worktree at the commit being pushed,
 uncommitted files (e.g. an Owner's register edit not yet committed) once masked a red commit (4f62453b cited
 Ruling 160 before its heading was committed). docs-graph validate fails on a problem (index drift alone is allowed:
 joins regenerate the index). The repo copy tools/verify-ruling-citations.py is strict (Ruling 160).
-Exit 0 = safe to push; 1 = do not push.
+Exit 0 = safe to push; 1 = refused (do not push); 2 = usage (the check did not run).
 If the commit touches tools/, src/ or tests/, run the full gate_ratchet.py instead (the fast set does not cover them).
 It also refuses a push whose range (<base>..<commit>, base defaulting to origin/main) carries a join commit
 ("chore(join): join-<name> - ...") with no "join-<name>-step8" audit entry in the pushed tree: a ruling commit
@@ -18,7 +18,14 @@ import subprocess
 import sys
 import tempfile
 
+USAGE = "usage: python -I leader_precommit.py <repo root> [<commit> [<base>]]   exit: 0 OK, 1 refused, 2 usage"
+if len(sys.argv) < 2 or len(sys.argv) > 4 or any(a.startswith("-") for a in sys.argv[1:]):
+    print(USAGE)
+    sys.exit(2)
 ROOT = pathlib.Path(sys.argv[1])
+if not (ROOT / ".git").exists():
+    print(f"leader-precommit: {ROOT} is not a git checkout\n{USAGE}")
+    sys.exit(2)
 COMMIT = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
 BASE = sys.argv[3] if len(sys.argv) > 3 else "origin/main"
 PY = sys.executable
