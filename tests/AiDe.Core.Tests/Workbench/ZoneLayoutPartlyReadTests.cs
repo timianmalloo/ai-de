@@ -36,6 +36,7 @@ public sealed class ZoneLayoutPartlyReadTests
         var restored = Assert.IsType<WorkbenchLayout>(result.Layout);
         Assert.All(Enum.GetValues<ZoneId>(), id => Assert.Null(restored.Zone(id).Content));
         Assert.Equal("sessions", Assert.Single(Assert.Single(restored.Floating).Surfaces).SurfaceId);
+        Assert.Empty(result.LeftOutTitles);
     }
 
     [Fact]
@@ -54,6 +55,44 @@ public sealed class ZoneLayoutPartlyReadTests
         var restored = Assert.IsType<WorkbenchLayout>(result.Layout);
         Assert.Empty(restored.Floating);
         Assert.Equal(ZoneId.Left, restored.FindZoneOf("explore"));
+        Assert.Empty(result.LeftOutTitles);
+    }
+
+    // T21 node 5 check (A), the named form (Owner, 2026-10-19 ~15:10Z): a zone entry this build does
+    // not know cannot be placed, so it is left out, and the read names its surfaces by their saved
+    // titles, in saved order, through a split. Before this the entry vanished without a word.
+    [Fact]
+    public void AZoneEntryTheBuildDoesNotKnow_IsLeftOut_AndTheReadNamesItsSurfacesByTitle_InSavedOrder()
+    {
+        var path = Fixture("zone-layout-unknown-zone.json");
+        var zones = JsonNode.Parse(File.ReadAllText(path))!["layout"]!["zones"]!.AsArray();
+        Assert.Contains(zones, z => (string?)z!["id"] == "Nowhere");
+
+        ZoneLoadResult? result = null;
+        var thrown = Record.Exception(() => result = new ZoneLayoutStore(path).Read(None, Kinds));
+
+        Assert.Null(thrown);
+        Assert.Equal(ZoneLoadRefusal.None, result!.Refusal);
+        Assert.True(result.PartlyRead, "the read did not say that the unknown zone was left out");
+        Assert.Equal(["Notebook 2", "Graph"], result.LeftOutTitles);
+        var restored = Assert.IsType<WorkbenchLayout>(result.Layout);
+        Assert.Equal(ZoneId.Left, restored.FindZoneOf("explore"));
+        Assert.Null(restored.FindZoneOf("graph"));
+    }
+
+    // T21 node 5 check (A), the plain form: the left-out part holds no surface with a title, so the
+    // read says part was left out and names nothing.
+    [Fact]
+    public void AZoneEntryTheBuildDoesNotKnow_HoldingNoSurface_IsLeftOut_AndTheReadNamesNothing()
+    {
+        ZoneLoadResult? result = null;
+        var thrown = Record.Exception(
+            () => result = new ZoneLayoutStore(Fixture("zone-layout-unknown-zone-empty.json")).Read(None, Kinds));
+
+        Assert.Null(thrown);
+        Assert.Equal(ZoneLoadRefusal.None, result!.Refusal);
+        Assert.True(result.PartlyRead, "the read did not say that the unknown zone was left out");
+        Assert.Empty(result.LeftOutTitles);
     }
 
     // The control against over-reporting: an older file that simply has no "floating" field is not

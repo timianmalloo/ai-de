@@ -13,10 +13,42 @@ public sealed class ZoneLayoutPartlyReadRestoreTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "aide-partly-" + Guid.NewGuid().ToString("N"));
 
+    // The plain form: the left-out part holds no surface with a title (no "zones" field; an empty
+    // floating stack; a zone entry this build does not know, holding nothing), so nothing is named.
     [Theory]
     [InlineData("zone-layout-no-zones.json")]
     [InlineData("zone-layout-floating-no-surfaces.json")]
+    [InlineData("zone-layout-unknown-zone-empty.json")]
     public void AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(string fixture)
+    {
+        var result = RestoreFrom(fixture, out var applied);
+
+        Assert.True(applied, result.Announcement);
+        Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
+        Assert.Equal(
+            $"Restored your saved workbench arrangement. {LayoutPersistence.PartlyReadSentence}",
+            result.Announcement);
+        Assert.Equal("Part of your saved layout could not be read and was left out.", LayoutPersistence.PartlyReadSentence);
+    }
+
+    // T21 node 5 check (A), the named form (Owner, 2026-10-19 ~15:10Z): the dropped surfaces by their
+    // own titles, in saved order, joined with ", ". Never an internal id.
+    [Fact]
+    public void ALeftOutZoneHoldingTitledSurfaces_IsNamedByTheirTitles_InSavedOrder_AndNeverByAnId()
+    {
+        var result = RestoreFrom("zone-layout-unknown-zone.json", out var applied);
+
+        Assert.True(applied, result.Announcement);
+        Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
+        Assert.Equal(
+            "Restored your saved workbench arrangement. Part of your saved layout could not be read and was left out: Notebook 2, Graph.",
+            result.Announcement);
+        Assert.DoesNotContain("notebook-2", result.Announcement, StringComparison.Ordinal);
+        Assert.DoesNotContain("Nowhere", result.Announcement, StringComparison.Ordinal);
+        Assert.Equal("Part of your saved layout could not be read and was left out: ", LayoutPersistence.PartlyReadNamingPrefix);
+    }
+
+    private RestoreResult RestoreFrom(string fixture, out bool applied)
     {
         Directory.CreateDirectory(_dir);
         var layoutPath = Path.Combine(_dir, "layout.json");
@@ -31,12 +63,8 @@ public sealed class ZoneLayoutPartlyReadRestoreTests : IDisposable
         var thrown = Record.Exception(() => result = persistence.Restore());
 
         Assert.Null(thrown);
-        Assert.True(persistence.LastRestoreAppliedASavedArrangement, result!.Announcement);
-        Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
-        Assert.Equal(
-            $"Restored your saved workbench arrangement. {LayoutPersistence.PartlyReadSentence}",
-            result.Announcement);
-        Assert.Equal("Part of your saved layout could not be read and was left out.", LayoutPersistence.PartlyReadSentence);
+        applied = persistence.LastRestoreAppliedASavedArrangement;
+        return result!;
     }
 
     private static string RepoRoot()

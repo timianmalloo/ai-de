@@ -29,6 +29,8 @@ public sealed class LayoutPersistence : IDisposable
     /// </summary>
     internal const string PartlyReadSentence = "Part of your saved layout could not be read and was left out.";
 
+    internal const string PartlyReadNamingPrefix = "Part of your saved layout could not be read and was left out: ";
+
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
     private readonly SurfaceAvailability _availability;

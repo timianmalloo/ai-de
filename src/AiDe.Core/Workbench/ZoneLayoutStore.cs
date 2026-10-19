@@ -69,7 +69,10 @@ public enum ZoneLoadRefusal
 
 /// <summary>What a read produced: the layout, or null with the reason.</summary>
 /// <param name="PartlyRead">True when the layout was returned without a part of the file that could not be read.</param>
-public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal, bool PartlyRead = false);
+public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal, bool PartlyRead = false)
+{
+    public IReadOnlyList<string> LeftOutTitles { get; init; } = [];
+}
 
 /// <summary>
 /// Saves and restores a <see cref="WorkbenchLayout"/> of named zones as JSON (ADR-0021 dz-persist),
