@@ -76,3 +76,8 @@ and a default.
     join (T17e join, 2026-10-19 15:03Z). Before `dotnet test tests/AiDe.App.Tests`, read the board
     (`python docs/ai-forward-pack/scripts/coord-board.py board --since <last id you read>`). If a `join in flight` post has
     no matching `join done` or `join abandoned` post, run Core first and start App after the join ends.
+20. **The user's demo holds the desktop (Owner, 2026-10-19).** App suites and UI probes open windows and send input, so
+    a run during the user's walk-through can steal focus or type into their session. While the board's latest Owner
+    post on it reads `USER DEMO IN PROGRESS`, with no later `USER DEMO DONE`, run **no App suite, no UI probe and no
+    real-lane test**, in any tree. Core suites and docs-only work may continue. Read the board (rule 19's command) before
+    every App, probe or real-lane run.
