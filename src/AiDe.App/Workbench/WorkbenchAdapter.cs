@@ -335,7 +335,15 @@ public sealed class WorkbenchAdapter
 
         _pendingRebuild.Clear();
 
-        var panel = BuildPanel(_service.Current.Root, reuse);
+        var layoutRoot = new LayoutRoot { RootPanel = BuildPanel(_service.Current.Root, reuse) };
+
+        // Floating stacks live outside the docked tree (LayoutModel's Floating), so each one is drawn
+        // as the dock library's own floating window. Before T21 only the tree was drawn, and a floated
+        // pane was in the model and on no screen (Ruling 171).
+        foreach (var stack in _service.Current.Floating.Where(s => s.Surfaces.Count > 0))
+        {
+            layoutRoot.FloatingWindows.Add(BuildFloatingWindow(stack, reuse));
+        }
 
         // A render IS the model speaking; every mutation it makes to the docking tree must not come
         // back as "the view changed under us". What we drew becomes the arrangement the watcher has
@@ -343,7 +351,7 @@ public sealed class WorkbenchAdapter
         _rendering = true;
         try
         {
-            Manager.Layout = new LayoutRoot { RootPanel = panel };
+            Manager.Layout = layoutRoot;
             RestoreSelection();
             RestoreActive(preActive);
             ApplyAccessibleNames();
@@ -1039,5 +1047,37 @@ public sealed class WorkbenchAdapter
         // The model's active tab is applied after the layout attaches (RestoreSelection) — AvalonDock
         // resets a detached pane's selection on attach, so setting it here would not survive.
         return pane;
+    }
+
+    /// <summary>The size a floating window opens at when its stack has no saved bounds.</summary>
+    internal static readonly LayoutRect DefaultFloatingSize = new(0, 0, 640, 420);
+
+    /// <summary>
+    /// One floating stack as AvalonDock's floating window, at the stack's saved bounds (device-
+    /// independent units, as <c>VirtualScreen.IsOnAConnectedDisplay</c> reads them). A stack with no
+    /// bounds opens at <see cref="DefaultFloatingSize"/>, offset into the workbench so it is on the
+    /// same display as the window that floated it.
+    /// </summary>
+    private LayoutDocumentFloatingWindow BuildFloatingWindow(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
+    {
+        var pane = BuildPane(stack, reuse);
+        var bounds = stack.FloatingBounds ?? DefaultBoundsNearTheWorkbench();
+        pane.FloatingLeft = bounds.X;
+        pane.FloatingTop = bounds.Y;
+        pane.FloatingWidth = bounds.Width;
+        pane.FloatingHeight = bounds.Height;
+
+        var group = new LayoutDocumentPaneGroup();
+        group.Children.Add(pane);
+        return new LayoutDocumentFloatingWindow { RootPanel = group };
+    }
+
+    private LayoutRect DefaultBoundsNearTheWorkbench()
+    {
+        const double Offset = 48;
+        var origin = Window.GetWindow(Manager) is { } owner
+            ? new Point(owner.Left, owner.Top)
+            : new Point(SystemParameters.WorkArea.Left, SystemParameters.WorkArea.Top);
+        return DefaultFloatingSize with { X = origin.X + Offset, Y = origin.Y + Offset };
     }
 }

@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -24,7 +27,7 @@ public sealed class FloatRenderTests
         Sta.Pump(
             create: () => new DockingManager(),
             configure: window => { window.Width = 900; window.Height = 600; },
-            body: async (_, manager) =>
+            body: async (main, manager) =>
             {
                 var builds = new Dictionary<string, int>(StringComparer.Ordinal);
                 var service = new ZoneBackedLayoutService();
@@ -51,7 +54,11 @@ public sealed class FloatRenderTests
                 var content = Assert.IsType<TextBox>(adapter.ContentFor("sessions"));
                 Assert.Equal("sessions", content.Text);
                 Assert.Equal(1, builds["sessions"]);
-                Assert.Same(window, Window.GetWindow(content));
+                // AvalonDock hosts a floating window's content in its own HwndSource inside that window,
+                // so the question "which window draws it" is answered by the HWND chain, not by
+                // Window.GetWindow (which follows the inherited window through the logical tree).
+                Assert.True(HostedBy(content, window), "the floated content is not drawn inside the floating window");
+                Assert.False(HostedBy(content, main), "the floated content is still drawn in the workbench window");
                 Assert.True(content.IsVisible, "the floated content is not visible in its window");
 
                 window.Activate();
@@ -61,10 +68,24 @@ public sealed class FloatRenderTests
                 Assert.Equal("sessions", adapter.ActiveSurfaceId);
 
                 // Floating one pane leaves every other pane where it was, still drawn in the docked tree.
-                foreach (var id in dockedBefore)
+                foreach (var id in dockedBefore.Where(id => service.Current.FindStackOf(id) is not null))
                 {
-                    Assert.NotNull(adapter.ContentFor(id));
-                    Assert.NotSame(window, Window.GetWindow(adapter.ContentFor(id)!));
+                    var docked = adapter.ContentFor(id);
+                    Assert.NotNull(docked);
+                    Assert.False(HostedBy(docked!, window), $"{id} is drawn in the floating window");
+                    Assert.Contains(manager.Layout.RootPanel.Descendents().OfType<LayoutDocument>(), d => d.ContentId == id);
                 }
             });
+
+    /// <summary>True when <paramref name="element"/> is drawn in <paramref name="window"/>'s HWND or one of its child HWNDs.</summary>
+    private static bool HostedBy(Visual element, Window window)
+    {
+        var host = new WindowInteropHelper(window).Handle;
+        return PresentationSource.FromVisual(element) is HwndSource source
+            && (source.Handle == host || IsChild(host, source.Handle));
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool IsChild(IntPtr parent, IntPtr child);
 }
