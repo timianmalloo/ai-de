@@ -3558,3 +3558,29 @@ The decision:
 (3) T11's slot migration leaves prompt slots unmigrated, and its report says so.
 
 - request: req-01M5A28A97KF9XW18GX2819ZZR · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:32Z
+
+### Ruling 174 — A floating window's position is stored in the zone layout as four optional fields, written on move or resize, with the off-screen recovery AC-D01b requires; one T21 node
+
+Option A. US-9 requires a floating pane to return to the display it was on. LayoutModel.cs:100-106 records FloatingBounds for exactly that reason, and says that without it the off-screen guard has nothing to test. AC-D01b (workbench-loops-ux.md:353) and ADR-0045 section 7 (:129) require an off-screen placement to recover to the perspective default. The older pane layout already stores the four values, read all-or-none (LayoutStore.cs:32-33 written, :303-304 read, :318). The zone layout's ZoneStackDto (ZoneLayoutStore.cs:34) has no such fields. That is the gap. Option B would ship floating with a known US-9 failure.
+
+The Data and Persistence review is PASS-WITH-CONDITIONS, with no veto. Conditions, in one T21 node after the guard is removed, each red-first:
+(1) ZoneStackDto gains four optional double? fields (X, Y, Width, Height), read all-or-none exactly as LayoutStore.cs:318 does. schemaVersion is NOT bumped, because the change is additive. A test shows an older-shaped file without the fields still loads, and an older binary's reader ignores them.
+(2) A writer exists: the dock library's move and resize end events write FloatingBounds. Cite the writer by file:line; a field with no writer is not stored.
+(3) On restore, a window whose bounds fall off every current display recovers to the perspective default with a report line (AC-D01b), tested with a bounds rectangle outside all displays.
+(4) The null 'floating' load fix from T21 n1b stays.
+Mixed-DPI placement remains ADR-0015's airspace-spike obligation, and is not claimed here.
+
+- request: req-01M5A4911PW38Z4E28QBGXMP7P · ruled by: wl-owner-20261018 · at: 2026-10-19T13:06:30Z
+
+### Ruling 175 — A Send while a reopened notebook is restoring keeps the words visible and says why it waits; the host-open time is measured; T17d gets one more node
+
+Option B, with the copy set here. Option A is rejected because the Owner read the send path on wl1a-readback (SessionDocumentSurface.cs:596-610). Composer.BeginNextTurn() clears the editor at once, and the turn joins the thread only after LastReadBack completes (AfterTheReadBackAsync). So for an unmeasured time the user's just-typed words vanish from the editor and appear nowhere. That reads as lost input and invites a second Send. Nothing measures the host-open duration today, so the window cannot be argued small.
+
+The decision, one T17d node, each item red-first:
+(1) While the read-back is pending, a Send does not clear the editor. The words stay, Send is disabled, and the composer status line reads 'Restoring this notebook's turns. Your message sends when they are back.' When the read-back completes, the turn is admitted with its ordinal after the restored turns (Ruling 163, b3), and only then does the editor clear. One const, a DESIGN.md row beside line 1204, and the same words in UIA.
+(2) If the read-back fails or the host refuses, the words stay in the editor, and the status shows that failure's own cause (Ruling 159). Nothing is silently dropped.
+(3) Two Sends cannot be queued in that window, since Send is disabled. A test proves exactly one turn is admitted.
+(4) Measured by default: the host-open and read-back durations are emitted on the normal path, from bind start to bound and from read-back start to end, with no flag (IO1). The WL-1a Proof Pack records the value seen on this machine.
+(5) NoDispatchOutsideTheHostTests:47 is re-scoped to assert the words remain visible with the status, then the row appears with b3 once the read-back completes. That replaces an assertion that a row appears immediately.
+
+- request: req-01M5A55C99CWSEFYBCT7NX0VYT · ruled by: wl-owner-20261018 · at: 2026-10-19T13:21:52Z

@@ -2668,7 +2668,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 50 members, 85% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 53 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2681,7 +2681,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bb3cf806d508b8e652431cc42340db91e958dd6e467d07cc38ecfa319fed4764"
+      "sourceSha256": "9d3b057aa42a59daa2d048e1d2fc0bf84d0e07a865c91242073eca43c24c265c"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2693,7 +2693,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 222 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 223 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2706,7 +2706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1fd882fc2352e088e9d02f11cbebeca0f044373efc4c695c8f499d3eebe2e530"
+      "sourceSha256": "77ddb4484879d4eeb3ee7891801cb3b3849cc860ecabffb1d08f62fada2a96cc"
     },
     {
       "id": "api-aide-core",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5059d49f3ffe208e06afc2125d7aa56852d1afbd96797907249bf0dd33c0a4cb"
+      "sourceSha256": "01612d203dbaa572efc397aebd468c767d0a66db33e22e509fe7cb1f7eca9149"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0c4c0737cb81d473f54dba2d82224bdb96e7e0f7db7d0b69b5fef10277dc4a41"
+      "sourceSha256": "e09cbab6ef32f97a1cb5f6f54d570e86983fc8159371029207181a5eda00d0ff"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22428,7 +22428,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4aabadac0cc1f6908bde10a0dfa6a854a9c91e1223c42c173bdb92261d32b187"
+      "sourceSha256": "847c3f4bf52d6fa3c8d16cc869fcccb8393dc435abb3c90fc623788c94757e20"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -22584,7 +22584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0a8b3d4068b2c2194bd9e507fcd38c888c94d0aa1a212b343f0d5875e4b92835"
+      "sourceSha256": "951895db7c9309dabe37b730a456681cb859645623b7fa91d8270ff91bb3d5e8"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -22679,6 +22679,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a3885e9ce99ffa97a7e45ec06477dfeee5d92ccf3928c1d7a8f1499dea6dd069"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-readback",
+      "path": "docs/proof/workbench-loops-wl-1a/readback/README.md",
+      "title": "Proof Pack: WL-1a T17d — the restart read-back runs when the host binds (Ruling 172)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17d's evidence for Ruling 172: a reopened notebook reads its recorded attempts back when the host binds, before or after the document is built, once per bind. Checks 1-2 run through the shell's real order, and check 3 is a per-site guard that no read-back test binds the host first unless the site is named, with a reason, as not a reopen.",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "evidence",
+        "read-back",
+        "restart",
+        "ruling-172"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f37678d4630782aa9ab183904872389cace59bf5196d0f2730fc320b0a7c99f"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-readback-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/readback/handoff.md",
+      "title": "Hand-off — WL-1a T17d: the read-back runs when the host binds",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17d after node 4: all Ruling 172 and Ruling 175 checks are red then green, including the Owner's two corrections (\"sent\" not announced; the read-back failure's own copy) and the host-open and read-back durations (measured, shell-path test: medians 16.5 ms and 23.25 ms). Suites: Core 3024/0; App 1143/2, one environmental, one teardown race not reproduced.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4034a8fc378b4ef3b4b7fdfc46e804e22ddeb4026def256dcdb222f763e231ac"
     },
     {
       "id": "proof-workbench-loops-wl-1a-real-lane-stop",
@@ -24848,5 +24901,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "af5e06c65dad22366723434b093b5fd611a8284871b2d850cc45e5b71bc9299f"
+  "graphSha256": "2d790758da318ad7d9a7d8ed2bbbd73482e7e67357da61fd6a98fb7376a06bf8"
 };

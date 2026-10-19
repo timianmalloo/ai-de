@@ -8430,6 +8430,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
     or a sub-agent's report does not promote a claim.
   - **Status of this instance:** `open`; a candidate mechanical check is a coord-decide lint that refuses "the Leader
     read/spot-read/verified" in evidence with no file:line read logged in the session.
+- **Fifteenth instance (the Leader, 2026-10-19): a kick that allowed skipping the whole suite.** The Leader's kick text
+  said "skip the whole-suite run unless it is already running". So T11 nodes 4 to 8 each closed with no whole-suite run,
+  and two guard reds piled up unseen until node 9's suite (`89111aea`):
+  - DC-138's `Loaded` hook at `SessionDocumentSurface.cs:131`, from `c736c96f`;
+  - the open-seam guard crediting `OpenExecution`'s add to `OpenSessionConsole`.
+
+  Node 10 fixed both (`005b8da5`, `3b567ce9`).
+  - **Control (procedural):** the kick text no longer skips the suite. It gives grace for a suite already running, and
+    every node prompt says the whole-suite run is mandatory before the node stops, even after a kick.
+  - **Status:** `open` until mechanical. The candidate check: the Leader refuses to dispatch a track's next node when the
+    last hand-off has no `suite-node<N>.txt`.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.

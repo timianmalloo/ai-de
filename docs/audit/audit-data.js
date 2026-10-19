@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T12:46:53Z",
+  "generated": "2026-10-19T14:34:14Z",
   "audit": [
     {
       "actor": null,
@@ -25187,6 +25187,155 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T12:23:47Z",
       "duration_seconds": 1386.0
+    },
+    {
+      "id": "al-01M5A43ZQ1SGSVK62QMDEKH3YM",
+      "shortname": "wl-t17d-readback",
+      "datetime": "2026-10-19T13:02:53Z",
+      "session": "wl-t17d-readback",
+      "prompt": "T17d (Ruling 172): the restart read-back runs when the attempt host binds, once per bind, red through the real shell construction order; guard against bind-first read-back tests",
+      "summary": "Node 1 stopped at the rule-16 kick. Checks 1-2 red 04b75bf0 -> green 69452f35: NotebookRuns.ReadBackOnEachBind + Bound() + a bind counter; ReadingBack is pending while the host opens; the real WorkbenchShell revive renders its attempts; 18/18 with the T17/163/164 tests. Check 3 guard red 7bd617ad on 3 T17 files; its green waits on seam req-01M5A3JM9CAE3Q0EA1K0ZX315K. Suite run, README and the Acceptance update are not done (handoff.md).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "The read-back runs when the host binds, exactly once per bind, proven in the shell's order",
+      "done_when": "Checks 1-3 red then green; suite green; readback Proof Pack; WL-1a Acceptance says reopened (Ruling 172)",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T12:49:23Z",
+      "duration_seconds": 810.0
+    },
+    {
+      "id": "al-01M5A53T1M8EVSVYZ3JP2HF89V",
+      "shortname": "wl-t17d-readback",
+      "datetime": "2026-10-19T13:20:16Z",
+      "session": "wl-t17d-readback",
+      "prompt": "T17d node 2: turn check 3 green (convert the reopen sites to the shell's order), whole suites, Proof Pack README, slice acceptance reopened (Ruling 172)",
+      "summary": "check 3 per-site guard red 0c92dafd -> green 4be08710 (4 reopen sites converted, 8 named; mutation red 7/14); README + acceptance 1a0e9c4b; Core 3024/0; App 1134/2: NoDispatchOutsideTheHostTests regression from 69452f35 (seam req-01M5A52AQHR32CPQFSBS9NGJ4T open), SolutionTreeChord environmental",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "check 3 green, both suites run, Proof Pack and acceptance written",
+      "done_when": "guard + converted files green, suite-green.txt, README + acceptance committed, done mail sent",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T13:03:57Z",
+      "duration_seconds": 979.0
+    },
+    {
+      "id": "al-01M5A6EFCYEHNS7CAFMPE4K8YV",
+      "shortname": "wl-t17d-readback",
+      "datetime": "2026-10-19T13:43:34Z",
+      "session": "wl-t17d-readback",
+      "prompt": "T17d node 3: Ruling 175 items 1-5 as checks A (pending Send), B (failure words), C (durations), red-first",
+      "summary": "Check A red 7d07d8ed -> green f796d727 (words kept, Send disabled with RestoringTurns in status+UIA, one turn admitted as b3, DESIGN row, NoDispatch:47 re-scoped). Check B red 7954c4ea -> green e16d2fcd (failed read-back is HostRefusal in Ruling 159 words via CannotHost; Retry re-reads). Check C not started (kick). Suites: Core 3024/0, App 1139/1 (SolutionTreeChordTests environmental).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ship T17d node 3: Ruling 175 checks A, B, C red-then-green",
+      "done_when": "A, B, C red+green; suites run; README, handoff, audit, done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T13:22:46Z",
+      "duration_seconds": 1248.0
+    },
+    {
+      "id": "al-01M5A7TGA5HNYSDECAJYPHTGES",
+      "shortname": "wl-t17d-readback",
+      "datetime": "2026-10-19T14:07:37Z",
+      "session": "wl-t17d-readback",
+      "prompt": "T17d node 4: Ruling 175 (4) durations, plus the Owner's two corrections moved into this node (no 'sent' for a waiting Send; the read-back failure's own copy)",
+      "summary": "Three checks red then green: 074c1c90/ce94643d ('sent' never announced before admission; ComposerSurface one granted line), 8825c4a8/0bf5f955 (NotebookRuns.RestoringFailed copy + DESIGN.md :1220; host-open keeps Ruling 159), 03a1dfd3/fa310512 (notebook.host-open and notebook.read-back durations via WorkbenchDiagnostics.Write, by default). Measured in the shell-path test n=10: host-open median 16.5 ms, read-back median 23.25 ms. Suites at fa310512: Core 3024/0; App 1143/2 (chord environmental; one teardown race not reproduced). Proof 7b3061cc.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Emit host-open and read-back durations on the normal path (Ruling 175(4)) and land the Owner's two corrections, each red then green, measured on this machine",
+      "done_when": "Red and green commits for each check on wl1a-readback; README and Acceptance carry measured min/median/max; suite-green.txt replaced; audit entry and done mail sent",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T13:44:34Z",
+      "duration_seconds": 1383.0
+    },
+    {
+      "id": "al-01M5A8JMHATV0QVD9V63HHGXVV",
+      "shortname": "join-wl1a-readback",
+      "datetime": "2026-10-19T14:20:48Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T17d (Opus, 4 nodes): read-back on host bind, once per bind (Ruling 172); Send during restore keeps the words, never announces 'sent', admits one turn as b3; failure keeps the words with its own sentence; durations logged by default (Ruling 175). Recount RAN IN FULL at step 4 (App 1147 counted, Core 3025/2842/183 completed); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head e1280798 AND on the first parent 3802bb70 in a clean tree in the same environment, so it is excused under Ruling 155 (3) and NOT CHECKED; --docs-only here only skips re-running a recount that cannot pass unattended. The teardown NRE did not recur in this recount; T17e investigates it next. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 172/175: WL-1a's restart step works in the running app",
+      "done_when": "merged on main, recount (Ruling 155 (3) excusal recorded) and step 8 ratchet PASS, pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T14:20:46Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M5A9B8C9PEB5E6TBGKY3KXM2",
+      "shortname": "join-wl1a-readback-step8",
+      "datetime": "2026-10-19T14:34:14Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T17d join fd68b3eb",
+      "summary": "Recount ran in full at step 4 (App 1147 counted, Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph \"foreground not held\" (probe exit 2). It refused alone on the join head e1280798 AND on the first parent 3802bb70 in a clean detached tree in the same environment, so it is excused under Ruling 155 (3) and NOT CHECKED. The join continued with --docs-only only to skip a re-run that cannot pass unattended (Owner confirmed the reading). Step 8 6/48 against the 5 baseline. The sixth gate is tools/verify-test-run.py: in the primary its .trx carries that same [Failed] probe result (the other two non-passes are the named expected skips KnowledgeModeRealProjectionTests and AttemptRealLaneStopTests). At the T20 join it was OK, because the probe passed then. It is one of Ruling 151 (3)'s never-ratcheted gates, and its red is the 155 (3)-excused refusal, so it is not a T17d green->red; the 5 baseline was not stale. Ratchet vs first parent 3802bb70 on clean trees, head fd68b3eb: PASS 0/49; no gate green->red; verify-derived-views and verify-site-figures went red->green. T17d (Opus, 4 nodes; Rulings 172, 175): read-back on host bind, once per bind, red through the real shell revive; bind-before-construction tests converted and guarded; a Send during the restore keeps the words, disables Send, never announces \"sent\", admits one turn as b3; a failed read-back keeps the words with its own sentence; host-open and read-back durations logged by default (shell-path medians 16.5 ms / 23.25 ms, n=10). Residual: one teardown NRE seen once in TheRowsAttemptBindingSurvivesRestartAndSequenceTests (not recurred, including this recount); T17e is next.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/readback/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 172/175: WL-1a's restart step works in the running app",
+      "done_when": "ratchet PASS; sixth gate named; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T14:03:36Z",
+      "duration_seconds": 1838.0
     }
   ],
   "changes": [
@@ -30209,6 +30358,222 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M5A28A97KF9XW18GX2819ZZR",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A420WB2CGVK3J35QZ6GT07",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A420YXFJ12EP0YEX88FKC7",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4211D2WNH4W7HS9AN5Y5H",
+      "ts": "2026-10-19T13:01:49Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A44CVJ1DM0KC6YJ6D4TF60",
+      "ts": "2026-10-19T13:03:07Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A44R7BVV96NS5CJ7E4KXP3",
+      "ts": "2026-10-19T13:03:18Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A4911ZBH2WACBD8WC9WF08",
+      "ts": "2026-10-19T13:05:38Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A4911PW38Z4E28QBGXMP7P",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4AKSF83A9JZ0XTF07F4JH",
+      "ts": "2026-10-19T13:06:30Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A4911PW38Z4E28QBGXMP7P",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A4EV0SH5PBN7A3ZRGQ57HG",
+      "ts": "2026-10-19T13:08:49Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A4VTBAEXCR2GP6QCC1C275",
+      "ts": "2026-10-19T13:15:54Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A4WWMZKPYG0J21D7FKYME5",
+      "ts": "2026-10-19T13:16:29Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A545G298NY20240EE230MD",
+      "ts": "2026-10-19T13:20:28Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A55C9MQQ18XSQ32F8CJRC8",
+      "ts": "2026-10-19T13:21:07Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A55C99CWSEFYBCT7NX0VYT",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A55WZQPJ3YRR9DW2FNBX1S",
+      "ts": "2026-10-19T13:21:24Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A56HYZSJVGQ0H6ZHG99Q7N",
+      "ts": "2026-10-19T13:21:46Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A56RDPJQ8G39P5028TBM54",
+      "ts": "2026-10-19T13:21:53Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A55C99CWSEFYBCT7NX0VYT",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M5A5HFVR5AB0H5YS8TKGNSKZ",
+      "ts": "2026-10-19T13:27:44Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A5YAMCHFRT6KQSAXDWCAZX",
+      "ts": "2026-10-19T13:34:45Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A5ZEEWPXE1BWTBQ235858H",
+      "ts": "2026-10-19T13:35:22Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A6ESPQSRMCA8MQWHY8BPS8",
+      "ts": "2026-10-19T13:43:45Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A6G2T5AGABR0FT498TADS9",
+      "ts": "2026-10-19T13:44:27Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5A761TE3CTMAW1D1VZQ22ZG",
+      "ts": "2026-10-19T13:56:27Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t17d-readback",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A77WEPDAXC9ADWHP2466RY",
+      "ts": "2026-10-19T13:57:27Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t21-float",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A7TVJAADWZY8GX56P454B6",
+      "ts": "2026-10-19T14:07:48Z",
+      "from": "wl-t17d-readback",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17d-readback"
+    },
+    {
+      "id": "mail-01M5A7VD69MME76AACHF8RPMG1",
+      "ts": "2026-10-19T14:08:06Z",
+      "from": "wl-t21-float",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-float"
     }
   ]
 };
