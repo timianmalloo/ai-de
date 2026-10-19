@@ -60,7 +60,7 @@ What changed:
 
 ## Suites, node 5
 
-See `suite-core.txt` and `suite-app.txt` (this node's runs). The `SolutionTreeChordTests` re-run alone is in
+Core 3017 passed, 1 skipped, 0 failed. App 1081 passed, 1 skipped, 1 failed: `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` ("foreground not held"), the same test as node 4. Run alone, it passed. The runs are `suite-core.txt` and `suite-app.txt`. The `SolutionTreeChordTests` re-run alone is in
 `solution-tree-chord-alone.txt`.
 
 ---
