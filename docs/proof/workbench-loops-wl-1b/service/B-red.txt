@@ -1,0 +1,27 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-service\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-service\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-service\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal [FAIL]
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal [195 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "shell:16708"
+Actual:   "payload"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 569
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 569
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B_TheFiveOperations_RoundTripOverThePipe_RefusalsAreStableCodes_AndTheActorIsThePipePrincipal() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 575
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 206 ms - AiDe.Core.Tests.dll (net10.0)
+NOTE: the registration existed from node 1, so the test was green at once. This red is a MUTATION run: work.accept was given the actor 'payload' instead of peer.ToPrincipal().Id (src restored after). Every earlier assertion in the test passed; the actor assertion failed.

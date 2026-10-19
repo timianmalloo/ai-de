@@ -26,26 +26,37 @@ public static class CurrentnessFold
     /// <summary>Spec §C3, verbatim.</summary>
     public const string StaleCopy = "This output belongs to an earlier draft. Run again to refresh it.";
 
+    /// <summary>A stored attempt, judged by its own <c>projection_sha</c> against the live projection sha.</summary>
     public static CurrentnessResult Evaluate(AttemptRow attempt, int? currentRevisionNo, string? liveProjectionSha)
     {
         ArgumentNullException.ThrowIfNull(attempt);
+        return Evaluate(attempt.RevisionNo, currentRevisionNo, attempt.ProjectionSha, liveProjectionSha);
+    }
+
+    /// <summary>
+    /// The one definition. <paramref name="ranSha"/> and <paramref name="liveSha"/> are the same kind of digest, taken
+    /// by the caller's one definition of it (a projection sha for a stored attempt, a body sha for a notebook result);
+    /// the fold only compares them, so neither side is ever a recompile's answer.
+    /// </summary>
+    public static CurrentnessResult Evaluate(int ranRevisionNo, int? currentRevisionNo, string? ranSha, string? liveSha)
+    {
         var started = Stopwatch.GetTimestamp();
 
-        var result = Compare(attempt, currentRevisionNo, liveProjectionSha);
+        var result = Compare(ranRevisionNo, currentRevisionNo, ranSha, liveSha);
 
         FoldSignal.Record("currentness", Stopwatch.GetElapsedTime(started).TotalMilliseconds);
         return result;
     }
 
-    private static CurrentnessResult Compare(AttemptRow attempt, int? currentRevisionNo, string? liveProjectionSha)
+    private static CurrentnessResult Compare(int ranRevisionNo, int? currentRevisionNo, string? ranSha, string? liveSha)
     {
-        if (currentRevisionNo is null || liveProjectionSha is null || attempt.ProjectionSha is null)
+        if (currentRevisionNo is null || liveSha is null || ranSha is null)
         {
             return new CurrentnessResult(Currentness.NotRecorded, null);
         }
 
-        return currentRevisionNo == attempt.RevisionNo
-            && string.Equals(liveProjectionSha, attempt.ProjectionSha, StringComparison.Ordinal)
+        return currentRevisionNo == ranRevisionNo
+            && string.Equals(liveSha, ranSha, StringComparison.Ordinal)
             ? new CurrentnessResult(Currentness.Current, null)
             : new CurrentnessResult(Currentness.Stale, StaleCopy);
     }
