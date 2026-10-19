@@ -22200,6 +22200,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-wl-hygiene-pack-defects",
+      "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md",
+      "title": "Pack defects found while burning down main's red gates (T13, Ruling 151)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Gate findings whose cause is the pack's own gate, not this repository's content. None is fixed here (Ruling 151: no pack script under docs/ai-forward-pack/ is edited locally). Each is filed as a pack defect next step with the finding, the gate, why it is the pack's, and the proposed fix.",
+      "tags": [
+        "proof-pack",
+        "gate-hygiene",
+        "pack-defects",
+        "ruling-151",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1ed68b91ba2e690eaca6a70105dbf3541801d59d53beb34e020de9efedd0ea29"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -24243,5 +24270,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "a15a9c371695e15eac28ecd5b45d3669c802fe049988aabec2f79d8d9d5d8769"
+  "graphSha256": "236943a432363911738a7ea3d18d7b8c73be86d66ce21690234fb3a6ef798bbe"
 };
