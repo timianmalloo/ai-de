@@ -155,3 +155,5 @@
 {"agent": "wl-t11-kinds", "at": 1792422530.9379163, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/suite-node11-app-rerun.txt", "session": "wl-t11-kinds", "wi": ""}
 {"agent": "wl-t11-kinds", "at": 1792422530.9715703, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/suite-node11.txt", "session": "wl-t11-kinds", "wi": ""}
 {"agent": "wl-t11-kinds", "at": 1792422539.5328977, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792429969.5952115, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/kinds/suite-node12-start.txt", "session": "wl-t11-kinds", "wi": ""}
+{"agent": "wl-t11-kinds", "at": 1792429969.9432995, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s.md", "session": "wl-t11-kinds", "wi": ""}

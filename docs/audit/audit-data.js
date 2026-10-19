@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T17:09:10Z",
+  "generated": "2026-10-19T17:23:17Z",
   "audit": [
     {
       "actor": null,
@@ -25711,6 +25711,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T17:09:08Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5AK0SMF1K75QPQZ75PVR2T8",
+      "shortname": "join-wl1a-compiled-field-step8",
+      "datetime": "2026-10-19T17:23:17Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T28 join a8a30535",
+      "summary": "Recount ran in full at step 4 (App 1176 counted; Core 3047 / portable 2864 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'foreground not held' (probe exit 2). It refused ALONE on the join head b0c44585 and ALONE on the first parent 76581e0b in a clean detached tree (C:/Projects/rt-t28p, removed), same words: Ruling 155 (3) excused, NOT CHECKED; --continue --docs-only skipped only that re-run. The other two non-passes are the named expected skips. Step 8 strict 6/48. Ratchet vs 76581e0b on clean trees, head a8a30535: PASS 0/49; the pack verify-ruling-citations copy is excluded under Ruling 160 (PD-1; +findings for Rulings 180/181, which it looks for in rulings.md); the repo copy is ok (strict). Release build 0 errors. T28 (Opus, n1 investigate + n2 fix, Ruling 181): the user's WL-1a compiled-field report is fixed at its verified root cause. Owner accepted n2 on the Leader's read of 5da5d032. n3 follows: queued-as heading (Owner direction under Ruling 181 (1)) and the DC-NEW-wl-t28-compiled class gate.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Owner: the user's compiled-field report fixed at its verified root cause (Ruling 181)",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T16:48:22Z",
+      "duration_seconds": 2095.0
     }
   ],
   "changes": [
