@@ -6,11 +6,11 @@
   AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
   AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
   AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
-  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
-  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
-  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
-  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
   AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
   AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
 Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
@@ -18,22 +18,22 @@ A total of 1 test files matched the specified pattern.
 [xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
 [xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
 [xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
-[xUnit.net 00:00:00.91]     AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [FAIL]
-[xUnit.net 00:00:00.91]       Assert.Equal() Failure: Strings differ
-[xUnit.net 00:00:00.91]                  ↓ (pos 0)
-[xUnit.net 00:00:00.91]       Expected: "Suggestion 1 for goal."
-[xUnit.net 00:00:00.91]       Actual:   ""
+[xUnit.net 00:00:00.90]     AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [FAIL]
+[xUnit.net 00:00:00.90]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.90]                  ↓ (pos 0)
+[xUnit.net 00:00:00.90]       Expected: "Suggestion 1 for goal."
+[xUnit.net 00:00:00.90]       Actual:   ""
 [xUnit.net 00:00:00.91]       Stack Trace:
-[xUnit.net 00:00:00.92]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
-[xUnit.net 00:00:00.92]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
-[xUnit.net 00:00:00.92]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(49,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
-[xUnit.net 00:00:00.92]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\AKeptSuggestedLineIsKeptTests.cs(39,0): at AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere()
-[xUnit.net 00:00:00.92]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
-[xUnit.net 00:00:00.92]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
-[xUnit.net 00:00:00.92]       Output:
-[xUnit.net 00:00:00.92]         compile calls 2; after the second prepare: Goal "Suggestion 2 for goal." marked "? derived"; draft goal ""; Done when "Suggestion 2 for done_when." marked "? derived"
+[xUnit.net 00:00:00.91]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.91]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.91]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(49,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:00.91]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\AKeptSuggestedLineIsKeptTests.cs(39,0): at AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere()
+[xUnit.net 00:00:00.91]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.91]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.91]       Output:
+[xUnit.net 00:00:00.91]         compile calls 2; after the second prepare: Goal "Suggestion 2 for goal." marked "? derived"; draft goal ""; Done when "Suggestion 2 for done_when." marked "? derived"
 [xUnit.net 00:00:01.17]   Finished:    AiDe.App.Tests
-  Failed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [690 ms]
+  Failed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [687 ms]
   Error Message:
    Assert.Equal() Failure: Strings differ
            ↓ (pos 0)
@@ -50,10 +50,10 @@ Actual:   ""
  compile calls 2; after the second prepare: Goal "Suggestion 2 for goal." marked "? derived"; draft goal ""; Done when "Suggestion 2 for done_when." marked "? derived"
 
 
-  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [262 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [265 ms]
 
 Test Run Failed.
 Total tests: 2
      Passed: 1
      Failed: 1
- Total time: 1.5684 Seconds
+ Total time: 1.5131 Seconds

@@ -95,9 +95,13 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
         });
     }
 
-    /// <summary>The session's rung set to <c>agentic-advisory</c>, and a stub compile host that records each prompt.</summary>
+    /// <summary>
+    /// The session's rung set to <c>agentic-advisory</c>, the draft on the goal-block form (as
+    /// <c>SessionComposerBinder.Bind</c> opens it), and a stub compile host that records each prompt.
+    /// </summary>
     private static List<string> UnderAdvisory(ComposerSurface composer)
     {
+        composer.Draft.SwitchTo(ComposerShape.GoalBlock);
         composer.Gate.BindSession(NotebookFixture.SessionId, CompileModes.AgenticAdvisory, "claude-code", "implement");
         var prompts = new List<string>();
         composer.Gate.Compiler = (request, _) =>
