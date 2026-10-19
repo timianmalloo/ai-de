@@ -590,10 +590,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             StackState.Collapsed or StackState.Hidden => ZoneLayoutService.CollapseZone(_zones, zoneId.Value),
             StackState.Docked => ZoneLayoutService.ExpandZone(_zones, zoneId.Value),
             StackState.Maximized => ZoneLayoutService.Maximize(_zones, zoneId.Value),
-            StackState.Floating => Float(_zones.Zone(zoneId.Value).Surfaces().FirstOrDefault()?.SurfaceId ?? string.Empty),
+            StackState.Floating => Float(FocusedIn(_zones.Zone(zoneId.Value).Content)?.SurfaceId ?? string.Empty),
             _ => new ZoneLayoutResult(_zones, false, LayoutErrorCodes.InvalidTarget, "Unsupported state."),
         };
     }
+
+    // The tab a zone shows as focused: a stack's active tab. A split renders as one tab strip whose
+    // active tab is its first (ZonesToTree.StackFromContent), so floatPane takes the same one
+    // (T21 close condition 3).
+    private static Surface? FocusedIn(ZoneContent? content) => content switch
+    {
+        ZoneStack stack => stack.Active,
+        _ => content?.Surfaces().FirstOrDefault(),
+    };
 
     private bool ColumnsStartWithLeft() =>
         !_zones.Zone(ZoneId.Left).Collapsed && !_zones.Zone(ZoneId.Left).IsEmpty;
