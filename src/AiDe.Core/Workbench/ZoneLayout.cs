@@ -132,7 +132,7 @@ public sealed record WorkbenchLayout(
     /// the Center</b> — the mockup's <c>minmax(0,1.3fr) minmax(0,1fr)</c> — spelled as the zone's
     /// share of the columns row (1.3 ⁄ 2.3), which is what <see cref="ZoneState.Extent"/> is. A
     /// document zone, not a tool rail: the thread's 96ch measure plus its gutter must fit at the
-    /// startup size, and the App's <c>CodingsLeftExtentTests</c> measures that on the composed tree.
+    /// startup size, and the App's <c>TheThreadMeasureMovesWithTheNotebookTests</c> measures the thread's measure on the composed tree.
     /// </summary>
     public const double CodingLeftExtent = 1.3 / 2.3;
 

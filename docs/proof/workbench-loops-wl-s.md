@@ -10,6 +10,7 @@ links:
   - { to: architecture, rel: implements }
   - { to: adr-0045-perspective-set-factory-review-understand, rel: implements }
   - { to: design-workbench-loops-wl-s, rel: implements }
+  - { to: proof-wl-s-kinds-node1-handoff, rel: documents }
 review-by: "2026-11-19"
 summary: >-
   The slice Proof Pack for WL-S, drafted by T11 node 9. Each row cites its red and green commits: T11 nodes 1-9

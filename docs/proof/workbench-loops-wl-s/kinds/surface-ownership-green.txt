@@ -1,0 +1,2 @@
+verify-surface-ownership: OK — 18 surface(s), 18 assigned in §2, 0 recorded as awaiting a joint decision.
+exit 0
