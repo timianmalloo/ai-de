@@ -8,7 +8,59 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 1 stopped at the Leader's kick. Check A (notebook half + Ruling 152 D2 flip) is green; 19 old Left-dock tests need re-scoping; the execution kind, check B and check C are not started."
+summary: "Node 2 stopped at the rule-16 kick. 13 Left-dock tests are re-scoped to the Center notebook; 6 remain (1 focus finding, 1 copy seam, 2 probe tests owed to slot migration, CodingsLeftExtentTests x4 under Ruling 168). The execution kind is not started."
+---
+
+# T11 node 2 — hand-off
+
+Node 2 stopped at the rule-16 kick. It finished item 1 in part. Items 2 and 3 are not started.
+
+## Done
+
+- **Commit `a8ffe20f`** re-scopes 13 Ruling 83 tests to the Center notebook. Red: `A-rescope-red.txt` (14 assertion
+  failures). Green: `A-rescope-green.txt` (40 of 41 in the re-scoped classes). Old → new names:
+  - `SessionDocumentPlacementTests.ANewSessionDocument_OpensInTheLeftZone_Docked_WithMaximizedNull` → `ANewNotebook_OpensInTheCenterZone_Docked_WithMaximizedNull`
+  - `…TheCodingLanding_IsTheSessionAtLeft_ElseTheCentersEmptyCopy_EachWithAFocusTarget` → `TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget` (the collapsed-Left fallback to the "docked at the left" copy becomes "a collapsed Left does not move the landing")
+  - `…TheSessionDocumentKindsRow_NamesTheLeftZone` → `TheNotebookKindsRow_NamesTheCenterZone`
+  - `…AReopenedSessionDocument_FollowsTheSameZoneRule_AndRearrangesNothing` (name kept; Left → Center)
+  - `PerspectiveShellTests.TheLanding_IsTheRowsZonesActiveTab_LeftForFactory_…` → `TheLanding_IsTheRowsZonesActiveTab_CenterForEveryRow_ElseTheEmptyCopy`
+  - `PerspectiveShellTests.TheFactoryLanding_IsTheSessionDocument_WhenTheCoordinationKindsOccupyItsCenter` → `TheFactoryLanding_IsTheNotebook_WhenTheCoordinationKindsShareItsCenter` (the landing ignores the view's active tab and follows the model's)
+  - `WorkbenchShellTests.ShowLedger_InFactory_WithASessionActiveInTheLeft_…_AndTheLandingStaysTheSession` → `ShowLedger_InFactory_WithTheNotebookInTheCenter_DocksInTheCenter_AndTheLandingIsTheCentersActiveTab`
+  - `WorkbenchDragCompletedHookTests` (2): only the retired literal `"session-document"` → `"notebook"`. The drag gesture is the subject, so the Left start stays.
+  - `ConsoleSplitPlacementTests.WithTheSessionAtLeft_…` → `WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument`. `CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen`: focus after the close lands inside the notebook, not on the "docked at the left" heading.
+  - `AParallelSessionIsADerivedSiblingTests.…TheSiblingDocksLeftBesideIt…` → `…TheSiblingDocksInTheCenterBesideIt…`
+
+## Still red, with the reason
+
+1. **`ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument`. This is a product finding,
+   not a test fix.** After the Console toggle closes the Console tab, the document's focus scope holds the notebook's
+   "Goal · Done when · Not in scope" toggle instead of the Console toggle. The Console is now a sibling tab of the notebook,
+   and the close reactivates the notebook, whose landing focus wins. That contradicts the CV-5.2 rule "focus returns to
+   the toggle". The fix is in product code outside the grant. The next node or the Leader should decide where focus goes.
+2. **`CenterEmptyCopyTests.WhileASessionIsOpenAtLeft_…`. It is NOT deleted. Seam `req-01M59WCW4YBGJ1AXQEVK63KN0J` is pending.** Rule 14:
+   the premise "no notebook can dock Left any more" does not hold in code. `SurfaceKind.Zone` is read only on open, and
+   drags follow drops with no kind guard. The re-scoped drag test still moves a notebook Center → Left, and nothing is refused. So
+   "The session is docked at the <zone>." (`CenterEmptyState.cs:94-100`, a template, not a constant) is still reachable.
+   The fallback: keep the copy, and re-scope the composed test to a notebook moved Left.
+3. **`ASessionDocumentIsShownWhereTheOperatorIsTests` (2 probe tests).** They have no Left assertion. The operator's saved arrangement
+   carries `session-document` surfaces, which are now retired and dropped with a report. So the probe's `dropped=6` count and the
+   bind-on-restore revival fail. This belongs to slot migration (D, node 4): map `session-document` → `notebook`.
+4. **`CodingsLeftExtentTests` (4).** It is untouched. **Ruling 168** (Leader mail) chose option A, tightened. Move
+   `ThreadFeed.MeasureWidth` with the notebook to the Center and rename the test. Check (1) that the words column is ≥ MeasureWidth + its 40 px gutter + the
+   body's padding, with nothing clipped; (2) that the rendered line width is ≤ MeasureWidth (a cap, so spare width becomes margin); (3) that both hold at the minimum and at a wide
+   window. If ThreadFeed does not cap today, (2) is a red-first product change, and `ThreadFeed.cs` is granted.
+
+## Not started
+
+- **The `execution` kind.** The plan: Zone Bottom, `Instances.Many`, caption "Execution — <attempt>", opened from the turn row's
+  existing "Open log" action (`SessionDocumentSurface.cs` ~:852) as a derived opener. Bind it to the attempt host. It never owns a
+  token or a queue slot (design §4), and it carries a UIA name and a `KindAllowListsTests` row. Do not add a `session.execution` verb.
+
+## Next step
+
+Node 3: (a) Ruling 168's measure retarget, (b) the `execution` kind, (c) the console focus-return finding, or a ruling on it.
+Answer seam `req-01M59WCW4YBGJ1AXQEVK63KN0J` before anyone touches `CenterEmptyState`.
+
 ---
 
 # T11 node 1 — hand-off
