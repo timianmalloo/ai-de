@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 69 types, 187 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 70 types, 200 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**69 public types · 187 public members · 92% documented.**
+**70 public types · 200 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -231,6 +231,8 @@ caller owns, not a constant.
 | `Task<string> NewSessionAsync(` | Opens a session rooted at , which **must be absolute**, holding the tools  names — or, with none, whatever the adapter's preset allows. |
 | `Task<string> NewSessionAsync(` | Opens the lane's session rooted in its **provisioned worktree** — spec R1 bullet 1. |
 | `Task<JsonObject> PromptAsync(string sessionId, string text, CancellationToken cancellationToken = default)` | Sends one prompt and waits for the turn to end, under the prompt bound rather than the handshake one. |
+| `IReadOnlyCollection<JsonObject> CancelledPermissions` | The permission requests answered `cancelled` because a Stop was under way, in arrival order — the host records each as `PermissionCancelledByStop` (ADR-0041 §4). |
+| `Task CancelAsync(string sessionId, CancellationToken cancellationToken = default)` | Asks the engine to stop the session's prompt turn: from now on every permission request is answered `cancelled` (the ACP cancellation contract), then `session/cancel` is sent as a notification. The turn's end is the e… |
 
 ### `int ProtocolVersion = 1`
 
@@ -482,6 +484,7 @@ diagnostic goes to stderr; one bad message never kills the loop; an unknown meth
 | `AcpPeerCounters Counters` | Everything the peer has counted. |
 | `Task RunAsync(CancellationToken cancellationToken = default)` | Reads the child's stdout until end of stream, normalizing and dispatching every frame. |
 | `Task<JsonObject> RequestAsync(` | Sends a request and waits for the reply that carries its id. |
+| `Task NotifyAsync(string method, JsonObject? parameters, CancellationToken cancellationToken = default)` | Sends a notification — a frame with no id, so nothing waits for a reply — serialized through the same write lock as every request and answer (ADR-0041 §4: `session/cancel`). |
 
 ### `AcpPeer(`
 
@@ -491,6 +494,7 @@ diagnostic goes to stderr; one bad message never kills the loop; an unknown meth
 - **`time`** — Stamps receipt and publication. Defaults to the system clock.
 - **`options`** — The peer's bounds. Defaults to `AcpPeerOptions`'s stated values.
 - **`diagnostics`** — Where everything that is not protocol goes. Defaults to stderr.
+- **`runLog`** — The attempt's durable run log; every event is appended to it before it is published (ADR-0041 §3). Null: no run log.
 
 ### `ObservedAuthStatus? ObservedAuth { get; private set; }`
 
@@ -1831,6 +1835,61 @@ The kinds of the raw-frame fallbacks. Unknown kinds are carried namespaced (the 
 |---|---|
 | `string AcpFrame = "acp.frame"` | The stored raw ACP frame (redacted per ADR-0042 §6). |
 | `string NativeFrame = "native.frame"` | The stored raw native-harness frame (redacted per ADR-0042 §6). |
+
+## `RunLogStore`
+
+*class* — `RunLogStore.cs`
+
+The durable run log of one execution attempt: one line per `RunEvent` at
+`runs/<dispatch_key>.jsonl`, appended and flushed **before** the event is published
+(ADR-0041 §3; docs/design/workbench-loops-wl-1a.md, "Run log, relay, redaction").
+
+**Remarks.** **The line is T3's serialization**: `JsonSerializer.Serialize(runEvent)` with default
+options, UTF-8, `\n`, no BOM — the format T6's fold reads.
+
+
+
+
+**A line that cannot be made durable is refused, not dropped.** `Append` throws
+`AgentPlaneException` `UnwritableCode`; the peer then publishes nothing for the
+frame and fails the pending prompt with that code, which the host maps to
+`DeliveryUnknown{run_log_unwritable}`.
+
+
+
+
+**Append-only, one writer.** The peer's read loop is the only caller of `Append`;
+the file is shared for read so a late subscriber can catch up while the run is live.
+
+| Member | Summary |
+|---|---|
+| `string UnwritableCode = "AIDE-RUN-LOG-UNWRITABLE"` | The stable code of a run-log line that could not be made durable. |
+| `RunLogStore(Stream sink, string path)` | **(gap)** |
+| `string Path { get; }` | The run log's file. |
+| `long Events` | Lines made durable so far. |
+| `long Bytes` | Bytes made durable so far. |
+| `string PathFor(string workspaceRoot, string sessionId, string dispatchKey)` | `<ws>/.aide/sessions/<id>/runs/<dispatch_key>.jsonl` — the one caller of the reserved path. |
+| `RunLogStore Open(string workspaceRoot, string sessionId, string dispatchKey)` | Opens (or continues) the attempt's run log for append. |
+| `void Append(RunEvent runEvent)` | Appends one event's line and flushes it to disk. |
+| `IReadOnlyList<RunEvent> Read(string path)` | Every event in a run log, in order; empty when the file does not exist. |
+| `void Dispose()` | **(gap)** |
+
+### `RunLogStore(Stream sink, string path)`
+
+- **`sink`** — Where the lines go; flushed after every line.
+- **`path`** — The file the lines can be read back from, for a catch-up read.
+
+### `RunLogStore Open(string workspaceRoot, string sessionId, string dispatchKey)`
+
+Opens (or continues) the attempt's run log for append.
+
+**Throws `AgentPlaneException`.** `UnwritableCode` when the file cannot be opened.
+
+### `void Append(RunEvent runEvent)`
+
+Appends one event's line and flushes it to disk.
+
+**Throws `AgentPlaneException`.** `UnwritableCode` when the line could not be made durable.
 
 ## `RunStage`
 

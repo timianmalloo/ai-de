@@ -49,7 +49,7 @@ Checks, red then green (test names exact):
 | (g) Proof Pack | `docs/proof/workbench-loops-wl-1a.md` (demo script left for the Leader) |
 
 Existing test changed because of this work: `AiDe.Core.Tests.Sessions.SessionPathContractTests` — its allowlist
-gains `RunLogStore.cs` (the extension point Ruling 38 names). Node 1's `AttemptHostTests` are unchanged and green.
+gains `RunLogStore.cs` (the extension point named in the front-door run-log guard-scope decision note). Node 1's `AttemptHostTests` are unchanged and green.
 
 ## Suites (after the merge of `origin/main`)
 

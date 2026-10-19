@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 16 types, 34 members, 94% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 19 types, 49 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**16 public types · 34 public members · 94% documented.**
+**19 public types · 49 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -31,6 +31,39 @@ The execution-attempt host as the App binding sees it (ADR-0041; docs/design/wor
 **Remarks.** An interface over one class for one reason: T8 builds its binding in parallel and its UI tests need a host
 with no engine behind it (the design's Simplifier condition 3). Every member answers with a receipt read back
 from the store, never an in-memory guess.
+
+## `AttemptHostOptions`
+
+*record* — `AttemptHost.cs`
+
+What the host is configured with.
+
+| Member | Summary |
+|---|---|
+| `TimeSpan StopDeadline { get; init; } = TimeSpan.FromSeconds(10)` | How long a Stop waits for the engine's `cancelled` reply (ADR-0041 §4: 10 s, config). |
+| `TimeSpan SweepBackstop { get; init; } = TimeSpan.FromSeconds(30)` | The backstop sweep's interval (ADR-0041 §4: 30 s). |
+| `HealthIncidentSidecar? Incidents { get; init; }` | Where an unwritable run log is reported; null reports nowhere. |
+| `Func<string, string, RunLogStore>? RunLogs { get; init; }` | Opens an attempt's run log from `(session_id, dispatch_key)`; null opens `Open` under `WorkspaceRoot`. |
+| `string TelemetryLog` | The rolling log the host's metrics go to. |
+
+## `AttemptSubscription`
+
+*class* — `AttemptHost.cs`
+
+One subscriber's view of one attempt's events (design, "Relay": a late subscriber catches up by `seq > last_seen`).
+
+**Remarks.** The relay channel is taken **before** the run log is read, and the log is written before every publish, so
+nothing falls between the two: an event is in the log, in the channel, or both — and "both" is skipped by seq.
+
+| Member | Summary |
+|---|---|
+| `IAsyncEnumerable<RunEvent> ReadAllAsync([EnumeratorCancellation] CancellationToken cancellationToken)` | Every event, each seq once, in seq order; ends when the run ends. |
+
+## `AttemptMeasures`
+
+*record* — `AttemptHost.cs`
+
+NFR-11 (ADR-0041 §7): every value measured from a row or the run log, or null when not recorded.
 
 ## `AttemptDispatch`
 
@@ -55,26 +88,38 @@ A prepared revision, ready for the gate.
 
 The in-run write points `RunAsync` takes for an attempt.
 
+| Member | Summary |
+|---|---|
+| `RunLogStore? RunLog { get; init; }` | The attempt's durable run log; every event is appended before it is published. Null: no run log. |
+
 ## `AttemptHost`
 
 *class* — `AttemptHost.cs`
 
-The stateful attempt host: one per workspace, holding the live set and the gate choreography, and calling
-`RunAsync` — still the one composition root — for every launch.
+The stateful attempt host: one per workspace, holding the live set, the gate choreography, the queue, Stop and
+the subscriptions, and calling `RunAsync` — still the one composition root — for
+every launch.
 
 | Member | Summary |
 |---|---|
-| `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken)` | Takes the workspace's host lock and runs the startup sweep (`host_restart`). A second host on the same workspace is refused here, so it can neither dispatch nor sweep another host's live attempts. |
+| `string FoldActivitySourceName = "aide.attempt.fold"` | The activity source T6's fold reports on; the host turns each stopped activity into `fold.duration_ms`. |
+| `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken, AttemptHostOptions? options = null)` | Takes the workspace's host lock, runs the startup sweep (`host_restart`) and starts the 30 s backstop. A second host on the same workspace is refused here, so it can neither dispatch nor sweep another host's live atte… |
 | `Task<AttemptStart> DispatchAsync(AttemptDispatch dispatch, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
-| `void Dispose()` | Releases the host lock — what a process death does, so a restarted host can take it. |
+| `Task<AttemptStart> SendNowAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<AttemptReceipt> StopAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<AttemptMeasures> MeasureAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `void Dispose()` | The host's own teardown — what a process death does, so a restarted host can take the lock. Live runs are cancelled by token, never by `session/cancel`, so a teardown-caused exit is never `Interrupted`. |
 
-### `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken)`
+### `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken, AttemptHostOptions? options = null)`
 
-Takes the workspace's host lock and runs the startup sweep (`host_restart`). A second host on the same
-workspace is refused here, so it can neither dispatch nor sweep another host's live attempts.
+Takes the workspace's host lock, runs the startup sweep (`host_restart`) and starts the 30 s backstop.
+A second host on the same workspace is refused here, so it can neither dispatch nor sweep another host's live
+attempts.
 
 - **`hostLockFile`** — `<workspace>/.aide/attempt-host.lock`; the OS releases it when the process dies.
+- **`options`** — Null: the workspace is the lock file's `<workspace>` (the design fixes the lock's place) and every default holds.
 
 ## `CompileRequest`
 
@@ -353,48 +398,51 @@ What the governed run did, in the terms its exit evidence is written from.
 
 *class* — `RunEventRelay.cs`
 
-Carries the events `GovernedRunHost` drains to a second consumer — the shape
-`SessionLane` already takes, so nothing on the console side has to change to receive them.
+Carries the events `GovernedRunHost` drains to every other consumer — one channel per
+subscriber (ADR-0041 §3: lane, fold, evaluation). `Reader` is the first subscriber's, the
+shape `SessionLane` already takes.
 
 **Remarks.** **Why a relay and not a second reader.** `AcpEventQueue` is
 `SingleReader = true` and the host's own loop is that reader, so "let the console read the
 plane's queue too" is impossible by construction rather than merely unwise. The host therefore
 *republishes* what it has already drained, and this is the channel it republishes into. The
-events are the same instances — nothing is re-normalized, re-sequenced or re-stamped, so the
-console cannot hold a second opinion about what arrived (DM7).
+events are the same instances — nothing is re-normalized, re-sequenced or re-stamped, so no
+consumer can hold a second opinion about what arrived (DM7).
 
 
 
 
 
-**It fits `SessionLane`'s existing constructor.** `Reader` is a
-`ChannelReader{T}` of `ObservedRunEvent`, which is exactly the parameter
-the lane already declares, so the seam is a new object rather than a changed contract on a type
-another node had just finished.
+**Fan-out at publish, never a second reader.** `Publish` writes the same instance
+into every subscriber's own `SingleReader` channel, so no channel ever has two readers. A subscriber
+that joins late misses what was published before it and catches up from the run log by
+`seq > last_seen` (`AttemptSubscription`).
 
 
 
 
 
 **Unbounded, and that is a bounded risk.** A bounded relay would back-pressure the host
-— and therefore the engine — on a console that stopped reading, which turns a closed pane into a
-stalled run; an unbounded one holds at most one run's events and is collected with the document
-that opened it. What is not acceptable is losing an event silently, because the equality the
-sink's oracle asserts would then quietly become an approximation, so a publish that cannot land
-is **counted** as `Refused` rather than dropped.
+— and therefore the engine — on a consumer that stopped reading, which turns a closed pane into a
+stalled run; an unbounded one holds at most one run's events. The retention cap is WL-4's. What is
+not acceptable is losing an event silently, so a publish that cannot land is **counted** as
+`Refused` rather than dropped.
 
 | Member | Summary |
 |---|---|
-| `ChannelReader<ObservedRunEvent> Reader` | The consumer side — hand this straight to a `SessionLane`. |
+| `RunEventRelay()` | **(gap)** |
+| `ChannelReader<ObservedRunEvent> Reader { get; }` | The first subscriber's side — hand this straight to a `SessionLane`. |
 | `long Published` | How many events reached the relay. The number the run's own count is compared with. |
-| `long Refused` | How many could not. Above zero means the console saw fewer events than the run did, and it says so instead of the two numbers quietly disagreeing. |
+| `long Refused` | How many subscriber writes could not land. Above zero means a consumer saw fewer events than the run did, and it says so instead of the two numbers quietly disagreeing. |
+| `long HighWaterSeq` | The highest `Seq` published so far; 0 before the first. A Stop records it (ADR-0041 §4). |
+| `ChannelReader<ObservedRunEvent> Subscribe()` | A new subscriber's own channel; already completed when the relay is. |
 | `void Publish(ObservedRunEvent observed)` | The sink itself: pass this as `GovernedRunHost.RunAsync`'s `sink`. |
-| `void Complete()` | Closes the relay, which ends the lane's drain once it has read what is already queued. |
+| `void Complete()` | Closes every subscriber's channel, which ends each drain once it has read what is already queued. |
 | `void Dispose()` | Closes the relay — `Complete`, so a `using` and an explicit end agree. |
 
 ### `void Complete()`
 
-Closes the relay, which ends the lane's drain once it has read what is already queued.
+Closes every subscriber's channel, which ends each drain once it has read what is already queued.
 
 **Remarks.** Called when the run ends, not when the document closes: a lane whose run is over should stop
 waiting, and a lane whose document is closing is disposed by the document.
