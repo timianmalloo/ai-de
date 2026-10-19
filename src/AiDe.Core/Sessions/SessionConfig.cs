@@ -129,14 +129,23 @@ public sealed record SessionConfig(
     /// Ruling 68) — one of <see cref="CompileModes"/>.
     /// </summary>
     /// <remarks>
-    /// Default <see cref="CompileModes.MechanicalOnly"/> (Ruling 68): a session opens with only the
-    /// free, in-memory, mechanical pre-compile; the two agentic rungs are opt-in as the eval gate
-    /// admits them.
+    /// The record's own value is <see cref="CompileModes.MechanicalOnly"/>: what a file with no
+    /// <c>compileMode</c> reads, and what a caller that cannot evaluate the ladder writes. A NEW
+    /// session is written with <see cref="DefaultCompileModeFor"/> (Ruling 180 (1), amending
+    /// Ruling 68's default only).
     /// </remarks>
     public string CompileMode { get; init; } = CompileModes.MechanicalOnly;
 
-    /// <summary>The compile mode a new session opens in.</summary>
-    public static string DefaultCompileModeFor(CompileModeAvailability? availability) => CompileModes.MechanicalOnly;
+    /// <summary>
+    /// The compile mode a new session opens in (Ruling 180 (1), amending Ruling 68's default only):
+    /// <see cref="CompileModes.AgenticAdvisory"/> when Gate 1 admits it, so the compile step suggests
+    /// Goal, Done when and Not in scope and the user keeps or edits each; otherwise
+    /// <see cref="CompileModes.MechanicalOnly"/>. Null — the ladder could not be evaluated — is
+    /// mechanical-only. Never <see cref="CompileModes.Agentic"/>: that rung stays behind Gate 2's
+    /// 50 + 50 floors and is chosen, never defaulted.
+    /// </summary>
+    public static string DefaultCompileModeFor(CompileModeAvailability? availability) =>
+        availability?.IsSelectable(CompileModes.AgenticAdvisory) == true ? CompileModes.AgenticAdvisory : CompileModes.MechanicalOnly;
 
     /// <summary>
     /// The task class a prompt in this session carries when it declares none of its own (Ruling 70;
