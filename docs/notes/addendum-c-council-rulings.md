@@ -3584,3 +3584,27 @@ The decision, one T17d node, each item red-first:
 (5) NoDispatchOutsideTheHostTests:47 is re-scoped to assert the words remain visible with the status, then the row appears with b3 once the read-back completes. That replaces an assertion that a row appears immediately.
 
 - request: req-01M5A55C99CWSEFYBCT7NX0VYT · ruled by: wl-owner-20261018 · at: 2026-10-19T13:21:52Z
+
+### Ruling 176 — WL-1b: a checklist's owning journey is its id (checklist_id = journey_id, one checklist per journey), enforced, not merely documented
+
+Option A, with an enforcement condition. ADR-0040:57 requires exactly one owning journey per checklist, and the spec's ownership rule (workbench-loops-ux.md:127) requires an owning context. Neither requires several checklists per journey, so one per journey is an admissible WL-1b constraint (YAGNI), with the precedent draft_id = notebook_id. checklist_obligation_fact has no owner column (WorkspaceSchema.cs:323-332), and option B would make WL-1b a migration slice. Conditions: (1) the alias is stated in ADR-0040's amendment of record (this ruling) and in the WL-1b design; (2) creating a second checklist for a journey is refused with a stable code, never merged silently, and a red-first test covers it; (3) the upgrade trigger is recorded: the first spec story needing two checklists in one journey requires the v3 owner column, with a backfill from the alias.
+
+- request: req-01M5AD6E2KGW7N7RAZKGCZMEY9 · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 177 — WL-1b: no disposition covers a mandatory obligation's evidence gap; 'deferred' keeps acceptance blocked
+
+Option A. ADR-0040 :115-117 defers coverage to a policy whose default is none, and AC-W03b allows only 'an authorized disposition explicitly permitted by policy'; WL-1b permits none. AC-W03c's plan deliverable is met by evidence, not by deferral. The policy is one Core table, AcceptancePolicy.Covers, empty for mandatory obligations, and a test pins it. Adding a kind later is a ruling, not an edit. T23's assume: marker for DR-2 is resolved by this ruling.
+
+- request: req-01M5AD6E7JA61TVJGM32MHCQKP · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 178 — WL-1b: currentness gets ONE definition now; NotebookModel.CurrentnessOf delegates to CurrentnessFold
+
+Option C, bounded. Two definitions of one quantity is a defect signature (DM7), and option B's agreement test would keep both alive. The Owner measured the size on origin/main: CurrentnessFold (src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs) is 52 lines with no caller, and NotebookModel.CurrentnessOf (NotebookModel.cs:210) has one caller (SessionDocumentSurface.cs:1560). In a WL-1b track, red-first: CurrentnessOf becomes a thin call to CurrentnessFold over the same inputs, the stale sentence keeps one const, and the old body is deleted (HYG-A). A test asserts the notebook's stale notice and the checklist's evidence state come from the same fold. Bound: if the fold needs inputs NotebookModel cannot supply without a new store read or IPC, the track stops and brings it back as a seam request, and option B is then the interim.
+
+- request: req-01M5AD6ECD82SXWFSTCXA8EMM6 · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 179 — WL-1b: the declared deliverable is the accepted intent revision; the Accepted line names that revision and never claims implementation
+
+Option A. Spec :104 requires acceptance to name the declared deliverable, and AC-W03c requires a plan deliverable accepted without claiming implementation. No v2 column holds a deliverable kind, and option B would be a migration for no WL-1b need. Conditions: the Accepted line names the intent revision by its number (for example 'revision 3'), never says 'implemented' or 'done', and a test refuses an Accepted line that claims implementation. A typed deliverable kind is a later v3 column, if a slice needs to distinguish kinds. T23's assume: marker for DR-4 is resolved by this ruling.
+
+- request: req-01M5AD6EH3Y1VE7BGNGM5KHJHH · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z

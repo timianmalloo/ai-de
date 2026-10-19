@@ -8502,3 +8502,22 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** the test above asserts the drawn window's `Left/Top/Width/Height`, not only the model. Node 1's `FloatRenderTests` and node 1b's `FloatReadBackRestartTests` asserted visibility and hosting, never position.
 - **Derive:** for a view library, the proof of a placement is the drawn object's own geometry. A value is not placed because the adapter wrote it; it is placed when the library's own window reports it.
 - **Status:** `controlled`.
+### DC-NEW-wl-leader3 — A join's recount shares a single-occupant desktop resource with a running track's suite, so the join refuses for a cause outside the join
+- **Class:** a gate that needs an exclusive machine resource (the Ruling 115 desktop hold for shown-window/UIA probes)
+  runs while other sessions may hold it. The gate then reports the resource's occupancy as a test failure. A join's
+  verdict comes to depend on what another track happened to be running, not on the joined code.
+- **Instance (2026-10-19, T17e join):** step 4's recount refused `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`
+  with "Ruling 115 desktop hold is occupied". The occupant was a concurrent track suite (PID 40900, started 14:57:08Z).
+  With the hold free (released 15:05:35Z), the probe passed alone on the join head 293c18a4 (1/1). The join continued
+  with `--docs-only` and the step-8 record says so (`al-01M5AC39QMCJD0W1QMAQZHAVSP`).
+- **Sweep:** every shown-window/UIA test in `tests/AiDe.App.Tests` that takes the hold, and every running track whose App
+  suite overlaps a join (T11, T21 and the WL-1b tracks).
+- **Derive:** a gate's refusal must name a cause in the code under test. Occupancy is an environment state, so it should
+  read NOT CHECKED with its cause, never Failed, or the gate should wait for the resource.
+- **Control:** brief rule 19 in `.agents/briefs/workbench-loops/brief-common.md` (a5a0fdc8): a track starts no App suite
+  while a `join in flight` post is open. Mechanical candidate, not yet built: the conductor recount takes the desktop hold
+  before the App project and waits for it, so occupancy cannot reach the verdict.
+- **Status:** `partially-controlled` (a brief rule only, until the recount takes the hold).
+- **Control, extended (Owner, 2026-10-19):** the same resource is the user's desktop during a demo. Brief rule 20: while
+  `USER DEMO IN PROGRESS` is the Owner's latest demo post on the board, no App suite, UI probe or real-lane test runs in
+  any tree. Running tracks were told by mail at the rule's commit.
