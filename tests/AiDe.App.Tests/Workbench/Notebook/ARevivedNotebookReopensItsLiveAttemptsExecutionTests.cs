@@ -157,9 +157,11 @@ public sealed class ARevivedNotebookReopensItsLiveAttemptsExecutionTests : IDisp
                 _fixture.ReleaseRun();
                 var ledger = new DyingAtTheTerminal(new BoundaryDispatcher(_fixture.Store), diesMidRun);
                 var host = await AttemptHost.OpenAsync(ledger, Path.Combine(Root, ".aide", "attempt-host.lock"), CancellationToken.None);
+                // Today's window is a first open over an empty store: the document is built, then the host binds (the
+                // shell's order, Ruling 172), and the bind's read-back finds nothing.
                 var model = _fixture.NewModel();
-                model.Runs.BindHost(host, new AttemptScope("workspace", _fixture.Store.CoreEpoch, SessionGeneration: 1));
                 var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                model.Runs.BindHost(host, new AttemptScope("workspace", _fixture.Store.CoreEpoch, SessionGeneration: 1));
                 window.Content = surface;
                 _fixture.ConfigureStub(surface);
                 surface.Composer.Draft.SetFreeFormText("words before the close");

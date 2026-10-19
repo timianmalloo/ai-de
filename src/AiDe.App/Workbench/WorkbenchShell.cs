@@ -3819,9 +3819,12 @@ public sealed class WorkbenchShell : IDisposable
             : host.Service.Apply(new LayoutOperation.AddSurface(
                 ZonesToTree.StackIdOf(ZoneId.Bottom),
                 new Surface(executionId, Execution.ExecutionSurface.Kind, caption)));
-        if (result.Applied && activate)
+        if (result.Applied)
         {
-            OpeningDocument(host);
+            if (activate)
+            {
+                OpeningDocument(host);
+            }
         }
 
         WorkbenchDiagnostics.LayoutMutation(activate ? "open-execution" : "revive-execution", "zone-rule", executionId, host.Adapter.ActiveSurfaceId, host.Service.Current);
