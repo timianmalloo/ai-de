@@ -172,6 +172,15 @@ public sealed class NotebookRuns : IDisposable
     private static string CannotHost(string cause) => $"Runs cannot be hosted in this window: {cause} Retry to open the host again.";
 
     /// <summary>
+    /// Ruling 175 (the Owner's copy, DESIGN.md): the refusal, status and UIA help text, of a bound host whose restart
+    /// read-back failed. <c>{cause}</c> is the failure's own message. The Retry reads back again; it does not reopen.
+    /// </summary>
+    public const string RestoringFailed = "Restoring this notebook's turns failed: {cause}. Retry to restore them.";
+
+    /// <summary><see cref="RestoringFailed"/> with <paramref name="cause"/>; a trailing full stop is not doubled.</summary>
+    private static string CannotRestore(string cause) => RestoringFailed.Replace("{cause}", cause.TrimEnd('.'), StringComparison.Ordinal);
+
+    /// <summary>
     /// Binds to the workspace's attempt host once <paramref name="open"/> completes (Ruling 159): a turn sent before then
     /// waits for it, and a host that cannot be opened refuses every send with its cause — never a direct run, which would
     /// break ADR-0041's write-ahead invariant.
@@ -313,8 +322,8 @@ public sealed class NotebookRuns : IDisposable
     }
 
     /// <summary>
-    /// The bind's read-back, its failure kept as the refusal Send shows (Ruling 175(2)): Ruling 159's words with the
-    /// read-back's own cause, and the Retry that reads back again. A read-back that ends clears it.
+    /// The bind's read-back, its failure kept as the refusal Send shows (Ruling 175(2)): <see cref="RestoringFailed"/>
+    /// with the read-back's own cause, and the Retry that reads back again. A read-back that ends clears it.
     /// </summary>
     private async Task KeepingTheFailureAsync(Task read)
     {
@@ -325,7 +334,7 @@ public sealed class NotebookRuns : IDisposable
         }
         catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
         {
-            failure = CannotHost(error.Message);
+            failure = CannotRestore(error.Message);
         }
 
         ChangeRefusal(() => _readBackFailure = failure, inline: false);
