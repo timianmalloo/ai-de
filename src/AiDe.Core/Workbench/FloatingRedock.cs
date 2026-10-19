@@ -12,7 +12,7 @@ public sealed record FloatingRedockResult(WorkbenchLayout Layout, IReadOnlyList<
     internal const string SingularFormat = "{0} was floating in your saved layout. Floating is not available yet, so it is docked in {1}.";
 
     /// <summary>The report for several docked panes: {0} the count, {1} the <see cref="PluralItemFormat"/> items joined by ", ".</summary>
-    internal const string PluralFormat = "{0} floating panes in your saved layout are docked because floating is not available yet: {1}.";
+    internal const string PluralFormat = "{0} floating panes in your saved layout are docked: {1}.";
 
     /// <summary>One item of the plural report: {0} the title, {1} the zone's user-facing label.</summary>
     internal const string PluralItemFormat = "{0} in {1}";

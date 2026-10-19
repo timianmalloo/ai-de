@@ -1382,7 +1382,7 @@ Copy added by this section (review oracles quote these strings):
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
 | DOCK1 | Pane hidden. The run continues. |
 | DOCK2 | Floating a pane is not available yet. The pane stays where it is. (Ruling 171 (1); removed by T21) |
-| DOCK3 | {Title} was floating in your saved layout. Floating is not available yet, so it is docked in {zone}. — plural: {N} floating panes in your saved layout are docked because floating is not available yet: {Title} in {zone}, … (Ruling 171 (1); removed by T21) |
+| DOCK3 | {Title} was floating in your saved layout. Floating is not available yet, so it is docked in {zone}. — plural: {N} floating panes in your saved layout are docked: {Title} in {zone}, {Title} in {zone}. (Ruling 171 (1); removed by T21) |
 | AUTH1 | Signed in does not mean this route is qualified. |
 | DEMO1 | Interactive prototype. Runs, accounts and evidence are simulated. |
 
