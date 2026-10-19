@@ -325,20 +325,45 @@ public sealed class NotebookRuns : IDisposable
     /// The bind's read-back, its failure kept as the refusal Send shows (Ruling 175(2)): <see cref="RestoringFailed"/>
     /// with the read-back's own cause, and the Retry that reads back again. A read-back that ends clears it.
     /// </summary>
+    /// <remarks>
+    /// Ruling 175(4): writes <c>notebook.read-back</c> with its duration once the read ends, before the refusal is set or
+    /// cleared, so a reader that sees the outcome sees the record. The clock starts here, as the read is started.
+    /// </remarks>
     private async Task KeepingTheFailureAsync(Task read)
     {
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
         string? failure = null;
         try
         {
             await read.ConfigureAwait(false);
+            Timed("notebook.read-back", started, "read", attempts: ReadBack.Count);
         }
         catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
         {
+            Timed("notebook.read-back", started, "failed", errorType: error.GetType().Name);
             failure = CannotRestore(error.Message);
         }
 
         ChangeRefusal(() => _readBackFailure = failure, inline: false);
     }
+
+    /// <summary>
+    /// Ruling 175(4), measured by default (IO1): one step's duration and how it ended, through the Shell lane's one writer
+    /// (<see cref="WorkbenchDiagnostics.Write"/>, as <c>ThreadDiagnostics</c> writes). A failed step records its own
+    /// duration with <c>failed</c>; a value this step does not know is null, never invented (IO12).
+    /// </summary>
+    private void Timed(string evt, long started, string outcome, int? tries = null, int? attempts = null, string? errorType = null) =>
+        WorkbenchDiagnostics.Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt,
+            notebook = _notebook.Id.Value,
+            outcome,
+            duration_ms = Math.Round(System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, 1),
+            tries,
+            attempts,
+            error_type = errorType,
+        });
 
     /// <summary>Raised on the model's home context each time <see cref="HostRefusal"/> is set or cleared.</summary>
     public event Action? HostRefusalChanged;
@@ -346,14 +371,24 @@ public sealed class NotebookRuns : IDisposable
     /// <summary>How often a hosted-elsewhere window tries the open again, so the copy shows only while the holder lives.</summary>
     public static readonly TimeSpan HolderProbe = TimeSpan.FromSeconds(1);
 
+    /// <remarks>
+    /// Ruling 175(4): writes <c>notebook.host-open</c> with the duration from this open's start (the bind, or the Retry)
+    /// to its end, <c>bound</c>, <c>failed</c> or <c>ended</c> with the workspace, before the state a reader waits on is
+    /// set. <c>tries</c> counts the passes, more than one while another window holds the host.
+    /// </remarks>
     private async Task OpenHostAsync(Func<Task<IAttemptHost>> open, AttemptScope scope)
     {
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        var tries = 0;
+
         // Terminates: each pass binds, refuses with a cause that needs the operator's Retry, or ends with the workspace.
         while (!_disposing.IsCancellationRequested)
         {
+            tries++;
             try
             {
                 var host = await open().ConfigureAwait(false);
+                Timed("notebook.host-open", started, "bound", tries);
                 ChangeRefusal(() => (_host, _openFailure) = ((host, scope), null), inline: false);
                 Bound();
                 return;
@@ -365,12 +400,15 @@ public sealed class NotebookRuns : IDisposable
             }
             catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
             {
+                Timed("notebook.host-open", started, "failed", tries, errorType: error.GetType().Name);
                 ChangeRefusal(() => _openFailure = CannotHost(error.Message), inline: false);
                 return;
             }
 
             await Task.Delay(HolderProbe, _disposing.Token).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
+
+        Timed("notebook.host-open", started, "ended", tries);
     }
 
     /// <summary>
