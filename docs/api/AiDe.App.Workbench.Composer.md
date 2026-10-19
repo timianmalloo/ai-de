@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 126 members, 94% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 132 members, 95% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**16 public types · 126 public members · 94% documented.**
+**16 public types · 132 public members · 95% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -178,6 +178,7 @@ not two runs.
 | `void UseEnvelopeStore(EnvelopeStore? store, string? reason)` | Binds the store the session document opened for its lifetime (ADR-0034 rule 2), or null with the reason there is none — a locked file, a missing session directory — so Prepare degrades with the reason shown, never sil… |
 | `void NextBlock()` | The block was accepted and the composer starts the next one (SC1: the session is a conversation of n turns through one composer). `SendCount` is per block — one block, one send — so it returns to zero; `BlocksSent` ke… |
 | `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)` | Renders the compiled view. Everything after this point is byte-for-byte what gets sent. |
+| `string CurrentProjectionSha(Envelope envelope)` | The envelope's projection sha now, by the same call the send projects through — the attempt gate's G1 read (ADR-0041) of a submitted envelope, so the sha it compares is this producer's, never a fourth call site. |
 | `string EngineId { get; private set; } = Envelope.NotRecorded` | The engine every `opened` row names, and whose provider is the family; `NotRecorded` until bound. |
 | `string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm` | The session's `default_task_class` (Ruling 72) — `FreeForm` until bound, the vocabulary's one home. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
@@ -215,6 +216,13 @@ Renders the compiled view. Everything after this point is byte-for-byte what get
 **Remarks.** Kept separate from `Send` so C15's window has two named ends: the file reader and
 the mention sources are sampled here and again after `Send`, and both must be
 unchanged.
+
+### `string CurrentProjectionSha(Envelope envelope)`
+
+The envelope's projection sha now, by the same call the send projects through — the attempt gate's G1 read
+(ADR-0041) of a submitted envelope, so the sha it compares is this producer's, never a fourth call site.
+
+**Throws `EnvelopeStoreException`.** The fold has no `opened` row.
 
 ### `GovernedRunRequest? Send(`
 
@@ -398,6 +406,8 @@ claim, and paste is handled inside the page by the editor that received it.
 | `Task? Preparing { get; private set; }` | The preparing gesture in flight, or the last one — what a test drains and what the document may await. |
 | `void KeepStructureLine(string field)` | The operator keeps a derived line through its own control (the test's route to the same click). |
 | `PrepareState PrepareState` | The Prepare state, as the gate holds it. |
+| `Func<string, Task>? RevisionPreparer { get; set; }` | Saves the draft's source text as a notebook revision before Prepare opens the envelope (the session document's notebook binding sets it); null when nothing is bound — Prepare then runs as before. |
+| `event Action? DraftChanged` | The compiled view was re-rendered over the draft — an edit, an attachment, a prepare; the stale mark re-derives. |
 | `bool PrepareAgainVisible` | Whether the *Prepare again* control is on the screen. |
 | `bool CancelVisible` | Whether the *Cancel* control is on the screen. |
 | `Task PrepareTurnAsync()` | The preparing gesture: the envelope opened, the model called for the open lines, Prepare entered with the compile line and its next-action control — every state with a reason string in voice (§A11; US-D5). |
@@ -414,6 +424,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `string WaitOrParallelOffer(TurnView inFlight)` | The offer's sentence (Ruling 95; DESIGN.md copy): *b1 is running. Wait — send after b1, or start a parallel session.* |
 | `string WaitActionName(TurnView inFlight)` | The Wait action's name: *Wait — send after b1*. |
 | `string ParallelActionName = "Start a parallel session"` | The Parallel action's name. |
+| `string InFlightLinkName(TurnView inFlight)` | The offer's link to the turn in flight, named by its state: *b1, running*. |
 | `void BeginNextTurn()` | The turn was accepted: the composer starts the next one — the message and the structure lines empty, the gate on a new block, the page told (Feedback:+Confirmed — the turn now lives in the thread). |
 | `void UseAsNextDraft(string sourceText)` | A past turn's words become the next draft (*Use as the next draft* · *Send again as a new turn*) — a host→page push, never a second Configure. |
 | `void OfferAttachment(IReadOnlyList<string> filePaths)` | **(gap)** |
@@ -423,6 +434,8 @@ claim, and paste is handled inside the page by the editor that received it.
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `string RuleChoice = "rule"` | The tier control's first choice: the rule's own value stands. |
 | `void Dispose()` | Releases the hosted browser control. |
+| `string RetryHostName = "Retry hosting runs"` | The UIA name of the Retry that opens the attempt host again. |
+| `void ShowHostRefusal(string? refusal, Func<Task>? retry)` | Ruling 159(1): why this window cannot host runs, or null once it can. While set, Send is disabled and its UIA help text is the cause; , when given, is offered as the Retry control. The read-only views are untouched. |
 | `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with what remains of the constraint after the ones before it, so an uncapped compiled prompt would take its … |
 
 ### `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)`

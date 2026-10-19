@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T08:26:37Z",
+  "generated": "2026-10-19T08:37:15Z",
   "audit": [
     {
       "actor": null,
@@ -24600,6 +24600,64 @@ window.AUDIT_DATA = {
       "done_when": "every state's row Name pinned; suites green",
       "tier": "T2",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M59MWJ8TDEXXWWV4H408QYYV",
+      "shortname": "join-wl1a-notebook-binding",
+      "datetime": "2026-10-19T08:36:41Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-notebook-binding into main",
+      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync (Rejected/never_dispatched + attempt.withdraw receipt, one txn); Ruling 159 (no dispatch outside the host; Send disabled with cause; dead holder never locks out); Ruling 156 adoption refusal; withdrawn copy; UIA names guard recount_seconds=575 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T08:27:05Z",
+      "duration_seconds": 576.0
+    },
+    {
+      "id": "al-01M59MXJJP1SX51CZ8JWK5EKZ4",
+      "shortname": "join-wl1a-notebook-binding",
+      "datetime": "2026-10-19T08:37:14Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync; Ruling 159; Ruling 156 refusal; withdrawn copy; UIA names guard. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md is canonical; an internal hand-off note), then continued --docs-only. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T08:37:13Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -29180,6 +29238,51 @@ window.AUDIT_DATA = {
       "to": "wl-leader2-20261019",
       "kind": "ruling",
       "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59MA996F1CJR3DVAD87N41D",
+      "ts": "2026-10-19T08:26:42Z",
+      "from": "wl-t8-bind",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59MCRFMT4867WWQ94XKCP3Y",
+      "ts": "2026-10-19T08:28:03Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59MCRFB279FC5CW64MX8AY8",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59MEM0N2YNVG5MYMP9HAH4R",
+      "ts": "2026-10-19T08:29:04Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59MCRFB279FC5CW64MX8AY8",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59MJ388RKXR1AJN6X1GX9JT",
+      "ts": "2026-10-19T08:30:58Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59MJ37YMWR9MKS49VKMWXZ2",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59MJXNG926VWAXW19QS3ERA",
+      "ts": "2026-10-19T08:31:25Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59MJ37YMWR9MKS49VKMWXZ2",
       "session": "wl-owner-20261018"
     }
   ]

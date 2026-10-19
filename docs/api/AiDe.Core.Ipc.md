@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 63 types, 142 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 64 types, 144 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**63 public types · 142 public members · 64% documented.**
+**64 public types · 144 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -972,6 +972,7 @@ epoch would defeat it while appearing to work.
 | `Task<DispatchReceipt> DispatchFinalizeAsync(` | Phase 2 of a dispatch. Idempotent: a retried finalize returns the existing receipt. |
 | `Task<AttemptBeginResult> BeginAttemptAsync(AttemptRow attempt, CancellationToken cancellationToken)` | G0 of a native-route attempt, answered in one store transaction by the daemon. |
 | `Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken)` | G1–G3: one outcome event; `Committed` says whether the store took it. |
+| `Task<AttemptAppendResult> WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken)` | The operator's withdraw, answered in one store transaction by the daemon. |
 | `Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken)` | The attempt and its outcome events, read back from the store. |
 | `Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken)` | The host's sweep, run by the daemon over the host's own live set. |
 | `Task<NotebookOpenResult> OpenNotebookAsync(string notebookId, string journeyTitle, CancellationToken cancellationToken)` | Opens a notebook and its owning journey; idempotent on the notebook id. |
@@ -1127,6 +1128,12 @@ G1–G3 of a native-route attempt: one outcome event.
 
 One attempt and its outcome events, by key.
 
+## `AttemptWithdrawRequest`
+
+*record* — `WorkspaceOperations.cs`
+
+The operator's withdraw of a never-launched attempt; the dispatch key is the command id.
+
 ## `AttemptReadResult`
 
 *record* — `WorkspaceOperations.cs`
@@ -1210,6 +1217,7 @@ bound, and two definitions of one quantity is a defect signature.
 | `string AttemptOutcome = "attempt.outcome"` | **(gap)** |
 | `string AttemptRead = "attempt.read"` | **(gap)** |
 | `string AttemptSweep = "attempt.sweep"` | **(gap)** |
+| `string AttemptWithdraw = AttemptReceipt.WithdrawCommand` | **(gap)** |
 | `string IndexSolution = "index.solution"` | **(gap)** |
 | `JsonSerializerOptions Wire { get; } = new(JsonSerializerDefaults.Web)` | How every payload on this boundary is encoded. |
 | `void Register(DaemonEndpoint endpoint, ProjectionService projections)` | Registers the read projections on . |

@@ -3367,3 +3367,46 @@ Conditions, each red-first:
 (4) The early-Send race (a turn sent before the host finishes opening) is fixed in T8 node 4 as planned: the composer waits for the open, and is never given a direct path.
 
 - request: req-01M59FX8EAK66B8PQEDQR4TRGN · ruled by: wl-owner-20261018 · at: 2026-10-19T07:11:02Z
+
+### Ruling 160 — Step 8 drops the pack copy of verify-ruling-citations until PD-1 is fixed; the repo copy tools/verify-ruling-citations.py is held strict; Ruling 153's filter is retired
+
+Option A. The two copies of one check disagree, and the pack copy is known-broken (PD-1): it reads only docs/notes/rulings.md, so every ruling a decision note defines reads as undefined to it. Ruling 153 filtered only addendum-c rulings, so a citation of a note-defined ruling, such as Ruling 38 in T5's handoff.md, still refused the ratchet, though nothing was wrong.
+
+The Owner ran the repo copy on main. tools/verify-ruling-citations.py reports OK: 154 cited, 145 defined by a note, 9 frozen as pre-existing debt (1, 3, 5, 7, 32, 33, 34, 35, 37). Its --self-test passes 5 cases. The Leader read them: case 1 plants an undefined citation and requires the refusal, case 3 refuses a prose-only definition, and a frozen entry that becomes defined must be removed.
+
+The decision:
+(1) In conductor-join step 8, docs/ai-forward-pack/scripts/verify-ruling-citations.py is excluded from the ratchet. Its output is still recorded in each join audit.
+(2) tools/verify-ruling-citations.py is held STRICT, with no ratchet allowance. It must report OK at every join head and at every Leader pre-push, so leader_precommit.py runs this copy.
+(3) Ruling 153's finding filter is retired, because it filtered the pack copy only. Its root-prefix-only normalisation rule stays in force for every other gate.
+(4) The 9 frozen rulings stay as recorded debt. The frozen list may only shrink.
+(5) The exclusion ends when PD-1 is fixed in the pack and the pack copy reports OK on main. From then on both copies are strict.
+
+- request: req-01M59KAEJ1KF9ZB4X29RN35RTP · ruled by: wl-owner-20261018 · at: 2026-10-19T08:10:07Z
+
+### Ruling 161 — WL-1a shows each attempt's binding in its turn row (track T16); the slice is not demo-ready until it does
+
+Option A. WL-1a's human-validation column in architecture.md:1503 is 'the scenario above, keyboard only', and that scenario includes 'see the attempt bound to revision/projection_sha/route'. AC-R01a requires that A's attempt keep its submitted input and actual route after an edit to B. Option B would accept the slice with part of its own demo moved out, which the slice table does not allow. The values exist only as data today (NotebookRuns.cs:44-45, AttemptHost.cs:146-147, ComposerSendGate.cs:451/461).
+
+T16, a small Sonnet track, adds one detail line to the turn row's existing disclosure. Copy: 'Sent from revision {n} · request {first 7 of projection_sha} · via {route}'. '{route}' is the route's own user-facing label, the same words the route picker shows, not an internal id. The words are 'request' and 'via': the spec's ubiquitous language calls the projection the prepared request (AC-E04a) and names the route, while 'projection' is an internal term.
+
+Conditions, each red-first:
+(1) The values are read from the attempt record via the host (AttemptHost), never from the composer's current state.
+(2) After the notebook is edited to revision B, the row of A's attempt still shows revision A's number and request: a test asserting AC-R01a.
+(3) The same line is the disclosure's UIA HelpText, with the 7-character fingerprint, and the Name convention is unchanged.
+(4) Add the copy to DESIGN.md's copy list (the line at 1204).
+The slice is not demo-ready until T16 joins. The demo script includes the step that opens the disclosure and reads the line.
+
+- request: req-01M59MCRFB279FC5CW64MX8AY8 · ruled by: wl-owner-20261018 · at: 2026-10-19T08:29:04Z
+
+### Ruling 162 — Ruling 161's {route} is the engine id exactly as the New session sheet shows it, or the existing Terminal surface label for the PTY path, until WL-3's route picker supplies labels
+
+Option A, amending Ruling 161, which assumed a route picker. None exists in src: the spec introduces it in WL-3. The Owner checked what an operator sees today. NewSessionSheetDialog.cs:368 renders account.EngineId as the engine line. AttemptHost.cs:170 stores RouteFingerprint as 'acp:' + EngineId, or 'pty'. SurfaceContentFactory.cs:194 already labels the terminal surface 'Terminal'.
+
+The decision:
+(1) {route} = the EngineId the sheet shows, i.e. RouteFingerprint with its 'acp:' prefix removed, e.g. 'claude-code'.
+(2) For 'pty', {route} = 'Terminal', the existing surface label in SurfaceContentFactory.cs:194, so no new word is introduced.
+(3) Derive both from ONE function that the turn row calls, and add a test pinning that the sheet and the row produce the same words for the same engine.
+(4) Any other fingerprint shape renders the fingerprint verbatim, never a guess, and a test covers it.
+Option B is rejected: it would mint product copy and a Core field ahead of WL-3's design. When WL-3's picker lands, its label replaces both surfaces through that one function.
+
+- request: req-01M59MJ37YMWR9MKS49VKMWXZ2 · ruled by: wl-owner-20261018 · at: 2026-10-19T08:31:25Z

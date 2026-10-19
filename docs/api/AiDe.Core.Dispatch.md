@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Dispatch: 19 types, 31 members, 76% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Dispatch: 19 types, 34 members, 77% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Dispatch`
 
-**19 public types · 31 public members · 76% documented.**
+**19 public types · 34 public members · 77% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -61,6 +61,7 @@ while the daemon lives. Every one of those leaves a `Pending` row, which
 | `AttemptBeginResult BeginAttempt(AttemptRow attempt)` | G0 — make the attempt durable, or return the attempt that already holds this key. |
 | `AttemptAppendResult AppendAttemptOutcome(OutcomeRow outcome)` | G1–G3 — append one outcome event to an attempt, unless the attempt may not take it. |
 | `AttemptReceipt? ReadAttempt(string dispatchKey)` | The attempt row and every outcome event on it, in total order; null when the key was never attempted. |
+| `AttemptAppendResult WithdrawAttempt(string dispatchKey, CallerPrincipal caller)` | The operator's withdraw of a never-launched attempt (`WithdrawAttemptAsync`). |
 | `AttemptSweepResult SweepAttempts(AttemptSweepRequest request)` | Resolves every abandoned native attempt to `DeliveryUnknown` with a cause. |
 
 ### `DispatchBeginResult Begin(DispatchCommand command)`
@@ -108,6 +109,14 @@ G1–G3 — append one outcome event to an attempt, unless the attempt may not t
 (design, DSA Blocker 1); a second terminal — the first stands (ADR-0041 §2). The checks run in the writer
 transaction; the partial unique indexes are the net, and their violation maps to the same answer.
 
+### `AttemptAppendResult WithdrawAttempt(string dispatchKey, CallerPrincipal caller)`
+
+The operator's withdraw of a never-launched attempt (`WithdrawAttemptAsync`).
+
+**Remarks.** One writer transaction: the effect (`Rejected{never_dispatched}`) and its command receipt commit together or
+not at all. Only an attempt with no `Dispatched` row and no terminal is admitted, so a retried withdraw —
+whose first try already wrote the terminal — commits nothing and reads back the original outcome.
+
 ### `AttemptSweepResult SweepAttempts(AttemptSweepRequest request)`
 
 Resolves every abandoned native attempt to `DeliveryUnknown` with a cause.
@@ -145,10 +154,12 @@ The native-route dispatch key (ADR-0041 §1). One home: the host and the binding
 
 One attempt as the store holds it: the attempt row and its outcome events in total order.
 
-**Remarks.** Every member past the two fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.
+**Remarks.** Every member past the three fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.
 
 | Member | Summary |
 |---|---|
+| `string WithdrawCommand = "attempt.withdraw"` | The `command_type` of the operator's withdraw; its `command_id` is the dispatch key. |
+| `bool IsWithdrawn` | Withdrawn by the operator: `Rejected{never_dispatched}` AND the completed withdraw command — never the terminal alone. |
 | `IReadOnlySet<DispatchState> TerminalStates = new HashSet<DispatchState>` | The terminal states — exactly the set the store's `ux_outcome_one_terminal` index names. |
 | `string DispatchKey` | **(gap)** |
 | `OutcomeRow? Dispatched` | The one `Dispatched` row, or null when the prompt was never launched. |

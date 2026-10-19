@@ -181,3 +181,9 @@
 {"agent": "wl-t8-bind", "at": 1792397761.7802484, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-app.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792397761.8107555, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-core.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792397762.3410606, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.44228, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.4703352, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.4988253, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-app.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.5269673, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-core.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.553678, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/uia-names-guard-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792398397.5846593, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/EveryExecutionStateKeepsTheUiaNameTests.cs", "session": "wl-t8-bind", "wi": ""}

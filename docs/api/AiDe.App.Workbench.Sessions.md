@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 205 members, 74% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 210 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**36 public types · 205 public members · 74% documented.**
+**36 public types · 210 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -739,10 +739,15 @@ refusal is announced (`THR-0002`), never silent.
 |---|---|
 | `double ThreadMinimum = 44` | The least the thread keeps once it has turns — half a turn (the words line and its decoration; DS-1 L1's 88 px turn ÷ 2) — the belt's constant under a short window (Ruling 80: the composer's belt is body − this). At 0… |
 | `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
+| `SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | A surface that **binds** to a workspace-owned model (ADR-0045 §4): disposing the surface leaves the model, its thread and its revisions to the next surface built over it. The shell's construction site uses this one. |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
 | `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
 | `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for — `session-document`, never `session` (Ruling 18). |
+| `string PaneHiddenCopy = "Pane hidden. The run continues."` | Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a). |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
+| `NotebookModel Notebook { get; }` | The notebook this surface is bound to (ADR-0045 §4) — the shell's, or this surface's own when built from a bare view model. |
+| `bool StaleNoticeVisible` | Whether the latest result is marked stale (spec §C3). |
+| `string StaleNoticeText` | The stale mark's words while it shows; empty otherwise. |
 | `string SurfaceId { get; }` | The layout surface id. |
 | `ComposerSurface Composer { get; }` | The composer — the document's last region. |
 | `EnvelopeStore? Envelopes` | The envelope store this document holds for its lifetime, or null with the reason on `HistoryState`. |
@@ -764,7 +769,7 @@ refusal is announced (`THR-0002`), never silent.
 | `ToggleButton ConsoleToggle` | The header's Console toggle. |
 | `bool OperatorActed` | Whether the operator has acted in the document since it opened — the one-shot flag K7 reads. |
 | `void AttachLane(SessionLane lane)` | Holds a lane for the document's lifetime, so nothing else has to remember to. |
-| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is `LastRunFailure`. |
+| `Task LastLaunch` | The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is `LastRunFailure`. |
 | `GovernedRunResult? LastRunResult { get; private set; }` | What the last completed run reported, or null when none has completed. |
 | `string? LastRunFailure { get; private set; }` | Why the last run did not complete, or null. Never a plausible substitute for a result. |
 | `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the lane's side of the seam. |
@@ -784,6 +789,15 @@ refusal is announced (`THR-0002`), never silent.
 - **`model`** — The document's state.
 - **`store`** — Where the document's envelope is persisted, or null to keep none — the compiled-prompt disclosure's open state is written there on every toggle (Ruling 96), so a reopen restores it.
 - **`announcer`** — The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site, `WorkbenchShell.RegisterSessionDocument`). Null — a document built directly, as every headless test here still does — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
+
+### `SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`
+
+A surface that **binds** to a workspace-owned model (ADR-0045 §4): disposing the surface leaves the model, its
+thread and its revisions to the next surface built over it. The shell's construction site uses this one.
+
+- **`notebook`** — The model; its owner (the shell) disposes it, never this surface.
+- **`store`** — As the other constructor's.
+- **`announcer`** — As the other constructor's.
 
 ### `string PurgeCompileHistory()`
 

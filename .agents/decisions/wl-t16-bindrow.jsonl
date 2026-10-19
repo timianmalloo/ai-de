@@ -1,0 +1,12 @@
+{"agent": "wl-t16-bindrow", "at": 1792398872.6621354, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/binding-row-red.txt", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398872.6941848, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/RouteWords.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398872.728207, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398872.7598953, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398872.7899177, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheTurnRowShowsItsAttemptBindingTests.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.0792878, "code": null, "kind": "allowed", "path": "DESIGN.md", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.1078248, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding-row/binding-row-green.txt", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.1383548, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.168358, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/RouteWords.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.1968865, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.2278972, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "session": "wl-t16-bindrow", "wi": ""}
+{"agent": "wl-t16-bindrow", "at": 1792398938.2555008, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "session": "wl-t16-bindrow", "wi": ""}
