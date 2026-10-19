@@ -395,3 +395,16 @@ It does not buy speed on the critical path.
 - **10:51Z — WL-S resumed.** T11 was re-cut into nodes of ≤ 3 checks: n1 = kinds + the D2 Landing flip, WebView2 keys,
   and a live hide/float/redock; n2 = slot migration + the WL-S Proof Pack. T18 `wls-knowledge-mode` (Ruling 149 (2)) was
   split out to run in parallel. A DR is open on the mode's placement, because a toolbar toggle would amend Ruling 53.
+- **2026-10-19, epoch 3 (`wl-leader3-20261019`).**
+  - **Joins:** T17e `64f713a4` (ratchet 0/49). Its recount refused once because a concurrent track suite held the
+    desktop (DC-NEW-wl-leader3). Brief rules 19 and 20 now gate App runs on joins in flight and on the user's demo.
+  - **WL-1a ACCEPTED** by the user's demo (2026-10-19 15:34–15:46Z, all steps passed), per the Owner's relay.
+  - **WL-1b plan refresh (GO19 step 11).** T22 `wl1b-design` ran `/design-slice`: no schema change and no adoption.
+    The cut is T23 folds and T24 service (Core, Sonnet), T25 perf (bench, Sonnet), and T26 checklist kind (App, Opus,
+    after the WL-S joins). Rulings 176–179 settle DR-1 to DR-4. Ruling 178 adds T27 `wl1b-currentness`, which gives
+    currentness one definition.
+  - **Fix-forwards from the user's demo:** T28 `wl1a-compiled-field` (`/investigate`, red only, ahead of every WL-1b join)
+    and T29 `wl-prefill-assessment` (AC-W01a, a DR draft, docs only).
+  - **Fan-out cap raised 3 → 5 for this window** (Owner): user-priority fixes plus one read-only track. UI-test tracks
+    are capped at 2 concurrent (T21, T28). A "desktop hold occupied" result is re-run, never counted as a pass or a fail,
+    and each occurrence is logged to measure the contention. **The cap returns to 3** after T28's red and T21's join.
