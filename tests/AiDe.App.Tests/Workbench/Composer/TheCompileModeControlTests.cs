@@ -107,6 +107,35 @@ public sealed class TheCompileModeControlTests(ITestOutputHelper output) : IDisp
         });
     }
 
+    /// <summary>
+    /// T30 n2 (A), the real settings: with no ladder injected, the settings evaluate the gate over the bound composer's
+    /// adapter install root. Only the gate's input is injected (<see cref="SessionDocumentSurface.CompileModeGateInput"/>),
+    /// so the test sees which root the gate was asked about and no test reads <c>~/.aide/proof</c>.
+    /// </summary>
+    [Fact]
+    public void WithNoLadderInjected_TheSettingsEvaluateTheGateOverTheBoundAdapter_AndOfferAgenticAdvisory()
+    {
+        ComposerGesture.Drive(_fixture, (window, document) =>
+        {
+            var asked = new List<string>();
+            document.CompileModeGateInput = root =>
+            {
+                asked.Add(root);
+                return GateOneAdmits();
+            };
+            var config = NewSession(GateOneAdmits());
+            document.Composer.Gate.BindSession(config.SessionId, config.CompileMode, "claude-code", "implement");
+
+            var picker = OpenSettings(document);
+            output.WriteLine($"open: bound adapter {document.Composer.AdapterInstallRoot} · gate asked about [{string.Join(", ", asked)}] · selected {Selected(picker)} · why \"{Why(picker)}\" · items {Items(picker)}");
+            Assert.Equal(Path.Combine(_fixture.Root, "install"), document.Composer.AdapterInstallRoot);
+            Assert.Contains(document.Composer.AdapterInstallRoot, asked);
+            Assert.True(Item(picker, CompileModes.AgenticAdvisory).IsEnabled, "agentic-advisory is disabled although the gate over the bound adapter admits it");
+            Assert.Contains("Gate 1 admits it", Why(picker), StringComparison.Ordinal);
+            return Task.CompletedTask;
+        });
+    }
+
     /// <summary>The header's <i>Session settings</i> button through its invoke peer, then the open popup's compile-mode control.</summary>
     private static ComboBox OpenSettings(SessionDocumentSurface document)
     {

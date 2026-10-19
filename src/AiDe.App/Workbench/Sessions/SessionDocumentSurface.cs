@@ -1359,6 +1359,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// </summary>
     public Func<CompileModeAvailability>? CompileModeLadder { get; set; }
 
+    /// <summary>
+    /// The gates over an adapter install root — <see cref="CompileModeGate.Evaluate(string)"/> in the product. With no
+    /// <see cref="CompileModeLadder"/>, the settings evaluate it over the bound composer's
+    /// <see cref="ComposerSurface.AdapterInstallRoot"/>; a test injects it so no test reads <c>~/.aide/proof</c>.
+    /// </summary>
+    public Func<string, CompileModeAvailability> CompileModeGateInput { get; set; } = CompileModeGate.Evaluate;
+
     /// <summary>What the settings row says when no ladder can be read: every agentic rung refused, by name.</summary>
     private const string LadderNotEvaluated = "this session document cannot read the compile-mode gates, so only mechanical-only is offered";
 

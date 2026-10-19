@@ -430,6 +430,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The draft this surface composes.</summary>
     public ComposerDraft Draft => _draft;
 
+    /// <summary>The bound session's adapter install root — the compile-mode gates read it; null until configured.</summary>
+    public string? AdapterInstallRoot => _context?.AdapterInstallRoot;
+
     /// <summary>The last thing that happened, in a sentence.</summary>
     public string Status => _statusText;
 
