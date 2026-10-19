@@ -72,11 +72,14 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
                     document.Dispose();
                 }
 
+                // The restart in the shell's order (Ruling 172): the host is bound when its open completes, after the document is built.
                 using var restarted = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
                 using var reopened = _fixture.NewModel();
-                reopened.Runs.BindHost(restarted, Scope);
+                var opened = new TaskCompletionSource<IAttemptHost>(TaskCreationOptions.RunContinuationsAsynchronously);
+                reopened.Runs.BindHostWhenOpen(() => opened.Task, Scope);
                 using var surface = new SessionDocumentSurface(reopened, null, new RecordingAnnouncer());
                 window.Content = surface;
+                opened.SetResult(restarted);
                 await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
 
                 // T16b's premise turned around (Ruling 163, T17): the read-back restores the attempt as a row, built from the

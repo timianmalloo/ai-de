@@ -51,15 +51,20 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
     private static bool Ended(NotebookModel model, int index) =>
         model.Thread.Current.Turns.Count > index && model.Thread.Current.Turns[index].State is not (TurnState.Running or TurnState.Preparing);
 
-    /// <summary>A new surface over a new model and a new host; the read-back awaited and its rows rendered.</summary>
+    /// <summary>
+    /// A new surface over a new model and a new host, in the shell's order (Ruling 172): the host is bound when its open
+    /// completes, after the document is built; the read-back awaited and its rows rendered.
+    /// </summary>
     private async Task<(AttemptHost Host, NotebookModel Model, SessionDocumentSurface Surface)> ReopenAsync(Window window, IAttemptLedger? ledger = null)
     {
         var host = await AttemptHost.OpenAsync(ledger ?? new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
         var model = _fixture.NewModel();
-        model.Runs.BindHost(host, Scope);
+        var opened = new TaskCompletionSource<IAttemptHost>(TaskCreationOptions.RunContinuationsAsynchronously);
+        model.Runs.BindHostWhenOpen(() => opened.Task, Scope);
         var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
         window.Content = surface;
         _fixture.ConfigureStub(surface);
+        opened.SetResult(host);
         await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
         await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
         return (host, model, surface);
@@ -307,10 +312,12 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 host = await AttemptHost.OpenAsync(held, LockFile, CancellationToken.None);
                 held.Hold();
                 model = _fixture.NewModel();
-                model.Runs.BindHost(host, Scope);
+                var opened = new TaskCompletionSource<IAttemptHost>(TaskCreationOptions.RunContinuationsAsynchronously);
+                model.Runs.BindHostWhenOpen(() => opened.Task, Scope);
                 surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
                 window.Content = surface;
                 _fixture.ConfigureStub(surface);
+                opened.SetResult(host);
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
                 Assert.False(surface.LastReadBack.IsCompleted, "the read-back finished before the send; the race is not exercised");
 
