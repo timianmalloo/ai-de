@@ -8,7 +8,55 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 6 (kicked at 12 min): the Owner's condition (1) and Ruling 170 (MinWidth 840) are red then green. Check C hide is red, with its seam granted and the green not started. Float/redock is out of reach (decision request to the Owner). The node 6 suite run was skipped."
+summary: "Node 7 (kicked at 12 min): C-hide is green, and its once-per-close shutdown case is red then green. D, the slot migration, is red then green on its own test, but it is committed as wip: the session-render probe needs seam req-01M5A13XF0SK5F69EKH25C6C93, and until then 5 operator tests exit 33. D6, the Proof Pack and suite-node7 are not started."
+---
+
+# T11 node 7 — hand-off (rule 16 kick, dispatched 11:58Z)
+
+## Done
+
+- **C-hide green** `bbf1465b`, `C-hide-green.txt`: 1 of 1.
+  - `WorkbenchShell.OnSurfaceClosed` says DOCK1's copy when a bound notebook's pane closes mid-run (seam req-01M59ZYYPN).
+- **C-hide shutdown (the once-per-close condition).**
+  - Red `3c954c94`, `C-hide-shutdown-red.txt`: two closes said the copy twice, then `shell.Dispose()` said it a third time from `SessionDocumentSurface.Dispose`.
+  - Green `c736c96f`, `C-hide-shutdown-green.txt`: hide tests 2 of 2.
+    - The fix is `SessionDocumentSurface.SayPaneHidden()`, a once-only guard that both the shell's close and `Dispose` call. Its flag resets on the document's `Loaded`, so a reopened pane may say it again on its next close.
+  - **The test:** `ALiveNotebookSurvivesHideAndReopenTests.APaneClosedTwiceMidRun_SaysItTwice_AndTheShutdownAfterSaysNothingMore`. The daemon setup is now shared by both tests through `WithDaemonAsync`.
+  - **A test-harness fact:** the live region's `TextProperty` raises no change when the same sentence is set twice. The test therefore empties `shell.LiveRegion.Text` before each later say. A count of repeated, identical announcements cannot be read from text changes alone.
+- **D, the slot migration, on its own test.**
+  - Red `22649126`, `D-slot-migration-red.txt`: the Center read `[ledger]`, because both `session-document` panes were dropped.
+  - Wip `28cbad3a`, `D-slot-migration-green.txt`: 40 of 40 across `LayoutSlotMigrationTests`, `ZoneLayoutSlotsTests`, `*LayoutPersistence*` and `PerspectiveLayoutSlot*`.
+  - **New:** `src/AiDe.App/Workbench/Notebook/NotebookSlotMigration.cs`, a pure `Migrate(WorkbenchLayout)`.
+    - `session-document:<sid>` becomes `notebook:<sid>`, with the same zone, tab position, active index and saved caption.
+    - It walks the zones and the maximize memo. It does not walk Floating, which is left to T20.
+    - An id it cannot map, or a notebook id the slot already holds, stays `session-document` and drops with the RetiredKinds sentence.
+  - **In `LayoutPersistence.Restore`:** `LastRestoreMigrated`, and a one-time `.pre-notebook.bak` (`PreNotebookBackupSuffix`). It is owed ahead of the pre-perspective backup, because it holds today's full bytes.
+  - **The test:** `LayoutSlotMigrationTests.TodaysSlot_RestoresEachSessionPaneAsItsNotebook_ReportsTheRest_KeepsAOneTimeBak_AndRoundTrips`.
+    - It checks: the restore, the drop report, a `.bak` byte-equal to today's file, a round-trip with no drops, and that a second migration does not replace the `.bak`.
+
+## Red or not done
+
+- **D is not join-ready.** `D-operator-probe-after-migration.txt`: all five `ASessionDocumentIsShownWhereTheOperatorIsTests` exit 33.
+  - The probe's `expectedShape` (`Program.SessionRender.cs:258`) is `Admission.Filter(arrangement)` over the raw file, so it lacks the two migrated notebooks.
+  - **Seam `req-01M5A13XF0SK5F69EKH25C6C93`** names both edits: the probe line, and the test literal `active in view=session-document:` → `notebook:` at `:173`.
+  - Before the migration, 2 of these tests were red and 3 were green. With it, all 5 fail until the seam lands.
+  - The two target tests' new drop count (6) and the revive (`revived=[20260911T175821Z-1edfa710]`) are not yet observed.
+- **D, the rest of its scope, is not done:**
+  - **Execution placement:** "plus one `execution` when an attempt was live" needs a source of live attempts at restore. The slot file holds none. Inferred: it is known only after the notebooks revive and bind the attempt host, so it is a revive-time step, not a layout rewrite.
+  - **The `prompt` kind:** it is still a live kind (Prompt draft surface, `_Prompt` menu, `BindPromptDrafts`). Retiring it removes a working feature, so it is a separate check.
+  - **The rest of design §7:** the `.architecture` → `.understand` rename and the `coordination` fold are not done; the `simplify:` alias in `SlotSuffix` remains.
+- **A finding (not fixed):** `ZoneLayoutStore.Read` throws `ArgumentNullException` (`ZoneLayoutStore.cs:186`) on an envelope with no `"floating"` field. This is T20's area.
+- **D6 + F:** not started (the D6 design note, and the WL-S Proof Pack `docs/proof/workbench-loops-wl-s.md`).
+- **`suite-node7.txt`:** not run (the kick).
+- **A slip of my own:** one test edit used a heredoc Python program, against brief rule 6. It was an edit only, never a gate. Node 6 made the same slip, so this is a recurring shape for the Leader's register.
+
+## Next step
+
+1. Land seam req-01M5A13XF0SK5F69EKH25C6C93, then re-run `ASessionDocumentIsShownWhereTheOperatorIsTests` and save the green.
+2. D6 and the WL-S Proof Pack.
+3. Run `suite-node7.txt`.
+4. The rest of D (execution at revive, prompt retirement, the §7 rename and fold), as the Leader re-cuts it.
+
 ---
 
 # T11 node 6 — hand-off (rule 16 kick, about 13 minutes)
