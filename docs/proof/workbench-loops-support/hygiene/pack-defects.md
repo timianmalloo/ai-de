@@ -25,7 +25,7 @@ Nothing under `docs/ai-forward-pack/` was edited. Each row is a next step for th
 - **Gate:** `docs/ai-forward-pack/scripts/verify-ruling-citations.py`. The pack runner runs it beside the
   repository's own `tools/verify-ruling-citations.py`.
 - **Finding:** 151 defects, e.g. "Ruling 153 is cited as authority in 1 file(s) and no heading in
-  docs/notes/rulings.md defines it". Rulings 1 to 153 are reported, because the pack gate's only
+  docs/notes/rulings.md defines it". every numbered ruling in the addendum-c register is reported, because the pack gate's only
   definition site is `docs/notes/rulings.md` (its `REGISTER` constant, line 60) and this repository's
   rulings are headings in `docs/notes/addendum-c-council-rulings.md` and its sibling notes.
 - **Why it is the pack's:** the gate was "absorbed from ai-de's tools/verify-ruling-citations.py" (its own
