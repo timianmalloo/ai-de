@@ -78,7 +78,7 @@ public sealed class FloatRenderTests
             });
 
     /// <summary>True when <paramref name="element"/> is drawn in <paramref name="window"/>'s HWND or one of its child HWNDs.</summary>
-    private static bool HostedBy(Visual element, Window window)
+    internal static bool HostedBy(Visual element, Window window)
     {
         var host = new WindowInteropHelper(window).Handle;
         return PresentationSource.FromVisual(element) is HwndSource source
