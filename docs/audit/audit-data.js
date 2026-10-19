@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T10:04:01Z",
+  "generated": "2026-10-19T10:15:05Z",
   "audit": [
     {
       "actor": null,
@@ -24855,6 +24855,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T09:53:01Z",
       "duration_seconds": 660.0
+    },
+    {
+      "id": "al-01M59TGP0RQ7HJP4KKXVDXXVQ0",
+      "shortname": "join-wl1a-restored-turns",
+      "datetime": "2026-10-19T10:15:03Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-restored-turns into main",
+      "summary": "T17 (Opus n1-n2) + T17b (Sonnet, not reproduced 0/35) + T17c (Sonnet): restored rows from ReadBack in dispatch order with ordinal continuity (b1/b3); DeliveryUnknown with 'Last event received: #{seq} at {HH:mm:ss}.'; keyboard/UIA reach of restored events (guard); early Send waits for the read-back (race red->green); killed-launch test awaits LaunchSettledAsync; RunLogStoreSharingTests pins the reader's FileShare.ReadWrite; mixed filter 15/15 recount_seconds=592 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T17 to main",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T10:05:10Z",
+      "duration_seconds": 593.0
     }
   ],
   "changes": [
@@ -29535,6 +29564,51 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M59QHSNVHVN9HWSBWTXP1XA6",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59RMS8T5K4QGWQ6WNXAZA12",
+      "ts": "2026-10-19T09:42:21Z",
+      "from": "wl-t17-restore",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17-restore"
+    },
+    {
+      "id": "mail-01M59S4MR38YAJZ1B04HE6Y9W1",
+      "ts": "2026-10-19T09:51:00Z",
+      "from": "wl-t17b-restore",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17b-restore"
+    },
+    {
+      "id": "mail-01M59S63GH292V2GTSJHN24SHF",
+      "ts": "2026-10-19T09:51:48Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59S63G76ZPF0V8KFMRZ2YGB",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59S71337Y3EBKG53E79AG8P",
+      "ts": "2026-10-19T09:52:19Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59S63G76ZPF0V8KFMRZ2YGB",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59SWV75KR70JH0BRNQH3DE2",
+      "ts": "2026-10-19T10:04:13Z",
+      "from": "wl-t17c-restore",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t17c-restore"
     }
   ]
 };

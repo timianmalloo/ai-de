@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 219 members, 75% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 222 members, 76% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**37 public types · 219 public members · 75% documented.**
+**37 public types · 222 public members · 76% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -964,7 +964,8 @@ stopped row and one assertive announcement, the channel kept alive for a second 
 | `bool IsStopped { get; private set; }` | The feed's own fault state: `ItemStatus` "stopped"; "live" otherwise. |
 | `double MeasureWidth { get; }` | The prose measure in device-independent pixels: 96 × the advance of "0" in the UI type at 13 px. |
 | `Func<bool> ReducedMotion { get; set; } = static ()` | Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it. |
-| `void RefreshAttempts()` | Re-reads every row's attempt from `AttemptOf`. |
+| `void RefreshAttempts()` | Re-reads every row's attempt from `AttemptOf` and its last event from `LastEventOf`. |
+| `Func<int, AiDe.Core.AgentPlane.RunEvent?> LastEventOf` | The last run event the notebook's fold received for a turn (Ruling 164); null when none. |
 | `Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf` | The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none. |
 | `IReadOnlyList<TurnItem> Rows` | The rows, in ordinal order — a rebuildable projection of the read model's turns. |
 | `int Applies { get; private set; }` | How many times `Apply` ran — the coalescing witness (C1). |
@@ -1029,6 +1030,8 @@ state of its own.
 | `string Name` | **(gap)** |
 | `string DecorationLine` | **(gap)** |
 | `string HelpText` | **(gap)** |
+| `string LastEventReceived = "Last event received: {0}."` | Ruling 164: how far a DeliveryUnknown attempt's run log got — *#{seq} at {HH:mm:ss}* (the thread's local event clock), or *not recorded* when it holds no event. One const; a row with no attempt carries no line. |
+| `AiDe.Core.AgentPlane.RunEvent? LastEvent` | The last run event the notebook's fold received for this turn, read by the feed; null when none. |
 | `IReadOnlyList<DecorationRow> Decorations` | **(gap)** |
 | `string Time` | **(gap)** |
 | `TurnState State` | **(gap)** |

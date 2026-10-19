@@ -1,0 +1,9 @@
+{"agent": "wl-t17c-restore", "at": 1792404241.6495001, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.68254, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.7135475, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/runlog-ioexception-green.txt", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.743607, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/runlogstore-sharing-red.txt", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.773942, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/suite-app-t17c.txt", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.8059452, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/suite-core-t17c.txt", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.8349638, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.8634748, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "session": "wl-t17c-restore", "wi": ""}
+{"agent": "wl-t17c-restore", "at": 1792404241.8947816, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/RunLogStoreSharingTests.cs", "session": "wl-t17c-restore", "wi": ""}

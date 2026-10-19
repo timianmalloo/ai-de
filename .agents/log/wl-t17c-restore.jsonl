@@ -1,0 +1,7 @@
+{"agent": "wl-t17c-restore", "at": 1792403619.5922852, "kind": "claim", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 1, "session": "wl-t17c-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17c-restore", "at": 1792403619.7713723, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "seq": 2, "session": "wl-t17c-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t17c-restore", "at": 1792403619.9734828, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/RunLogStoreSharingTests.cs", "seq": 3, "session": "wl-t17c-restore", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792404253.9259677, "from": "wl-t17c-restore", "kind": "done", "mail_id": "mail-01M59SWV75KR70JH0BRNQH3DE2", "ref": null, "session": "wl-t17c-restore", "to": "wl-leader2-20261019", "type": "mail"}
+{"agent": "wl-t17c-restore", "at": 1792404257.4554963, "kind": "release", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 5, "session": "wl-t17c-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17c-restore", "at": 1792404257.5675676, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "seq": 6, "session": "wl-t17c-restore", "wi": "workbench-loops"}
+{"agent": "wl-t17c-restore", "at": 1792404257.6773846, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/RunLogStoreSharingTests.cs", "seq": 7, "session": "wl-t17c-restore", "wi": "workbench-loops"}

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 49 members, 85% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 50 members, 85% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Records`
 
-**12 public types · 49 public members · 85% documented.**
+**12 public types · 50 public members · 85% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -184,7 +184,8 @@ continues."). Disposing the model is what cancels them.
 | `event Action? HostRefusalChanged` | Raised on the model's home context each time `HostRefusal` is set or cleared. |
 | `TimeSpan HolderProbe = TimeSpan.FromSeconds(1)` | How often a hosted-elsewhere window tries the open again, so the copy shows only while the holder lives. |
 | `AttemptReceipt? AttemptOf(int ordinal)` | Turn 's attempt as the host last answered it, or null when it was not one. |
-| `Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha)> submitted, CancellationToken cancellationToken)` | Restart read-back: each submitted envelope's dispatch key is derived (`For`, nothing stored beside it) and read from the host; an envelope never attempted is skipped. |
+| `Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)> submitted, CancellationToken cancellationToken)` | Restart read-back: each submitted envelope's dispatch key is derived (`For`, nothing stored beside it) and read from the host; an envelope never attempted is skipped. Each concluded attempt this notebook does not alre… |
+| `RunEvent? LastEventOf(int ordinal)` | The last run event the one fold received for turn ; null when it received none. |
 | `Task LastRun { get; private set; } = Task.CompletedTask` | The last run's own task — completed before the first. It never faults: a refusal is a line of the run. |
 | `Task Start(int ordinal, GovernedRunRequest request, RunLaunch launch)` | Starts the run for accepted turn ; the task never faults. |
 | `void Queue(int ordinal, GovernedRunRequest request, RunLaunch launch)` | Queues turn  (Ruling 95: exactly one). Host-bound, the queue is the host's (ADR-0045 §4, design "Queued launch"): the turn is dispatched now as the held successor of the turn in flight, and the host launches it after … |
@@ -200,6 +201,19 @@ Binds the notebook to the workspace's attempt host (ADR-0041): from now on a sen
 revision it ran, launched and owned by the host, never by a surface.
 
 **Remarks.** Called on the model's home context: `HostRefusalChanged` is raised inline.
+
+### `Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)> submitted, CancellationToken cancellationToken)`
+
+Restart read-back: each submitted envelope's dispatch key is derived (`For`, nothing
+stored beside it) and read from the host; an envelope never attempted is skipped. Each concluded attempt this
+notebook does not already hold becomes a turn (Ruling 163), in dispatch order, so the next turn sent continues
+after it.
+
+- **`submitted`** — Each submitted envelope, with the words it opened with (the restored row's words).
+
+**Remarks.** assume: an attempt with no terminal row at read-back is live in this host (the host's startup sweep resolves every
+other one), so its own dispatch still owns its turn. Confirm: the sweep's live-key exclusion
+(`BoundaryDispatcher.SweepAttempts`). If false: an open attempt from another process has no row.
 
 ### `Task? SendNow(int ordinal)`
 

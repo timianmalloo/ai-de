@@ -2668,7 +2668,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 49 members, 85% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Records: 12 types, 50 members, 85% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2681,7 +2681,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7fbb5aa9059227f1c38ad755144fd9081a4d39d26b6a0f0a645c9e3d60955792"
+      "sourceSha256": "bb3cf806d508b8e652431cc42340db91e958dd6e467d07cc38ecfa319fed4764"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2693,7 +2693,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 219 members, 75% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 222 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2706,7 +2706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57c0b1587d910476a11271753ba3533fec7fd73b439d73d0fd2c8f6753fe156d"
+      "sourceSha256": "1fd882fc2352e088e9d02f11cbebeca0f044373efc4c695c8f499d3eebe2e530"
     },
     {
       "id": "api-aide-core",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5dea4320e2b8b9b3f4d4f20d026627bcdf49a009ec317caeaecc604dde5d3c62"
+      "sourceSha256": "95e51e8e8c0fe2b1c817f1b0befdd4c339a3dba13364335930a71c15e2545a22"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "128ce4de457610f3df4b16bb64cf823a0b721535ccf00acbe4928a126f24edc0"
+      "sourceSha256": "38605273812db8bc1f65da1df2def05fcbb6aba025778c97f2b8ee5430995f35"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22715,6 +22715,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "5cc998caae1610f7cb167992b221e15d58659f3346384e9a064fba9dc4f799c2"
     },
     {
+      "id": "proof-workbench-loops-wl-1a-restored-turns",
+      "path": "docs/proof/workbench-loops-wl-1a/restored-turns/README.md",
+      "title": "Evidence — WL-1a T17: a reopened notebook renders its recorded attempts",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Red and green evidence that a restarted notebook shows one row per recorded attempt in dispatch order, and that a host killed mid-run reopens as delivery unknown with the attempt's last seq and ts and its binding line (Ruling 163).",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a6a1fc0a5cae40ecff7c36c32e78d2ec9cc61e4c4447c70df21bd53b619db6d9"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-restored-turns-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/restored-turns/handoff.md",
+      "title": "Hand-off — WL-1a T17 node 1 (restored turns)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "What T17 node 1 landed (checks 1 and 2), Ruling 164's copy as node 2's first item, and node 2's status (all three of its checks done).",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-workbench-loops-wl-1a-restored-turns",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fc2bf6b1ba73ad0e59a14d6d5486d86aca303eb5e020ff797082268332ea1cb6"
+    },
+    {
       "id": "proof-workbench-loops-wl-1a-sp1",
       "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md",
       "title": "Evidence — WL-1a spine T2: WorkspaceSchema v2",
@@ -24742,5 +24795,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "bd9f70a15f82efff57edb4e2d3fb20468c90fc187640fdc406b7fc679db3f1d9"
+  "graphSha256": "65cf0515c8eecee2832c134da12c9aa50093d1eebc01906ccb1f6c55cfd0d70a"
 };
