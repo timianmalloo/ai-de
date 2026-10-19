@@ -19,7 +19,7 @@ namespace AiDe.App.Tests.Sessions;
 /// <summary>
 /// <b>Ruling 95 — Parallel.</b> <i>Start a parallel session</i> creates a derived sibling — the same
 /// workspace, backends and config copied, <c>origin = parallel:&lt;parent id&gt;</c>, the name by the
-/// Ruling 99 seam — opens it docked in the Left zone beside the parent (Ruling 83), binds its
+/// Ruling 99 seam — opens it docked in the Center beside the parent (ADR-0045 §1(a)), binds its
 /// composer, and sends the parent's draft (attachments following) as the sibling's first turn through
 /// the sibling's own gate; the parent's draft is consumed only when that happened.
 /// </summary>
@@ -179,9 +179,9 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             });
     }
 
-    /// <summary>The shell's half: the sibling docks in Coding's Left zone beside the parent (Ruling 83), bound and sent; the parent's draft is consumed.</summary>
+    /// <summary>The shell's half: the sibling docks in the Center beside the parent (ADR-0045 §1(a)), bound and sent; the parent's draft is consumed.</summary>
     [Fact]
-    public void FromTheParentsStatusLine_TheSiblingDocksLeftBesideIt_AndTheParentsDraftIsConsumed()
+    public void FromTheParentsStatusLine_TheSiblingDocksInTheCenterBesideIt_AndTheParentsDraftIsConsumed()
     {
         var root = _workspace.Root;
         var parentConfig = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow)).Create("payments", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
@@ -214,12 +214,12 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             parallel!.RaiseEvent(new RoutedEventArgs(Hyperlink.ClickEvent));
             frame.Settle();
 
-            // The sibling exists, docked in the Left zone beside the parent, bound, and sent.
+            // The sibling exists, docked in the Center beside the parent, bound, and sent.
             Assert.Equal(["payments (2)"], bound);
             var zones = shell.Factory.Service.Zones;
-            var siblingSurface = zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId)
+            var siblingSurface = zones.Zone(ZoneId.Center).Surfaces().Select(s => s.SurfaceId)
                 .Single(id => id != parentSurface && SessionDocumentSurface.SessionIdOf(id) is not null);
-            Assert.Equal(ZoneId.Left, zones.FindZoneOf(parentSurface));
+            Assert.Equal(ZoneId.Center, zones.FindZoneOf(parentSurface));
             Assert.Null(zones.Maximized);
             var sibling = frame.Document(siblingSurface);
             Assert.Equal("payments (2)", sibling.Model.Title);

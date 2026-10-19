@@ -1,0 +1,58 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.57]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [FAIL]
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [413 ms]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ConsoleSplitPlacementTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:    40, Skipped:     0, Total:    41, Duration: 4 s - AiDe.App.Tests.dll (net10.0)
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.38]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [FAIL]
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [427 ms]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: System.Windows.Controls.Primitives.ToggleButton Content:Console IsChecked:False
+Actual:   System.Windows.Controls.Primitives.ToggleButton Content:Goal · Done when · Not in scope IsChecked:False
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ConsoleSplitPlacementTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     5, Skipped:     0, Total:     6, Duration: 2 s - AiDe.App.Tests.dll (net10.0)

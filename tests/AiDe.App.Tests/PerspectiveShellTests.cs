@@ -113,7 +113,7 @@ public sealed class PerspectiveShellTests
     // has emptied or collapsed falls back the same way. Stated on the row because the view's own
     // "active" after a body is first parented is whichever pane control realized last.
     [Fact]
-    public void TheLanding_IsTheRowsZonesActiveTab_LeftForFactory_CenterForUnderstandAndReview_ElseTheEmptyCopy()
+    public void TheLanding_IsTheRowsZonesActiveTab_CenterForEveryRow_ElseTheEmptyCopy()
     {
         Sta.Run(() =>
         {
@@ -125,14 +125,14 @@ public sealed class PerspectiveShellTests
             Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));     // Ruling 140: the Center's active tab is the Graph
             Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, PerspectiveShell.LandingSurfaceFor(f.C));
 
-            // Factory (SH-4.2): the Left's active document when one is open, else the Center's
+            // Factory (ADR-0045 §1(a)): the Center's notebook when one is open, else the Center's
             // empty copy — the placeholder's id, whose content the shell composes.
             Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
-            Assert.True(f.A.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            Assert.True(f.A.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface("session:s1", "notebook", "S1"))).Applied);
             f.A.Adapter.Render();
             Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(f.A));
 
-            Assert.Equal(ZoneId.Left, f.A.Row.Landing);
+            Assert.Equal(ZoneId.Center, f.A.Row.Landing);
             Assert.Equal(ZoneId.Center, f.B.Row.Landing);
             Assert.Equal(ZoneId.Center, f.C.Row.Landing);
 
@@ -141,19 +141,19 @@ public sealed class PerspectiveShellTests
             Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("tree")).Applied);
             Assert.Equal("tree", PerspectiveShell.LandingSurfaceFor(f.B));
 
-            // And in Factory, the Left collapsed with the session held: the Center's empty copy again.
+            // And in Factory, a collapsed Left does not move the landing: the notebook is in the Center.
             Assert.True(f.A.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
             f.A.Adapter.Render();
-            Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
+            Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(f.A));
             return 0;
         }, 30);
     }
 
     // SH-4.1 re-run on the Factory host (ADR-0045 §1(b); the WL-S design's §3 oracle 1). Folding the
     // five Loomkeeper kinds into Factory is an occupancy change: its Center can now hold Ledger ·
-    // Leaderboard · Message board beside a session document in its Left, and the view's own "active"
+    // Leaderboard · Message board beside the notebook (ADR-0045 §1(a)), and the view's own "active"
     // is whichever pane realized or was activated last. The landing is the row's data, not that: the
-    // session document; with the Left collapsed, the Center's active tab the operator chose. Through
+    // Center's model-active tab, the notebook until the operator chooses another. Through
     // the product's DockHost and admission (DC-135). RED before the re-row: the initial host refused
     // the ledger (sp3/sh41-factory-red.txt).
         // The Factory → Coordination group, derived from what the product admits: Factory's Center kinds
@@ -164,12 +164,11 @@ public sealed class PerspectiveShellTests
             .Select(k => (k.Kind, k.Title));
 
     [Fact]
-    public void TheFactoryLanding_IsTheSessionDocument_WhenTheCoordinationKindsOccupyItsCenter()
+    public void TheFactoryLanding_IsTheNotebook_WhenTheCoordinationKindsShareItsCenter()
     {
         Sta.Run(() =>
         {
             var factory = DockHost.Create(PerspectiveSet.Initial, _ => new Border(), new RecordingAnnouncer(), (_, _) => { });
-            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
             foreach (var (kind, title) in LoomkeeperKinds())
             {
                 Assert.True(
@@ -177,19 +176,18 @@ public sealed class PerspectiveShellTests
                     $"the initial host refused '{kind}' — the Loomkeeper kinds are not admitted under Factory");
             }
 
+            Assert.True(factory.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.CenterStackId, new Surface("session:s1", "notebook", "S1"))).Applied);
             factory.Adapter.Render();
             Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(factory));
 
             // The view's notion of active moves to the Center's ledger (as a later-realizing pane
             // control would make it); the landing does not follow it.
-            Assert.True(factory.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
-            factory.Adapter.Render();
             factory.Adapter.ActivateInView("ledger");
             Assert.Equal("ledger", factory.Adapter.ActiveSurfaceId);
             Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(factory));
 
-            // The Left collapsed with the session held: the Center's active tab, literally the ledger.
-            Assert.True(factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            // The operator activates the ledger in the model: the landing is the Center's active tab, literally the ledger.
+            Assert.True(factory.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
             factory.Adapter.Render();
             Assert.Equal("ledger", PerspectiveShell.LandingSurfaceFor(factory));
             Assert.Equal("factory", factory.Row.Id);
