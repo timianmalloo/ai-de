@@ -8391,6 +8391,27 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
     table), not just the line in question.
 - **Tenth instance (the Leader, 2026-10-19):** ruling T11's node 2, the Leader called the Center copy 'The session is docked at the left' UNREACHABLE and ordered it deleted, without checking the code. T11's rule-14 check showed that SurfaceKind.Zone is read only on open (SurfaceContentFactory.cs:101-106), that drags carry no kind/zone guard (WorkbenchDragCompletedHookTests.cs:320-363), and that CenterEmptyState.CopyFor (:94-100) is a template over the zone, so the state is reachable. The Leader withdrew the ruling. **Control:** a ruling that calls a state unreachable cites the code that prevents it (file:line), never the design's intent alone.
 - **Eleventh instance (the Owner, 2026-10-19):** Ruling 166 (2) said the knowledge toggle 'persists with the layout, like Group', an unverified analogy. On origin/main Group is page-local (`var grouped = false;`, CanvasPage.cs:133), and the layout's Surface holds only (SurfaceId, Kind, Title) (LayoutModel.cs:10). T18's rule-14 check caught it, and Ruling 169 made the toggle session-only. **Control:** a ruling that says 'like X' cites how X does it in the code.
+- **Twelfth instance (the Leader, 2026-10-19): a ruling swept into a join commit.** The Owner's `coord decide rule`
+  wrote Ruling 171 into `docs/notes/addendum-c-council-rulings.md` while the T18 join was in flight. The Leader held
+  the ruling commit until the join was pushed, as the no-stacking rule says. But `conductor-join.py`'s step 7 stages
+  every uncommitted file, so the register edit, and Leader lines in `obligations.md` that cite Ruling 171, landed
+  inside the join's chore commit `61c9f4b0`. The Owner caught it before the push. The commit was re-created as
+  `9c62f453` without either file; the old one is kept as `backup/t18-join-61c9f4b0`. The ratchet ran on both (0/49).
+  - **Control:** `leader_precommit.py` refuses a push range in which any `chore(join):` or `join:` commit changes the
+    rulings register. It was shown refusing `origin/main..backup/t18-join-61c9f4b0` (exit 1, naming `61c9f4b0`), and
+    passing that check on `9c62f453`.
+  - **Residual:** the same staging step also sweeps other uncommitted Leader files, like `obligations.md`. The control
+    covers only the register. Before a join, commit or hold every Leader edit (pack defect candidate: step 7 stages
+    all files, not the join's own).
+- **Thirteenth instance (the Leader, 2026-10-19): a full inbox bounced a track's done mail.** The Leader read mail but
+  never acked it, so its inbox reached 50 queued, and T11 node 6's done mail was refused with `MAIL-FULL` (exit 3).
+  The evidence survived only because the track also committed it to `handoff.md`. All 50 were then acked through
+  `coord-mail.py ack`.
+  - **Control (procedural, not yet mechanical):** after each read, the Leader acks what it has processed. The Leader's
+    node prompts since T11 node 7 tell a track to put its done text in the hand-off if the mail is refused;
+    `brief-common.md` does not say so yet.
+  - **Status of this instance:** `open`. A recorded habit is a memoir until a check fails on it, so the candidate
+    control is a renew-loop line that warns when the Leader inbox is above 40 queued.
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.
