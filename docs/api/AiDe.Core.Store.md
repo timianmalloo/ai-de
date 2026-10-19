@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 15 types, 104 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 15 types, 113 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**15 public types · 104 public members · 59% documented.**
+**15 public types · 113 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -53,13 +53,16 @@ One search hit: the node, why it matched, and the text that matched.
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `IReadOnlyList<AttemptRow> ReadAttemptsForNotebook(string notebookId)` | Every attempt of one notebook, oldest first, at any revision. |
 | `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
+| `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinksForSubject(string subjectKind, string subjectId)` | Every link to one subject at any revision, oldest first. |
 | `AssessmentRow? ReadLatestAssessment(string kind, string scope)` | The newest assessment of one kind for one scope (any baseline), or null. |
 | `IReadOnlyList<DispositionRow> ReadDispositions(string subjectKind, string subjectId)` | Every disposition on one subject, oldest first. The caller picks the current one per actor. |
 | `IReadOnlyList<ObligationRow> ReadObligations(string checklistId, int revision)` | The obligations of one checklist revision. |
+| `IReadOnlyList<ObligationRow> ReadObligationHistory(string checklistId)` | Every obligation row of one checklist at every revision, oldest first. |
 | `int? ReadLatestChecklistRevision(string checklistId)` | The highest checklist revision recorded, or null. |
 | `HarnessProfileRow? ReadHarnessProfile(string profileId)` | The latest version of one harness profile, or null. |
 | `HarnessProfileRow? ReadHarnessProfileByKey(long profileKey)` | One profile version by the surrogate key an attempt carries. |
@@ -299,13 +302,16 @@ graph costs (P1-PERF-02); an empty input reads nothing at all.
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `IReadOnlyList<AttemptRow> ReadAttemptsForNotebook(string notebookId)` | Every attempt of one notebook, oldest first, at any revision. |
 | `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
+| `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinksForSubject(string subjectKind, string subjectId)` | Every link to one subject at any revision, oldest first. |
 | `AssessmentRow? ReadLatestAssessment(string kind, string scope)` | The newest assessment of one kind for one scope (any baseline), or null. |
 | `IReadOnlyList<DispositionRow> ReadDispositions(string subjectKind, string subjectId)` | Every disposition on one subject, oldest first. The caller picks the current one per actor. |
 | `IReadOnlyList<ObligationRow> ReadObligations(string checklistId, int revision)` | The obligations of one checklist revision. |
+| `IReadOnlyList<ObligationRow> ReadObligationHistory(string checklistId)` | Every obligation row of one checklist at every revision, oldest first. |
 | `int? ReadLatestChecklistRevision(string checklistId)` | The highest checklist revision recorded, or null. |
 | `HarnessProfileRow? ReadHarnessProfile(string profileId)` | The latest version of one harness profile, or null. |
 | `HarnessProfileRow? ReadHarnessProfileByKey(long profileKey)` | One profile version by the surrogate key an attempt carries. |
@@ -549,7 +555,7 @@ graph costs (P1-PERF-02); an empty input reads nothing at all.
 | `void AppendEvidenceLink(EvidenceLinkRow row)` | **(gap)** |
 | `void AppendAssessment(AssessmentRow row)` | **(gap)** |
 | `void AppendDisposition(DispositionRow row)` | **(gap)** |
-| `void AppendObligation(ObligationRow row)` | **(gap)** |
+| `void AppendObligation(ObligationRow row)` | Appends one obligation. The checklist is the work journey that owns it: `checklist_id` is that journey's id (Ruling 176), so any other id would open a second checklist and is refused here, whoever the caller is. |
 | `long AppendHarnessProfile(HarnessProfileRow row)` | Appends a profile version and returns its surrogate key (what attempts bind to). |
 | `void AppendProfileObservation(ProfileObservationRow row)` | **(gap)** |
 | `long NextIngressSequence()` | Allocates the next total-order position. Monotonic within the workspace. |
@@ -621,7 +627,7 @@ declared by one scope and referenced by another alternated between rows on every
 | `void AppendEvidenceLink(EvidenceLinkRow row)` | **(gap)** |
 | `void AppendAssessment(AssessmentRow row)` | **(gap)** |
 | `void AppendDisposition(DispositionRow row)` | **(gap)** |
-| `void AppendObligation(ObligationRow row)` | **(gap)** |
+| `void AppendObligation(ObligationRow row)` | Appends one obligation. The checklist is the work journey that owns it: `checklist_id` is that journey's id (Ruling 176), so any other id would open a second checklist and is refused here, whoever the caller is. |
 | `long AppendHarnessProfile(HarnessProfileRow row)` | Appends a profile version and returns its surrogate key (what attempts bind to). |
 | `void AppendProfileObservation(ProfileObservationRow row)` | **(gap)** |
 | `long NextIngressSequence()` | Allocates the next total-order position. Monotonic within the workspace. |
@@ -771,13 +777,16 @@ accident (spike S6).
 | `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
 | `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
 | `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `IReadOnlyList<AttemptRow> ReadAttemptsForNotebook(string notebookId)` | Every attempt of one notebook, oldest first, at any revision. |
 | `bool HasCompletedCommand(string workspaceId, string commandType, string commandId)` | Whether a mutating command completed, by any caller: its `command_receipt_fact` row exists. |
 | `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
 | `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
 | `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
+| `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinksForSubject(string subjectKind, string subjectId)` | Every link to one subject at any revision, oldest first. |
 | `AssessmentRow? ReadLatestAssessment(string kind, string scope)` | The newest assessment of one kind for one scope (any baseline), or null. |
 | `IReadOnlyList<DispositionRow> ReadDispositions(string subjectKind, string subjectId)` | Every disposition on one subject, oldest first. The caller picks the current one per actor. |
 | `IReadOnlyList<ObligationRow> ReadObligations(string checklistId, int revision)` | The obligations of one checklist revision. |
+| `IReadOnlyList<ObligationRow> ReadObligationHistory(string checklistId)` | Every obligation row of one checklist at every revision, oldest first. |
 | `int? ReadLatestChecklistRevision(string checklistId)` | The highest checklist revision recorded, or null. |
 | `HarnessProfileRow? ReadHarnessProfile(string profileId)` | The latest version of one harness profile, or null. |
 | `HarnessProfileRow? ReadHarnessProfileByKey(long profileKey)` | One profile version by the surrogate key an attempt carries. |
@@ -1032,7 +1041,7 @@ triggers (spike S4), so forbidding it in the writer API is the control, and the 
 | `void AppendEvidenceLink(EvidenceLinkRow row)` | **(gap)** |
 | `void AppendAssessment(AssessmentRow row)` | **(gap)** |
 | `void AppendDisposition(DispositionRow row)` | **(gap)** |
-| `void AppendObligation(ObligationRow row)` | **(gap)** |
+| `void AppendObligation(ObligationRow row)` | Appends one obligation. The checklist is the work journey that owns it: `checklist_id` is that journey's id (Ruling 176), so any other id would open a second checklist and is refused here, whoever the caller is. |
 | `long AppendHarnessProfile(HarnessProfileRow row)` | Appends a profile version and returns its surrogate key (what attempts bind to). |
 | `void AppendProfileObservation(ProfileObservationRow row)` | **(gap)** |
 | `long NextIngressSequence()` | Allocates the next total-order position. Monotonic within the workspace. |
@@ -1107,6 +1116,12 @@ Stable error codes this layer can raise. Never a bare exception message.
 | `string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY"` | **(gap)** |
 | `string AdoptionNotOffered = "AIDE-STORE-ADOPTION-NOT-OFFERED"` | **(gap)** |
 | `string JourneyIdCollision = "AIDE-STORE-JOURNEY-ID-COLLISION"` | **(gap)** |
+| `string WorkNotAWorkJourney = "AIDE-WORK-NOT-A-WORK-JOURNEY"` | **(gap)** |
+| `string WorkObligationUnknown = "AIDE-WORK-OBLIGATION-UNKNOWN"` | **(gap)** |
+| `string WorkFieldTooLong = "AIDE-WORK-FIELD-TOO-LONG"` | **(gap)** |
+| `string WorkEvidenceNotEligible = "AIDE-WORK-EVIDENCE-NOT-ELIGIBLE"` | **(gap)** |
+| `string WorkAcceptanceBlocked = "AIDE-WORK-ACCEPTANCE-BLOCKED"` | **(gap)** |
+| `string WorkSecondChecklist = "AIDE-WORK-SECOND-CHECKLIST"` | **(gap)** |
 
 ## `WorkspaceStoreException`
 

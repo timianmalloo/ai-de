@@ -69,3 +69,6 @@
 {"agent": "wl-t28-compiled", "at": 1792435812.89233, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792435851.6136618, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-B-red-mutation.txt", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792435851.659711, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-C-red-mutation.txt", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792436751.2646842, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792436751.307836, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792436751.349928, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/ratchet.txt", "session": "wl-t28-compiled", "wi": ""}
