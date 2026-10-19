@@ -20,3 +20,11 @@
 {"agent": "wl-t5-host", "at": 1792388682.3620605, "kind": "release", "path": "src/AiDe.Core/Store/StoreReader.cs", "seq": 20, "session": "wl-t5-host", "wi": "WI-0"}
 {"agent": "wl-t5-host", "at": 1792388682.5147667, "kind": "release", "path": "docs/design/workbench-loops-wl-1a.md", "seq": 21, "session": "wl-t5-host", "wi": "WI-0"}
 {"agent": "wl-t5-host", "at": 1792388682.6360555, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 22, "session": "wl-t5-host", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792389262.9661968, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/AcpPeer.cs", "seq": 23, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389263.1771798, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/AcpLaneClient.cs", "seq": 24, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389263.3885844, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/RunLogStore.cs", "seq": 25, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389263.6516051, "kind": "claim", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 26, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389263.8481545, "kind": "claim", "path": "src/AiDe.App/Conductor/RunEventRelay.cs", "seq": 27, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389264.0643659, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 28, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389264.32152, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 29, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792389264.5082421, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "seq": 30, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}

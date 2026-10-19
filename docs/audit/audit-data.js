@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T05:51:42Z",
+  "generated": "2026-10-19T06:04:26Z",
   "audit": [
     {
       "actor": null,
@@ -24001,6 +24001,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T05:43:07Z",
       "duration_seconds": 514.0
+    },
+    {
+      "id": "al-01M59C5S5VMREVSVF5CWTJ00FQ",
+      "shortname": "join-wl1a-redaction-step8",
+      "datetime": "2026-10-19T06:04:26Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T7 wl1a-redaction join 7c54de9e",
+      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6b062caf, same environment back to back: PASS, 0 refusals over 48 gates; never-ratcheted (151(3)): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage, evidence = conductor recount. Pushed 7c54de9e:main; Release build exit 0 (AiDe.Core.dll 05:54:56Z). T7 = Grok grok-4.7 run wl-t7-20261019b (1198 s) + T7b Sonnet fix-forward (offsets per RunEvent.cs:193, DC-NEW-wl-leader2). Leader read-back: FrameRedaction 19/19 re-run.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T7 on main under Ruling 151",
+      "done_when": "ratchet PASS; pushed; Release build green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:04:01Z",
+      "duration_seconds": 25.0
     }
   ],
   "changes": [

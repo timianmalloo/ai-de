@@ -29,3 +29,15 @@
 {"agent": "wl-t5-host", "at": 1792388627.3209178, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792388671.2216785, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792388671.2496827, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389684.886043, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/node2-app-red.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389684.9200776, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/run-log-core-red.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389684.952624, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389684.990598, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/RunEventRelay.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.0259073, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/AcpPeer.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.0579717, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/RunLogStore.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.0918782, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostFixture.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.1227784, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptObservabilityTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.1603818, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptQueueAndSweepTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.196332, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRunLogTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.2412043, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptStopTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792389685.277333, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Attempts/RunLogOrderTests.cs", "session": "wl-t5-host", "wi": ""}

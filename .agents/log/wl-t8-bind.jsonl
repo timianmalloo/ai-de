@@ -5,3 +5,10 @@
 {"agent": "wl-t8-bind", "at": 1792388506.969909, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 5, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792388507.1608205, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 6, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792388507.3495338, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookBindingTests.cs", "seq": 7, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389156.4684618, "kind": "claim", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 8, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389600.7705023, "kind": "release", "path": "src/AiDe.App/Workbench/Records/NotebookModel.cs", "seq": 9, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389600.8978996, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 10, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389601.0153048, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 11, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389601.1353538, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 12, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389601.2407055, "kind": "release", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 13, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792389601.386944, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookBindingTests.cs", "seq": 14, "session": "wl-t8-bind", "wi": "workbench-loops"}

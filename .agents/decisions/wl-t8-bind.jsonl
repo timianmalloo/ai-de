@@ -9,3 +9,16 @@
 {"agent": "wl-t8-bind", "at": 1792388823.1205678, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/PrepareFromRevisionTests.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792388823.4092355, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/stale-marker-red.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792388823.4372923, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheOldResultIsMarkedStaleTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389586.9988508, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.029184, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/handoff.md", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.061697, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/model-rekey-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.0923114, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/prepare-from-revision-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.1238236, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/records-after-final-edits.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.154618, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/stale-marker-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.1881304, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.2186267, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.2491405, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookModel.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.280144, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.3141358, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389587.3444974, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792389600.6269102, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t8-bind", "wi": ""}
