@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T01:22:24Z",
+  "generated": "2026-10-19T01:41:53Z",
   "audit": [
     {
       "actor": null,
@@ -22605,220 +22605,428 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58R1P58WC1KKB9XF6CZEJ0C",
-      "shortname": "join-sp1-schema-v2",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T00:12:41Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Schema v2: migration chain, WAL-safe snapshot, constraints, typed record API; Ruling 148 (a)-(h) and Ruling 150 landed red-first. Defect-register EOF conflict resolved by keeping both entries (DC-NEW-wl-t1-wl0, DC-NEW-wl-t2-sp1). Step 8 per Rulings 151/153. recount_seconds=555 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
       "done_when": "migration golden round-trip incl. WAL; DM11; one violation test per ADR-0039 s4 row; read-only-on-newer; Ruling 148/150 conditions",
-      "tier": "T1",
+      "duration_seconds": 557.0,
       "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-10-19T00:03:24Z",
-      "duration_seconds": 557.0
-    },
-    {
-      "id": "al-01M58RV2ZDC0XW76QP43HK8XBF",
-      "shortname": "join-sp1-schema-v2-fm",
-      "datetime": "2026-10-19T00:26:33Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of sp1-schema-v2 into main",
-      "summary": "Re-join of sp1-schema-v2 for 888aeb36 (V2 frontmatter on the evidence README; the first T2 join's ratchet refused docs-graph validate green->red). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
       "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
-      "done_when": "ratchet PASS vs origin/main 17fba9ef",
-      "tier": "T1",
-      "fan_out": 0,
+      "id": "al-01M58R1P58WC1KKB9XF6CZEJ0C",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-schema-v2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
-      "started_at": "2026-10-19T00:26:32Z",
-      "duration_seconds": 1.0
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:03:24Z",
+      "summary": "Schema v2: migration chain, WAL-safe snapshot, constraints, typed record API; Ruling 148 (a)-(h) and Ruling 150 landed red-first. Defect-register EOF conflict resolved by keeping both entries (DC-NEW-wl-t1-wl0, DC-NEW-wl-t2-sp1). Step 8 per Rulings 151/153. recount_seconds=555 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M58SHVSQ3VK6266W707QY73V",
-      "shortname": "join-sp1-step8-ratchet",
-      "datetime": "2026-10-19T00:38:59Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153 step-8 completion for the T2 schema-v2 join",
-      "summary": "T2 schema v2 pushed d0cee41b (17fba9ef..d0cee41b). First join's ratchet REFUSED docs-graph validate green->red (sp1 evidence README had no frontmatter; Leader brief omission, same class on T3/T4 branches fixed pre-join; brief rule 13 added). Re-join with 888aeb36: ratchet PASS 0/48, Ruling 153 filter dropped 104/104, recount gates excluded per 151(3) (first join's recount green). Defect-register EOF conflict resolved by keeping both entries. Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-wl-1a/sp1/README.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Land schema v2 on main under Ruling 151/153",
-      "done_when": "pushed with ratchet PASS recorded",
-      "tier": "T1",
+      "datetime": "2026-10-19T00:26:33Z",
+      "done_when": "ratchet PASS vs origin/main 17fba9ef",
+      "duration_seconds": 1.0,
       "fan_out": 0,
-      "started_at": "2026-10-19T00:04:03Z",
-      "duration_seconds": 2096.0
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "id": "al-01M58RV2ZDC0XW76QP43HK8XBF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of sp1-schema-v2 into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-schema-v2-fm",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:26:32Z",
+      "summary": "Re-join of sp1-schema-v2 for 888aeb36 (V2 frontmatter on the evidence README; the first T2 join's ratchet refused docs-graph validate green->red). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M58TW311DTEEXYVK853QTTV2",
-      "shortname": "wl-t13-correct-J8AW3F",
-      "datetime": "2026-10-19T01:02:03Z",
-      "session": "wl-t13-hygiene",
-      "prompt": "T13 gate hygiene: correct audit entry al-01M55TPKC6J24DWNFXNSJ8AW3F (session codex-cleanup-20261017) that recorded no evidence",
-      "summary": "Correction by supersession (the log is append-only). The original run codex-cleanup-20261017 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:38:59Z",
+      "done_when": "pushed with ratchet PASS recorded",
+      "duration_seconds": 2096.0,
+      "fan_out": 0,
+      "goal": "Land schema v2 on main under Ruling 151/153",
+      "id": "al-01M58SHVSQ3VK6266W707QY73V",
       "kind": "skill",
-      "skill": "implement",
-      "tool": null,
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the T2 schema-v2 join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:04:03Z",
+      "summary": "T2 schema v2 pushed d0cee41b (17fba9ef..d0cee41b). First join's ratchet REFUSED docs-graph validate green->red (sp1 evidence README had no frontmatter; Leader brief omission, same class on T3/T4 branches fixed pre-join; brief rule 13 added). Re-join with 888aeb36: ratchet PASS 0/48, Ruling 153 filter dropped 104/104, recount gates excluded per 151(3) (first join's recount green). Defect-register EOF conflict resolved by keeping both entries. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/plans/worktree-cleanup-20261017.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Commit and push remaining AI-DE work and retire linked worktrees.",
+      "datetime": "2026-10-19T01:02:03Z",
       "done_when": "Remote recovery verified; only primary checkout remains locally.",
-      "tier": "T2",
+      "duration_seconds": 410.0,
       "fan_out": 0,
+      "goal": "Commit and push remaining AI-DE work and retire linked worktrees.",
+      "id": "al-01M58TW311DTEEXYVK853QTTV2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M55TPKC6J24DWNFXNSJ8AW3F (session codex-cleanup-20261017) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-J8AW3F",
       "signals": {
         "verification_path": false
       },
+      "skill": "implement",
       "started_at": "2026-10-19T00:55:13Z",
-      "duration_seconds": 410.0,
-      "supersedes": "al-01M55TPKC6J24DWNFXNSJ8AW3F"
+      "summary": "Correction by supersession (the log is append-only). The original run codex-cleanup-20261017 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M55TPKC6J24DWNFXNSJ8AW3F",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M58TW34S8WPXSJ3M03N7MH1W",
-      "shortname": "wl-t13-correct-H2FSAQ",
-      "datetime": "2026-10-19T01:02:03Z",
-      "session": "wl-t13-hygiene",
-      "prompt": "T13 gate hygiene: correct audit entry al-01M581X9Z8CKSZ9P0XEZH2FSAQ (session codex-workbench-loops-20261018) that recorded no evidence",
-      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/specs/workbench-loops-ux.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Elevate the local dockable workbench proposal and complete HTML interaction model.",
+      "datetime": "2026-10-19T01:02:03Z",
       "done_when": "Reviewable proposal and full loop mockups are source-grounded, independently reviewed, verified and linked.",
-      "tier": "T2",
       "fan_out": 0,
+      "goal": "Elevate the local dockable workbench proposal and complete HTML interaction model.",
+      "id": "al-01M58TW34S8WPXSJ3M03N7MH1W",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581X9Z8CKSZ9P0XEZH2FSAQ (session codex-workbench-loops-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-H2FSAQ",
       "signals": {
         "verification_path": false
       },
-      "supersedes": "al-01M581X9Z8CKSZ9P0XEZH2FSAQ"
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M581X9Z8CKSZ9P0XEZH2FSAQ",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M58TW38PS72VK4NFBQDE6KY5",
-      "shortname": "wl-t13-correct-1BS5ZD",
-      "datetime": "2026-10-19T01:02:03Z",
-      "session": "wl-t13-hygiene",
-      "prompt": "T13 gate hygiene: correct audit entry al-01M581XA7C6Z11H96W8Y1BS5ZD (session codex-workbench-loops-20261018) that recorded no evidence",
-      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proposals/local-software-factory-v2.html",
         "docs/proposals/local-software-factory-v2-interactive.html",
         "docs/knowledge/workbench-loops-20261018.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Evolve AI-DE as a local desktop software factory and system-understanding workbench.",
+      "datetime": "2026-10-19T01:02:03Z",
       "done_when": "Both entry paths and all three loops have reviewable HTML and an honest migration proposal.",
-      "tier": "T2",
       "fan_out": 0,
+      "goal": "Evolve AI-DE as a local desktop software factory and system-understanding workbench.",
+      "id": "al-01M58TW38PS72VK4NFBQDE6KY5",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581XA7C6Z11H96W8Y1BS5ZD (session codex-workbench-loops-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-1BS5ZD",
       "signals": {
         "verification_path": false
       },
-      "supersedes": "al-01M581XA7C6Z11H96W8Y1BS5ZD"
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M581XA7C6Z11H96W8Y1BS5ZD",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M58TW3CENZA0DWJB30MA06Q6",
-      "shortname": "wl-t13-correct-9778RM",
-      "datetime": "2026-10-19T01:02:03Z",
-      "session": "wl-t13-hygiene",
-      "prompt": "T13 gate hygiene: correct audit entry al-01M58CGVHSXSDW79EB399778RM (session codex-specify-evolution-20261018) that recorded no evidence",
-      "summary": "Correction by supersession (the log is append-only). The original run codex-specify-evolution-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/plans/workbench-loops-20261018.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "datetime": "2026-10-19T01:02:03Z",
       "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
-      "tier": "T2",
       "fan_out": 0,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "id": "al-01M58TW3CENZA0DWJB30MA06Q6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M58CGVHSXSDW79EB399778RM (session codex-specify-evolution-20261018) that recorded no evidence",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-correct-9778RM",
       "signals": {
         "verification_path": false
       },
-      "supersedes": "al-01M58CGVHSXSDW79EB399778RM"
+      "skill": "implement",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-specify-evolution-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "supersedes": "al-01M58CGVHSXSDW79EB399778RM",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M58W1C1NSTRCGGGZJMTNJNQK",
-      "shortname": "wl-t13-hygiene",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T01:22:24Z",
-      "session": "wl-t13-hygiene",
+      "done_when": "Each item green red-first with proof files, or filed as a pack defect; gates-before/after show the red set shrink with no green-to-red",
+      "fan_out": 0,
+      "goal": "Burn down main's pre-existing red verify gates and remove the two join-time defect classes",
+      "id": "al-01M58W1C1NSTRCGGGZJMTNJNQK",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "T13 gate hygiene (Ruling 151): burn down main's red verify gates, union-merge the defect register, fix DesktopHold.Occupant",
+      "session": "wl-t13-hygiene",
+      "shortname": "wl-t13-hygiene",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
       "summary": "Register unions on merge (merge=union + test); DesktopHold.Occupant sees R115 holds (red-first); audit-capture, no-machine-paths, portable-text-io, preservation-policy, workbench-v2, ui-craft-floor, project-coverage (spikes) fixed; ruling-citations and the frozen front-door oracle filed as pack defects; suite 3978 green.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/Shared/ConsoleHostCensus.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:05:42Z",
+      "done_when": "retry test, cause in snapshot, suites green",
+      "duration_seconds": 995.0,
+      "fan_out": 0,
+      "goal": "census reliable",
+      "id": "al-01M58M71V17RJM3KKXXKBZN3N0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Make the console-host census read reliably under load",
+      "session": "wl-t12-census",
+      "shortname": "wl-t12-census",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:49:07Z",
+      "summary": "Census retries only its read 3x, reports cause; consumers say NOT CHECKED; DC-NEW-wl-t12-census registered",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/census-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:58:30Z",
+      "done_when": "transient read absorbed, real leak still fails, persistent failure explained; suites green",
+      "duration_seconds": 520.0,
+      "fan_out": 0,
+      "goal": "Make the console-host census read the process table reliably under concurrent test load",
+      "id": "al-01M58TNJX0QVXXYH6ZZTN4ZWHM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-census-flake",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:49:50Z",
+      "summary": "T12: ConsoleHostCensus.Take retries only the WMI read (3 attempts, 300 ms backoff); persistent failure NOT CHECKED with cause; a good read showing a leak still fails at once. Joined before T3 (T3's recount failed on 6 census reads). Register EOF conflict kept both. Step 8 per Rulings 151/153. recount_seconds=518 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:14:23Z",
+      "done_when": "gate exit 0, suites green, committed",
+      "duration_seconds": 175.0,
+      "fan_out": 0,
+      "goal": "gate green",
+      "id": "al-01M58VJNVPBHZZQR4VZKW9XC8K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "fix-forward census-flake: harness-diagnostics gate red on ConsoleHostCensusTests",
+      "session": "wl-t12-census",
+      "shortname": "wl-t12-census",
+      "skill": "implement",
+      "started_at": "2026-10-19T01:11:28Z",
+      "summary": "Gate false positive on an inline throw lambda; moved to a named method; gate 0, Core 2788 pass",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/gate-harness-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:23:49Z",
+      "done_when": "ratchet PASS vs origin/main 2de9d373",
+      "duration_seconds": 544.0,
+      "fan_out": 0,
+      "goal": "Make the console-host census read the process table reliably under concurrent test load",
+      "id": "al-01M58W3YTZXPV8ZJ9XCGT7XD0Z",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of census-flake into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-census-flake-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:14:45Z",
+      "summary": "T12 fix-forward 5daac116: the census test's lambda throw tripped verify-harness-diagnostics (green->red at the first T12 join ratchet); moved into a named method. Step 8 per Rulings 151/153. recount_seconds=543 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-10-19T01:28:38Z",
+      "done_when": "the compile gate passes and the compiled prompt is logged with its raw source",
+      "duration_seconds": 12513.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "compile the workbench-loops drive prompt into a dispatchable starting prompt",
+      "id": "al-01M58WCRBWDKPAEBZKBEEMMCN8",
+      "kind": "command",
+      "outcome": "success",
+      "prompt": "Correction of al-01M58FV33ZKBC7NJBSJW2C7QWZ (missing goal/done_when/evidence).",
+      "session": "wl-owner-20261018",
+      "shortname": "compile-workbench-loops-coordination-correction",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "compile",
+      "started_at": "2026-10-18T22:00:05Z",
+      "summary": "Supersedes the compile entry: the drive prompt was compiled to al-01M58FTCXG1K5J5BWC5X6MGVC2 (raw al-01M58FTC4GNXDXPCT023Y6J72K); the compile gate passed on its second run and the result was dispatchable with zero decision requests.",
+      "supersedes": "al-01M58FV33ZKBC7NJBSJW2C7QWZ",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-10-19T01:28:38Z",
+      "done_when": "the Leader is live and pinned as coordination leader",
+      "duration_seconds": 13318.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 1,
+      "goal": "hand the workbench-loops plan to the Opus Leader seat",
+      "id": "al-01M58WCRGVJK5X7QK9SYP37AG2",
+      "kind": "command",
+      "outcome": "success",
+      "prompt": "Correction of al-01M58G5X47WPDGWXM0S4JBABR0 (missing evidence).",
+      "session": "wl-owner-20261018",
+      "shortname": "coordination-workbench-loops-owner-handoff-correction",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T21:46:40Z",
+      "summary": "Supersedes the Owner hand-off entry: the kickoff brief (docs/coordination/workbench-loops-leader-kickoff.md) was executed. The Leader launched 2026-10-18 and pinned itself; coord leader who showed wl-leader-20261018 epoch 1 live within ~30 s, observed by the Owner.",
+      "supersedes": "al-01M58G5X47WPDGWXM0S4JBABR0",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/census-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:36:17Z",
+      "done_when": "pushed with ratchet PASS recorded",
+      "duration_seconds": 1492.0,
+      "fan_out": 0,
+      "goal": "Land the census fix on main under Ruling 151/153",
+      "id": "al-01M58WTRP7JRWDFSP5TKHPC7MS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the T12 census join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t12-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:11:25Z",
+      "summary": "T12 census fix pushed 36bcfaea (2de9d373..36bcfaea), joined ahead of T3 (Owner-approved reorder). First T12 ratchet REFUSED verify-harness-diagnostics green->red (lambda throw pattern in ConsoleHostCensusTests); fix-forward 5daac116; re-join ratchet PASS 0/48, Ruling 153 filter 104/104, recount gates excluded per 151(3) with the recount green. Register EOF conflict kept both. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M58X50Q23YY06XV2BX88XF4V",
+      "shortname": "wl-t13-hygiene",
+      "datetime": "2026-10-19T01:41:52Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 condition gate-hygiene, Ruling 154 (1): keep the two workbench mockups scanned",
+      "summary": "verify-ui-craft-floor.py: the two pages leave LEGACY_ADVISORY and are scanned; only design-system-color exempt (COLOR_EXEMPT_RULES); self-test case added; red proof by planted undersized-ui-text",
       "kind": "skill",
       "skill": "implement",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
+        "tools/verify-ui-craft-floor.py"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Burn down main's pre-existing red verify gates and remove the two join-time defect classes",
-      "done_when": "Each item green red-first with proof files, or filed as a pack defect; gates-before/after show the red set shrink with no green-to-red",
+      "goal": "Both pages stay scanned; non-colour Majors fail",
+      "done_when": "r154 red then green; gates-after-r154 saved",
       "tier": "T2",
       "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      }
+      "started_at": "2026-10-19T01:36:41Z",
+      "duration_seconds": 311.0
     }
   ],
   "changes": [
@@ -27081,6 +27289,60 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t9-spike"
+    },
+    {
+      "id": "mail-01M58SJJ6637QZ4B3ZH2TKTZ7P",
+      "ts": "2026-10-19T00:39:22Z",
+      "from": "wl-t10-e1",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t10-e1"
+    },
+    {
+      "id": "mail-01M58SMHXMCXPYMZ1PDDCPP3QT",
+      "ts": "2026-10-19T00:40:27Z",
+      "from": "wl-t10-e1",
+      "to": "wl-leader-20261018",
+      "kind": "blocked",
+      "ref": null,
+      "session": "wl-t10-e1"
+    },
+    {
+      "id": "mail-01M58VJPGQP9F5YHNSSHFA7ZTC",
+      "ts": "2026-10-19T01:14:24Z",
+      "from": "wl-t12-census",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t12-census"
+    },
+    {
+      "id": "mail-01M58W9M9GBPKXDCJA3R78K59F",
+      "ts": "2026-10-19T01:26:55Z",
+      "from": "wl-t13-hygiene",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t13-hygiene"
+    },
+    {
+      "id": "mail-01M58WAMADAKM573XFD40814DB",
+      "ts": "2026-10-19T01:27:28Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58WD2P89P6XEXQDSVJ4RD16",
+      "ts": "2026-10-19T01:28:48Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
+      "session": "wl-owner-20261018"
     }
   ]
 };
