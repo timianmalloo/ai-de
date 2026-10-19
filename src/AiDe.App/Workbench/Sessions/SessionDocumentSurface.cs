@@ -598,11 +598,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
 
         // A SEND BEFORE THE RESTART READ-BACK ENDS WAITS FOR IT (Ruling 163's ordinal condition): the restored turns
         // take their ordinals first, so this one continues after them. Until it is admitted the words stay in the editor
-        // and Send is disabled with the reason it waits (Ruling 175(1)), so nothing reads as lost and nothing queues.
-        // Shown again once the gesture returns: the gate's Sent event runs inside Send, which then writes its own status.
+        // and Send is disabled with the reason it waits (Ruling 175(1)), so nothing reads as lost and nothing queues. The
+        // composer keeps this reason as its status when the gesture returns, and never says "sent" (Ruling 175).
         _waitingForTheReadBack = true;
         ShowHostRefusal();
-        Dispatcher.InvokeAsync(ShowHostRefusal);
         LastAdmission = AfterTheReadBackAsync(request, sent);
     }
 
