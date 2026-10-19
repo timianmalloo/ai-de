@@ -1,4 +1,3 @@
-Call log:
-  - navigating to "file:///C:/Users/malla/AppData/Local/docs/mockups/factory-workbench-v2.html", waiting until "load"
-
-exit (old script, same failure at HEAD)
+    os.mkdir(self, mode)
+FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\Projects\\ai-de-gate-hygiene\\.git'
+exit (script as at HEAD before the fix)
