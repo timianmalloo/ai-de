@@ -108,7 +108,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
 
                 // The act was requested; the run host concludes the turn; the merge removes the button.
                 Assert.Equal(new TurnAction(6, TurnActionKind.Stop, null), Assert.Single(actions));
-                thread.Conclude(6, TurnState.Stopped, ThreadFixtures.T0.AddMinutes(10), null, 1);
+                thread.Conclude(6, TurnState.Interrupted, ThreadFixtures.T0.AddMinutes(10), null, 1);
                 await PumpAsync(window);
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
 

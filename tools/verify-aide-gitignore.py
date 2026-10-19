@@ -75,14 +75,14 @@ def self_test() -> int:
         subprocess.run(["git", "init", "-q"], cwd=scratch, check=True)
 
         # DIRECTION 1: no rule at all — the state this repo was actually in before the fix.
-        (scratch / ".gitignore").write_text("*.log\n", encoding="utf-8")
+        (scratch / ".gitignore").write_text("*.log\n", encoding="utf-8", newline="\n")
         if is_ignored(scratch, TARGETS[0]):
             print("self-test FAILED: .aide/ was reported ignored with no matching rule present",
                   file=sys.stderr)
             return 1
 
         # DIRECTION 2: the rule this fix adds.
-        (scratch / ".gitignore").write_text("*.log\n.aide/\n", encoding="utf-8")
+        (scratch / ".gitignore").write_text("*.log\n.aide/\n", encoding="utf-8", newline="\n")
         for target in TARGETS:
             if not is_ignored(scratch, target):
                 print(f"self-test FAILED: {target} was NOT reported ignored with `.aide/` present",

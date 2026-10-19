@@ -2718,7 +2718,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 65 types, 181 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 67 types, 183 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2731,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "172bcb77276d0efacfa0be8bec3beb6ab79a03846f98d702e145ede86c0b9a9b"
+      "sourceSha256": "3ac4534ddd3b4eba8fbbdef3815d50a0b92ec3572c2e04e7afa8dcd07ac0533a"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2781,7 +2781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "94ba0d0ddbc3b018c2c067cf8c7a2dae1f659673351532ff8682a70ecef20955"
+      "sourceSha256": "f810bd140790624abe90275b6c1a7e2dfdd049108ae52172107dcf112e8a5685"
     },
     {
       "id": "api-aide-core-facts",
@@ -2943,7 +2943,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 158 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 159 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2956,7 +2956,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7bef9fb152625252b4bc5caa388d8de1fb313457811ef580e349639effb3f72f"
+      "sourceSha256": "e4d5b6b48c734c85c5acb58662edbad474c1547402d0d924fd2ece3db9876623"
     },
     {
       "id": "api-aide-core-projections",
@@ -2968,7 +2968,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Projections: 62 types, 86 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Projections: 62 types, 87 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2981,7 +2981,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6d5a9682c181596f77cd5c434de0f9ed76afbf46194d3a4ed54d2ddf9cd9beaa"
+      "sourceSha256": "5ef01fe57b064c38e588d3fe6e228744b51145a46f0ce7820a9ed8d8edf24ea2"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -3043,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 56 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 13 types, 95 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3056,7 +3056,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4980cf344022f8e39525950ba3f967174f4c2305cb9db74c7b0d273bb5be1ee5"
+      "sourceSha256": "3a8d816f8a020c07f585e7f3492bba00d4a11d31a09963dcfbbb920ab1275d6b"
+    },
+    {
+      "id": "api-aide-core-store-records",
+      "path": "docs/api/AiDe.Core.Store.Records.md",
+      "title": "API: AiDe.Core.Store.Records",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Store.Records: 13 types, 37 members, 38% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "307e5c64a05d868b7c492a32927ed5ec68e0ec56985e115eb37a9cac9b96bba6"
     },
     {
       "id": "api-aide-core-terminal",
@@ -3106,7 +3131,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7cf8b89e41c8c2d1f465b6b4056935ad8a04eed42e17806ce65f61bcd2d3e9ee"
+      "sourceSha256": "f61c770081a5522c2f24041d6264e16d447feb0d46deca929de2715fbb1d49cd"
     },
     {
       "id": "api-aide-core-watcher",
@@ -8191,6 +8216,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffa5f5177804a2f2fa7d086e9880a2357e6afd6d8c1aa256450743990cb508d1"
     },
     {
+      "id": "note-wl-dr-schema-v2-departures",
+      "path": "docs/notes/wl-dr-schema-v2-departures.md",
+      "title": "Decision request — T2 schema v2 departures from ADR-0039 (for Ruling 148)",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T2 (branch sp1-schema-v2, green 586a7eae) departed from ADR-0039 in six places. The Data & Persistence Architect's adversarial review (PASS-WITH-CONDITIONS, veto cleared) verified the evidence for each and added two Major findings outside the six. The Leader recommends accepting all six with the amendment text below and making the conditions merge conditions.",
+      "tags": [
+        "decision",
+        "workbench-loops",
+        "schema",
+        "adr-0039"
+      ],
+      "links": [
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e8b1c9fea1cb4abb989d4e19ccf9715c22ba7169adab21a5b52edc0f866e9814"
+    },
+    {
       "id": "note-workbench-loops-architecture-exhaust",
       "path": "docs/notes/workbench-loops-architecture-exhaust.md",
       "title": "Workbench-loops architecture run — session exhaust: drift found, calls made below ADR weight",
@@ -10529,7 +10584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36387bd3fcb9f34dae75c17f40cf211192c76d4397d16ab2af5fa801df637cb9"
+      "sourceSha256": "569f0bb5c1a0b49a149a796d0ad57dfd98129554c098864179ba6125f26ccfdd"
     },
     {
       "id": "design-session-profiler",
@@ -12140,7 +12195,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b109644c7950bd29a0f1fa330151c2368078a846886d6ffebced198d38831988"
+      "sourceSha256": "e55e79678612a894bddbaa14355bbbdd3a271ccf5f9efbd7a31de895b8e8d84f"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -18844,7 +18899,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81c4de20d13f53c310339f43616140137fbfbacdc8d1962ddac759bfc8e92a1e"
+      "sourceSha256": "e3473bd21bee1c37dd1d20903391df787ec4b37f4fb9456d783b7243fd01df87"
     },
     {
       "id": "plan-workbench-loops-drive-prompt",
@@ -22145,6 +22200,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-wl-hygiene-pack-defects",
+      "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md",
+      "title": "Pack defects found while burning down main's red gates (T13, Ruling 151)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Gate findings whose cause is the pack's own gate, not this repository's content. None is fixed here (Ruling 151: no pack script under docs/ai-forward-pack/ is edited locally). Each is filed as a pack defect next step with the finding, the gate, why it is the pack's, and the proposed fix.",
+      "tags": [
+        "proof-pack",
+        "gate-hygiene",
+        "pack-defects",
+        "ruling-151",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c74181efb6aa0c61d3356d9707808eec95cfc5387b575a71f722b84a07b827b2"
+    },
+    {
+      "id": "proof-wl-hygiene-residuals",
+      "path": "docs/proof/workbench-loops-support/hygiene/residuals.md",
+      "title": "T13 named residuals - gates no workflow invokes, and the gates that stay red",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Residual red gates after T13, each with its cause and next step. The Leader declined the CI change (req-01M58W131E19CB9H3810ZAN1PG) for this track, so the workflow steps are recorded here, not added.",
+      "tags": [
+        "proof-pack",
+        "gate-hygiene",
+        "residuals",
+        "ruling-151",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d33df5a0f53e7c4820dae41fc769d74895f96b3e40a79d4788ff06aa9046dbb6"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -22182,6 +22291,79 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "edc03cbcf657c3d546b0b35150b2bfe18ab71fbc0d19ccee7fe3878b247a45d3"
+    },
+    {
+      "id": "proof-workbench-loops-wl-0",
+      "path": "docs/proof/workbench-loops-wl-0.md",
+      "title": "Proof Pack: workbench-loops WL-0 (FR-001, FR-002)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-0",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "A forced reindex under an unchanged git revision now indexes edited files, and entry-point listings are bounded by serialized bytes so they fit one IPC frame. Both proven red then green.",
+      "tags": [
+        "workbench-loops",
+        "freshness",
+        "ipc-frame"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f78b5f78940915ac886915e28a3bc54320d1447c2594d2e5853a90b3d0292118"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-sp1",
+      "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md",
+      "title": "Evidence — WL-1a spine T2: WorkspaceSchema v2",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T2's red and green evidence for schema v2, the migration chain and the Ruling 148/150 conditions; cited by the WL-1a Proof Pack.",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b12f4e89200a31bb6e50ca4163431fd1e97df6d260861c6297dfc8fbba81c72a"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-sp2",
+      "path": "docs/proof/workbench-loops-wl-1a/sp2/README.md",
+      "title": "Evidence — WL-1a spine T3: RunEvent and TurnState vocabulary",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T3's red and green evidence for the TurnState extension, the Stopped-to-Interrupted rename and the RunEvent redaction envelope; cited by the WL-1a Proof Pack.",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
     },
     {
       "id": "proof-worktree-cleanup-20261017",
@@ -24139,5 +24321,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "ba5143b003fb21592b5f5cb728be63839b4ad2cdcec7a97b32eb3ba2a29ea183"
+  "graphSha256": "4e16aacd87726425bfc58d4a27bfb981fda4d749d0a4f87a88fc98af8c1776ed"
 };

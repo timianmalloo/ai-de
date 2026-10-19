@@ -3179,3 +3179,109 @@ rewritten to record the wrong diagnosis and how it was caught, not only the outc
 remains **not approved**: condition (a)'s adversary clearance is not on disk.
 
 ---
+
+### Ruling 148 — ADR-0039 amended: T2's six schema-v2 departures are accepted, each with its condition; the frozen DDL, the disposition FK and the outcome-state gate are merge conditions
+
+Accepted on the evidence in docs/notes/wl-dr-schema-v2-departures.md, with the Data & Persistence Architect's review (PASS-WITH-CONDITIONS, veto cleared). The Owner spot-checked it in the sp1-schema-v2 tree at 7369bcfa. StoreWriter.cs:161 closes session_dim by UPDATE. DispatchService.cs:96-103 saves a revision and binds an attempt in one transaction. WorkspaceSchema.cs builds the v2 CHECK lists from live WorkbenchVocabulary and TerminalStates. disposition_fact declares no foreign key.
+
+This ruling is the ADR-0039 amendment of record. The six amendment texts in the note's table are adopted verbatim: (1) trigger-enforced vocabulary and references, with stable codes; (2) append-only dimension versions without valid_to_seq; (3) owner_journey_id is Type-0 except one adoption transition, and legacy changes only 1 to 0; (4) PTY attempts may bind legacy revisions, and the gate asserts every attempt binds an existing revision; (5) assessment_fact.payload never holds a derived state; (6) StoreOpenReport carries the legacy count to the human.
+
+Merge conditions: T2 does not join until each one lands red-first with a refusing test.
+(a) The post-purge reference check runs the same queries as the attempts-bind-revisions gate.
+(b) A per-dimension BEFORE INSERT trigger enforces the next version_no and a strictly greater ingress_seq.
+(c) legacy changes only 1 to 0, and a version-1 legacy=1 row comes only from the backfill.
+(d) body_sha has one home: either every revision writer sets it under an equality test, or it is computed on read. Every revision save creates or requires a notebook.
+(e) The forbidden derived-status-key guard on assessment payload.
+(f) MAJOR: the v2 DDL is frozen as a literal or a pinned hash. Vocabulary growth is a v3 migration.
+(g) MAJOR: a declared composite FK from intent-accepted dispositions to prompt_revision_fact (draft_id, revision_no).
+(h) The migration gate checks existing outcome state values against the vocabulary and reports unknowns.
+The red tests run through Microsoft.Data.Sqlite's bundled engine, which closes the probe-engine residual.
+
+Tracked obligations, not merge conditions: the adoption actor is recorded when T8's binding lands, and the per-kind payload schema lands with WL-5's first producer. Both are named in their tracks' contracts.
+
+The join also needs a green suite, or the census-read failures shown to be baseline on main. The remaining residuals are accepted as listed: real v1 files with unknown states or orphans, and trigger overhead at 100x, which WL-1b measures.
+
+- request: req-01M58KREHTRS93NBAWG36JGNFP · ruled by: wl-owner-20261018 · at: 2026-10-18T22:58:38Z
+
+### Ruling 149 — ADR-0045 1(b) proceeds: ExplorerSurface is deleted; the in-app knowledge/spec corpus loss is named, bounded and owned by WL-S, not deferred to WL-6
+
+Option A, with conditions. The deletion is ADR-0045's accepted decision. Its rejection of Explorer as a full-window body still holds, because the visualizer must dock beside the question (AC-S02a, UX-04), so holding T4 (option B) would reopen a settled direction.
+
+The ADR's Consequences, however, accept only losing the full-window arrangement (ADR-0045:157). They do not accept losing the corpus. T4's evidence shows a second loss the ADR did not weigh. WorkbenchShell.cs:1386 sets ExcludeKnowledge = true on the docked canvas. GraphProjection.cs:93 says the docked graph never shows the knowledge/spec corpus. So deleting ExplorerSurface removes the only in-app view of knowledge and spec nodes. That loss is accepted here only bounded and named.
+
+Conditions:
+(1) T4's Proof Pack and the WL-S slice close state the capability loss in user terms, with docs/index.html as the interim path, under Flagged risks and not as a footnote.
+(2) The knowledge-inclusive representation is a committed WL-S backlog row with its own E2E check, not a WL-6 follow-up. It means Understand's canvas admits the knowledge/spec corpus through the existing representation selector (ADR-0045:98-101), as a mode of the admitted canvas kind, never a second graph surface. WL-S does not close until that check is green.
+(3) T4 records the ExcludeKnowledge seam as the place the mode attaches, and does not build it inside T4. Its done-when is unchanged.
+(4) The user is told in the morning summary, because this is a user-visible regression of a capability that worked before.
+
+The change is fully reversible: git restores ExplorerSurface. The blast radius is a single operator.
+
+- request: req-01M58M88614J682GM6JXM4NKMA · ruled by: wl-owner-20261018 · at: 2026-10-18T23:09:02Z
+
+### Ruling 150 — T2's three Ruling-148 landing choices: the terminal-drafts journey is accepted as a marked standing owner; body_sha is test-asserted; the payload guard forbids exactly ADR-0039 section 3's fold-derived names
+
+(1) ACCEPT the standing journey journey-terminal-drafts as the owner of post-migration PTY drafts (StoreWriter.cs:146), with conditions:
+- It has purpose=work. The migration creates it exactly once, idempotently, and StoreOpenReport counts it.
+- It carries an origin marker, so readers and T8's binding can tell it from a user-created journey and a later adoption can re-own a draft into a real journey. No non-PTY writer may use it as a default; a test refuses that.
+- Ruling 148's amendment text for (3) and (4) is read as naming it.
+Requiring the PTY path to name a real journey is rejected for now: it needs the binding T8 owns.
+
+(2) ACCEPT. body_sha equality is asserted by tests on both writer paths, and the trigger refuses NULL and any value that is not 64 hex characters. SQLite has no sha256, and the tests satisfy Ruling 148 (d)'s single home.
+
+(3) ACCEPT the narrowing away from the generic keys state and status: a resource state is a legitimate finding. The recommended five-name list is too narrow, though. The forbidden set is ADR-0039 section 3's fold-derived names (lines 128-129, 151, 190): satisfied, satisfied_by, accepted, eligible, closed, current, stale, ready, has_evidence, proposed. Each is matched case- and separator-insensitively (hasEvidence, has-evidence). One test pins the list to that section, so adding a derived quantity to section 3 means extending the guard. WL-5's per-kind schema may tighten the list, never loosen it.
+
+- request: req-01M58MW81RJP74K274EV8Q6B3M · ruled by: wl-owner-20261018 · at: 2026-10-18T23:18:40Z
+
+### Ruling 151 — Gate policy for drive joins: a finding-level ratchet with the test-backed gates held strict, until hygiene track T13 makes the line green
+
+Option A, tightened. The Owner re-ran run-verify-gates at 7e21707b in a separate detached tree. 15 distinct gates FAIL there, the Leader's 14 plus verify-front-door-exit-evidence (12 findings), and verify-test-run failed for a different reason: it ran past 300 s, where the Leader's run produced no usable result file. So main was red before the drive (confirmed), and the failing set moves with the environment. A ratchet on gate names alone would let a real new failure hide behind a gate that was already red for another reason.
+
+Step 8 of conductor-join passes for a drive join when all of these hold:
+(1) Same run, same place. The first parent and the join head run the gate line back to back in the same environment, and both outputs are recorded in the join's audit entry.
+(2) Finding level. Every gate that fails at the head also fails at the first parent, and the head's findings for it are a subset of the parent's. A new finding inside an already-red gate is a new red. The diff of findings is recorded.
+(3) Test-backed gates are never ratcheted. verify-test-run, verify-terminal-host-exit-paths and verify-project-coverage cannot pass on 'it was red before', because a missing result or a timeout says nothing about the tests. For them, the join's own conductor recount, on full suites with result files kept, is the evidence. It must be green except for census reads reported NOT CHECKED with T12's cause.
+(4) The join adds no red. Any gate red at the head and green at the parent stops the join (WL-0's two reds are an example) and goes back to its track.
+
+T13, the hygiene track, is approved and owns the burn-down, each item red-first. Its list is the 15 gates above. For a gate that is pack-owned (under docs/ai-forward-pack/scripts, e.g. ruling-citations reading only rulings.md), T13 fixes the repo content the gate flags, or files the gate defect for the pack as a next step. It does not edit the pack's scripts locally.
+The ratchet ends when the line is green on main. From then on, step 8 is strict again. This ruling is reversible: it is a join policy only.
+
+- request: req-01M58MTQWEHY7WSNFXM59QZ7H3 · ruled by: wl-owner-20261018 · at: 2026-10-18T23:28:15Z
+
+### Ruling 152 — ADR-0045 amended: T4's D2 (Factory lands Left until T11), D4 (Escape/Previous deleted, US-C1 pinned by a rendered-window test) and D5 (Body column deleted, no-FullWindow as a build fact) are accepted
+
+Option A. Each deviation keeps ADR-0045's intent, and the Patterns Expert and Simplifier adversaries co-signed each one (docs/design/workbench-loops-wl-s.md:132, :193, :206 in the sp3 tree).
+
+The Owner verified D4 at 4b439996. The only production caller of Escape() is MainWindow.xaml.cs:113, inside the Explore-guarded handler that ADR-0045 1(b) deletes. PerspectiveShell.Previous is written at :236 and read only at :301, inside Escape(). The other Previous symbols (IpcContract, WpfHostFocusScope, workbench.previousSurface) are unrelated. In the sp3 tree, no src/*.cs names PerspectiveBody or FullWindow.
+
+Conditions:
+(D2) The Left landing is time-boxed. Flipping it to Center is a merge condition of T11, in the same change that docks the notebook in the Center. The build test pins the value, and the Factory row's simplify: marker names T11. Ruling 83's left-dock focus (SH-4.1/SH-4.2) stays pinned until then.
+(D4) The previous-perspective slot is re-added only with its first reader, the drill-to-node return of US-C1, by whichever slice builds that return. Until then, US-C1's 'Escape never switches the perspective from a host' is a rendered-window test, and the US-C1 trace names it.
+(D5) The reflection and source build test is the ADR's requested build test. Re-adding a full-window body must fail the suite.
+
+This ruling and Rulings 149 and 151 together are ADR-0045's amendment of record for WL-S. The change is reversible.
+
+- request: req-01M58P6FZ03JG8EQ8EW3G12MSA · ruled by: wl-owner-20261018 · at: 2026-10-18T23:41:56Z
+
+### Ruling 153 — verify-ruling-citations stays ratcheted, with only the findings the addendum-c register answers filtered out; erratum to Ruling 152
+
+Neither option as posed. Excluding the gate wholesale would also hide a citation of a ruling that exists nowhere, which is the defect the gate exists for (class ID-A). Ratcheting it unfiltered refuses every ruling this drive makes, because the gate reads only docs/notes/rulings.md while the Owner rules into docs/notes/addendum-c-council-rulings.md (Ruling 148 onward).
+
+So the comparator drops exactly one class of finding from verify-ruling-citations, on both sides of the ratchet: a finding 'Ruling N is cited ... no heading in docs/notes/rulings.md defines it' where docs/notes/addendum-c-council-rulings.md has exactly one '## Ruling N' or '### Ruling N' heading. Every other finding of that gate still ratchets. That includes a number cited and defined in neither register, and a number defined twice. The filter, and the count of findings it dropped, are recorded in each join's audit entry. It ends when T13 resolves the register mismatch: either the pack gate learns --register, filed as a pack defect, or the repo adopts one register.
+
+On verify-workbench-v2: the comparator fix may normalise only the tree-root path prefix. Record that fix in the join's audit entry. No other normalisation is allowed without a ruling.
+
+ERRATUM to Ruling 152: its last paragraph should read 'This ruling and Ruling 149 together are ADR-0045's amendment of record for WL-S'. Ruling 151 is the join gate policy and does not amend ADR-0045. Ruling 152 is otherwise unchanged and is not edited in place.
+
+- request: req-01M58PX7A6BXNH5TP6RHEHTMWE · ruled by: wl-owner-20261018 · at: 2026-10-18T23:53:12Z
+
+### Ruling 154 — T13's two gate exemptions are accepted: the machine-path opt-outs as written; the two proposal mockups only with a non-colour floor kept on them
+
+(2) verify-no-machine-paths: ACCEPTED as written. .agents/requests.jsonl is the append-only coordination ledger, and .agents/sessions/copilot-main-watch.md is a verbatim transcript. Rewriting a recorded path would falsify the record. The opt-out is the route the gate names, and it covers only those two capture files, so authored files and source stay checked.
+
+(1) verify-ui-craft-floor: ACCEPTED WITH A CONDITION. The Owner read tools/verify-ui-craft-floor.py in the T13 tree. A name in LEGACY_ADVISORY is NOT SCANNED at all (lines 52, 96), so the exemption also drops the accessibility and structure rules on those pages. Its stated reason covers only the palette. The 11 measured Majors are all design-system-color, so the reason is sound for that rule and for no other.
+Condition, before T13 joins: workbench-design-language.html and factory-workbench-notes.html stay scanned. Every Major finding on them other than design-system-color still fails, either by a per-rule exemption or by a test asserting that every Major they produce is design-system-color. Their promotion trigger stays as written: they become fully gated when the workbench design language is adopted into DESIGN.md, or when the pages are retired.
+
+Audit-capture: the Owner's two entries are corrected by superseders al-01M58WCRBWDKPAEBZKBEEMMCN8 and al-01M58WCRGVJK5X7QK9SYP37AG2. The project-coverage CI step stays out of T13's scope as the Leader decided. It is a next step for the user, because it changes what runs on every push.
+
+- request: req-01M58WAMA58T3GFHN8E5P0PT9T · ruled by: wl-owner-20261018 · at: 2026-10-19T01:28:48Z

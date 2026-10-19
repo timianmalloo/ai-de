@@ -135,7 +135,7 @@ public sealed class TurnItem : INotifyPropertyChanged
 
     /// <summary><i>N events</i> — the non-conversation rows only (SC7 as amended: <c>acp.*</c>, the conductor's lines, stderr, a result with no call).</summary>
     public string FoldHeader => TurnCopy.EventsText(EventRows.Count);
-    public bool IsLive => _view.State is TurnState.Running or TurnState.Waiting;
+    public bool IsLive => _view.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested;
 
     /// <summary>The fold's rows: every event item's row, in order — collected once per merge.</summary>
     private IReadOnlyList<TurnRow> EventRows => _eventRows;
@@ -168,7 +168,9 @@ public sealed class TurnItem : INotifyPropertyChanged
         TurnState.Running => [TurnActionKind.Stop],
         TurnState.Waiting => _view.Waiting!.Actions,
         TurnState.Queued => QueuedAwaitsYou ? [TurnActionKind.SendNow, TurnActionKind.Cancel] : [TurnActionKind.Cancel],
-        TurnState.Failed or TurnState.Stopped when IsLast => [TurnActionKind.SendAgain, TurnActionKind.OpenLog],
+        TurnState.Failed or TurnState.Interrupted or TurnState.Rejected or TurnState.Denied or TurnState.OverLimit when IsLast =>
+            [TurnActionKind.SendAgain, TurnActionKind.OpenLog],
+        TurnState.DeliveryUnknown when IsLast => [TurnActionKind.OpenLog],
         _ => [],
     };
 
@@ -212,7 +214,8 @@ public sealed class TurnItem : INotifyPropertyChanged
     private bool _isLast;
 
     /// <summary>A boxed reason on a failed, stopped, waiting or queued LAST turn; a past failure folds (SC7).</summary>
-    public bool ShowsReasonBox => IsLast && (_view.State is TurnState.Failed or TurnState.Stopped or TurnState.Waiting or TurnState.Queued);
+    public bool ShowsReasonBox => IsLast && (_view.State is TurnState.Failed or TurnState.Interrupted or TurnState.StopRequested or TurnState.DeliveryUnknown
+        or TurnState.Rejected or TurnState.Denied or TurnState.OverLimit or TurnState.Waiting or TurnState.Queued);
 
     private void Set(ref bool field, bool value, [System.Runtime.CompilerServices.CallerMemberName] string? name = null)
     {

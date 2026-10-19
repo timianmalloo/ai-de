@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Projections: 62 types, 86 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Projections: 62 types, 87 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Projections`
 
-**62 public types · 86 public members · 65% documented.**
+**62 public types · 87 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -182,6 +182,7 @@ Open Sequence is not this query (mapper r5: authorship only, Sequence still disa
 | Member | Summary |
 |---|---|
 | `int MaxRowsCeiling = 1_254` | The most rows a listing may return, so the response still crosses one IPC frame — the query's default and the ceiling `ProjectionService.EntryPoints` clamps to. |
+| `int MaxRowBytes = ProjectionService.MaxResponseBytes - 512` | The byte budget for the rows, the durable half of the bound the remarks above call for: the response budget less 512 bytes for the envelope (revision and the `Omitted (n)` disclosure). |
 | `string UnclassifiedReasonPendingClassifier = "classifier-not-admitted"` | **(gap)** |
 
 ### `int MaxRowsCeiling = 1_254`
@@ -228,6 +229,8 @@ holds only while a row stays under 731 bytes — an identifier twice the fixture
 overflows the frame at this cap too. The durable fix is the byte budget every other
 projection carries; this is the cap the evidence supports today, and the listing's
 `Omitted (n)` disclosure keeps it honest on the surface rather than silent.
+**The byte budget now exists** (`MaxRowBytes`, FR-002) and is what actually
+bounds the frame; this count stays as the cheap first cut.
 
 
 

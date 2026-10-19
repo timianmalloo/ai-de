@@ -59,7 +59,7 @@ public sealed class TerminalHostExitPathTests(ITestOutputHelper output)
                 {
                     await Task.Delay(SettleAfterExit);
                     var after = ConsoleHostCensus.Take();
-                    Assert.True(after.Readable, "the process table could not be read after exit");
+                    Assert.True(after.Readable, after.NotChecked("after exit"));
                     var survivors = after.HeadlessHostsOwnedBy(ownerPid);
                     afterCount = survivors.Count;
                     afterRows = ConsoleHostCensus.Describe(survivors);
@@ -69,7 +69,7 @@ public sealed class TerminalHostExitPathTests(ITestOutputHelper output)
             // Meanwhile, while the helper holds its session: the oracle must see the host.
             var ownerPid = await ReadPidAsync(report, TimeSpan.FromSeconds(20));
             var live = await ConsoleHostCensus.WaitForHeadlessHostAsync(ownerPid, TimeSpan.FromSeconds(5));
-            Assert.True(live.Readable, "the process table could not be read while the helper ran");
+            Assert.True(live.Readable, live.NotChecked("while the helper ran"));
             liveCount = live.HeadlessHostsOwnedBy(ownerPid).Count;
             output.WriteLine($"[{mode}] owner {ownerPid} live; headless hosts it owns: {liveCount} {ConsoleHostCensus.Describe(live.HeadlessHostsOwnedBy(ownerPid))}");
             output.WriteLine($"[{mode}] owner's children while live: {ConsoleHostCensus.Describe(live.ChildrenOf(ownerPid))}");

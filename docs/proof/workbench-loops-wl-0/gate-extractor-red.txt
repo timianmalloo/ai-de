@@ -1,0 +1,7 @@
+verify-extractor-generation: FAILED
+  - extraction changed since the generation last did (a437c690b), and ScopeFingerprints.cs still says 2026-09-17.1:
+      src/AiDe.Core/Extraction/SourceRevision.cs
+
+  Bump ExtractorGeneration. Without it, every existing workspace keeps serving
+  results from the previous generation — which is how the Knowledge chip read 0
+  on a repository holding 2,343 knowledge nodes.

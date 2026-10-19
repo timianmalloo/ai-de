@@ -9,7 +9,7 @@ namespace AiDe.Core.Store;
 /// A snapshot read. The connection is pinned <c>query_only=1</c>, so this path cannot write even by
 /// accident (spike S6).
 /// </summary>
-public sealed class StoreReader : IDisposable
+public sealed partial class StoreReader : IDisposable
 {
     private readonly SqliteConnection _connection;
 

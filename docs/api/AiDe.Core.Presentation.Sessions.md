@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 158 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 159 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**50 public types · 158 public members · 96% documented.**
+**50 public types · 159 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -523,8 +523,9 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 | `void Start(int ordinal, DateTimeOffset at)` | The queued turn is sent: it runs from  (its duration counts from the send, never from the queue). |
 | `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
 | `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
+| `void RequestStop(int ordinal)` | A stop was requested and the harness has not acknowledged it (ADR-0041 §2). Only a turn that is in flight can be asked to stop; the acknowledgment arrives later as `Interrupted` through `Conclude`. |
 | `void Resume(int ordinal)` | The request was answered; the turn runs again. |
-| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null)` | The run ended.  is one of the four terminal states. What the run said arrived as its events (Ruling 81: the fold is `Coalesce(Events)`); a conclusion carries no text of its own — a reason is appended as a line before … |
+| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null)` | The run ended.  is a terminal state. What the run said arrived as its events (Ruling 81: the fold is `Coalesce(Events)`); a conclusion carries no text of its own — a reason is appended as a line before it, never store… |
 
 ### `RunChannelSessionThread(bool caughtUp = true)`
 
@@ -552,6 +553,14 @@ next ordinal joins **queued** — compiled, submitted, not yet sent. Exactly one
 The queued turn is sent: it runs from  (its duration counts from the send, never from the queue).
 
 **Throws `InvalidOperationException`.** The turn is not queued.
+
+### `void RequestStop(int ordinal)`
+
+A stop was requested and the harness has not acknowledged it (ADR-0041 §2). Only a turn that
+is in flight can be asked to stop; the acknowledgment arrives later as
+`Interrupted` through `Conclude`.
+
+**Throws `InvalidOperationException`.** The turn is not preparing, running or waiting.
 
 ## `SessionDocumentEnvelope`
 
@@ -754,7 +763,7 @@ The read model's state after one applied event. Version 0 is the folded history 
 | `TurnView? InFlight` | The in-flight turn (Ruling 77: at most one) — derived, never a member. |
 | `TurnView? Queued` | The queued turn (Ruling 95: exactly one or none) — derived, never a member. |
 | `TurnView? QueuedBehind` | The turn the queued one waits behind: the in-flight turn while one runs or waits, else the last turn that ran — the one whose Stop or failure left the queued turn waiting for the operator (Ruling 95: *b1 stopped; b2 i… |
-| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in flight and the turn before it ended `Stopped` or `Failed` — the drain never sends after those, so *Send now* is the operato… |
+| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in flight and the turn before it ended `Interrupted`, `Failed` or another non-completing terminal state — the drain never send… |
 
 ## `TurnState`
 
@@ -837,7 +846,7 @@ the jump list, the UIA name and the announcement policy can never disagree on wh
 | Member | Summary |
 |---|---|
 | `int NameWords = 120` | The first this many characters of the words make the item's name (SC10; deviation 3). |
-| `string OutcomeWord(TurnState state, int? exitCode)` | The outcome word (SC7): *answered · completed · running · lane exited 1 · stopped by you · waiting for you · outcome not recorded*. |
+| `string OutcomeWord(TurnState state, int? exitCode)` | The outcome word (SC7): *answered · completed · running · lane exited 1 · interrupted · waiting for you · outcome not recorded*. |
 | `string OutcomeWord(TurnView turn)` | The outcome word of a turn. |
 | `string Name(TurnView turn)` | The UIA name: *b2, Refactor the layout store's…* — the ordinal and the first 120 characters, *…* when truncated. |
 | `string DecorationLine(IReadOnlyList<DecorationRow> decorations)` | The decoration line as one string: *class free-form · tier T0 · lease src/** · goal block* — the item's `ItemStatus`. |

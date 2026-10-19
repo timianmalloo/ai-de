@@ -1,0 +1,11 @@
+{"agent": "wl-leader-20261018", "at": 1792361855.9842594, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t1-wl0", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl0-evidence"}
+{"agent": "wl-t1-wl0", "at": 1792362319.1954226, "kind": "claim", "path": "src/AiDe.Core/WorkspaceCore.cs", "seq": 2, "session": "wl-t1-wl0", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362319.3688552, "kind": "claim", "path": "src/AiDe.Core/Extraction/SourceRevision.cs", "seq": 3, "session": "wl-t1-wl0", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362319.5564342, "kind": "claim", "path": "src/AiDe.Core/Projections/EntryPointsProjection.cs", "seq": 4, "session": "wl-t1-wl0", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362319.7585404, "kind": "claim", "path": "src/AiDe.Core/Projections/ProjectionService.cs", "seq": 5, "session": "wl-t1-wl0", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362814.2035956, "kind": "release", "path": "src/AiDe.Core/WorkspaceCore.cs", "seq": 6, "session": "wl-t1-wl0", "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362814.3087163, "kind": "release", "path": "src/AiDe.Core/Extraction/SourceRevision.cs", "seq": 7, "session": "wl-t1-wl0", "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362814.4516366, "kind": "release", "path": "src/AiDe.Core/Projections/EntryPointsProjection.cs", "seq": 8, "session": "wl-t1-wl0", "wi": "workbench-loops"}
+{"agent": "wl-t1-wl0", "at": 1792362814.5737157, "kind": "release", "path": "src/AiDe.Core/Projections/ProjectionService.cs", "seq": 9, "session": "wl-t1-wl0", "wi": "workbench-loops"}
+{"at": 1792362836.1322725, "from": "wl-t1-wl0", "kind": "done", "mail_id": "mail-01M58JCW54ZF2B3351J4V9N349", "ref": null, "session": "wl-t1-wl0", "to": "wl-leader-20261018", "type": "mail"}
+{"at": 1792365610.0546346, "from": "wl-t1-wl0", "kind": "done", "mail_id": "mail-01M58N1H26RB6DFME0Z5M1KV70", "ref": null, "session": "wl-t1-wl0", "to": "wl-leader-20261018", "type": "mail"}

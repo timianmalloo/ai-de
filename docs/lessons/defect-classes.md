@@ -8287,3 +8287,27 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Observed instance:** Escape hid the October 18 popup without clearing its active option, and zero matches still named suggestion-0. The independent reviewer reproduced both.
 - **Sweep:** rich and source projections, Escape, empty matches and accepted completion. Closing clears active-descendant and expanded state; zero matches has no active option.
 - **Control:** `tools/verify-workbench-v2.py` covers dismissal and source completion; the independent targeted review also checked zero results. Native accessibility tree behavior remains separately unverified.
+
+### DC-NEW-wl-t1-wl0 — A cache or identity key omits the input the caller holds constant
+
+- **Shape:** an identity (revision) is captured once and reused while the thing it names changes underneath, so "same key" is read as "same content" (FR-001), and a count bound is read as a byte bound (FR-002).
+- **Observed instance:** a session-long git HEAD was the only key for a scope snapshot, so a forced reindex of an edited scope returned early as already current; separately, a 1,254-row cap let 2,000-character rows build a 5 MB reply.
+- **Sweep:** every reuse guard keyed on a caller-supplied identifier; every item cap guarding a byte-limited transport.
+- **Control:** `DirtyEditSurvivesReindexTests` (same revision, edited file) and `EveryOperationFitsTheFrameTests.EntryPointsRowsAreBoundedByBytesNotOnlyByCount`.
+
+### DC-NEW-wl-t2-sp1 — A constraint lives in prose or in one consumer, so a second consumer checks a different thing
+
+- **Shape:** a reference or vocabulary rule SQLite cannot declare (ALTER, versioned key) is enforced by one path only: the migration gate ran the reference queries, the purge path ran none, the v2 DDL was rebuilt from live lists, a body hash had two writers and one of them skipped it, and a dimension's version order lived in the writer, not the store. Each path passed its own test.
+- **Observed instance:** Ruling 148 (Oct 18): the Data & Persistence review found eight such gaps in schema v2 that the green suite could not see, because the suite read the same text or the same writer on both sides.
+- **Sweep:** every trigger-enforced reference (one query list, `WorkspaceSchema.ReferenceChecks`, run by the migration gate and the compactor), every closed vocabulary (frozen v2 DDL, pinned hash), every dimension (version-order trigger), every revision writer (`StoreWriter.BodySha`, store trigger refuses NULL).
+- **Control:** `tests/AiDe.Core.Tests/Store/SchemaV2/Ruling148Tests.cs` (one refusing test per condition, run through Microsoft.Data.Sqlite's bundled engine), including `TheV2MigrationDdl_IsPinnedByHash` and `EveryLiveVocabularyValue_IsAlreadyInTheFrozenDdl_SoGrowthFailsHereUntilV3Exists`.
+
+### DC-NEW-wl-t12-census — A measurement that cannot be read is reported as a failure with no cause, and a one-shot read is trusted
+
+- **Shape:** an environment probe (process table via `powershell.exe` + WMI) makes one attempt and, on any failure, returns "unreadable" with no reason; the consumer's assertion then says only "could not be read", which is indistinguishable from a real defect and cannot be diagnosed (a "not checked" reported as a failure, with the cause thrown away).
+- **Observed instance:** the WL-0 join's recount, and tracks T2 and T3, failed "the process table could not be read" while four worktrees ran suites. The cause is now **Verified** from the T3 join recount, where three TerminalHost tests reported `JSON parse error: '0x15' is invalid within a JSON string`: a live process's `CommandLine` held a raw C0 control character, which Windows PowerShell 5.1's `ConvertTo-Json` emits unescaped, so `JsonDocument.Parse` threw on every attempt for as long as that process lived. It is content, not load, which is why 950 raw queries and 150 census reads never reproduced it and why the retry could not help.
+- **Measured read-failure rate under the same shape of load:** before 0/950 raw queries; after 0/150 census reads. Both zero, so the rate does not show the fix working; the injected-runner tests do.
+- **Sweep:** every test-helper probe that returns a bool/empty on failure (`Readable`-style) and every assertion message that drops the probe's cause. Only `ConsoleHostCensus` and its three consumers matched in `tests/`.
+- **Control:** `ConsoleHostCensusTests` - a transient read error is absorbed (retry capped at `MaxAttempts` = 3, the read only); a good read showing a leaked host is returned on the first call and still fails the leak assertion; a persistent failure is unreadable and carries exit code + first stderr line or the JSON parse error. Consumers assert `Snapshot.NotChecked(...)` ("NOT CHECKED - ..." with the cause).
+- **Fix and control (root cause):** `ConsoleHostCensus` escapes raw C0 characters inside JSON string literals to `\u00XX` before parsing, on the reading side so it holds for any emitter and a leak assertion sees the same values. Control: `ConsoleHostCensusTests.ARawControlCharacterInACommandLine_IsKept_AndEveryOtherRowStillParses` (all of 0x00-0x1F in one `CommandLine`, a second row kept).
+- **Status:** `controlled` - retry, explanation and the deterministic parse cause are all controlled by tests.

@@ -35,14 +35,18 @@ public sealed record ProcessRow(int Pid, int ParentPid, string Name, DateTimeOff
 /// the key must be able to represent the thing being attributed).</para>
 ///
 /// <para>Windows only — <c>Get-CimInstance</c> through <c>powershell.exe</c>, the interpreter every
-/// Windows machine has. A failed read returns an empty table rather than a plausible one; a caller
-/// that needs to distinguish the two checks <see cref="Snapshot.Readable"/>.</para>
+/// Windows machine has. A failed read is retried (<see cref="MaxAttempts"/>), then returns an empty table rather than a
+/// plausible one with the failure's <see cref="Snapshot.Cause"/>; a caller that needs to distinguish
+/// the two checks <see cref="Snapshot.Readable"/>.</para>
 /// </remarks>
 public static class ConsoleHostCensus
 {
     /// <summary>The table, and whether it could be read at all.</summary>
-    public sealed record Snapshot(IReadOnlyList<ProcessRow> Rows, bool Readable, DateTimeOffset TakenAt)
+    public sealed record Snapshot(IReadOnlyList<ProcessRow> Rows, bool Readable, DateTimeOffset TakenAt, string? Cause = null)
     {
+        /// <summary>The assertion message for an unreadable table: the census did not run, which is not a pass.</summary>
+        public string NotChecked(string context) => $"NOT CHECKED - the process table could not be read {context}: {Cause}";
+
         /// <summary>Headless console hosts whose recorded parent is <paramref name="ownerPid"/>.</summary>
         public IReadOnlyList<ProcessRow> HeadlessHostsOwnedBy(int ownerPid) =>
             Rows.Where(r => r.IsHeadlessConsoleHost && r.ParentPid == ownerPid).ToList();
@@ -57,43 +61,87 @@ public static class ConsoleHostCensus
         + "@{n='Created';e={if($_.CreationDate){$_.CreationDate.ToUniversalTime().ToString('o')}else{''}}},"
         + "CommandLine | ConvertTo-Json -Compress -Depth 2";
 
-    public static Snapshot Take()
+    /// <summary>One run of the query: the interpreter's exit code and its two streams.</summary>
+    public sealed record QueryResult(int ExitCode, string Stdout, string Stderr);
+
+    /// <summary>Attempts at the read, the first included. Only the read is retried, never a caller's assertion.</summary>
+    public const int MaxAttempts = 3;
+
+    private static readonly TimeSpan Backoff = TimeSpan.FromMilliseconds(300);
+
+    public static Snapshot Take() => Take(RunPowerShell, MaxAttempts, Backoff);
+
+    /// <summary>
+    /// Reads the table through <paramref name="runner"/>, retrying a failed read up to
+    /// <paramref name="attempts"/> times with <paramref name="backoff"/> between them. A good read is
+    /// returned at once, whatever it shows. When every attempt fails the snapshot is unreadable and
+    /// <see cref="Snapshot.Cause"/> names the last failure.
+    /// </summary>
+    public static Snapshot Take(Func<QueryResult> runner, int attempts, TimeSpan backoff)
     {
         var takenAt = DateTimeOffset.UtcNow;
         if (!OperatingSystem.IsWindows())
         {
-            return new Snapshot([], Readable: false, takenAt);
+            return new Snapshot([], Readable: false, takenAt, "not Windows");
         }
 
-        string stdout;
-        try
+        var cause = "";
+        for (var attempt = 1; attempt <= attempts; attempt++)
         {
-            using var powershell = Process.Start(new ProcessStartInfo("powershell.exe")
+            if (attempt > 1)
             {
-                ArgumentList = { "-NoProfile", "-NonInteractive", "-Command", Query },
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            });
-
-            if (powershell is null)
-            {
-                return new Snapshot([], Readable: false, takenAt);
+                Thread.Sleep(backoff);
             }
 
-            stdout = powershell.StandardOutput.ReadToEnd();
-            powershell.WaitForExit();
+            try
+            {
+                var result = runner();
+                var rows = Parse(result, out cause);
+                if (rows is not null)
+                {
+                    return new Snapshot(rows, Readable: true, takenAt);
+                }
+            }
+            catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+            {
+                cause = $"powershell.exe did not start: {ex.Message}";
+            }
         }
-        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+
+        return new Snapshot([], Readable: false, takenAt, $"{cause} (after {attempts} attempts)");
+    }
+
+    private static QueryResult RunPowerShell()
+    {
+        using var powershell = Process.Start(new ProcessStartInfo("powershell.exe")
         {
-            return new Snapshot([], Readable: false, takenAt);
+            ArgumentList = { "-NoProfile", "-NonInteractive", "-Command", Query },
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        }) ?? throw new InvalidOperationException("Process.Start returned null");
+
+        var stderr = powershell.StandardError.ReadToEndAsync();
+        var stdout = powershell.StandardOutput.ReadToEnd();
+        powershell.WaitForExit();
+        return new QueryResult(powershell.ExitCode, stdout, stderr.GetAwaiter().GetResult());
+    }
+
+    private static List<ProcessRow>? Parse(QueryResult result, out string cause)
+    {
+        cause = "";
+        if (result.ExitCode != 0)
+        {
+            var first = result.Stderr.Split('\n', 2)[0].Trim();
+            cause = $"powershell.exe exit {result.ExitCode}: {first}";
+            return null;
         }
 
         List<ProcessRow> rows = [];
         try
         {
-            using var document = JsonDocument.Parse(stdout);
+            using var document = JsonDocument.Parse(EscapeControlCharactersInStrings(result.Stdout));
             var root = document.RootElement;
             foreach (var item in root.ValueKind == JsonValueKind.Array ? root.EnumerateArray().ToList() : [root])
             {
@@ -115,12 +163,50 @@ public static class ConsoleHostCensus
                 rows.Add(new ProcessRow(pid.GetInt32(), ppid, name, created, cmd));
             }
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
-            return new Snapshot([], Readable: false, takenAt);
+            cause = $"JSON parse error: {ex.Message}";
+            return null;
         }
 
-        return new Snapshot(rows, Readable: true, takenAt);
+        return rows;
+    }
+
+    /// <summary>
+    /// Windows PowerShell 5.1's <c>ConvertTo-Json</c> leaves C0 control characters (a live process's
+    /// <c>CommandLine</c> held 0x15) raw inside string values, which <see cref="JsonDocument"/> rejects
+    /// for as long as that process lives. Escaping them to <c>\u00XX</c> here keeps the row and every
+    /// other row and cannot change a value a leak assertion reads. It is done on the reading side so it
+    /// holds whichever interpreter emitted the text; whitespace between tokens is left alone.
+    /// </summary>
+    private static string EscapeControlCharactersInStrings(string json)
+    {
+        var escaped = new System.Text.StringBuilder(json.Length);
+        var inString = false;
+        var backslash = false;
+        foreach (var ch in json)
+        {
+            if (inString && ch < ' ')
+            {
+                escaped.Append("\\u").Append(((int)ch).ToString("x4", System.Globalization.CultureInfo.InvariantCulture));
+                backslash = false;
+                continue;
+            }
+
+            if (inString)
+            {
+                inString = backslash || ch != '"';
+                backslash = !backslash && ch == '\\';
+            }
+            else if (ch == '"')
+            {
+                inString = true;
+            }
+
+            escaped.Append(ch);
+        }
+
+        return escaped.ToString();
     }
 
     /// <summary>Polls until <paramref name="ownerPid"/> owns at least one headless host, or the deadline passes.</summary>

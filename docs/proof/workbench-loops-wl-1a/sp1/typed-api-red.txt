@@ -1,0 +1,123 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ThePtyDispatchPath_StillWorks_AndKeepsTheOneRouteFingerprint [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.EveryV2Row_RoundTripsThroughTheTypedApi [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ADimensionChange_IsANewVersionRow_AndTheLatestRead_ReturnsIt [FAIL]
+[xUnit.net 00:00:00.48]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ARevisionBranch_ResolvesItsParent_AndRecordsABodyHash [FAIL]
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AType0Attribute_CannotChangeInANewVersionRow [FAIL]
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AHarnessProfile_FamilyAndEngineAreType0_ButNativeHomeMayChange [FAIL]
+[xUnit.net 00:00:00.58]     AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ThePtyDispatchPath_StillWorks_AndKeepsTheOneRouteFingerprint [64 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table dispatch_attempt_fact has no column named projection_sha'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendAttempt(AttemptRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 75
+   at AiDe.Core.Store.StoreWriter.RecordDispatchAttempt(String dispatchKey, String workspaceId, Int64 workspaceEpoch, String draftId, Int32 revisionNo, String sessionId, Int64 sessionGeneration) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 136
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ThePtyDispatchPath_StillWorks_AndKeepsTheOneRouteFingerprint() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 142
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.EveryV2Row_RoundTripsThroughTheTypedApi [34 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.EveryV2Row_RoundTripsThroughTheTypedApi() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 19
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ADimensionChange_IsANewVersionRow_AndTheLatestRead_ReturnsIt [25 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ADimensionChange_IsANewVersionRow_AndTheLatestRead_ReturnsIt() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 59
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ARevisionBranch_ResolvesItsParent_AndRecordsABodyHash [25 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'table prompt_revision_fact has no column named parent_revision_no'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Store.WorkspaceStore.Execute(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\WorkspaceStore.cs:line 190
+   at AiDe.Core.Store.StoreWriter.Exec(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\StoreWriter.cs:line 220
+   at AiDe.Core.Store.StoreWriter.AppendNotebookRevision(NotebookRevisionRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 65
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ARevisionBranch_ResolvesItsParent_AndRecordsABodyHash() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 125
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AType0Attribute_CannotChangeInANewVersionRow [37 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AType0Attribute_CannotChangeInANewVersionRow() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 74
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AHarnessProfile_FamilyAndEngineAreType0_ButNativeHomeMayChange [27 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: harness_profile_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendHarnessProfile(HarnessProfileRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 146
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.AHarnessProfile_FamilyAndEngineAreType0_ButNativeHomeMayChange() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 92
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed [30 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.TypedStoreApiTests.ALegacyNotebook_IsAdoptedByANewVersionRow_ThenItsOwnerIsFixed() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\TypedStoreApiTests.cs:line 107
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     7, Passed:     0, Skipped:     0, Total:     7, Duration: 258 ms - AiDe.Core.Tests.dll (net10.0)

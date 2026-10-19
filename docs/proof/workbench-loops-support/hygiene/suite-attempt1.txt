@@ -1,0 +1,11 @@
+verify-test-run: running 2 test project(s)…
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+AiDe.App.Tests                     193      1062 **SHORTFALL**
+AiDe.Core.Tests                   2914      2914     Completed
+
+verify-test-run: FAILED
+  - AiDe.App.Tests: run outcome was 'Failed', not 'Completed'
+  - AiDe.App.Tests: the run counted 193 tests but the baseline expects at least 1062 — 869 test(s) are missing from the results entirely. This is the silent-abort signature: the counters are self-consistent, they just describe fewer tests than exist.
+exit 1

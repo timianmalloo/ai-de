@@ -149,7 +149,7 @@ def heal_from_marker() -> str | None:
 
 def mark(path: str) -> None:
     MARKER.write_text(
-        json.dumps({"path": path, "started": _now()}), encoding="utf-8")
+        json.dumps({"path": path, "started": _now()}), encoding="utf-8", newline="\n")
 
 
 def _now() -> str:

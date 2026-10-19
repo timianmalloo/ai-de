@@ -1,0 +1,16 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.SchemaV2.Ruling148IntentReferenceTests.AnIntentAcceptance_OfARevisionThatDoesNotExist_IsRefused [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148IntentReferenceTests.AnIntentAcceptance_OfARevisionThatDoesNotExist_IsRefused [35 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148IntentReferenceTests.AnIntentAcceptance_OfARevisionThatDoesNotExist_IsRefused() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 392
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 58 ms - AiDe.Core.Tests.dll (net10.0)
+exit=1

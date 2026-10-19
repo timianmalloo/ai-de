@@ -1,0 +1,328 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "notebook_dim") [FAIL]
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "permission_decision_fact") [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "disposition_fact") [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "journey_dim") [FAIL]
+[xUnit.net 00:00:00.48]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "checklist_obligation_fact") [FAIL]
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "evidence_link_fact") [FAIL]
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "assessment_fact") [FAIL]
+[xUnit.net 00:00:00.59]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "harness_profile_dim") [FAIL]
+[xUnit.net 00:00:00.63]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "profile_observation_fact") [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "notebook_dim") [57 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "permission_decision_fact") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "disposition_fact") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "journey_dim") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "checklist_obligation_fact") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "evidence_link_fact") [38 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "assessment_fact") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "harness_profile_dim") [38 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(table: "profile_observation_fact") [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 375
+   at InvokeStub_ForbiddenUpdateTests.DeletingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.67]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "disposition_fact") [FAIL]
+[xUnit.net 00:00:00.70]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "permission_decision_fact") [FAIL]
+[xUnit.net 00:00:00.74]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "assessment_fact") [FAIL]
+[xUnit.net 00:00:00.78]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "journey_dim") [FAIL]
+[xUnit.net 00:00:00.81]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "harness_profile_dim") [FAIL]
+[xUnit.net 00:00:00.84]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "notebook_dim") [FAIL]
+[xUnit.net 00:00:00.88]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "evidence_link_fact") [FAIL]
+[xUnit.net 00:00:00.93]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "profile_observation_fact") [FAIL]
+[xUnit.net 00:00:00.96]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "checklist_obligation_fact") [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "disposition_fact") [37 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "permission_decision_fact") [37 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "assessment_fact") [32 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "journey_dim") [38 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "harness_profile_dim") [34 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "notebook_dim") [32 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "evidence_link_fact") [39 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "profile_observation_fact") [42 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(table: "checklist_obligation_fact") [36 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(String table) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 362
+   at InvokeStub_ForbiddenUpdateTests.UpdatingARowOfAV2Table_IsRejected(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.00]     AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.TheWidenedV1Tables_StayImmutableToo [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.TheWidenedV1Tables_StayImmutableToo [40 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ForbiddenUpdateTests.TheWidenedV1Tables_StayImmutableToo() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 386
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    19, Passed:     0, Skipped:     0, Total:    19, Duration: 719 ms - AiDe.Core.Tests.dll (net10.0)

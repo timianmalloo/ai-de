@@ -1179,7 +1179,7 @@ is a graph that quietly describes code that no longer exists.
 
 | Member | Summary |
 |---|---|
-| `string ExtractorGeneration = "2026-09-17.1"` | **(gap)** |
+| `string ExtractorGeneration = "2026-10-18.1"` | **(gap)** |
 | `ScopeFingerprints Load(string dataDirectory)` | **(gap)** |
 | `bool IsUnchanged(string scopeId, string fingerprint)` | True when this scope's inputs are byte-for-byte what they were when it last ran. |
 | `void Record(string scopeId, string fingerprint)` | **(gap)** |
@@ -1260,15 +1260,23 @@ new observation. The guard was the symptom; the key was the cause.
 
 `simplify: the generation is carried in the revision STRING rather than its own column in
 the natural key; ceiling is that a stored revision is no longer the caller's literal text, so
-anything showing one to a person calls `Base` first; upgrade trigger = the store
+anything showing one to a person calls `Base` first (which also drops the working-tree content digest); upgrade trigger = the store
 gains migration machinery, at which point extractor_generation becomes a real column and this
 type collapses to nothing.`
 
 | Member | Summary |
 |---|---|
 | `string RetiredFixtureLiteral = "rev-1"` | A RETIRED FIXTURE, not a revision. `"rev-1"` was the literal the shell attached to every workspace it indexed before Ruling 85 — a door default read as a measurement (DC-110) — and the stores those builds wrote still … |
-| `string Stamp(string artifactRevision)` | The revision to STORE facts under. Idempotent: stamping an already-stamped revision returns it unchanged, so a caller that passes one through twice does not create a third identity. |
+| `string Stamp(string artifactRevision, string? contentDigest = null)` | The revision to STORE facts under. Idempotent: stamping an already-stamped revision returns it unchanged, so a caller that passes one through twice does not create a third identity. |
 | `string Base(string revision)` | The revision to SHOW: the caller's own text, with any extractor stamp removed. |
+
+### `string Stamp(string artifactRevision, string? contentDigest = null)`
+
+The revision to STORE facts under. Idempotent: stamping an already-stamped revision returns
+it unchanged, so a caller that passes one through twice does not create a third identity.
+
+- **`artifactRevision`** — The caller's revision, typically the git HEAD.
+- **`contentDigest`** — A digest of the scope's working-tree inputs. The caller captures HEAD once and keeps it while the user edits files under it (FR-001), so the revision alone cannot tell old content from new: without this component a forced re-index of an edited scope collided with, or was skipped as, the snapshot of the unedited one. Empty or null adds nothing.
 
 ### `string Base(string revision)`
 

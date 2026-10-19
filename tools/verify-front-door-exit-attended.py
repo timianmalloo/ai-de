@@ -124,14 +124,14 @@ def self_test(root: Path) -> int:
     with tempfile.TemporaryDirectory() as tmp:
         conductor = dict(record, attended=dict(record["attended"], by="conductor"))
         p = Path(tmp) / "conductor.json"
-        p.write_text(json.dumps(conductor), encoding="utf-8")
+        p.write_text(json.dumps(conductor), encoding="utf-8", newline="\n")
         status, out = attended(root, p)
         if status != 1 or not any("operator's word only" in line for line in out):
             failures.append("a record attended by the conductor was accepted")
 
         widened = dict(record, oracleCommit="0" * 40)
         p2 = Path(tmp) / "widened.json"
-        p2.write_text(json.dumps(widened), encoding="utf-8")
+        p2.write_text(json.dumps(widened), encoding="utf-8", newline="\n")
         status, out = attended(root, p2)
         if status != 1 or not any("clause 0" in line for line in out):
             failures.append("a record whose oracleCommit is not a commit was accepted")
@@ -156,6 +156,14 @@ def main() -> int:
     for line in lines:
         print(line)
     return status
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

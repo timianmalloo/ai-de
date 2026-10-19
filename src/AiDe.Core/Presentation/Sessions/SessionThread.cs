@@ -32,7 +32,7 @@ public interface ISessionThread
 public sealed record ThreadSnapshot(IReadOnlyList<TurnView> Turns, long Version, bool IsCaughtUp)
 {
     /// <summary>The in-flight turn (Ruling 77: at most one) — derived, never a member.</summary>
-    public TurnView? InFlight => Turns.LastOrDefault(t => t.State is TurnState.Running or TurnState.Waiting);
+    public TurnView? InFlight => Turns.LastOrDefault(t => t.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested);
 
     /// <summary>The queued turn (Ruling 95: exactly one or none) — derived, never a member.</summary>
     public TurnView? Queued => Turns.LastOrDefault(t => t.State == TurnState.Queued);
@@ -47,12 +47,12 @@ public sealed record ThreadSnapshot(IReadOnlyList<TurnView> Turns, long Version,
 
     /// <summary>
     /// Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in
-    /// flight and the turn before it ended <c>Stopped</c> or <c>Failed</c> — the drain never sends
+    /// flight and the turn before it ended <c>Interrupted</c>, <c>Failed</c> or another non-completing terminal state — the drain never sends
     /// after those, so <i>Send now</i> is the operator's. Derived from the turns, so the instant
     /// between a Completed conclusion and the drain's start never reads as waiting-on-you.
     /// </summary>
     public bool QueuedAwaitsYou =>
-        Queued is not null && InFlight is null && QueuedBehind is { State: TurnState.Stopped or TurnState.Failed };
+        Queued is not null && InFlight is null && QueuedBehind is { State: TurnState.Interrupted or TurnState.Failed or TurnState.DeliveryUnknown or TurnState.Rejected or TurnState.Denied or TurnState.OverLimit };
 }
 
 /// <summary>The one encoding of a turn's lifecycle (DM7): the state decides which of Outcome / Waiting exists.</summary>
@@ -63,7 +63,33 @@ public enum TurnState
     Completed,
     Answered,
     Failed,
-    Stopped,
+
+    /// <summary>
+    /// The harness acknowledged the stop (ADR-0041 §2; renamed from <c>Stopped</c>): native
+    /// acknowledgment only. Our own token cancel is <see cref="StopRequested"/>, never this.
+    /// </summary>
+    Interrupted,
+
+    /// <summary>Being prepared for the harness — compiled, not yet delivered. In flight, no outcome yet (ADR-0041 §2).</summary>
+    Preparing,
+
+    /// <summary>A stop was requested and the harness has not acknowledged it. In flight, no outcome yet (ADR-0041 §2).</summary>
+    StopRequested,
+
+    /// <summary>
+    /// Delivery could not be confirmed: the harness may or may not have received the turn. Terminal;
+    /// "has evidence" is a derived bool on the view, never a state (ADR-0041 §2).
+    /// </summary>
+    DeliveryUnknown,
+
+    /// <summary>The harness refused the turn before it ran. Terminal.</summary>
+    Rejected,
+
+    /// <summary>A permission request of the turn was denied and the turn ended. Terminal.</summary>
+    Denied,
+
+    /// <summary>The turn ended because it went over a limit. Terminal.</summary>
+    OverLimit,
 
     /// <summary>A <c>submitted</c> with no <c>consumed</c> (ADR-0034): an explicit negative, never an absent row.</summary>
     NotRecorded,
@@ -172,7 +198,7 @@ public sealed record TurnView
 
         if ((outcome is not null) != IsTerminal(state))
         {
-            throw new ArgumentException("Outcome ⇔ a terminal state; Running, Waiting, Queued and NotRecorded carry none", nameof(outcome));
+            throw new ArgumentException("Outcome ⇔ a terminal state; Preparing, Running, Waiting, StopRequested, Queued and NotRecorded carry none", nameof(outcome));
         }
 
         Ordinal = ordinal;
@@ -184,7 +210,7 @@ public sealed record TurnView
         Waiting = waiting;
         Events = events;
         Rows = Coalesce.Rows(events);
-        Items = ConversationItems.Of(Rows, live: state is TurnState.Running or TurnState.Waiting);
+        Items = ConversationItems.Of(Rows, live: state is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested);
         SentBytes = sentBytes;
         At = at;
     }
@@ -234,7 +260,8 @@ public sealed record TurnView
 
     /// <summary>Whether <paramref name="state"/> carries an outcome.</summary>
     public static bool IsTerminal(TurnState state) =>
-        state is TurnState.Completed or TurnState.Answered or TurnState.Failed or TurnState.Stopped or TurnState.Cancelled;
+        state is TurnState.Completed or TurnState.Answered or TurnState.Failed or TurnState.Interrupted or TurnState.Cancelled
+            or TurnState.DeliveryUnknown or TurnState.Rejected or TurnState.Denied or TurnState.OverLimit;
 
     /// <summary>The display ordinal: <c>b17</c>.</summary>
     public string DisplayOrdinal => "b" + Ordinal.ToString(CultureInfo.InvariantCulture);
@@ -249,7 +276,7 @@ public static class TurnCopy
     /// <summary>The first this many characters of the words make the item's name (SC10; deviation 3).</summary>
     public const int NameWords = 120;
 
-    /// <summary>The outcome word (SC7): <i>answered · completed · running · lane exited 1 · stopped by you · waiting for you · outcome not recorded</i>.</summary>
+    /// <summary>The outcome word (SC7): <i>answered · completed · running · lane exited 1 · interrupted · waiting for you · outcome not recorded</i>.</summary>
     public static string OutcomeWord(TurnState state, int? exitCode) => state switch
     {
         TurnState.Running => "running",
@@ -259,7 +286,13 @@ public static class TurnCopy
         TurnState.Failed => exitCode is { } code
             ? string.Create(CultureInfo.InvariantCulture, $"lane exited {code}")
             : "failed",
-        TurnState.Stopped => "stopped by you",
+        TurnState.Interrupted => "interrupted",
+        TurnState.Preparing => "preparing",
+        TurnState.StopRequested => "stop requested",
+        TurnState.DeliveryUnknown => "delivery unknown",
+        TurnState.Rejected => "rejected",
+        TurnState.Denied => "denied",
+        TurnState.OverLimit => "over limit",
         TurnState.NotRecorded => "outcome not recorded",
         TurnState.Queued => "queued",
         TurnState.Cancelled => "cancelled by you",
@@ -310,7 +343,12 @@ public static class TurnCopy
                     CultureInfo.InvariantCulture,
                     $"The lane exited {code} after {EditsText(turn.Outcome.Edits)}. Send the same turn again as a new turn, or open the log.")
                 : $"The lane failed after {EditsText(turn.Outcome.Edits)}. Send the same turn again as a new turn, or open the log.",
-            TurnState.Stopped => $"Stopped by you after {EditsText(turn.Outcome!.Edits)}; {SpendText(turn.Outcome.Spend)}. Send the same turn again as a new turn, or open the log.",
+            TurnState.Interrupted => $"Interrupted after {EditsText(turn.Outcome!.Edits)}; {SpendText(turn.Outcome.Spend)}. Send the same turn again as a new turn, or open the log.",
+            TurnState.StopRequested => "Stop requested. Waiting for the harness to acknowledge.",
+            TurnState.DeliveryUnknown => "Delivery is unknown: the harness may or may not have received this turn. Open the log before sending it again.",
+            TurnState.Rejected => "The harness rejected this turn before it ran. Send the same turn again as a new turn, or open the log.",
+            TurnState.Denied => "A permission request of this turn was denied. Send the same turn again as a new turn, or open the log.",
+            TurnState.OverLimit => "This turn went over a limit and ended. Send the same turn again as a new turn, or open the log.",
             TurnState.Waiting => turn.Waiting!.Text,
             TurnState.NotRecorded => "The outcome was not recorded: the turn was submitted and nothing consumed it.",
             TurnState.Cancelled => "Cancelled before it was sent; its words went back to the editor.",

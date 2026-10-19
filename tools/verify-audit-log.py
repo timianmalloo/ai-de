@@ -356,7 +356,7 @@ def _self_test(run_mutants: bool) -> int:
             return
         path.write_text("".join(
             (entry if isinstance(entry, str) else json.dumps(entry, sort_keys=True)) + "\n"
-            for entry in entries), encoding="utf-8")
+            for entry in entries), encoding="utf-8", newline="\n")
 
     def run_gate(root: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
@@ -528,7 +528,7 @@ def _self_test(run_mutants: bool) -> int:
                 scripts = mutant_root / "docs" / "ai-forward-pack" / "scripts"
                 mutant_gate.parent.mkdir(parents=True)
                 scripts.mkdir(parents=True)
-                mutant_gate.write_text(source_text.replace(old, new, 1), encoding="utf-8")
+                mutant_gate.write_text(source_text.replace(old, new, 1), encoding="utf-8", newline="\n")
                 for name in ("audit-log.py", "coord_ids.py"):
                     installed = REPO / "docs" / "ai-forward-pack" / "scripts" / name
                     (scripts / name).write_bytes(installed.read_bytes())

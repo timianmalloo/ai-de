@@ -920,7 +920,7 @@ def self_test():
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         snap = pathlib.Path(tmp) / "s.json"
-        snap.write_text(json.dumps({"40": "T1"}), encoding="utf-8")
+        snap.write_text(json.dumps({"40": "T1"}), encoding="utf-8", newline="\n")
         expect("pre-existing server is excused", assert_clean(dirty, {wt}, str(snap)), 0)
 
     # The header falsifier (DC-131 inside the tool): a group where the FIRST item's reason
@@ -1038,7 +1038,7 @@ def main():
 
     if args.snapshot:
         pathlib.Path(args.snapshot).write_text(
-            json.dumps({str(k): v["created"] for k, v in procs.items()}), encoding="utf-8")
+            json.dumps({str(k): v["created"] for k, v in procs.items()}), encoding="utf-8", newline="\n")
         print("snapshot: %d processes -> %s" % (len(procs), args.snapshot))
         return 0
 
@@ -1051,6 +1051,14 @@ def main():
         print("`foreign` and `unknown` are NEVER reaped, at any flag -- reported only.")
         return 0
     return reap(procs, buckets)
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

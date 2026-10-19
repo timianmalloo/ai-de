@@ -183,7 +183,7 @@ def self_test(root: Path) -> int:
 
     try:
         for name, (body, should_fire) in cases.items():
-            probe.write_text(body, encoding="utf-8")
+            probe.write_text(body, encoding="utf-8", newline="\n")
             findings, _ = check(root, [probe.relative_to(root).as_posix()])
 
             if should_fire and not findings:
@@ -235,6 +235,14 @@ def main() -> int:
     print(f"verify-perf-assertions: OK — {read} test source(s) read, no duration asserted against "
           "a constant.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

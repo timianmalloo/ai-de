@@ -106,7 +106,8 @@ public sealed class ScopeFingerprints
     // `SourceRevision`'s suffix into `artifact_revision`, which IS in the hash — so this bump is the
     // whole of the repair's store half, and `extractor_version` could not have been (it is in
     // neither key, and putting it there would be a schema change).
-    public const string ExtractorGeneration = "2026-09-17.1";
+    // 2026-10-18.1 — `SourceRevision` changed (WL-0 evidence foundations); the gate requires the bump.
+    public const string ExtractorGeneration = "2026-10-18.1";
 
     private const string FileName = "scope-fingerprints.json";
 

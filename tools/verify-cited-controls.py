@@ -188,7 +188,7 @@ def self_test(root: Path) -> int:
     bad.write_text(
         "/// <summary><c>ANameNothingResolves</c> is the control.</summary>\n"
         "public sealed class SelfTestSubject { }\n",
-        encoding="utf-8")
+        encoding="utf-8", newline="\n")
 
     try:
         problems, _, cited = check(root, files=[bad])
@@ -232,6 +232,14 @@ def main() -> int:
     print(f"verify-cited-controls: OK — {cited} claimed control(s) across {names} code identifiers; "
           "every one resolves.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

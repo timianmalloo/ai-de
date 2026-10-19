@@ -1,0 +1,11 @@
+Preservation workflow policy matches main
+exit 0
+Preservation workflow policy matches main
+PRESERVATION-WORKFLOW-DRIFT: apply the current workflow policy before pushing drift
+PRESERVATION-WORKFLOW-NOT-CHECKED: cannot resolve bare
+PRESERVATION-WORKFLOW-NOT-CHECKED: cannot resolve missing-ref
+self-test OK - a matching, a drifted, a workflow-less and an unknown candidate each exit as declared.
+exit 0
+verify-gate-self-tests: FAILED
+  - verify-workbench-v2.py is a gate with no --self-test, and is not on the frozen list. A control that has never been observed failing has not been observed (DC-104): four controls were wrong on their first run today, and each was found by making the code wrong and watching what stayed quiet. Add a --self-test that proves this gate fires.
+exit 1

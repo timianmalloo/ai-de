@@ -149,14 +149,14 @@ def self_test(root: Path) -> int:
     imported = scratch / "_selftest_imported.md"
     broken = scratch / "_selftest_broken_import.md"
 
-    silent.write_text("# A harness root that never mentions capture\n", encoding="utf-8")
+    silent.write_text("# A harness root that never mentions capture\n", encoding="utf-8", newline="\n")
     imported.write_text(
-        "Write `episode.artifacts` on episode-close to $AIDE_CONTRACT_LOG.\n", encoding="utf-8")
+        "Write `episode.artifacts` on episode-close to $AIDE_CONTRACT_LOG.\n", encoding="utf-8", newline="\n")
     importer.write_text(
         f"# A harness root that imports the instruction\n\n@{imported.relative_to(root).as_posix()}\n",
-        encoding="utf-8")
+        encoding="utf-8", newline="\n")
     broken.write_text("# A harness root importing nothing that exists\n\n@NO_SUCH_FILE.md\n",
-                      encoding="utf-8")
+                      encoding="utf-8", newline="\n")
 
     try:
         relative = silent.relative_to(root).as_posix()
@@ -221,6 +221,14 @@ def main() -> int:
     print(f"verify-capture-instruction: OK — {checked} harness root(s) carry the capture "
           f"instruction, {pending} declared root(s) not yet present.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

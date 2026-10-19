@@ -114,7 +114,7 @@ def self_test():
             for rel, body in files.items():
                 target = root / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(body, encoding="utf-8")
+                target.write_text(body, encoding="utf-8", newline="\n")
             found = check(root)
             if expected is None:
                 if found:
@@ -158,7 +158,7 @@ def main():
                 without = count_workers()
             finally:
                 if backup is not None:
-                    root_rsp.write_text(backup, encoding="utf-8")
+                    root_rsp.write_text(backup, encoding="utf-8", newline="\n")
             subprocess.run(["dotnet", "build-server", "shutdown"],
                            capture_output=True, check=False)
             subprocess.run(["dotnet", "build", str(ROOT / "AiDe.sln"), "--nologo",
@@ -184,6 +184,14 @@ def main():
     print("node-reuse control: every Directory.Build.rsp in the tree carries "
           "/nodeReuse:false.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

@@ -45,3 +45,19 @@ docs/_meta.json merge=coord-regen
 # while the bytes a Windows checkout ships differ. `-text` disables every conversion in both
 # directions, so the one number means the same thing in all three places.
 src/AiDe.App/Web/vendor/** -text
+
+# THE DEFECT-CLASS REGISTER IS APPEND-ONLY MARKDOWN (T13, Ruling 151). Left `authored`, every join
+# after the first collided at end-of-file, because each branch appends its own entry there. The
+# `coord-register` driver unions JSONL rows and refuses anything else, so it cannot take this file;
+# git's built-in `union` driver keeps both sides' added lines. The header counts line is the one
+# derived line, so `python tools/verify-defect-register.py --fix-counts` follows every such merge.
+# Proof: tools/test-defect-register-merge.py.
+docs/lessons/defect-classes.md merge=union
+
+# BYTE-EXACT CAPTURED RECORDS (T13). Both hold machine paths because they RECORD what an agent saw
+# or wrote on a machine: requests.jsonl is the append-only coordination ledger (two lines quote
+# the path of a diagnostic output) and copilot-main-watch.md is a verbatim session transcript.
+# Rewriting either to a portable token would falsify the record, so each opts out whole-file, the
+# route verify-no-machine-paths.py names for exactly this case.
+.agents/requests.jsonl machine-path-ok
+.agents/sessions/copilot-main-watch.md machine-path-ok

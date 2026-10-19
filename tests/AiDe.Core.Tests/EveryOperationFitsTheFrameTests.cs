@@ -205,4 +205,46 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
             $"these responses cannot cross the {IpcFraming.MaxFrameBytes:N0}-byte frame: " +
             string.Join("; ", oversized));
     }
+
+    [Fact]
+    public void EntryPointsRowsAreBoundedByBytesNotOnlyByCount()
+    {
+        // FR-002: 1,300 types with 2,000-character identifiers sit UNDER the 1,254-row ceiling's
+        // intent but each row is ~2.6x wider than the 731 bytes the ceiling was derived from, so the
+        // count clamp alone returned 5,165,696 bytes against a 1,048,576-byte frame.
+        var store = WorkspaceStore.Open(Path.Combine(_dir, "wide.db"));
+        var wide = new string('W', 2_000);
+        var facts = Enumerable.Range(0, 1_300).Select(i => new EvidenceAssertion(
+            "scope", "rev-1", $"{wide}.Type{i}", "has_type", "class",
+            EvidenceOrigin.Static, VerificationStatus.Verified,
+            new Provenance($"src/File{i}.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch))).ToList();
+
+        using (var writer = store.BeginWrite())
+        {
+            writer.DesireScopeGeneration("scope", 1, "rev-1");
+            writer.CommitSnapshot("scope", 1, "rev-1", facts, complete: true);
+            writer.Commit();
+        }
+
+        var result = new ProjectionService(store).EntryPoints(new EntryPointsQuery(int.MaxValue));
+
+        Assert.True(WireBytes(result) <= IpcFraming.MaxFrameBytes,
+            $"entry points = {WireBytes(result):N0} bytes against a {IpcFraming.MaxFrameBytes:N0}-byte frame");
+        Assert.True(result.Rows.Count > 0);
+        Assert.Equal(1_300 - result.Rows.Count, result.OmittedByCap);
+    }
+
+    [Fact]
+    public void ACallerSuppliedByteBudgetLargerThanTheBoundIsClamped()
+    {
+        var wide = new string('x', 2_000);
+        var candidates = Enumerable.Range(0, 1_300)
+            .Select(i => ($"{wide}.Type{i}", "class")).ToList();
+
+        var result = EntryPointsListing.FromHasType(candidates, int.MaxValue, "rev-1", maxBytes: int.MaxValue);
+
+        Assert.True(WireBytes(result) <= EntryPointsProjection.MaxRowBytes + 512,
+            $"rows = {WireBytes(result):N0} bytes against a {EntryPointsProjection.MaxRowBytes:N0}-byte bound");
+        Assert.True(result.OmittedByCap > 0);
+    }
 }

@@ -1,0 +1,9 @@
+verify-project-coverage: 42 tracked project(s) — 19 in AiDe.sln, 23 outside, 0 exempt.
+  built 23 project(s) outside the solution in 23s
+verify-project-coverage: FAILED
+  - tools/verify-preservation-workflow-policy.py is a gate that no workflow invokes — it runs only when somebody remembers, which is not a control
+  - tools/verify-workbench-v2.py is a gate that no workflow invokes — it runs only when somebody remembers, which is not a control
+
+  A project nothing compiles is a project that rots, and a harness that rots runs a
+  stale binary and reports a number nobody can tell is old.
+exit 1

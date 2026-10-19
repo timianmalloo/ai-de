@@ -1,0 +1,56 @@
+control currency: OK — origin/main (4c3e4b0c) carries no commit touching tools or docs/ai-forward-pack/scripts since this tree's merge-base 4c3e4b0c.
+
+run-verify-gates: 47 gate(s) in C:\Projects\ai-de-gate-hygiene
+  ok     verify-aide-gitignore.py                        0.1 s  verify-aide-gitignore: OK — .aide/prompt-drafts.json, .aide/nested/whatever.json ignored.
+  ok     verify-api-crefs.py                             0.2 s  verify-api-crefs: OK — 4,648 declared name(s) known, 2245 unresolved span(s), none of them a dropped first cha
+  FAIL   verify-audit-capture.py                         0.0 s  a goal never becomes one. This is AL5b, which 259 entries show prose does not carry.
+  ok     verify-audit-log.py                             0.1 s  verify-audit-log: OK — 1,018 entr(ies) across 2 log(s); every id is claimed by exactly one entry.
+  ok     verify-bounds-are-enforced.py                   0.5 s    Note: this checks that a bound is APPLIED, not that a comment describing it is true. The prose half of the c
+  ok     verify-capture-instruction.py                   0.0 s  verify-capture-instruction: OK — 3 harness root(s) carry the capture instruction, 1 declared root(s) not yet p
+  ok     verify-cited-controls.py                        1.5 s  verify-cited-controls: OK — 310 claimed control(s) across 20622 code identifiers; every one resolves.
+  ok     verify-containment-comparisons.py               0.6 s  verify-containment-comparisons: OK -- every separator-terminated containment check uses PathComparison.ForThis
+  ok     verify-defect-register.py                       0.2 s  verify-defect-register: OK — 231 class(es); every cited class resolves, the sequence is unbroken, and the head
+  FAIL   verify-derived-views.py                         2.0 s          regenerated: ...b'\n      "tool": null\n    },\n    {\n      "actor": null,\n      "artifacts": [\n   
+  ok     verify-design-modes.py                          0.0 s  verify-design-modes: OK - 30 colour roles, each with a light value; accent-contrast and border-strong declared
+  ok     verify-embedded-scripts.py                      0.6 s  verify-embedded-scripts: OK — 13 embedded script block(s) parse (node --check).
+  ok     verify-extractor-generation.py                  0.1 s  verify-extractor-generation: OK — generation 2026-10-18.1, no extraction change since it was set (0c2994e46).
+  ok     verify-fixture-derivation.py                    0.2 s  verify-fixture-derivation: OK — no test restates the product's own list (36 identifier(s) watched).
+  ok     verify-front-door-exit-attended.py              0.7 s  clauses met 5/10; F5 is closed on the operator's word (Ruling 103) — the NOT MET rows are what the product did
+  ok     verify-front-door-exit-evidence.py              6.8 s  self-test: the oracle reddens on every clause it claims to check
+  ok     verify-gate-self-tests.py                       0.1 s  verify-gate-self-tests: OK — 38 gate(s), 9 without a self-test, all frozen and none added.
+  ok     verify-harness-diagnostics.py                   0.1 s  verify-harness-diagnostics: OK — 1 wrapping harness(es), every one rethrows an assertion failure as itself.
+  ok     verify-id-allocators.py                       144.9 s  verify-id-allocators: OK — 9 declared famil(ies) (al 859, cl 159, mit 10, DC 231, adr 45, INV 14, AP 22, TS 14
+  ok     verify-mockup-audits.py                        15.8 s  24 mockup(s) swept headless, 0 findings (DC-147's control)
+  ok     verify-node-reuse-control.py                    0.2 s  node-reuse control: every Directory.Build.rsp in the tree carries /nodeReuse:false.
+  ok     verify-perf-assertions.py                       0.9 s  verify-perf-assertions: OK — 452 test source(s) read, no duration asserted against a constant.
+  ok     verify-preservation-workflow-policy.py          0.1 s  Preservation workflow policy matches main
+  FAIL   verify-project-coverage.py                     26.1 s    stale binary and reports a number nobody can tell is old.
+  ok     verify-published-layout.py                      1.8 s  verify-published-layout: OK — the published shell finds daemon/AiDe.Daemon.exe, mcp/AiDe.Mcp.exe.
+  ok     verify-r14b2-session-naming.py                  0.1 s  verify-r14b2-session-naming: OK — no new out-of-container "session" symbol since origin/main.
+  ok     verify-ruling-citations.py                      0.3 s  verify-ruling-citations: OK — 149 ruling(s) cited, 140 defined by a note, 9 frozen as pre-existing debt (1, 3,
+  FAIL   verify-site-figures.py                          0.4 s  8 stale, 0 unknown, out of 14 checked
+  ok     verify-standins.py                              0.1 s  verify-standins: OK — 1 stand-in(s) in production, each with a recorded reason.
+  ok     verify-stranded-audit.py                        0.7 s  verify-stranded-audit: OK — 13 worktree(s), 0 reported, no append-only log left uncommitted in a tree this ses
+  ok     verify-subprocess-utf8.py                       0.1 s  verify-subprocess-utf8: OK — every text-mode subprocess under tools/ and spikes/ states its encoding (1 allowl
+  ok     verify-surface-ownership.py                     0.1 s  verify-surface-ownership: OK — 19 surface(s), 19 assigned in §2, 0 recorded as awaiting a joint decision.
+  ok     verify-terminal-host-exit-paths.py              0.1 s  verify-terminal-host-exit-paths: OK — 5 exit paths executed and passed (window close · owner exit · owner kill
+  FAIL   verify-test-run.py                              0.1 s          this host cannot create a file symbolic link (IOException: enable Developer Mode or run elevated); the
+  ok     verify-ui-craft-floor.py                        3.7 s  verify-ui-craft-floor: OK - every gated artifact is clean at its threshold, over committed source.
+  ok     verify-vendored-advisories.py                   0.6 s  verify-vendored-advisories: 1 manifest(s) carry a current advisory record, and the scan was re-run against eve
+  ok     verify-vendored-assets.py                       0.1 s  verify-vendored-assets: 2 vendored file(s) across 1 manifest(s) match their recorded hashes, sizes, lockfile a
+  ok     verify-workbench-v2.py                          8.2 s  }
+  ok     verify-compiled-prompt.py                       0.0 s  self-test OK: nine directions behave; every refusal matches the grammar
+  ok     verify-documented-commands.py                   0.1 s  verify-documented-commands: no pack/ under C:\Projects\ai-de-gate-hygiene\docs - nothing to scan (a consuming 
+  ok     verify-no-conflict-markers.py                   0.5 s  verify-no-conflict-markers: OK - 2925 tracked text file(s) read, no conflict markers.
+  ok     verify-no-machine-paths.py                      0.4 s  clean - 912 tracked machine-readable files carry no machine-specific path
+  ok     verify-no-new-console-launches.py               0.3 s  verify-no-new-console-launches: OK - 787 file(s) read under src, tests, no CREATE_NEW_CONSOLE launch.
+  FAIL   verify-portable-text-io.py                      0.1 s       pack-doctor.py at the top of every printing script; drop text=True from mkstemp
+  FAIL   verify-ruling-citations.py                      0.6 s    - Ruling 154 is cited as authority in 1 file(s) and no heading in docs/notes/rulings.md defines it. Cited by
+  ok     verify-skill-contracts.py                       0.1 s  clean - 30 skill(s) checked in C:\Projects\ai-de-gate-hygiene\.claude\skills
+  FAIL   verify-subprocess-utf8.py                       0.1 s  fix: add encoding="utf-8", errors="replace" to the call (prompt-log.py has the worked example)
+run-verify-gates: 8 of 47 gate(s) FAILED - the line stops here.
+
+docs-graph validate: OK — 589 artifact(s), 0 defect(s), 149 suggestion(s) (review-suggested/review-by decay warn inside docs-graph.py, V16).
+
+run-verify-gates: FAILED — the pack runner's gates. The line's exit status is the worst of them; nothing above is a skip.
+exit 1

@@ -145,7 +145,7 @@ def self_test(root: Path) -> int:
             "    // A mock until something ships — this LINE is a comment and must not fire.\n"
             "    private readonly IThing _real = new MockThing();\n"
             "}\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         subprocess.run(["git", "add", "-A"], cwd=place, capture_output=True, check=True)
 
@@ -166,6 +166,14 @@ def self_test(root: Path) -> int:
     print("verify-standins: self-test OK — an unlisted stand-in fails, and a comment about one "
           "does not.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":
