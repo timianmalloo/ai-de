@@ -1,0 +1,83 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale [FAIL]
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale [FAIL]
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass", mandatoryAtLinkTime: False) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass and lint is clean", mandatoryAtLinkTime: True) [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale [3 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 167
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 214
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: NotRecorded
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 204
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass", mandatoryAtLinkTime: False) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(String textAtLinkTime, Boolean mandatoryAtLinkTime) in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 186
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass and lint is clean", mandatoryAtLinkTime: True) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(String textAtLinkTime, Boolean mandatoryAtLinkTime) in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 186
+   at InvokeStub_AcceptanceFoldTests.A2_AChangedCriterion_IsStale(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 195
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: NotRecorded
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 231
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     7, Passed:     7, Skipped:     0, Total:    14, Duration: 50 ms - AiDe.Core.Tests.dll (net10.0)
