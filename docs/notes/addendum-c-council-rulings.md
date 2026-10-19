@@ -3468,3 +3468,19 @@ Conditions, each red-first:
 This also discharges Ruling 149 (2)'s 'representation selector' wording.
 
 - request: req-01M59VQGBWQN4AB0DHWNYE6587 · ruled by: wl-owner-20261018 · at: 2026-10-19T10:37:52Z
+
+### Ruling 167 — An Interrupted turn reads 'stopped by you', as DESIGN.md specifies twice; the product's 'interrupted' outcome word is changed, not DESIGN.md
+
+Option B. DESIGN.md is not stale on one line. Its reply-side outcome-word list (DESIGN.md:1170) names 'stopped by you', and the composer copy list (DESIGN.md:1204) uses 'b1 stopped by you; b2 is waiting — Send it or cancel it'. The spec grounds load-bearing copy in DESIGN.md, and Ruling 164's 'cancelled by you' was modelled on this pattern. The product departs from it: OutcomeWord(Interrupted) is 'interrupted' (SessionThread.cs:289), which flows into TurnCopy.QueuedSentence (:372).
+
+'By you' is literally true. The Owner read the only writer of Interrupted, AttemptHost.cs:964-967: a cancelled reply is Interrupted only under a Stop whose high-water mark it follows, and otherwise it is DeliveryUnknown{relay_lost}. The only stop requests come from the operator's Stop (NotebookRuns.cs:441, :575, :733). The stop check at :726 excludes disposal, and :570 records 'stopped by the operator'. A shutdown or a token cancel never yields Interrupted.
+
+The decision:
+(1) OutcomeWord(Interrupted) = 'stopped by you'. The composer line therefore reads exactly 'b1 stopped by you; b2 is waiting — Send it or cancel it'.
+(2) The pinned tests (TheQueuedTurnIsOneTurnOfTheStreamTests.cs:133 and any test asserting 'interrupted' as display text) are changed red-first. The TurnState name and the stored DispatchState stay 'Interrupted'; only the displayed word changes.
+(3) A guard test: a turn ended by host shutdown or by token cancel alone never renders 'stopped by you'.
+(4) The announcement names the ordinal once, per the Cancelled precedent, and UIA carries the same words.
+(5) The WL-1a demo script's Stop step expects 'stop requested' then 'stopped by you'. Update the Proof Pack's expected string.
+This is a small fix-forward and does not reopen WL-1a's provisional acceptance.
+
+- request: req-01M59VXQ699GXNXYWY5E547PGJ · ruled by: wl-owner-20261018 · at: 2026-10-19T10:40:53Z
