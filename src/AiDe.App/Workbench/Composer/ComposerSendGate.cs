@@ -174,6 +174,9 @@ public sealed class ComposerSendGate
     /// <summary>The last succeeded call by <c>inputs_sha</c>: the stored derived decorations a re-prepare with unchanged inputs reuses (§A8.4) — after a failed call, nothing is stored here.</summary>
     private readonly Dictionary<string, Prepared> _lastSuccess = new(StringComparer.Ordinal);
 
+    /// <summary>The summed <c>called.cost</c> of every compile call since the last send (each with at least one request), or null when none was made.</summary>
+    private RunEventCost? _turnCompileCost;
+
     /// <summary>A prepared envelope: its rows (stamped or pending), the source text it was opened on, its inputs sha and the derived lines.</summary>
     private sealed record Prepared(string EnvelopeId, List<EnvelopeEvent> Rows, string SourceText, string InputsSha, Dictionary<string, string> Derived, int? CalledSeq)
     {
@@ -488,11 +491,11 @@ public sealed class ComposerSendGate
             TryAppend([new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
 
             // THE COMPILE'S COST TRAVELS WITH THE SUBMISSION (Ruling 78: `called.cost` is the turn's
-            // spend, on its own outcome line; Ruling 95 condition 4 for a queued turn): the fold's
-            // last `called` row, when a request was made — a reused call (0 requests) and a
-            // mechanical compile (no call) contribute nothing, never a zero.
-            var compileCost = envelope.LastCall?.Cost is { Requests: > 0 } cost ? cost : null;
-            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null, compileCost);
+            // spend, on its own outcome line; Ruling 95 condition 4 for a queued turn): every call this
+            // turn made, including those on envelopes a re-prepare abandoned (Ruling 180 (4)) — a
+            // reused call (0 requests) and a mechanical compile (no call) contribute nothing, never a zero.
+            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null, _turnCompileCost);
+            _turnCompileCost = null;
             _abandoned = null;
             _prepared = null;
             State = PrepareState.Draft;
@@ -702,6 +705,14 @@ public sealed class ComposerSendGate
     {
         lock (_gate)
         {
+            // THE CALL WAS BILLED whether or not its envelope is still the prepared one: its spend is this turn's.
+            if (called.Cost is { Requests: > 0 } spent)
+            {
+                _turnCompileCost = _turnCompileCost is { } sum
+                    ? new RunEventCost(sum.TokensIn + spent.TokensIn, sum.TokensOut + spent.TokensOut, sum.CacheRead + spent.CacheRead, sum.Requests + spent.Requests, sum.Credits + spent.Credits)
+                    : spent;
+            }
+
             if (_prepared is not { } prepared || prepared.EnvelopeId != called.EnvelopeId)
             {
                 // The envelope was abandoned while the call ran (a stale re-prepare): its receipt is not appended to another envelope's rows.
@@ -875,7 +886,7 @@ public sealed class ComposerSendGate
 /// <param name="ProjectionSha">The rebuild's oracle — what the <c>submitted</c> row recorded.</param>
 /// <param name="TaskClassSource"><c>session-default</c> or <c>operator</c> — the cohort attribute the leaderboard stamps (ADR-0028 amendment).</param>
 /// <param name="Recorded">Whether the rows reached the store; false when history is not recorded (the reason is on the gate).</param>
-/// <param name="CompileCost">What the compile step's model call cost for this envelope (the fold's last <c>called.cost</c> with at least one request), or null — no call, or a reused one.</param>
+/// <param name="CompileCost">What the compile step's model calls cost for this turn: the sum of every <c>called.cost</c> with at least one request since the last send, on this envelope or on one abandoned before it (Ruling 180 (4)); or null — no call, or only reused ones.</param>
 public sealed record SubmittedEnvelope(
     string EnvelopeId,
     string ProjectionSha,
