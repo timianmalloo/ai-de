@@ -1399,10 +1399,17 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// <summary>
     /// The row's stated reason (Ruling 180 (1), C3): what the session's mode does, and why it is the one in force —
     /// the gate's admission for an agentic rung, or the gate's own refusal text when agentic-advisory is not available.
+    /// A rung the session holds but the gate now refuses (a demotion after creation) states the gate's refusal and
+    /// claims no admission (T30 n3 (C)).
     /// </summary>
     internal static string CompileModeWhy(string mode, CompileModeAvailability ladder)
     {
         var meaning = CompileModeMeaning(mode);
+        if (mode is CompileModes.AgenticAdvisory or CompileModes.Agentic && ladder.RefusalFor(mode) is { } demoted)
+        {
+            return meaning + $" This session is set to {mode}, but the gate now refuses it: " + demoted.Reason + ".";
+        }
+
         if (mode is CompileModes.AgenticAdvisory)
         {
             return meaning + " Gate 1 admits it: the compile-pin spike matches the installed adapter.";
