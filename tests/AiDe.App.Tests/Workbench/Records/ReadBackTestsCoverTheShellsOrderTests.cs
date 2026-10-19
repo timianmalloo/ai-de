@@ -9,15 +9,39 @@ namespace AiDe.App.Tests.Records;
 /// never read back. A test-source census over <c>tests/</c>.
 /// </summary>
 /// <remarks>
-/// The pattern, by name, <b>bind-first read-back</b>: a file that observes the restart read-back (it names
-/// <c>LastReadBack</c> or <c>Runs.ReadBack</c>) and calls <c>.BindHost(</c> with a <c>new SessionDocumentSurface(</c>
-/// within the next <see cref="Window"/> lines. Such a file passes only when it also covers the asynchronous order: it
-/// calls <c>.BindHostWhenOpen(</c> or <c>.ReviveRestoredSessionDocuments(</c>.
+/// The pattern, by name, <b>bind-first read-back</b>: in a file that observes the restart read-back (it names
+/// <c>LastReadBack</c> or <c>Runs.ReadBack</c>), a call to <c>.BindHost(</c> with a <c>new SessionDocumentSurface(</c>
+/// within the next <see cref="Window"/> lines. Each such site fails on its own, unless <see cref="NotAShellReopen"/> names
+/// its member with the number of sites it holds and why. A reopen binds in the shell's order instead:
+/// <c>BindHostWhenOpen</c> with an opener that completes after the document is built.
 /// </remarks>
 public sealed partial class ReadBackTestsCoverTheShellsOrderTests
 {
     /// <summary>How many lines after a <c>BindHost</c> call a document construction counts as "bound first".</summary>
     private const int Window = 3;
+
+    private const string EmptyStore =
+        "a first open over an empty store: no attempt is recorded yet, so the read-back has nothing to read and the order cannot hide a restore gap";
+
+    /// <summary>
+    /// The bind-first sites that are not the shell's reopen: file, member, how many sites the member holds, and why.
+    /// The product never binds first; its one bind is <c>BindHostWhenOpen</c> (WorkbenchShell.cs:3596). An entry whose
+    /// member holds a different number of sites fails, so a new bind-first reopen cannot hide behind it; an entry that
+    /// matches nothing fails too.
+    /// </summary>
+    internal static readonly (string File, string Method, int Sites, string Reason)[] NotAShellReopen =
+    [
+        ("TheAttemptHostBindingTests.cs", "ASentTurn_IsAnAttemptOfItsRevision_AndARestartReadsTheAttemptAndItsEventsBack", 1, EmptyStore),
+        ("TheAttemptHostBindingTests.cs", "APaneStop_ReachesTheHostsStopAsync_AndTheAttemptEndsByItsStopRule", 1, EmptyStore),
+        ("TheAttemptHostBindingTests.cs", "AQueuedTurn_IsTheHostsHeldSuccessor_AndEachAttemptsLiveLinesReachTheThread", 1, EmptyStore),
+        ("TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "AfterARestart_TheStoreHoldsTheAttempt_AndTheThreadRestoresItsRow_WithTheLiveBindingLine", 1, EmptyStore),
+        ("TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "ASendEditSendSequence_LeavesTurnAsRowOnItsRevisionAndRequest_AndTurnBOnItsOwn", 1, EmptyStore),
+        ("TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "ASentTurnsRow_ShowsItsBinding_WhileTheRunIsStillHeld_ThroughTheSurface", 1, EmptyStore),
+        ("TheReadBackRunsWhenTheHostBindsTests.cs", "RecordTwoAttemptsAsync", 1, EmptyStore),
+        ("TheReadBackRunsWhenTheHostBindsTests.cs", "TheReadBackRunsOncePerBind_NotOncePerDocument_AndARebindReadsBackOnceMore", 1,
+            "a reopen that binds before construction on purpose: Ruling 172(2) requires the read-back when the host is bound before "
+            + "construction too, and this test proves that case and once per bind; the same file covers the shell's order"),
+    ];
 
     [GeneratedRegex(@"\b(LastReadBack|Runs\.ReadBack)\b")]
     private static partial Regex ObservesTheReadBack();
@@ -28,46 +52,87 @@ public sealed partial class ReadBackTestsCoverTheShellsOrderTests
     [GeneratedRegex(@"new SessionDocumentSurface\(")]
     private static partial Regex BuildsTheDocument();
 
-    [GeneratedRegex(@"\.(BindHostWhenOpen|ReviveRestoredSessionDocuments)\(")]
-    private static partial Regex CoversTheAsyncOrder();
+    [GeneratedRegex(@"^\s*(?:public|private|internal|protected)\b[^=;]*?\b(\w+)\(")]
+    private static partial Regex DeclaresAMember();
 
-    /// <summary>The bind-first lines of <paramref name="lines"/> (1-based), or none when the file is not a bind-first read-back test.</summary>
-    internal static IReadOnlyList<int> BindFirstReadBack(string[] lines)
+    /// <summary>
+    /// The bind-first sites of <paramref name="lines"/>: each 1-based line with the member it is in ("" before any), or
+    /// none when the file does not observe the read-back.
+    /// </summary>
+    internal static IReadOnlyList<(int Line, string Method)> BindFirstSites(string[] lines)
     {
-        var text = string.Join('\n', lines);
-        if (!ObservesTheReadBack().IsMatch(text) || CoversTheAsyncOrder().IsMatch(text))
+        if (!ObservesTheReadBack().IsMatch(string.Join('\n', lines)))
         {
             return [];
         }
 
-        List<int> found = [];
+        List<(int Line, string Method)> found = [];
+        var method = "";
         for (var i = 0; i < lines.Length; i++)
         {
+            if (DeclaresAMember().Match(lines[i]) is { Success: true } member)
+            {
+                method = member.Groups[1].Value;
+            }
+
             if (BindsTheHost().IsMatch(lines[i]) && lines.Skip(i).Take(Window + 1).Any(l => BuildsTheDocument().IsMatch(l)))
             {
-                found.Add(i + 1);
+                found.Add((i + 1, method));
             }
         }
 
         return found;
     }
 
+    /// <summary>
+    /// The census's failures over <paramref name="files"/>: every member's sites that no entry of <paramref name="named"/>
+    /// names with their exact count, and every entry that matches no site.
+    /// </summary>
+    internal static IReadOnlyList<string> Offenders(
+        IEnumerable<(string File, string[] Lines)> files, IReadOnlyList<(string File, string Method, int Sites, string Reason)> named)
+    {
+        var sites = files.SelectMany(f => BindFirstSites(f.Lines).Select(s => (f.File, s.Method, s.Line))).ToList();
+        List<string> offenders = [];
+        foreach (var member in sites.GroupBy(s => (Name: Path.GetFileName(s.File), s.Method)))
+        {
+            var entry = named.FirstOrDefault(e => e.File == member.Key.Name && e.Method == member.Key.Method);
+            if (entry.Sites != member.Count())
+            {
+                var why = entry.File is null ? "" : $"; named for {entry.Sites} site(s), holds {member.Count()}";
+                offenders.Add($"{member.First().File}:{string.Join(",", member.Select(s => s.Line))} ({member.Key.Method}{why})");
+            }
+        }
+
+        offenders.AddRange(named
+            .Where(e => !sites.Any(s => Path.GetFileName(s.File) == e.File && s.Method == e.Method))
+            .Select(e => $"{e.File} {e.Method}: named, but it holds no bind-first site; remove the entry"));
+        return offenders;
+    }
+
     [Fact]
-    public void ThePattern_FlagsABindFirstReadBack_AndPassesOneThatAlsoCoversTheAsyncOrder()
+    public void ThePattern_FlagsEachBindFirstSite_UnlessItsMemberIsNamedWithItsCount_AndFlagsANameThatMatchesNothing()
     {
         string[] bindFirst =
         [
+            "    public void Reopens()",
             "model.Runs.BindHost(host, Scope);",
             "var surface = new SessionDocumentSurface(model, null, announcer);",
             "await surface.LastReadBack;",
         ];
-        Assert.Equal([1], BindFirstReadBack(bindFirst));
-        Assert.Empty(BindFirstReadBack([.. bindFirst, "other.Runs.BindHostWhenOpen(open, Scope);"]));
-        Assert.Empty(BindFirstReadBack(["model.Runs.BindHost(host, Scope);", "var surface = new SessionDocumentSurface(model, null, announcer);"]));
+        Assert.Equal([(2, "Reopens")], BindFirstSites(bindFirst));
+        Assert.Equal([(2, "Reopens")], BindFirstSites([.. bindFirst, "other.Runs.BindHostWhenOpen(open, Scope);"]));
+        Assert.Empty(BindFirstSites(["model.Runs.BindHostWhenOpen(() => opened.Task, Scope);", "var surface = new SessionDocumentSurface(model, null, announcer);", "await surface.LastReadBack;"]));
+        Assert.Empty(BindFirstSites(["model.Runs.BindHost(host, Scope);", "var surface = new SessionDocumentSurface(model, null, announcer);"]));
+
+        (string File, string[] Lines)[] file = [("tests/X.cs", bindFirst)];
+        Assert.Single(Offenders(file, []));
+        Assert.Empty(Offenders(file, [("X.cs", "Reopens", 1, "why")]));
+        Assert.Single(Offenders(file, [("X.cs", "Reopens", 2, "why")]));
+        Assert.Single(Offenders([], [("X.cs", "Reopens", 1, "why")]));
     }
 
     [Fact]
-    public void NoReadBackTest_BindsTheHostBeforeTheDocument_WithoutAlsoCoveringTheShellsAsynchronousOrder()
+    public void NoReadBackTest_BindsTheHostBeforeTheDocument_UnlessTheSiteIsNamedAsNotTheShellsReopen()
     {
         var tests = Path.Combine(RepoRoot(), "tests");
         var files = Directory.EnumerateFiles(tests, "*.cs", SearchOption.AllDirectories)
@@ -79,14 +144,11 @@ public sealed partial class ReadBackTestsCoverTheShellsOrderTests
         var readBackTests = files.Count(f => ObservesTheReadBack().IsMatch(File.ReadAllText(f)));
         Assert.True(readBackTests >= 3, $"the census found {readBackTests} read-back test files; it is not reading tests/");
 
-        var offenders = files
-            .Select(f => (File: Path.GetRelativePath(RepoRoot(), f).Replace('\\', '/'), Lines: BindFirstReadBack(File.ReadAllLines(f))))
-            .Where(x => x.Lines.Count > 0)
-            .Select(x => $"{x.File}:{string.Join(",", x.Lines)}")
-            .ToList();
+        var offenders = Offenders(
+            files.Select(f => (Path.GetRelativePath(RepoRoot(), f).Replace('\\', '/'), File.ReadAllLines(f))), NotAShellReopen);
         Assert.True(offenders.Count == 0,
-            "bind-first read-back: these tests bind the host before building the document and never cover the shell's order "
-            + "(BindHostWhenOpen, then the document; Ruling 172): " + string.Join("; ", offenders));
+            "bind-first read-back: reopen in the shell's order (BindHostWhenOpen with an opener that completes after the document "
+            + "is built; Ruling 172), or name a site that is not a reopen in NotAShellReopen with its reason: " + string.Join("; ", offenders));
     }
 
     private static string RepoRoot()
