@@ -59,6 +59,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly TextBlock? _ownLiveRegion;
     private readonly TextBlock _outsideText;
     private readonly TextBlock _stoppedRow;
+    private readonly StackPanel _notices = new();
+    private readonly bool _ownsNotebook;
     private readonly TextBlock _templateWord;
     private readonly TextBlock _budgetState;
     private readonly Button _jumpButton;
@@ -96,18 +98,35 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// headless test here still does — builds a document-owned polite live region so SC9 is never
     /// silent; the two are never both live.
     /// </param>
-    public SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
-        : this(notebook.Session, store, announcer)
+    public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+        : this(new NotebookModel(model ?? throw new ArgumentNullException(nameof(model))), ownsNotebook: true, store, announcer)
     {
     }
 
-    public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+    /// <summary>
+    /// A surface that <b>binds</b> to a workspace-owned model (ADR-0045 §4): disposing the surface leaves the model, its
+    /// thread and its revisions to the next surface built over it. The shell's construction site uses this one.
+    /// </summary>
+    /// <param name="notebook">The model; its owner (the shell) disposes it, never this surface.</param>
+    /// <param name="store">As the other constructor's.</param>
+    /// <param name="announcer">As the other constructor's.</param>
+    public SessionDocumentSurface(NotebookModel notebook, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
+        : this(notebook ?? throw new ArgumentNullException(nameof(notebook)), ownsNotebook: false, store, announcer)
     {
-        ArgumentNullException.ThrowIfNull(model);
+    }
+
+    /// <param name="ownsNotebook">
+    /// True for a surface built from a bare view model (every headless test, and nothing in the product): it built its
+    /// model, so it disposes it. False when bound to a model someone else owns.
+    /// </param>
+    private SessionDocumentSurface(NotebookModel notebook, bool ownsNotebook, SessionDocumentStore? store, IWorkbenchAnnouncer? announcer)
+    {
+        var model = notebook.Session;
         _store = store;
+        _ownsNotebook = ownsNotebook;
 
         Model = model;
-        Notebook = new NotebookModel(model);
+        Notebook = notebook;
         SurfaceId = SurfaceIdFor(model.SessionId);
 
         AutomationProperties.SetName(this, model.Title);
@@ -122,9 +141,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         _announcer = announcer;
 
-        // The read model (CV-1: the run channel, caught up from construction — a live session has
-        // no history to replay until the envelope store lands in CV-2).
-        _thread = new RunChannelSessionThread(caughtUp: true);
+        // The read model is the NOTEBOOK's (ADR-0045 §4), so a surface built later over the same model shows the same
+        // turns; CV-1's run channel, caught up from construction.
+        _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;
@@ -140,6 +159,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
 
         Composer.Gate.Sent += Launch;
+
+        // PREPARE FROM A REVISION (WL-1a; ADR-0043 §2 — the page protocol is unchanged): the draft is saved as an
+        // immutable notebook revision before the envelope opens, so what is prepared is a row the attempt can bind to.
+        Composer.RevisionPreparer = text => Notebook.PrepareRevisionAsync(text, CancellationToken.None);
+        Composer.DraftChanged += RenderStale;
+        Notebook.Changed += OnNotebookChanged;
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
         Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
@@ -181,15 +206,20 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>This document's state.</summary>
     public SessionDocumentViewModel Model { get; }
 
+    /// <summary>The notebook this surface is bound to (ADR-0045 §4) — the shell's, or this surface's own when built from a bare view model.</summary>
     public NotebookModel Notebook { get; }
 
-    public bool StaleNoticeVisible => false;
+    /// <summary>Whether the latest result is marked stale (spec §C3).</summary>
+    public bool StaleNoticeVisible => StaleNotice.Visibility == Visibility.Visible;
 
-    public string StaleNoticeText => string.Empty;
+    /// <summary>The stale mark's words while it shows; empty otherwise.</summary>
+    public string StaleNoticeText => StaleNoticeVisible ? StaleNotice.Text : string.Empty;
 
-    internal Task LastBinding => Task.CompletedTask;
+    /// <summary>The last send's revision binding — the save (or reuse) of the sent bytes as a revision, and the turn bound to it.</summary>
+    internal Task LastBinding { get; private set; } = Task.CompletedTask;
 
-    internal TextBlock StaleNotice { get; } = new();
+    /// <summary>The stale mark: the latest result belongs to an earlier draft. Named for UIA by its own sentence.</summary>
+    internal TextBlock StaleNotice { get; } = BuildStaleNotice();
 
     /// <summary>The layout surface id.</summary>
     public string SurfaceId { get; }
@@ -546,6 +576,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         // the turn joins the thread queued. It is sent by the drain when the turn in flight ends
         // Completed or Answered, by Send now after a Stop or a failure, or not at all (Cancel).
         var queue = _thread.Current.InFlight is not null;
+        var sourceText = Composer.Draft.SourceText;
         var ordinal = queue
             ? _thread.Enqueue(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend)
             : _thread.Accept(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend);
@@ -559,6 +590,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 _envelopeByOrdinal[ordinal] = (submission.EnvelopeId, submission.TaskClassSource);
             }
         }
+
+        // THE TURN RUNS A REVISION (WL-1a): the sent bytes are bound to the notebook revision they are — captured with
+        // the ordinal here, before the composer clears for the next block.
+        LastBinding = BindRevisionAsync(ordinal, sourceText);
 
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
         Composer.BeginNextTurn();
@@ -923,6 +958,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         }
 
         RenderHeader(snapshot);
+        RenderStale();
         Composer.SetInFlight(snapshot.InFlight);
         Composer.SetQueued(snapshot.Queued, snapshot.Queued is null ? null : TurnCopy.QueuedSentence(snapshot), snapshot.QueuedAwaitsYou);
         if (IsSplitOpen)
@@ -1019,8 +1055,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Grid.SetRow(threadHost, 0);
         column.Children.Add(threadHost);
 
-        Grid.SetRow(_stoppedRow, 1);
-        column.Children.Add(_stoppedRow);
+        // The rows between the thread and the composer: the stopped sentence and the stale mark (spec §C3).
+        _notices.Children.Add(_stoppedRow);
+        _notices.Children.Add(StaleNotice);
+        Grid.SetRow(_notices, 1);
+        column.Children.Add(_notices);
 
         _composerHost.Child = Composer;
         _composerHost.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
@@ -1074,11 +1113,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             var atWidth = new Size(constraint.Width, double.PositiveInfinity);
             _header.Measure(atWidth);
             _permissionBanner.Measure(atWidth);
-            _stoppedRow.Measure(atWidth);
+            _notices.Measure(atWidth);
             var body = constraint.Height
                 - _header.DesiredSize.Height
                 - _permissionBanner.DesiredSize.Height
-                - _stoppedRow.DesiredSize.Height
+                - _notices.DesiredSize.Height
                 - _composerHost.BorderThickness.Top;
 
             // The thread's need: the caption at 0 turns (wrapped at the column the split leaves it —
@@ -1425,6 +1464,63 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return row;
     }
 
+    /// <summary>The stale mark (spec §C3): text, not colour alone, and its sentence is its UIA name (UI-04).</summary>
+    private static TextBlock BuildStaleNotice()
+    {
+        var notice = new TextBlock
+        {
+            Text = NotebookModel.StaleCopy,
+            FontSize = 12,
+            Margin = new Thickness(52, 6, 12, 6),
+            Visibility = Visibility.Collapsed,
+            TextWrapping = TextWrapping.Wrap,
+        };
+        notice.SetResourceReference(TextBlock.ForegroundProperty, "StaleBrush");
+        AutomationProperties.SetName(notice, NotebookModel.StaleCopy);
+        AutomationProperties.SetLiveSetting(notice, AutomationLiveSetting.Polite);
+        return notice;
+    }
+
+    /// <summary>A revision saved or a turn bound — possibly off the UI thread (the save's continuation).</summary>
+    private void OnNotebookChanged()
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(RenderStale);
+            return;
+        }
+
+        RenderStale();
+    }
+
+    /// <summary>
+    /// Derives the stale mark from the latest turn that ran a recorded revision and the editor's bytes now — never a
+    /// flag kept beside them (DM: derive, don't store).
+    /// </summary>
+    private void RenderStale()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        var latest = _thread.Current.Turns.LastOrDefault(t => Notebook.RevisionOf(t.Ordinal) is not null);
+        var stale = latest is not null
+            && Notebook.CurrentnessOf(latest.Ordinal, Composer.Draft.SourceText) == ResultCurrentness.Stale;
+        StaleNotice.Visibility = stale ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Binds turn <paramref name="ordinal"/> to the revision its bytes are: the prepared one when Prepare saved it,
+    /// else a new one (a direct send on the mechanical rung prepares at Send). Not cancelled by this surface closing:
+    /// the binding is the model's, and the model outlives the surface.
+    /// </summary>
+    private async Task BindRevisionAsync(int ordinal, string sourceText)
+    {
+        var revision = await Notebook.PrepareRevisionAsync(sourceText, CancellationToken.None).ConfigureAwait(false);
+        Notebook.BindResult(ordinal, revision);
+    }
+
     private void BuildPermissionBanner()
     {
         _permissionText.TextWrapping = TextWrapping.Wrap;
@@ -1483,6 +1579,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.PageReady -= PlaceFocusInTheEditor;
         Composer.FocusLeftBackward -= OnComposerLeftBackward;
         Composer.CompiledPromptOpenChanged -= RecordCompiledPromptOpen;
+        Composer.DraftChanged -= RenderStale;
+        Composer.RevisionPreparer = null;
+        Notebook.Changed -= OnNotebookChanged;
         _feed.Dispose();
 
         // A RUN MAY OUTLIVE ITS DOCUMENT — ONE LIFETIME RULE (ADR-0034 rule 7): the store's lifetime
@@ -1517,5 +1616,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         // The composer hosts a WebView2, which is a child PROCESS. It is disposed here and nowhere else.
         Composer.Dispose();
+
+        // A bound model is its owner's (the shell's) to dispose — create, move, hide and close never reach it (ADR-0045 §4).
+        if (_ownsNotebook)
+        {
+            Notebook.Dispose();
+        }
     }
 }

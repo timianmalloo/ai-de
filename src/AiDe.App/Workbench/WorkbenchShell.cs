@@ -82,8 +82,10 @@ public sealed class WorkbenchShell : IDisposable
     /// </summary>
     internal Func<Sessions.SessionDocumentSurface, Composer.ParallelDraft, Sessions.ParallelSessionOutcome>? ParallelSessionStarter { get; set; }
 
-    private readonly Dictionary<string, Sessions.SessionDocumentSurface> _sessionDocuments =
-        new(StringComparer.Ordinal);
+    // ADR-0045 §4: session state is keyed by MODEL, not by surface. The notebooks are the workspace's (created once,
+    // disposed only in Dispose); each surface binds to one and may come and go over it. Both maps share one key.
+    private readonly Dictionary<Records.NotebookId, Records.NotebookModel> _notebooks = [];
+    private readonly Dictionary<Records.NotebookId, Sessions.SessionDocumentSurface> _sessionDocuments = [];
 
     // The open console documents (Ruling 89), keyed by their surface id (`console:<sessionId>`):
     // each hosts its session document's own split in the Center and follows the thread until it
@@ -537,7 +539,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         CanvasFocusResult Cycle(string? surfaceId, int delta)
         {
-            if (surfaceId is not null && _sessionDocuments.TryGetValue(surfaceId, out var document))
+            if (BoundDocument(surfaceId) is { } document)
             {
                 return document.CycleRegion(delta);
             }
@@ -565,15 +567,21 @@ public sealed class WorkbenchShell : IDisposable
             return null;
         }
 
-        if (_sessionDocuments.TryGetValue(surfaceId, out var document))
+        if (BoundDocument(surfaceId) is { } document)
         {
             return document;
         }
 
         return Sessions.ConsoleDocumentHost.SessionIdOf(surfaceId) is { } sessionId
-            ? _sessionDocuments.GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))
+            ? _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(sessionId))
             : null;
     }
+
+    /// <summary>The surface bound to the notebook a <c>session-document</c> surface id names, or null.</summary>
+    private Sessions.SessionDocumentSurface? BoundDocument(string? surfaceId) =>
+        surfaceId is not null && Sessions.SessionDocumentSurface.SessionIdOf(surfaceId) is { } sessionId
+            ? _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(sessionId))
+            : null;
 
     /// <summary>Walks up from a focused element to the surface it belongs to.</summary>
     internal static string? FindSurfaceId(DependencyObject element)
@@ -3392,6 +3400,14 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         _sessionDocuments.Clear();
+
+        // ...and the one place a notebook model is disposed (ADR-0045 §4): after every surface bound to it.
+        foreach (var notebook in _notebooks.Values)
+        {
+            notebook.Dispose();
+        }
+
+        _notebooks.Clear();
         foreach (var console in _consoles.Values)
         {
             console.Dispose();
@@ -3411,8 +3427,7 @@ public sealed class WorkbenchShell : IDisposable
     /// session has not been reopened yet, and the pane then shows the "no session is open" empty
     /// state rather than an empty document that reads as a broken one.
     /// </remarks>
-    private Sessions.SessionDocumentSurface? SessionDocumentFor(Surface surface) =>
-        _sessionDocuments.GetValueOrDefault(surface.SurfaceId);
+    private Sessions.SessionDocumentSurface? SessionDocumentFor(Surface surface) => BoundDocument(surface.SurfaceId);
 
     /// <summary>
     /// Opens a created session as a dock document in the paired-zone preset (R13 b3, A4.4).
@@ -3483,8 +3498,8 @@ public sealed class WorkbenchShell : IDisposable
         foreach (var surface in Service.Current.AllStacks().SelectMany(s => s.Surfaces))
         {
             if (surface.Kind != Sessions.SessionDocumentSurface.Kind
-                || _sessionDocuments.ContainsKey(surface.SurfaceId)
                 || Sessions.SessionDocumentSurface.SessionIdOf(surface.SurfaceId) is not { } sessionId
+                || _notebooks.ContainsKey(Records.NotebookId.ForSession(sessionId))
                 || !File.Exists(AiDe.Core.Sessions.SessionPaths.SessionFile(workspaceRoot, sessionId)))
             {
                 continue;
@@ -3520,7 +3535,7 @@ public sealed class WorkbenchShell : IDisposable
         var surfaceId = Sessions.SessionDocumentSurface.SurfaceIdFor(config.SessionId);
         var root = _workspaceRoot ?? config.WorkspaceId;
 
-        if (!_sessionDocuments.ContainsKey(surfaceId))
+        if (!_notebooks.ContainsKey(Records.NotebookId.ForSession(config.SessionId)))
         {
             var store = new AiDe.Core.Presentation.Sessions.SessionDocumentStore(root, config.SessionId);
 
@@ -3541,12 +3556,17 @@ public sealed class WorkbenchShell : IDisposable
             // One announcer across hosts (ADR-0031; CV-1/CV-2's seam request): the document no
             // longer builds its own polite live region once this is wired, so its refusals and
             // outcomes reach the same strip every other layout announcement does.
-            var document = new Sessions.SessionDocumentSurface(model, store, Announcer);
+            //
+            // The notebook first, then the surface BOUND to it (ADR-0045 §4): the model is the workspace's, created
+            // here once per session and disposed only with the shell; the surface never disposes it. Revisions are
+            // not recorded until the daemon op lands (seam request req-01M59AS2R0986PT82ARD0QZP8G) — the model says so.
+            var notebook = new Records.NotebookModel(model, revisions: null);
+            _notebooks[notebook.Id] = notebook;
+            var document = new Sessions.SessionDocumentSurface(notebook, store, Announcer);
 
-            // Keyed by the document's OWN id rather than by the one computed above: the surface and
-            // the dictionary must agree about which pane holds this session, and two derivations of
-            // one key is the shape that lets them stop agreeing (DM7).
-            _sessionDocuments[document.SurfaceId] = document;
+            // Both maps keyed by the notebook's OWN id rather than by one computed beside it: two derivations of one
+            // key is the shape that lets them stop agreeing (DM7).
+            _sessionDocuments[notebook.Id] = document;
 
             // Ruling 89: the header's Console toggle and a turn's "Open the log" open the session's
             // Console as a document in the Center through the shell, never beside the thread; the
@@ -3603,7 +3623,7 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         var host = Hosts.First(h => h.Row == row);
-        var copy = CenterEmptyState.CopyFor(row, host.Service.Zones, _sessionDocuments.ContainsKey);
+        var copy = CenterEmptyState.CopyFor(row, host.Service.Zones, surfaceId => BoundDocument(surfaceId) is not null);
         return SurfaceChrome.WrapAsIsland(CenterEmptyState.Build(copy, () => Execute("session.new")));
     }
 
@@ -3614,7 +3634,7 @@ public sealed class WorkbenchShell : IDisposable
     private FrameworkElement? ConsoleFor(Surface surface)
     {
         if (Sessions.ConsoleDocumentHost.SessionIdOf(surface.SurfaceId) is not { } sessionId
-            || !_sessionDocuments.TryGetValue(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId), out var document))
+            || !_sessionDocuments.TryGetValue(Records.NotebookId.ForSession(sessionId), out var document))
         {
             return null;
         }
@@ -3781,10 +3801,10 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     /// <param name="sessionId">The session whose document is open.</param>
     /// <returns>The composer, or null when no document for that session is open.</returns>
-    internal Records.NotebookModel? Notebook(Records.NotebookId id) => null;
+    /// <summary>The workspace's model for notebook <paramref name="id"/>, or null when no session document registered it.</summary>
+    internal Records.NotebookModel? Notebook(Records.NotebookId id) => _notebooks.GetValueOrDefault(id);
 
     internal Composer.ComposerSurface? SessionComposer(string sessionId) =>
-        _sessionDocuments
-            .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
+        _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(sessionId))?.Composer;
 }
 

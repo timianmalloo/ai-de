@@ -725,6 +725,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The Prepare state, as the gate holds it.</summary>
     public PrepareState PrepareState => _gate.State;
 
+    /// <summary>
+    /// Saves the draft's source text as a notebook revision before Prepare opens the envelope (the session document's
+    /// notebook binding sets it); null when nothing is bound — Prepare then runs as before.
+    /// </summary>
+    public Func<string, Task>? RevisionPreparer { get; set; }
+
+    /// <summary>The compiled view was re-rendered over the draft — an edit, an attachment, a prepare; the stale mark re-derives.</summary>
+    public event Action? DraftChanged;
+
     /// <summary>Whether the <i>Prepare again</i> control is on the screen.</summary>
     public bool PrepareAgainVisible => _prepareAgain.Visibility == Visibility.Visible;
 
@@ -746,6 +755,13 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         ShowCompileLine("Preparing…", preparing: true);
         SetStatus("Preparing… — the model is reading your draft", Urgency.Status);
+
+        // FROM A REVISION (WL-1a): the draft is saved as an immutable notebook revision first, so the envelope prepared
+        // next is of bytes a row holds. Host-side, on the v1 protocol: no page message asks for it (ADR-0043 §2).
+        if (RevisionPreparer is { } saveRevision)
+        {
+            await saveRevision(_draft.SourceText);
+        }
 
         var result = await _gate.PrepareAsync(_context, _draft, _template);
 
@@ -1192,6 +1208,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             line.Sync(_draft.GoalValues.TryGetValue(field, out var value) ? value : string.Empty);
             line.RenderMark();
         }
+
+        DraftChanged?.Invoke();
     }
 
     /// <summary>
