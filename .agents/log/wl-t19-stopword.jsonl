@@ -1,1 +1,2 @@
 {"agent": "wl-leader2-20261019", "at": 1792406540.2357883, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t19-stopword", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl1a-stopped-by-you"}
+{"at": 1792407068.2883797, "from": "wl-t19-stopword", "kind": "done", "mail_id": "mail-01M59WJQM0P8M0HWGR4FP6R2FG", "ref": null, "session": "wl-t19-stopword", "to": "wl-leader2-20261019", "type": "mail"}
