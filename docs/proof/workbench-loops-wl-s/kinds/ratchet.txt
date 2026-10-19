@@ -1,0 +1,6 @@
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=2
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 3 refusal(s) over 49 gate(s)
+ratchet exit 1
+Note: the 3 refusals are derived-view drift (docs-graph index drift, verify-derived-views, verify-site-figures counts); the join regenerates those. cited-controls, surface-ownership and the docs-graph orphan check are green on this head (e379991b).

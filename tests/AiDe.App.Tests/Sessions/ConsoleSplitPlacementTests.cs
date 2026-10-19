@@ -41,7 +41,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
     }
 
     [Fact]
-    public void WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument()
+    public void WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument()
     {
         var config = _workspace.Session("payments extraction");
 
@@ -53,7 +53,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             var sessionId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             var document = frame.Document(sessionId);
-            Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(sessionId));
+            Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(sessionId));
 
             // The header's toggle — the operator's gesture — dispatches the verb.
             Press(document.ConsoleToggle);
@@ -111,7 +111,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             // join, 2026-09-14; green alone — DC-008's shape). What the ruling promises is that the
             // document returned focus to its toggle; that is the scope's fact.
             Assert.Same(document.ConsoleToggle, System.Windows.Input.FocusManager.GetFocusedElement(FocusScopeOf(document)));
-            Assert.NotNull(frame.CenterEmpty());
+            Assert.Null(frame.CenterEmpty());   // the notebook still holds the Center
 
             // Open again: the same split instance, hosted anew; then it closes with its session.
             Press(document.ConsoleToggle);
@@ -157,16 +157,29 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.NotNull(shell.Factory.Adapter.ContentFor(ConsoleId(config.SessionId)));
 
             // The tab's close with the Left collapsed: "Console closed.", and focus on the landing
-            // (the Center's copy — its heading), not dropped on the window.
+            // (the notebook in the Center), not dropped on the window.
             Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied);
             shell.Factory.Adapter.Render();
             frame.Settle();
             Assert.Equal("Console closed.", shell.LiveRegion.Text);
-            var focused = System.Windows.Input.Keyboard.FocusedElement;
-            Assert.True(focused is System.Windows.Controls.TextBlock { Text: var text } && text.StartsWith("The session is docked at the left, collapsed", StringComparison.Ordinal),
+            var focused = System.Windows.Input.Keyboard.FocusedElement as System.Windows.DependencyObject;
+            Assert.True(focused is not null && IsInside(focused, document),
                 $"focus after the close is on {focused?.GetType().Name ?? "(none)"}, not the landing");
             return 0;
         }, 60);
+
+        static bool IsInside(System.Windows.DependencyObject element, System.Windows.DependencyObject ancestor)
+        {
+            for (var node = element; node is not null; node = System.Windows.Media.VisualTreeHelper.GetParent(node) ?? System.Windows.LogicalTreeHelper.GetParent(node))
+            {
+                if (ReferenceEquals(node, ancestor))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     /// <summary>The session itself in the Center: the Console opens as a sibling tab in that stack.</summary>

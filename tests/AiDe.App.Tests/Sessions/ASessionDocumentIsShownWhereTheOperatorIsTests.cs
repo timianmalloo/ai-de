@@ -170,7 +170,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains("active document live=True renders='", documents, StringComparison.Ordinal);
         Assert.DoesNotContain("active document live=True renders='No session is open.", documents, StringComparison.Ordinal);
         Assert.DoesNotContain("active document live=True renders='No session", documents, StringComparison.Ordinal);
-        Assert.Contains("' active in view=session-document:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
+        Assert.Contains("' active in view=notebook:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
         // The island's curly quotes do not survive the probe's console encoding either; the sentence's engine does.
         var gone = documents[documents.IndexOf("gone document live=False renders='", StringComparison.Ordinal)..];
         Assert.Contains("could not be restored", gone, StringComparison.Ordinal);

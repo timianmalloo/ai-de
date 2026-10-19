@@ -1,0 +1,123 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:05.08]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown [4 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=True away=True returnToWorkbench=False reopen=False sibling=True bindOnRestore=False chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:16:08.6704067\u002B00:00","evt":"thread.layout","surface":"notebook:20261019T121608Z-023a6468","turns":0,"realized":0,"composer_top":null,"viewport":null,"layout_ms":0.494,"pinned":true,"moved":true,"version":0}
+diag: {"ts":"2026-10-19T12:16:08.7228093\u002B00:00","evt":"layout.mutation","operation":"open-notebook","placement":"zone-rule","surface":"notebook:20261019T121608Z-023a6468","active":"welcome","stack":null,"stacks":[{"id":"zone-center","active":0,"surfaces":["notebook:20261019T121608Z-023a6468:notebook"]}]}
+diag: {"ts":"2026-10-19T12:16:08.7564291\u002B00:00","evt":"composer.layout","surface":"composer:20261019T121608Z-023a6468","composer":{"width":1137.3333333333333,"height":506.3766666666666},"editor":{"width":1137.3333333333333,"height":354.41666666666663},"compiled":{"width":null,"height":null},"visible":true,"loaded":false,"inputs":0}
+diag: {"ts":"2026-10-19T12:16:08.7617074\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121608Z-023a6468","transition":"initialising","navigations":null,"inputs":null,"drops":null,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:09.0081882\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121608Z-023a6468","transition":"navigation-started","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:09.0999663\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121608Z-023a6468","transition":"page-ready","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:09.1076510\u002B00:00","evt":"thread.focus","surface":"notebook:20261019T121608Z-023a6468","gesture":"page_ready","from":"outside","to":"Composer","landed":true,"error_code":null}
+prior document (22:33:28Z replay): announced='Session ôprior sessionö opened.' initialising=1 page-ready=1 configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot: this window has no open workspace, so a run has no checkout to cut a worktree from' zones=zone-center@0[notebook:20261019T121608Z-023a6468]
+diag: {"ts":"2026-10-19T12:16:09.7175530\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:11.2783954\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1566.8655,"exitCode":null}
+diag: {"ts":"2026-10-19T12:16:11.2964704\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121608Z-023a6468","transition":"disposed","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileAnotherHostIsTheBodyIsShown() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 77
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:08.76]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace [3 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=False away=False returnToWorkbench=False reopen=False sibling=False bindOnRestore=False chooser=True windowHeight=720
+diag: {"ts":"2026-10-19T12:16:13.4057540\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:14.9757474\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1576.1443,"exitCode":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 208
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:12.48]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen [3 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=False away=False returnToWorkbench=False reopen=False sibling=False bindOnRestore=True chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:16:17.1226676\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:18.6944567\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1578.1967,"exitCode":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 163
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:17.16]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedInAnotherHostLeavesItBecauseADocumentOpened [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedInAnotherHostLeavesItBecauseADocumentOpened [4 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=True away=True returnToWorkbench=True reopen=False sibling=False bindOnRestore=False chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:16:20.8473249\u002B00:00","evt":"thread.layout","surface":"notebook:20261019T121620Z-fe5017bb","turns":0,"realized":0,"composer_top":null,"viewport":null,"layout_ms":0.6376,"pinned":true,"moved":true,"version":0}
+diag: {"ts":"2026-10-19T12:16:20.9000499\u002B00:00","evt":"layout.mutation","operation":"open-notebook","placement":"zone-rule","surface":"notebook:20261019T121620Z-fe5017bb","active":"welcome","stack":null,"stacks":[{"id":"zone-center","active":0,"surfaces":["notebook:20261019T121620Z-fe5017bb:notebook"]}]}
+diag: {"ts":"2026-10-19T12:16:20.9318252\u002B00:00","evt":"composer.layout","surface":"composer:20261019T121620Z-fe5017bb","composer":{"width":1137.3333333333333,"height":506.3766666666666},"editor":{"width":1137.3333333333333,"height":354.41666666666663},"compiled":{"width":null,"height":null},"visible":true,"loaded":false,"inputs":0}
+diag: {"ts":"2026-10-19T12:16:20.9371334\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121620Z-fe5017bb","transition":"initialising","navigations":null,"inputs":null,"drops":null,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:21.1584615\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121620Z-fe5017bb","transition":"navigation-started","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:21.2108513\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121620Z-fe5017bb","transition":"page-ready","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:21.2211835\u002B00:00","evt":"thread.focus","surface":"notebook:20261019T121620Z-fe5017bb","gesture":"page_ready","from":"outside","to":"Composer","landed":true,"error_code":null}
+prior document (22:33:28Z replay): announced='Session ôprior sessionö opened.' initialising=1 page-ready=1 configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot: this window has no open workspace, so a run has no checkout to cut a worktree from' zones=zone-center@0[notebook:20261019T121620Z-fe5017bb]
+diag: {"ts":"2026-10-19T12:16:21.7972977\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:23.3698046\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1578.4211,"exitCode":null}
+diag: {"ts":"2026-10-19T12:16:23.3888134\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121620Z-fe5017bb","transition":"disposed","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedInAnotherHostLeavesItBecauseADocumentOpened() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 107
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:21.81]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [4 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=True away=False returnToWorkbench=False reopen=False sibling=False bindOnRestore=False chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:16:25.4974087\u002B00:00","evt":"thread.layout","surface":"notebook:20261019T121625Z-a0466428","turns":0,"realized":0,"composer_top":null,"viewport":null,"layout_ms":0.6282,"pinned":true,"moved":true,"version":0}
+diag: {"ts":"2026-10-19T12:16:25.5482785\u002B00:00","evt":"layout.mutation","operation":"open-notebook","placement":"zone-rule","surface":"notebook:20261019T121625Z-a0466428","active":"welcome","stack":null,"stacks":[{"id":"zone-center","active":0,"surfaces":["notebook:20261019T121625Z-a0466428:notebook"]}]}
+diag: {"ts":"2026-10-19T12:16:25.5809518\u002B00:00","evt":"composer.layout","surface":"composer:20261019T121625Z-a0466428","composer":{"width":1137.3333333333333,"height":506.3766666666666},"editor":{"width":1137.3333333333333,"height":354.41666666666663},"compiled":{"width":null,"height":null},"visible":true,"loaded":false,"inputs":0}
+diag: {"ts":"2026-10-19T12:16:25.5867417\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121625Z-a0466428","transition":"initialising","navigations":null,"inputs":null,"drops":null,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:25.8076440\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121625Z-a0466428","transition":"navigation-started","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:25.8623864\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121625Z-a0466428","transition":"page-ready","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:16:25.8717242\u002B00:00","evt":"thread.focus","surface":"notebook:20261019T121625Z-a0466428","gesture":"page_ready","from":"outside","to":"Composer","landed":true,"error_code":null}
+prior document (22:33:28Z replay): announced='Session ôprior sessionö opened.' initialising=1 page-ready=1 configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot: this window has no open workspace, so a run has no checkout to cut a worktree from' zones=zone-center@0[notebook:20261019T121625Z-a0466428]
+diag: {"ts":"2026-10-19T12:16:26.4303366\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:28.0187329\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1594.1119,"exitCode":null}
+diag: {"ts":"2026-10-19T12:16:28.0382641\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121625Z-a0466428","transition":"disposed","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:25.50]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.AReopenedSessionIsShownAndItsComposerIsBound [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.AReopenedSessionIsShownAndItsComposerIsBound [3 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=False away=False returnToWorkbench=False reopen=True sibling=False bindOnRestore=False chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:16:30.1443046\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:16:31.7125519\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1574.4864,"exitCode":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@2[ledger,leaderboard,board] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.AReopenedSessionIsShownAndItsComposerIsBound() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 135
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     6, Passed:     0, Skipped:     0, Total:     6, Duration: 25 s - AiDe.App.Tests.dll (net10.0)

@@ -10,17 +10,110 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench.Records.Folds: 7 types, 5 members, 75% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench.Records.Folds: 20 types, 20 members, 55% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench.Records.Folds`
 
-**7 public types · 5 public members · 75% documented.**
+**20 public types · 20 public members · 55% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `AcceptanceBaseline`
+
+*class* — `AcceptanceBaseline.cs`
+
+The one home of the acceptance baseline (WL-1b, ADR-0040 section 5): the string
+`intent:<notebook_id>@<revision_no>` over the intent notebook's latest saved revision.
+
+**Remarks.** Ruling 179: the deliverable is the accepted intent revision.
+HEAD, PR head and dirty-content hash are ADR-0040 baseline parts with no producer in WL-1b; the slice
+that adds one extends this type, and an old baseline then compares unequal and reads stale.
+
+| Member | Summary |
+|---|---|
+| `string NoRevision = ""` | The baseline of a notebook with no saved revision. It equals no stored baseline. |
+| `string For(string notebookId, int? latestRevisionNo)` | **(gap)** |
+
+## `AcceptanceInput`
+
+*record* — `AcceptanceFold.cs`
+
+Everything one acceptance evaluation reads. All of it is already durable except the App's projection answer.
+
+## `EvidenceState`
+
+*enum* — `AcceptanceFold.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `HumanState`
+
+*enum* — `AcceptanceFold.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `ObligationEvaluation`
+
+*record* — `AcceptanceFold.cs`
+
+One obligation's two derived states. A row and a fold never share one field.
+
+## `AcceptanceGap`
+
+*record* — `AcceptanceFold.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AcceptanceEvaluation`
+
+*record* — `AcceptanceFold.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AcceptanceGapCodes`
+
+*class* — `AcceptanceFold.cs`
+
+Stable gap codes of `Code`.
+
+| Member | Summary |
+|---|---|
+| `string ChecklistEmpty = "checklist-empty"` | **(gap)** |
+| `string IntentMissing = "intent-missing"` | **(gap)** |
+| `string EvidenceMissing = "evidence-missing"` | **(gap)** |
+| `string EvidenceStale = "evidence-stale"` | **(gap)** |
+| `string EvidenceNotRecorded = "evidence-not-recorded"` | **(gap)** |
+| `string NeedsDecision = "needs-decision"` | **(gap)** |
+| `string IntentNotAccepted = "intent-not-accepted"` | **(gap)** |
+
+## `AcceptanceFold`
+
+*class* — `AcceptanceFold.cs`
+
+Acceptance eligibility as a pure fold over the v2 rows (WL-1b design, "The folds").
+
+| Member | Summary |
+|---|---|
+| `string ObservedStatus = "observed"` | The only `verification_status` WL-1b writes: the link names an attempt that ended `ResponseComplete`. |
+| `AcceptanceEvaluation Evaluate(AcceptanceInput input)` | **(gap)** |
+
+## `AcceptancePolicy`
+
+*class* — `AcceptancePolicy.cs`
+
+Whether a human disposition removes an evidence gap on a mandatory obligation (ADR-0040 section 3).
+
+**Remarks.** Ruling 177: no disposition covers a mandatory obligation. Adding a covering kind later is a ruling,
+not an edit; `CoveringKinds` and its pinning test change together.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlySet<string> CoveringKinds = new HashSet<string>(StringComparer.Ordinal)` | The one table: the disposition kinds that cover a mandatory obligation. Empty by default. |
+| `bool Covers(string dispositionKind)` | **(gap)** |
 
 ## `AttemptStateInput`
 
@@ -68,7 +161,7 @@ decision writer's stored value. If false: Denied never derives.
 
 The `artifact_ref` an evidence link to this attempt carries.
 
-**Remarks.** assume: WL-1b's evidence writer uses this form. Confirm: its first link row. If false: HasEvidence reads false.
+**Remarks.** Written only by `ChecklistService.LinkEvidence`, which refuses any other form of attempt reference.
 
 ## `FoldSignal`
 
@@ -106,4 +199,28 @@ row is retained; staleness is derived, never stored.
 | Member | Summary |
 |---|---|
 | `string StaleCopy = "This output belongs to an earlier draft. Run again to refresh it."` | Spec §C3, verbatim. |
-| `CurrentnessResult Evaluate(AttemptRow attempt, int? currentRevisionNo, string? liveProjectionSha)` | **(gap)** |
+| `CurrentnessResult Evaluate(AttemptRow attempt, int? currentRevisionNo, string? liveProjectionSha)` | A stored attempt, judged by its own `projection_sha` against the live projection sha. |
+| `CurrentnessResult Evaluate(int ranRevisionNo, int? currentRevisionNo, string? ranSha, string? liveSha)` | The one definition.  and  are the same kind of digest, taken by the caller's one definition of it (a projection sha for a stored attempt, a body sha for a notebook result); the fold only compares them, so neither side… |
+
+## `WorkClosureState`
+
+*enum* — `WorkClosureFold.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `WorkClosure`
+
+*record* — `WorkClosureFold.cs`
+
+Work closure. An acceptance at an older baseline stays `Accepted` with
+false: the record is historical and never re-labelled current.
+
+## `WorkClosureFold`
+
+*class* — `WorkClosureFold.cs`
+
+Whether a journey's deliverable was accepted, derived from `subject_kind = work` dispositions only.
+
+| Member | Summary |
+|---|---|
+| `WorkClosure Evaluate(IReadOnlyList<DispositionRow> workDispositions, string currentBaseline)` | **(gap)** |

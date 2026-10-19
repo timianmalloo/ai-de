@@ -325,6 +325,34 @@ public static class WorkspaceOperations
             Refusable(() => Handle<NotebookLatestRequest>(request, notebooks.LatestRevision)));
     }
 
+    public const string ChecklistEvaluate = "checklist.evaluate";
+    public const string ChecklistObligationsSet = "checklist.obligations.set";
+    public const string ChecklistDispositionRecord = "checklist.disposition.record";
+    public const string ChecklistEvidenceLink = "checklist.evidence.link";
+    public const string WorkAccept = "work.accept";
+
+    /// <summary>Registers the five checklist operations. The actor of a write is the connection's principal, never the payload.</summary>
+    public static void RegisterChecklist(DaemonEndpoint endpoint, ChecklistService checklists)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(checklists);
+
+        endpoint.Register(ChecklistEvaluate, (request, _) =>
+            Refusable(() => Handle<ChecklistEvaluateRequest>(request, checklists.Evaluate)));
+
+        endpoint.Register(ChecklistObligationsSet, (request, _) =>
+            Refusable(() => Handle<ObligationsSetRequest>(request, checklists.SetObligations)));
+
+        endpoint.Register(ChecklistDispositionRecord, (request, peer) =>
+            Refusable(() => Handle<DispositionRecordRequest>(request, body => checklists.RecordDisposition(body, peer.ToPrincipal().Id))));
+
+        endpoint.Register(ChecklistEvidenceLink, (request, peer) =>
+            Refusable(() => Handle<EvidenceLinkRequest>(request, body => checklists.LinkEvidence(body, peer.ToPrincipal().Id))));
+
+        endpoint.Register(WorkAccept, (request, peer) =>
+            Refusable(() => Handle<WorkAcceptRequest>(request, body => checklists.Accept(body, peer.ToPrincipal().Id))));
+    }
+
     /// <summary>
     /// Turns a domain refusal into a stable error response instead of letting it escape.
     /// </summary>

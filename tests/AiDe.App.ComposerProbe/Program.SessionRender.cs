@@ -258,7 +258,17 @@ internal static partial class Program
             // Architecture). The state the replay must reach is that projection of the log line —
             // the product's own filter over the product's own rows — not the pre-perspective file.
             var restoredShape = Shape(shell);
-            var expectedShape = Shape(shell.Factory.Service.Admission.Filter(arrangement).Layout);
+            // The slot migration's rule stated here, not computed by NotebookSlotMigration (the code under test): each
+            // 'session-document:<id>' becomes 'notebook:<id>' in the same zone, tab position and caption; then admission.
+            var expectedShape = Shape(shell.Factory.Service.Admission.Filter(arrangement with
+            {
+                Zones = arrangement.Zones.SetItems(arrangement.Zones.Select(z => KeyValuePair.Create(z.Key, z.Value with
+                {
+                    Content = z.Value.Content is ZoneStack stack
+                        ? stack with { Tabs = [.. stack.Tabs.Select(t => t.SurfaceId.StartsWith("session-document:", StringComparison.Ordinal) ? new Surface("notebook:" + t.SurfaceId["session-document:".Length..], "notebook", t.Title) : t)] }
+                        : z.Value.Content,
+                }))),
+            }).Layout);
             Console.Out.WriteLine(
                 $"restore (22:33:53Z replay): applied-saved={persistence.LastRestoreAppliedASavedArrangement} announced='{restore.Announcement}' "
                 + $"dropped={persistence.LastRestoreDropped.Count} zones={restoredShape}");

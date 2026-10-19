@@ -171,6 +171,7 @@ unchanged and returns to Design.
 | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` | The Atlas reader view (Rulings 106, 113, 116): Design's surface, Core's reader lease and queries behind it — the `SearchSurface.cs` shape; authored by the Atlas fleet under a branch-local grant, never a fleet ownership. `AtlasStaticView.cs` joins this cell in the ruling that accepts the native E1 slice |
 | `src/AiDe.App/Workbench/PromptDraftSurface.cs` | Interactive chrome |
 | `src/AiDe.App/Workbench/TerminalSurface.cs` | Terminal rendering, with `TerminalView` |
+| `src/AiDe.App/Workbench/Execution/ExecutionSurface.cs` | One attempt's execution in the Bottom zone (WL-S design §4); a rendering surface — the attempt record behind it is the host's |
 | `src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs` | The New Session sheet's window; every rule it renders belongs to `NewSessionSheetModel` (R13) |
 | `docs/mockups/**`, `docs/design/**` | Design artifacts |
 | `docs/ui/**` | Session 3 (`claude-ui-experience`) — craft findings, mockups, review harnesses |

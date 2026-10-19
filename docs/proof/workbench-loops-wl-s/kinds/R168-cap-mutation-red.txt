@@ -1,0 +1,16 @@
+Mutation red for Ruling 168 (2): ThreadFeed.cs:616 words MaxWidth set to PositiveInfinity, then restored (git status clean).
+  Failed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "minimum", width: 820, height: 520) [700 ms]
+  Error Message:
+   minimum: the turn's row (706) cannot hold 96ch (673) plus its 40 px gutter and 12 px padding
+ 820×520 requested, 820×520 given: body 749 · Center pane 749 · turn row 706 · words column 654 · 96ch = 672.6 · words 632.0 · reply line 646.0 · longest word 58.8
+
+  Failed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "startup", width: 1440, height: 900) [236 ms]
+  Error Message:
+   startup: the words (1258.0) run past the 96ch measure (672.6)
+ 1440×900 requested, 1440×900 given: body 1369 · Center pane 1369 · turn row 1343 · words column 1291 · 96ch = 672.6 · words 1258.0 · reply line 670.7 · longest word 58.8
+
+  Failed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "wide", width: 1706, height: 1066) [179 ms]
+  Error Message:
+   wide: the words (1544.7) run past the 96ch measure (672.6)
+ 1706×1066 requested, 1706×1066 given: body 1635 · Center pane 1635 · turn row 1609 · words column 1557 · 96ch = 672.6 · words 1544.7 · reply line 670.7 · longest word 58.8
+

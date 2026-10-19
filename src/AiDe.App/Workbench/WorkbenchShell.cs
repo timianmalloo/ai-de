@@ -3538,9 +3538,33 @@ public sealed class WorkbenchShell : IDisposable
 
             RegisterSessionDocument(config);
             revived.Add(config);
+            _ = OpenTheLiveExecutionAfterTheReadBackAsync(_sessionDocuments[Records.NotebookId.ForSession(sessionId)]);
         }
 
         return revived;
+    }
+
+    /// <summary>
+    /// The WL-S design's §4 at revive: once the document's read-back ends, the attempt the window closed on
+    /// (<see cref="Execution.ExecutionAtRevive.LiveAtClose"/>) opens as one execution in the Bottom, NOT activated, so the
+    /// revive moves neither focus nor the perspective. A failed read-back opens nothing: its refusal is the composer's.
+    /// </summary>
+    private async Task OpenTheLiveExecutionAfterTheReadBackAsync(Sessions.SessionDocumentSurface document)
+    {
+        await document.LastReadBack.ConfigureAwait(ConfigureAwaitOptions.ContinueOnCapturedContext | ConfigureAwaitOptions.SuppressThrowing);
+
+        // The shell disposed, or the session closed, while the read-back ran: there is no document to open beside.
+        if (!_sessionDocuments.TryGetValue(document.Notebook.Id, out var current) || !ReferenceEquals(current, document)
+            || Execution.ExecutionAtRevive.LiveAtClose(document.Notebook.Runs.ReadBack) is not { } live)
+        {
+            return;
+        }
+
+        var runs = document.Notebook.Runs;
+        if (document.Notebook.Thread.Current.Turns.FirstOrDefault(t => runs.AttemptOf(t.Ordinal)?.DispatchKey == live.DispatchKey) is { } turn)
+        {
+            Announcer.Announce(OpenExecution(document, turn.Ordinal, activate: false));
+        }
     }
 
     /// <summary>
@@ -3610,6 +3634,9 @@ public sealed class WorkbenchShell : IDisposable
             document.ConsoleRequested = ordinal => Announcer.Announce(OpenSessionConsole(document, ordinal));
             document.ConsoleDismissed = () => Announcer.Announce(CloseSessionConsole(document));
 
+            // The WL-S design's §4: a turn's "Open the log" opens that turn's attempt's execution in the Bottom.
+            document.ExecutionRequested = ordinal => Announcer.Announce(OpenExecution(document, ordinal));
+
             // Ruling 95: the composer's "Start a parallel session" runs the window's flow — a derived
             // sibling session, opened docked beside this one, the draft sent as its first turn — and
             // gets back the reason when the words could not be sent, so they stay in this editor.
@@ -3625,6 +3652,11 @@ public sealed class WorkbenchShell : IDisposable
             // hold the island (never a live document: ADR-0017) — and the next Render hands it this
             // document. A surface not in the layout is built fresh regardless.
             Adapter.Invalidate([document.SurfaceId]);
+        }
+        else
+        {
+            // The kept document is shown again (open or restore), so its next close is a new close (DOCK1, said once per close).
+            _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(config.SessionId))?.PaneShown();
         }
 
         return surfaceId;
@@ -3748,6 +3780,68 @@ public sealed class WorkbenchShell : IDisposable
         return FocusConsole(host, consoleId, ordinal, "Console open");
     }
 
+    /// <summary>
+    /// Opens turn <paramref name="ordinal"/>'s execution in the Bottom zone, or focuses the one already open (the WL-S
+    /// design's §4): identity <c>execution:&lt;DispatchKey&gt;</c>, the key read through
+    /// <see cref="Records.NotebookRuns.AttemptOf"/>, one per attempt. A collapsed Bottom is expanded first. A turn with
+    /// no attempt opens nothing. Returns what to announce.
+    /// </summary>
+    /// <param name="activate">
+    /// False at revive: the execution is added, but neither shown in view nor raised as a document opening (no
+    /// perspective switch), and one already open is left as it is.
+    /// </param>
+    private string OpenExecution(Sessions.SessionDocumentSurface document, int ordinal, bool activate = true)
+    {
+        if (document.Notebook.Runs.AttemptOf(ordinal) is not { } receipt)
+        {
+            return "This turn was never sent to the host, so it has no execution to open.";
+        }
+
+        var host = HostOf(document.SurfaceId) ?? Factory;
+        ReconcileViewIntoModel(host);
+
+        var executionId = Execution.ExecutionSurface.SurfaceIdFor(receipt.DispatchKey);
+        var caption = Execution.ExecutionSurface.CaptionFor(receipt.DispatchKey);
+        var holder = host.Service.Zones.FindZoneOf(executionId) ?? ZoneId.Bottom;
+        if (host.Service.Zones.Zone(holder).Collapsed)
+        {
+            ExpandZone(host, holder);
+        }
+
+        var shown = host.Service.Zones.FindZoneOf(executionId) is not null;
+        if (shown && !activate)
+        {
+            return string.Empty;
+        }
+
+        var result = shown
+            ? host.Service.Apply(new LayoutOperation.ActivateSurface(executionId))
+            : host.Service.Apply(new LayoutOperation.AddSurface(
+                ZonesToTree.StackIdOf(ZoneId.Bottom),
+                new Surface(executionId, Execution.ExecutionSurface.Kind, caption)));
+        if (result.Applied)
+        {
+            if (activate)
+            {
+                OpeningDocument(host);
+            }
+        }
+
+        WorkbenchDiagnostics.LayoutMutation(activate ? "open-execution" : "revive-execution", "zone-rule", executionId, host.Adapter.ActiveSurfaceId, host.Service.Current);
+        host.Adapter.Render();
+        if (!result.Applied && !shown)
+        {
+            return result.Announcement;
+        }
+
+        if (activate)
+        {
+            host.Adapter.ActivateInView(executionId);
+        }
+
+        return (shown ? "Execution shown, " : "Execution open, ") + caption + ".";
+    }
+
     /// <summary>Closes the session's Console document — the toggle unchecked, or the tab's close by another route — and says so.</summary>
     private string CloseSessionConsole(Sessions.SessionDocumentSurface document)
     {
@@ -3823,9 +3917,16 @@ public sealed class WorkbenchShell : IDisposable
                 {
                     // One dispatcher turn past the render that just ran: the landing's pane
                     // realizes on the layout pass, and a MoveFocus into an unrealized subtree
-                    // lands nowhere (the same edge AssertActive defers past, DC-194).
+                    // lands nowhere (the same edge AssertActive defers past, DC-194). A notebook
+                    // that shared the Console's pane is that unrealized subtree: its tab comes back
+                    // on this pass, so the toggle is tried again before the landing.
                     _dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () =>
                     {
+                        if (owner.ConsoleToggle.Focus())
+                        {
+                            return;
+                        }
+
                         if (PerspectiveShell.LandingSurfaceFor(host) is { } landing
                             && host.Adapter.ContentFor(landing) is { } content)
                         {
@@ -3839,6 +3940,10 @@ public sealed class WorkbenchShell : IDisposable
 
             return;
         }
+
+        // DOCK1 (ADR-0045 §4): the shell keeps a closed notebook's document, so no Dispose comes to say that its run
+        // goes on. The close says it here, once, so a pane hidden mid-run is never silent and a shutdown after it says no more.
+        BoundDocument(surfaceId)?.SayPaneHidden();
 
         if (Sessions.SessionDocumentSurface.SessionIdOf(surfaceId) is { } sessionId
             && host.Service.Zones.FindZoneOf(Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId)) is not null)

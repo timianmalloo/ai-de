@@ -328,7 +328,7 @@ public sealed class WorkbenchDragCompletedHookTests
             WorkbenchDiagnostics.Sink = records.Add;
             try
             {
-                Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+                Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "notebook", "S1"))).Applied);
                 host.Adapter.Render();
                 Settle(h.Window, host.Manager);
                 Assert.Equal(ZoneId.Left, host.Service.Zones.FindZoneOf("session:s1"));
@@ -381,7 +381,7 @@ public sealed class WorkbenchDragCompletedHookTests
             {
                 foreach (var id in new[] { "session:a", "session:b", "session:c" })
                 {
-                    Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface(id, "session-document", id))).Applied);
+                    Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface(id, "notebook", id))).Applied);
                 }
 
                 host.Adapter.Render();

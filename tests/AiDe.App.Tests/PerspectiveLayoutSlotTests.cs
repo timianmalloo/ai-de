@@ -59,18 +59,18 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         return dir?.FullName ?? throw new InvalidOperationException("AiDe.sln was not found above the test directory");
     }
 
-    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function. The WL-S
-    // design's §7 "expand" step: the re-rowed ids read and write TODAY's files until T11's migration
-    // renames them — Factory is Coding's grandfathered empty suffix, Understand is Architecture's
-    // sibling, Review is new. Seen red before the alias: sp3/slot-alias-red.txt.
+    // Rule 1 — the slot's natural key is the file-name suffix, mapped by ONE function. Factory keeps
+    // Coding's grandfathered empty suffix; Understand and Review use their own ids. The WL-S design's
+    // §7 alias (Understand reading Architecture's file) was contracted by T11 node 9; the rename and
+    // the coordination fold are pinned in LayoutSlotMigrationTests.
     [Fact]
-    public void SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew()
+    public void SlotPathFor_MapsEachRowToItsFile_FactoryKeepsCodingsEmptySuffix_UnderstandAndReviewTheirIds()
     {
         Assert.Equal(
             [
                 Path.Combine(_dir, "layout.zones.json"),
                 Path.Combine(_dir, "layout.review.zones.json"),
-                Path.Combine(_dir, "layout.architecture.zones.json"),
+                Path.Combine(_dir, "layout.understand.zones.json"),
             ],
             PerspectiveSet.All.Select(p => LayoutPersistence.SlotPathFor(LayoutPath, p)));
         Assert.Equal(["factory", "review", "understand"], PerspectiveSet.All.Select(p => p.Id));

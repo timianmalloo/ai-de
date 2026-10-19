@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f55f53f2b23f2f0699bed7d20281bb39916068423fe3944909976a99aa9941c3"
+      "sourceSha256": "083a8732e4bef730240ab1d34d072e612160b542608a7b2d37e9407ded2dfb7e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2659,6 +2659,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "27629418d0faf347ddf012e4062fb168073f28dae59a3db1f564587922460256"
     },
     {
+      "id": "api-aide-app-workbench-execution",
+      "path": "docs/api/AiDe.App.Workbench.Execution.md",
+      "title": "API: AiDe.App.Workbench.Execution",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Execution: 2 types, 5 members, 86% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "feb6db02bafb947b580a5aa51946bb38630e00230088dceaff9603bf1415205c"
+    },
+    {
+      "id": "api-aide-app-workbench-notebook",
+      "path": "docs/api/AiDe.App.Workbench.Notebook.md",
+      "title": "API: AiDe.App.Workbench.Notebook",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Notebook: 1 types, 3 members, 100% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e3d876772bcf4e35d71a20f502096b8e08342aee360b8d5bc70a5c16c4068221"
+    },
+    {
       "id": "api-aide-app-workbench-records",
       "path": "docs/api/AiDe.App.Workbench.Records.md",
       "title": "API: AiDe.App.Workbench.Records",
@@ -2681,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "049ddaf453ecda8208821b51839943796c5f84716fbb5f24d1b174d82b2d70e8"
+      "sourceSha256": "ca41b9914eb62bf9ad48093f954743e72c2adfd38afe05aafd190eb9fe074a09"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2693,7 +2743,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 223 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 224 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2706,7 +2756,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77ddb4484879d4eeb3ee7891801cb3b3849cc860ecabffb1d08f62fada2a96cc"
+      "sourceSha256": "37d8b720defcb638afd1d44a8974f3fbc7792386be74e594589f62b0730c89a6"
     },
     {
       "id": "api-aide-core",
@@ -2868,7 +2918,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 64 types, 144 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 76 types, 161 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2881,7 +2931,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2926523215c75d71738ca16a1702a54572da4274144a1842943e65e2732e0d18"
+      "sourceSha256": "1dde5c5e4f4eb0ea08d1015db84e21e4c71c5faed03d3e9640f7b343cec9e19d"
     },
     {
       "id": "api-aide-core-mcp",
@@ -3068,7 +3118,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 15 types, 104 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 15 types, 113 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3081,7 +3131,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "578c9e79ef805c3e7e6791dbbfe813adaa84df967b0fbb46e4ea06ba6c8e5fbe"
+      "sourceSha256": "a1ba67d94297823d873bd815ae26e877eeae8eda17abb581333b185212aee5e3"
     },
     {
       "id": "api-aide-core-store-records",
@@ -3206,7 +3256,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f6dcee4b04afdf1bb0016c61d7946d30ab9e3c6adeb650708671e40c1ae87c25"
+      "sourceSha256": "29c6d9d4a78dc3a4eb031c5ea10edfbb74c0b0e3d5b3a0adb62c5fd8a20c191c"
     },
     {
       "id": "api-aide-core-workbench-records-folds",
@@ -3218,7 +3268,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench.Records.Folds: 7 types, 5 members, 75% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench.Records.Folds: 20 types, 20 members, 55% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3231,7 +3281,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f56d1156a011f620808353d586e1eaccee70af9ee62b0bbf87f4455a973b9a37"
+      "sourceSha256": "f932905eba38a910134a902ce38e6b1fe7345e96cfb8f13552089778f7cfd53b"
     },
     {
       "id": "api-aide-mcp",
@@ -10192,6 +10242,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "ca3e5bd1ebdfdadefd94abd1c2f89e9c649e90505ccdde5d23d57e6e35c7d697"
     },
     {
+      "id": "design-workbench-loops-wl-1b",
+      "path": "docs/design/workbench-loops-wl-1b.md",
+      "title": "Design: WL-1b — obligations, evidence and acceptance (folds, guarded commands, minimal checklist kind)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops / WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The detailed design of WL-1b. It adds no table, column or trigger: the v2 rows and their raw writers and readers already exist. It adds two pure folds (acceptance eligibility and work closure), one Core service that guards every write and re-checks eligibility inside the writer transaction, five IPC operations, a P1-PERF-style 100x bench, and a minimal checklist kind. No WL-1b disposition is an adoption, so WL-1b owes no v3 migration. It cuts four tracks; three are Core-only and start at once.",
+      "tags": [
+        "design",
+        "workbench-loops",
+        "wl-1b",
+        "checklist",
+        "obligation",
+        "evidence",
+        "disposition",
+        "acceptance",
+        "closure",
+        "fold"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-workbench-loops-ux",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-workbench-loops-wl-1a",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-workbench-loops-wl-s",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9389530607168ad739da4576b9793bc5a9e98d998163344599229bfaab6ca223"
+    },
+    {
       "id": "design-workbench-loops-wl-s",
       "path": "docs/design/workbench-loops-wl-s.md",
       "title": "Design: WL-S — Factory · Review · Understand perspectives, FullWindow retired, kinds, hosts, named layouts and slot migration (ADR-0045)",
@@ -10219,7 +10325,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08a6ddc658b2c938a42648c0f17ee0d519011928e15e133713bf715b476dfd63"
+      "sourceSha256": "32ab6686880e831e91e52ab3076fb4df0b5f2047b1c27a80bc0a7185c53e913c"
     },
     {
       "id": "ui-bounded-count-chip",
@@ -10731,7 +10837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46f7c4b79fdab54c4c0fd743ddea25012ad0b0443268988982ab9cf37077ea4e"
+      "sourceSha256": "b6e7fe606bbf26a5ccdbf8ef6d1ba31155799b033e605e9ea6096c58cbf5044a"
     },
     {
       "id": "design-session-profiler",
@@ -14183,7 +14289,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4a01980468da05fcc115a62dd927c6da568adb5b29a038538b4fb0e8058e2f82"
+      "sourceSha256": "f3d3a7bb0df8f1132afe9e84d5c0cb2c4105ab562ea4c3285e153f24c92c43c9"
     },
     {
       "id": "session-profiles",
@@ -22518,6 +22624,22 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ba4a76daba33ff0bb5e0804c8f87b9accf668fc42e14da3761d6f19371a2a1c"
     },
     {
+      "id": "proof-wl-s-kinds-node1-handoff",
+      "path": "docs/proof/workbench-loops-wl-s/kinds/handoff.md",
+      "title": "WL-S T11 kinds - node 1 hand-off (rule 16 kick)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Node 12 (kicked, after the merge of main with T21 joined): the merge head 31077bb7 brought in no red, and both of the Leader's conflict resolutions hold; the DOCK4 plural is green (KeptPromptsSentence const, c25e3e90, mutation proved); the WL-S demo script has the attended list (Ruling 155 (3)) and the float step pending close condition 4; the node-10 seam guard is green at the merge head. suite-node12: Core 3046/0/1, App 1202/2/2 (the two foreground tests). Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join.",
+      "tags": [],
+      "links": [],
+      "diagrams": [],
+      "sourceSha256": "da08488473376677cca17ef6b0bc0b11cc303a59c014db276be676bf590ee56e"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -23011,6 +23133,300 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b",
+      "path": "docs/proof/workbench-loops-wl-1b.md",
+      "title": "Proof Pack: WL-1b — obligations, evidence and acceptance",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The slice Proof Pack skeleton for WL-1b: one row per §WL.11 WL-1b check, each with an empty evidence cell for its track (T23 folds, T24 service, T25 bench, T26 checklist kind). It carries the draft human demo script. Nothing here is evidence yet.",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-1b",
+        "checklist",
+        "obligation",
+        "evidence",
+        "disposition",
+        "acceptance"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b3e6f07359fdd7ffcbe1f7ecca35932d354b74d834a6ba40cbcbb491fbb154ed"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-currentness",
+      "path": "docs/proof/workbench-loops-wl-1b/currentness/README.md",
+      "title": "Proof: WL-1b currentness (T27 wl1b-currentness, node 1)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Ruling 178: NotebookModel.CurrentnessOf delegates to CurrentnessFold, so the notebook's stale notice and the checklist's evidence state share one fold, and the stale sentence is one literal in src/.",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-1b",
+        "currentness"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f93d18ce1eff1cfeeeba577a06fa44515f6b5bb79fd5e324777b37d19d22bf7"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-currentness-handoff",
+      "path": "docs/proof/workbench-loops-wl-1b/currentness/handoff.md",
+      "title": "Hand-off: WL-1b currentness (T27 node 1)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "What T27 node 1 changed, the input mapping onto CurrentnessFold, and the one App suite failure outside this track.",
+      "tags": [
+        "handoff",
+        "workbench-loops",
+        "wl-1b",
+        "currentness"
+      ],
+      "links": [
+        {
+          "to": "proof-workbench-loops-wl-1b-currentness",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a32432b3e07c6b7c01c9ee0033144cd48cf9f0a1564eaa61c89221f55a337de6"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-design-handoff",
+      "path": "docs/proof/workbench-loops-wl-1b/design/handoff.md",
+      "title": "Hand-off: T22 wl1b-design (WL-1b /design-slice)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "What T22 left: the WL-1b design and the Proof Pack skeleton are committed; no code or tests by design. Lists the four DR drafts, the track cut, the one deviation (security rollups) and the next step.",
+      "tags": [
+        "handoff",
+        "workbench-loops",
+        "wl-1b",
+        "design"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "59a01da914cd736cfde62a93f4570fd6ea7b5820328109ad225a83e3211c4182"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-folds",
+      "path": "docs/proof/workbench-loops-wl-1b/folds/README.md",
+      "title": "Proof: WL-1b folds (T23 wl1b-folds, node 1)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Red-then-green evidence for checks A1, A2 and A3 of WL-1b: acceptance eligibility and work closure as pure Core folds over the v2 rows. Core suite green. No store write, service, IPC or UI.",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-1b",
+        "folds"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "11755e4ea545323244ce2a1fd0a9deceb0e688e127f0481dba70f4ff0e2df892"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-folds-handoff",
+      "path": "docs/proof/workbench-loops-wl-1b/folds/handoff.md",
+      "title": "Hand-off: T23 wl1b-folds node 1",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T23 node 1 done: A1, A2 and A3 red then green, Core suite green. Nothing red. Next is T24, which consumes the fold record types.",
+      "tags": [
+        "handoff",
+        "workbench-loops",
+        "wl-1b",
+        "folds"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f8d8937e7c71c7320adee3533de2d5f4e35a29693c6a0125012b7e413a8433a8"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-service",
+      "path": "docs/proof/workbench-loops-wl-1b/service/README.md",
+      "title": "Proof: WL-1b checklist service (T24, B1-B3)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Red and green output for checks B1, B2 and B3 of the WL-1b checklist service, with the Core suite run of node 1.",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-1b",
+        "service"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d5f2329cb274cb14424e053843768d72500efbae7b01b4628d94bc2906ece484"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-service-handoff",
+      "path": "docs/proof/workbench-loops-wl-1b/service/handoff.md",
+      "title": "Hand-off: T24 wl1b-service node 2",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "What node 2 of T24 left: A, B and C are done, the Core suite is green, and only the D6 golden JSON remains.",
+      "tags": [
+        "handoff",
+        "workbench-loops",
+        "wl-1b",
+        "service"
+      ],
+      "links": [
+        {
+          "to": "design-workbench-loops-wl-1b",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0040-journey-purpose-identity",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5a1a6e5723ec9cb9354e7f72d44193ee92c0f9e38c1f40d6118bf73dc227fd98"
+    },
+    {
+      "id": "proof-workbench-loops-wl-s",
+      "path": "docs/proof/workbench-loops-wl-s.md",
+      "title": "Proof Pack: WL-S - the notebook and execution kinds, slot migration, knowledge mode, float guard",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-S",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The slice Proof Pack for WL-S, drafted by T11 node 9. Each row cites its red and green commits: T11 nodes 1-9 (notebook and execution kinds, Factory's Center landing, Ctrl+1/2/3 inside a WebView2 page, hide, slot migration with its .bak and report, prompt kept, the .architecture rename and the coordination fold), T18's knowledge mode and T20's float guard. D2 is green (node 11) and DOCK4's plural const is green (node 12). Open: T21's close condition 4, a live notebook floated and redocked, owed after the T11 join (Ruling 171 (2)); and two foreground tests on the user's attended list (Ruling 155 (3)).",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-s",
+        "notebook",
+        "execution",
+        "slot-migration",
+        "knowledge-mode",
+        "float-guard"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-s",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-wl-s-kinds-node1-handoff",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4116353cef194df07565bab8597ef6e9c7bde097b11d7c22dd713689de73da5c"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -25087,5 +25503,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "b6b98ddece702224845f9b9b6f00f7a03963132c73e7039dab4b632837bb4caf"
+  "graphSha256": "ab5a1172c78c5d6cdb7c5ff8d19fca4a6c5032bc372846efbc8f4e6e5b2f9f92"
 };

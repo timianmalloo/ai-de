@@ -10,8 +10,8 @@ namespace AiDe.Core.Tests.Workbench;
 /// <remarks>
 /// <b>Red before green:</b> the Bottom was not collapsed (Ruling 60's expanded terminal) and the
 /// Left sat at the tool-zone default 0.22 — a 96ch column cannot fit a 22 % column at 1440 px
-/// (<c>docs/proof/coding-recut-left-dock.md</c>). The extent's fit is measured on the composed
-/// tree by the App's <c>CodingsLeftExtentTests</c>; this pins the model the composition reads.
+/// (<c>docs/proof/coding-recut-left-dock.md</c>). The thread's 96ch measure is held on the composed
+/// tree by the App's <c>TheThreadMeasureMovesWithTheNotebookTests</c> (Ruling 168 moved the measure to the Center); this pins the model the composition reads.
 /// </remarks>
 public sealed class ZoneLayoutTests
 {

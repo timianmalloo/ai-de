@@ -1,0 +1,28 @@
+[xUnit.net 00:00:00.98]         820×520 requested, 820×520 given: body 749 · Center pane 749 · turn row 706 · words column 654 · 96ch = 672.6 · words 632.0 · reply line 646.0 · longest word 58.8
+  Failed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "minimum", width: 820, height: 520) [742 ms]
+  Error Message:
+--
+ 820×520 requested, 820×520 given: body 749 · Center pane 749 · turn row 706 · words column 654 · 96ch = 672.6 · words 632.0 · reply line 646.0 · longest word 58.8
+--
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "startup", width: 1440, height: 900) [380 ms]
+--
+ 1440×900 requested, 1440×900 given: body 1369 · Center pane 1369 · turn row 1326 · words column 1274 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+--
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "wide", width: 1706, height: 1066) [248 ms]
+--
+ 1706×1066 requested, 1706×1066 given: body 1635 · Center pane 1635 · turn row 1609 · words column 1557 · 96ch = 672.6 · words 662.7 · reply line 670.7 · longest word 58.8
+--
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.AtStartupSizeInTheCenterBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [550 ms]
+--
+ 1440×900 requested, 1440×900 given, 5 turns: document 1349×708 · thread viewport 237 · editor 280 · 1 of 2 realized at least half visible · b4 1994 px, 0 shown · b5 345 px, 237 shown
+--
+  Passed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.AtStartupSizeInTheCenterBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [149 ms]
+--
+ 1440×900 requested, 1440×900 given, 5 turns: document 1349×708 · thread viewport 237 · editor 280 · 1 of 2 realized at least half visible · b4 239 px, 0 shown · b5 239 px, 237 shown
+--
+Total tests: 5
+--
+ Total time: 2.7918 Seconds
+31:  Error Message:
+32-   minimum: the turn's row (706) cannot hold 96ch (673) plus its 40 px gutter and 12 px padding
+33-  Stack Trace:

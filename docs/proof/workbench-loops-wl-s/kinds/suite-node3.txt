@@ -1,0 +1,10 @@
+T11 node 3 whole-suite run at 00ab13e5.
+app-suite.txt:Failed!  - Failed:     4, Passed:  1123, Skipped:     1, Total:  1128, Duration: 5 m 3 s - AiDe.App.Tests.dll (net10.0)
+core-suite.txt:Passed!  - Failed:     0, Passed:  3019, Skipped:     1, Total:  3020, Duration: 2 m 8 s - AiDe.Core.Tests.dll (net10.0)
+App failures:
+  Failed AiDe.App.Tests.Shell.TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "minimum", width: 820, height: 520) [204 ms]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen [3 s]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [5 s]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+SolutionTreeChordTests solo:
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 20 s - AiDe.App.Tests.dll (net10.0)

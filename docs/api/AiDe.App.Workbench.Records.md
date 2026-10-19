@@ -96,7 +96,7 @@ the normal path, so a test can show that nothing disposed a model (the `SessionD
 
 | Member | Summary |
 |---|---|
-| `string StaleCopy = "This output belongs to an earlier draft. Run again to refresh it."` | Spec §C3's load-bearing copy for a result whose revision is no longer the draft. |
+| `string StaleCopy = CurrentnessFold.StaleCopy` | Spec §C3's load-bearing copy for a result whose revision is no longer the draft. |
 | `string RevisionsNotRecorded = "notebook revisions are not recorded: no workspace daemon is connected"` | Why revisions are not saved when no store is bound — shown, never silent. |
 | `string DisposalActivitySource = "aide.notebook.model"` | **(gap)** |
 | `string DisposeActivity = "notebook.model.dispose"` | **(gap)** |

@@ -141,7 +141,7 @@ internal static class SchemaV2Support
         writer.AppendEvidenceLink(new EvidenceLinkRow(
             "link1", "criterion", "c1", 1, "artifact://a", "producer", "base-1", "Verified"));
         writer.AppendAssessment(new AssessmentRow("as1", "drift", "scope-1", "base-1", "[]", "{}"));
-        writer.AppendObligation(new ObligationRow("ob1", "cl1", 1, "Do the thing", Mandatory: true));
+        writer.AppendObligation(new ObligationRow("ob1", "j1", 1, "Do the thing", Mandatory: true));
         writer.AppendDisposition(new DispositionRow("obligation", "ob1", "acknowledged", "user", "base-1"));
         writer.AppendProfileObservation(new ProfileObservationRow(profile, "installed", "true", "probe", "2026-10-18T00:00:00Z"));
         writer.Commit();

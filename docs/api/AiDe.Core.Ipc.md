@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 64 types, 144 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 76 types, 161 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**64 public types · 144 public members · 64% documented.**
+**76 public types · 161 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -83,6 +83,91 @@ Validates a presented token against the live connection and the command it accom
 **Remarks.** Returns a typed reason rather than a bool. Which check failed is the difference between "your
 session ended" and "that token belongs to another workspace", and an operator who only sees
 "denied" cannot tell an expired shell from an attack.
+
+## `ObligationInput`
+
+*record* — `ChecklistOperations.cs`
+
+One obligation a caller declares. A null id is minted by the service; a given id must already be in the checklist's history.
+
+## `ObligationsSetRequest`
+
+*record* — `ChecklistOperations.cs`
+
+Sets the complete obligation list of a journey's checklist. The journey has one checklist, keyed by its id (Ruling 176).
+
+## `ObligationsSetResult`
+
+*record* — `ChecklistOperations.cs`
+
+The checklist revision now at the head, whether this call wrote it or found it.
+
+## `DispositionRecordRequest`
+
+*record* — `ChecklistOperations.cs`
+
+Records one human disposition. An obligation kind needs ; `intent-accepted` needs none.
+
+## `DispositionRecordResult`
+
+*record* — `ChecklistOperations.cs`
+
+The disposition row this call wrote.
+
+## `EvidenceLinkRequest`
+
+*record* — `ChecklistOperations.cs`
+
+Links one completed attempt to one obligation as evidence.
+
+## `EvidenceLinkResult`
+
+*record* — `ChecklistOperations.cs`
+
+The link row, whether this call wrote it or found an identical current one.
+
+## `ChecklistEvaluateRequest`
+
+*record* — `ChecklistOperations.cs`
+
+Asks whether the work may be accepted now.
+
+## `ChecklistEvaluateResult`
+
+*record* — `ChecklistOperations.cs`
+
+Acceptance eligibility, work closure, and the attempts that could still be linked as evidence.
+
+## `WorkAcceptRequest`
+
+*record* — `ChecklistOperations.cs`
+
+Accepts the work's declared deliverable: the intent notebook's latest revision.
+
+## `WorkAcceptResult`
+
+*record* — `ChecklistOperations.cs`
+
+The acceptance. It names the intent revision by number and claims nothing about implementation (Ruling 179).
+
+## `ChecklistService`
+
+*class* — `ChecklistOperations.cs`
+
+The five checklist operations, answered where the store is. Each write is one writer transaction.
+
+**Remarks.** A write holds the store's single writer gate before it reads, so nothing can commit between the read and the
+append. `work.accept` relies on that: it re-folds eligibility under the gate and appends in the same
+transaction (WL-1b design, "Error and concurrency model").
+
+| Member | Summary |
+|---|---|
+| `int MaxTextLength = 2000` | The longest obligation text or disposition reason one frame may carry. |
+| `ChecklistEvaluateResult Evaluate(ChecklistEvaluateRequest request)` | **(gap)** |
+| `ObligationsSetResult SetObligations(ObligationsSetRequest request)` | **(gap)** |
+| `DispositionRecordResult RecordDisposition(DispositionRecordRequest request, string actor)` | **(gap)** |
+| `EvidenceLinkResult LinkEvidence(EvidenceLinkRequest request, string actor)` | **(gap)** |
+| `WorkAcceptResult Accept(WorkAcceptRequest request, string actor)` | **(gap)** |
 
 ## `DaemonEndpoint`
 
@@ -978,6 +1063,11 @@ epoch would defeat it while appearing to work.
 | `Task<NotebookOpenResult> OpenNotebookAsync(string notebookId, string journeyTitle, CancellationToken cancellationToken)` | Opens a notebook and its owning journey; idempotent on the notebook id. |
 | `Task<NotebookSaveResult> SaveNotebookRevisionAsync(` | Saves a body as the next immutable revision; the latest body again returns that revision. |
 | `Task<NotebookRevisionRow?> ReadLatestNotebookRevisionAsync(string notebookId, CancellationToken cancellationToken)` | The latest revision of a notebook, or null when it has none. |
+| `Task<ChecklistEvaluateResult> EvaluateChecklistAsync(ChecklistEvaluateRequest request, CancellationToken cancellationToken)` | Whether the work may be accepted now, and which attempts could still be linked as evidence. |
+| `Task<ObligationsSetResult> SetObligationsAsync(ObligationsSetRequest request, CancellationToken cancellationToken)` | Sets the journey's obligation list; an equal list returns the existing revision. |
+| `Task<DispositionRecordResult> RecordDispositionAsync(DispositionRecordRequest request, CancellationToken cancellationToken)` | Records one human disposition; the daemon names the actor. |
+| `Task<EvidenceLinkResult> LinkEvidenceAsync(EvidenceLinkRequest request, CancellationToken cancellationToken)` | Links a completed, current attempt to an obligation as evidence. |
+| `Task<WorkAcceptResult> AcceptWorkAsync(WorkAcceptRequest request, CancellationToken cancellationToken)` | Accepts the work's deliverable (the intent revision); refused with the gap list while any gap remains. |
 | `Task<RefreshMetrics> RefreshMetricsAsync(CancellationToken cancellationToken)` | What re-indexing has cost in this daemon so far. |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
@@ -1226,6 +1316,12 @@ bound, and two definitions of one quantity is a defect signature.
 | `string NotebookRevisionSave = "notebook.revision.save"` | **(gap)** |
 | `string NotebookRevisionLatest = "notebook.revision.latest"` | **(gap)** |
 | `void RegisterNotebook(DaemonEndpoint endpoint, NotebookService notebooks)` | Registers the three notebook operations (open, save a revision, read the latest) on . |
+| `string ChecklistEvaluate = "checklist.evaluate"` | **(gap)** |
+| `string ChecklistObligationsSet = "checklist.obligations.set"` | **(gap)** |
+| `string ChecklistDispositionRecord = "checklist.disposition.record"` | **(gap)** |
+| `string ChecklistEvidenceLink = "checklist.evidence.link"` | **(gap)** |
+| `string WorkAccept = "work.accept"` | **(gap)** |
+| `void RegisterChecklist(DaemonEndpoint endpoint, ChecklistService checklists)` | Registers the five checklist operations. The actor of a write is the connection's principal, never the payload. |
 | `void RegisterIndex(DaemonEndpoint endpoint, Func<string, bool, CancellationToken, Task<IndexSummary>> index)` | Turns a domain refusal into a stable error response instead of letting it escape.  Registers the workspace-wide C# index on . |
 
 ### `string SearchContent = "search-content"`

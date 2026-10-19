@@ -1,0 +1,3 @@
+node 2 whole suites
+Core: Passed 3060, Failed 0, Skipped 1 (3061)  [suite-node2-core.txt]
+App: Passed 1150, Failed 1, Skipped 2 (1153) - SolutionTreeChord only, refuses on the base 27e761b7 too (C2-base-chord.txt)  [suite-node2-app.txt]
