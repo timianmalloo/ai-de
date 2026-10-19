@@ -87,6 +87,10 @@ public sealed class WorkbenchShell : IDisposable
     private readonly Dictionary<Records.NotebookId, Records.NotebookModel> _notebooks = [];
     private readonly Dictionary<Records.NotebookId, Sessions.SessionDocumentSurface> _sessionDocuments = [];
 
+    // The workspace's one attempt host (ADR-0041), opened the first time a session document needs it; null inside the
+    // task when it could not be opened, which the shell announced. Disposed in Dispose, after every notebook.
+    private Task<Conductor.AttemptHost?>? _attemptHost;
+
     // The open console documents (Ruling 89), keyed by their surface id (`console:<sessionId>`):
     // each hosts its session document's own split in the Center and follows the thread until it
     // closes — with its tab, or with its session (the adapter's SurfaceClosed). One per session.
@@ -3408,6 +3412,16 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         _notebooks.Clear();
+
+        // ...then the attempt host the notebooks were bound to, which releases the workspace's host lock.
+        if (_attemptHost is { IsCompleted: true } opened)
+        {
+            opened.Result?.Dispose();
+        }
+        else
+        {
+            _attemptHost?.ContinueWith(opening => opening.Result?.Dispose(), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+        }
         foreach (var console in _consoles.Values)
         {
             console.Dispose();
@@ -3563,9 +3577,18 @@ public sealed class WorkbenchShell : IDisposable
             // shell, a degraded start) none is passed and the model says "not recorded".
             // simplify: a type test on the one client, because the notebook ops are declared on WorkspaceClient and on
             // no IWorkspace* interface. Ceiling: one construction site. Upgrade when a second implementer of the ops exists.
-            var revisions = _queries is WorkspaceClient client ? new Records.DaemonNotebookRevisions(client, config.Name) : null;
+            var client = _queries as WorkspaceClient;
+            var revisions = client is null ? null : new Records.DaemonNotebookRevisions(client, config.Name);
             var notebook = new Records.NotebookModel(model, revisions);
             _notebooks[notebook.Id] = notebook;
+
+            // The run is the host's (ADR-0041; ADR-0045 §4): the notebook binds to the workspace's attempt host over the
+            // same client, so a sent turn is an attempt of its revision. With no client its turns run directly.
+            if (client is not null)
+            {
+                _ = BindAttemptHostAsync(notebook, client, root);
+            }
+
             var document = new Sessions.SessionDocumentSurface(notebook, store, Announcer);
 
             // Both maps keyed by the notebook's OWN id rather than by one computed beside it: two derivations of one
@@ -3596,6 +3619,37 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         return surfaceId;
+    }
+
+    /// <summary>
+    /// Opens the workspace's attempt host once (<see cref="Conductor.ConductorEntry.OpenAttemptHostAsync"/>) and binds
+    /// <paramref name="notebook"/> to it; a turn sent before the host is open runs directly. A host that cannot be
+    /// opened is announced, never swallowed.
+    /// </summary>
+    private async Task BindAttemptHostAsync(Records.NotebookModel notebook, WorkspaceClient client, string root)
+    {
+        _attemptHost ??= OpenAttemptHostAsync(client, root);
+
+        // assume: a session document has no PTY generation, so its attempts carry generation 1 (one lifetime per session
+        // id). Confirm: the design names a native session's generation. If false: re-key here, at the one binding site.
+        var scope = new Records.AttemptScope(_dispatchScopeId ?? "workspace", client.Epoch, SessionGeneration: 1);
+        if (await _attemptHost is { } host)
+        {
+            notebook.Runs.BindHost(host, scope);
+        }
+    }
+
+    private async Task<Conductor.AttemptHost?> OpenAttemptHostAsync(WorkspaceClient client, string root)
+    {
+        try
+        {
+            return await Conductor.ConductorEntry.OpenAttemptHostAsync(client, root, CancellationToken.None);
+        }
+        catch (Exception error) when (error is AiDe.Core.AgentPlane.AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException)
+        {
+            Announcer.Announce($"Runs are not recorded as attempts in this window: {error.Message}");
+            return null;
+        }
     }
 
     /// <summary>
@@ -3794,6 +3848,9 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
+    /// <summary>The workspace's model for notebook <paramref name="id"/>, or null when no session document registered it.</summary>
+    internal Records.NotebookModel? Notebook(Records.NotebookId id) => _notebooks.GetValueOrDefault(id);
+
     /// <summary>
     /// The composer half of an open session document, so the composition root can wire it.
     /// </summary>
@@ -3805,8 +3862,6 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     /// <param name="sessionId">The session whose document is open.</param>
     /// <returns>The composer, or null when no document for that session is open.</returns>
-    /// <summary>The workspace's model for notebook <paramref name="id"/>, or null when no session document registered it.</summary>
-    internal Records.NotebookModel? Notebook(Records.NotebookId id) => _notebooks.GetValueOrDefault(id);
 
     internal Composer.ComposerSurface? SessionComposer(string sessionId) =>
         _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(sessionId))?.Composer;
