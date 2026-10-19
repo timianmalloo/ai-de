@@ -131,6 +131,7 @@ public sealed class NotebookRuns : IDisposable
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(scope);
         ChangeRefusal(() => _host = (host, scope), inline: true);
+        Bound();
     }
 
     /// <summary>
@@ -152,15 +153,32 @@ public sealed class NotebookRuns : IDisposable
 
     /// <summary>
     /// Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly.
-    /// With neither a host nor an opener the window has no workspace client: <see cref="NoWorkspace"/>.
+    /// With neither a host nor an opener the window has no workspace client: <see cref="NoWorkspace"/>. With a host bound
+    /// whose restart read-back failed, the read-back's cause (Ruling 175(2)): a turn sent now would number ahead of the
+    /// turns it did not restore.
     /// </summary>
     public string? HostRefusal =>
-        _host is not null || _unhosted ? null : _openFailure ?? (_opener is null ? NoWorkspace : null);
+        _host is not null ? _readBackFailure : _unhosted ? null : _openFailure ?? (_opener is null ? NoWorkspace : null);
 
-    /// <summary>True while a retry can help: the refusal came from an open that may succeed on another try.</summary>
-    public bool CanRetryHost => _host is null && _opener is not null && _openFailure is not null and not HostedElsewhere;
+    /// <summary>True while a retry can help: an open that may succeed on another try, or a read-back that failed.</summary>
+    public bool CanRetryHost => _host is null
+        ? _opener is not null && _openFailure is not null and not HostedElsewhere
+        : _readBackFailure is not null;
 
     private string? _openFailure;
+    private string? _readBackFailure;
+
+    /// <summary>Ruling 159(2)'s refusal of a failure that a retry may clear, with that failure's own cause.</summary>
+    private static string CannotHost(string cause) => $"Runs cannot be hosted in this window: {cause} Retry to open the host again.";
+
+    /// <summary>
+    /// Ruling 175 (the Owner's copy, DESIGN.md): the refusal, status and UIA help text, of a bound host whose restart
+    /// read-back failed. <c>{cause}</c> is the failure's own message. The Retry reads back again; it does not reopen.
+    /// </summary>
+    public const string RestoringFailed = "Restoring this notebook's turns failed: {cause}. Retry to restore them.";
+
+    /// <summary><see cref="RestoringFailed"/> with <paramref name="cause"/>; a trailing full stop is not doubled.</summary>
+    private static string CannotRestore(string cause) => RestoringFailed.Replace("{cause}", cause.TrimEnd('.'), StringComparison.Ordinal);
 
     /// <summary>
     /// Binds to the workspace's attempt host once <paramref name="open"/> completes (Ruling 159): a turn sent before then
@@ -172,15 +190,180 @@ public sealed class NotebookRuns : IDisposable
         ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(scope);
         ChangeRefusal(() => _opener = (open, scope), inline: true);
-        _hostOpening = OpenHostAsync(open, scope);
+        StartOpening(open, scope);
     }
 
-    /// <summary>The refusal's retry: opens the host again. Completes once this try bound the host or set its refusal.</summary>
-    public Task RetryHostAsync() =>
-        _host is null && _opener is { } opener ? _hostOpening = OpenHostAsync(opener.Open, opener.Scope) : Task.CompletedTask;
+    /// <summary>
+    /// The refusal's retry: opens the host again, or, bound with a failed read-back, reads back again for this bind.
+    /// Completes once this try bound the host or set its refusal, or the read-back ended.
+    /// </summary>
+    public Task RetryHostAsync()
+    {
+        if (_host is not null)
+        {
+            if (_readBackFailure is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            lock (_gate)
+            {
+                _readBackFor = 0;
+            }
+
+            ReadBackForTheBind();
+            return ReadingBack;
+        }
+
+        return _opener is { } opener ? StartOpening(opener.Open, opener.Scope) : Task.CompletedTask;
+    }
 
     private (Func<Task<IAttemptHost>> Open, AttemptScope Scope)? _opener;
     private Task _hostOpening = Task.CompletedTask;
+    private Task _afterTheOpen = Task.CompletedTask;
+
+    /// <summary>One open of the host, and the wait a read-back reader sees while it runs (<see cref="ReadingBack"/>).</summary>
+    private Task StartOpening(Func<Task<IAttemptHost>> open, AttemptScope scope)
+    {
+        var opening = OpenHostAsync(open, scope);
+        var after = AfterTheOpenAsync(opening);
+        lock (_gate)
+        {
+            _hostOpening = opening;
+            _afterTheOpen = after;
+        }
+
+        return opening;
+    }
+
+    /// <summary>Completes once <paramref name="opening"/> ended and the read-back its bind started (if any) ended.</summary>
+    private async Task AfterTheOpenAsync(Task opening)
+    {
+        await opening.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        Task bound;
+        lock (_gate)
+        {
+            bound = _bindReadBack;
+        }
+
+        await bound.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+    }
+
+    // RESTART READ-BACK PER BIND (Ruling 172): the shell binds asynchronously and builds the document at once, so the
+    // read-back is started by the bind, never by the document's construction. _binds counts binds; _readBackFor is the
+    // bind the last read-back ran for, so a bind reads back once however many surfaces register, and once more on a rebind.
+    private Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>>? _submitted;
+    private int _binds;
+    private int _readBackFor;
+    private Task _bindReadBack = Task.CompletedTask;
+
+    /// <summary>
+    /// The restart read-back a turn sent now must wait for (Ruling 163): while the host opens, the wait for that open's
+    /// bind and its read-back; else the read-back of the last bind (completed when none ran).
+    /// </summary>
+    public Task ReadingBack
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _host is null && !_hostOpening.IsCompleted ? _afterTheOpen : _bindReadBack;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Registers the bound surface's submitted envelopes (AC-L01a) as the restart read-back's source: the read-back runs
+    /// now when a host is bound, and on every later bind, exactly once per bind (Ruling 172).
+    /// </summary>
+    public void ReadBackOnEachBind(Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>> submitted)
+    {
+        ArgumentNullException.ThrowIfNull(submitted);
+        lock (_gate)
+        {
+            _submitted = submitted;
+        }
+
+        ReadBackForTheBind();
+    }
+
+    /// <summary>A host was bound: its read-back runs once, now, when a surface has registered its envelopes.</summary>
+    private void Bound()
+    {
+        lock (_gate)
+        {
+            _binds++;
+        }
+
+        ReadBackForTheBind();
+    }
+
+    /// <summary>
+    /// Starts the current bind's read-back unless it already ran, no host is bound, or no surface shows the notebook (the
+    /// envelopes are the surface's: a closed one's store is disposed). The claim is taken under the gate; the read runs
+    /// outside it.
+    /// </summary>
+    private void ReadBackForTheBind()
+    {
+        Task<Task> read;
+        lock (_gate)
+        {
+            if (_submitted is not { } submitted || Observer is null || _host is null || _readBackFor == _binds)
+            {
+                return;
+            }
+
+            _readBackFor = _binds;
+            read = new Task<Task>(() => ReadBackAsync(submitted(), CancellationToken.None));
+            _bindReadBack = KeepingTheFailureAsync(read.Unwrap());
+        }
+
+        read.RunSynchronously(TaskScheduler.Default);
+    }
+
+    /// <summary>
+    /// The bind's read-back, its failure kept as the refusal Send shows (Ruling 175(2)): <see cref="RestoringFailed"/>
+    /// with the read-back's own cause, and the Retry that reads back again. A read-back that ends clears it.
+    /// </summary>
+    /// <remarks>
+    /// Ruling 175(4): writes <c>notebook.read-back</c> with its duration once the read ends, before the refusal is set or
+    /// cleared, so a reader that sees the outcome sees the record. The clock starts here, as the read is started.
+    /// </remarks>
+    private async Task KeepingTheFailureAsync(Task read)
+    {
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        string? failure = null;
+        try
+        {
+            await read.ConfigureAwait(false);
+            Timed("notebook.read-back", started, "read", attempts: ReadBack.Count);
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
+        {
+            Timed("notebook.read-back", started, "failed", errorType: error.GetType().Name);
+            failure = CannotRestore(error.Message);
+        }
+
+        ChangeRefusal(() => _readBackFailure = failure, inline: false);
+    }
+
+    /// <summary>
+    /// Ruling 175(4), measured by default (IO1): one step's duration and how it ended, through the Shell lane's one writer
+    /// (<see cref="WorkbenchDiagnostics.Write"/>, as <c>ThreadDiagnostics</c> writes). A failed step records its own
+    /// duration with <c>failed</c>; a value this step does not know is null, never invented (IO12).
+    /// </summary>
+    private void Timed(string evt, long started, string outcome, int? tries = null, int? attempts = null, string? errorType = null) =>
+        WorkbenchDiagnostics.Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt,
+            notebook = _notebook.Id.Value,
+            outcome,
+            duration_ms = Math.Round(System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, 1),
+            tries,
+            attempts,
+            error_type = errorType,
+        });
 
     /// <summary>Raised on the model's home context each time <see cref="HostRefusal"/> is set or cleared.</summary>
     public event Action? HostRefusalChanged;
@@ -188,15 +371,26 @@ public sealed class NotebookRuns : IDisposable
     /// <summary>How often a hosted-elsewhere window tries the open again, so the copy shows only while the holder lives.</summary>
     public static readonly TimeSpan HolderProbe = TimeSpan.FromSeconds(1);
 
+    /// <remarks>
+    /// Ruling 175(4): writes <c>notebook.host-open</c> with the duration from this open's start (the bind, or the Retry)
+    /// to its end, <c>bound</c>, <c>failed</c> or <c>ended</c> with the workspace, before the state a reader waits on is
+    /// set. <c>tries</c> counts the passes, more than one while another window holds the host.
+    /// </remarks>
     private async Task OpenHostAsync(Func<Task<IAttemptHost>> open, AttemptScope scope)
     {
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        var tries = 0;
+
         // Terminates: each pass binds, refuses with a cause that needs the operator's Retry, or ends with the workspace.
         while (!_disposing.IsCancellationRequested)
         {
+            tries++;
             try
             {
                 var host = await open().ConfigureAwait(false);
+                Timed("notebook.host-open", started, "bound", tries);
                 ChangeRefusal(() => (_host, _openFailure) = ((host, scope), null), inline: false);
+                Bound();
                 return;
             }
             catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)
@@ -206,12 +400,15 @@ public sealed class NotebookRuns : IDisposable
             }
             catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
             {
-                ChangeRefusal(() => _openFailure = $"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.", inline: false);
+                Timed("notebook.host-open", started, "failed", tries, errorType: error.GetType().Name);
+                ChangeRefusal(() => _openFailure = CannotHost(error.Message), inline: false);
                 return;
             }
 
             await Task.Delay(HolderProbe, _disposing.Token).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
+
+        Timed("notebook.host-open", started, "ended", tries);
     }
 
     /// <summary>

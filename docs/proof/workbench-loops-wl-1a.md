@@ -172,6 +172,20 @@ GUI steps not yet run by a person are **owed to the user**.*
 
 ## Acceptance (Owner, 2026-10-19)
 
+**WL-1a is reopened (Ruling 172).** In the running app a reopened notebook never read its attempts back. The shell binds the host asynchronously (`WorkbenchShell.cs:3596`) and builds the document at once, and the read-back ran only when the host was already bound at construction. T17's tests bound the host first, so they passed without exercising the product order. The provisional acceptance below rested on those tests, so its restart step is withdrawn until T17d joins.
+
+**T17d's fix and proof** (`wl1a-readback`; `workbench-loops-wl-1a/readback/README.md`):
+
+- Checks 1–2: the read-back runs when the host binds, before or after construction, once per bind. Check 1 runs through `WorkbenchShell.ReviveRestoredSessionDocuments`. `readback/check1-red.txt` → `check1-green.txt` and `readback/check2-red.txt` → `check2-green.txt`.
+- Check 3: Ruling 163's tests now reopen in the shell's order, and a per-site guard fails any read-back test that binds the host first unless the site is named as not a reopen. `readback/check3-red.txt`, `check3-red-per-site.txt` → `check3-green.txt`. Mutation red: `readback/check3-mutation-red.txt`.
+- Ruling 175 (node 3): a Send while the turns restore keeps its words, disables Send with the restoring sentence, and admits exactly one turn as b3 (check A). A failed read-back or host open keeps the words with its own cause (check B). Node 2's `NoDispatchOutsideTheHostTests` regression is closed by Ruling 175(5).
+- Ruling 175 and the Owner's two corrections (node 4): a restoring Send is never announced as "sent" (`readback/check4-1-*.txt`). A failed read-back reads "Restoring this notebook's turns failed: {cause}. Retry to restore them.", and a failed host open keeps Ruling 159's words (`readback/check4-2-*.txt`). The host-open and read-back durations are emitted on the normal path as `notebook.host-open` and `notebook.read-back`, through `WorkbenchDiagnostics.Write` (`readback/checkC-*.txt`).
+- **Measured on this machine (shell-path test, not the running app).** The shell's revive test ran 10 times at fa310512 (`readback/timings-shell-path.txt`). Host-open (bind start to bound): min 15.7, median 16.5, max 18.5 ms. Read-back (2 attempts): min 22.2, median 23.25, max 26.6 ms. The running app writes the same records to the workbench log, so step 18 leaves its values there.
+- Whole suites, node 4 at fa310512 (`readback/suite-green.txt`). Core: 3024 passed, 0 failed. App: 1143 passed, 2 failed. One failure is the environmental `SolutionTreeChordTests` ("foreground not held", fails alone too). The other is a teardown failure in `TheRowsAttemptBindingSurvivesRestartAndSequenceTests.ASentTurnsRow_ShowsItsBinding_WhileTheRunIsStillHeld_ThroughTheSurface`: SQLite's `Close` threw from `NotebookFixture.Dispose`. It is **not reproduced**: alone 3/3, and the Records namespace 3 × 89/89 (`readback/teardown-race-rerun-n4.txt`). Its cause is not established. Joining over it is the Leader's call.
+- **The human demo's restart step is the one this fixes:** step 18 (section 7, "Restart, and kill the host mid-run"). Walk it after T17d joins. Before that join it fails in the running app.
+
+The provisional acceptance, as the Owner recorded it before Ruling 172:
+
 **WL-1a is ACCEPTED, PROVISIONALLY.** The Owner (`wl-owner-20261018`) ran these on a clean detached tree at `origin/main` `ba2b7e5e`:
 
 - `dotnet build AiDe.sln -c Release`: 0 warnings, 0 errors.

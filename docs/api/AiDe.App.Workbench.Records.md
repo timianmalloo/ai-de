@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 50 members, 85% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Records: 12 types, 53 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Records`
 
-**12 public types · 50 public members · 85% documented.**
+**12 public types · 53 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -177,10 +177,13 @@ continues."). Disposing the model is what cancels them.
 | `string HostedElsewhere = "This workspace's runs are hosted in another window. Send from that window, or close it to host runs here."` | Ruling 159(1): the copy Send shows while another window holds the workspace's attempt host. |
 | `string NotOpened = "Runs cannot be hosted in this window: the attempt host did not open. Retry to open the host again."` | The refusal when the host's open ended with no cause this binding knows. |
 | `string NoWorkspace = "Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs."` | Ruling 159(2): the refusal of a window with no workspace client — nothing here can record a turn, and no retry can help. |
-| `string? HostRefusal` | Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly. With neither a host nor an opener the window has no workspace client: `NoWorkspace`. |
-| `bool CanRetryHost` | True while a retry can help: the refusal came from an open that may succeed on another try. |
+| `string? HostRefusal` | Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly. With neither a host nor an opener the window has no workspace client: `NoWorkspace`. With a host bound whose… |
+| `bool CanRetryHost` | True while a retry can help: an open that may succeed on another try, or a read-back that failed. |
+| `string RestoringFailed = "Restoring this notebook's turns failed: {cause}. Retry to restore them."` | Ruling 175 (the Owner's copy, DESIGN.md): the refusal, status and UIA help text, of a bound host whose restart read-back failed. `{cause}` is the failure's own message. The Retry reads back again; it does not reopen. |
 | `void BindHostWhenOpen(Func<Task<IAttemptHost>> open, AttemptScope scope)` | Binds to the workspace's attempt host once  completes (Ruling 159): a turn sent before then waits for it, and a host that cannot be opened refuses every send with its cause — never a direct run, which would break ADR-… |
-| `Task RetryHostAsync()` | The refusal's retry: opens the host again. Completes once this try bound the host or set its refusal. |
+| `Task RetryHostAsync()` | The refusal's retry: opens the host again, or, bound with a failed read-back, reads back again for this bind. Completes once this try bound the host or set its refusal, or the read-back ended. |
+| `Task ReadingBack` | The restart read-back a turn sent now must wait for (Ruling 163): while the host opens, the wait for that open's bind and its read-back; else the read-back of the last bind (completed when none ran). |
+| `void ReadBackOnEachBind(Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>> submitted)` | Registers the bound surface's submitted envelopes (AC-L01a) as the restart read-back's source: the read-back runs now when a host is bound, and on every later bind, exactly once per bind (Ruling 172). |
 | `event Action? HostRefusalChanged` | Raised on the model's home context each time `HostRefusal` is set or cleared. |
 | `TimeSpan HolderProbe = TimeSpan.FromSeconds(1)` | How often a hosted-elsewhere window tries the open again, so the copy shows only while the holder lives. |
 | `AttemptReceipt? AttemptOf(int ordinal)` | Turn 's attempt as the host last answered it, or null when it was not one. |

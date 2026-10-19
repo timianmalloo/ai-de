@@ -170,11 +170,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         Notebook.Runs.HostRefusalChanged += ShowHostRefusal;
         ShowHostRefusal();
 
-        // RESTART READ-BACK (AC-L01a): the host's attempts for this session's submitted envelopes, read from the store.
-        if (Notebook.Runs.Host is not null)
-        {
-            LastReadBack = Notebook.Runs.ReadBackAsync(SubmittedEnvelopes(), CancellationToken.None);
-        }
+        // RESTART READ-BACK (AC-L01a; Ruling 172): the host's attempts for this session's submitted envelopes, read from
+        // the store when the host BINDS: at once if it is bound, else when the shell's asynchronous open binds it.
+        Notebook.Runs.ReadBackOnEachBind(SubmittedEnvelopes);
 
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
@@ -381,8 +379,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// Ruling 159: the composer's Send follows the host's refusal. Retry is offered only where it can help — a hold
     /// elsewhere clears itself, and a window with no workspace client has nothing to retry.
     /// </summary>
+    /// <summary>Send's state: the host's refusal first (its own cause), else the restoring wait (Ruling 175), else enabled.</summary>
     private void ShowHostRefusal() =>
-        Composer.ShowHostRefusal(Notebook.Runs.HostRefusal, Notebook.Runs.CanRetryHost ? Notebook.Runs.RetryHostAsync : null);
+        Composer.ShowHostRefusal(
+            Notebook.Runs.HostRefusal ?? (_waitingForTheReadBack ? RestoringTurns : null),
+            Notebook.Runs.CanRetryHost ? Notebook.Runs.RetryHostAsync : null);
 
     /// <summary>What the last completed run reported, or null when none has completed.</summary>
     public GovernedRunResult? LastRunResult { get; private set; }
@@ -591,28 +592,55 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         var sent = (Text: Composer.Draft.SourceText, Composer.Decorations, Submission: Composer.Gate.LastSubmission, At: DateTimeOffset.Now);
         if (LastReadBack.IsCompleted)
         {
-            Admit(request, sent, beginNextTurn: true);
+            Admit(request, sent);
             return;
         }
 
         // A SEND BEFORE THE RESTART READ-BACK ENDS WAITS FOR IT (Ruling 163's ordinal condition): the restored turns
-        // take their ordinals first, so this one continues after them. The words were captured above; the composer
-        // starts the next block now.
-        Composer.BeginNextTurn();
+        // take their ordinals first, so this one continues after them. Until it is admitted the words stay in the editor
+        // and Send is disabled with the reason it waits (Ruling 175(1)), so nothing reads as lost and nothing queues. The
+        // composer keeps this reason as its status when the gesture returns, and never says "sent" (Ruling 175).
+        _waitingForTheReadBack = true;
+        ShowHostRefusal();
         LastAdmission = AfterTheReadBackAsync(request, sent);
     }
+
+    /// <summary>True while a turn sent during the restart read-back waits for it (<see cref="RestoringTurns"/>).</summary>
+    private bool _waitingForTheReadBack;
 
     /// <summary>The admission of a turn sent while the read-back ran: completed when it joined the thread.</summary>
     internal Task LastAdmission { get; private set; } = Task.CompletedTask;
 
+    /// <summary>
+    /// Ruling 175(1): the composer status, and the disabled Send's UIA help text, while a turn sent during the restart
+    /// read-back waits for it (DESIGN.md's copy).
+    /// </summary>
+    public const string RestoringTurns = "Restoring this notebook's turns. Your message sends when they are back.";
+
     private async Task AfterTheReadBackAsync(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent)
     {
         await LastReadBack.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-        await Dispatcher.InvokeAsync(() => Admit(request, sent, beginNextTurn: false));
+        await Dispatcher.InvokeAsync(() =>
+        {
+            _waitingForTheReadBack = false;
+
+            // Ruling 175(2): a host that refused keeps the words in the editor and shows its own cause (Ruling 159); the
+            // block reopens, so a Send once the host binds sends them. Nothing is admitted on their behalf.
+            if (Notebook.Runs.HostRefusal is null)
+            {
+                Admit(request, sent);
+            }
+            else
+            {
+                Composer.Gate.NextBlock();
+            }
+
+            ShowHostRefusal();
+        });
     }
 
     /// <summary>The sent turn joins the thread (accepted, or queued behind the one in flight) and its run starts or queues.</summary>
-    private void Admit(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent, bool beginNextTurn)
+    private void Admit(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent)
     {
         var (sourceText, decorations, submission, now) = sent;
         var compileSpend = submission?.CompileCost is { } cost ? new Spend(cost.TokensIn, cost.CacheRead, cost.TokensOut, cost.Requests) : null;
@@ -641,10 +669,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         LastBinding = BindRevisionAsync(ordinal, sourceText);
 
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
-        if (beginNextTurn)
-        {
-            Composer.BeginNextTurn();
-        }
+        Composer.BeginNextTurn();
 
         // The run is the MODEL's (ADR-0045 §4): queued or started there, so closing this pane leaves it running.
         var envelopeId = submission?.EnvelopeId;
@@ -689,8 +714,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         RecordConsumed(end.Ordinal, Envelope.NotRecorded, null, outcome, end.ConsumedReason);
     }
 
-    /// <summary>The restart read-back's task: the host's attempts for this session's submitted envelopes (completed when no host is bound).</summary>
-    internal Task LastReadBack { get; private set; } = Task.CompletedTask;
+    /// <summary>The restart read-back a turn sent now waits for (<see cref="NotebookRuns.ReadingBack"/>): pending while the host opens.</summary>
+    internal Task LastReadBack => Notebook.Runs.ReadingBack;
 
     /// <summary>The envelope fold's projection of <paramref name="envelopeId"/> now (G1) — null when it cannot be read, which the gate refuses as stale.</summary>
     private string? CurrentProjectionOf(string envelopeId)

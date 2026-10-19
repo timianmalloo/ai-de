@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 222 members, 76% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 223 members, 76% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**37 public types · 222 public members · 76% documented.**
+**37 public types · 223 public members · 76% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -792,6 +792,7 @@ refusal is announced (`THR-0002`), never silent.
 | `Region? CurrentRegion` | The region holding keyboard focus, or null when focus is elsewhere. |
 | `CanvasFocusResult CycleRegion(int delta)` | F6 (+1) / Shift+F6 (−1): header → thread → composer → (split) → header. A refusal is announced, never silent. |
 | `CanvasFocusResult FocusRegion(Region region, string gesture = "direct", Region? from = null)` | Focuses a region's target directly (Ctrl+Home → header, Ctrl+End → composer, the tail → the split). |
+| `string RestoringTurns = "Restoring this notebook's turns. Your message sends when they are back."` | Ruling 175(1): the composer status, and the disabled Send's UIA help text, while a turn sent during the restart read-back waits for it (DESIGN.md's copy). |
 | `Func<string, bool> PurgeConfirmation { get; set; } = plan` | The confirmation seam for `PurgeCompileHistory`: the plan's text in, yes or no out. The product asks with a message box; a test injects its answer. |
 | `int PurgedThisOpen` | How many times this document purged its compile history since it opened — the fact behind *history purged*. |
 | `string PurgeCompileHistory()` | Purges this session's compile history from the document that holds it — releases the handle, resolves the plan (the identity: name · id · workspace · file · count · newest), asks, deletes the one file, and reopens the… |

@@ -1,0 +1,31 @@
+# shell-path test: TheShellsRevive_RendersTheRecordedAttempts_OnceTheHostItOpensAsynchronouslyBinds, 10 runs at fa310512, 2026-10-19T13:55:47Z
+run 1 exit=0
+timing {"ts":"2026-10-19T13:55:49.4005344\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.3,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:55:49.4231318\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":22.4,"tries":null,"attempts":2,"error_type":null}
+run 2 exit=0
+timing {"ts":"2026-10-19T13:55:51.9680515\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.9,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:55:51.9913833\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":23.2,"tries":null,"attempts":2,"error_type":null}
+run 3 exit=0
+timing {"ts":"2026-10-19T13:55:54.4812187\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":18.5,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:55:54.5079667\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":26.6,"tries":null,"attempts":2,"error_type":null}
+run 4 exit=0
+timing {"ts":"2026-10-19T13:55:57.4372234\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":17.3,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:55:57.4617217\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":24.3,"tries":null,"attempts":2,"error_type":null}
+run 5 exit=0
+timing {"ts":"2026-10-19T13:56:00.0521712\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.6,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:00.0759231\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":23.6,"tries":null,"attempts":2,"error_type":null}
+run 6 exit=0
+timing {"ts":"2026-10-19T13:56:02.7337786\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:02.7561722\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":22.2,"tries":null,"attempts":2,"error_type":null}
+run 7 exit=0
+timing {"ts":"2026-10-19T13:56:05.2276185\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.5,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:05.2503437\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":22.6,"tries":null,"attempts":2,"error_type":null}
+run 8 exit=0
+timing {"ts":"2026-10-19T13:56:07.7034407\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":15.7,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:07.7261540\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":22.6,"tries":null,"attempts":2,"error_type":null}
+run 9 exit=0
+timing {"ts":"2026-10-19T13:56:10.2637159\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.5,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:10.2871050\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":23.3,"tries":null,"attempts":2,"error_type":null}
+run 10 exit=0
+timing {"ts":"2026-10-19T13:56:12.7357720\u002B00:00","evt":"notebook.host-open","notebook":"20261019T060000Z-binding1","outcome":"bound","duration_ms":16.4,"tries":1,"attempts":null,"error_type":null}
+timing {"ts":"2026-10-19T13:56:12.7594526\u002B00:00","evt":"notebook.read-back","notebook":"20261019T060000Z-binding1","outcome":"read","duration_ms":23.5,"tries":null,"attempts":2,"error_type":null}
