@@ -24,12 +24,6 @@ public sealed class LayoutPersistence : IDisposable
     public const string RefusedBackupSuffix = ".bak";
 
     /// <summary>
-    /// The end of the zone restore's report line for floating windows moved off a missing display, after
-    /// their quoted titles (Ruling 174 (3); seam req-01M5A6W4HGN4PREM1CK48Q5X4H, the proposed copy).
-    /// </summary>
-    internal const string RehomedFloatingSentenceTail = "moved onto this display because the saved display is not connected.";
-
-    /// <summary>
     /// The zone restore's report sentence when part of the saved file could not be read and was left out
     /// (T21 node 4; seam req-01M5A9YZ4PB93ZD06KE5EMC5X8, accepted provisionally).
     /// </summary>
@@ -177,7 +171,7 @@ public sealed class LayoutPersistence : IDisposable
                 var sentences = new List<string> { DropAnnouncement(report) };
                 if (rehomed.Count > 0)
                 {
-                    sentences.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} {RehomedFloatingSentenceTail}");
+                    sentences.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} {ZoneLayoutStore.RehomedSentenceTail}.");
                 }
 
                 if (read.PartlyRead)

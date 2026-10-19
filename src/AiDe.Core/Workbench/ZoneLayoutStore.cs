@@ -82,6 +82,13 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
 {
     public const int CurrentSchemaVersion = 1;
 
+    /// <summary>
+    /// The words after the quoted titles in the report line for a floating window moved off a display
+    /// that is no longer connected (AC-D01b), without a final period. Both restores say it: the tree
+    /// path (<see cref="LayoutStore"/>) and the zone path (<c>LayoutPersistence</c>).
+    /// </summary>
+    public const string RehomedSentenceTail = "moved onto this display because the saved display is not connected";
+
     private static readonly JsonSerializerOptions Json = new()
     {
         WriteIndented = true,
