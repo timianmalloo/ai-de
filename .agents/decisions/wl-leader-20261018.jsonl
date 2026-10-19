@@ -335,3 +335,12 @@
 {"agent": "wl-leader-20261018", "at": 1792373035.597371, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792373035.6242547, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "wl-leader-20261018", "wi": ""}
 {"agent": "wl-leader-20261018", "at": 1792373035.6523473, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.5499465, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.5735626, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t13-hygiene.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.5966957, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.6232104, "code": null, "kind": "allowed", "path": ".agents/log/wl-owner-20261018.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.6471047, "code": null, "kind": "allowed", "path": ".agents/log/wl-t13-hygiene.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.6707017, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.695271, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.721888, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader-20261018", "wi": ""}
+{"agent": "wl-leader-20261018", "at": 1792373777.7450027, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "wl-leader-20261018", "wi": ""}
