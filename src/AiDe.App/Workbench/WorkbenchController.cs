@@ -16,6 +16,13 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnouncer announcer)
 {
+    /// <summary>
+    /// Why <c>workbench.floatPane</c> refuses: a layout command run through the controller is not drawn yet, so a
+    /// floated pane would vanish while the shell said it floats (T21 n7's red; the Owner's guard order, 2026-10-19).
+    /// T20's guard shape (0ea50971). T21 removes it, red-first, when the command renders.
+    /// </summary>
+    public const string FloatUnavailableAnnouncement = "Floating a pane is not available yet. The pane stays where it is.";
+
     private readonly KeyboardResizeSession _resize = new(service);
 
     /// <summary>The stack the user is working in. Layout commands act on this.</summary>
@@ -206,8 +213,8 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
                     && ApplyAndAnnounce(new LayoutOperation.CloseSurface(FocusedSurfaceId));
 
             case "workbench.floatPane":
-                return WithFocusedStack(id =>
-                    new LayoutOperation.SetStackState(id, StackState.Floating));
+                announcer.Announce(FocusedStackId is null ? "No pane is focused." : FloatUnavailableAnnouncement);
+                return true;
 
             case "workbench.collapsePane":
                 return WithFocusedStack(id =>
