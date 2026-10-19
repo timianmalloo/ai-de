@@ -5,6 +5,7 @@ using AiDe.Core.Facts;
 using AiDe.Core.Ipc;
 using AiDe.Core.Store;
 using AiDe.Core.Store.Records;
+using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Dispatch;
 
@@ -197,38 +198,76 @@ public sealed class BoundaryDispatcher(WorkspaceStore store) : IAttemptLedger
     // ---- The native-route attempt gate (ADR-0041 §1, docs/design/workbench-loops-wl-1a.md). Runs where the STORE is.
 
     /// <summary>G0 — make the attempt durable, or return the attempt that already holds this key.</summary>
+    /// <remarks>
+    /// Read-before-write inside ONE writer transaction: the existence check and the insert cannot be split by another
+    /// writer, because the writer holds the store's single-writer semaphore. Any prior attempt wins, even after the
+    /// epoch moved — exactly <see cref="Begin"/>'s rule, so a retry after a lost reply returns the receipt.
+    /// </remarks>
     public AttemptBeginResult BeginAttempt(AttemptRow attempt)
     {
         ArgumentNullException.ThrowIfNull(attempt);
 
-        if (attempt.WorkspaceEpoch != store.CoreEpoch)
-        {
-            throw new WorkspaceStoreException(DispatchErrorCodes.EpochStale,
-                $"attempt epoch {attempt.WorkspaceEpoch} is not the current {store.CoreEpoch}");
-        }
-
+        bool existed;
         using (var writer = store.BeginWrite())
         {
-            writer.AppendAttempt(attempt);
-            writer.Commit();
+            existed = writer.AttemptExists(attempt.DispatchKey);
+            if (!existed)
+            {
+                if (attempt.WorkspaceEpoch != store.CoreEpoch)
+                {
+                    throw new WorkspaceStoreException(DispatchErrorCodes.EpochStale,
+                        $"attempt epoch {attempt.WorkspaceEpoch} is not the current {store.CoreEpoch}");
+                }
+
+                writer.AppendAttempt(attempt);
+                writer.Commit();
+            }
         }
 
-        return new AttemptBeginResult(ReadAttempt(attempt.DispatchKey)!, AlreadyAttempted: false);
+        return new AttemptBeginResult(ReadAttempt(attempt.DispatchKey)!, AlreadyAttempted: existed);
     }
 
-    /// <summary>G1–G3 — append one outcome event to an attempt.</summary>
+    /// <summary>G1–G3 — append one outcome event to an attempt, unless the attempt may not take it.</summary>
+    /// <remarks>
+    /// <para>Refused (not committed, never thrown): a second <see cref="DispatchState.Dispatched"/>; a
+    /// <c>Dispatched</c> after a terminal — a sweep that resolved the attempt first wins, and no prompt may follow it
+    /// (design, DSA Blocker 1); a second terminal — the first stands (ADR-0041 §2). The checks run in the writer
+    /// transaction; the partial unique indexes are the net, and their violation maps to the same answer.</para>
+    /// </remarks>
     public AttemptAppendResult AppendAttemptOutcome(OutcomeRow outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);
 
+        var committed = false;
         using (var writer = store.BeginWrite())
         {
-            writer.AppendOutcome(outcome);
-            writer.Commit();
+            if (Admits(writer, outcome))
+            {
+                try
+                {
+                    writer.AppendOutcome(outcome);
+                    writer.Commit();
+                    committed = true;
+                }
+                catch (SqliteException error) when (error.SqliteErrorCode == ConstraintViolation && error.Message.Contains("UNIQUE", StringComparison.Ordinal))
+                {
+                    committed = false;
+                }
+            }
         }
 
-        return new AttemptAppendResult(ReadAttempt(outcome.DispatchKey)!, Committed: true);
+        return new AttemptAppendResult(ReadAttempt(outcome.DispatchKey)!, committed);
     }
+
+    /// <summary>SQLITE_CONSTRAINT; the message names UNIQUE when a partial unique index raised it.</summary>
+    private const int ConstraintViolation = 19;
+
+    private static bool Admits(StoreWriter writer, OutcomeRow outcome) => outcome.State switch
+    {
+        DispatchState.Dispatched => !writer.HasOutcome(outcome.DispatchKey, [DispatchState.Dispatched, .. AttemptReceipt.TerminalStates]),
+        var state when AttemptReceipt.TerminalStates.Contains(state) => !writer.HasOutcome(outcome.DispatchKey, AttemptReceipt.TerminalStates),
+        _ => true,
+    };
 
     /// <summary>The attempt row and every outcome event on it, in total order; null when the key was never attempted.</summary>
     public AttemptReceipt? ReadAttempt(string dispatchKey)
@@ -241,22 +280,28 @@ public sealed class BoundaryDispatcher(WorkspaceStore store) : IAttemptLedger
     }
 
     /// <summary>Resolves every abandoned native attempt to <see cref="DispatchState.DeliveryUnknown"/> with a cause.</summary>
+    /// <remarks>
+    /// One writer transaction: the candidates are selected, the cause computed and the rows inserted inside it (design,
+    /// DSA 4) — never the PTY sweep's read-then-write. The caller's live set is excluded; so is a queued successor whose
+    /// predecessor has no <c>ResponseComplete</c> (it folds to "Queued — awaits you"). PTY rows are not candidates.
+    /// </remarks>
     public AttemptSweepResult SweepAttempts(AttemptSweepRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        List<string> pending;
-        using (var reader = store.BeginRead())
-        {
-            pending = [.. reader.PendingDispatchKeys()];
-        }
-
+        var live = request.LiveKeys.ToHashSet(StringComparer.Ordinal);
         var swept = new List<OutcomeRow>();
         using (var writer = store.BeginWrite())
         {
-            foreach (var key in pending)
+            foreach (var (key, dispatched) in writer.UnresolvedNativeAttempts())
             {
-                var row = new OutcomeRow(key, DispatchState.DeliveryUnknown, DispatchErrorCodes.DeliveryUnknown);
+                if (live.Contains(key))
+                {
+                    continue;
+                }
+
+                var row = new OutcomeRow(key, DispatchState.DeliveryUnknown, DispatchErrorCodes.DeliveryUnknown,
+                    dispatched ? request.DispatchedCause : "never_dispatched");
                 writer.AppendOutcome(row);
                 swept.Add(row);
             }

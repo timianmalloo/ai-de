@@ -1,0 +1,12 @@
+# dispatch-key-idempotency — green
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.BeginAgain_AfterTheEpochMoved_StillReturnsTheExistingReceipt [22 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.BeginTwice_WritesOneAttemptRow_AndTheSecondIsAlreadyAttempted [21 ms]
+     Passed: 9
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.SameDispatchKeyTwice_LaunchesOnce [248 ms]
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.TwoConcurrentDispatchesOfOneKey_LaunchOnce [153 ms]
+
+runs:

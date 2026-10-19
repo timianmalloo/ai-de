@@ -1,0 +1,15 @@
+# write-ahead-crash-windows — green
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_SkipsLiveAttempts [25 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.ThePtySweep_NeverTouchesANativeAttempt [24 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_ResolvesEachAbandonedAttempt_ToDeliveryUnknownWithItsCause [51 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.Sweep_SkipsAQueuedSuccessorWhosePredecessorLacksResponseComplete [37 ms]
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W1, cause: "never_dispatched", promptsBeforeTheCrash: 0) [47 ms]
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W2, cause: "never_dispatched", promptsBeforeTheCrash: 0) [133 ms]
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W3, cause: "host_restart", promptsBeforeTheCrash: 0) [138 ms]
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(window: W4, cause: "host_restart", promptsBeforeTheCrash: 1) [141 ms]
+
+runs:

@@ -1,0 +1,8 @@
+# sole-host — green
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.ASecondHost_IsRefused [14 ms]
+
+runs:

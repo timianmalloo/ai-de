@@ -1,0 +1,10 @@
+# gate — green
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.ASecondTerminal_IsNotCommitted_AndTheFirstStands [75 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.Dispatched_AfterATerminal_IsNotCommitted [29 ms]
+  Passed AiDe.Core.Tests.Attempts.AttemptGateTests.ASecondDispatchedRow_IsNotCommitted [26 ms]
+
+runs:

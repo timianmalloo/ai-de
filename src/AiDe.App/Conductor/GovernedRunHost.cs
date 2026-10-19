@@ -437,8 +437,16 @@ public static class GovernedRunHost
             return;
         }
 
-        await attempt.Ledger.AppendAttemptOutcomeAsync(
+        // The host launches only when ITS OWN Dispatched row committed (partial unique index). Not committed — a
+        // second launcher, or a sweep that resolved the attempt first — means no prompt is sent.
+        var dispatched = await attempt.Ledger.AppendAttemptOutcomeAsync(
             new OutcomeRow(attempt.DispatchKey, DispatchState.Dispatched), cancellationToken).ConfigureAwait(false);
+        if (!dispatched.Committed)
+        {
+            throw new AgentPlaneException(AttemptErrorCodes.NotDispatched,
+                $"attempt {attempt.DispatchKey}: the Dispatched row did not commit; no prompt is sent");
+        }
+
         report($"attempt {attempt.DispatchKey}: Dispatched");
     }
 
@@ -1022,7 +1030,16 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
         ArgumentException.ThrowIfNullOrEmpty(hostLockFile);
 
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(hostLockFile))!);
-        var hostLock = new FileStream(hostLockFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+        FileStream hostLock;
+        try
+        {
+            hostLock = new FileStream(hostLockFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        }
+        catch (IOException error)
+        {
+            throw new AgentPlaneException(AttemptErrorCodes.HostNotSole,
+                $"another attempt host holds '{hostLockFile}' ({error.Message}); a second host can neither dispatch nor sweep");
+        }
 
         var host = new AttemptHost(ledger, hostLock);
         await host.SweepAsync(AttemptCauses.HostRestart, cancellationToken).ConfigureAwait(false);
@@ -1033,24 +1050,65 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
     {
         ArgumentNullException.ThrowIfNull(dispatch);
 
+        if (dispatch.QueuedAfterDispatchKey is not null)
+        {
+            // The queue's launch path (live from queue time, launched after the predecessor's ResponseComplete) is
+            // WL-1a node 2; refused before any write rather than launched at once, which would skip the predecessor.
+            throw new NotSupportedException("a queued dispatch is WL-1a node 2 (docs/proof/workbench-loops-wl-1a/host/handoff.md)");
+        }
+
         var key = dispatch.DispatchKey;
         var owner = new object();
-        AttemptBeginResult begun;
 
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            _live[key] = owner;
-            begun = await _ledger.BeginAttemptAsync(dispatch.ToRow(), cancellationToken).ConfigureAwait(false);
+            // L before G0, so a launch in progress is never swept. Already live: a duplicate in flight — launch
+            // nothing and touch nothing; the running owner's entry stays (only it deregisters).
+            if (!_live.TryAdd(key, owner))
+            {
+                var running = await _ledger.ReadAttemptAsync(key, cancellationToken).ConfigureAwait(false);
+                return Unlaunched(running!);
+            }
+
+            AttemptBeginResult begun;
+            try
+            {
+                begun = await _ledger.BeginAttemptAsync(dispatch.ToRow(), cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception error) when (error is IOException or OperationCanceledException or WorkspaceStoreException)
+            {
+                _live.Remove(key);
+                throw;
+            }
+
+            if (begun.AlreadyAttempted)
+            {
+                _live.Remove(key);
+                return Unlaunched(begun.Receipt);
+            }
         }
         finally
         {
             _gate.Release();
         }
 
-        var completion = LaunchAsync(dispatch, key, owner);
-        return new AttemptStart(begun.Receipt, AlreadyAttempted: false, completion);
+        // G1: the envelope's projection NOW against the one the attempt was prepared from (AC-E04b). No process.
+        if (!string.Equals(dispatch.CurrentProjectionSha(), dispatch.ProjectionSha, StringComparison.Ordinal))
+        {
+            var rejected = await _ledger.AppendAttemptOutcomeAsync(
+                new OutcomeRow(key, DispatchState.Rejected, AttemptErrorCodes.StalePrepare, Detail: "rejected_stale"),
+                cancellationToken).ConfigureAwait(false);
+            await DeregisterAsync(key, owner).ConfigureAwait(false);
+            return new AttemptStart(rejected.Receipt, AlreadyAttempted: false, Task.FromResult(rejected.Receipt));
+        }
+
+        var started = (await _ledger.ReadAttemptAsync(key, cancellationToken).ConfigureAwait(false))!;
+        return new AttemptStart(started, AlreadyAttempted: false, LaunchAsync(dispatch, key, owner));
     }
+
+    private static AttemptStart Unlaunched(AttemptReceipt receipt) =>
+        new(receipt, AlreadyAttempted: true, Task.FromResult(receipt));
 
     public Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken) =>
         _ledger.ReadAttemptAsync(dispatchKey, cancellationToken);
