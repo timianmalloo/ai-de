@@ -1351,6 +1351,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         return chrome;
     }
 
+    /// <summary>The compile-mode ladder as the gates read it now.</summary>
+    public Func<AiDe.Core.Sessions.CompileModeAvailability>? CompileModeLadder { get; set; }
+
     /// <summary>The session settings as a Popup (SC1's header): the four values, read here — editing them is CV-3's settings model.</summary>
     private Popup BuildSettingsPopup(Button target)
     {
