@@ -36,6 +36,15 @@ summary: "Node 3: Ruling 168's measure retargeted (startup, wide and the cap gre
   - Rule 14: today "Open log" opens the Console at the turn. Re-pointing it changes pinned behaviour.
 - **Owed to node 5's migration:** `ASessionDocumentIsShownWhereTheOperatorIsTests` (2).
 
+## Suites (`suite-node3.txt`)
+
+- **Core:** 3019 passed, 0 failed.
+- **App:** 1123 passed, 4 failed (was 9). The four failures:
+  - `TheThreadMeasureMovesWithTheNotebookTests.TheThreadsMeasure_IsHeldBothWaysInTheCenter_NeverClippedNeverStretched(row: "minimum", width: 820, height: 520)`, waiting on seam `req-01M59XDZY6FSA83JGEXEJYCGB2`.
+  - `ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` and `…ANewSessionRendersInTheOperatorsRestoredArrangement`, which wait for node 5's migration.
+  - `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, which passes when run alone (1/1). It is solo-flaky (Ruling 155).
+- **docs-graph validate:** 0 problems. The one orphan is this file's id, which is index drift that the join regenerates.
+
 ## Next step
 
 Node 4 or a re-run of node 3: answer the two seams, then build the execution kind red-first.
