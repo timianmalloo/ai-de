@@ -1,45 +1,55 @@
-# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Opus · node 1 (investigate)
+# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Opus · node 2 (the fix)
 
-**Goal (Owner, 2026-10-19 ~15:50Z, high priority, ahead of every WL-1b join):** the user submitted a prompt during the
-WL-1a walk-through, and the compiled prompt did not show in the compiled field. This is a **recurrence of Ruling 96**
-(`docs/notes/addendum-c-council-rulings.md`, "Ruling 96 — F-E", about :1626-1634). Ruling 96's cause was only **Inferred**
-("consistent with the belt not re-measuring on expand"), and its measurement was made a condition.
-**This node runs `/investigate`** (`.claude/skills/investigate/SKILL.md`). It **stops for review before any fix lands**:
-the Owner reads the root cause first.
-**Done when, all in this node:**
-1. **Reproduced on the real composed tree with an actual submit.** Use the real `WorkbenchShell` / `SessionDocumentSurface`
-   / `ComposerSurface` composition, as the existing on-screen composer tests build it. Submit with Ctrl+Enter or the send
-   path the user takes (demo script step 5, `docs/proof/workbench-loops-wl-1a.md`), not just a draft change. Then expand
-   the compiled disclosure. Record `_compiled.Text.Length`, `_compiled.ActualHeight` and `IsExpanded`, before and after
-   the submit, in `docs/proof/workbench-loops-wl-1a/compiled-field/reproduction.txt`. Say which one is wrong.
-2. **The verified root cause, by file:line.** Verified means you observed it. A plausible chain is not enough (NG rules).
-   If the cause differs before and after a submit, name both.
-3. **Why Ruling 96's control did not catch it, as a defect class.** Open the test Ruling 96's condition (2) produced
-   (find it; it extends "the existing on-screen test" to the content). State what it drives and what it does not drive.
-   For example: a draft change but no submit, or a fixture composition but not the real one. Append
-   `DC-NEW-wl-t28-compiled` to `docs/lessons/defect-classes.md` with class / sweep / derive / prevent. The sweep covers
-   every other test that asserts composer content on a path the user's gesture does not take.
-4. **A red test, committed red only.** It drives a real submit and asserts that the expanded field shows the non-empty
-   compiled text (`Text == RenderView(draft).Text`, non-empty, `ActualHeight ≥ CompiledPromptMinHeight`). Save
-   `docs/proof/workbench-loops-wl-1a/compiled-field/compiled-after-submit-red.txt`. **Do not write the fix in this node.**
-5. `docs/proof/workbench-loops-wl-1a/compiled-field/README.md`, with the root cause, the class, the phased repair plan (code + tests) and its confidence labels.
-   Also `handoff.md`.
+**Goal (Ruling 181, read it in `docs/notes/addendum-c-council-rulings.md`):** after a submit, the composer's compiled field
+keeps showing what was sent, headed **"Compiled prompt — sent as b{n}"**, until the next keystroke in the editor. It is
+display-only, and it can never be resent.
+**Node 1 is accepted** (e3ec0278; the Owner checked `ComposerSendGate.cs:230/:347` and `ComposerSurface.cs:1224-1225`).
+The root cause is Verified: `Admit` → `BeginNextTurn` → `NextBlock` (`RenderedView = null`) → empty draft → `_compiled.Text = ""`.
+The red test is `f3bdf334`.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 12 min by mail. The Leader extends
-the kick for this node to 20 min, because reproduction on the real tree is one long check; rule 16's 120 calls / 200k cap
-still binds.
+**Every test in this node drives the user's real gesture:** type through `SetFieldText`, press Ctrl+Enter through
+`OnAcceleratorKey`, open the disclosure through its toggle peer, and read the open field on the real
+`SessionDocumentSurface` composition (your node-1 reproduction).
 
-## Desktop hold (DC-NEW-wl-leader3)
-Other tracks may run App UI tests in parallel. A result that says "Ruling 115 desktop hold is occupied" is **not a
-failure and not a pass**: record it, wait two minutes, and re-run. Rules 19 and 20 hold.
+**This node (n2), each red then green:**
+- **(A) Ruling 181 (1).** After a submit the field shows the sent turn's compiled text under the heading
+  `Compiled prompt — sent as b{n}` (one const; the same words in UIA, name or ItemStatus). The next editor keystroke
+  returns it to the live view of the new draft. Add a DESIGN.md row amending line 879's "exactly the outgoing text" to
+  name the sent-state. Your node-1 red `f3bdf334` turns green, with its oracle updated to the heading if needed. Say so
+  in handoff.md.
+- **(B) Ruling 181 (2), the HARD resend guard.** The shown text never reaches `ComposerSendGate.RenderedView`, because
+  `:347` sends `RenderedView ?? RenderView(...)`. Red: a second Ctrl+Enter right after a submit, with no keystroke,
+  sends **nothing**. Assert no new turn, no dispatch, and no new attempt row, plus the gate's own refusal ("an empty
+  prompt is not a task"). Prove the red by planting the leak (route the display through `RenderedView`), and record it
+  as a mutation red. Also cover a queued send (Ruling 95) and a held send (Ruling 175), so each shows its own state, not
+  the sent-state.
+- **(C) Ruling 181 (3), phase 2: re-drive Ruling 96's tests through the gesture.** In
+  `tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs`, `TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount`
+  (:107-142) gets a typed draft and a **non-empty** assertion. `…OpenedAtTheOperatorsBelt_RendersTheCompiledText`
+  (:163-220) drives the composition and the gesture. The sibling at
+  `Composer/TheComposerRendersItsFieldLevelErrorsTests.cs:381` moves onto a `SessionDocumentSurface`, or is relabelled
+  pre-admit, with its name saying so. Each must fail on the unfixed code first: show it against `f3bdf334`'s parent
+  state, or by a mutation, and save the output.
+**Next node (n3), not this one:** phase 3, the class gate. A content oracle on a user-visible field must drive the user's
+gesture, and must not be set up by changing the fixture directly.
+
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 15 min by mail.
+**Desktop hold:** a "desktop hold occupied" result is re-run after 2 min and logged in `docs/proof/workbench-loops-wl-1a/compiled-field/desktop-hold.txt`. It is
+never counted as a pass or a fail. Rules 19 and 20 apply.
 
 ## Owned authored paths
-New tests under `tests/AiDe.App.Tests/Workbench/Composer/` (or beside the existing on-screen composer test; name the
-file in handoff.md); `docs/lessons/defect-classes.md` (your DC-NEW entry only); `docs/proof/workbench-loops-wl-1a/compiled-field/**`. **Reading any file is
-free. Editing product code is not in this node.**
+- `src/AiDe.App/Workbench/Composer/ComposerSurface.cs` (`BeginNextTurn`, `RenderCompiledView`, the compiled field's
+  heading/UIA, and the new const only)
+- the `DESIGN.md` row for line 879
+- `tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs` (the two tests above)
+- `tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs` (the :381 test only)
+- your node-1 test file and new tests beside it
+- `docs/proof/workbench-loops-wl-1a/compiled-field/**`
+
+`ComposerSendGate.cs` and `SessionDocumentSurface.cs` are **read only**. A needed edit there is a seam request.
 
 ## Not in scope
-The fix (node 2, after the Owner's read of the root cause). The goal / done-criteria prefill (a separate assessment, T29).
+The prefill (T30, Ruling 180), which follows on this file after this node joins. The class gate (n3).
 
 ## Standing rules for this track (CTX-F — every line binds)
 
@@ -124,3 +134,7 @@ and a default.
     post on it reads `USER DEMO IN PROGRESS`, with no later `USER DEMO DONE`, run **no App suite, no UI probe and no
     real-lane test**, in any tree. Core suites and docs-only work may continue. Read the board (rule 19's command) before
     every App, probe or real-lane run.
+21. **Every output file you write stays in your own tree (DC-NEW-wl-leader3, 2nd instance).** Test logs, suite runs and
+    scratch files go under `docs/proof/workbench-loops-wl-1a/compiled-field/` or a folder named for your track inside `C:\Projects\ai-de-wl1a-compiled-field`. Never use the session
+    scratchpad, `%TEMP%` or any other shared path: sub-agents share one session scratchpad, and T21's suite overwrote
+    T28's result files there (2026-10-19 ~16:05Z), so T28 had to discard a whole suite run.
