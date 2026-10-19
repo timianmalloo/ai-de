@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T16:46:33Z",
+  "generated": "2026-10-19T17:23:17Z",
   "audit": [
     {
       "actor": null,
@@ -25535,71 +25535,172 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5AD3145HS0KBGTPWG6WQRSH",
-      "shortname": "wl-t21-float",
-      "datetime": "2026-10-19T15:39:39Z",
-      "session": "wl-t21-float",
-      "prompt": "T21 n5: (A) the partial-read sentence names the left-out surfaces by title; (B) a null element in a saved-layout list loads with the sentence and never throws; (C) floating-window ids are unique across a restore",
-      "summary": "A: unknown zone entries left out and reported, LeftOutTitles + PartlyReadNamingPrefix, DESIGN.md row with both forms (f6e7842e/733391b6). B: ZoneLayoutStore.Present drops JSON nulls in zones/floating/tabs/children/surfaces and reports; DC-NEW-wl-t21-float controlled for the zone reader (8c533157/3b12744f). C: Float skips float-N ids in use (f3d14d3b/4d43a871). Core suite 3043/0/1; App suite owed under rule 20.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Float and redock are real; a malformed saved layout loads with a report line and never throws; close condition 2",
+      "datetime": "2026-10-19T15:39:39Z",
       "done_when": "A, B, C each red then green with saved output and commits; whole Core suite saved; README and hand-off updated",
-      "tier": "T2",
+      "duration_seconds": 830.0,
       "fan_out": 0,
+      "goal": "Float and redock are real; a malformed saved layout loads with a report line and never throws; close condition 2",
+      "id": "al-01M5AD3145HS0KBGTPWG6WQRSH",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 n5: (A) the partial-read sentence names the left-out surfaces by title; (B) a null element in a saved-layout list loads with the sentence and never throws; (C) floating-window ids are unique across a restore",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
       "started_at": "2026-10-19T15:25:49Z",
-      "duration_seconds": 830.0
+      "summary": "A: unknown zone entries left out and reported, LeftOutTitles + PartlyReadNamingPrefix, DESIGN.md row with both forms (f6e7842e/733391b6). B: ZoneLayoutStore.Present drops JSON nulls in zones/floating/tabs/children/surfaces and reports; DC-NEW-wl-t21-float controlled for the zone reader (8c533157/3b12744f). C: Float skips float-N ids in use (f3d14d3b/4d43a871). Core suite 3043/0/1; App suite owed under rule 20.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M5AFAMY6TDCCWZSCX3CKS7BY",
-      "shortname": "wl-t21-float",
-      "datetime": "2026-10-19T16:18:46Z",
-      "session": "wl-t21-float",
-      "prompt": "T21 n6: the owed App suite at node 5's head; floatPane floats the focused tab (close condition 3); duplicate floating ids in a saved file load with the partial-read sentence; float-view ids after a restart",
-      "summary": "App suite at f21fdf95 1165/1/2 (known SolutionTreeChord precondition). A focused tab red 2a590c8a green 3c433c3f. B floating id in use red 5327d810 green 51ae8820 (DC-NEW-wl-t21-float-c). C float-view id collision real, red f5fc73b0 green 9973a1ce. Core 3046/0/1, App 1166/1/2 at 51ae8820.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-wl-s/float/README.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Float and redock are real: floatPane floats the focused tab, a malformed saved layout with an id in use loads with a report line and never throws, and native float ids never collide after a restart",
+      "datetime": "2026-10-19T16:18:46Z",
       "done_when": "Checks A, B, C each red then green and committed; Core and App whole suites saved as suite-node6.txt; README and handoff updated; done mail sent",
-      "tier": "T2",
+      "duration_seconds": 1725.0,
       "fan_out": 0,
+      "goal": "Float and redock are real: floatPane floats the focused tab, a malformed saved layout with an id in use loads with a report line and never throws, and native float ids never collide after a restart",
+      "id": "al-01M5AFAMY6TDCCWZSCX3CKS7BY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 n6: the owed App suite at node 5's head; floatPane floats the focused tab (close condition 3); duplicate floating ids in a saved file load with the partial-read sentence; float-view ids after a restart",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
       "started_at": "2026-10-19T15:50:01Z",
-      "duration_seconds": 1725.0
+      "summary": "App suite at f21fdf95 1165/1/2 (known SolutionTreeChord precondition). A focused tab red 2a590c8a green 3c433c3f. B floating id in use red 5327d810 green 51ae8820 (DC-NEW-wl-t21-float-c). C float-view id collision real, red f5fc73b0 green 9973a1ce. Core 3046/0/1, App 1166/1/2 at 51ae8820.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M5AG2KPZWN89AM9VAFX5RW7F",
-      "shortname": "join-wls-float",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T16:31:51Z",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Ruling 171 (2): float and redock made real in WL-S; T21's own close conditions 1-3",
+      "id": "al-01M5AG2KPZWN89AM9VAFX5RW7F",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T16:31:50Z",
+      "summary": "T21 (Opus, nodes 1-6): floating panes render, move, close, persist their bounds (Ruling 174) and are read back; T20's guard and DOCK2/DOCK3 removed red-first; schema-1 freeze as an allow-list of the four bounds fields; malformed saved layouts load with the partial-read sentence naming dropped tabs by saved Title, never throw; floating ids unique across restore (model and adapter); floatPane floats the focused tab. Recount ran in full (App 1169 counted; Core 3047/2864/183 completed); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head 0ccb0299 AND on the first parent a1555fc1 in a clean detached tree (Ruling 155 (3): excused, NOT CHECKED); --continue --docs-only skips only that re-run. Close condition 4 (live-notebook float) follows T11's join. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:46:33Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1582.0,
+      "fan_out": 0,
+      "goal": "Ruling 171 (2): float and redock made real in WL-S",
+      "id": "al-01M5AGXGHQ29FVE5XK2T0K1X6F",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 join bcd3d121",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T16:20:11Z",
+      "summary": "Recount ran in full at step 4 (App 1169 counted; Core 3047 / portable 2864 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'foreground not held; SendInput would prove another window' (probe exit 2). It refused ALONE on the join head 0ccb0299 and ALONE on the first parent a1555fc1 in a clean detached tree (C:/Projects/rt-t21p, removed), same environment, same words: Ruling 155 (3) excused, NOT CHECKED; the join continued with --docs-only only to skip that re-run. The other two non-passes are the named expected skips. No App suite ran elsewhere during the join (T28 held by rule 19). Step 8 strict 6/48. Ratchet vs first parent a1555fc1 on clean trees, head bcd3d121: PASS 0/49; the pack verify-ruling-citations copy is excluded under Ruling 160 (PD-1; +2 findings for Rulings 171 and 174, which the pack copy looks for in rulings.md), the repo copy is ok (strict) 0/0. Release build 0 errors. T21 (Opus, 6 nodes): float and redock real (Ruling 171 (2)), Ruling 174 bounds, T21 close conditions 1-3; close condition 4 (live-notebook float and redock) is owed after the T11 join. WL-S is not accepted until it is green (Ruling 171 (3)).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:18:34Z",
+      "done_when": "reproduction.txt, root cause by file:line, DC-NEW entry, red test committed, README and handoff",
+      "duration_seconds": 1711.0,
+      "fan_out": 0,
+      "goal": "Verified root cause of the compiled field empty after a submit, red test, class, repair plan; no fix",
+      "id": "al-01M5AFA9MTF1SFCW6YJ4PEA7GC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T28 wl1a-compiled-field n1: /investigate the Ruling 96 recurrence (compiled prompt not shown in the compiled field after a submit); red only, root cause to the Owner first",
+      "session": "wl-t28-compiled",
+      "shortname": "wl-t28-compiled",
+      "skill": "investigate",
+      "started_at": "2026-10-19T15:50:03Z",
+      "summary": "Reproduced on the product composition with a real Ctrl+Enter: _compiled.Text.Length 69 -> 0, ActualHeight 48 (floor), IsExpanded true. Verified root cause: SessionDocumentSurface.Admit (:672) -> ComposerSurface.BeginNextTurn empties the draft (:1138) and re-renders the live-draft view (:1149, :1225). Not layout. Ruling 96's tests open over an unsent draft (theory oracle is empty==empty). DC-NEW-wl-t28-compiled registered; red test f3bdf334; phased plan with Owner decision (A keep sent prompt / B empty-state pointer); seam req-01M5AE5QGZMKFC36RA4C93QSPJ.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:56:18Z",
+      "done_when": "A, B, C red then green through the gesture; suites saved as suite-node2.txt; README/handoff updated",
+      "duration_seconds": 2158.0,
+      "fan_out": 0,
+      "goal": "the compiled field shows the sent turn after a submit, headed sent as b{n}, display-only, until the next keystroke",
+      "id": "al-01M5AHFBV9RD11R45347CN1ZCX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T28 n2: after a submit the compiled field keeps showing what was sent, headed 'Compiled prompt — sent as b{n}', display-only, never resent (Ruling 181)",
+      "session": "wl-t28-compiled",
+      "shortname": "wl-t28-compiled",
+      "skill": "implement",
+      "started_at": "2026-10-19T16:20:20Z",
+      "summary": "Ruling 181 (1)-(3) red then green through the gesture: ComposerSurface keeps the sent turn as display-only state until the next keystroke (eaf8966c red, 1edfc015 red evidence incl. planted-leak mutation M1 resending b1, 5da5d032 green 12/12); Ruling 96 tests re-driven; DESIGN.md:879 amended; Core 3024/0/1, App 1154/1/2 (Ruling 155(3) chord probe only)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5AJ6X966F5B88EAJ3G5FVNK",
+      "shortname": "join-wl1a-compiled-field",
+      "datetime": "2026-10-19T17:09:09Z",
       "session": "wl-leader3-20261019",
       "prompt": "the join of the resolved merge into main",
-      "summary": "T21 (Opus, nodes 1-6): floating panes render, move, close, persist their bounds (Ruling 174) and are read back; T20's guard and DOCK2/DOCK3 removed red-first; schema-1 freeze as an allow-list of the four bounds fields; malformed saved layouts load with the partial-read sentence naming dropped tabs by saved Title, never throw; floating ids unique across restore (model and adapter); floatPane floats the focused tab. Recount ran in full (App 1169 counted; Core 3047/2864/183 completed); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head 0ccb0299 AND on the first parent a1555fc1 in a clean detached tree (Ruling 155 (3): excused, NOT CHECKED); --continue --docs-only skips only that re-run. Close condition 4 (live-notebook float) follows T11's join. recount_seconds=0 (docs_only=True).",
+      "summary": "T28 (Opus, 2 nodes). Root cause VERIFIED: a submit's Admit -> BeginNextTurn empties the draft and the compiled field renders '' (ComposerSurface.cs:1225 the only writer); Ruling 96's layout cause ruled out; DC-NEW-wl-t28-compiled. Ruling 181: the sent turn is kept display-only under 'Compiled prompt - sent as b{n}' until the next keystroke; ShowCompiled is the only writer; RenderedView never fed, so a second Ctrl+Enter sends nothing (planted-leak mutation red resent 2 turns); Ruling 96's tests re-driven through the gesture. Recount ran in full (App 1176 counted; Core 3047/2864/183); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head b0c44585 and on the first parent 76581e0b in a clean detached tree (Ruling 155 (3), NOT CHECKED); --continue --docs-only skips only that re-run. n3 next: queued-as heading (Owner) + class gate. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Ruling 171 (2): float and redock made real in WL-S; T21's own close conditions 1-3",
+      "goal": "Owner: the user's compiled-field report fixed at its verified root cause (Ruling 181)",
       "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -25608,32 +25709,32 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T16:31:50Z",
+      "started_at": "2026-10-19T17:09:08Z",
       "duration_seconds": 1.0
     },
     {
-      "id": "al-01M5AGXGHQ29FVE5XK2T0K1X6F",
-      "shortname": "join-wls-float-step8",
-      "datetime": "2026-10-19T16:46:33Z",
+      "id": "al-01M5AK0SMF1K75QPQZ75PVR2T8",
+      "shortname": "join-wl1a-compiled-field-step8",
+      "datetime": "2026-10-19T17:23:17Z",
       "session": "wl-leader3-20261019",
-      "prompt": "Step 8 (Rulings 151/155/160) for the T21 join bcd3d121",
-      "summary": "Recount ran in full at step 4 (App 1169 counted; Core 3047 / portable 2864 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'foreground not held; SendInput would prove another window' (probe exit 2). It refused ALONE on the join head 0ccb0299 and ALONE on the first parent a1555fc1 in a clean detached tree (C:/Projects/rt-t21p, removed), same environment, same words: Ruling 155 (3) excused, NOT CHECKED; the join continued with --docs-only only to skip that re-run. The other two non-passes are the named expected skips. No App suite ran elsewhere during the join (T28 held by rule 19). Step 8 strict 6/48. Ratchet vs first parent a1555fc1 on clean trees, head bcd3d121: PASS 0/49; the pack verify-ruling-citations copy is excluded under Ruling 160 (PD-1; +2 findings for Rulings 171 and 174, which the pack copy looks for in rulings.md), the repo copy is ok (strict) 0/0. Release build 0 errors. T21 (Opus, 6 nodes): float and redock real (Ruling 171 (2)), Ruling 174 bounds, T21 close conditions 1-3; close condition 4 (live-notebook float and redock) is owed after the T11 join. WL-S is not accepted until it is green (Ruling 171 (3)).",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T28 join a8a30535",
+      "summary": "Recount ran in full at step 4 (App 1176 counted; Core 3047 / portable 2864 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'foreground not held' (probe exit 2). It refused ALONE on the join head b0c44585 and ALONE on the first parent 76581e0b in a clean detached tree (C:/Projects/rt-t28p, removed), same words: Ruling 155 (3) excused, NOT CHECKED; --continue --docs-only skipped only that re-run. The other two non-passes are the named expected skips. Step 8 strict 6/48. Ratchet vs 76581e0b on clean trees, head a8a30535: PASS 0/49; the pack verify-ruling-citations copy is excluded under Ruling 160 (PD-1; +findings for Rulings 180/181, which it looks for in rulings.md); the repo copy is ok (strict). Release build 0 errors. T28 (Opus, n1 investigate + n2 fix, Ruling 181): the user's WL-1a compiled-field report is fixed at its verified root cause. Owner accepted n2 on the Leader's read of 5da5d032. n3 follows: queued-as heading (Owner direction under Ruling 181 (1)) and the DC-NEW-wl-t28-compiled class gate.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Ruling 171 (2): float and redock made real in WL-S",
+      "goal": "Owner: the user's compiled-field report fixed at its verified root cause (Ruling 181)",
       "done_when": "ratchet PASS; step-8 recorded before push",
       "tier": "T2",
       "fan_out": 0,
-      "started_at": "2026-10-19T16:20:11Z",
-      "duration_seconds": 1582.0
+      "started_at": "2026-10-19T16:48:22Z",
+      "duration_seconds": 2095.0
     }
   ],
   "changes": [
@@ -31202,6 +31303,24 @@ window.AUDIT_DATA = {
       "ts": "2026-10-19T16:37:22Z",
       "from": "wl-leader3-20261019",
       "to": "wl-t28-compiled",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AHFRYWPS5G0PA5W0TB525V",
+      "ts": "2026-10-19T16:56:31Z",
+      "from": "wl-t28-compiled",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t28-compiled"
+    },
+    {
+      "id": "mail-01M5AHQ3GPXTW1VX8SPGM6GXB6",
+      "ts": "2026-10-19T17:00:31Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t11-kinds",
       "kind": "kick",
       "ref": null,
       "session": "wl-leader3-20261019"

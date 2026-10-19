@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using AiDe.App.Tests.Composer;
 using AiDe.App.Tests.Sessions.Thread;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Composer;
@@ -109,8 +110,13 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
         Sta.Run(() =>
         {
             using var document = ThreadFixtures.Document(Turns(count));
-            var g = Layout(document, LeftWidth, StartupHeight);
             var composer = document.Composer;
+
+            // A TYPED DRAFT (Ruling 181 (3)): the words arrive through the page's input verb, so the oracle below reads
+            // a non-empty compile — over an empty draft "" == "" held whether or not the field was ever written.
+            ConfigureGoalBlock(composer);
+            ComposerGesture.Type(composer, OperatorsMessage);
+            var g = Layout(document, LeftWidth, StartupHeight);
             var disclosures = ThreadFixtures.Visuals<Expander>(composer).ToList();
             var compiled = disclosures.SingleOrDefault(e => AutomationProperties.GetName(e) == "Compiled prompt");
             Assert.True(compiled is not null, "the Compiled prompt disclosure is not in the composer's visual tree");
@@ -136,6 +142,8 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
             output.WriteLine($"{count} turns, compiled prompt open: composer {open.Composer:F1} · editor {open.Editor:F1} · compiled {open.Compiled:F1} · text {box.Text.Length} chars");
             Assert.True(composer.CompiledPromptOpen, "the header click did not open the disclosure");
             Assert.True(open.Compiled >= ComposerSurface.CompiledPromptMinHeight - 0.5, $"{count} turns: the compiled box was laid out at {open.Compiled:F1} px; its floor when open is {ComposerSurface.CompiledPromptMinHeight}");
+            Assert.True(box.Text.Length > 0, $"{count} turns: the open compiled field is empty over a typed draft of {composer.Draft.SourceText.Length} chars");
+            Assert.Contains(OperatorsMessage, box.Text, StringComparison.Ordinal);
             Assert.Equal(composer.Gate.RenderView(composer.Draft).Text, box.Text);
             Assert.True(open.Editor >= ComposerSurface.EditorFloor - 0.5, $"{count} turns: the editor host was starved to {open.Editor:F1} px; its floor is {ComposerSurface.EditorFloor}");
         });
@@ -147,75 +155,79 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
     private const string OperatorsMessage = "why are we using grep? is graphify and obsidian vault not configured?";
 
     /// <summary>
-    /// <b>Ruling 96 — F-E.</b> The operator: <i>"the compiled prompt thing … is expanded but shows
-    /// no compiled prompt i expected it there."</i> The composer is rendered at exactly the belt
-    /// their ledger recorded (<see cref="OperatorsWidth"/> × <see cref="OperatorsBelt"/>, 1 turn,
-    /// the editor resting at 280) with their one-line message draft; the disclosure is opened the
-    /// way they opened it — a toggle <i>after</i> the layout, no new belt, one layout pass — and
-    /// the four quantities condition 1 names are read and written to the output:
+    /// <b>Ruling 96 — F-E, re-driven through the gesture (Ruling 181 (3)).</b> The operator: <i>"the
+    /// compiled prompt thing … is expanded but shows no compiled prompt i expected it there."</i> The
+    /// product's composition (<see cref="ComposerGesture.Drive"/>): the operator types their one-line
+    /// message through the page's input verb and presses Ctrl+Enter, so the document holds the 1 turn
+    /// their ledger recorded; the document is then sized so the composer's belt is exactly theirs
+    /// (<see cref="OperatorsWidth"/> × <see cref="OperatorsBelt"/>, the editor resting at 280), and
+    /// the disclosure is opened the way they opened it — a toggle <i>after</i> the layout, one
+    /// layout pass. The four quantities condition 1 names are written to the output:
     /// <c>_compiled.IsArrangeValid</c>, <c>_compiled.ActualHeight</c>, <c>_compiled.Text.Length</c>
     /// and the lines panel's <c>ActualHeight</c>. Condition 2 is the assertion: after expand the
-    /// box lays out at ≥ <see cref="ComposerSurface.CompiledPromptMinHeight"/> and its text is
-    /// <c>RenderView(draft).Text</c>. Condition 3: the editor never goes under its floor and the
-    /// send row stays inside the composer (INV-0007).
+    /// box lays out at ≥ <see cref="ComposerSurface.CompiledPromptMinHeight"/> and its text is b1's
+    /// sent bytes, headed <i>sent as b1</i>. Condition 3: the editor never goes under its floor and
+    /// the send row stays inside the composer (INV-0007).
     /// </summary>
     [Fact]
     public void TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText()
     {
-        Sta.Run(() =>
+        using var fixture = new AiDe.App.Tests.Records.NotebookFixture();
+        ComposerGesture.Drive(fixture, async (window, document) =>
         {
-            var root = Path.Combine(Path.GetTempPath(), "aide-writer-room", Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(root);
-            try
-            {
-                using var surface = new ComposerSurface("composer:r96", "r96 — composer");
-                ConfigureMessage(surface, root, OperatorsMessage);
-                surface.EditorRestHeight = ComposerSurface.EditorRest;
-                surface.BeltHeight = OperatorsBelt;
+            var surface = document.Composer;
+            ComposerGesture.Type(surface, OperatorsMessage);
+            ComposerGesture.Settle(document);
+            ComposerGesture.CtrlEnter(surface);
+            await document.LastBinding.WaitAsync(AiDe.App.Tests.Records.NotebookFixture.Bound);
+            ComposerGesture.Settle(document);
+            var b1 = Assert.Single(document.Notebook.Thread.Current.Turns);
 
-                // The document's Auto row: the composer is measured under an infinite height and
-                // arranged at what it desired — the operator's 517.13.
-                surface.Measure(new Size(OperatorsWidth, double.PositiveInfinity));
-                surface.Arrange(new Rect(0, 0, OperatorsWidth, surface.DesiredSize.Height));
-                surface.UpdateLayout();
+            // THE OPERATOR'S BELT ON THE DOCUMENT: the document sets the belt from its own height (body − the thread's
+            // minimum at 1 turn), so the height is solved for 517.13 and read back, never set on the composer.
+            document.HorizontalAlignment = HorizontalAlignment.Left;
+            document.VerticalAlignment = VerticalAlignment.Top;
+            document.Width = OperatorsWidth;
+            document.Height = 800;
+            ComposerGesture.Settle(document);
+            document.Height = 800 + (OperatorsBelt - surface.BeltHeight);
+            ComposerGesture.Settle(document);
+            output.WriteLine($"document {document.ActualWidth:F2} × {document.ActualHeight:F2} · belt {surface.BeltHeight:F2} · editor rest {surface.EditorRestHeight:F2} · turns {document.Notebook.Thread.Current.Turns.Count}");
+            Assert.Equal(OperatorsBelt, surface.BeltHeight, 0.5);
 
-                var compiled = Logical<TextBox>(surface).Single(box => box.IsReadOnly && box.MaxHeight <= ComposerSurface.CompiledPromptMaxHeight + 1);
-                var disclosure = ThreadFixtures.Visuals<Expander>(surface).Single(e => AutomationProperties.GetName(e) == "Compiled prompt");
-                var lines = (FrameworkElement)VisualTreeHelper.GetParent(disclosure);
-                var editor = ThreadFixtures.Visuals<WebView2>(surface).Single();
-                var send = ThreadFixtures.Visuals<Button>(surface).Single(b => b.Content is "Send");
-                output.WriteLine($"at rest: composer {surface.ActualHeight:F2} (desired {surface.DesiredSize.Height:F2}, minimum {surface.MinimumHeight:F2}) · editor {editor.ActualHeight:F2} · lines {lines.ActualHeight:F2} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} text {compiled.Text.Length} chars");
-                Assert.Equal(ComposerSurface.EditorRest, editor.ActualHeight, 0.5);   // the operator's 280: the belt is theirs
+            var compiled = Logical<TextBox>(surface).Single(box => box.IsReadOnly && box.MaxHeight <= ComposerSurface.CompiledPromptMaxHeight + 1);
+            var disclosure = ThreadFixtures.Visuals<Expander>(surface).Single(e => AutomationProperties.GetName(e) == "Compiled prompt");
+            var lines = (FrameworkElement)VisualTreeHelper.GetParent(disclosure);
+            var editor = ThreadFixtures.Visuals<WebView2>(surface).Single();
+            var send = ThreadFixtures.Visuals<Button>(surface).Single(b => b.Content is "Send");
+            output.WriteLine($"at rest: composer {surface.ActualHeight:F2} (desired {surface.DesiredSize.Height:F2}, minimum {surface.MinimumHeight:F2}) · editor {editor.ActualHeight:F2} · lines {lines.ActualHeight:F2} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} text {compiled.Text.Length} chars");
+            Assert.Equal(ComposerSurface.EditorRest, editor.ActualHeight, 0.5);   // the operator's 280: the belt is theirs
 
-                // The operator's gesture: the header CLICKED after the layout (the toggle's own
-                // click path, never the property), then one layout pass. Their screenshot's chevron
-                // is rotated — the toggle is checked — and the box beneath it is 0 px.
-                var header = ThreadFixtures.Visuals<ToggleButton>(disclosure).First();
-                ((System.Windows.Automation.Provider.IToggleProvider)UIElementAutomationPeer.CreatePeerForElement(header).GetPattern(PatternInterface.Toggle)!).Toggle();
-                surface.UpdateLayout();
-                output.WriteLine($"after the header click: toggle checked {header.IsChecked} · CompiledPromptOpen {surface.CompiledPromptOpen} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} text {compiled.Text.Length} chars · lines {lines.ActualHeight:F2}");
-                Assert.True(surface.CompiledPromptOpen, "the header click rotated the chevron but never reached IsExpanded — the disclosure's toggle is bound one way");
+            // The operator's gesture: the header CLICKED after the layout (the toggle's own
+            // click path, never the property), then one layout pass. Their screenshot's chevron
+            // is rotated — the toggle is checked — and the box beneath it is 0 px.
+            var header = ThreadFixtures.Visuals<ToggleButton>(disclosure).First();
+            ((System.Windows.Automation.Provider.IToggleProvider)UIElementAutomationPeer.CreatePeerForElement(header).GetPattern(PatternInterface.Toggle)!).Toggle();
+            surface.UpdateLayout();
+            output.WriteLine($"after the header click: toggle checked {header.IsChecked} · CompiledPromptOpen {surface.CompiledPromptOpen} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} text {compiled.Text.Length} chars · lines {lines.ActualHeight:F2}");
+            Assert.True(surface.CompiledPromptOpen, "the header click rotated the chevron but never reached IsExpanded — the disclosure's toggle is bound one way");
 
-                var presenter = ThreadFixtures.Visuals<ContentPresenter>(disclosure).FirstOrDefault(p => p.Name == "ExpandSite");
-                var headerBottom = ThreadFixtures.Visuals<ToggleButton>(disclosure).First() is { } toggle ? toggle.TransformToAncestor(surface).Transform(new Point(0, toggle.ActualHeight)).Y : double.NaN;
-                var sendTop = send.TransformToAncestor(surface).Transform(new Point(0, 0)).Y;
-                output.WriteLine($"expanded: composer {surface.ActualHeight:F2} (desired {surface.DesiredSize.Height:F2}, minimum {surface.MinimumHeight:F2}) · editor {editor.ActualHeight:F2} · lines {lines.ActualHeight:F2} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} desired {compiled.DesiredSize.Height:F2} max {compiled.MaxHeight:F2} text {compiled.Text.Length} chars · ExpandSite {(presenter is null ? "absent" : presenter.Visibility + " " + presenter.ActualHeight.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))} · header bottom {headerBottom:F2} · send row top {sendTop:F2}");
+            var presenter = ThreadFixtures.Visuals<ContentPresenter>(disclosure).FirstOrDefault(p => p.Name == "ExpandSite");
+            var headerBottom = ThreadFixtures.Visuals<ToggleButton>(disclosure).First() is { } toggle ? toggle.TransformToAncestor(surface).Transform(new Point(0, toggle.ActualHeight)).Y : double.NaN;
+            var sendTop = send.TransformToAncestor(surface).Transform(new Point(0, 0)).Y;
+            output.WriteLine($"expanded: composer {surface.ActualHeight:F2} (desired {surface.DesiredSize.Height:F2}, minimum {surface.MinimumHeight:F2}) · editor {editor.ActualHeight:F2} · lines {lines.ActualHeight:F2} · compiled arrange-valid {compiled.IsArrangeValid} height {compiled.ActualHeight:F2} desired {compiled.DesiredSize.Height:F2} max {compiled.MaxHeight:F2} text {compiled.Text.Length} chars · ExpandSite {(presenter is null ? "absent" : presenter.Visibility + " " + presenter.ActualHeight.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))} · header bottom {headerBottom:F2} · send row top {sendTop:F2}");
 
-                // Condition 2 — the content, not the header.
-                Assert.True(compiled.IsArrangeValid, "the compiled box's arrange is not valid after expand — the belt was not re-laid out");
-                Assert.True(compiled.ActualHeight >= ComposerSurface.CompiledPromptMinHeight - 0.5, $"the compiled box was laid out at {compiled.ActualHeight:F2} px; its floor when open is {ComposerSurface.CompiledPromptMinHeight}");
-                Assert.Equal(surface.Gate.RenderView(surface.Draft).Text, compiled.Text);
-                Assert.True(compiled.Text.Length > 0, "the compiled text is empty for a one-line message");
+            // Condition 2 — the content, not the header.
+            Assert.True(compiled.IsArrangeValid, "the compiled box's arrange is not valid after expand — the belt was not re-laid out");
+            Assert.True(compiled.ActualHeight >= ComposerSurface.CompiledPromptMinHeight - 0.5, $"the compiled box was laid out at {compiled.ActualHeight:F2} px; its floor when open is {ComposerSurface.CompiledPromptMinHeight}");
+            Assert.True(compiled.Text.Length > 0, "the compiled text is empty after the one-line message was sent");
+            Assert.Equal(b1.SentBytes, compiled.Text);
+            Assert.Equal(ComposerSurface.SentHeading("b1"), disclosure.Header);
 
-                // Condition 3 — INV-0007: the writer keeps its floor, the send row stays on screen.
-                Assert.True(editor.ActualHeight >= ComposerSurface.EditorFloor - 0.5, $"the editor host was starved to {editor.ActualHeight:F2} px; its floor is {ComposerSurface.EditorFloor}");
-                var sendBottom = send.TransformToAncestor(surface).Transform(new Point(0, send.ActualHeight)).Y;
-                Assert.True(sendBottom <= surface.ActualHeight + 0.5, $"the send row's bottom is at {sendBottom:F2} px inside a {surface.ActualHeight:F2} px composer — clipped");
-            }
-            finally
-            {
-                Directory.Delete(root, recursive: true);
-            }
+            // Condition 3 — INV-0007: the writer keeps its floor, the send row stays on screen.
+            Assert.True(editor.ActualHeight >= ComposerSurface.EditorFloor - 0.5, $"the editor host was starved to {editor.ActualHeight:F2} px; its floor is {ComposerSurface.EditorFloor}");
+            var sendBottom = send.TransformToAncestor(surface).Transform(new Point(0, send.ActualHeight)).Y;
+            Assert.True(sendBottom <= surface.ActualHeight + 0.5, $"the send row's bottom is at {sendBottom:F2} px inside a {surface.ActualHeight:F2} px composer — clipped");
         });
     }
 
@@ -759,12 +771,14 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
         });
     }
 
-    /// <summary>The operator's draft (the ledger's <c>fields 1</c>): a goal block whose structure lines are blank — a Message — and one line of text.</summary>
-    private static void ConfigureMessage(ComposerSurface surface, string root, string message)
+    /// <summary>
+    /// The operator's form (the ledger's <c>fields 1</c>): a goal block whose structure lines are blank — a Message. No
+    /// words: they arrive through <see cref="ComposerGesture.Type"/>.
+    /// </summary>
+    private static void ConfigureGoalBlock(ComposerSurface surface)
     {
+        var root = Path.GetTempPath();
         surface.Draft.SwitchTo(ComposerShape.GoalBlock);
-        surface.Draft.SetFreeFormText(message);
-
         surface.Configure(
             new SessionConfig("s-r96", "r96", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
             new ComposerSendContext(

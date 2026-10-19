@@ -1,0 +1,35 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:01:36.03]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+  Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
+[xUnit.net 00:03:11.82]     AiDe.Core.Tests.DispatchLiveSessionTests.APromptDispatchedAcrossTheDaemon_ReachesALiveSessionAndIsExecuted [FAIL]
+  Failed AiDe.Core.Tests.DispatchLiveSessionTests.APromptDispatchedAcrossTheDaemon_ReachesALiveSessionAndIsExecuted [1 m 8 s]
+  Error Message:
+   dispatch probe exited 6.
+console window: none (headless)
+readiness      : Ready (shell integration)
+receipt state  : PtyWriteAccepted
+receipt error  : (none)
+marker acted on: False
+the receipt says the write was accepted, but the session never produced
+the marker — the prompt was written and NOT acted on.
+---- last 1600 bytes of session output ----
+[?9001h[?1004h[?25l[2J[m[HWarning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.]0;C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe[?25h[?25l[4;1H[?25h]133;D;0;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;A;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;B;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;D;0]133;A]9;9;"C:\Users\malla\AppData\Local\Temp"]9001;ShellType;powershell;5.1.26100.9711PS C:\Users\malla\AppData\Local\Temp> ]133;B[?25lWrite-Output 'AIDEDISPATCHECB3A0D11[?25h88E'
+]133;C;nonce=9c427ef691e1b9deb6675a5f2dfa3612\AIDEDISPATCHECB3A0D1188E
+]133;D;0;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;A;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;B;nonce=9c427ef691e1b9deb6675a5f2dfa3612\]133;D;0]133;A]9;9;"C:\Users\malla\AppData\Local\Temp"]9001;ShellType;powershell;5.1.26100.9711PS C:\Users\malla\AppData\Local\Temp> ]133;B
+---- end ----
+
+  Stack Trace:
+     at AiDe.Core.Tests.DispatchLiveSessionTests.APromptDispatchedAcrossTheDaemon_ReachesALiveSessionAndIsExecuted() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.Core.Tests\DispatchLiveSessionTests.cs:line 43
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:  3023, Skipped:     1, Total:  3025, Duration: 3 m 16 s - AiDe.Core.Tests.dll (net10.0)

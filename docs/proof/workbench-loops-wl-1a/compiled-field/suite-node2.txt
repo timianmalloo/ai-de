@@ -1,0 +1,5 @@
+T28 node 2 — whole suites at the node head 5da5d032 (tree C:\Projects\ai-de-wl1a-compiled-field).
+Core (run on the working tree that became 5da5d032 — the same src/ and DESIGN.md; only App test files changed after it): Passed!  - Failed:     0, Passed:  3024, Skipped:     1, Total:  3025, Duration: 2 m 15 s - AiDe.Core.Tests.dll (net10.0)
+App:  Failed!  - Failed:     1, Passed:  1154, Skipped:     2, Total:  1157, Duration: 4 m 55 s - AiDe.App.Tests.dll (net10.0)
+App's one failure: SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph — 'Ctrl+Enter probe failed with exit code 2. foreground not held; SendInput would prove another window'. Re-run alone: failed the same way (suite-node2-rerun-app-chord.txt). This is the Ruling 155 (3) excused shown-window probe, which the T21 join (8608d4eb) also recorded as refused alone, NOT CHECKED. It is not in this node's paths, and it is not a 'desktop hold occupied' result, so desktop-hold.txt has no entry.
+Full outputs: suite-node2-core.txt, suite-node2-app.txt.

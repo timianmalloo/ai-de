@@ -1,37 +1,33 @@
-# Brief — T11 `wls-kinds-migration` (slice WL-S) · Claude Code · Opus · node 12 (the last node before the T11 join)
+# Brief — T11 `wls-kinds-migration` (slice WL-S) · Claude Code · Opus · node 13 (fix-forward for the refused join)
 
-**Goal (plan row):** split `session-document` into the `notebook` + `execution` kinds and migrate saved layouts with a
-report. The WL-S Proof Pack is `docs/proof/workbench-loops-wl-s.md`.
-**Node 11 is done** (a2e2e8b8): D2 green, D6 amended with the reflection test, and the DOCK4 plural pin **red only**
-(`b62261e8`), because T21 held `LayoutPersistence.cs`.
-**T21 is joined on main** (Owner order: T21 first, then T11 on top of it). The Leader merged origin/main into your tree
-before dispatch, and resolved any `LayoutPersistence.cs` conflict in that merge by keeping both sides. Read the merge
-commit before your first edit.
+**Goal:** the T11 join's step-8 ratchet passes.
+**The Leader's join was refused** (board `01M5AN48624ADXW2BPQSNY2QGM`). The ratchet against `bf7483e5`, head `070d2637`
+(kept at `backup/t11-join-070d2637`), refused three gates that went green→red. Nothing was pushed. Node 12's work is
+otherwise accepted: the suites, the merge resolution, DOCK4 and the attended list.
 
-**This node (n12), in this order:**
-- **(0)** The whole Core and App suites at the merge head, before any edit, saved as `{PROOF}/suite-node12-start.txt`.
-  Any red the merge brought in (T21's partial-read sentence and the DOCK4 arm share `LayoutPersistence.cs`) is this
-  node's first fix. Name its cause by file:line.
-- **(A) The DOCK4 plural pin, green.** Your node-11 hand-off step 1: one `KeptPromptsSentence` const, and the :391 plural
-  arm returns it with `{N}` replaced. Mutate the const once to prove the two-prompt test bites, then revert. Check the
-  line numbers on the merged file first (rule 14).
-- **(B) The WL-S demo script's attended list (Owner, Ruling 155 (3)).** `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests`
-  and `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` stay NOT CHECKED unattended. Add both to
-  the user's **attended** list in `docs/proof/workbench-loops-wl-s.md`'s human demo script, with the exact commands.
-  Mark the float step "pending: close condition 4, the live-notebook float after the T11 join" (T21's README names it).
-  This is a docs check: no red/green, but the Leader reads the diff.
-- **(C) The seam guard edit from node 10.** `EveryOpeningCommandPassesThroughTheSeamTests.cs` was edited outside the
-  grant. The Leader confirmed it retroactively at node 10 (obligations.md). Make sure the merge did not reopen it: it
-  must be green at the merge head. Record that in handoff.md.
+**This node (n13).** Each red is the gate's own refusal, already observed on the join head. Re-run each gate on your
+head before the fix and save `{PROOF}/<gate>-red.txt`, then fix and save `-green.txt`:
+- **(A) `tools/verify-cited-controls.py`:** `tests/AiDe.Core.Tests/Workbench/ZoneLayoutTests.cs:14` cites
+  `CodingsLeftExtentTests`, which no longer exists. You renamed it to `TheThreadMeasureMovesWithTheNotebookTests` at
+  `d8746b1d`. Open that test and confirm it still measures what the comment claims (the extent's fit on the composed
+  tree). Then cite it by its current name. If it no longer measures that, the comment must say what does, or stop
+  claiming enforcement. Sweep: grep `tests/` and `src/` for every other cite of a name you renamed or deleted.
+- **(B) `tools/verify-surface-ownership.py`:** `src/AiDe.App/Workbench/Execution/ExecutionSurface.cs` has no owner in
+  `docs/collaboration/session-contracts.md` §2. Add its row to the owner table the file belongs to, matching how the
+  other Workbench surfaces your kinds added (Notebook) are listed. Read §2 first. **Grant:** that one §2 row only, plus
+  the gate's UNASSIGNED map if §2's own rules say so.
+- **(C) `docs-graph.py validate`:** one orphan, `proof-wl-s-kinds-node1-handoff`
+  (`docs/proof/workbench-loops-wl-s/kinds/handoff.md`). Give it an inbound typed link from the kinds README or the WL-S
+  Proof Pack, so it is reachable. Rule 13 frontmatter holds.
+- **Then rule 22:** run the ratchet against origin/main's sha, and save `{PROOF}/ratchet.txt`. It must PASS before your
+  done mail.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 12 min by mail.
-**Desktop hold:** a "desktop hold occupied" result is re-run after 2 min and logged in `{PROOF}/desktop-hold.txt`. It is
-never counted as a pass or a fail. Rules 19, 20 and 21 apply.
+**Tier** T2 · **fan-out** 0 · **budget** 60 tool calls · 120k · **kick** at 12 min by mail.
 
 ## Owned authored paths
-As in node 11, plus `src/AiDe.App/Workbench/LayoutPersistence.cs` (the DOCK4 arm and its const only; T21's sentences stay
-as joined) and `docs/proof/workbench-loops-wl-s.md` (the demo script).
+`tests/AiDe.Core.Tests/Workbench/ZoneLayoutTests.cs` (the :14 comment only), any other file that check (A)'s sweep finds
+(name each in handoff.md), the one `session-contracts.md` §2 row, the kinds README / WL-S Proof Pack link, and `{PROOF}/**`.
+No product code.
 
 ## Not in scope
-Close condition 4, the live-notebook float and redock: it is owed after the T11 join, and the Leader dispatches it as a
-T21 node.
+Close condition 4 (the live-notebook float). The Leader dispatches it after the T11 join.

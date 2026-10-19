@@ -1,0 +1,2 @@
+core exit=1
+app exit=1

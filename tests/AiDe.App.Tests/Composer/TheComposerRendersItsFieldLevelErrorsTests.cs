@@ -359,33 +359,29 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
         });
     }
 
+    /// <summary>
+    /// The whole prompt, not a summary — read where the user reads it: after a real submit on the product's composition
+    /// (<see cref="ComposerGesture.Drive"/>), typed through the page's input verb and sent with Ctrl+Enter. The document
+    /// admits the turn and the composer starts the next block; the field still holds every byte b1 sent (Ruling 181 (3)).
+    /// </summary>
     [Fact]
-    public void TheCompiledViewOnScreenIsTheWholePromptAndNotASummary()
+    public void TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary()
     {
-        Sta.Run(() =>
+        using var fixture = new AiDe.App.Tests.Records.NotebookFixture();
+        ComposerGesture.Drive(fixture, async (window, document) =>
         {
-            var root = Path.Combine(Path.GetTempPath(), "aide-render", Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(root);
+            var surface = document.Composer;
+            var body = string.Join("\n", Enumerable.Range(0, 400).Select(i => $"line {i} of the prompt"));
+            ComposerGesture.Type(surface, body + "\n@src/Payments\n");
+            ComposerGesture.Settle(document);
+            ComposerGesture.CtrlEnter(surface);
+            await document.LastBinding.WaitAsync(AiDe.App.Tests.Records.NotebookFixture.Bound);
+            ComposerGesture.Settle(document);
 
-            try
-            {
-                var surface = Build(root, attachEnabled: false);
-
-                var body = string.Join("\n", Enumerable.Range(0, 400).Select(i => $"line {i} of the prompt"));
-                surface.Draft.SetFreeFormText(body + "\n@src/Payments\n");
-                surface.Draft.SwitchTo(ComposerShape.FreeForm);
-
-                var request = surface.Send();
-
-                Assert.NotNull(request);
-                Assert.Equal(request!.Prompt, surface.CompiledView);
-                Assert.Contains("line 399 of the prompt", surface.CompiledView, StringComparison.Ordinal);
-                Assert.Equal(request.Prompt.Length, surface.CompiledView.Length);
-            }
-            finally
-            {
-                Directory.Delete(root, recursive: true);
-            }
+            var b1 = Assert.Single(document.Notebook.Thread.Current.Turns);
+            Assert.Equal(b1.SentBytes, surface.CompiledView);
+            Assert.Contains("line 399 of the prompt", surface.CompiledView, StringComparison.Ordinal);
+            Assert.Equal(b1.SentBytes.Length, surface.CompiledView.Length);
         });
     }
 

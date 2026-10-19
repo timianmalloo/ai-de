@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 132 members, 95% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 136 members, 95% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**16 public types · 132 public members · 95% documented.**
+**16 public types · 136 public members · 95% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -362,6 +362,10 @@ claim, and paste is handled inside the page by the editor that received it.
 | `double EditorRest = 280` | The editor's rest height once the thread has turns (Ruling 80; DESIGN.md errata "Chat-like — editor height"): it scrolls only past this. |
 | `double CompiledPromptMaxHeight = 200` | The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137). |
 | `double CompiledPromptMinHeight = 48` | The compiled prompt's floor when it is open: three lines of the mono face, so a reader the operator asked for is a reader (INV-0007's "the reader gets its share"). Under a constraint that cannot hold the floor, the ed… |
+| `string CompiledPromptHeading = "Compiled prompt"` | The compiled prompt disclosure's heading while it shows the live draft's compile (DESIGN.md:879). |
+| `string CompiledPromptLiveName = "Compiled prompt — exactly what will be sent"` | The compiled field's UIA name while it shows the live draft's compile: the outgoing text. |
+| `string SentHeadingFormat = "Compiled prompt — sent as {0}"` | Ruling 181 (1): the heading while the field shows the turn just sent, until the next keystroke — the visible header, the field's UIA name and the disclosure's ItemStatus, one string. `{0}` is the turn's ordinal (`b1`). |
+| `string SentHeading(string displayOrdinal)` | The `SentHeadingFormat` heading for one turn's ordinal. |
 | `string ModelSource = "model"` | The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text. |
 | `ICanvasFocusTarget FocusTarget { get; }` | The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1). |
 | `event Action? PageReady` | Raised once per page mount — after `MarkReady`; the document places focus in the editor on it (K7). |

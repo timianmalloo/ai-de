@@ -1,0 +1,18 @@
+T28 n1 - whole affected suites at the node head (tree C:\Projects\ai-de-wl1a-compiled-field; head e3ec0278 + docs edits)
+Board read before the run: USER DEMO DONE (15:46Z); "No join in flight". Ruling 115 desktop-hold occupied results: 0.
+Changed vs base 624b46c4 under src/ and tests/: one new test file only (TheCompiledFieldAfterASubmitTests.cs). No product code.
+
+Core  tests/AiDe.Core.Tests   Failed 1 / Passed 3023 / Skipped 1 / Total 3025   (suite-node1-core.txt)
+  DispatchLiveSessionTests.APromptDispatchedAcrossTheDaemon_ReachesALiveSessionAndIsExecuted - "dispatch probe exited 6"
+  (live PTY session probe, 1 m 8 s). Re-run alone: Passed 1/1 in 8 s (suite-node1-rerun-core-dispatch.txt). Not this node.
+
+App   tests/AiDe.App.Tests    Failed 3 / Passed 1147 / Skipped 2 / Total 1152   (suite-node1-app.txt)
+  TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt  - EXPECTED RED (this node)
+  TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt - EXPECTED RED (this node)
+  SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - "Ctrl+Enter probe failed with exit code 2.
+    foreground not held; SendInput would prove another window". Re-run alone: Failed the same way
+    (suite-node1-rerun-app-chord.txt). Ruling 155 (addendum-c-council-rulings.md:3289): this real-input probe is not
+    checked on an unattended desktop. Not this node (the file is unchanged since base).
+
+An earlier run (discarded) wrote to the shared session scratchpad and was overwritten by T21's run in
+C:\Projects\ai-de-wls-float; see handoff.md.

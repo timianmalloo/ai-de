@@ -8565,3 +8565,44 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Derive:** a reader that promises "never throws on a bad file" checks every invariant the file's consumer enforces,
   not only the one its own model asserts. A counter that restarts never mints a saved id without checking the ids in use.
 - **Status:** `controlled` for the three floating-id sites.
+### DC-NEW-wl-t28-compiled — A content oracle set up by fixture mutation never drives the user's gesture, so the state transition the gesture triggers in the real composition goes untested
+- **Class:** a UI content test puts the surface in the state it asserts by mutating a fixture (the draft set directly, a
+  property set instead of a click, a bare control instead of its composed parent) and asserts there. The user reaches the
+  same screen through a gesture that runs a state transition first (here: submit → `SessionDocumentSurface.Admit` →
+  `ComposerSurface.BeginNextTurn` consumes and resets the draft). The test certifies a state the user is never left in.
+  A second shape rides with it: a **self-referential oracle** (`field == producer(input)` over the same input) passes as
+  `"" == ""` when the input is empty, so "the content shows" is never asserted.
+- **Signature:** a test that asserts composer content (`CompiledView`, the compiled `TextBox.Text`,
+  `RenderView(draft).Text`) after `Draft.SetFreeFormText` / `CompiledPromptOpen = true` on a bare `ComposerSurface`, or
+  after a `Send()` with no `SessionDocumentSurface` to admit it; an equality oracle with no non-empty assertion.
+- **Why it survived (the controls it passed):** Ruling 96's condition (2) extended "the existing on-screen test" to the
+  content. Its two tests (`Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount`,
+  `...OpenedAtTheOperatorsBelt_RendersTheCompiledText`) open the disclosure through the header's real toggle, but over a
+  draft that was set and never sent: the theory's draft is empty (observed "text 0 chars" at 0, 1 and 40 turns), and the
+  belt test is a bare composer. `Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenIsTheWholePromptAndNotASummary`
+  asserts `CompiledView == request.Prompt` after a send, on a bare composer that nothing admits. Ruling 96's cause was
+  Inferred (layout) and its measurement (condition 1) was taken on the same fixture, so it measured the layout, not the
+  gesture.
+- **Instance (2026-10-19, WL-1a demo, T28 n1):** type, Ctrl+Enter, open the *Compiled prompt* disclosure on the product's
+  composition: `_compiled.Text.Length` 69 before the submit, 0 after; `ActualHeight` 48 = `CompiledPromptMinHeight`. The
+  emptying render was observed on the stack: `RenderCompiledView ← BeginNextTurn ← SessionDocumentSurface.Admit ← Launch
+  ← ComposerSendGate.Send ← SendThroughTheGate ← Send ← OnAcceleratorKey` (`ComposerSurface.cs:1138`, `:1149`, `:1224-1225`;
+  `SessionDocumentSurface.cs:672`). Proof: `docs/proof/workbench-loops-wl-1a/compiled-field/`.
+- **Sweep (tests asserting composer content on a path the user's gesture does not take):** confirmed —
+  the two Ruling 96 tests above (no submit; the theory's oracle is `"" == ""`) and
+  `TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenIsTheWholePromptAndNotASummary:381` (post-send content
+  on a composition with no admit). Ruled out, with the reason — `TheDecorationTheRowTheBytesAndTheColumnAgreeTests:96`
+  (asserts the pre-send view, a state typing does pass through); `ASendWhileATurnRunsOffersWaitOrParallelTests:203`
+  (asserts the queued row's bytes, not the composer); `NoLateBindingOnTheSendPathTests.TheCompiledViewAndTheSentTextAreTheSameBytes`
+  (gate-level, no surface); `Composer.TheWriterKeepsItsRoomTests:90` and `Sessions.TheWriterKeepsItsRoomTests:386`
+  (pre-send geometry; they open by property, a lesser gesture skip recorded here); `TheThreadIsChatLikeTests:77` (no
+  content assertion). Wider surface, not each read: 19 App test files mutate the draft directly, 8 use the page verb
+  `SetFieldText`.
+- **Derive:** a content oracle on a composed surface drives the gesture the user takes — the page's input verb, the
+  accelerator, the header click — on the composition the product builds, and asserts the content non-empty as well as
+  equal. A fixture mutation is allowed only to reach a state the gesture cannot, and says so.
+- **Prevent (control):** instance — `TheCompiledFieldAfterASubmitTests` (both facts, observed failing on the unfixed code,
+  `f3bdf334`). Class — proposed, not built in this node: a shared gesture helper (type / submit / open) for composer
+  tests, and a gate that refuses a composer-content assertion with no non-empty check or with no gesture on a
+  `SessionDocumentSurface`. Repair plan in the proof README.
+- **Status:** `open` (red only; the fix waits for the Owner's read of the root cause).

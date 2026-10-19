@@ -1,0 +1,110 @@
+MUTATION M1 (planted leak): ComposerSurface.BeginNextTurn line 1167 '_draft.SetFreeFormText(string.Empty);' deleted on top of the fix — the sent words stay in the draft, so the field's text is rendered through _gate.RenderView, i.e. it IS ComposerSendGate.RenderedView, which ComposerSendGate.cs:347 sends. Run 2: ASecondCtrlEnter... asserts the send before the display.
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.93]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState [FAIL]
+[xUnit.net 00:00:00.93]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.93]                                 ↓ (pos 15)
+[xUnit.net 00:00:00.93]       Expected: "Compiled prompt — sent as b1"
+[xUnit.net 00:00:00.93]       Actual:   "Compiled prompt"
+[xUnit.net 00:00:00.93]       Stack Trace:
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(87,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState()
+[xUnit.net 00:00:00.93]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.93]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState [725 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                          ↓ (pos 15)
+Expected: "Compiled prompt — sent as b1"
+Actual:   "Compiled prompt"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 87
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.87]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [FAIL]
+[xUnit.net 00:00:01.87]       Assert.Single() Failure: The collection contained 2 items
+[xUnit.net 00:00:01.87]       Collection: [TurnView { Ordinal = 1, EnvelopeId = turn-1, SourceText = why are we using grep? is graphify and obsidian vault not configured?, Decorations = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.DecorationRow], State = Answered, Outcome = OutcomeView { Lane = claude-code, ExitCode = , Edits = , Spend = Spend { In = 4, Cached = 0, Out = 2, Requests = 1, Tokens = 6 }, Duration = 00:00:00.1930353, EventCount = 5 }, Waiting = , Events = <>z__ReadOnlyArray`1[AiDe.Core.Presentation.Sessions.EventLine], Rows = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.TurnRow], Items = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.ConversationItem], SentBytes = why are we using grep? is graphify and obsidian vault not configured?, At = 10/19/2026 9:48:20 AM -07:00, DisplayOrdinal = b1 }, TurnView { Ordinal = 2, EnvelopeId = turn-2, SourceText = why are we using grep? is graphify and obsidian vault not configured?, Decorations = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.DecorationRow], State = Answered, Outcome = OutcomeView { Lane = claude-code, ExitCode = , Edits = , Spend = Spend { In = 4, Cached = 0, Out = 2, Requests = 1, Tokens = 6 }, Duration = 00:00:00.1473546, EventCount = 5 }, Waiting = , Events = <>z__ReadOnlyArray`1[AiDe.Core.Presentation.Sessions.EventLine], Rows = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.TurnRow], Items = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.ConversationItem], SentBytes = why are we using grep? is graphify and obsidian vault not configured?, At = 10/19/2026 9:48:20 AM -07:00, DisplayOrdinal = b2 }]
+[xUnit.net 00:00:01.87]       Stack Trace:
+[xUnit.net 00:00:01.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:01.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:01.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs(48,0): at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height)
+[xUnit.net 00:00:01.87]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(41,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing()
+[xUnit.net 00:00:01.87]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.87]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.87]       Output:
+[xUnit.net 00:00:01.87]         before the second press: field 69 chars · header "Compiled prompt" · draft 69 chars
+[xUnit.net 00:00:01.87]         after the second press: turns 2 · attempt rows 2 (was 1) · blocks sent 2 (was 1) · status "sent" · field 69 chars · header "Compiled prompt"
+[xUnit.net 00:00:02.43]     AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [FAIL]
+[xUnit.net 00:00:02.43]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:02.43]                                 ↓ (pos 15)
+[xUnit.net 00:00:02.43]       Expected: "Compiled prompt — sent as b1"
+[xUnit.net 00:00:02.43]       Actual:   "Compiled prompt"
+[xUnit.net 00:00:02.43]       Stack Trace:
+[xUnit.net 00:00:02.43]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:02.43]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:02.43]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs(132,0): at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted()
+[xUnit.net 00:00:02.43]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:02.43]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:02.43]       Output:
+[xUnit.net 00:00:02.43]         held: turns 0 · status "Restoring this notebook's turns. Your message sends when they are back." · header "Compiled prompt" · field 10 chars · draft "held words"
+[xUnit.net 00:00:02.43]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [942 ms]
+  Error Message:
+   Assert.Single() Failure: The collection contained 2 items
+Collection: [TurnView { Ordinal = 1, EnvelopeId = turn-1, SourceText = why are we using grep? is graphify and obsidian vault not configured?, Decorations = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.DecorationRow], State = Answered, Outcome = OutcomeView { Lane = claude-code, ExitCode = , Edits = , Spend = Spend { In = 4, Cached = 0, Out = 2, Requests = 1, Tokens = 6 }, Duration = 00:00:00.1930353, EventCount = 5 }, Waiting = , Events = <>z__ReadOnlyArray`1[AiDe.Core.Presentation.Sessions.EventLine], Rows = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.TurnRow], Items = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.ConversationItem], SentBytes = why are we using grep? is graphify and obsidian vault not configured?, At = 10/19/2026 9:48:20 AM -07:00, DisplayOrdinal = b1 }, TurnView { Ordinal = 2, EnvelopeId = turn-2, SourceText = why are we using grep? is graphify and obsidian vault not configured?, Decorations = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.DecorationRow], State = Answered, Outcome = OutcomeView { Lane = claude-code, ExitCode = , Edits = , Spend = Spend { In = 4, Cached = 0, Out = 2, Requests = 1, Tokens = 6 }, Duration = 00:00:00.1473546, EventCount = 5 }, Waiting = , Events = <>z__ReadOnlyArray`1[AiDe.Core.Presentation.Sessions.EventLine], Rows = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.TurnRow], Items = System.Collections.Generic.List`1[AiDe.Core.Presentation.Sessions.ConversationItem], SentBytes = why are we using grep? is graphify and obsidian vault not configured?, At = 10/19/2026 9:48:20 AM -07:00, DisplayOrdinal = b2 }]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.ComposerGesture.Drive(NotebookFixture fixture, Func`3 body, Boolean releaseRun, Double width, Double height) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\ComposerGesture.cs:line 48
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ before the second press: field 69 chars · header "Compiled prompt" · draft 69 chars
+ after the second press: turns 2 · attempt rows 2 (was 1) · blocks sent 2 (was 1) · status "sent" · field 69 chars · header "Compiled prompt"
+
+
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [558 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                          ↓ (pos 15)
+Expected: "Compiled prompt — sent as b1"
+Actual:   "Compiled prompt"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheSentPromptIsNeverResentTests.cs:line 132
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ held: turns 0 · status "Restoring this notebook's turns. Your message sends when they are back." · header "Compiled prompt" · field 10 chars · draft "held words"
+
+
+
+Test Run Failed.
+Total tests: 3
+     Failed: 3
+ Total time: 2.7434 Seconds

@@ -1,0 +1,78 @@
+
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.99]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [FAIL]
+[xUnit.net 00:00:00.99]       the open compiled field emptied on the submit; the prompt sent was 69 chars
+[xUnit.net 00:00:00.99]       Stack Trace:
+[xUnit.net 00:00:00.99]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.99]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.99]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(115,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.Drive(Func`4 body)
+[xUnit.net 00:00:00.99]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(90,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt()
+[xUnit.net 00:00:00.99]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.99]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.99]       Output:
+[xUnit.net 00:00:00.99]         open, typed, before the submit: IsExpanded True · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 69 chars
+[xUnit.net 00:00:00.99]         open, after the submit: IsExpanded True · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 0 chars
+[xUnit.net 00:00:00.99]         sent prompt 69 chars · RenderView(next draft) 0 chars · turns 1
+[xUnit.net 00:00:01.36]     AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [FAIL]
+[xUnit.net 00:00:01.36]       the opened compiled field is empty after the submit; the prompt sent was 69 chars
+[xUnit.net 00:00:01.36]       Stack Trace:
+[xUnit.net 00:00:01.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:01.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:01.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(115,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.Drive(Func`4 body)
+[xUnit.net 00:00:01.36]         C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs(50,0): at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt()
+[xUnit.net 00:00:01.36]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.36]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.36]       Output:
+[xUnit.net 00:00:01.36]         before the submit: IsExpanded False · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · arrange-valid False · draft 69 chars
+[xUnit.net 00:00:01.36]         render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+[xUnit.net 00:00:01.36]         render → 0 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.BeginNextTurn ← SessionDocumentSurface.Admit ← SessionDocumentSurface.Launch ← ComposerSendGate.Send ← ComposerSurface.SendThroughTheGate ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+[xUnit.net 00:00:01.36]         after the submit, disclosure closed: IsExpanded False · _compiled.Text.Length 0 · _compiled.ActualHeight 0.00 · arrange-valid False · draft 0 chars
+[xUnit.net 00:00:01.36]         after the submit, disclosure opened: IsExpanded True · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 0 chars
+[xUnit.net 00:00:01.36]         sent prompt 69 chars · RenderView(next draft) 0 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+[xUnit.net 00:00:01.36]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [785 ms]
+  Error Message:
+   the open compiled field emptied on the submit; the prompt sent was 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.Drive(Func`4 body) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 115
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 90
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ open, typed, before the submit: IsExpanded True · _compiled.Text.Length 69 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 69 chars
+ open, after the submit: IsExpanded True · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 0 chars
+ sent prompt 69 chars · RenderView(next draft) 0 chars · turns 1
+
+
+  Failed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [374 ms]
+  Error Message:
+   the opened compiled field is empty after the submit; the prompt sent was 69 chars
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.Drive(Func`4 body) in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 115
+   at AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt() in C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\Workbench\Composer\TheCompiledFieldAfterASubmitTests.cs:line 50
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ before the submit: IsExpanded False · _compiled.Text.Length 69 · _compiled.ActualHeight 0.00 · arrange-valid False · draft 69 chars
+ render → 69 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ render → 0 chars via ComposerSurface.RenderCompiledView ← ComposerSurface.BeginNextTurn ← SessionDocumentSurface.Admit ← SessionDocumentSurface.Launch ← ComposerSendGate.Send ← ComposerSurface.SendThroughTheGate ← ComposerSurface.Send ← ComposerSurface.OnAcceleratorKey
+ after the submit, disclosure closed: IsExpanded False · _compiled.Text.Length 0 · _compiled.ActualHeight 0.00 · arrange-valid False · draft 0 chars
+ after the submit, disclosure opened: IsExpanded True · _compiled.Text.Length 0 · _compiled.ActualHeight 48.00 · arrange-valid True · draft 0 chars
+ sent prompt 69 chars · RenderView(next draft) 0 chars · b1's row SentBytes 69 chars, equal to the sent prompt: True
+
+
+
+Test Run Failed.
+Total tests: 2
+     Failed: 2
+ Total time: 1.7182 Seconds
