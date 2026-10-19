@@ -1,9 +1,21 @@
-T17d node 3 whole suites at e16d2fcd (src/tests as of e16d2fcd; README edits uncommitted at run time).
+T17d node 4 - whole suites at fa310512 (branch wl1a-readback), fresh run, 2026-10-19
 
-Core: dotnet test tests/AiDe.Core.Tests -nologo -> exit 0. Passed 3024, Failed 0, Skipped 1, Total 3025 (suite-core-n3.txt).
-App:  dotnet test tests/AiDe.App.Tests -nologo -> exit 1. Passed 1139, Failed 1, Skipped 2, Total 1142 (suite-app-n3.txt).
-  The one failure: SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - 'Ctrl+Enter probe failed with exit code 2. foreground not held; SendInput would prove another window'.
-  Re-run alone: fails the same way (chord-alone-n3.txt). Environmental (no held foreground in this session); the same NOT CHECKED cause recorded at node 2 and at the WL-1a acceptance. Not touched by this node.
-  NoDispatchOutsideTheHostTests (node 2's regression) now passes in the whole suite: 1139 passed vs 1134 at node 2 (+4 new node-3 tests, +1 the regression now green; total 1142 vs 1138; the chord test still environmental).
+Core: dotnet test tests/AiDe.Core.Tests -nologo
+  exit 0. Passed 3024, Failed 0, Skipped 1, Total 3025 (suite-core-n4.txt)
 
-So: green except one environmental test that cannot pass without a held foreground. The exit code is 1; this file does not claim 0.
+App: dotnet test tests/AiDe.App.Tests -nologo
+  exit 1. Passed 1143, Failed 2, Skipped 2, Total 1147 (suite-app-n4.txt)
+  1. SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph
+     "foreground not held". Environmental, as in nodes 2 and 3. Fails alone too (chord-alone-n4.txt).
+  2. TheRowsAttemptBindingSurvivesRestartAndSequenceTests.ASentTurnsRow_ShowsItsBinding_WhileTheRunIsStillHeld_ThroughTheSurface
+     NullReferenceException in Microsoft.Data.Sqlite.SqliteTransaction.Complete, during
+     SqliteConnection.Close, from WorkspaceStore.Dispose (WorkspaceStore.cs:380), from
+     NotebookFixture.Dispose (NotebookFixture.cs:109): a teardown failure, after the test body.
+     NOT REPRODUCED: alone 3/3 pass; the whole Records namespace 3 x 89/89 pass
+     (teardown-race-rerun-n4.txt). Cause NOT established.
+     Inferred, not tested: a transaction still open on another thread when the fixture disposes
+     the store. Not attributed to node 4: node 4's edits do not touch the store or the fixture,
+     and this test passed in checkC-green.txt at fa310512. That is a reading, not a proof.
+
+Not green as a whole: App exit 1. One failure is environmental; the other is a teardown race
+seen once in 7 runs of the test, and not reproduced since.

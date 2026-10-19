@@ -1,0 +1,12 @@
+## alone run 1
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 689 ms - AiDe.App.Tests.dll (net10.0)
+## alone run 2
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 700 ms - AiDe.App.Tests.dll (net10.0)
+## alone run 3
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 666 ms - AiDe.App.Tests.dll (net10.0)
+## Records namespace run 1
+Passed!  - Failed:     0, Passed:    89, Skipped:     0, Total:    89, Duration: 44 s - AiDe.App.Tests.dll (net10.0)
+## Records namespace run 2
+Passed!  - Failed:     0, Passed:    89, Skipped:     0, Total:    89, Duration: 39 s - AiDe.App.Tests.dll (net10.0)
+## Records namespace run 3
+Passed!  - Failed:     0, Passed:    89, Skipped:     0, Total:    89, Duration: 40 s - AiDe.App.Tests.dll (net10.0)
