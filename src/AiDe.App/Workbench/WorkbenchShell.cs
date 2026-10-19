@@ -3538,9 +3538,33 @@ public sealed class WorkbenchShell : IDisposable
 
             RegisterSessionDocument(config);
             revived.Add(config);
+            _ = OpenTheLiveExecutionAfterTheReadBackAsync(_sessionDocuments[Records.NotebookId.ForSession(sessionId)]);
         }
 
         return revived;
+    }
+
+    /// <summary>
+    /// The WL-S design's §4 at revive: once the document's read-back ends, the attempt the window closed on
+    /// (<see cref="Execution.ExecutionAtRevive.LiveAtClose"/>) opens as one execution in the Bottom, NOT activated, so the
+    /// revive moves neither focus nor the perspective. A failed read-back opens nothing: its refusal is the composer's.
+    /// </summary>
+    private async Task OpenTheLiveExecutionAfterTheReadBackAsync(Sessions.SessionDocumentSurface document)
+    {
+        await document.LastReadBack.ConfigureAwait(ConfigureAwaitOptions.ContinueOnCapturedContext | ConfigureAwaitOptions.SuppressThrowing);
+
+        // The shell disposed, or the session closed, while the read-back ran: there is no document to open beside.
+        if (!_sessionDocuments.TryGetValue(document.Notebook.Id, out var current) || !ReferenceEquals(current, document)
+            || Execution.ExecutionAtRevive.LiveAtClose(document.Notebook.Runs.ReadBack) is not { } live)
+        {
+            return;
+        }
+
+        var runs = document.Notebook.Runs;
+        if (document.Notebook.Thread.Current.Turns.FirstOrDefault(t => runs.AttemptOf(t.Ordinal)?.DispatchKey == live.DispatchKey) is { } turn)
+        {
+            Announcer.Announce(OpenExecution(document, turn.Ordinal, activate: false));
+        }
     }
 
     /// <summary>
@@ -3762,7 +3786,11 @@ public sealed class WorkbenchShell : IDisposable
     /// <see cref="Records.NotebookRuns.AttemptOf"/>, one per attempt. A collapsed Bottom is expanded first. A turn with
     /// no attempt opens nothing. Returns what to announce.
     /// </summary>
-    private string OpenExecution(Sessions.SessionDocumentSurface document, int ordinal)
+    /// <param name="activate">
+    /// False at revive: the execution is added, but neither shown in view nor raised as a document opening (no
+    /// perspective switch), and one already open is left as it is.
+    /// </param>
+    private string OpenExecution(Sessions.SessionDocumentSurface document, int ordinal, bool activate = true)
     {
         if (document.Notebook.Runs.AttemptOf(ordinal) is not { } receipt)
         {
@@ -3781,24 +3809,33 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         var shown = host.Service.Zones.FindZoneOf(executionId) is not null;
+        if (shown && !activate)
+        {
+            return string.Empty;
+        }
+
         var result = shown
             ? host.Service.Apply(new LayoutOperation.ActivateSurface(executionId))
             : host.Service.Apply(new LayoutOperation.AddSurface(
                 ZonesToTree.StackIdOf(ZoneId.Bottom),
                 new Surface(executionId, Execution.ExecutionSurface.Kind, caption)));
-        if (result.Applied)
+        if (result.Applied && activate)
         {
             OpeningDocument(host);
         }
 
-        WorkbenchDiagnostics.LayoutMutation("open-execution", "zone-rule", executionId, host.Adapter.ActiveSurfaceId, host.Service.Current);
+        WorkbenchDiagnostics.LayoutMutation(activate ? "open-execution" : "revive-execution", "zone-rule", executionId, host.Adapter.ActiveSurfaceId, host.Service.Current);
         host.Adapter.Render();
         if (!result.Applied && !shown)
         {
             return result.Announcement;
         }
 
-        host.Adapter.ActivateInView(executionId);
+        if (activate)
+        {
+            host.Adapter.ActivateInView(executionId);
+        }
+
         return (shown ? "Execution shown, " : "Execution open, ") + caption + ".";
     }
 
