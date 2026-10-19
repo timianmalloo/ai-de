@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T23:22:18Z",
+  "generated": "2026-10-19T23:40:24Z",
   "audit": [
     {
       "actor": null,
@@ -26752,6 +26752,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T23:11:48Z",
       "duration_seconds": 629.0
+    },
+    {
+      "id": "al-01M5B8KAA0TM3AAF2FVWKC2DWW",
+      "shortname": "join-wl-prefill-step8",
+      "datetime": "2026-10-19T23:40:24Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T30 join 463f4ce0",
+      "summary": "Recount fully green: App 1247/1247 (both foreground probes passed), Core 3120 / portable 2937 / nonportable 183 Completed. Step 8 strict 5/48. Ratchet vs 669cf746, head 463f4ce0: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's option 1 (no USER DEMO post was open). T30 (Rulings 180, 182): the model prefill is the default under gate 1, marked '? suggested', kept across a prepare, and never claims to be saved; the settings row states the gate's real reason; a restored row's compiled prompt is rebuilt and verified (sha256 vs Submitted.TextSha256) or reads 'Compiled prompt not recorded' (real red 19437c6e: 0 of 263 chars). Residual (Owner-accepted, deferred with Ruling 182 to WL-2): turns whose bytes included attachment bodies or a template read 'not recorded' after a restart. Owed: T30 n4 (Ruling 180 (4) cost line and first 50 calls, (6) compile-eval, the sheet tests that read the real proof file).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "AC-W01a: the user does not fill goal and done criteria by hand",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T22:50:47Z",
+      "duration_seconds": 2977.0
     }
   ],
   "changes": [
