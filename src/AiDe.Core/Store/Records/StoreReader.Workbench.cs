@@ -40,6 +40,25 @@ public sealed partial class StoreReader
         FROM dispatch_attempt_fact WHERE dispatch_key = $key;
         """;
 
+    internal const string SqlReadAttemptsForNotebook = """
+        SELECT dispatch_key, workspace_id, workspace_epoch, draft_id, revision_no, session_id,
+               session_generation, projection_sha, route_fingerprint, profile_key, scope_snapshot,
+               parent_dispatch_key, queued_after_dispatch_key, ingress_seq, attempted_at
+        FROM dispatch_attempt_fact WHERE draft_id = $id ORDER BY ingress_seq;
+        """;
+
+    internal const string SqlReadEvidenceLinksForSubject = """
+        SELECT link_id, subject_kind, subject_id, subject_revision, artifact_ref, producer, baseline,
+               verification_status, limitations, ingress_seq, recorded_at
+        FROM evidence_link_fact
+        WHERE subject_kind = $k AND subject_id = $id ORDER BY ingress_seq;
+        """;
+
+    internal const string SqlReadObligationHistory = """
+        SELECT obligation_id, checklist_id, revision, text, mandatory, ingress_seq, recorded_at
+        FROM checklist_obligation_fact WHERE checklist_id = $c ORDER BY ingress_seq;
+        """;
+
     internal const string SqlReadOutcomes = """
         SELECT dispatch_key, state, error_code, cause, detail, ingress_seq, recorded_at
         FROM dispatch_outcome_fact WHERE dispatch_key = $key ORDER BY ingress_seq;
@@ -114,15 +133,19 @@ public sealed partial class StoreReader
         },
         ("$id", notebookId), ("$rev", revisionNo));
 
-    public AttemptRow? ReadAttempt(string dispatchKey) => ReadOne(SqlReadAttempt,
-        r => new AttemptRow(
-            r.GetString(0), r.GetString(1), r.GetInt64(2), r.GetString(3), r.GetInt32(4), r.GetString(5),
-            r.GetInt64(6), NullableString(r, 7), NullableString(r, 8), NullableLong(r, 9),
-            NullableString(r, 10), NullableString(r, 11), NullableString(r, 12))
-        {
-            IngressSeq = r.GetInt64(13), AttemptedAt = r.GetString(14),
-        },
-        ("$key", dispatchKey));
+    public AttemptRow? ReadAttempt(string dispatchKey) => ReadOne(SqlReadAttempt, MapAttempt, ("$key", dispatchKey));
+
+    /// <summary>Every attempt of one notebook, oldest first, at any revision.</summary>
+    public IReadOnlyList<AttemptRow> ReadAttemptsForNotebook(string notebookId) =>
+        ReadMany(SqlReadAttemptsForNotebook, MapAttempt, ("$id", notebookId));
+
+    private static AttemptRow MapAttempt(SqliteDataReader r) => new(
+        r.GetString(0), r.GetString(1), r.GetInt64(2), r.GetString(3), r.GetInt32(4), r.GetString(5),
+        r.GetInt64(6), NullableString(r, 7), NullableString(r, 8), NullableLong(r, 9),
+        NullableString(r, 10), NullableString(r, 11), NullableString(r, 12))
+    {
+        IngressSeq = r.GetInt64(13), AttemptedAt = r.GetString(14),
+    };
 
     /// <summary>Whether a mutating command completed, by any caller: its <c>command_receipt_fact</c> row exists.</summary>
     public bool HasCompletedCommand(string workspaceId, string commandType, string commandId) => ReadOne("""
@@ -154,14 +177,18 @@ public sealed partial class StoreReader
 
     /// <summary>Every link to one claim/criterion revision, oldest first.</summary>
     public IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision) =>
-        ReadMany(SqlReadEvidenceLinks,
-            r => new EvidenceLinkRow(
-                r.GetString(0), r.GetString(1), r.GetString(2), r.GetInt32(3), r.GetString(4), r.GetString(5),
-                r.GetString(6), r.GetString(7), NullableString(r, 8))
-            {
-                IngressSeq = r.GetInt64(9), RecordedAt = r.GetString(10),
-            },
-            ("$k", subjectKind), ("$id", subjectId), ("$rev", subjectRevision));
+        ReadMany(SqlReadEvidenceLinks, MapLink, ("$k", subjectKind), ("$id", subjectId), ("$rev", subjectRevision));
+
+    private static EvidenceLinkRow MapLink(SqliteDataReader r) => new(
+        r.GetString(0), r.GetString(1), r.GetString(2), r.GetInt32(3), r.GetString(4), r.GetString(5),
+        r.GetString(6), r.GetString(7), NullableString(r, 8))
+    {
+        IngressSeq = r.GetInt64(9), RecordedAt = r.GetString(10),
+    };
+
+    /// <summary>Every link to one subject at any revision, oldest first.</summary>
+    public IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinksForSubject(string subjectKind, string subjectId) =>
+        ReadMany(SqlReadEvidenceLinksForSubject, MapLink, ("$k", subjectKind), ("$id", subjectId));
 
     /// <summary>The newest assessment of one kind for one scope (any baseline), or null.</summary>
     public AssessmentRow? ReadLatestAssessment(string kind, string scope) => ReadOne(SqlReadLatestAssessment,
@@ -189,6 +216,14 @@ public sealed partial class StoreReader
             IngressSeq = r.GetInt64(5), RecordedAt = r.GetString(6),
         },
         ("$c", checklistId), ("$rev", revision));
+
+    /// <summary>Every obligation row of one checklist at every revision, oldest first.</summary>
+    public IReadOnlyList<ObligationRow> ReadObligationHistory(string checklistId) => ReadMany(SqlReadObligationHistory,
+        r => new ObligationRow(r.GetString(0), r.GetString(1), r.GetInt32(2), r.GetString(3), r.GetInt32(4) == 1)
+        {
+            IngressSeq = r.GetInt64(5), RecordedAt = r.GetString(6),
+        },
+        ("$c", checklistId));
 
     /// <summary>The highest checklist revision recorded, or null.</summary>
     public int? ReadLatestChecklistRevision(string checklistId) =>
