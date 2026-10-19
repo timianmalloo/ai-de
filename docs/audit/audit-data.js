@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T04:54:11Z",
+  "generated": "2026-10-19T05:07:34Z",
   "audit": [
     {
       "actor": null,
@@ -23579,6 +23579,111 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T04:54:09Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M598XNA98FE7GDKPJFWZTDYD",
+      "shortname": "coordinate-workbench-loops-leader1",
+      "datetime": "2026-10-19T05:07:34Z",
+      "session": "wl-leader-20261018",
+      "prompt": "You are the Leader. Read C:\\Projects\\ai-de\\docs\\coordination\\workbench-loops-leader-kickoff.md and follow it exactly, starting now.",
+      "summary": "Leader 1 hand-off. Landed on main: WL-0 (4e615327), spine T2 schema v2 (d0cee41b), T3 RunEvent/TurnState (d35aae27), T4 re-row (c3013bd2), support T12 census (36bcfaea, 45c9b940) and T13 gate hygiene (34e82fc4, strict reds 14->5), spikes T9 (e651d3e0) and T10 E-1 PASS (17681f16). Q0: Grok and Agy observed-only. Rulings 148-155 drove amendments and the step-8 ratchet. Planned vs actual: T4 344/280 calls (GO9 signal) -> wave-2 hard tracks split into two nodes; every join needed 1-3 attempts (ratchet refusals were real defects or Leader/brief omissions, each fixed forward and recorded). Defects of the Leader recorded: missed seam requests (control: request census per report), evidence READMEs without frontmatter (brief rule 13), concurrent commits during a join, prose read as ruling citations. Hand-off: docs/coordination/workbench-loops-leader-handoff-1.md; briefs .agents/briefs/workbench-loops/.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/workbench-loops-leader-handoff-1.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Run the workbench-loops plan as Leader until hand-off",
+      "done_when": "spine + WL-0 on main, wave-2 briefs and hand-off committed, leader released",
+      "tier": "T2",
+      "fan_out": 6,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:06:27Z",
+      "duration_seconds": 28867.0,
+      "agent_runs": [
+        {
+          "agent": "T1",
+          "started_at": "2026-10-18T22:23:00Z",
+          "ended_at": "2026-10-18T22:34:00Z",
+          "duration_seconds": 660.0,
+          "calls": 29,
+          "budget_calls": 150,
+          "over_budget": false
+        },
+        {
+          "agent": "T2",
+          "started_at": "2026-10-18T22:23:00Z",
+          "ended_at": "2026-10-18T23:40:00Z",
+          "duration_seconds": 4620.0,
+          "calls": 250,
+          "budget_calls": 220,
+          "over_budget": true
+        },
+        {
+          "agent": "T3",
+          "started_at": "2026-10-18T22:23:00Z",
+          "ended_at": "2026-10-18T22:45:00Z",
+          "duration_seconds": 1320.0,
+          "calls": 39,
+          "budget_calls": 140,
+          "over_budget": false
+        },
+        {
+          "agent": "T4",
+          "started_at": "2026-10-18T22:23:00Z",
+          "ended_at": "2026-10-19T03:50:00Z",
+          "duration_seconds": 19620.0,
+          "calls": 423,
+          "budget_calls": 280,
+          "over_budget": true
+        },
+        {
+          "agent": "T9",
+          "started_at": "2026-10-19T00:03:00Z",
+          "ended_at": "2026-10-19T00:09:00Z",
+          "duration_seconds": 360.0,
+          "calls": 23,
+          "budget_calls": 80,
+          "over_budget": false
+        },
+        {
+          "agent": "T10",
+          "started_at": "2026-10-19T00:03:00Z",
+          "ended_at": "2026-10-19T00:39:00Z",
+          "duration_seconds": 2160.0,
+          "calls": 216,
+          "budget_calls": 220,
+          "over_budget": false
+        },
+        {
+          "agent": "T12",
+          "started_at": "2026-10-18T22:45:00Z",
+          "ended_at": "2026-10-19T02:35:00Z",
+          "duration_seconds": 13800.0,
+          "calls": 64,
+          "budget_calls": 60,
+          "over_budget": true
+        },
+        {
+          "agent": "T13",
+          "started_at": "2026-10-19T00:57:00Z",
+          "ended_at": "2026-10-19T02:05:00Z",
+          "duration_seconds": 4080.0,
+          "calls": 94,
+          "budget_calls": 200,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 46620.0,
+        "span_seconds": 19620.0,
+        "speedup": 2.38,
+        "peak_concurrency": 4
+      }
     }
   ],
   "changes": [

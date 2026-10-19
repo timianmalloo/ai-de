@@ -31,7 +31,9 @@ rules into `brief-<T>-<session>.md`), the rendered wave-2 briefs T5/T6/T7/T8/T11
 | T12 census (+ T12b, + T12c root cause) | `36bcfaea`, `45c9b940` | census retries only its read; raw C0 characters in JSON escaped (0x15 root cause) |
 | T3 RunEvent/TurnState | `d35aae27` | under the Owner's 151(3) reading, recorded verbatim in its join audit; condition (b) discharged on main |
 | T13 gate hygiene (+ T13b, Ruling 154) | `34e82fc4` | strict step 8: 5 of 47 red; the register union-merges (`.gitattributes`) |
-| T4 re-row | **pending**: local join commits `81880c04` + `5979a7ff` are unpushed; App floor lowered 1064→1026 with the reason (37 test attributes in 5 deleted files) | ratchet refused 2 green→red (verify-cited-controls, verify-fixture-derivation); fix-forward **T4c** running at hand-off time, see the state table |
+| T4 re-row (+ T4b, T4c) | `c3013bd2` | ADR-0045 as amended by Rulings 149 + 152; joined under Ruling 155 (the SolutionTreeChordTests probe was NOT CHECKED on the unattended desktop; an **attended run is owed**) |
+| T9 A↔B↔C unparent spike | `e651d3e0` | spike exit 0; private bytes recorded |
+| T10 E-1 notebook spike | `17681f16` | PASS, not reverse; native IME **manual, owed** |
 
 ## Track state at hand-off
 | track | branch / tree | last sha | state | next |
@@ -41,16 +43,16 @@ rules into `brief-<T>-<session>.md`), the rendered wave-2 briefs T5/T6/T7/T8/T11
 | T3 sp2-runevent-vocab | `sp2-runevent-vocab` · `C:\Projects\ai-de-sp2-runevent-vocab` | `fba3e3b5` | joined | cleanup |
 | T12 census-flake | `census-flake` · `C:\Projects\ai-de-census-flake` | `b306e90e` | joined | cleanup |
 | T13 gate-hygiene | `gate-hygiene` · `C:\Projects\ai-de-gate-hygiene` | (on main at `34e82fc4`) | joined | cleanup |
-| T4 sp3-perspective-rerow | `sp3-perspective-rerow` · `C:\Projects\ai-de-sp3-perspective-rerow` | see below | **see the final-state section** | re-join, ratchet, push |
-| T9 wls-unparent-spike | `wls-unparent-spike` · `C:\Projects\ai-de-wls-unparent-spike` | `a89c26a8` | review-ready (spike exit 0, re-run by the Leader) | join after T4 |
-| T10 e1-notebook-spike | `e1-notebook-spike` · `C:\Projects\ai-de-e1-notebook-spike` | `29553f30` | review-ready (E-1 PASS, not reverse; merged origin/main; spikes index row added) | join after T9 |
+| T4 sp3-perspective-rerow | `sp3-perspective-rerow` · `C:\Projects\ai-de-sp3-perspective-rerow` | `aebc8e66` | joined | cleanup |
+| T9 wls-unparent-spike | `wls-unparent-spike` · `C:\Projects\ai-de-wls-unparent-spike` | `a89c26a8` | joined | cleanup |
+| T10 e1-notebook-spike | `e1-notebook-spike` · `C:\Projects\ai-de-e1-notebook-spike` | `29553f30` | joined | cleanup |
 | Q0 grok / agy | `q0-grok-wl`, `q0-agy-wl` (tagged `archive/q0-*`) | `ca7734aa`, `8c71e9e8` | done: both **observed-only** | keep (cleanup holds tag-only commits) |
 | scratch | `C:\Projects\ai-de-ratchet-parent`, `-ratchet-head` (detached) | — | Leader's ratchet trees | reuse; `git checkout -f --detach <sha>` + `git clean -fdq -e artifacts` before each run |
 
 **Open requests to the Leader: 0** (cumulative: 10. Resolved: 5, all answered. Expired: T4 seams 2–5b, missed by the first
 Leader and granted retroactively in T4b). **Open DRs: 0.**
 
-## Binding rulings (addendum-c register, `docs/notes/addendum-c-council-rulings.md`; next is Ruling 155)
+## Binding rulings (addendum-c register, `docs/notes/addendum-c-council-rulings.md`; the next number follows its last heading)
 - **148** — ADR-0039 amended: T2's six departures, with merge conditions (a)–(h), all landed.
 - **149** — ExplorerSurface deleted. The in-app knowledge/spec loss is stated with `docs/index.html` as the interim path.
   **The knowledge-inclusive canvas mode is a WL-S close condition** (in T11's brief).
@@ -65,6 +67,9 @@ Leader and granted retroactively in T4b). **Open DRs: 0.**
   heading; record the counts). Normalisation is limited to the tree-root prefix.
 - **154** — T13's exemptions: the machine-path opt-outs are accepted; the mockups stay scanned with a
   design-system-colour-only exemption.
+- **155** — T4 joins. A foreground refusal of the SolutionTreeChordTests probe is NOT CHECKED, never a pass. It is excused
+  only when the first parent refuses too, in the same environment. An attended run is owed to the user. Next hygiene
+  item: the probe should report NOT CHECKED with its cause.
 - **The Owner's 151(3) reading (T3's join audit, verbatim):** the exception covers only a *transiently* unreadable census
   read. A deterministic cause is not excused, except where a join's diff touches no terminal-host or process-lifecycle
   code. With T12c on main, that question is closed unless it recurs.
@@ -112,7 +117,22 @@ Leader and granted retroactively in T4b). **Open DRs: 0.**
    → WL-1b → WL-1c → WL-2 ∥ WL-3 …, each refreshed from actuals (GO19).
 
 ## Final state at release (written last)
-<!-- filled by the Leader immediately before `coord leader release` -->
+- **origin/main at release:** `17681f16` (the T10 join) plus this hand-off commit. The whole serial spine, WL-0, the
+  census, gate hygiene and both spikes are on main. **No track is running. No join is open.** Open requests to the Leader: 0.
+  Open DRs: 0.
+- **Leader designation:** `wl-leader-20261018`, epoch 1, **released** after this commit. The epoch survives; the next
+  Leader pins `wl-leader2-20261019`.
+- **App test floor reconciliation (Owner, 2026-10-19).** Both App case counts are measured trx totals:
+  **1064** at the T13 join recount (main `3e1bd2ae`) and **1026** at the T4 recount, so the drop is a **measured 38**. The
+  diff `3e1bd2ae..c3013bd2` over `tests/AiDe.App.Tests` removes 28 and adds 4 `[Fact]/[Theory]`-family attributes, and
+  removes 31 and adds 15 `[InlineData]` rows: about 40 at attribute level. The gap from 38 is `[Theory]` attributes, which
+  are not cases, and member-data theories. My earlier "37" counted only the five deleted files' attributes. The rest are
+  rescopes Rulings 149/152 granted.
+- **Strict step 8 on main:** 5 of 47 red (see T13). Every drive join is still ratcheted (Ruling 151).
+- **Worktrees:** every tree listed above is left in place (the Owner's instruction). `coord worktree cleanup`
+  (report-only) is the next Leader's call.
+- **First actions for wl-leader2:** dispatch wave 2 as listed, starting with T5 (two-node split) and T7 (compile, then
+  Grok). Every report starts with the request census.
 
 ## Resume brief (the fresh Leader's first lines)
 ```
