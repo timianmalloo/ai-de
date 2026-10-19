@@ -1,0 +1,12 @@
+{"agent": "wl-leader2-20261019", "at": 1792386718.8120651, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t5-host", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl1a-attempt-host"}
+{"action": "add", "agent": "wl-t5-host", "at": 1792387088.4834583, "deadline_at": 1792388888.4834583, "id": "req-01M599H0364THVM23WJJ68R11S", "kind": "request", "path": "-", "seq": 2, "session": "wl-t5-host", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t5-host", "at": 1792387353.4471488, "kind": "claim", "path": "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs", "seq": 3, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387353.6338267, "kind": "claim", "path": "src/AiDe.Core/Ipc/IWorkspaceDispatch.cs", "seq": 4, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387353.8220959, "kind": "claim", "path": "src/AiDe.Core/Ipc/WorkspaceOperations.cs", "seq": 5, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387354.0112057, "kind": "claim", "path": "src/AiDe.Core/Ipc/WorkspaceClient.cs", "seq": 6, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387354.1991823, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 7, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387354.4109788, "kind": "claim", "path": "src/AiDe.Core/Store/StoreWriter.cs", "seq": 8, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387354.5786002, "kind": "claim", "path": "src/AiDe.Core/Store/StoreReader.cs", "seq": 9, "session": "wl-t5-host", "ttl": 900.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792387639.5012205, "kind": "claim", "path": "docs/design/workbench-loops-wl-1a.md", "seq": 10, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792388109.6797752, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 11, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792388527.2537029, "kind": "claim", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 12, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}

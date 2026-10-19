@@ -1,0 +1,8 @@
+{"agent": "wl-t7b-redact", "at": 1792388366.5473115, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/redaction/offsets-in-stored-frame-red.txt", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388366.5749056, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/FrameRedactionTests.cs", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388382.3733053, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/redaction/offsets-in-stored-frame-green.txt", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388382.406877, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/FrameRedaction.cs", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388382.4395223, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388521.5893276, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388522.1726317, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t7b-redact", "wi": ""}
+{"agent": "wl-t7b-redact", "at": 1792388522.199991, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t7b-redact", "wi": ""}

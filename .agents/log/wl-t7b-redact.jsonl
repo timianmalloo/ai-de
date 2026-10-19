@@ -1,0 +1,5 @@
+{"agent": "wl-t7b-redact", "at": 1792388374.8977146, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/FrameRedaction.cs", "seq": 1, "session": "wl-t7b-redact", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t7b-redact", "at": 1792388375.066066, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "seq": 2, "session": "wl-t7b-redact", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t7b-redact", "at": 1792388382.6365407, "kind": "release", "path": "src/AiDe.Core/AgentPlane/FrameRedaction.cs", "seq": 3, "session": "wl-t7b-redact", "wi": "workbench-loops"}
+{"agent": "wl-t7b-redact", "at": 1792388382.7348726, "kind": "release", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "seq": 4, "session": "wl-t7b-redact", "wi": "workbench-loops"}
+{"at": 1792388522.3031268, "from": "wl-t7b-redact", "kind": "done", "mail_id": "mail-01M59AWR9ZN8TS186NSWDCPAW2", "ref": null, "session": "wl-t7b-redact", "to": "wl-leader2-20261019", "type": "mail"}

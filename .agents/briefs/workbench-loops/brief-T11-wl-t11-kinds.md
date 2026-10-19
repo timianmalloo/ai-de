@@ -83,3 +83,7 @@ and a default.
     `python docs/ai-forward-pack/scripts/docs-graph.py validate` and fix every **problem** it lists. Index drift alone is
     fine, because the join regenerates the index. A file with no frontmatter turned this gate from green to red at a join
     (2026-10-19).
+14. **The code on main outranks your brief on what a field means.** Before you implement a field, record or kind that
+    your brief describes, open its declaration and doc comment on main. If they disagree with the brief, follow the code.
+    Send a seam request naming both texts, and do not build to the brief's wording. A brief that described an offset
+    differently from `RunEventRedaction`'s doc comment sent T7 the wrong way (DC-NEW-wl-leader2, 2026-10-19).

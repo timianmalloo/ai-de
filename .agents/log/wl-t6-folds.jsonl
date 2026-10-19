@@ -1,0 +1,3 @@
+{"agent": "wl-leader2-20261019", "at": 1792387977.1801238, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t6-folds", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl1a-folds"}
+{"action": "add", "agent": "wl-t6-folds", "at": 1792388337.995628, "deadline_at": 1792390137.995628, "id": "req-01M59AQ4AFG4MASSNZBNJ9PFXG", "kind": "request", "path": "-", "seq": 2, "session": "wl-t6-folds", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"at": 1792388344.637041, "from": "wl-t6-folds", "kind": "done", "mail_id": "mail-01M59AQASXBEKTMYHHBZ4S4R31", "ref": null, "session": "wl-t6-folds", "to": "wl-leader2-20261019", "type": "mail"}

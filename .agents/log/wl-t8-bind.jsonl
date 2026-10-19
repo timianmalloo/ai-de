@@ -1,0 +1,7 @@
+{"agent": "wl-leader2-20261019", "at": 1792387978.5002084, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t8-bind", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl1a-notebook-binding"}
+{"action": "add", "agent": "wl-t8-bind", "at": 1792388401.9171648, "deadline_at": 1792390201.9171648, "id": "req-01M59AS2R0986PT82ARD0QZP8G", "kind": "request", "path": "-", "seq": 2, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792388506.5937886, "kind": "claim", "path": "src/AiDe.App/Workbench/Records/NotebookModel.cs", "seq": 3, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792388506.7675927, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 4, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792388506.969909, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 5, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792388507.1608205, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 6, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792388507.3495338, "kind": "claim", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookBindingTests.cs", "seq": 7, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
