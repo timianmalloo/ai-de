@@ -1,0 +1,16 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheHeldTurnIsWithdrawnTests.cs(54,36): error CS1061: 'AttemptHost' does not contain a definition for 'WithdrawAsync' and no accessible extension method 'WithdrawAsync' accepting a first argument of type 'AttemptHost' could be found (are you missing a using directive or an assembly reference?) [C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\AiDe.App.Tests.csproj]
+C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheHeldTurnIsWithdrawnTests.cs(82,80): error CS1061: 'AttemptHost' does not contain a definition for 'WithdrawAsync' and no accessible extension method 'WithdrawAsync' accepting a first argument of type 'AttemptHost' could be found (are you missing a using directive or an assembly reference?) [C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\AiDe.App.Tests.csproj]
+C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheHeldTurnIsWithdrawnTests.cs(84,22): error CS0103: The name 'AttemptHostCodes' does not exist in the current context [C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\AiDe.App.Tests.csproj]
