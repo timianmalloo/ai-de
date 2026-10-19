@@ -1,0 +1,13 @@
+source run log: green-all.txt
+== ime-cdp: PASS — paragraph end: pass; rich heading text: pass; inside a JSON fence: pass
+   method: DevTools Input.imeSetComposition (に → にほんご → 日本語) then Input.insertText commit, at a paragraph end, a rich heading and inside a JSON fence; SHA-256 compare; one SendInput Ctrl+Z
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | [paragraph end] events start 1, update 6, end [日本語]; rich decorations mid-composition 36; doc == original with '日本語' at 63: True; one native Ctrl+Z restores original: True
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 70
+   | [rich heading text] events start 1, update 6, end [日本語]; rich decorations mid-composition 35; doc == original with '日本語' at 70: True; one native Ctrl+Z restores original: True
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 95
+   | [inside a JSON fence] events start 1, update 6, end [日本語]; rich decorations mid-composition 36; doc == original with '日本語' at 95: True; one native Ctrl+Z restores original: True
+E-1 exit 1: 7/8 passed

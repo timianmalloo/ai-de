@@ -1,0 +1,141 @@
+{
+  "at": "2026-10-19T00:37:53.5888266+00:00",
+  "exit": 1,
+  "webview2Runtime": "155.0.4283.62",
+  "results": [
+    {
+      "Name": "ime",
+      "Pass": false,
+      "Value": "MANUAL, pending a dated record \u2014 not run: the Microsoft Japanese IME is not enabled for this Windows user",
+      "Method": "precondition read from HKCU\\Control Panel\\International\\User Profile\\ja-JP; steps in RESULT.md \u00A7IME",
+      "Detail": [
+        "precondition: HKCU\\Control Panel\\International\\User Profile has no ja-JP key (the user\u0027s input languages do not include Japanese)"
+      ]
+    },
+    {
+      "Name": "ime-control",
+      "Pass": true,
+      "Value": "paragraph end: \u0027nihongo \\n\u0027; rich heading text: \u0027nihongo \\n\u0027",
+      "Method": "negative control: the same SendInput keys with the user\u0027s en-US layout and no IME \u2014 must insert ASCII with no composition events",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "[paragraph end] focus hwnd 0x2030ac4 in pid 23564, layout 0x4090409",
+        "[paragraph end] composition events: 0 (start 0, end []); inserted \u0027nihongo \\n\u0027; rest of document intact: True",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 70",
+        "[rich heading text] focus hwnd 0x2030ac4 in pid 23564, layout 0x4090409",
+        "[rich heading text] composition events: 0 (start 0, end []); inserted \u0027nihongo \\n\u0027; rest of document intact: True"
+      ]
+    },
+    {
+      "Name": "ime-cdp",
+      "Pass": true,
+      "Value": "paragraph end: pass; rich heading text: pass; inside a JSON fence: pass",
+      "Method": "DevTools Input.imeSetComposition (\u306B \u2192 \u306B\u307B\u3093\u3054 \u2192 \u65E5\u672C\u8A9E) then Input.insertText commit, at a paragraph end, a rich heading and inside a JSON fence; SHA-256 compare; one SendInput Ctrl\u002BZ",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "[paragraph end] events start 1, update 6, end [\u65E5\u672C\u8A9E]; rich decorations mid-composition 36; doc == original with \u0027\u65E5\u672C\u8A9E\u0027 at 63: True; one native Ctrl\u002BZ restores original: True",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 70",
+        "[rich heading text] events start 1, update 6, end [\u65E5\u672C\u8A9E]; rich decorations mid-composition 35; doc == original with \u0027\u65E5\u672C\u8A9E\u0027 at 70: True; one native Ctrl\u002BZ restores original: True",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 95",
+        "[inside a JSON fence] events start 1, update 6, end [\u65E5\u672C\u8A9E]; rich decorations mid-composition 36; doc == original with \u0027\u65E5\u672C\u8A9E\u0027 at 95: True; one native Ctrl\u002BZ restores original: True"
+      ]
+    },
+    {
+      "Name": "clipboard",
+      "Pass": true,
+      "Value": "paste=True, copy=True, doc-\u003Eclipboard-\u003Edoc fixed point=True, clipboard out CRLF=False",
+      "Method": "Windows clipboard (UnicodeText \u002B HTML Format) -\u003E SendInput Ctrl\u002BV; SendInput Ctrl\u002BA, Ctrl\u002BC -\u003E Clipboard.GetText; SendInput Ctrl\u002BV into an empty document; SHA-256 compare",
+      "Detail": [
+        "load: 0 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,304); editor hasFocus=true; caret 0",
+        "Windows clipboard set: UnicodeText (88 chars, CRLF) \u002B HTML Format",
+        "paste: doc sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; expected (CRLF-\u003ELF, the editor\u0027s line model) sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; equal True; html leaked False",
+        "copy: clipboard sequence changed True; clipboard text 82 chars, CRLF pairs 0, byte-identical to the original Windows text False; equals doc modulo CRLF True",
+        "load: 0 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,304); editor hasFocus=true; caret 0",
+        "re-paste of the editor\u0027s own copy: sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; fixed point True"
+      ]
+    },
+    {
+      "Name": "multiselect",
+      "Pass": true,
+      "Value": "cursors=True, 3-cursor edit=True, one undo restores exact bytes=True, one redo=True",
+      "Method": "SendInput click \u002B 2 Ctrl\u002Bclicks at coordsAtPos (rich projection, cursors in prose, a JSON fence and a heading), SendInput \u0027xyz\u0027, Ctrl\u002BZ, Ctrl\u002BY; SHA-256 compare",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 0",
+        "cursors after click \u002B 2 Ctrl\u002Bclicks: [29,100,363], wanted [29,100,363]",
+        "typed \u0027xyz\u0027 at every cursor: sha 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce, expected 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce: True",
+        "one Ctrl\u002BZ: sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72 vs original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72: True",
+        "one Ctrl\u002BY: equals the edited bytes True"
+      ]
+    },
+    {
+      "Name": "roundtrip",
+      "Pass": true,
+      "Value": "LF: pass (byte-exact); CRLF: pass (byte-exact); mixed: pass (disclosed as lossy)",
+      "Method": "load fixture -\u003E rich (decorations \u003E 0, fence info strings read from the syntax tree) -\u003E 3x source\u003C-\u003Erich -\u003E save UTF-8 file -\u003E reload page -\u003E load file; SHA-256 compare at every step",
+      "Detail": [
+        "[LF] page: {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}; rich decorations 38; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: [\u0027python\u0027,\u0027\u0027]",
+        "[LF] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: True; saved file sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; page reloaded True; reloaded doc sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72",
+        "[CRLF] page: {\u0022lineSeparator\u0022:\u0022\\r\\n\u0022,\u0022mixed\u0022:false}; rich decorations 35; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: [\u0027python\u0027,\u0027\u0027]",
+        "[CRLF] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: True; saved file sha 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40; page reloaded True; reloaded doc sha 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40; original 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40",
+        "[mixed] page: {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:true}; rich decorations 35; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: [\u0027python\u0027,\u0027\u0027]",
+        "[mixed] 3 toggles source\u003C-\u003Erich hold the bytes and source has 0 decorations: True; saved file sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; page reloaded True; reloaded doc sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; original ef739f8a6347dc0cb1bdbd17f21fedbb78c90013b9ede04a60cb55ff6867a578"
+      ]
+    },
+    {
+      "Name": "latency",
+      "Pass": true,
+      "Value": "p95 5.5 ms page (keydown-\u003Enext frame), 7.1 ms host (SendInput-\u003Epaint stamp received), n=450/450, doc 100076 chars",
+      "Method": "SendInput letters at 50 ms cadence, 150 per position (near start, middle, end) of a rich-projection notebook; page/latency-harness.mjs stamps keydown.timeStamp and the first task after the next animation frame",
+      "Detail": [
+        "load: 100076 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 30",
+        "[near start] keys 150, samples 150, doc grew 150; page p50 4.0 p95 5.5 max 6.1 ms; host p95 7.2 ms; event-timing entries \u003E=16ms 0, max 0",
+        "focus: native click at (550,314); editor hasFocus=true; caret 50083",
+        "[middle] keys 150, samples 150, doc grew 150; page p50 3.6 p95 5.6 max 6.4 ms; host p95 7.1 ms; event-timing entries \u003E=16ms 0, max 0",
+        "focus: native click at (550,314); editor hasFocus=true; caret 100076",
+        "[end] keys 150, samples 150, doc grew 150; page p50 3.4 p95 5.3 max 6.1 ms; host p95 6.6 ms; event-timing entries \u003E=16ms 0, max 0",
+        "document 100076 chars; all positions: 450 samples of 450 keys; page p95 5.5 ms; host p95 7.1 ms; event-timing entries \u003E 50 ms: 0"
+      ]
+    },
+    {
+      "Name": "completion-uia",
+      "Pass": true,
+      "Value": "open=pass; ArrowDown moves DOM and UIA selection to option 1=pass; Escape=pass; zero matches=pass; Enter=pass",
+      "Method": "SendInput \u0027@sp\u0027 / ArrowDown / Escape / \u0027zzq\u0027 / Enter, each from a verified-open popup; System.Windows.Automation over the WebView2 window (List \u0027Completions\u0027, ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM\u0027s aria-activedescendant",
+      "Detail": [
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "open: DOM listbox open True; UIA list found True",
+        "open: UIA list \u0027Completions\u0027 ControlType.List; items [@spec/workbench-loops | @spike/notebook-editor-e1]; UIA selected index 0; DOM {\u0022activedescendant\u0022:\u0022cm-ac-13s21-0\u0022,\u0022controls\u0022:\u0022cm-ac-13s21\u0022,\u0022listbox\u0022:true,\u0022selectedId\u0022:\u0022cm-ac-13s21-0\u0022,\u0022selectedIndex\u0022:0,\u0022status\u0022:\u0022active\u0022}",
+        "editor: UIA \u0027Notebook\u0027 ControlType.Edit",
+        "ArrowDown (popup open before the key: True): DOM {\u0022activedescendant\u0022:\u0022cm-ac-13s21-1\u0022,\u0022controls\u0022:\u0022cm-ac-13s21\u0022,\u0022listbox\u0022:true,\u0022selectedId\u0022:\u0022cm-ac-13s21-1\u0022,\u0022selectedIndex\u0022:1,\u0022status\u0022:\u0022active\u0022}; UIA selected index 1",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "before Escape: DOM listbox open True; UIA list found True",
+        "Escape: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA list gone True; selected ListItems left 0; UIA focus \u0027Notebook\u0027 ControlType.Edit",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "before narrowing: DOM listbox open True; UIA list found True",
+        "zero matches: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA list gone True; selected ListItems left 0; UIA focus \u0027Notebook\u0027 ControlType.Edit",
+        "load: 402 chars, mode rich, page reports {\u0022lineSeparator\u0022:\u0022\\n\u0022,\u0022mixed\u0022:false}",
+        "focus: native click at (550,314); editor hasFocus=true; caret 63",
+        "before Enter: DOM listbox open True; UIA list found True",
+        "accept: applied \u0027@spec/workbench-loops\u0027 True",
+        "accept: DOM {\u0022activedescendant\u0022:null,\u0022controls\u0022:null,\u0022listbox\u0022:false,\u0022selectedId\u0022:null,\u0022selectedIndex\u0022:-1,\u0022status\u0022:null}; UIA list gone True; selected ListItems left 0; UIA focus \u0027Notebook\u0027 ControlType.Edit",
+        "PASS open: listbox named, options, first selected in DOM and UIA",
+        "PASS ArrowDown moves DOM and UIA selection to option 1",
+        "PASS Escape: was open; then no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor",
+        "PASS zero matches: was open; \u0027@spzzq\u0027 leaves nothing open, nothing active",
+        "PASS Enter: was open; accepts and leaves nothing active"
+      ]
+    }
+  ]
+}

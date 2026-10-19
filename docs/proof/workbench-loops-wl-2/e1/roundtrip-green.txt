@@ -1,0 +1,10 @@
+source run log: green-all.txt
+== roundtrip: PASS — LF: pass (byte-exact); CRLF: pass (byte-exact); mixed: pass (disclosed as lossy)
+   method: load fixture -> rich (decorations > 0, fence info strings read from the syntax tree) -> 3x source<->rich -> save UTF-8 file -> reload page -> load file; SHA-256 compare at every step
+   | [LF] page: {"lineSeparator":"\n","mixed":false}; rich decorations 38; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: ['python','']
+   | [LF] 3 toggles source<->rich hold the bytes and source has 0 decorations: True; saved file sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; page reloaded True; reloaded doc sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72
+   | [CRLF] page: {"lineSeparator":"\r\n","mixed":false}; rich decorations 35; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: ['python','']
+   | [CRLF] 3 toggles source<->rich hold the bytes and source has 0 decorations: True; saved file sha 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40; page reloaded True; reloaded doc sha 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40; original 0c28c0ec97b53baf23ef201809fed4809da7b24b3d81cb52e5c542acfd39bd40
+   | [mixed] page: {"lineSeparator":"\n","mixed":true}; rich decorations 35; fence info [json|csharp|python||json|csharp] expected [json|csharp|python||json|csharp]; fences with no bundled language, keeping their own tag: ['python','']
+   | [mixed] 3 toggles source<->rich hold the bytes and source has 0 decorations: True; saved file sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; page reloaded True; reloaded doc sha 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72; original ef739f8a6347dc0cb1bdbd17f21fedbb78c90013b9ede04a60cb55ff6867a578
+E-1 exit 1: 7/8 passed

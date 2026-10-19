@@ -20,6 +20,8 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        // The detail lines carry CJK and emoji; the console's OEM code page would print them as '?'.
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
         var selected = Arg(args, "--check")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? Checks.All;
         var output = Arg(args, "--out");
         var unknown = selected.Except(Checks.All).ToArray();

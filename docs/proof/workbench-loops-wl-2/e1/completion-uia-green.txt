@@ -1,0 +1,28 @@
+source run log: green-all.txt
+== completion-uia: PASS — open=pass; ArrowDown moves DOM and UIA selection to option 1=pass; Escape=pass; zero matches=pass; Enter=pass
+   method: SendInput '@sp' / ArrowDown / Escape / 'zzq' / Enter, each from a verified-open popup; System.Windows.Automation over the WebView2 window (List 'Completions', ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM's aria-activedescendant
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | open: DOM listbox open True; UIA list found True
+   | open: UIA list 'Completions' ControlType.List; items [@spec/workbench-loops | @spike/notebook-editor-e1]; UIA selected index 0; DOM {"activedescendant":"cm-ac-13s21-0","controls":"cm-ac-13s21","listbox":true,"selectedId":"cm-ac-13s21-0","selectedIndex":0,"status":"active"}
+   | editor: UIA 'Notebook' ControlType.Edit
+   | ArrowDown (popup open before the key: True): DOM {"activedescendant":"cm-ac-13s21-1","controls":"cm-ac-13s21","listbox":true,"selectedId":"cm-ac-13s21-1","selectedIndex":1,"status":"active"}; UIA selected index 1
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | before Escape: DOM listbox open True; UIA list found True
+   | Escape: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | before narrowing: DOM listbox open True; UIA list found True
+   | zero matches: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,314); editor hasFocus=true; caret 63
+   | before Enter: DOM listbox open True; UIA list found True
+   | accept: applied '@spec/workbench-loops' True
+   | accept: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'Notebook' ControlType.Edit
+   | PASS open: listbox named, options, first selected in DOM and UIA
+   | PASS ArrowDown moves DOM and UIA selection to option 1
+   | PASS Escape: was open; then no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor
+   | PASS zero matches: was open; '@spzzq' leaves nothing open, nothing active
+   | PASS Enter: was open; accepts and leaves nothing active
+E-1 exit 1: 7/8 passed

@@ -1,0 +1,12 @@
+source run log: green-all.txt
+== clipboard: PASS — paste=True, copy=True, doc->clipboard->doc fixed point=True, clipboard out CRLF=False
+   method: Windows clipboard (UnicodeText + HTML Format) -> SendInput Ctrl+V; SendInput Ctrl+A, Ctrl+C -> Clipboard.GetText; SendInput Ctrl+V into an empty document; SHA-256 compare
+   | load: 0 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,304); editor hasFocus=true; caret 0
+   | Windows clipboard set: UnicodeText (88 chars, CRLF) + HTML Format
+   | paste: doc sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; expected (CRLF->LF, the editor's line model) sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; equal True; html leaked False
+   | copy: clipboard sequence changed True; clipboard text 82 chars, CRLF pairs 0, byte-identical to the original Windows text False; equals doc modulo CRLF True
+   | load: 0 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (550,304); editor hasFocus=true; caret 0
+   | re-paste of the editor's own copy: sha cd79018bf0a5d1361401f4a7c26c9c18a3ea41307c7d417085a70321b5661fe2; fixed point True
+E-1 exit 1: 7/8 passed

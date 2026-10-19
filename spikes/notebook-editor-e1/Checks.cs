@@ -19,7 +19,10 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
 
     private readonly List<string> _log = [];
 
-    public static readonly string[] All = ["ime", "ime-control", "clipboard", "multiselect", "roundtrip", "latency", "completion-uia"];
+    /// <summary>The user-profile value Windows writes when the Microsoft Japanese IME is enabled for the user.</summary>
+    private const string JapaneseTip = "0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}";
+
+    public static readonly string[] All = ["ime", "ime-control", "ime-cdp", "clipboard", "multiselect", "roundtrip", "latency", "completion-uia"];
 
     public async Task<CheckResult> RunAsync(string name)
     {
@@ -30,6 +33,7 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
             {
                 "ime" => await ImeAsync(useIme: true),
                 "ime-control" => await ImeAsync(useIme: false),
+                "ime-cdp" => await ImeCdpAsync(),
                 "clipboard" => await ClipboardAsync(),
                 "multiselect" => await MultiSelectAsync(),
                 "roundtrip" => await RoundTripAsync(),
@@ -90,6 +94,18 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
     private async Task<CheckResult> ImeAsync(bool useIme)
     {
         var name = useIme ? "ime" : "ime-control";
+        if (useIme && !JapaneseImeEnabled(out var evidence))
+        {
+            // Loading the Japanese HKL without the user's IME profile gives the kbdjpn layout and an
+            // "open" IMM status but no TSF text service, so nothing composes (observed 2026-10-19).
+            // Enabling it is a persistent change to the user's input settings: a human's to make.
+            Log(evidence);
+            return new CheckResult(name, false,
+                "MANUAL, pending a dated record — not run: the Microsoft Japanese IME is not enabled for this Windows user",
+                "precondition read from HKCU\\Control Panel\\International\\User Profile\\ja-JP; steps in RESULT.md §IME",
+                [.. _log]);
+        }
+
         var original = Fixtures.NotebookLf;
         var paragraphEnd = original.IndexOf("spaces   ", StringComparison.Ordinal) + "spaces   ".Length;
         var headingText = original.IndexOf("## Code", StringComparison.Ordinal) + "## ".Length;
@@ -157,7 +173,7 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
                 && doc.StartsWith(original[..pos], StringComparison.Ordinal)
                 && doc.EndsWith(original[pos..], StringComparison.Ordinal);
             var inserted = intact ? doc.Substring(pos, doc.Length - original.Length) : "<surrounding text changed>";
-            Log($"[{label}] composition events: {events.GetArrayLength()} (start {starts}, end [{string.Join(",", ends)}]); inserted '{inserted}'; rest of document intact: {intact}");
+            Log($"[{label}] composition events: {events.GetArrayLength()} (start {starts}, end [{string.Join(",", ends)}]); inserted '{Visible(inserted)}'; rest of document intact: {intact}");
 
             bool ok;
             if (useIme)
@@ -178,7 +194,7 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
             }
 
             outcomes.Add(ok);
-            values.Add($"{label}: '{inserted}'");
+            values.Add($"{label}: '{Visible(inserted)}'");
         }
 
         var method = useIme
@@ -186,6 +202,77 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
             : "negative control: the same SendInput keys with the user's en-US layout and no IME — must insert ASCII with no composition events";
         return new CheckResult(name, outcomes.All(o => o), string.Join("; ", values), method, [.. _log]);
     }
+
+    private static bool JapaneseImeEnabled(out string evidence)
+    {
+        using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\International\User Profile\ja-JP");
+        var names = key?.GetValueNames() ?? [];
+        evidence = key is null
+            ? @"precondition: HKCU\Control Panel\International\User Profile has no ja-JP key (the user's input languages do not include Japanese)"
+            : $"precondition: ja-JP profile values [{string.Join(", ", names)}]";
+        return names.Any(n => n.Equals(JapaneseTip, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// The renderer half of an IME composition, through the same browser->renderer IPC a Windows
+    /// IME's text service drives (DevTools Input.imeSetComposition / Input.insertText). It proves
+    /// CodeMirror's composition handling inside WebView2 over the rich projection; it does NOT prove
+    /// the TSF layer above it — that is the native <c>ime</c> check.
+    /// </summary>
+    private async Task<CheckResult> ImeCdpAsync()
+    {
+        var original = Fixtures.NotebookLf;
+        var targets = new[]
+        {
+            ("paragraph end", original.IndexOf("spaces   ", StringComparison.Ordinal) + "spaces   ".Length),
+            ("rich heading text", original.IndexOf("## Code", StringComparison.Ordinal) + "## ".Length),
+            ("inside a JSON fence", original.IndexOf("\"a\": 1,", StringComparison.Ordinal) + "\"a\": 1,".Length),
+        };
+        string[] steps = ["に", "にほ", "にほん", "にほんご", "日本語"];
+        const string committed = "日本語";
+        var outcomes = new List<bool>();
+        var values = new List<string>();
+        foreach (var (label, pos) in targets)
+        {
+            await LoadAsync(original, "rich");
+            await FocusAtAsync(pos);
+            await page.EvalAsync("nb.clearEvents()");
+            foreach (var step in steps)
+            {
+                await Cdp("Input.imeSetComposition", new { text = step, selectionStart = step.Length, selectionEnd = step.Length });
+                await Task.Delay(60);
+            }
+
+            var midDecorations = (await page.EvalAsync("nb.decorationCount()")).GetInt32();
+            await Cdp("Input.insertText", new { text = committed });
+            await Task.Delay(250);
+
+            var doc = await page.DocAsync();
+            var events = await page.EvalAsync("nb.events()");
+            var types = events.EnumerateArray().Select(e => e.GetProperty("type").GetString()).ToList();
+            var ends = events.EnumerateArray().Where(e => e.GetProperty("type").GetString() == "compositionend")
+                .Select(e => e.GetProperty("data").GetString() ?? "").ToList();
+            var expected = original.Insert(pos, committed);
+            var exact = Page.Sha(doc) == Page.Sha(expected);
+
+            RequireForeground();
+            Native.Chord(Native.VkControl, 'Z');
+            await Task.Delay(300);
+            var oneUndo = Page.Sha(await page.DocAsync()) == Page.Sha(original);
+            var ok = exact && types.Count(t => t == "compositionstart") == 1 && types.Count(t => t == "compositionupdate") >= steps.Length
+                && ends.Count == 1 && ends[0] == committed && oneUndo && midDecorations > 0;
+            Log($"[{label}] events start {types.Count(t => t == "compositionstart")}, update {types.Count(t => t == "compositionupdate")}, end [{string.Join(",", ends)}]; rich decorations mid-composition {midDecorations}; doc == original with '{committed}' at {pos}: {exact}; one native Ctrl+Z restores original: {oneUndo}");
+            outcomes.Add(ok);
+            values.Add($"{label}: {(ok ? "pass" : "FAIL")}");
+        }
+
+        return new CheckResult("ime-cdp", outcomes.All(o => o), string.Join("; ", values),
+            "DevTools Input.imeSetComposition (に → にほんご → 日本語) then Input.insertText commit, at a paragraph end, a rich heading and inside a JSON fence; SHA-256 compare; one SendInput Ctrl+Z",
+            [.. _log]);
+    }
+
+    private async Task Cdp(string method, object args) =>
+        await page.View.CoreWebView2.CallDevToolsProtocolMethodAsync(method, JsonSerializer.Serialize(args));
 
     // ---------------------------------------------------------------- clipboard
 
@@ -330,9 +417,11 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
             var disclosed = info.GetProperty("mixed").GetBoolean();
             await page.EvalAsync("nb.setMode('rich')");
             var decorated = (await page.EvalAsync("nb.decorationCount()")).GetInt32();
-            var fences = (await page.EvalAsync("nb.fences()")).EnumerateArray().Select(f => f.GetProperty("info").GetString() ?? "").ToArray();
+            var fenceJson = await page.EvalAsync("nb.fences()");
+            var fences = fenceJson.EnumerateArray().Select(f => f.GetProperty("info").GetString() ?? "").ToArray();
+            var unknownKeptOwnTag = string.Join(",", fenceJson.EnumerateArray().Where(f => !f.GetProperty("known").GetBoolean()).Select(f => $"'{f.GetProperty("info").GetString()}'"));
             var fencesOk = fences.SequenceEqual(Fixtures.ExpectedFenceInfo);
-            Log($"[{label}] page: {info.GetRawText()}; rich decorations {decorated}; fence info [{string.Join("|", fences)}] expected [{string.Join("|", Fixtures.ExpectedFenceInfo)}]");
+            Log($"[{label}] page: {info.GetRawText()}; rich decorations {decorated}; fence info [{string.Join("|", fences)}] expected [{string.Join("|", Fixtures.ExpectedFenceInfo)}]; fences with no bundled language, keeping their own tag: [{unknownKeptOwnTag}]");
 
             var toggleOk = true;
             for (var i = 0; i < 3; i++)
@@ -417,68 +506,57 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
         var steps = new List<(string Step, bool Ok)>();
 
         // open
-        await LoadAsync(original, "rich");
-        await FocusAtAsync(pos);
-        RequireForeground();
-        Native.TypeAt();
-        Native.TypeLetters("sp");
-        var opened = await page.WaitAsync("nb.completion().listbox", TimeSpan.FromSeconds(3));
-        var list = await UntilUia(() => FindList(root), TimeSpan.FromSeconds(5));
+        var list = await OpenCompletionAsync(root, original, pos, "open");
         var items = await Task.Run(() => Items(list));
         var names = await Task.Run(() => items?.Cast<AutomationElement>().Select(e => e.Current.Name).ToArray() ?? []);
         var dom = await page.EvalAsync("nb.completion()");
         var selected = await Task.Run(() => SelectedIndex(items));
         var listLabel = await Task.Run(() => list is null ? "NOT FOUND" : $"'{list.Current.Name}' {list.Current.ControlType.ProgrammaticName}");
         var listName = await Task.Run(() => list?.Current.Name);
-        Log($"open: DOM listbox {opened}; DOM {dom.GetRawText()}");
-        Log($"open: UIA list {listLabel}; items [{string.Join(" | ", names)}]; UIA selected index {selected}");
+        Log($"open: UIA list {listLabel}; items [{string.Join(" | ", names)}]; UIA selected index {selected}; DOM {dom.GetRawText()}");
         var editor = await Task.Run(() => root.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Notebook")));
         var editorLabel = await Task.Run(() => editor is null ? "NOT FOUND" : $"'{editor.Current.Name}' {editor.Current.ControlType.ProgrammaticName}");
         Log($"editor: UIA {editorLabel}");
         steps.Add(("open: listbox named, options, first selected in DOM and UIA",
-            opened && listName == "Completions" && names.Length >= 2 && selected == 0
+            listName == "Completions" && names.Length >= 2 && selected == 0
             && dom.GetProperty("selectedIndex").GetInt32() == 0 && dom.GetProperty("activedescendant").GetString() == dom.GetProperty("selectedId").GetString()
             && editor is not null));
 
-        // move
+        // move: the popup must still be open when the key is sent, or the step proves nothing
+        var stillOpen = (await page.EvalAsync("nb.completion().listbox")).ValueKind == JsonValueKind.True;
         RequireForeground();
         Native.Key(Native.VkDown);
         await Task.Delay(300);
         dom = await page.EvalAsync("nb.completion()");
         var movedUia = await Task.Run(() => SelectedIndex(Items(list)));
-        Log($"ArrowDown: DOM {dom.GetRawText()}; UIA selected index {movedUia}");
+        Log($"ArrowDown (popup open before the key: {stillOpen}): DOM {dom.GetRawText()}; UIA selected index {movedUia}");
         steps.Add(("ArrowDown moves DOM and UIA selection to option 1",
-            dom.GetProperty("selectedIndex").GetInt32() == 1 && movedUia == 1 && dom.GetProperty("activedescendant").GetString() == dom.GetProperty("selectedId").GetString()));
+            stillOpen && dom.GetProperty("selectedIndex").GetInt32() == 1 && movedUia == 1
+            && dom.GetProperty("activedescendant").GetString() == dom.GetProperty("selectedId").GetString()));
 
-        // dismiss
+        // Escape, from a freshly opened popup
+        var escapeOpened = await OpenCompletionAsync(root, original, pos, "before Escape") is not null;
         RequireForeground();
         Native.Key(Native.VkEscape);
-        steps.Add(("Escape: no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor",
-            await DismissedAsync(root, "Escape")));
+        steps.Add(("Escape: was open; then no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor",
+            escapeOpened && await DismissedAsync(root, "Escape")));
 
-        // zero matches
-        await LoadAsync(original, "rich");
-        await FocusAtAsync(pos);
+        // zero matches: narrow an OPEN popup to nothing (the observed defect shape)
+        var narrowOpened = await OpenCompletionAsync(root, original, pos, "before narrowing") is not null;
         RequireForeground();
-        Native.TypeAt();
         Native.TypeLetters("zzq");
         await Task.Delay(700);
-        steps.Add(("zero matches: nothing open, nothing active", await DismissedAsync(root, "zero matches")));
+        steps.Add(("zero matches: was open; '@spzzq' leaves nothing open, nothing active", narrowOpened && await DismissedAsync(root, "zero matches")));
 
         // accept
-        await LoadAsync(original, "rich");
-        await FocusAtAsync(pos);
+        var acceptOpened = await OpenCompletionAsync(root, original, pos, "before Enter") is not null;
         RequireForeground();
-        Native.TypeAt();
-        Native.TypeLetters("sp");
-        await page.WaitAsync("nb.completion().listbox", TimeSpan.FromSeconds(3));
-        await Task.Delay(150);
         Native.Key(Native.VkReturn);
         await Task.Delay(300);
         var accepted = await page.DocAsync();
         var applied = accepted.Contains("spaces   @spec/workbench-loops", StringComparison.Ordinal);
         Log($"accept: applied '@spec/workbench-loops' {applied}");
-        steps.Add(("Enter accepts and leaves nothing active", applied && await DismissedAsync(root, "accept")));
+        steps.Add(("Enter: was open; accepts and leaves nothing active", acceptOpened && applied && await DismissedAsync(root, "accept")));
 
         foreach (var (step, ok) in steps)
         {
@@ -487,8 +565,23 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
 
         return new CheckResult("completion-uia", steps.All(s => s.Ok),
             string.Join("; ", steps.Select(s => $"{s.Step.Split(':')[0]}={(s.Ok ? "pass" : "FAIL")}")),
-            "SendInput '@sp' / ArrowDown / Escape / '@zzq' / Enter; System.Windows.Automation over the WebView2 window (List 'Completions', ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM's aria-activedescendant",
+            "SendInput '@sp' / ArrowDown / Escape / 'zzq' / Enter, each from a verified-open popup; System.Windows.Automation over the WebView2 window (List 'Completions', ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM's aria-activedescendant",
             [.. _log]);
+    }
+
+    /// <summary>Fresh document, caret after the paragraph, SendInput '@sp'; the UIA list or null.</summary>
+    private async Task<AutomationElement?> OpenCompletionAsync(AutomationElement root, string text, int pos, string label)
+    {
+        await LoadAsync(text, "rich");
+        await FocusAtAsync(pos);
+        RequireForeground();
+        Native.TypeAt();
+        Native.TypeLetters("sp");
+        var opened = await page.WaitAsync("nb.completion().listbox", TimeSpan.FromSeconds(3));
+        var list = opened ? await UntilUia(() => FindList(root), TimeSpan.FromSeconds(5)) : null;
+        await Task.Delay(150);
+        Log($"{label}: DOM listbox open {opened}; UIA list found {list is not null}");
+        return list;
     }
 
     private async Task<bool> DismissedAsync(AutomationElement root, string label)
@@ -569,6 +662,10 @@ internal sealed class Checks(Page page, Window window, IntPtr hwnd)
 
         return true;
     }
+
+    /// <summary>Line breaks and tabs shown as escapes, so one result stays on one log line.</summary>
+    private static string Visible(string text) =>
+        text.Replace("\r", "\\r", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal).Replace("\t", "\\t", StringComparison.Ordinal);
 
     private static int Count(string text, string part)
     {

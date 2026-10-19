@@ -9,16 +9,15 @@ namespace NotebookEditorE1Spike;
 /// </summary>
 internal static class Native
 {
-    public const ushort VkBack = 0x08;
     public const ushort VkReturn = 0x0D;
     public const ushort VkControl = 0x11;
     public const ushort VkEscape = 0x1B;
     public const ushort VkSpace = 0x20;
-    public const ushort VkEnd = 0x23;
     public const ushort VkDown = 0x28;
 
     private const uint InputMouse = 0;
     private const uint InputKeyboard = 1;
+    private const uint KeyEventExtended = 0x0001;
     private const uint KeyEventKeyUp = 0x0002;
     private const uint MouseLeftDown = 0x0002;
     private const uint MouseLeftUp = 0x0004;
@@ -96,10 +95,6 @@ internal static class Native
     public static void Chord(ushort modifier, ushort vk) =>
         Send(KeyInput(modifier, false), KeyInput(vk, false), KeyInput(vk, true), KeyInput(modifier, true));
 
-    public static void KeyDown(ushort vk) => Send(KeyInput(vk, false));
-
-    public static void KeyUp(ushort vk) => Send(KeyInput(vk, true));
-
     /// <summary>A lower-case ASCII letter or digit as its virtual key — the path an IME sees.</summary>
     public static ushort VkFor(char c) => c switch
     {
@@ -153,10 +148,14 @@ internal static class Native
             {
                 wVk = vk,
                 wScan = (ushort)MapVirtualKeyW(vk, 0),
-                dwFlags = up ? KeyEventKeyUp : 0,
+                // A real keyboard sends the navigation cluster with the E0 prefix. Without the flag,
+                // the scan code is the numeric keypad's, and the browser reports e.g. Numpad2.
+                dwFlags = (up ? KeyEventKeyUp : 0) | (IsExtended(vk) ? KeyEventExtended : 0),
             },
         },
     };
+
+    private static bool IsExtended(ushort vk) => vk is >= 0x21 and <= 0x28 or 0x2D or 0x2E;
 
     private static Input MouseInput(uint flags) => new()
     {

@@ -81,7 +81,15 @@ internal sealed class Page(WebView2 view)
     /// <summary>A document position as a physical screen point (PerMonitorV2: PointToScreen returns device pixels).</summary>
     public async Task<(int X, int Y)> ScreenPointAsync(int pos)
     {
+        // Scroll first: coordsAtPos is only meaningful once the scroll's measure frame has run.
+        await EvalAsync($"nb.reveal({pos})");
+        await Task.Delay(150);
         var c = await EvalAsync($"nb.coords({pos})");
+        if (c.ValueKind != JsonValueKind.Object)
+        {
+            throw new InvalidOperationException($"position {pos} has no screen coordinates after reveal");
+        }
+
         var screen = View.PointToScreen(new Point(c.GetProperty("x").GetDouble(), c.GetProperty("y").GetDouble()));
         return ((int)Math.Round(screen.X), (int)Math.Round(screen.Y));
     }

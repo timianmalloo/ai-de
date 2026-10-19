@@ -1,0 +1,5 @@
+source run log: green-all.txt
+== ime: FAIL — MANUAL, pending a dated record — not run: the Microsoft Japanese IME is not enabled for this Windows user
+   method: precondition read from HKCU\Control Panel\International\User Profile\ja-JP; steps in RESULT.md §IME
+   | precondition: HKCU\Control Panel\International\User Profile has no ja-JP key (the user's input languages do not include Japanese)
+E-1 exit 1: 7/8 passed
