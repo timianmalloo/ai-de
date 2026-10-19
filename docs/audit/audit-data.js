@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T11:16:38Z",
+  "generated": "2026-10-19T11:58:37Z",
   "audit": [
     {
       "actor": null,
@@ -24809,149 +24809,250 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59RMCCJTCRXC2GP53P0RBQ6",
-      "shortname": "wl-t17-restore",
-      "datetime": "2026-10-19T09:42:08Z",
-      "session": "wl-t17-restore",
-      "prompt": "T17 n2: Ruling 164 last-event line; restored row keyboard/UIA; a send before the read-back waits for it (Ruling 163)",
-      "summary": "DeliveryUnknown row HelpText ends 'Last event received: #{seq} at {HH:mm:ss}.' or 'not recorded.' (TurnItem.LastEventReceived, DESIGN RUN4a); restored rows' fold reachable by Tab/Space and exposed to UIA (green first run); early Send waits for LastReadBack so restored rows keep b1..bn. App 1124/1 skip, Core 3018/1 skip, 0 failed.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "A reopened notebook shows its recorded attempts, with Ruling 164's copy and no ordinal collision",
+      "datetime": "2026-10-19T09:42:08Z",
       "done_when": "Three checks green through the real surface; App and Core suites green",
-      "tier": "T2",
+      "duration_seconds": 956.0,
       "fan_out": 0,
+      "goal": "A reopened notebook shows its recorded attempts, with Ruling 164's copy and no ordinal collision",
+      "id": "al-01M59RMCCJTCRXC2GP53P0RBQ6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T17 n2: Ruling 164 last-event line; restored row keyboard/UIA; a send before the read-back waits for it (Ruling 163)",
+      "session": "wl-t17-restore",
+      "shortname": "wl-t17-restore",
+      "skill": "implement",
       "started_at": "2026-10-19T09:26:12Z",
-      "duration_seconds": 956.0
+      "summary": "DeliveryUnknown row HelpText ends 'Last event received: #{seq} at {HH:mm:ss}.' or 'not recorded.' (TurnItem.LastEventReceived, DESIGN RUN4a); restored rows' fold reachable by Tab/Space and exposed to UIA (green first run); early Send waits for LastReadBack so restored rows keep b1..bn. App 1124/1 skip, Core 3018/1 skip, 0 failed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M59SWEPTT5GKWSGZJDP77K3Y",
-      "shortname": "wl-t17c-restore",
-      "datetime": "2026-10-19T10:04:01Z",
-      "session": "wl-t17c-restore",
-      "prompt": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
-      "summary": "AttemptHost.LaunchSettledAsync (internal) awaited by the killed-attempt test before its write; RunLogStoreSharingTests pins Read share mode (red proven); 15x mixed filter 0 failures",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
+      "datetime": "2026-10-19T10:04:01Z",
       "done_when": "test awaits launch; sharing test red-green; N=15 green; suites green",
-      "tier": "T2",
+      "duration_seconds": 660.0,
       "fan_out": 0,
-      "started_at": "2026-10-19T09:53:01Z",
-      "duration_seconds": 660.0
-    },
-    {
-      "id": "al-01M59TGP0RQ7HJP4KKXVDXXVQ0",
-      "shortname": "join-wl1a-restored-turns",
-      "datetime": "2026-10-19T10:15:03Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "the join of wl1a-restored-turns into main",
-      "summary": "T17 (Opus n1-n2) + T17b (Sonnet, not reproduced 0/35) + T17c (Sonnet): restored rows from ReadBack in dispatch order with ordinal continuity (b1/b3); DeliveryUnknown with 'Last event received: #{seq} at {HH:mm:ss}.'; keyboard/UIA reach of restored events (guard); early Send waits for the read-back (race red->green); killed-launch test awaits LaunchSettledAsync; RunLogStoreSharingTests pins the reader's FileShare.ReadWrite; mixed filter 15/15 recount_seconds=592 (docs_only=False).",
+      "goal": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
+      "id": "al-01M59SWEPTT5GKWSGZJDP77K3Y",
       "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
-      ],
-      "tags": [],
       "outcome": "success",
-      "compiled": false,
-      "goal": "join T17 to main",
-      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-10-19T10:05:10Z",
-      "duration_seconds": 593.0
-    },
-    {
-      "id": "al-01M59V7JH0RWAGV7M8W6T15TVK",
-      "shortname": "join-wl1a-restored-turns-step8",
-      "datetime": "2026-10-19T10:27:34Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Rulings 151/160) for the T17 join 9b5f6011",
-      "summary": "Recount OK; step 8 5/48 (baseline); strict repo citations OK (160 cited/151 by a note/9 frozen); identity gate OK (1003). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED solo on the join head (20 s; Ruling 155 as corrected), proof in restored-turns/solution-tree-chord-solo-on-join-head.txt. Ratchet vs first parent 67a4e6b0: PASS 0/49. Release build exit 0. T17 = Opus n1 (restored rows, b1/b3) + n2 (Ruling 164 line, keyboard/UIA guard, early Send waits for the read-back) + T17b (not reproduced 0/35, case (a)) + T17c (LaunchSettledAsync await; RunLogStoreSharingTests; N=15/0). Pushed only after this record exists (leader_precommit join check).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T17 on main under Rulings 151/155/160",
-      "done_when": "solo PASS on head; ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T10:05:32Z",
-      "duration_seconds": 1322.0
-    },
-    {
-      "id": "al-01M59WJPMNAXBXK66HQ0ZPBNAH",
-      "shortname": "wl-t19-stopword",
-      "datetime": "2026-10-19T10:51:07Z",
-      "session": "wl-t19-stopword",
-      "prompt": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
-      "summary": "OutcomeWord(Interrupted), box sentence and announcement read 'stopped by you'; 3 tests re-pinned red-first; guard test; WL-1a demo Stop step updated",
-      "kind": "skill",
+      "prompt": "Fix T17 run-log IOException flake per Ruling 165: test awaits killed launch; reader share mode pinned",
+      "session": "wl-t17c-restore",
+      "shortname": "wl-t17c-restore",
       "skill": "implement",
-      "tool": null,
+      "started_at": "2026-10-19T09:53:01Z",
+      "summary": "AttemptHost.LaunchSettledAsync (internal) awaited by the killed-attempt test before its write; RunLogStoreSharingTests pins Read share mode (red proven); 15x mixed filter 0 failures",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T10:15:03Z",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "duration_seconds": 593.0,
+      "fan_out": 0,
+      "goal": "join T17 to main",
+      "id": "al-01M59TGP0RQ7HJP4KKXVDXXVQ0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of wl1a-restored-turns into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-restored-turns",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T10:05:10Z",
+      "summary": "T17 (Opus n1-n2) + T17b (Sonnet, not reproduced 0/35) + T17c (Sonnet): restored rows from ReadBack in dispatch order with ordinal continuity (b1/b3); DeliveryUnknown with 'Last event received: #{seq} at {HH:mm:ss}.'; keyboard/UIA reach of restored events (guard); early Send waits for the read-back (race red->green); killed-launch test awaits LaunchSettledAsync; RunLogStoreSharingTests pins the reader's FileShare.ReadWrite; mixed filter 15/15 recount_seconds=592 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T10:27:34Z",
+      "done_when": "solo PASS on head; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1322.0,
+      "fan_out": 0,
+      "goal": "Land T17 on main under Rulings 151/155/160",
+      "id": "al-01M59V7JH0RWAGV7M8W6T15TVK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/160) for the T17 join 9b5f6011",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-restored-turns-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T10:05:32Z",
+      "summary": "Recount OK; step 8 5/48 (baseline); strict repo citations OK (160 cited/151 by a note/9 frozen); identity gate OK (1003). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED solo on the join head (20 s; Ruling 155 as corrected), proof in restored-turns/solution-tree-chord-solo-on-join-head.txt. Ratchet vs first parent 67a4e6b0: PASS 0/49. Release build exit 0. T17 = Opus n1 (restored rows, b1/b3) + n2 (Ruling 164 line, keyboard/UIA guard, early Send waits for the read-back) + T17b (not reproduced 0/35, case (a)) + T17c (LaunchSettledAsync await; RunLogStoreSharingTests; N=15/0). Pushed only after this record exists (leader_precommit join check).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Presentation/Sessions/SessionThread.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "datetime": "2026-10-19T10:51:07Z",
       "done_when": "word changed, tests red then green, suites green, demo updated",
-      "tier": "T2",
+      "duration_seconds": 498.0,
       "fan_out": 0,
+      "goal": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "id": "al-01M59WJPMNAXBXK66HQ0ZPBNAH",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "session": "wl-t19-stopword",
+      "shortname": "wl-t19-stopword",
+      "skill": "implement",
       "started_at": "2026-10-19T10:42:49Z",
-      "duration_seconds": 498.0
+      "summary": "OutcomeWord(Interrupted), box sentence and announcement read 'stopped by you'; 3 tests re-pinned red-first; guard test; WL-1a demo Stop step updated",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M59X6GTZ46ZB8CC9KEB5BBHZ",
-      "shortname": "join-wl1a-stopped-by-you",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T11:01:56Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed with step-8",
+      "duration_seconds": 573.0,
+      "fan_out": 0,
+      "goal": "join T19 to main",
+      "id": "al-01M59X6GTZ46ZB8CC9KEB5BBHZ",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl1a-stopped-by-you into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-stopped-by-you",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T10:52:23Z",
       "summary": "T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1182 SC7); 3 pinned assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou (shutdown/token-cancel never claim it; AttemptStopTests confirms the premise); demo-script Stop step updated recount_seconds=572 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T11:16:38Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 601.0,
+      "fan_out": 0,
+      "goal": "Land T19 on main under Ruling 160",
+      "id": "al-01M59Y1EBW3YP4MA6E5VCX47SS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/160) for the T19 join 4ca7a73e",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-stopped-by-you-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T11:06:37Z",
+      "summary": "Recount OK; step 8 5/48 (baseline). Ratchet vs first parent 3281d689 on clean trees: PASS 0/49 (repo citations ok strict). Release build exit 0. T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1170/:1182/:1204, Ruling 167); 3 assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou; demo-script Stop step updated.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T11:16:07Z",
+      "done_when": "checks 4-5 red then green, suites run, README, done mail",
+      "duration_seconds": 1136.0,
+      "fan_out": 0,
+      "goal": "Knowledge-inclusive toggle per Ruling 166/169",
+      "id": "al-01M59Y0FZNTXJRT4FP9DFSHF51",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T18 node 2: Ruling 166 (1)(2) - toggle default OFF, text and UIA name one const each; Ruling 169 session-only",
+      "session": "wl-t18-knowledge",
+      "shortname": "wl-t18-knowledge",
+      "skill": "implement",
+      "started_at": "2026-10-19T10:57:11Z",
+      "summary": "check 4 (one const each, default OFF held) and check 5 (EvaluateAsync sentinel in KnowledgeModeTests) red then green; persistence not built per Ruling 169; non-leak held by check 2; Core 3019/0, App 1126/2 (2 env flakes pass on rerun)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeRealProjectionTests.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T11:36:41Z",
+      "done_when": "check 6 red then green, DESIGN.md entry committed, failures classified, Leader mailed",
+      "duration_seconds": 886.0,
+      "fan_out": 0,
+      "goal": "T18 node 3: three checks recorded and committed on wls-knowledge-mode",
+      "id": "al-01M59Z64QXMDEYR1BVT9SH98R8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T18 node 3: real-projection E2E of the knowledge-inclusive toggle (red first), DESIGN.md entry for its strings, prove or disprove two App failures environmental",
+      "session": "wl-t18-knowledge",
+      "shortname": "wl-t18-knowledge",
+      "skill": "implement",
+      "started_at": "2026-10-19T11:21:55Z",
+      "summary": "Check 6 red 74e690fd / green 2ff09885: knowledge-hub drawn with 45 typed edges over the real daemon projection, hidden when off (gated by AIDE_REAL_PROJECTION_ROOT). Check 7 f7346c8f: DESIGN.md entry; no pin pattern exists. App suite 1127 passed / 1 failed (SolutionTreeChord foreground refusal, environmental) / 2 skipped; Core not re-run (rule-16 kick).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M5A0E8VWGKVE57VX2G15XN86",
+      "shortname": "join-wls-knowledge-mode",
+      "datetime": "2026-10-19T11:58:36Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T18 (Opus, 3 nodes): knowledge-inclusive toggle per canvas instance, default off, session-only (Ruling 169); ExcludeKnowledge seam per instance; one const each for text and UIA name; DESIGN.md entry; §8 E2E over the real daemon (knowledge-hub, 45 typed edges; env-gated AIDE_REAL_PROJECTION_ROOT; Leader re-run 5/5, 0 skipped). Leader fix at recount: expectedSkips gains the env-gated E2E with its provenance. recount_seconds=558 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+        "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T19 to main",
-      "done_when": "recount green; ratchet PASS (Ruling 160); pushed with step-8",
+      "goal": "WL-S close condition Ruling 149 (2): the knowledge-inclusive mode with its E2E green",
+      "done_when": "merged on main, recount and step 8 ratchet PASS, pushed",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -24959,32 +25060,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T10:52:23Z",
-      "duration_seconds": 573.0
-    },
-    {
-      "id": "al-01M59Y1EBW3YP4MA6E5VCX47SS",
-      "shortname": "join-wl1a-stopped-by-you-step8",
-      "datetime": "2026-10-19T11:16:38Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Rulings 151/160) for the T19 join 4ca7a73e",
-      "summary": "Recount OK; step 8 5/48 (baseline). Ratchet vs first parent 3281d689 on clean trees: PASS 0/49 (repo citations ok strict). Release build exit 0. T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1170/:1182/:1204, Ruling 167); 3 assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou; demo-script Stop step updated.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T19 on main under Ruling 160",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T11:06:37Z",
-      "duration_seconds": 601.0
+      "started_at": "2026-10-19T11:49:16Z",
+      "duration_seconds": 560.0
     }
   ],
   "changes": [
@@ -29809,6 +29886,96 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t18-knowledge"
+    },
+    {
+      "id": "mail-01M59Y8DT3YK91CCYW93B35GYZ",
+      "ts": "2026-10-19T11:20:27Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59Y8DSSMBMFX4G0P42Q8PHC",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59YCCAFRYK905BDHVY89CZ0",
+      "ts": "2026-10-19T11:22:37Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59Y8DSSMBMFX4G0P42Q8PHC",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59YK35M6A1RJ9F1XR45RRRC",
+      "ts": "2026-10-19T11:26:17Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M59Z19DV2T2FPQ7HMEQBK8MP",
+      "ts": "2026-10-19T11:34:02Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t18-knowledge",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59Z6GF5XMP68B1KZXDEQ7FP",
+      "ts": "2026-10-19T11:36:53Z",
+      "from": "wl-t18-knowledge",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t18-knowledge"
+    },
+    {
+      "id": "mail-01M59ZB1CC5BTDH0SA4HJTRY1G",
+      "ts": "2026-10-19T11:39:21Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59ZD57VNJTG0R10W175BTFF",
+      "ts": "2026-10-19T11:40:31Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5A05D9HM7M221GSAF0M8FZ2",
+      "ts": "2026-10-19T11:53:46Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M5A05D964584659GYV9HHE64",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A060YDPH0PHDYV9G29DEYJ",
+      "ts": "2026-10-19T11:54:06Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t11-kinds",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M5A07QN4VHHH77SDREKH5TB0",
+      "ts": "2026-10-19T11:55:02Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M5A05D964584659GYV9HHE64",
+      "session": "wl-owner-20261018"
     }
   ]
 };

@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 416 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "82e7c3cb237ec44d1246af7a550e01d5dea7443eb232d8d0cc17245021a76037"
+      "sourceSha256": "95846f6aa66a30328d9333ae5d81e2b75febd1d2964e5f6400ef75d30975055d"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2261278586c87fa0f0942f27432663d7960cf4110b746c1b6ecd2218266d0003"
+      "sourceSha256": "75d86a34397ae118f66af306fcbd570089cfa31df4a4f06c783c3940a521ed94"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "699718b15c4794d3f222fa980f1fed1e4fccbf4025acc652b6eab65fa5ee5be7"
+      "sourceSha256": "0c4c0737cb81d473f54dba2d82224bdb96e7e0f7db7d0b69b5fef10277dc4a41"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22816,6 +22816,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
     },
     {
+      "id": "proof-workbench-loops-wl-s-knowledge-mode",
+      "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md",
+      "title": "Evidence — WL-S T18: knowledge-inclusive canvas mode",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-S",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T18 red and green evidence (nodes 1-3; checks 1-7): the canvas toolbar's Knowledge-inclusive toggle turns the ExcludeKnowledge seam off for that canvas only, starts OFF, names itself through one const per string recorded in DESIGN.md, and passes design WL-S §8's E2E check over the real daemon projection of this repository (Ruling 149 (2); Ruling 166; Ruling 169).",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-s",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "39074d79fe774aa2c0f0dbaa66c40e1cf94901ae07188ac8a3d6a9bfed0ca0f6"
+    },
+    {
       "id": "proof-workbench-loops-wl-s-sp3",
       "path": "docs/proof/workbench-loops-wl-s/sp3/README.md",
       "title": "Evidence — WL-S spine T4: Perspective re-row",
@@ -24795,5 +24827,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "9fff496c1992474e7c16c4991f53671edda45ef66f986e3bfeeb2720e0ebbbc0"
+  "graphSha256": "cb4583c9299ab60dd2a238d8634699f4645f0b2561e3a38444a0481d4c4d5b28"
 };

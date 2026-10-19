@@ -1,0 +1,2 @@
+{"agent": "wl-leader2-20261019", "at": 1792410946.8015518, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t20-floatguard", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wls-float-guard"}
+{"action": "add", "agent": "wl-t20-floatguard", "at": 1792411093.631311, "deadline_at": 1792412893.631311, "id": "req-01M5A0DJM4HBFJXKKDW4FZ0BMB", "kind": "request", "path": "-", "seq": 2, "session": "wl-t20-floatguard", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
