@@ -1,0 +1,2 @@
+Green for check C: ConsoleSplitPlacementTests (whole class).
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6, Duration: 2 s - AiDe.App.Tests.dll (net10.0)

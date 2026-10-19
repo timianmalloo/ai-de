@@ -3820,9 +3820,16 @@ public sealed class WorkbenchShell : IDisposable
                 {
                     // One dispatcher turn past the render that just ran: the landing's pane
                     // realizes on the layout pass, and a MoveFocus into an unrealized subtree
-                    // lands nowhere (the same edge AssertActive defers past, DC-194).
+                    // lands nowhere (the same edge AssertActive defers past, DC-194). A notebook
+                    // that shared the Console's pane is that unrealized subtree: its tab comes back
+                    // on this pass, so the toggle is tried again before the landing.
                     _dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () =>
                     {
+                        if (owner.ConsoleToggle.Focus())
+                        {
+                            return;
+                        }
+
                         if (PerspectiveShell.LandingSurfaceFor(host) is { } landing
                             && host.Adapter.ContentFor(landing) is { } content)
                         {
