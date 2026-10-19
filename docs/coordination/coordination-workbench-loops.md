@@ -354,3 +354,44 @@ It does not buy speed on the critical path.
   2966/0/1; measured 32 tool calls / about 128k / 363 s). Its seam `req-01M59AQ4…` (four fold inputs the design leaves
   undefined) was forwarded to T5 as design owner. T6's `assume:` fallbacks stand meanwhile, and T6 does not join until T5
   fixes them in the design. T5 node 2 also carries the `aide.attempt.fold` listener.
+- **05:45Z–10:47Z — WL-1a built and joined (Leader 2).** Join order and shas on main:
+  - T7+T7b `7c54de9e`.
+  - T5 n1 `22d2484e`.
+  - T6 `cac40d5a`.
+  - T14+T14b `d5e6b877`.
+  - T15 (account-identity gate) `fb72f351`.
+  - T5 n2 `f7a12954` (+ citation fix `116076cf`).
+  - T8 n1–n7 `fa71cd0a`.
+  - T16+T16b `657e9e51`.
+  - T17+T17b+T17c `9b5f6011`.
+
+  Every join ran through `conductor-join.py` and the step-8 ratchet. From the T8 join on it was Ruling 160's ratchet: the
+  pack ruling-citations copy is excluded (PD-1) and the repo copy is strict. The human demo script is in
+  `docs/proof/workbench-loops-wl-1a.md` (`ba2b7e5e`). **WL-1a is REVIEW-READY and awaits the Owner's ACCEPT/REFUSE.**
+- **Rulings 156–165** (addendum-c):
+  - 156: the adoption actor is a v3 column, landing in the first adopting slice; until then the store refuses adoption.
+  - 157/158: the account-identity commit gate, with `noreply@anthropic.com` exact.
+  - 159: no dispatch outside the host; Send is refused with a cause.
+  - 160: the step-8 ratchet policy.
+  - 161/162: the attempt-binding row and its route words.
+  - 163/164: restored turns, and the last-event line.
+  - 165: the run-log test made deterministic.
+- **Scenario gaps found by tracks and Leader read-backs, then built (not demoed around):**
+  - the binding display (T16);
+  - turn restoration after restart (T17);
+  - the late-receipt window (T16b);
+  - the early-Send ordinal race (T17 n2).
+- **Leader defects (DC-NEW-wl-leader2, 7 instances; DC-NEW-wl-leader2-b):**
+  - a brief that defined a field against the code;
+  - a cause value invented without reading the CHECK;
+  - an assumed writer that did not exist;
+  - Leader commits that bypassed the join gate;
+  - a pre-push check that read the working tree;
+  - a ruling commit stacked on an unpushed join;
+  - nodes sized past their caps.
+
+  Their controls are brief rules 14–17, `leader_precommit.py` (commit-level, join-range check, exit 0/1/2), a ruling
+  committed alone, and the wall-clock and token kick ladder.
+- **10:51Z — WL-S resumed.** T11 was re-cut into nodes of ≤ 3 checks: n1 = kinds + the D2 Landing flip, WebView2 keys,
+  and a live hide/float/redock; n2 = slot migration + the WL-S Proof Pack. T18 `wls-knowledge-mode` (Ruling 149 (2)) was
+  split out to run in parallel. A DR is open on the mode's placement, because a toolbar toggle would amend Ruling 53.

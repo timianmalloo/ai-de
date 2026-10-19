@@ -1,0 +1,10 @@
+{"agent": "wl-t19-stopword", "at": 1792406611.5531337, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.5886095, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/RunEventVocabularyTests.cs", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.626132, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheQueuedTurnIsOneTurnOfTheStreamTests.cs", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792406611.6616476, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.7888978, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.8249183, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.8624926, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a.md", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.8963609, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/stopped-by-you/suite-app-green.txt", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.9293742, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/stopped-by-you/suite-core-green.txt", "session": "wl-t19-stopword", "wi": ""}
+{"agent": "wl-t19-stopword", "at": 1792407067.965944, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/Sessions/SessionThread.cs", "session": "wl-t19-stopword", "wi": ""}

@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "95e51e8e8c0fe2b1c817f1b0befdd4c339a3dba13364335930a71c15e2545a22"
+      "sourceSha256": "2261278586c87fa0f0942f27432663d7960cf4110b746c1b6ecd2218266d0003"
     },
     {
       "id": "design-session-profiler",
@@ -12342,7 +12342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38605273812db8bc1f65da1df2def05fcbb6aba025778c97f2b8ee5430995f35"
+      "sourceSha256": "699718b15c4794d3f222fa980f1fed1e4fccbf4025acc652b6eab65fa5ee5be7"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -19046,7 +19046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d5a56a85891b17b2bd5fb4ef4e10e2282d23989550ade2461c3e6189afbc592"
+      "sourceSha256": "e60d616c2639064ab759aadfdc787c4718bfd528a0643d35de0917c92b058dd5"
     },
     {
       "id": "coordination-workbench-loops-leader-handoff-1",
@@ -22584,7 +22584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "097207ce34585c8a1ed291136f0e6a7e53623e31f284d764912cdc9ba77dddea"
+      "sourceSha256": "0a8b3d4068b2c2194bd9e507fcd38c888c94d0aa1a212b343f0d5875e4b92835"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -24795,5 +24795,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "65cf0515c8eecee2832c134da12c9aa50093d1eebc01906ccb1f6c55cfd0d70a"
+  "graphSha256": "9fff496c1992474e7c16c4991f53671edda45ef66f986e3bfeeb2720e0ebbbc0"
 };

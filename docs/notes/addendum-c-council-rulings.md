@@ -3454,3 +3454,69 @@ T17c, a small Sonnet track:
 Then T17 joins under Ruling 160. Option B is rejected because the full recount would stay flaky. Option C gains nothing over (1) and (2), since the cause is known by code reading.
 
 - request: req-01M59S63G76ZPF0V8KFMRZ2YGB · ruled by: wl-owner-20261018 · at: 2026-10-19T09:52:18Z
+
+### Ruling 166 — The knowledge-inclusive mode is a per-instance toggle on the graph canvas toolbar beside Group; Ruling 53's 'no in-surface knowledge toggle' clause is amended
+
+Option A, and it explicitly amends Ruling 53. Ruling 53 forbade an in-surface knowledge or architecture toggle on the premise that Explorer was the knowledge surface. Ruling 149 retired Explorer, and in its condition (2) it already asked for a mode of the admitted canvas kind. ADR-0045 section 2 (lines 98-101) defines the representation selector as the admitted Understand kinds following linked selection, and no selector control exists. CanvasSurface and CanvasPage have only the 2D/3D and Group toolbar toggles, which are the existing representation options. A third toggle there adds the least new surface. Option B would make the mode unreachable.
+
+Conditions, each red-first:
+(1) A toggle button beside Group, text 'Knowledge-inclusive', UI Automation name 'Knowledge-inclusive mode', exposing the Toggle pattern (aria-pressed in the web page). Both strings are one const each, with a DESIGN.md entry.
+(2) Default OFF, so today's docked graph is unchanged. The state is per canvas instance and persists with the layout, like Group.
+(3) The toggle drives the existing exclusion seam. Its writer is the ExcludeKnowledge assignment at WorkbenchShell.cs:1386, cited by file:line: the toggle changes that value, not a second filter.
+(4) The WL-S end-to-end check: with the toggle on, knowledge and spec nodes appear in the Understand graph; with it off, they do not. It is keyboard-reachable from the toolbar.
+(5) Ruling 53's other clauses stand: one graph substrate, one neighbourhood query, no second graph store, no second graph surface.
+This also discharges Ruling 149 (2)'s 'representation selector' wording.
+
+- request: req-01M59VQGBWQN4AB0DHWNYE6587 · ruled by: wl-owner-20261018 · at: 2026-10-19T10:37:52Z
+
+### Ruling 167 — An Interrupted turn reads 'stopped by you', as DESIGN.md specifies twice; the product's 'interrupted' outcome word is changed, not DESIGN.md
+
+Option B. DESIGN.md is not stale on one line. Its reply-side outcome-word list (DESIGN.md:1170) names 'stopped by you', and the composer copy list (DESIGN.md:1204) uses 'b1 stopped by you; b2 is waiting — Send it or cancel it'. The spec grounds load-bearing copy in DESIGN.md, and Ruling 164's 'cancelled by you' was modelled on this pattern. The product departs from it: OutcomeWord(Interrupted) is 'interrupted' (SessionThread.cs:289), which flows into TurnCopy.QueuedSentence (:372).
+
+'By you' is literally true. The Owner read the only writer of Interrupted, AttemptHost.cs:964-967: a cancelled reply is Interrupted only under a Stop whose high-water mark it follows, and otherwise it is DeliveryUnknown{relay_lost}. The only stop requests come from the operator's Stop (NotebookRuns.cs:441, :575, :733). The stop check at :726 excludes disposal, and :570 records 'stopped by the operator'. A shutdown or a token cancel never yields Interrupted.
+
+The decision:
+(1) OutcomeWord(Interrupted) = 'stopped by you'. The composer line therefore reads exactly 'b1 stopped by you; b2 is waiting — Send it or cancel it'.
+(2) The pinned tests (TheQueuedTurnIsOneTurnOfTheStreamTests.cs:133 and any test asserting 'interrupted' as display text) are changed red-first. The TurnState name and the stored DispatchState stay 'Interrupted'; only the displayed word changes.
+(3) A guard test: a turn ended by host shutdown or by token cancel alone never renders 'stopped by you'.
+(4) The announcement names the ordinal once, per the Cancelled precedent, and UIA carries the same words.
+(5) The WL-1a demo script's Stop step expects 'stop requested' then 'stopped by you'. Update the Proof Pack's expected string.
+This is a small fix-forward and does not reopen WL-1a's provisional acceptance.
+
+- request: req-01M59VXQ699GXNXYWY5E547PGJ · ruled by: wl-owner-20261018 · at: 2026-10-19T10:40:53Z
+
+### Ruling 168 — The thread's 96ch reading measure moves with the notebook to the Center and is held both ways: never clipped, never stretched
+
+Option A, tightened. CodingsLeftExtentTests (tests/AiDe.App.Tests/Workbench/CodingsLeftExtentTests.cs:16-19) pins the thread's measure, ThreadFeed.MeasureWidth: the words column holds at least that measure, plus its 40 px gutter and the body's padding, unclipped. It cites Ruling 83 condition 1 and Ruling 88 condition 3. Ruling 83's Left dock is superseded by ADR-0045 1(a) and Ruling 152's D2 flip. Ruling 88's measure is a property of the thread's text, not of the zone it docks in, so it is retargeted, not retired. Option B is rejected.
+
+The Center inverts the risk. A Left zone could clip the measure, but a Center zone is wide enough to stretch the lines past it. So the retargeted test asserts both, measured on the composed tree at the startup size:
+(1) the notebook's words column is at least MeasureWidth plus gutter and padding, with no clipped words, as before;
+(2) the column's rendered line width does not exceed MeasureWidth: the measure is a cap, and extra Center width becomes margin, not longer lines;
+(3) both hold at the minimum supported window size and at a wide one.
+If ThreadFeed does not cap today, (2) is a red-first product change within T11's notebook-kind scope. Node 2's re-scoping of Ruling 83's 19 Left-dock tests to Center, and its deletion of the unreachable 'The session is docked at the left' empty copy with its test (HYG-A), are accepted.
+
+- request: req-01M59W9DMM0YKGB8V72JMZB9CC · ruled by: wl-owner-20261018 · at: 2026-10-19T10:46:57Z
+
+### Ruling 169 — Ruling 166(2) amended: the knowledge-inclusive toggle is session-only per instance, like Group actually is; persisted per-surface view state is one later designed feature
+
+Option A. Ruling 166(2) asserted that Group persists with the layout without opening it. The Owner checked origin/main. Group is page-local state, 'var grouped = false;' (CanvasPage.cs:133). The layout's Surface record holds only SurfaceId, Kind and Title (LayoutModel.cs:10). The factory builds CanvasSurface with no view state (SurfaceContentFactory.cs:142, per the Leader). So 'like Group' means session-only. This is an Owner instance of DC-NEW-wl-leader2: a ruling asserted behaviour by analogy without reading the analogue.
+
+The decision:
+(1) The toggle is per canvas instance, default OFF, and session-only. It resets on reopen exactly as Group does. No layout schema change.
+(2) Per-instance non-leak is tested red-first: toggling one canvas instance does not change another.
+(3) Persisted per-surface view state (Group, 2D/3D and knowledge-inclusive together) is recorded as one future designed feature, owned by the slice that first needs restored view state. It needs a layout schema change and the Data and Persistence review. Option B is rejected for now, because adding it to one toggle alone would give three view options with three different persistence rules.
+The Leader's withdrawal of the 'docked at the left' deletion is endorsed: a drag can still dock a notebook Left, so the copy is reachable and its test is re-scoped. The Console focus-return defect found in T11 node 2 is a real product fix and goes red-first in node 3, as dispatched.
+
+- request: req-01M59X6EFREMF46BDWAN9MGCDJ · ruled by: wl-owner-20261018 · at: 2026-10-19T11:02:43Z
+
+### Ruling 170 — The minimum window width rises from 820 to 840 so the thread's measure fits at the minimum; the minimum is tied to the measure by a derived test
+
+Option A. Ruling 168 (3) fails at the 820x520 minimum by 18.6 px: the turn row gets 706 px, and the measure needs 724.6 (672.6 plus a 40 px gutter plus 12 px padding). The space goes to shell chrome (a 71 px activity bar and 43 px of pane chrome), not to ThreadFeed. The cap already holds (ThreadFeed.cs:616 and :858, mutation red 8976dc86). The Owner searched DESIGN.md, docs/specs/, docs/architecture.md, docs/adr/ and docs/notes/: none pins 820. The only hit is a line-number reference in front-door-ruling-49.md. MainWindow.xaml:11 is the single definition. Option B is rejected, because it relaxes a readability guarantee at exactly the size where it matters most.
+
+The decision:
+(1) MainWindow.xaml:11 MinWidth becomes 840.
+(2) A test derives the requirement instead of copying the number. At the window's MinWidth, the notebook's words column is at least ThreadFeed.MeasureWidth plus gutter plus padding. Later chrome growth then fails this test instead of silently clipping the measure. A test that only asserts 840 is not enough.
+(3) The minimum window size is recorded in DESIGN.md next to the measure, with its derivation, so the one number has one home.
+(4) Ruling 168 (3) then holds at the minimum, at startup and at the wide size.
+
+- request: req-01M59Y8DSSMBMFX4G0P42Q8PHC · ruled by: wl-owner-20261018 · at: 2026-10-19T11:22:37Z

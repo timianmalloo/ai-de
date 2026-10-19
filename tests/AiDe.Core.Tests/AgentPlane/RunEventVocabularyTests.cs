@@ -87,7 +87,7 @@ public sealed class RunEventVocabularyTests
         null, [], "bytes", T0);
 
     [Theory]
-    [InlineData(TurnState.Interrupted, true, "interrupted", "Turn b1 interrupted after")]
+    [InlineData(TurnState.Interrupted, true, "stopped by you", "Turn b1 stopped by you after")]
     [InlineData(TurnState.Preparing, false, "preparing", "Turn b1 accepted as a goal block")]
     [InlineData(TurnState.StopRequested, false, "stop requested", "Turn b1: stop requested. Waiting for the harness to acknowledge.")]
     [InlineData(TurnState.DeliveryUnknown, true, "delivery unknown", "Turn b1: delivery is unknown")]
@@ -104,6 +104,20 @@ public sealed class RunEventVocabularyTests
         var emitted = policy.Next(new ThreadSnapshot([TurnIn(state)], 1, true));
 
         Assert.StartsWith(announced, Assert.Single(emitted).Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void OnlyInterrupted_ReadsStoppedByYou_SoAShutdownOrATokenCancelNeverClaimsTheOperatorStoppedIt()
+    {
+        // Ruling 167: "by you" is true only because Interrupted is written solely under an operator Stop
+        // (AttemptStopTests.ATokenCancelAlone_..._IsNeverInterrupted: shutdown ends DeliveryUnknown{relay_lost}).
+        Assert.Equal("stopped by you", TurnCopy.OutcomeWord(TurnState.Interrupted, exitCode: null));
+        foreach (var state in Enum.GetValues<TurnState>().Where(s => s != TurnState.Interrupted))
+        {
+            Assert.NotEqual("stopped by you", TurnCopy.OutcomeWord(state, exitCode: null));
+        }
+
+        Assert.DoesNotContain("by you", TurnCopy.OutcomeWord(TurnState.DeliveryUnknown, exitCode: null), StringComparison.Ordinal);
     }
 
     [Fact]

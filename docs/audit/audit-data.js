@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T10:27:34Z",
+  "generated": "2026-10-19T11:16:38Z",
   "audit": [
     {
       "actor": null,
@@ -24908,6 +24908,83 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T10:05:32Z",
       "duration_seconds": 1322.0
+    },
+    {
+      "id": "al-01M59WJPMNAXBXK66HQ0ZPBNAH",
+      "shortname": "wl-t19-stopword",
+      "datetime": "2026-10-19T10:51:07Z",
+      "session": "wl-t19-stopword",
+      "prompt": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "summary": "OutcomeWord(Interrupted), box sentence and announcement read 'stopped by you'; 3 tests re-pinned red-first; guard test; WL-1a demo Stop step updated",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Sessions/SessionThread.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Interrupted turn outcome word reads 'stopped by you' (Ruling 167)",
+      "done_when": "word changed, tests red then green, suites green, demo updated",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T10:42:49Z",
+      "duration_seconds": 498.0
+    },
+    {
+      "id": "al-01M59X6GTZ46ZB8CC9KEB5BBHZ",
+      "shortname": "join-wl1a-stopped-by-you",
+      "datetime": "2026-10-19T11:01:56Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-stopped-by-you into main",
+      "summary": "T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1182 SC7); 3 pinned assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou (shutdown/token-cancel never claim it; AttemptStopTests confirms the premise); demo-script Stop step updated recount_seconds=572 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T19 to main",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed with step-8",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T10:52:23Z",
+      "duration_seconds": 573.0
+    },
+    {
+      "id": "al-01M59Y1EBW3YP4MA6E5VCX47SS",
+      "shortname": "join-wl1a-stopped-by-you-step8",
+      "datetime": "2026-10-19T11:16:38Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/160) for the T19 join 4ca7a73e",
+      "summary": "Recount OK; step 8 5/48 (baseline). Ratchet vs first parent 3281d689 on clean trees: PASS 0/49 (repo citations ok strict). Release build exit 0. T19 (Sonnet): OutcomeWord(Interrupted) = 'stopped by you' and the box sentence 'Stopped by you after ...' (DESIGN.md:1170/:1182/:1204, Ruling 167); 3 assertions re-pinned red-first; guard OnlyInterrupted_ReadsStoppedByYou; demo-script Stop step updated.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/stopped-by-you/word-red.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T19 on main under Ruling 160",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T11:06:37Z",
+      "duration_seconds": 601.0
     }
   ],
   "changes": [
@@ -29633,6 +29710,105 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t17c-restore"
+    },
+    {
+      "id": "mail-01M59VQGC61X193X5AW9R4N76T",
+      "ts": "2026-10-19T10:36:16Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59VQGBWQN4AB0DHWNYE6587",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59VTEAX4KQ9TWNXBDPXRXMQ",
+      "ts": "2026-10-19T10:37:52Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59VQGBWQN4AB0DHWNYE6587",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59VXQ6KRKGWT45GN0VYNMMB",
+      "ts": "2026-10-19T10:39:39Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59VXQ699GXNXYWY5E547PGJ",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59VZZ12Y33BMKKSVCA1DN8H",
+      "ts": "2026-10-19T10:40:53Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59VXQ699GXNXYWY5E547PGJ",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59W9DMXCXN9JRJEVA9E9T59",
+      "ts": "2026-10-19T10:46:03Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59W9DMM0YKGB8V72JMZB9CC",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59WB2GP481YC9H1BD7ZSX6B",
+      "ts": "2026-10-19T10:46:57Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59W9DMM0YKGB8V72JMZB9CC",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59WJQM0P8M0HWGR4FP6R2FG",
+      "ts": "2026-10-19T10:51:08Z",
+      "from": "wl-t19-stopword",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t19-stopword"
+    },
+    {
+      "id": "mail-01M59X4HBXD5CNM9N6SN9J07A6",
+      "ts": "2026-10-19T11:00:51Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M59X6EG2DCJVE3BJ5J1QB8A4",
+      "ts": "2026-10-19T11:01:54Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59X6EFREMF46BDWAN9MGCDJ",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59X7YWWXPY2ZNM7JKSEKVW3",
+      "ts": "2026-10-19T11:02:43Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59X6EFREMF46BDWAN9MGCDJ",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59Y0V8D5FC4PM5DDE7JA6QC",
+      "ts": "2026-10-19T11:16:19Z",
+      "from": "wl-t18-knowledge",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t18-knowledge"
     }
   ]
 };

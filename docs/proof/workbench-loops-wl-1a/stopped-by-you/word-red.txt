@@ -1,0 +1,66 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Core\AiDe.Core.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Daemon\AiDe.Daemon.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Mcp\AiDe.Mcp.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 147 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-stopped-by-you\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.EachNewTurnState_HasAWordATerminalityAndAnAnnouncement(state: Interrupted, terminal: True, word: "stopped by you", announced: "Turn b1 stopped by you after") [FAIL]
+  Failed AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.EachNewTurnState_HasAWordATerminalityAndAnAnnouncement(state: Interrupted, terminal: True, word: "stopped by you", announced: "Turn b1 stopped by you after") [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "stopped by you"
+Actual:   "interrupted"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.EachNewTurnState_HasAWordATerminalityAndAnAnnouncement(TurnState state, Boolean terminal, String word, String announced) in C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\AgentPlane\RunEventVocabularyTests.cs:line 100
+   at InvokeStub_RunEventVocabularyTests.EachNewTurnState_HasAWordATerminalityAndAnAnnouncement(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.OnlyInterrupted_ReadsStoppedByYou_SoAShutdownOrATokenCancelNeverClaimsTheOperatorStoppedIt [FAIL]
+  Failed AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.OnlyInterrupted_ReadsStoppedByYou_SoAShutdownOrATokenCancelNeverClaimsTheOperatorStoppedIt [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "stopped by you"
+Actual:   "interrupted"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.OnlyInterrupted_ReadsStoppedByYou_SoAShutdownOrATokenCancelNeverClaimsTheOperatorStoppedIt() in C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\AgentPlane\RunEventVocabularyTests.cs:line 114
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Sessions.Thread.TheThreadAnnouncesByTransitionTests.ALaneExitIsAssertiveAndOnce_AStopIsAStatus_NotRecordedIsAStatus [FAIL]
+  Failed AiDe.Core.Tests.Sessions.Thread.TheThreadAnnouncesByTransitionTests.ALaneExitIsAssertiveAndOnce_AStopIsAStatus_NotRecordedIsAStatus [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                   ↓ (pos 8)
+Expected: "Turn b2 stopped by you after 1 edit; 3,90"···
+Actual:   "Turn b2 interrupted after 1 edit; 3,900 t"···
+                   ↑ (pos 8)
+  Stack Trace:
+     at AiDe.Core.Tests.Sessions.Thread.TheThreadAnnouncesByTransitionTests.ALaneExitIsAssertiveAndOnce_AStopIsAStatus_NotRecordedIsAStatus() in C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\Sessions\Thread\TheThreadAnnouncesByTransitionTests.cs:line 127
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Sessions.Thread.TheQueuedTurnIsOneTurnOfTheStreamTests.AfterAStopOrAFailure_TheQueuedTurnWaitsOnYou(ending: Interrupted) [FAIL]
+  Failed AiDe.Core.Tests.Sessions.Thread.TheQueuedTurnIsOneTurnOfTheStreamTests.AfterAStopOrAFailure_TheQueuedTurnWaitsOnYou(ending: Interrupted) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "b1 stopped by you; b2 is waiting — Send i"···
+Actual:   "b1 interrupted; b2 is waiting — Send it o"···
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Sessions.Thread.TheQueuedTurnIsOneTurnOfTheStreamTests.AfterAStopOrAFailure_TheQueuedTurnWaitsOnYou(TurnState ending) in C:\Projects\ai-de-wl1a-stopped-by-you\tests\AiDe.Core.Tests\Sessions\Thread\TheQueuedTurnIsOneTurnOfTheStreamTests.cs:line 130
+   at InvokeStub_TheQueuedTurnIsOneTurnOfTheStreamTests.AfterAStopOrAFailure_TheQueuedTurnWaitsOnYou(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     4, Passed:    34, Skipped:     0, Total:    38, Duration: 79 ms - AiDe.Core.Tests.dll (net10.0)

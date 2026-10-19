@@ -117,12 +117,12 @@ GUI steps not yet run by a person are **owed to the user**.*
     refresh it."*. It is also announced politely to a screen reader. b1's provenance line still names revision 1
     and its own request (AC-R01a).
 
-### 4. Stop on the real lane: StopRequested, then Interrupted
+### 4. Stop on the real lane: StopRequested, then stopped by you
 11. Send a long turn, b2, e.g. *"Write the numbers from 1 to 400 as English words, one per line. Do not use any
     tools."*. While it runs, reach its row and its **Stop this turn** button (the row's first action; **rehearse**
     whether Shift+Tab lands on it directly). Press **Space**.
 12. **Expect:** the outcome first reads *stop requested* (box "Stop requested. Waiting for the harness to
-    acknowledge."), then *interrupted* (box "Interrupted after {N edits}; {spend}. Send the same turn again as a new
+    acknowledge."), then *stopped by you* (box "Stopped by you after {N edits}; {spend}. Send the same turn again as a new
     turn, or open the log."). If the adapter does not acknowledge within 10 s, the honest terminal is *delivery
     unknown* (`stop_not_acknowledged`), which is a correct result, not a failure.
 
@@ -169,3 +169,14 @@ GUI steps not yet run by a person are **owed to the user**.*
 ### Still owed to the user (not observable by the Owner's session)
 - Every GUI step above (1–7, 9) needs a person at the window. Each is labelled not observed until run.
 - The native IME check for E-1 (WL-2).
+
+## Acceptance (Owner, 2026-10-19)
+
+**WL-1a is ACCEPTED, PROVISIONALLY.** The Owner (`wl-owner-20261018`) ran these on a clean detached tree at `origin/main` `ba2b7e5e`:
+
+- `dotnet build AiDe.sln -c Release`: 0 warnings, 0 errors.
+- Core: 3019 passed, 0 failed, 1 skipped.
+- App: 1123 passed, 1 skipped. `SolutionTreeChordTests` reported NOT CHECKED in the Owner's environment ("foreground not held", refused alone too). Its evidence is the Leader's solo PASS on the T17 join head (`restored-turns/solution-tree-chord-solo-on-join-head.txt`).
+- **Second recorded real-lane run:** `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` PASSED (1/1, 15 s) with `AIDE_REAL_ADAPTER_ROOT` set to the repository's `spikes/acp-subscription-lane` folder, on 2026-10-19. The run spent real adapter usage on the user's account. The first recorded run is `host/real-lane-stop/` (T5 node 2).
+
+**Not observed: the GUI demo (steps 1–9 above, including WL-0's folded GUI steps 2–4).** The Owner's session has no desktop control, so these steps are owed to the user. If any step fails, WL-1a is reopened.
