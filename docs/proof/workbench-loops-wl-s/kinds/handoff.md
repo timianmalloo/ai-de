@@ -8,7 +8,61 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 5 (kicked at 12 min): A2 (the Open log opener) and B (Ctrl+1/2/3 inside a WebView2 page) are red then green. The Owner's TurnAction condition (1) test, check C and the node 5 suite run are not started."
+summary: "Node 6 (kicked at 12 min): the Owner's condition (1) and Ruling 170 (MinWidth 840) are red then green. Check C hide is red, with its seam granted and the green not started. Float/redock is out of reach (decision request to the Owner). The node 6 suite run was skipped."
+---
+
+# T11 node 6 — hand-off (rule 16 kick, about 13 minutes)
+
+## Done
+
+- **The Owner's condition (1) on `SurfaceEntry.TurnAction`.**
+  - **The product already passed**, so the red is a mutation red.
+  - Mutation red `18505b9f`, `TA-condition1-mutation-red.txt` (the diff is in the file). The uncommitted mutation made the execution row `Derived("_View")` for Factory and Review. With it, 5 of 7 failed: the View menu in Factory and Review, the empty state in Review (default copy) and in Factory (notebook at the left), and the door fact.
+  - Green `56028e94`, `TA-condition1-green.txt`: 57 of 57 with `TheExecutionKindTests`, `TheExecutionOpensFromOpenLogTests`, `PerspectiveMenuTests` and `CenterEmptyCopyTests`.
+  - **The test:** `TheExecutionIsOfferedOnlyByItsTurnTests`. `NoViewMenu_OffersTheExecution` and `NoCenterEmptyState_OffersTheExecution` are theories over every perspective; `TheExecutionsOnlyDoor_IsTheTurnsOpenTheLog` is a fact.
+    - The menu bar is rendered by `MainMenuBuilder`. The empty state is rendered by `CenterEmptyState.Build` in three states: the default layout, a live notebook at the left, and an unrevived notebook at the left.
+    - Where the empty copy points at the View menu, that menu is read as part of the offer.
+    - The press itself is A2's end-to-end test (node 5).
+  - **The switch rule:** no code switches over `SurfaceEntry` (grep over `src` and `tests`). Every reader is an `is Derived` or `is Verb` type test (`PerspectiveMenu.cs:93`, `:119`; `CenterEmptyState.cs:59`). No control was added for a future switch.
+- **Ruling 170.**
+  - Red `9971fb3b`, `R170-minwidth-red.txt`: "MainWindow's MinWidth (820) is below the width that holds the thread: 71 shell chrome + 43 pane chrome + 672.6 measure + 40 gutter + 12 padding = 838.6". The minimum row was red too.
+  - Green `7785c44c`, `R170-minwidth-green.txt`: `MainWindow.xaml:11` MinWidth 840. `TheThreadMeasureMovesWithTheNotebookTests` is 6 of 6, and the minimum row now reads turn row 726 ≥ 724.6. The DESIGN.md entry sits under the thread's "Space" bullet.
+  - **The test:** `TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere`.
+    - It measures the chrome at the startup size (window minus body, then body minus the turn's row) and derives the minimum.
+    - It asserts that the window's `MinWidth` reaches that minimum, then re-measures the row at `MinWidth`. No literal 840 appears in the test.
+  - **Two `assume:` notes.**
+    - "Read MinWidth from the window" is met by the existing `MinimumSize()` reader, which reads the attribute from `MainWindow.xaml`; no test constructs `MainWindow`.
+    - The brief's "words column" is the turn's row (gutter + words column + padding), because Ruling 170's derivation sums to the row. The words column itself is 674 at 840, which is ≥ the 672.6 measure.
+
+## Red or not done
+
+- **Check C, hide.** Red `8b190778`, `C-hide-red.txt`: "Pane hidden. The run continues." was not said once; the live region said only "sent" and the turn's acceptance.
+  - **The test:** `ALiveNotebookSurvivesHideAndReopenTests`. It runs the real shell over a daemon, with the `AttemptHost` bound and a stub run held.
+    - The hide is the tab's own Close menu item.
+    - It asserts: the same `NotebookModel`, not disposed, the run in flight, the same `DispatchKey`, and the copy said once. Then a reopen through `OpenSessionDocument` binds the same model and `ReadModel`, and after `ReleaseRun` the reopened pane reads Answered.
+  - **Cause (verified by reading the code and by the red):** the shell never disposes its retained document (ADR-0045 §4; `SurfaceContentFactory.cs:367-388`). The copy is said only from `SessionDocumentSurface.Dispose` (`:1644`), so in the real shell a close says nothing.
+  - Every other assertion already passes. A probe with the two copy-count lines removed was 1 of 1, not committed.
+  - **Seam `req-01M59ZYYPNTZQ6PSF54SEX92R3` is GRANTED** for one branch in `WorkbenchShell.OnSurfaceClosed`. The green is not started (the kick).
+  - **The Leader's condition:** exactly once per close. Even if the retained document is later disposed with the run in flight, it must not say it again.
+    - **Open point for the next node:** the shell's `Dispose` (`WorkbenchShell.cs:3401`) disposes every retained document before the notebooks (`:3409`). A document closed mid-run whose run is still in flight at shell teardown would say the copy a second time from `:1644`.
+    - The grant covers `OnSurfaceClosed` only. Meeting the condition at teardown needs either `SessionDocumentSurface.cs:1644` (skip when the shell already said it) or the teardown order. That is the Leader's call.
+    - The test should add that disposal step and assert the count stays 1.
+- **Check C, float/redock: out of reach (seam `req-01M59ZYYSK51AVRKYQPPTDCNKE`, now an Owner decision request).** Measured in `C-float-probe.txt`:
+  - The product's float (`MoveSurface` with `DropKind.Float`, the same as `workbench.floatPane`, Ctrl+K F) moves the notebook to `Layout.Floating` and says "Binding is now floating.".
+  - `WorkbenchAdapter.Render` (`:338`) builds only `Current.Root`, so no dock-library floating window is drawn and the notebook leaves the screen (`FloatingWindows=0`, `ContentFor=null`). The model is the same.
+  - Redock to the Center is refused: `AIDE-LAYOUT-SURFACE-UNKNOWN`, "is not docked", because `FindZoneOf` skips `Floating`.
+  - **The finding (`WorkbenchAdapter.cs:890-891`):** a layout saved while the notebook is floated keeps it under `"floating"` in the slot file. A read-back keeps it floating with no docked zone, so after a restart the notebook stays invisible.
+    - `ReadLayoutFromView` returned null in the probe. Its `:891` bail covers only the view's own floating windows (an AvalonDock drag-out), which this probe did not create (Inferred: the null came from the surface-set check at `:913`).
+- **`suite-node6.txt` was not run** (the kick). The last whole-suite run is `suite-node3.txt`.
+- **A slip of my own:** one test edit used a heredoc Python program, against brief rule 6. It was used for an edit only, never for a gate.
+
+## Next step
+
+Node 7, or a C-hide re-run:
+1. Add the DOCK1 branch in `OnSurfaceClosed`, turn C-hide green, and settle the teardown double-say with the Leader.
+2. Take the Owner's float ruling.
+3. Run the whole suite into `suite-node6.txt` (or node 7's file).
+
 ---
 
 # T11 node 5 — hand-off (rule 16 kick, about 12 minutes)
