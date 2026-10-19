@@ -1,5 +1,9 @@
+using System.Windows.Controls;
+using AiDe.App.Tests.Shell;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
+using AvalonDock;
+using AvalonDock.Layout;
 
 namespace AiDe.App.Tests.Perspectives;
 
@@ -44,6 +48,44 @@ public sealed class FloatGuardTests : IDisposable
         Assert.Equal(surface.SurfaceId, controller.FocusedSurfaceId);
         Assert.Contains("not available yet", announcer.Last, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable() =>
+        Sta.Pump(
+            create: () => new DockingManager(),
+            configure: window => { window.Width = 900; window.Height = 600; },
+            body: async (main, manager) =>
+            {
+                var service = new ZoneBackedLayoutService();
+                var announcer = new RecordingAnnouncer();
+                var adapter = new WorkbenchAdapter(manager, service, surface => new TextBox { Text = surface.SurfaceId });
+                adapter.Render();
+                await Task.Delay(200);
+                var stack = service.Current.FindStackOf("sessions")!;
+                var surfaceId = stack.Surfaces[0].SurfaceId;
+                var controller = new WorkbenchController(service, announcer)
+                {
+                    FocusedStackId = stack.Id,
+                    FocusedSurfaceId = surfaceId,
+                };
+
+                controller.Execute("workbench.floatPane");
+                adapter.Render();
+                await Task.Delay(500);
+
+                Assert.True(service.Current.Floating.Count == 1, $"floatPane did not float the pane; it said: {announcer.Last}");
+                Assert.Equal(surfaceId, Assert.Single(Assert.Single(service.Current.Floating).Surfaces).SurfaceId);
+                Assert.Null(service.Zones.FindZoneOf(surfaceId));
+                Assert.IsType<LayoutDocumentFloatingWindow>(Assert.Single(manager.Layout.FloatingWindows));
+                var window = Assert.Single(manager.FloatingWindows);
+                Assert.True(window.IsVisible, "the floating window is not shown");
+                var content = Assert.IsType<TextBox>(adapter.ContentFor(surfaceId));
+                Assert.True(FloatRenderTests.HostedBy(content, window), "the floated pane is not drawn in the floating window");
+                Assert.False(FloatRenderTests.HostedBy(content, main), "the floated pane is still drawn in the workbench window");
+                Assert.True(content.IsVisible, "the floated pane is not visible");
+                window.Activate();
+                Assert.True(content.Focus(), "the floated pane did not take focus");
+            });
 
     [Fact]
     public void RestoringAFloatingWindow_DocksThePaneIntoItsKindsZone_DrawnReachableAndReported()
