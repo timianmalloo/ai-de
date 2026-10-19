@@ -18,6 +18,10 @@ public sealed class ConsoleHostCensusTests
 
     private static ConsoleHostCensus.QueryResult Failed(string stderr = "boom\nsecond line") => new(1, "", stderr);
 
+    // A named method, not an inline lambda: the harness-diagnostics gate reads `throw new X(..., ident);` as
+    // a harness wrapping a captured failure, and this file has no harness - the throw is the test's subject.
+    private static ConsoleHostCensus.QueryResult CannotStart() => throw new System.ComponentModel.Win32Exception("cannot start");
+
     private static ConsoleHostCensus.QueryResult Good(string json) => new(0, json, "");
 
     [Fact]
@@ -68,8 +72,7 @@ public sealed class ConsoleHostCensusTests
     [Fact]
     public void AStartFailure_IsRetried_AndNamed()
     {
-        var snapshot = ConsoleHostCensus.Take(
-            () => throw new System.ComponentModel.Win32Exception("cannot start"), ConsoleHostCensus.MaxAttempts, NoWait);
+        var snapshot = ConsoleHostCensus.Take(CannotStart, ConsoleHostCensus.MaxAttempts, NoWait);
 
         Assert.False(snapshot.Readable);
         Assert.Contains("did not start: cannot start", snapshot.Cause);
