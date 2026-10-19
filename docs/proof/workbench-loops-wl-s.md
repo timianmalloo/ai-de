@@ -24,7 +24,7 @@ summary: >-
 - **Change:** branches `wls-kinds-migration` (T11, nodes 1-9), `wls-knowledge-mode` (T18, on main),
   `wls-float-guard` (T20, on main at `5b47615e`). T21 (`wls-float`) and T17d (`wl1a-readback`) are not joined.
 - **Design:** `docs/design/workbench-loops-wl-s.md` §2-§4, §7, §8. ADR-0045. Rulings 149, 152, 168, 170, 171, 172, 173.
-- **Status: draft. WL-S is not accepted until T21 lands** (Ruling 171 (3)). D2 is red until T17d lands (Ruling 172).
+- **Status: draft. WL-S is not accepted until T21 lands** (Ruling 171 (3)). D2 is green since node 11 (row 12). Row 22 is red.
 - Each T11 row's proof file is under `docs/proof/workbench-loops-wl-s/kinds/`. The node-by-node record is that
   folder's `handoff.md`.
 
@@ -46,7 +46,7 @@ summary: >-
 | 9 | Hide a live notebook: closing its pane mid-run keeps the run and says "Pane hidden. The run continues." once | T11 n6-n7 | the hide tests in `C-hide-green.txt` | `8b190778` → `bbf1465b`; shutdown `3c954c94` → `c736c96f` | Verified |
 | 10 | **Float and redock a live notebook** (Ruling 171 (2)) | T21 | not written | **pending T21**. Probe `C-float-probe.txt` (`8b190778`) measured that a floated pane vanished | **Open** |
 | 11 | Slot migration: today's Factory slot restores each `session-document:<id>` as `notebook:<id>` (same zone, tab position and caption), drops the rest with a report, keeps a one-time `.pre-notebook.bak`, and round-trips | T11 n7-n8 | `LayoutSlotMigrationTests.TodaysSlot_RestoresEachSessionPaneAsItsNotebook_ReportsTheRest_KeepsAOneTimeBak_AndRoundTrips`; operator probe `ASessionDocumentIsShownWhereTheOperatorIsTests` (6) | `22649126` → `28cbad3a`; probe `0da0c3be` → `863c2df4`, mutation `D1-probe-mutation-red.txt` | Verified |
-| 12 | **D2: a revived notebook whose attempt was live at close reopens its execution in the Bottom, without moving focus** | T11 (after T17d) | `ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose` | red `98b5d7e6` (`D2-execution-at-revive-red.txt`: "the revived notebook reads 0 turn(s)"). **Green pending T17d** (Ruling 172). The shell part is granted: `ReviveRestoredSessionDocuments` → `OpenExecution(document, ordinal, activate:false)` | **Open (expected red)** |
+| 12 | **D2: a revived notebook whose attempt was live at close reopens its execution in the Bottom, without moving focus** | T11 (after T17d) | `ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose` | red `98b5d7e6` (`D2-execution-at-revive-red.txt`: "the revived notebook reads 0 turn(s)"). After T17d merged, red `ca392933` (`D2-revive-red.txt`: read back=1, "no execution:<key> opened; the Bottom holds []"; the concluded case's oracle corrected Answered → Completed, rule 14, `AttemptStateFold` maps `ResponseComplete` to `Completed`) → green `caa5df81` (`D2-revive-green.txt`, 9/9); its two guard regressions fixed in `bc1e8836` (`D2-guards-green.txt`, 16/16). App suite at `bc1e8836`: 1179/3/2 of 1184, the 3 being row 22's red and the two foreground tests (`suite-node11-app-rerun.txt`). `ExecutionAtRevive.LiveAtClose` (the LAST receipt, `DeliveryUnknown{host_restart}`) + `OpenExecution(.., activate:false)` (no `ActivateInView`, no `DocumentOpening`). `ExecutionAtReviveTests` (6); mutation `D2-predicate-mutation-red.txt` | Verified (tests); not walked in the running app |
 | 13 | `prompt` is kept (Ruling 173): the migration leaves a prompt draft as it was, `prompt` is not in `RetiredKinds`, and the migrating restore's report says so once | T11 n9 | `LayoutSlotMigrationTests.APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once` | `94c374d6` → `7383f868`; `P-prompt-kept-red.txt` → `-green.txt`; design §4 amended `31c75c3f` | Verified. The Owner confirmed the sentence; DESIGN.md row DOCK4 carries it (row 20) |
 | 14 | §7 rename: Understand reads `.understand`, falls back to `.architecture` once, writes the new name, keeps `<old>.bak`; T4's alias is removed | T11 n9 | `LayoutSlotMigrationTests.UnderstandsSlot_IsRenamedFromArchitecture_ReadingTheOldNameOnce_KeepingAOneTimeBak_AndRoundTrips` | `54863920` → `c56da52c`; `R-rename-fold-red.txt` → `-green.txt` | Verified. The alias pin is re-pinned to `.understand` as `PerspectiveLayoutSlotTests.SlotPathFor_MapsEachRowToItsFile_FactoryKeepsCodingsEmptySuffix_UnderstandAndReviewTheirIds` (T11 n10 `1b95c589`, `slot-repin-green.txt`, 27/27; seam `req-01M5A3V1Q07WEFR57AGDMQKD92` granted) |
 | 15 | §7 fold: every surface of the Coordination slot is appended to Factory's Center as tabs, never its Left. The Center stays on the notebook. What Factory refuses is dropped with a report, the coordination file is kept once as `.bak`, and the slot round-trips | T11 n9 | `LayoutSlotMigrationTests.CoordinationsSlot_FoldsIntoFactorysCenter_AsTabs_NeverItsLeft_LandingOnTheNotebook_DropsWithAReport_AndRoundTrips` | `54863920` → `c56da52c` | Verified |
@@ -55,6 +55,8 @@ summary: >-
 | 18 | DOCK1 is said once per close with no `Loaded` hook (DC-138). The reset runs when the shell shows a kept document again (`RegisterSessionDocument` → `SessionDocumentSurface.PaneShown`) | T11 n10 | `TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation`, `ALiveNotebookSurvivesHideAndReopenTests` (2), `TheRunOutlivesItsPaneTests` | red `suite-node9.txt` (from `c736c96f`) → `005b8da5`; `DC138-reset-green.txt` (10/10) | Verified |
 | 19 | Every `AddSurface` in the shell raises the seam after its add, and each add is judged within its own command: the head is derived from member declarations, not from a hand-kept list (DC-NEW-wl-t11-kinds) | T11 n10 | `EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender`, `TheExecutionOpensFromOpenLogTests`, `ConsoleSplitPlacementTests` | red `suite-node9.txt` → `3b567ce9`; `open-seam-green.txt` (12/12); mutation `open-seam-mutation-red.txt` names `OpenExecution` | Verified, both ways |
 | 20 | DESIGN.md row DOCK4 carries the kept-prompt sentence, singular and plural (Ruling 173; the Owner confirmed it) | T11 n10 | `LayoutSlotMigrationTests.TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord` | `47df88af` → `6d214263`; `DOCK4-row-red.txt` → `-green.txt` | Verified for the singular against the product's sentence. The plural is pinned against the doc only (see Flagged risks) |
+| 21 | D6 as the Owner amended it: switch statements list the three `SurfaceEntry` cases with no default; a switch expression's discard throws `UnreachableException` naming the type; one reflection test covers every subtype for every reader | T11 n11 | `EverySurfaceEntryIsHandledByEveryReaderTests` (subtype theory, `CenterEmptyState_OffersTheViewMenu_ExactlyWhereItsArmCountsARow`, `EveryRow_NamesItsDoor_ThroughTheFactorysArm`, `TheReadersAreTheOnesThisTestCovers`) | red `06e37edb` (`D6-reflection-red.txt`, planted `PlantedFourth`, uncommitted and reverted: names all three readers) → green `cb5cb59b` (design D6 amended; `D6-reflection-green.txt` 53/53). CS8509 observed: `D6-cs8509-probe.txt` | Verified |
+| 22 | DOCK4's plural is one const that the DOCK4 row test pins word for word, and a two-prompt restore says it | T11 n11 | `LayoutSlotMigrationTests.TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord`, `.TwoKeptPromptDrafts_SayDock4sPluralSentence_WordForWord` | red `b62261e8` (`DOCK4-plural-red.txt`: "LayoutPersistence has no KeptPromptsSentence const"). **Green not done:** the kick came while T21 held `LayoutPersistence.cs`. The two-prompt restore already passes, so the plural is reached | **Open (expected red)** |
 
 **Node 9's suite run** (`kinds/suite-node9.txt`): Core 3024/3025 passed (1 skipped, 0 failed). App 1146/1155
 passed (2 skipped, **7 failed**). The 7: three expected (D2 ×2, the alias pin), two environmental (real-input tests
@@ -150,27 +152,25 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
   document's text. Until a check shows the text in the app, `docs/index.html` stays the way to read it.
 - **Float/redock is not real yet** (Ruling 171). Until T21 lands, *Float pane* refuses, and a restored floating
   window docks with a report line (T20).
-- **A revived notebook shows none of its recorded attempts in the running app** (Ruling 172; WL-1a reopened). D2
-  cannot pass until T17d fixes the read-back.
+- **D2 is proved by tests, not in the running app.** After T17d, the revive E2E test over a real daemon is green
+  (row 12). No one has walked the restart in the app on this branch yet.
 - **The fold re-runs if its `.bak` already exists.** The first save after a fold moves the coordination file to
   `<file>.bak`, but never over an existing `.bak`. In that case the file stays, and the next restore folds it
   again. Surfaces already in Factory are skipped by id, so no tab is doubled. The drop report repeats.
 - **DOCK4's plural is not tied to the product.** `LayoutPersistence.KeptPromptsReport`'s plural sentence
-  (`LayoutPersistence.cs:391`) is an inline string. No test restores a slot with two prompt drafts, so the product's
-  plural and DOCK4's plural could drift apart unseen. The singular is tied: the P test asserts the report contains
-  `KeptPromptSentence`, and DOCK4's test asserts the row does too.
+  (`LayoutPersistence.cs:391`) is still an inline string. Node 11 added the two-prompt restore test, which reads
+  DOCK4's plural, so a drift in the product's words now fails it. The const pin is red (row 22) until a node makes
+  the plural one const.
 - **A rename's old file that cannot be read is left in place.** If `.architecture` is corrupt or newer, Understand
   restores its default and never reads it. Nothing is lost.
 
 ## Open items
 
-1. **D2 green** waits for T17d (Ruling 172). The Leader merges T17d into this branch, and a later node turns D2
-   green with the granted shell change.
+1. Closed at node 11: D2 is green (row 12).
 2. **Float/redock** waits for T21 (Ruling 171 (2)). **WL-S is not accepted until T21 lands.**
 3. Closed at node 10. The Owner confirmed the kept-prompt sentence (DOCK4, row 20). The alias pin was re-pinned (row 14).
-4. The D6 amendment (the Owner's): a switch statement over `SurfaceEntry` lists all three types with no default case,
-   a switch expression's discard arm throws `UnreachableException` naming the type, and one reflection test covers
-   every `SurfaceEntry` subtype for each consumer. This is node 11's.
+4. Closed at node 11: D6 amended (row 21). **New:** DOCK4's plural const (row 22, red `b62261e8`). The green is one
+   const plus `KeptPromptsReport` formatting it, in `LayoutPersistence.cs`, which T21 also edits.
 5. The `prompt` kind's retirement waits until the notebook has all six capabilities, each tested (design §4; Ruling 173).
 6. Captions "Notebook — <journey>" (ADR-0045 §5): node 1 recorded the notebook's title as the session's name.
    Not re-checked at node 9.

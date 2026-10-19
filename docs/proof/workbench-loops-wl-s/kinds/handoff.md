@@ -8,7 +8,50 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+summary: "Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+---
+
+# T11 node 11 — hand-off (rule 16 kick, during check 3)
+
+## Done
+
+- **Check 1, D2 green.**
+  - Re-run on the merged tip (fc56ee37): the read-back now runs (host bound=True, read back=1).
+    `diedMidRun:True` failed on "no execution:<key> opened; the Bottom holds []".
+    `diedMidRun:False` failed on its own oracle: the turn read back `Completed`, while the test expected `Answered`.
+  - The code wins (rule 14). `AttemptStateFold.cs:47` folds `ResponseComplete` to `Completed`, and a receipt has no goal. So the oracle is corrected to `Completed`.
+  - Red `ca392933` (`D2-revive-red.txt`, 1 failed / 1 passed). Green `caa5df81` (`D2-revive-green.txt`, 9/9, with `TheExecutionOpensFromOpenLogTests`).
+  - The predicate is `Execution/ExecutionAtRevive.LiveAtClose`. It picks the LAST read-back receipt in dispatch order, and only when that receipt is `DeliveryUnknown{host_restart}`. Its tests are `ExecutionAtReviveTests` (6). The any-receipt mutation went red on `AnEarlierSweptReceipt_IsNotOpened_WhenALaterTurnRanAfterIt` (`D2-predicate-mutation-red.txt`) and was reverted.
+  - Shell: `ReviveRestoredSessionDocuments` starts `OpenTheLiveExecutionAfterTheReadBackAsync` for each revived document. That method awaits `LastReadBack`, checks the document is still the registered one, finds the turn whose attempt is that receipt, and calls `OpenExecution(.., activate:false)`.
+  - `activate:false` skips both `ActivateInView` and `OpeningDocument`, which raises `DocumentOpening`, the US-C5 perspective switch. It also leaves an execution that is already open as it is. The result is announced; a refusal is never silent.
+  - No change to `NotebookRuns.cs` or `SessionDocumentSurface.cs`. No seam request was needed.
+- **Check 2, the D6 amendment.**
+  - Red `06e37edb`: the planted `PlantedFourth` (uncommitted, then reverted) gave "reaches the unreachable arm of: PerspectiveMenu, CenterEmptyState, SurfaceContentFactory" (`D6-reflection-red.txt`).
+  - Green `cb5cb59b`: design D6 amended to the Owner's three parts (`D6-reflection-green.txt`, 53/53).
+  - D6's `assume:` is closed. A three-arm switch expression with no discard was observed as `error CS8509` (`D6-cs8509-probe.txt`).
+  - **Design choice:** `src/` has no switch over `SurfaceEntry`, and its two readers are `is Derived` tests, one of them in `PerspectiveMenu.cs`, which is not an owned path. So each reader's arm is a switch expression in `EverySurfaceEntryIsHandledByEveryReaderTests`. The test checks each reader's real behaviour against its arm. `PerspectiveMenu.For` and `Opener` run over a fabricated row. `CenterEmptyState` reads the static rows, so it is checked over the real rows. A source scan pins the reader-file set.
+- **Check 3, the DOCK4 plural: red only.**
+  - Red `b62261e8` (`DOCK4-plural-red.txt`): "LayoutPersistence has no KeptPromptsSentence const". The row test looks the const up by reflection and asserts `IsLiteral`, and that its value equals DOCK4's plural word for word.
+  - The new `TwoKeptPromptDrafts_SayDock4sPluralSentence_WordForWord` passes already: the product plural is reached, and only the pin is missing.
+  - **Green not done.** `LayoutPersistence.cs` was leased by `wl-t21-float` when the kick arrived.
+
+## Next step (node 12)
+
+1. Check 3 green. In `LayoutPersistence.cs`, add `internal const string KeptPromptsSentence = "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks.";` and have `KeptPromptsReport`'s plural arm (:391) return `KeptPromptsSentence.Replace("{N}", kept.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal)`. Then mutate the const once, to prove the two-prompt test bites.
+2. T21 also edits `LayoutPersistence.cs` on `wls-float`. Expect a merge seam there at the join.
+
+## Suites (`suite-node11.txt`)
+
+- **Core (`suite-node11.txt`, HEAD `b62261e8`): 3024 passed, 0 failed, 1 skipped (3025).** No Core file changed after that head.
+- **First App run (`suite-node11.txt`, HEAD `b62261e8`): 1177 passed, 5 failed, 2 skipped (1184).** Two of the five were regressions from this node's D2 green, both caught by guards:
+  - `EveryOpeningCommandPassesThroughTheSeamTests`: the gate read `if (result.Applied && activate)`, and the guard wants the literal `if (result.Applied)`.
+  - `ReadBackTestsCoverTheShellsOrderTests`: `TodaysWindow` bound the host before it built the document.
+  - Both are fixed in `bc1e8836` (`D2-guards-green.txt`, 16/16). The test now builds the document first, so T17d's allow-list was not edited.
+- **App re-run (`suite-node11-app-rerun.txt`, HEAD `bc1e8836`): 1179 passed, 3 failed, 2 skipped (1184).**
+  - **DOCK4 ×1, expected:** `TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord` (check 3's red).
+  - **Environmental ×2, as at node 10:** `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_…` and `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`. A background session cannot take the foreground.
+  - The D2 tests (×2) are green.
+
 ---
 
 # T11 node 10 — hand-off
