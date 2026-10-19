@@ -1,0 +1,9 @@
+T17d node 3 whole suites at e16d2fcd (src/tests as of e16d2fcd; README edits uncommitted at run time).
+
+Core: dotnet test tests/AiDe.Core.Tests -nologo -> exit 0. Passed 3024, Failed 0, Skipped 1, Total 3025 (suite-core-n3.txt).
+App:  dotnet test tests/AiDe.App.Tests -nologo -> exit 1. Passed 1139, Failed 1, Skipped 2, Total 1142 (suite-app-n3.txt).
+  The one failure: SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - 'Ctrl+Enter probe failed with exit code 2. foreground not held; SendInput would prove another window'.
+  Re-run alone: fails the same way (chord-alone-n3.txt). Environmental (no held foreground in this session); the same NOT CHECKED cause recorded at node 2 and at the WL-1a acceptance. Not touched by this node.
+  NoDispatchOutsideTheHostTests (node 2's regression) now passes in the whole suite: 1139 passed vs 1134 at node 2 (+4 new node-3 tests, +1 the regression now green; total 1142 vs 1138; the chord test still environmental).
+
+So: green except one environmental test that cannot pass without a held foreground. The exit code is 1; this file does not claim 0.
