@@ -1,0 +1,58 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Sessions.TheSessionOriginIsSetOnlyOnTheCommandPathTests.ASessionConfigEventCarriesNoOrigin [38 ms]
+  Passed AiDe.Core.Tests.Sessions.TheSessionOriginIsSetOnlyOnTheCommandPathTests.ASessionConstructedDirectlyReadsTheOtherValue [8 ms]
+  Passed AiDe.Core.Tests.Sessions.TheSessionOriginIsSetOnlyOnTheCommandPathTests.TheFrontDoorSheetStampsTheCommandPathOrigin [9 ms]
+  Passed AiDe.Core.Tests.Sessions.TheSessionOriginIsSetOnlyOnTheCommandPathTests.ExactlyOneSiteInSrcCanStampTheFrontDoorOrigin [42 ms]
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneAdmits_ANewSessionOpensInAgenticAdvisory_AndTheFileSaysSo [7 ms]
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.ACallerThatCannotEvaluateTheGate_OpensMechanicalOnly [1 ms]
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneRefuses_ANewSessionOpensInMechanicalOnly_AndTheGateSaysWhy [3 ms]
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenEveryRungIsAdmitted_TheDefaultIsStillAgenticAdvisory_NeverAgentic [1 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.TheCanonicalisationFixtureMatchesRingPysHash [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.TheRecountReadsToolCallFramesOfAnyName [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.ARunThatDidNotEndRefusesBothRungs(mode: "aborted", promptAnswered: True) [7 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.ARunThatDidNotEndRefusesBothRungs(mode: "full", promptAnswered: False) [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.SetCompileModeRefusesAnUnadmittedRungAndWritesAnAdmittedOne [18 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AMissingOrShaMismatchedFrameLogRefusesBothRungs(withFrameLog: False, frameLogSha: null) [4 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AMissingOrShaMismatchedFrameLogRefusesBothRungs(withFrameLog: True, frameLogSha: "cccccccccccccccccccccccccccccccccccccccccccccccccc"···) [4 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.SetCompileModeCarriesAnExplicitTrigger [12 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.TheInstalledTripleIsHashedFromTheInstallRootsBytes [4 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.SetCompileModeDefaultsToOperatorAndEmitsOnlyOnARealTransition [15 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AnArtifactWhoseCliShaIsNotTheInstalledOneRefusesBothRungs [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AMatchingArtifactWithAZeroRecountAdmitsAdvisoryAndNotAgentic [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.SetCompileModeRejectsAnUnknownTrigger [5 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AnArtifactWhoseAdapterShaIsNotTheInstalledOneRefusesBothRungs [4 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.AnArtifactThatMeasuredAnotherPinRefusesBothRungs [4 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.NoArtifactLeavesBothAgenticRungsUnselectableNamingTheSpike [2 ms]
+  Passed AiDe.Core.Tests.Sessions.TheCompileModeLadderIsGatedTests.ARecountThatIsNotZeroRefusesBothRungs [4 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Lifecycle_NeverWritesUnderTheReservedRunsDirectory [15 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Create_WritesSessionJsonAtTheContractPath [1 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.UniqueName_CountsUpFromTwo_OverEverySessionInTheStore_AndNeverRefuses [7 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.SessionEventsFile_EarlierEventsSurviveByteForByteAfterALaterToggle [14 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Load_SurvivesAFreshStoreInstance_ProvingItIsReallyPersisted [5 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Create_ThenLoad_RoundTripsEveryField [5 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.SetAccounts_NeverMutatesAConfigARunAlreadyCaptured [9 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Create_SetsTheRuledDefaultsForTheFourNewFields [1 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.EachOfTheFourNewFields_RoundTripsANonDefaultValueThroughPersistedJson [11 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.SetAccounts_EmitsASessionConfigEvent [9 ms]
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Load_AnOldSessionFileWithNoneOfTheFourNewFields_ReadsBackWithTheirDefaults [5 ms]
+[xUnit.net 00:00:00.61]   Finished:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Sessions.SessionConfigStoreTests.Create_WritesTheSettingsItIsGiven_AndTheyReadBack [2 ms]
+
+Test Run Successful.
+Total tests: 37
+     Passed: 37
+ Total time: 0.9023 Seconds

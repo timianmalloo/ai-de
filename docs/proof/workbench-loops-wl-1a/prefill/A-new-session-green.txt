@@ -1,0 +1,72 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.TheFileMenuOffersRecentSessions_AndClickingOneReopensIt [126 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.ACreatedSessionAppearsInRecentSessions_AndItsEntryRestoresItsWorkspace [39 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.AnUnreadableRecentListDegradesToEmptyRatherThanThrowing [2 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.RecentSessionsIsNewestFirst_Deduplicated_AndCapped [58 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.NewSessionIsInTheCatalogAndInTheFileMenu [6 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.CtrlNIsReallyBoundToIt [9 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.InvokingItRunsTheFlow_AndSaysSoWhenNoFlowIsWired [1 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.ARecentSessionWhoseWorkspaceIsGoneIsDropped [6 ms]
+  Passed AiDe.App.Tests.Sessions.TheFrontDoorIsInTheFileMenuTests.FileNewTerminalSessionStillProducesTodaysTerminalSession [56 ms]
+  Passed AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneRefuses_OpensMechanicalOnly [50 ms]
+  Standard Output Messages:
+ File → New Session: "Session “2026-10-19 session” created in aide-t30-new-61cfd12de3ac4617bc7286cf36824082, task class implement." · gate asked about [C:\Users\malla\AppData\Local\Temp\aide-t30-new-61cfd12de3ac4617bc7286cf36824082\adapters] · stored compile_mode mechanical-only
+
+
+  Passed AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneAdmits_OpensAgenticAdvisory_GatedOverTheSheetsAdapter [22 ms]
+  Standard Output Messages:
+ File → New Session: "Session “2026-10-19 session” created in aide-t30-new-e1b211d0c2284a6e8967345202c36042, task class implement." · gate asked about [C:\Users\malla\AppData\Local\Temp\aide-t30-new-e1b211d0c2284a6e8967345202c36042\adapters] · stored compile_mode agentic-advisory
+
+
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.NoLeaseLeavesTheSheet [25 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: 10, tokens: 0) [10 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: 0, tokens: 10) [11 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: -1, tokens: 10) [8 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheDefaultNameIsADateSlug [9 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ATypedDuplicateNameIsSuffixedOnCreate_AndTheAnnouncementSaysSo [9 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.SignInIsClaudeCodeOnly_AndReprobesOnReturn [15 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetOpensAnsweredWithFreeForm_AndAClearedClassStillBlocks [8 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.EveryCatalogEngineIsListed_ConfiguredOrNot [23 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.CreateWritesTheSessionAndEmitsItsOpenEvent [15 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANeedsLoginEngineIsNeverOfferedToTheRouter [28 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANegativeOrUnwrittenFanOutCeilingBlocksCreateByName(ceiling: -1) [9 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANegativeOrUnwrittenFanOutCeilingBlocksCreateByName(ceiling: null) [7 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetCreatesOnDefaultsWithZeroRequiredInputs [19 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.NoParameterDefaultCanSupplyATaskClass [1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ACapIsOptional_EnforcedDeliberately_AndWrittenToTheSession [14 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetsHealthValuesAreReferenceEqualToTheRegistrys [12 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheFourCutFieldsAreAbsentFromTheSheet [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_AndAFailedOpenCreatesNothing [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports [3 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetRendersThatSentence [89 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.WithAnActiveWorkspaceTheSheetOpensPreBound [3 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ASheetCannotBeConstructedWithoutAWorkspace [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.WithNoWorkspaceTheChooserInterposes_AndCancelAbortsCleanly [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_AndAWindowThatStillReportsNoneCreatesNothing [< 1 ms]
+[xUnit.net 00:00:00.97]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheDefaultNameTakesACounter_WhenASessionOfThatNameAlreadyExistsInTheWorkspace [37 ms]
+
+Test Run Successful.
+Total tests: 37
+     Passed: 37
+ Total time: 1.3914 Seconds

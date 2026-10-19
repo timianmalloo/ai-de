@@ -1,0 +1,56 @@
+---
+id: handoff-workbench-loops-wl-1a-prefill-n1
+title: "Hand-off: WL-1a T30 node 3 (Ruling 182 (2)-(4); the gate's real reason)"
+type: proof-pack
+status: draft
+owner: "@timianmalloo"
+phase: "workbench-loops WL-1a"
+tags: [workbench-loops, wl-1a, handoff, compile-mode, ruling-180, ruling-182]
+links:
+  - { to: architecture, rel: implements }
+  - { to: proof-workbench-loops-wl-1a-prefill, rel: relates-to }
+review-by: "2026-11-19"
+summary: >-
+  T30 n3: (A) no saved-state copy (mutation red), (B) a sent turn's compiled prompt survives a restart (real red; the
+  restored disclosure was empty), (C) the settings row states the gate's refusal for a demoted rung. Residual line in
+  the Proof Pack. Next: node 4 (cost line, first 50 calls, compile-eval, sheet-test gate seam, rule 22's ratchet).
+---
+
+# Hand-off — T30 node 3
+
+**Done:** (A), (B), (C), each red then green. See `README.md` § Node 3 for the shas and proof files. Ruling 182 (3)'s
+residual line is at the top of `README.md`. Whole suites (`suite-node3.txt`): **Core 3119 passed, 0 failed, 1 skipped;
+App 1242 passed, 3 failed, 2 skipped.** On re-run, `SessionDocumentPlacementTests` passed. Node 1's foreground pair
+(`CtrlDigitSwitchesThePerspectiveFromInsideAPageTests`, `SolutionTreeChordTests`) failed again: *foreground not held*.
+`docs-graph.py validate`: 0 problems, index drift only.
+
+## Findings
+
+1. **Ruling 182 (4)'s premise was false until this node.** The restored row's disclosure was empty
+   (`B-sent-survives-red.txt`). The fix rebuilds the bytes and shows them only on a sha match with
+   `submitted.text_sha256`. A turn whose bytes carried **attachment bodies or a template** does not rebuild, so its
+   restored row reads *not recorded*. That is honest, but it is not full survival. Full survival for those turns needs
+   the bytes or the bodies stored, which is a store change. The decision belongs to the Owner or WL-2.
+2. **`KeepHelp` says "a kept line stays in your draft."** (A)'s scan does not refuse it, and it is true across a prepare.
+   A reader could take it to mean the line survives a restart. Not changed. It is the Owner's call whether that wording
+   implies "saved".
+3. **The WL-1a Proof Pack's residual paragraph** (`docs/proof/workbench-loops-wl-1a.md:202`, the Leader's) says the sent
+   prompt survives. That is true from `9234fc77` on, with finding 1's limit.
+4. **Rule-6 lapse (this node):** one empty heredoc was run by mistake while editing `NotebookRuns.cs`. It executed nothing
+   and changed no file. Every edit was made with the Edit tool.
+5. **Branch:** origin/main was merged into `wl-prefill` at `565b2883`, because `coord claim` refused on stale controls
+   (DC-226).
+
+## Next step (node 4, from the brief)
+
+1. Ruling 180 (4), the cost line and the first 50 calls.
+2. Ruling 180 (6), compile-eval.
+3. Inject the gate in the four sheet tests that read the real `~/.aide/proof` (the Leader grants the seam).
+4. Rule 22's ratchet, ahead of T30's join.
+
+Ratchet (rule 22) not run: the next step is node 4, not a join.
+
+## Node 3b (pre-join): the Owner copy change and rule 22 ratchet
+
+1. `ComposerSurface.KeepHelp` is now exactly the Owner copy ("... a kept line stays in your draft until you send it. It is not yet kept when AI-DE restarts."). `DESIGN.md` row updated in the same commit (5c61cc29). Tests: NothingSaysAnUnsentDraftIsSavedTests, AKeptSuggestedLineIsKeptTests, ASentGoalLineSurvivesARestartTests = 7/7 green (`keep-copy-green.txt`). Board checked first: no demo in progress, no join in flight.
+2. Ratchet (origin/main 669cf746 vs head c3564d6d): one unexpected refusal, `verify-harness-diagnostics` (TheCompileModeControlTests declared an STA thread with no failure capture). Fixed in c3564d6d: the thread captures its failure and the creator rethrows it as itself. Gate OK; TheCompileModeControlTests 5/5. Rerun: 3 refusals, all the expected derived-view gates (docs-graph index drift, verify-derived-views, verify-site-figures). Lines in `ratchet.txt`; the `ratchet/` folder is not committed.

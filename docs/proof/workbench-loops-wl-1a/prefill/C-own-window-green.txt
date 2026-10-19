@@ -1,0 +1,35 @@
+
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.09]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.22]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.23]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneAdmits_TheNewSessionsSettingsSayAgenticAdvisoryAndWhy_AndTheKeyboardCanChooseMechanicalOnly [705 ms]
+  Standard Output Messages:
+ open: selected agentic-advisory · why "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the compile-pin spike matches the installed adapter." · items mechanical-only | agentic-advisory | agentic — not available (disabled)
+ after Up: selected mechanical-only · stored mechanical-only · gate mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is available; choose it to have the compile step suggest the lines."
+
+
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WithNoLadderInjected_TheSettingsEvaluateTheGateOverTheBoundAdapter_AndOfferAgenticAdvisory [250 ms]
+  Standard Output Messages:
+ open: bound adapter C:\Users\malla\AppData\Local\Temp\aide-t8-binding-194213700af947feac7903b931b8d03c\install · gate asked about [C:\Users\malla\AppData\Local\Temp\aide-t8-binding-194213700af947feac7903b931b8d03c\install] · selected agentic-advisory · why "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the compile-pin spike matches the installed adapter." · items mechanical-only | agentic-advisory | agentic — not available (disabled)
+
+
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneRefuses_TheSettingsSayMechanicalOnlyWithTheGatesReason_AndAdvisoryIsDisabled [253 ms]
+  Standard Output Messages:
+ open: selected mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is not available: the compile-pin-spike artifact was not found at C:\Users\malla\AppData\Local\Temp\aide-t8-binding-f457129dc7964d1fb818c9b5e52a1c3f\no-proof\compile-pin-spike.json; run spikes/compile-session-pin-wire/Run-PinSpike.ps1 (PD-5) — a failed spike is a hard stop, never a fallback (Ruling 68)." · items mechanical-only | agentic-advisory — not available (disabled) | agentic — not available (disabled)
+
+
+[xUnit.net 00:00:01.77]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.TheSettingsQuery_ReadsThisTestsOwnWindow_WithConcurrentWindowsOpen [310 ms]
+  Standard Output Messages:
+ found the "Compile mode" control of window "" (this test's: "")
+
+
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 2.1032 Seconds

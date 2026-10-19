@@ -1,0 +1,44 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneAdmits_TheNewSessionsSettingsSayAgenticAdvisoryAndWhy_AndTheKeyboardCanChooseMechanicalOnly [675 ms]
+  Standard Output Messages:
+ open: selected agentic-advisory · why "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the compile-pin spike matches the installed adapter." · items mechanical-only | agentic-advisory | agentic — not available (disabled)
+ after Up: selected mechanical-only · stored mechanical-only · gate mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is available; choose it to have the compile step suggest the lines."
+
+
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneRefuses_TheSettingsSayMechanicalOnlyWithTheGatesReason_AndAdvisoryIsDisabled [234 ms]
+  Standard Output Messages:
+ open: selected mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is not available: the compile-pin-spike artifact was not found at C:\Users\malla\AppData\Local\Temp\aide-t8-binding-2574d2b2c13a4e81a8dea044172d33fb\no-proof\compile-pin-spike.json; run spikes/compile-session-pin-wire/Run-PinSpike.ps1 (PD-5) — a failed spike is a hard stop, never a fallback (Ruling 68)." · items mechanical-only | agentic-advisory — not available (disabled) | agentic — not available (disabled)
+
+
+[xUnit.net 00:00:01.81]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [413 ms]
+  Standard Output Messages:
+ compile calls 2; after the second prepare: Goal "Suggestion 1 for goal." marked "✓ kept"; draft goal "Suggestion 1 for goal."; Done when "Suggestion 2 for done_when." marked "? derived"
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [267 ms]
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 2.1258 Seconds

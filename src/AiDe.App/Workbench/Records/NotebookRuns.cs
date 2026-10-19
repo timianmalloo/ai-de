@@ -252,7 +252,7 @@ public sealed class NotebookRuns : IDisposable
     // RESTART READ-BACK PER BIND (Ruling 172): the shell binds asynchronously and builds the document at once, so the
     // read-back is started by the bind, never by the document's construction. _binds counts binds; _readBackFor is the
     // bind the last read-back ran for, so a bind reads back once however many surfaces register, and once more on a rebind.
-    private Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>>? _submitted;
+    private Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words, string? SentBytes)>>? _submitted;
     private int _binds;
     private int _readBackFor;
     private Task _bindReadBack = Task.CompletedTask;
@@ -276,7 +276,7 @@ public sealed class NotebookRuns : IDisposable
     /// Registers the bound surface's submitted envelopes (AC-L01a) as the restart read-back's source: the read-back runs
     /// now when a host is bound, and on every later bind, exactly once per bind (Ruling 172).
     /// </summary>
-    public void ReadBackOnEachBind(Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>> submitted)
+    public void ReadBackOnEachBind(Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words, string? SentBytes)>> submitted)
     {
         ArgumentNullException.ThrowIfNull(submitted);
         lock (_gate)
@@ -467,7 +467,7 @@ public sealed class NotebookRuns : IDisposable
     /// other one), so its own dispatch still owns its turn. Confirm: the sweep's live-key exclusion
     /// (<c>BoundaryDispatcher.SweepAttempts</c>). If false: an open attempt from another process has no row.
     /// </remarks>
-    public async Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)> submitted, CancellationToken cancellationToken)
+    public async Task ReadBackAsync(IEnumerable<(string EnvelopeId, string ProjectionSha, string Words, string? SentBytes)> submitted, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(submitted);
         if (Host is not { } host)
@@ -475,27 +475,33 @@ public sealed class NotebookRuns : IDisposable
             return;
         }
 
-        List<(AttemptReceipt Receipt, string Words)> found = [];
-        foreach (var (envelopeId, projectionSha, words) in submitted)
+        List<(AttemptReceipt Receipt, string Words, string? SentBytes)> found = [];
+        foreach (var (envelopeId, projectionSha, words, sentBytes) in submitted)
         {
             var read = await host.ReadAsync(AttemptKey.For(envelopeId, projectionSha, null, null), cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             if (read is { } receipt)
             {
-                found.Add((receipt, words));
+                found.Add((receipt, words, sentBytes));
             }
         }
 
         found.Sort((x, y) => x.Receipt.Attempt.IngressSeq.CompareTo(y.Receipt.Attempt.IngressSeq));
         ReadBack = [.. found.Select(f => f.Receipt)];
-        foreach (var (receipt, words) in found)
+        foreach (var (receipt, words, sentBytes) in found)
         {
             if (receipt.Terminal is not null && !Holds(receipt.DispatchKey))
             {
-                await RestoreAsync(host, receipt, words, cancellationToken).ConfigureAwait(false);
+                await RestoreAsync(host, receipt, words, sentBytes, cancellationToken).ConfigureAwait(false);
             }
         }
     }
+
+    /// <summary>
+    /// What a restored turn's <i>compiled prompt</i> disclosure says when its sent bytes cannot be rebuilt and verified
+    /// against the send's own sha (Ruling 182 (4); DESIGN.md's restored-row copy). Never a plausible wrong text.
+    /// </summary>
+    public const string CompiledPromptNotRecorded = "Compiled prompt not recorded: this turn's sent bytes could not be rebuilt and verified after the restart.";
 
     /// <summary>The last run event the one fold received for turn <paramref name="ordinal"/>; null when it received none.</summary>
     public RunEvent? LastEventOf(int ordinal)
@@ -515,14 +521,14 @@ public sealed class NotebookRuns : IDisposable
     }
 
     /// <summary>
-    /// One concluded attempt as a turn: its words, its run log's events through the one fold (<see cref="FoldEvent"/>),
+    /// One concluded attempt as a turn: its words, its verified sent bytes or <see cref="CompiledPromptNotRecorded"/>, its run log's events through the one fold (<see cref="FoldEvent"/>),
     /// the host's failure line, and the state the Core fold derives from its rows (<see cref="AttemptStateFold"/>).
     /// </summary>
-    private async Task RestoreAsync(IAttemptHost host, AttemptReceipt receipt, string words, CancellationToken cancellationToken)
+    private async Task RestoreAsync(IAttemptHost host, AttemptReceipt receipt, string words, string? sentBytes, CancellationToken cancellationToken)
     {
         var lane = receipt.Attempt.RouteFingerprint is { Length: > 0 } route ? RouteWords.For(route) : "attempt-host";
         cancellationToken.ThrowIfCancellationRequested();
-        var ordinal = Thread.Accept(words, [], string.Empty, Timestamp(receipt.Attempt.AttemptedAt) ?? DateTimeOffset.Now);
+        var ordinal = Thread.Accept(words, [], sentBytes ?? CompiledPromptNotRecorded, Timestamp(receipt.Attempt.AttemptedAt) ?? DateTimeOffset.Now);
         Record(ordinal, receipt);
 
         List<RunEvent> events = [];

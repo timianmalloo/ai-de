@@ -8630,6 +8630,32 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   committed file only from command output printed earlier in the same turn. The send of a message that cites a sha
   comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
   `partially-controlled`.
+
+### DC-NEW-wl-t30-prefill — a UI test that reads process-wide WPF state passes alone and fails in the suite
+
+- **Instance (2026-10-19, T30 n1):** `TheCompileModeControlTests` found the open settings popup through
+  `PresentationSource.CurrentSources`. Run alone (2 tests) it passed. In the whole App suite both tests failed with
+  *"The calling thread cannot access this object because a different thread owns it"*: the list is process-wide, and
+  other tests' STA threads still held windows whose `RootVisual` throws on this thread.
+- **Class:** a test oracle that reads **process-global** UI state (presentation sources, `Application.Current.Windows`,
+  static caches) without scoping it to the test's own thread or window is order- and suite-dependent. A filtered run is
+  not evidence for the suite.
+- **Sweep:** `grep -rn "CurrentSources" tests src` (2026-10-19) finds this one reader only; it now filters with
+  `HwndSource.CheckAccess()`. `Application.Current.Windows` readers were not swept in this node.
+- **Derive:** a filtered red/green is a claim about the filtered set; rule 7's whole-suite run is what catches this
+  shape, and it did.
+- **Prevent (control):** instance, the filter at `TheCompileModeControlTests.OpenSettings`, green in the whole suite
+  (`docs/proof/workbench-loops-wl-1a/prefill/suite-node1.txt`). Class (T30 n2): the fixture
+  `tests/AiDe.App.Tests/OwnWindow.cs` — `OwnWindow.Popups(window)` returns only this thread's sources whose popup is
+  placed over the test's own window. Red first: `TheCompileModeControlTests.TheSettingsQuery_ReadsThisTestsOwnWindow_WithConcurrentWindowsOpen`
+  forces two concurrent windows (one on another STA thread, one on this thread), each with an open *Compile mode*
+  popup; the thread-only filter read the same-thread window's control (`C-own-window-red.txt`), the fixture reads
+  the test's own (`C-own-window-green.txt`). Sweep (2026-10-19, `grep -rn "CurrentSources|Application.Current|
+  EnumWindows|FindWindow|AutomationElement.RootElement|GetForegroundWindow" tests/AiDe.App.Tests`): one reader of
+  `CurrentSources` (moved onto the fixture); no `Application.Current.Windows` reader; `GetForegroundWindow` in
+  `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` compares with its own hwnd (scoped; its failure is the
+  desktop hold, a different class). Gap: nothing yet refuses a NEW unscoped read — a source scan is the next control.
+- **Status:** `partially-controlled` (the fixture exists and the only reader uses it; no scan refuses a new one).
 - **DC-NEW-wl-leader3, fourth instance (2026-10-19, T21 n7):** a seam request (`req-01M5ATF6PNMEW0SX2KKZA34D4D`, a
   one-line `DockHost.cs` grant that blocked close condition 4) sat unanswered through the whole node. The Leader watched
   mail and the board, and seam requests arrive in the requests ledger. The node stopped at its kick with no check green.
@@ -8698,3 +8724,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   reading it in that turn. It was verified afterwards by `git branch --merged origin/main` and was true. It is the same
   unread-claim shape (the 6th recurrence under wl-leader3), and the claim was right by luck rather than by check.
 - **Update (2026-10-19, T30 n3):** the Owner instance above is now **Verified**. T30 observed a real red at `19437c6e`: the restored row's compiled-prompt disclosure was empty, 0 of 263 characters, through the shell's revive. It is fixed on branch `wl-prefill` at `9234fc77` (rebuild and verify, or 'not recorded'). The WL-1a Proof Pack's residual line had repeated the false premise, and it is corrected.
+
+### DC-NEW-wl-t30-prefill-b — a restored row fills a field it cannot rebuild with an empty value, so a gap looks like content
+
+- **Instance (T30 n3, 2026-10-19, observed at `19437c6e`):** after a restart, `NotebookRuns.RestoreAsync` accepted each restored turn with `string.Empty` as its sent bytes. The row's *compiled prompt* disclosure opened onto nothing, and nothing said the bytes were missing. The store keeps only the witness (`Submitted.TextSha256`), not the bytes. This observation confirms the Owner instance under DC-NEW-wl-leader2 above (Inferred there until this red).
+- **Class:** a read model rebuilt after a restart fills a field it has no source for with an empty or default value, instead of rebuilding and verifying it or saying *not recorded*.
+- **Sweep:** `grep -rn "Accept(" src/AiDe.App`: two writers of a turn row. The live send (`SessionDocumentSurface.cs:667`) passes `request.Prompt`; the restore was the only empty one. No other restore path builds a turn row.
+- **Derive:** the restored bytes are rebuilt through the send gate's own projection (`ComposerSendGate.SentBytesOf`, no new `Projection.Project` call), and shown only on a sha match with `submitted.text_sha256`. Otherwise the row reads `NotebookRuns.CompiledPromptNotRecorded` (DESIGN.md's restored-turn row).
+- **Prevent:** `ASentGoalLineSurvivesARestartTests` (the real revive path, the disclosure opened through its toggle). The byte-change mutation shows *not recorded* (`B-byte-change-mutation-red.txt`), never wrong text.
+- **Status:** `controlled` for the turn row. Partial for the class, because no scan refuses a new restore writer that passes an empty field.

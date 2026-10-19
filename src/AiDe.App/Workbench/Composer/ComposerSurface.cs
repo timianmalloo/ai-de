@@ -430,6 +430,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The draft this surface composes.</summary>
     public ComposerDraft Draft => _draft;
 
+    /// <summary>The bound session's adapter install root — the compile-mode gates read it; null until configured.</summary>
+    public string? AdapterInstallRoot => _context?.AdapterInstallRoot;
+
     /// <summary>The last thing that happened, in a sentence.</summary>
     public string Status => _statusText;
 
@@ -1624,6 +1627,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 RenderCompiledView();
             }, () =>
             {
+                // KEEP WRITES THE DRAFT (Ruling 180 (3), C1): the kept line becomes the user's own, so the next prepare
+                // seeds it as an operator row and never asks the model for it again. Before, only the prepared
+                // envelope held it and a re-prepare re-derived it.
+                if (_gate.DerivedLines.TryGetValue(field, out var kept))
+                {
+                    _draft.SetGoalValue(field, kept);
+                }
+
                 _gate.KeepLine(field);
                 RenderCompiledView();
             });
@@ -2261,6 +2272,12 @@ internal sealed class StructureLine
     private bool _kept;
     private bool _showing;
 
+    /// <summary>The keep control's description (Ruling 180 (3); DESIGN.md SC6): the line is a suggestion until kept, and Keep makes it the user's.</summary>
+    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft until you send it. It is not yet kept when AI-DE restarts.";
+
+    /// <summary>The mark of a line the model suggested and the user has not kept or edited (Ruling 180 (3); DESIGN.md's Derived structure row). UIA's ItemStatus reads the word without the glyph.</summary>
+    public const string ModelLineMark = "? suggested";
+
     public StructureLine(string field, string derived, Action<string> onChanged, Action? onKeep = null)
     {
         Field = field;
@@ -2295,7 +2312,7 @@ internal sealed class StructureLine
 
         _keep = new Button { Content = "keep", Padding = new Thickness(6, 0, 6, 0), MinHeight = 22, Margin = new Thickness(6, 0, 0, 0), Visibility = Visibility.Collapsed };
         AutomationProperties.SetName(_keep, "Keep " + LabelOf(field));
-        AutomationProperties.SetHelpText(_keep, "Keep the model's line as written.");
+        AutomationProperties.SetHelpText(_keep, KeepHelp);
         _keep.Click += (_, _) => Keep();
 
         _watermark = new TextBlock { Text = "fill in", FontSize = 13, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
@@ -2349,7 +2366,7 @@ internal sealed class StructureLine
         RenderMark();
     }
 
-    /// <summary>The keep control's act: an operator row with the derived value, the mark <i>kept</i>.</summary>
+    /// <summary>The keep control's act: the derived value written into the draft and as an operator row, the mark <i>kept</i>.</summary>
     public void Keep()
     {
         if (_derived is null)
@@ -2412,13 +2429,13 @@ internal sealed class StructureLine
         {
             _mark.Text = empty ? "— fill in"
                 : _kept ? "✓ kept"
-                : _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal) ? (_suspect ? "? derived · suspect" : "? derived")
+                : _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal) ? (_suspect ? ModelLineMark + " · suspect" : ModelLineMark)
                 : "✓ edited";
             _why.Visibility = Visibility.Collapsed;
             AutomationProperties.SetHelpText(_value, string.Empty);
         }
 
-        _keep.Visibility = _mark.Text.StartsWith("? derived", StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
+        _keep.Visibility = _mark.Text.StartsWith(ModelLineMark, StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
         AutomationProperties.SetItemStatus(_value, _mark.Text.TrimStart('—', '✓', '!', '?', ' '));
     }
 

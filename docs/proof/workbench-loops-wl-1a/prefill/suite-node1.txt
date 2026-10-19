@@ -1,0 +1,124 @@
+T30 n1 whole suites (rule 7 / rule 18). Branch wl-prefill, head da4a1066 plus docs-only README/handoff.
+Core: Passed!  - Failed:     0, Passed:  3119, Skipped:     1, Total:  3120, Duration: 2 m 14 s - AiDe.Core.Tests.dll (net10.0)
+App:  Failed!  - Failed:     2, Passed:  1225, Skipped:     2, Total:  1229, Duration: 5 m 46 s - AiDe.App.Tests.dll (net10.0)
+App failures (both environment: foreground not held), re-run after 2 min at 20:05:37Z, still failing the same way:
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  SolutionTreeChordTests: the known Ruling 155 (3) probe. CtrlDigitSwitchesThePerspectiveFromInsideAPageTests: 'focus could not be put inside the page (foreground held=False)'.
+  The first App run (before da4a1066) also failed TheCompileModeControlTests x2 (cross-thread CurrentSources; DC-NEW-wl-t30-prefill), fixed in da4a1066 and green in this run.
+
+===== Core =====
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:01:46.63]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+  Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
+
+Passed!  - Failed:     0, Passed:  3119, Skipped:     1, Total:  3120, Duration: 2 m 14 s - AiDe.Core.Tests.dll (net10.0)
+
+===== App =====
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.96]     AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [FAIL]
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 209
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 37
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.FocusInsideAsync(Window window, WebView2 page, Func`1 focus) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 136
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.<>c__DisplayClass2_0.<<CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective>b__1>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 66
+--- End of stack trace from previous location ---
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 140
+[xUnit.net 00:01:05.23]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:03:30.82]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
+[xUnit.net 00:04:31.95]     AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt [SKIP]
+  Skipped AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt [1 ms]
+
+Failed!  - Failed:     2, Passed:  1225, Skipped:     2, Total:  1229, Duration: 5 m 46 s - AiDe.App.Tests.dll (net10.0)
+app exit=1
+
+===== App re-run of the two environment failures =====
+    Rule-16 kick (15 min since 'join done: join-wl1b'). Finish the check you are in only if its gree
+20:05:37Z
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:21.04]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:25.89]     AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [FAIL]
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 209
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 37
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.FocusInsideAsync(Window window, WebView2 page, Func`1 focus) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 136
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.<>c__DisplayClass2_0.<<CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective>b__1>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 66
+--- End of stack trace from previous location ---
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 140
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 25 s - AiDe.App.Tests.dll (net10.0)
+rerun exit=1

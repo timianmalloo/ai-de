@@ -61,6 +61,10 @@ public sealed class SessionConfigStore
     /// checkable if something which did not come through it reads differently. The default is what
     /// makes the other value evidence.
     /// </param>
+    /// <param name="compileModes">
+    /// The compile-mode ladder as the gates read it now, or <c>null</c> when the caller cannot evaluate it. The session
+    /// opens in <see cref="SessionConfig.DefaultCompileModeFor"/> of it (Ruling 180 (1)).
+    /// </param>
     /// <remarks>The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply. The origin is F5's clause 1.</remarks>
     public SessionConfig Create(
         string name,
@@ -71,7 +75,8 @@ public sealed class SessionConfigStore
         int? fanOutCeiling = null,
         RunBudget? budgetCap = null,
         string? defaultTaskClass = null,
-        string origin = SessionOrigins.Direct)
+        string origin = SessionOrigins.Direct,
+        CompileModeAvailability? compileModes = null)
     {
         lock (_gate)
         {
@@ -87,6 +92,7 @@ public sealed class SessionConfigStore
                 FanOutCeiling = fanOutCeiling ?? config.FanOutCeiling,
                 BudgetCap = budgetCap,
                 DefaultTaskClass = defaultTaskClass ?? config.DefaultTaskClass,
+                CompileMode = SessionConfig.DefaultCompileModeFor(compileModes),
             };
 
             WriteConfigUnsafe(config);

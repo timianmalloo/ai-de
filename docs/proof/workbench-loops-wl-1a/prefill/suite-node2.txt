@@ -1,0 +1,16 @@
+T30 n2 whole suites at f2b382fa (2026-10-19). Core, then App, then the App failures re-run after 2 min.
+===== Core (suite-core-node2.txt) =====
+Passed!  - Failed:     0, Passed:  3119, Skipped:     1, Total:  3120, Duration: 2 m 18 s - AiDe.Core.Tests.dll (net10.0)
+===== App (suite-app-node2.txt, 20:51-20:56Z) =====
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Failed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing [1 s]
+Failed!  - Failed:     3, Passed:  1230, Skipped:     2, Total:  1235, Duration: 5 m 46 s - AiDe.App.Tests.dll (net10.0)
+===== App failures re-run (suite-app-node2-rerun.txt) =====
+re-run started 20:59:34Z
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [40 ms]
+   Ruling 115 desktop hold is occupied — one shown-window/UIA run at a time. Occupant: wl-leader3-20261019 R115 desktop grok-uv-ctrl-enter START ActualPID2620;start2026-10-19T20:59:17.8127477+00:00
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+Failed!  - Failed:     2, Passed:     3, Skipped:     0, Total:     5, Duration: 10 s - AiDe.App.Tests.dll (net10.0)

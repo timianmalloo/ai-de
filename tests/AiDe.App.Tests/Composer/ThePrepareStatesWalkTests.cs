@@ -104,7 +104,7 @@ public sealed class ThePrepareStatesWalkTests
             Assert.StartsWith("Compiled on claude-opus-5[1m]", surface.CompileLine, StringComparison.Ordinal);
             Assert.False(surface.CancelVisible);
             Assert.False(surface.PrepareAgainVisible);
-            Assert.Equal("? derived", surface.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.Equal(StructureLine.ModelLineMark, surface.StructureMarks[GoalBlockFields.GoalKey]);
             Assert.Equal("prepared — press again to send", surface.Status);
 
             // stale: the draft changed after Prepare.
@@ -159,7 +159,7 @@ public sealed class ThePrepareStatesWalkTests
 
             Assert.Null(surface.Send());
             Drain(surface);
-            Assert.Equal("? derived", surface.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.Equal(StructureLine.ModelLineMark, surface.StructureMarks[GoalBlockFields.GoalKey]);
 
             surface.KeepStructureLine(GoalBlockFields.GoalKey);
             surface.KeepStructureLine(GoalBlockFields.DoneWhenKey);

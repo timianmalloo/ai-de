@@ -1,0 +1,66 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneAdmits_ANewSessionOpensInAgenticAdvisory_AndTheFileSaysSo [FAIL]
+[xUnit.net 00:00:00.31]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.31]                  ↓ (pos 0)
+[xUnit.net 00:00:00.31]       Expected: "agentic-advisory"
+[xUnit.net 00:00:00.31]       Actual:   "mechanical-only"
+[xUnit.net 00:00:00.31]                  ↑ (pos 0)
+[xUnit.net 00:00:00.31]       Stack Trace:
+[xUnit.net 00:00:00.31]         C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\Sessions\ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.cs(53,0): at AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneAdmits_ANewSessionOpensInAgenticAdvisory_AndTheFileSaysSo()
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenEveryRungIsAdmitted_TheDefaultIsStillAgenticAdvisory_NeverAgentic [FAIL]
+[xUnit.net 00:00:00.32]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.32]                  ↓ (pos 0)
+[xUnit.net 00:00:00.32]       Expected: "agentic-advisory"
+[xUnit.net 00:00:00.32]       Actual:   "mechanical-only"
+[xUnit.net 00:00:00.32]                  ↑ (pos 0)
+[xUnit.net 00:00:00.32]       Stack Trace:
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\Sessions\ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.cs(73,0): at AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenEveryRungIsAdmitted_TheDefaultIsStillAgenticAdvisory_NeverAgentic()
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.32]   Finished:    AiDe.Core.Tests
+  Failed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneAdmits_ANewSessionOpensInAgenticAdvisory_AndTheFileSaysSo [26 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "agentic-advisory"
+Actual:   "mechanical-only"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneAdmits_ANewSessionOpensInAgenticAdvisory_AndTheFileSaysSo() in C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\Sessions\ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.cs:line 53
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.ACallerThatCannotEvaluateTheGate_OpensMechanicalOnly [2 ms]
+  Passed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenGateOneRefuses_ANewSessionOpensInMechanicalOnly_AndTheGateSaysWhy [3 ms]
+  Failed AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenEveryRungIsAdmitted_TheDefaultIsStillAgenticAdvisory_NeverAgentic [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "agentic-advisory"
+Actual:   "mechanical-only"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Sessions.ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.WhenEveryRungIsAdmitted_TheDefaultIsStillAgenticAdvisory_NeverAgentic() in C:\Projects\ai-de-wl-prefill\tests\AiDe.Core.Tests\Sessions\ANewSessionOpensInAdvisoryWhenGateOneAdmitsTests.cs:line 73
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Test Run Failed.
+Total tests: 4
+     Passed: 2
+     Failed: 2
+ Total time: 0.6474 Seconds

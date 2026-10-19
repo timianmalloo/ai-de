@@ -1,0 +1,77 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.21]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.42]     AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneRefuses_OpensMechanicalOnly [FAIL]
+[xUnit.net 00:00:00.42]       Assert.Equal() Failure: Collections differ
+[xUnit.net 00:00:00.42]                  ↓ (pos 0)
+[xUnit.net 00:00:00.42]       Expected: ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-t30-n"···]
+[xUnit.net 00:00:00.42]       Actual:   []
+[xUnit.net 00:00:00.42]       Stack Trace:
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\FileNewSessionOpensInTheGatesDefaultTests.cs(51,0): at AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneRefuses_OpensMechanicalOnly()
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.42]       Output:
+[xUnit.net 00:00:00.42]         File → New Session: "Session “2026-10-19 session” created in aide-t30-new-c86630611a61468481bee2869f3340f9, task class implement." · gate asked about [] · stored compile_mode mechanical-only
+[xUnit.net 00:00:00.44]     AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneAdmits_OpensAgenticAdvisory_GatedOverTheSheetsAdapter [FAIL]
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Collections differ
+[xUnit.net 00:00:00.44]                  ↓ (pos 0)
+[xUnit.net 00:00:00.44]       Expected: ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-t30-n"···]
+[xUnit.net 00:00:00.44]       Actual:   []
+[xUnit.net 00:00:00.44]       Stack Trace:
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\FileNewSessionOpensInTheGatesDefaultTests.cs(42,0): at AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneAdmits_OpensAgenticAdvisory_GatedOverTheSheetsAdapter()
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.44]       Output:
+[xUnit.net 00:00:00.44]         File → New Session: "Session “2026-10-19 session” created in aide-t30-new-40106e2cf54946fe9d5b26255d1c2a6c, task class implement." · gate asked about [] · stored compile_mode mechanical-only
+[xUnit.net 00:00:00.44]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneRefuses_OpensMechanicalOnly [189 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+           ↓ (pos 0)
+Expected: ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-t30-n"···]
+Actual:   []
+  Stack Trace:
+     at AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneRefuses_OpensMechanicalOnly() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\FileNewSessionOpensInTheGatesDefaultTests.cs:line 51
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ File → New Session: "Session “2026-10-19 session” created in aide-t30-new-c86630611a61468481bee2869f3340f9, task class implement." · gate asked about [] · stored compile_mode mechanical-only
+
+
+  Failed AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneAdmits_OpensAgenticAdvisory_GatedOverTheSheetsAdapter [23 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+           ↓ (pos 0)
+Expected: ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-t30-n"···]
+Actual:   []
+  Stack Trace:
+     at AiDe.App.Tests.Composer.FileNewSessionOpensInTheGatesDefaultTests.FileNewSession_WhenGateOneAdmits_OpensAgenticAdvisory_GatedOverTheSheetsAdapter() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\FileNewSessionOpensInTheGatesDefaultTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ File → New Session: "Session “2026-10-19 session” created in aide-t30-new-40106e2cf54946fe9d5b26255d1c2a6c, task class implement." · gate asked about [] · stored compile_mode mechanical-only
+
+
+
+Test Run Failed.
+Total tests: 2
+     Failed: 2
+ Total time: 0.9055 Seconds

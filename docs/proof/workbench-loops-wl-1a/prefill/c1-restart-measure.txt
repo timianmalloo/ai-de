@@ -1,0 +1,37 @@
+T30 n2 item (0) - C1's restart half, measured (rule 14). 2026-10-19 ~20:14Z, branch wl-prefill.
+
+RESULT: the kept line does NOT survive a restart. Item (0) stops here; no persistence was built.
+The Leader brings the Owner a DR on draft persistence.
+
+Test (measurement, pinned as a characterization; a persistence fix turns it red on purpose):
+  tests/AiDe.App.Tests/Workbench/Composer/AKeptSuggestedLineIsKeptTests.cs
+  AKeptGoal_IsInNeitherTheStoredRevisionNorTheRevivedDraft_AfterARestartThroughTheShellsRevive
+Run output: c1-restart-measure-run.txt (3 of 3 pass in the class).
+
+Gesture (stub compile host, no model call):
+  lifetime 1 (ComposerGesture.Drive: SessionDocumentSurface over NotebookModel, bound AttemptHost, agentic-advisory):
+    type -> Ctrl+Enter (prepare; Goal suggested) -> Keep Goal (invoke peer) -> type an edit -> Ctrl+Enter (re-prepare;
+    the revision is saved here)
+  restart: a new WorkbenchShell over a WorkspaceClient to an in-process daemon on the same store; the restored
+    session-document pane is revived through WorkbenchShell.ReviveRestoredSessionDocuments (T17d check 1's order).
+
+Measured lines:
+  before restart: draft goal "Suggestion 1 for goal."; mark "✓ kept"; editor "Rename the helper in the parser. Keep the public names."
+  stored head revision 2: body "Rename the helper in the parser. Keep the public names."
+  after restart: draft goal ""; shape FreeForm; editor ""
+
+Why, by path (each line opened, 2026-10-19):
+  1. The revision saved at prepare carries the editor's words only, never the goal values:
+     src/AiDe.App/Workbench/Composer/ComposerSurface.cs:813   await saveRevision(_draft.SourceText);
+     src/AiDe.Core/Presentation/Composer/ComposerDraft.cs:109 ComposerShape.FreeForm or ComposerShape.GoalBlock => _freeForm,
+  2. The App's revision record holds no body at all, only its sha:
+     src/AiDe.App/Workbench/Records/NotebookModel.cs:30      record NotebookRevision(NotebookId, int RevisionNo, string BodySha, int? ParentRevisionNo)
+  3. The revived document's composer starts from a new draft; nothing writes the draft back:
+     src/AiDe.App/Workbench/Composer/ComposerSurface.cs:96    private readonly ComposerDraft _draft = new();
+     src/AiDe.App/Workbench/WorkbenchShell.cs:3539           RegisterSessionDocument(config);   (revive: builds the document, restores no draft)
+     src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs:116  composer.Draft.SwitchTo(ComposerShape.GoalBlock);  (the bind
+       the window runs after revive, MainWindow.xaml.cs:175-178, only switches the shape; not run in this test)
+  4. ComposerDraftStore (Core) has 0 callers in src/AiDe.App (grep "ComposerDraftStore(" src/AiDe.App: 0 lines).
+
+Also observed: the editor's own words do not survive either (editor "" after restart), so this is not specific to
+kept lines: the composer draft as a whole is not persisted in the App.
