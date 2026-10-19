@@ -22264,6 +22264,30 @@ window.DOCS_INDEX = {
       "sourceSha256": "f78b5f78940915ac886915e28a3bc54320d1447c2594d2e5853a90b3d0292118"
     },
     {
+      "id": "proof-workbench-loops-wl-1a-sp1",
+      "path": "docs/proof/workbench-loops-wl-1a/sp1/README.md",
+      "title": "Evidence — WL-1a spine T2: WorkspaceSchema v2",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T2's red and green evidence for schema v2, the migration chain and the Ruling 148/150 conditions; cited by the WL-1a Proof Pack.",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "adr-0039-workbench-records-durable-representation",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b12f4e89200a31bb6e50ca4163431fd1e97df6d260861c6297dfc8fbba81c72a"
+    },
+    {
       "id": "proof-worktree-cleanup-20261017",
       "path": "docs/proof/worktree-cleanup-20261017.md",
       "title": "AI-DE worktree preservation and retirement",
@@ -24219,5 +24243,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "f6925fb216a7a138490c7966128c9732b5f3eeab60d6aaba7012cc104fcce226"
+  "graphSha256": "a15a9c371695e15eac28ecd5b45d3669c802fe049988aabec2f79d8d9d5d8769"
 };

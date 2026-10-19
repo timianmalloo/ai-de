@@ -1,1 +1,2 @@
 {"agent": "wl-leader-20261018", "at": 1792368162.517609, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t10-e1", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-e1-notebook-spike"}
+{"action": "add", "agent": "wl-t10-e1", "at": 1792368873.164821, "deadline_at": 1792370673.164821, "id": "req-01M58R53PG91V55XPCN205CPH0", "kind": "request", "path": "-", "seq": 2, "session": "wl-t10-e1", "to": "fleet", "type": "request", "wi": "WI-0"}

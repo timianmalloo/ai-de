@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:12:41Z",
+  "generated": "2026-10-19T00:26:34Z",
   "audit": [
     {
       "actor": null,
@@ -22632,6 +22632,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T00:03:24Z",
       "duration_seconds": 557.0
+    },
+    {
+      "id": "al-01M58RV2ZDC0XW76QP43HK8XBF",
+      "shortname": "join-sp1-schema-v2-fm",
+      "datetime": "2026-10-19T00:26:33Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of sp1-schema-v2 into main",
+      "summary": "Re-join of sp1-schema-v2 for 888aeb36 (V2 frontmatter on the evidence README; the first T2 join's ratchet refused docs-graph validate green->red). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "done_when": "ratchet PASS vs origin/main 17fba9ef",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T00:26:32Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
