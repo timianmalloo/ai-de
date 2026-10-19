@@ -881,7 +881,7 @@ public sealed class WorkbenchAdapter
     /// <remarks>
     /// <para><b>Fail-safe by construction.</b> The model is the source of truth and a wrong reconcile
     /// would be rendered AND persisted, so this returns null the moment it meets a shape it cannot map
-    /// losslessly — a floating window, an anchorable pane, an empty pane, an unknown node, a document
+    /// losslessly — a floating window that is not one document pane, an anchorable pane, an empty pane, an unknown node, a document
     /// whose surface the model does not know, or a result that does not carry exactly the same set of
     /// surfaces it started with. The caller then leaves the model untouched, degrading to the
     /// pre-existing revert-on-rebuild, never to a lost or duplicated pane.</para>
@@ -894,9 +894,6 @@ public sealed class WorkbenchAdapter
     public Layout? ReadLayoutFromView()
     {
         if (Manager.Layout is not { } root) { return null; }
-
-        // Floating windows are not mapped yet — bail rather than silently drop a floated pane.
-        if (root.FloatingWindows.Any()) { return null; }
 
         var known = _service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
@@ -913,7 +910,14 @@ public sealed class WorkbenchAdapter
         var mapped = MapNode(root.RootPanel, known);
         if (mapped is null) { return null; }
 
-        var reconciled = _service.Current with { Root = mapped, Floating = [] };
+        var floating = new List<StackNode>();
+        foreach (var window in root.FloatingWindows)
+        {
+            if (MapFloatingWindow(window, known) is not { } stack) { return null; }
+            floating.Add(stack);
+        }
+
+        var reconciled = _service.Current with { Root = mapped, Floating = [.. floating] };
 
         // The strong guard: a reconcile that lost, duplicated or invented a surface is a corrupt
         // reconcile, and rendering it would drop a pane. Compare the surface SET, and refuse if it moved.
@@ -925,6 +929,45 @@ public sealed class WorkbenchAdapter
         }
 
         return reconciled;
+    }
+
+    /// <summary>
+    /// One AvalonDock floating window as one floating stack: a document window holding exactly one
+    /// non-empty document pane of known surfaces. The window a <see cref="Render"/> drew keeps its
+    /// stack's id (<see cref="BuildFloatingWindow"/> names the pane with it); a window the user floated
+    /// natively gets a fresh one. Its bounds are read from the view, so the next render reopens it where
+    /// it is. Anything else (an anchorable window, several panes, the Center's placeholder) is null.
+    /// </summary>
+    private static StackNode? MapFloatingWindow(LayoutFloatingWindow window, IReadOnlyDictionary<string, Surface> known)
+    {
+        if (window is not LayoutDocumentFloatingWindow { RootPanel: { } group }) { return null; }
+
+        var panes = group.Descendents().OfType<LayoutDocumentPane>().Where(p => p.Children.Count > 0).ToList();
+        if (panes.Count != 1) { return null; }
+        var pane = panes[0];
+
+        var surfaces = new List<Surface>();
+        foreach (var content in pane.Children)
+        {
+            if (content is not LayoutDocument { ContentId: { } id }
+                || id == ZonesToTree.WelcomePlaceholder.SurfaceId
+                || !known.TryGetValue(id, out var surface))
+            {
+                return null;
+            }
+
+            surfaces.Add(surface);
+        }
+
+        var paneId = ((ILayoutPaneSerializable)pane).Id;
+        var stackId = paneId is { Length: > 0 } && paneId.StartsWith("float-", StringComparison.Ordinal) ? paneId : NewNodeId("float");
+        var bounds = Placed(pane.FloatingLeft, pane.FloatingTop, pane.FloatingWidth, pane.FloatingHeight)
+            ?? Placed(group.FloatingLeft, group.FloatingTop, group.FloatingWidth, group.FloatingHeight);
+        return new StackNode(stackId, [.. surfaces], Math.Clamp(pane.SelectedContentIndex, 0, surfaces.Count - 1),
+            StackState.Floating, floatingBounds: bounds);
+
+        static LayoutRect? Placed(double left, double top, double width, double height) =>
+            width > 0 && height > 0 ? new LayoutRect(left, top, width, height) : null;
     }
 
     private static LayoutNode? MapNode(ILayoutElement element, IReadOnlyDictionary<string, Surface> known)

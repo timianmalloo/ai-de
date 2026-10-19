@@ -321,7 +321,9 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         // Build the result from the current model (so extents are preserved), replacing each zone's
         // content with what the view assigned it. A zone the view could not show — collapsed, still
         // holding — keeps the model's content; a rendered zone the view no longer shows is empty.
-        var result = current;
+        // Floating stacks are the view's: a pane the user floated natively is in them and in no zone,
+        // and a pane redocked natively has left them.
+        var result = current with { Floating = tree.Floating };
         foreach (var id in Enum.GetValues<ZoneId>())
         {
             var zone = result.Zone(id);

@@ -67,7 +67,7 @@ public sealed class FloatReadBackRestartTests : IDisposable
                 // Read-back: the view maps, and the model takes both floating panes.
                 var view = adapter.ReadLayoutFromView();
                 Assert.NotNull(view);
-                Assert.Equal(["sessions", nativeId], view!.Floating.SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Order(StringComparer.Ordinal).ToArray(),
+                Assert.Equal(new[] { "sessions", nativeId }.Order(StringComparer.Ordinal).ToArray(), view!.Floating.SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Order(StringComparer.Ordinal).ToArray(),
                     StringComparer.Ordinal);
                 Assert.True(service.ReconcileFromView(view), "the service refused the view's floating windows");
                 Assert.All(new[] { "sessions", nativeId }, id =>
@@ -75,6 +75,11 @@ public sealed class FloatReadBackRestartTests : IDisposable
                     Assert.Null(service.Zones.FindZoneOf(id));
                     Assert.Contains(service.Zones.Floating, s => s.Surfaces.Any(x => x.SurfaceId == id));
                 });
+
+                // In the session the model keeps where the view put the native window, so the next
+                // Render reopens it there rather than at the default placement.
+                var native = service.Zones.Floating.Single(s => s.Surfaces.Any(x => x.SurfaceId == nativeId));
+                Assert.True(native.FloatingBounds is { Width: > 0, Height: > 0 }, "the native floating window's bounds were not read back");
 
                 // Restart: save, read, restore into a new service, and render into a new manager.
                 var path = Path.Combine(_dir, "zones.json");
