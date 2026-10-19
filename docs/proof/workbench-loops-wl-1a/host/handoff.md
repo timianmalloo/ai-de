@@ -1,75 +1,88 @@
 ---
 id: proof-workbench-loops-wl-1a-host-handoff
-title: "WL-1a host (T5) — node 1 hand-off: gate, write-ahead, W1–W4 green; node 2 next"
+title: "WL-1a host (T5) — hand-off after node 2: (a)–(g) green, real-lane Stop Interrupted"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
 phase: "workbench-loops WL-1a"
-tags: [proof, handoff, attempt, gate, workbench-loops, wl-1a, t5]
+tags: [proof, handoff, attempt, stop, sweep, run-log, workbench-loops, wl-1a, t5]
 links:
   - { to: adr-0041-execution-attempt-lifecycle, rel: implements }
   - { to: design-workbench-loops-wl-1a, rel: implements }
 review-by: "2026-11-18"
 summary: >-
-  Track T5 node 1 (GO9 split) is done: design committed with both adversary verdicts, the host-interface
-  commit, and the gate, dispatch_key idempotency, stale-prepare, W1–W4 crash-window and sole-host checks,
-  each red then green. Node 2 (Stop, sweep triggers and emission, run log, redaction wiring, queue, NFR-11,
-  the slice Proof Pack) starts from here in the same tree.
+  Track T5 after node 2. Node 1 built the gate, write-ahead and W1–W4; node 2 built the run log, relay fan-out
+  and subscribe, RunLogUnwritable, the sweep triggers and attempt.sweep emission, Stop (stub and one real
+  claude-code run: Interrupted), queue and Send-now, redaction wiring, fold.duration_ms, the NFR-11 oracle and
+  the slice Proof Pack. Each check red then green. What remains is listed under "Not done".
 ---
 
-# WL-1a host — node 1 hand-off
+# WL-1a host — hand-off after node 2
 
-Tree `C:\Projects\ai-de-wl1a-attempt-host`, branch `wl1a-attempt-host`, base `f1688dba`. Design:
-`docs/design/workbench-loops-wl-1a.md` (read it first; its gate table and "Crash windows" are the contract).
+Tree `C:\Projects\ai-de-wl1a-attempt-host`, branch `wl1a-attempt-host`. Node 1's tip is pinned as
+`wl1a-attempt-host-n1` (`2d3cb1bd`). Design: `docs/design/workbench-loops-wl-1a.md`. Slice Proof Pack:
+`docs/proof/workbench-loops-wl-1a.md`.
 
-## Done (node 1)
+## Done (node 2)
 
 | Commit | What |
 |---|---|
-| `344f6420` | `docs: design WL-1a` — Simplifier PASS-WITH-CONDITIONS; Distributed Systems VETO, cleared on re-review (gate record in the design) |
-| `66ae2be7` | host interface: `IAttemptHost`, `AttemptDispatch`, `AttemptStart`, `AttemptRun`; `IAttemptLedger` (`IWorkspaceDispatch.cs`); `AttemptKey`, `AttemptReceipt`, `AttemptErrorCodes` (`BoundaryDispatcher.cs`); IPC ops `attempt.begin/outcome/read/sweep`; `RunAsync(..., AttemptRun? attempt = null)` |
-| `6aad0db4` | `test: red` — 17 tests, red evidence `*-red.txt` |
-| `8d6e6153` | green: the gate (see below), `*-green.txt`, `suite-green.txt`, `DC-NEW-wl-t5-host` |
-| `9717c1a7` | refactor: host types moved to `src/AiDe.App/Conductor/AttemptHost.cs` (seam request `req-01M599H0364THVM23WJJ68R11S` granted) |
-| `68f3a753` | design: "Fold inputs" for T6 (Leader delegation) and the `FrameRedaction.Apply` signature |
+| `1b560f5d` | `test: red` — 18 tests + the skeleton API (`run-log-core-red.txt`, `node2-app-red.txt`) |
+| `cf3aef8f` | green: run log, relay, subscribe, RunLogUnwritable, sweep triggers + emission, Stop, queue + Send-now, NFR-11, `fold.duration_ms`, StopRequested precedence; `DC-NEW-wl-t5-host-n2` |
+| `439e9704` | merge `origin/main` (T7 `FrameRedaction` on main) |
+| `07922bfd` | `test: red` — redaction wiring (`redaction-wiring-red.txt`) |
+| `cbde0cb2` | green: the mapper redacts at ingest (`redaction-wiring-green.txt`) |
+| `1d9472d8` | the recorded real claude-code Stop (`real-lane-stop/`): `Interrupted` |
+| (this commit) | slice Proof Pack, suite runs, this hand-off |
 
 Checks, red then green (test names exact):
 
-| Check | Tests | Evidence |
-|---|---|---|
-| gate (G2/G3) | `AttemptGateTests.ASecondDispatchedRow_IsNotCommitted`, `.Dispatched_AfterATerminal_IsNotCommitted`, `.ASecondTerminal_IsNotCommitted_AndTheFirstStands` | `gate-red.txt`, `gate-green.txt` |
-| dispatch_key idempotency (G0, L) | `AttemptGateTests.BeginTwice_WritesOneAttemptRow_AndTheSecondIsAlreadyAttempted`, `.BeginAgain_AfterTheEpochMoved_StillReturnsTheExistingReceipt`; `AttemptHostTests.SameDispatchKeyTwice_LaunchesOnce`, `.TwoConcurrentDispatchesOfOneKey_LaunchOnce` | `dispatch-key-idempotency-*.txt` |
-| stale-prepare refusal (G1) | `AttemptHostTests.AStalePrepare_IsRejected_AndStartsNoProcess` | `stale-prepare-*.txt` |
-| write-ahead crash windows W1–W4 + sweep predicate | `AttemptHostTests.ACrashInAWindow_SweepsToDeliveryUnknown_AndNeverResends(W1..W4)`; `AttemptGateTests.Sweep_ResolvesEachAbandonedAttempt_ToDeliveryUnknownWithItsCause`, `.Sweep_SkipsLiveAttempts`, `.Sweep_SkipsAQueuedSuccessorWhosePredecessorLacksResponseComplete`, `.ThePtySweep_NeverTouchesANativeAttempt` | `write-ahead-crash-windows-*.txt` |
-| one host per workspace | `AttemptHostTests.ASecondHost_IsRefused` | `sole-host-*.txt` |
+| Check | Tests |
+|---|---|
+| (a) run log before publish; unwritable line | `AiDe.Core.Tests.Attempts.RunLogOrderTests.EveryEvent_IsInTheRunLog_BeforeThePeerPublishesIt`, `.ALineThatCannotBeMadeDurable_IsNotPublished_AndFailsThePendingPromptWithRunLogUnwritable`; `AiDe.App.Tests.Conductor.Attempts.AttemptRunLogTests.AnUnwritableRunLogLine_IsNotPublished_AndTheAttemptIsDeliveryUnknownRunLogUnwritable_WithAnIncident` |
+| (a) relay fan-out + subscribe | `AttemptRunLogTests.TheRelay_WritesTheSameInstanceToEverySubscriber_AndTracksTheHighWaterSeq`, `.ARun_WritesItsRunLog_AndASubscriberSeesEveryEventOnceInOrder` |
+| (b) sweep triggers + emission | `AttemptQueueAndSweepTests.TheStartupSweep_EmitsAttemptSweep_EvenAtZero`, `.TheBackstopTimer_SweepsAndEmits_OnItsInterval`, `.AnEngineExit_SweepsAnAbandonedDispatchedAttempt_ToRelayLost` |
+| (c) Stop | `AttemptStopTests.Stop_SendsSessionCancel_AndTheEnginesCancelledReplyIsInterrupted`, `.Stop_ThatIsNeverAcknowledged_IsDeliveryUnknownStopNotAcknowledged_AtTheDeadline`, `.APermissionAskedDuringStop_IsAnsweredCancelled_AndRecordedAsPermissionCancelledByStop`, `.ATokenCancelAlone_TheHostsOwnTeardown_IsNeverInterrupted`; `RunLogOrderTests.AStopRequestedTurn_StaysStopRequested_WhenAWaitOrAResumeArrives`; real lane `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` (skipped unless `AIDE_REAL_ADAPTER_ROOT` is set) |
+| (d) queue + Send-now | `AttemptQueueAndSweepTests.AQueuedSuccessor_LaunchesOnlyAfterItsPredecessorsResponseComplete`, `.AQueuedSuccessor_BehindAPredecessorThatDidNotComplete_IsHeld_AndSendNowLaunchesItOnce` |
+| (e) redaction wiring | `AttemptRedactionTests.ASentinelInAFrame_IsStoredRedacted_WithARedactionRow_AndNoSubscriberSeesIt` |
+| (f) `fold.duration_ms`; NFR-11 | `AttemptObservabilityTests.AFoldActivity_WritesFoldDurationMs_ToTheRollingLog`, `.EveryAttempt_HasDispatchedAndTerminalTs_EventCount_Bytes_Outcome_AndUsage`, `.AnAttemptWithNoUsage_ReadsNotRecorded_NeverZero` |
+| (g) Proof Pack | `docs/proof/workbench-loops-wl-1a.md` (demo script left for the Leader) |
 
-Core tests: `tests/AiDe.Core.Tests/Attempts/AttemptGateTests.cs`. App tests (product `RunAsync` spawning
-`StubAcpAdapter`): `tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostTests.cs`. Whole suites:
-`suite-green.txt`.
+Existing test changed because of this work: `AiDe.Core.Tests.Sessions.SessionPathContractTests` — its allowlist
+gains `RunLogStore.cs` (the extension point Ruling 38 names). Node 1's `AttemptHostTests` are unchanged and green.
 
-## Red / not built (node 2 — none of these has a test yet)
+## Suites (after the merge of `origin/main`)
 
-- **Queue:** `AttemptHost.DispatchAsync` refuses `QueuedAfterDispatchKey` with `NotSupportedException`. Build: live
-  from queue time (L at G0), launch after the predecessor's `ResponseComplete`, launcher re-reads and launches only
-  a `Pending` attempt; `SendNowAsync` on `IAttemptHost` (design, "Queued launch" and the re-review conditions).
-- **Stop:** `IAttemptHost.StopAsync`, `AcpPeer.NotifyAsync("session/cancel")`, `StopRequested{high-water seq}`,
-  `PermissionCancelledByStop`, 10 s deadline ⇒ `DeliveryUnknown{stop_not_acknowledged}`; `cancelled` reply after the
-  mark ⇒ `Interrupted` (today `AttemptTerminal.For` maps any `cancelled` to `DeliveryUnknown{relay_lost}` — the Stop
-  path replaces that row). Token cancel alone ⇒ not `Interrupted`. One recorded real claude-code run under
-  `real-lane-stop/`. `RunChannelSessionThread.Wait`/`Resume` must not move `StopRequested` to `Running` (red first).
-- **Sweep triggers + emission:** startup sweep runs in `AttemptHost.OpenAsync` today; add engine-exit (`relay_lost`)
-  and the 30 s backstop, and emit `attempt.sweep{count,last_sweep_at}` to the sidecar even at zero
-  (`AttemptHost.LastSweep` holds the last result).
-- **Run log + relay + subscribe:** `RunLogStore` (append+flush before `Events.PublishAsync`, line =
-  `JsonSerializer.Serialize(RunEvent)`), `RunLogUnwritable` ⇒ `DeliveryUnknown{run_log_unwritable}`;
-  `RunEventRelay.Subscribe()` fan-out; `IAttemptHost.Subscribe`. `AttemptHost.LaunchAsync` passes `sink: null` today.
-- **Redaction wiring:** the mapper calls `FrameRedaction.Apply(frame, patternsVersion)` → `RedactedFrame(Frame, Redactions, ScannedWith)` (T7, branch `wl1a-redaction`; Offset indexes the redacted frame); the sentinel fixture end to end, red until T7 joins.
-- **`fold.duration_ms`:** an `ActivityListener` on `aide.attempt.fold` writing `fold.duration_ms` to the rolling log (design, "Fold inputs").
-- **NFR-11 oracle:** terminal `detail` already carries `{stopReason, usage}` or `usage: "not recorded"`; add event
-  count and bytes from the run log and the oracle test.
-- **Proof Pack:** `docs/proof/workbench-loops-wl-1a.md`.
+- `tests/AiDe.Core.Tests`: **2966 passed, 0 failed, 1 skipped** (`suite-core-node2.txt`).
+- `tests/AiDe.App.Tests`: **1049 passed, 1 failed, 1 skipped** (`suite-app-node2.txt`). The one failure is
+  `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` — "foreground not held", the known
+  desktop-focus flake (also in node 1's `suite-green.txt` and `sp2/env-flakes.txt`); it passes alone
+  (`suite-app-node2-chord-rerun.txt`). The skip is `AttemptRealLaneStopTests` (no `AIDE_REAL_ADAPTER_ROOT`).
+- A first full App run also failed `AFoldActivity_WritesFoldDurationMs_ToTheRollingLog`: its oracle asserted
+  `value >= 5` after `Task.Delay(5)` and read 4.6 ms. The test (not the listener) was wrong; it now finds its own
+  activity by a unique operation name and asserts `value > 0`.
+
+## Interface changes T8 must know (the host's public surface)
+
+- `IAttemptHost` gains `SendNowAsync`, `StopAsync`, `SubscribeAsync` (**async**, returns `AttemptSubscription`;
+  the design sketched a synchronous `Subscribe` — a finished attempt's run-log path needs its row), and
+  `MeasureAsync` (NFR-11).
+- `AttemptHost.OpenAsync(ledger, lockFile, ct, AttemptHostOptions? options = null)`; null derives the workspace from
+  the lock path `<ws>/.aide/attempt-host.lock`. Options: `StopDeadline` (10 s), `SweepBackstop` (30 s),
+  `Incidents`, `RunLogs`.
+- `DispatchAsync` now accepts `QueuedAfterDispatchKey` (it threw `NotSupportedException` after node 1).
+- Rolling log: `<ws>/.aide/attempt-telemetry.jsonl`, one JSON object per line (`metric`, `at`, fields).
+
+## Not done
+
+- The design's `ActivitySource "aide.attempt"` spans (`attempt.begin`, `attempt.terminal`, `attempt.sweep`) are not
+  built; the sweep is emitted to the rolling log only. No check names the spans.
+- The ADR-0041 §7 health incident for `DeliveryUnknown` (first 20 ids + count) is not built; only the
+  run-log-unwritable incident is.
+- Privacy finding for the Leader: the account email/organization reach every run log (see
+  `real-lane-stop/README.md`).
 
 ## Next step
 
-Start node 2 with the queue (smallest, unblocks T8's queued turns), then run log + relay (unblocks T6's fold
-input), then Stop on the stub, then the real-lane Stop run.
+The Leader joins `wl1a-attempt-host` after `wl1a-attempt-host-n1`, re-runs `suite-core-node2.txt` /
+`suite-app-node2.txt`, and completes the Proof Pack's "Human demo script" after T8 lands.

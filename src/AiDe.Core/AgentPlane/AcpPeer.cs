@@ -282,6 +282,7 @@ public sealed class AcpPeer
     private readonly TimeProvider _time;
     private readonly AcpPeerOptions _options;
     private readonly Action<string> _diagnostics;
+    private readonly RunLogStore? _runLog;
 
     private readonly SemaphoreSlim _writeLock = new(1, 1);
     private readonly Lock _pendingGate = new();
@@ -303,14 +304,17 @@ public sealed class AcpPeer
     /// <param name="time">Stamps receipt and publication. Defaults to the system clock.</param>
     /// <param name="options">The peer's bounds. Defaults to <see cref="AcpPeerOptions"/>'s stated values.</param>
     /// <param name="diagnostics">Where everything that is not protocol goes. Defaults to stderr.</param>
+    /// <param name="runLog">The attempt's durable run log; every event is appended to it before it is published (ADR-0041 §3). Null: no run log.</param>
     public AcpPeer(
         TextReader input,
         TextWriter output,
         AcpRunEventMapper mapper,
         TimeProvider? time = null,
         AcpPeerOptions? options = null,
-        Action<string>? diagnostics = null)
+        Action<string>? diagnostics = null,
+        RunLogStore? runLog = null)
     {
+        _runLog = runLog;
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(mapper);
@@ -373,6 +377,7 @@ public sealed class AcpPeer
         var buffer = new char[8192];
         var frame = new System.Text.StringBuilder();
         var skippingToNextNewline = false;
+        AgentPlaneException? unwritable = null;
 
         try
         {
@@ -427,9 +432,15 @@ public sealed class AcpPeer
                     + "frame and were not parsed");
             }
         }
+        catch (AgentPlaneException refused) when (refused.Code == RunLogStore.UnwritableCode)
+        {
+            // The pump stops reading: nothing after an undurable line may be published out of order.
+            _diagnostics("acp: " + refused.Message);
+            unwritable = refused;
+        }
         finally
         {
-            FailEveryPendingRequest();
+            FailEveryPendingRequest(unwritable);
             Events.Complete();
         }
     }
@@ -502,6 +513,23 @@ public sealed class AcpPeer
     }
 
     /// <summary>
+    /// Sends a notification — a frame with no id, so nothing waits for a reply — serialized through the same
+    /// write lock as every request and answer (ADR-0041 §4: <c>session/cancel</c>).
+    /// </summary>
+    public Task NotifyAsync(string method, JsonObject? parameters, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(method);
+
+        var notification = new JsonObject { ["jsonrpc"] = "2.0", ["method"] = method };
+        if (parameters is not null)
+        {
+            notification["params"] = parameters;
+        }
+
+        return WriteAsync(notification, cancellationToken);
+    }
+
+    /// <summary>
     /// Normalizes one frame, publishes it, and only then acts on it.
     /// </summary>
     /// <remarks>
@@ -540,6 +568,10 @@ public sealed class AcpPeer
 
         var receivedAt = _time.GetUtcNow();
         var normalized = _mapper.Map(line, receivedAt);
+
+        // ADR-0041 §3: durable first. A line that cannot be made durable throws here, so it is never
+        // published and never acted on; RunAsync then fails the pending requests with its code.
+        _runLog?.Append(normalized);
         await Events.PublishAsync(
             ObservedRunEvent.From(normalized, receivedAt, _time.GetUtcNow()), cancellationToken);
 
@@ -638,7 +670,8 @@ public sealed class AcpPeer
     /// looks exactly like a lane that is working. Naming the reason is the difference between a
     /// diagnosable exit and a hang.
     /// </remarks>
-    private void FailEveryPendingRequest()
+    /// <param name="unwritable">The run-log refusal that stopped the pump, or null when the stream simply ended.</param>
+    private void FailEveryPendingRequest(AgentPlaneException? unwritable)
     {
         List<KeyValuePair<string, PendingRequest>> outstanding;
         lock (_pendingGate)
@@ -649,10 +682,12 @@ public sealed class AcpPeer
 
         foreach (var (key, pending) in outstanding)
         {
-            pending.Completion.TrySetException(new AgentPlaneException(
-                AgentPlaneErrorCodes.EngineStreamEnded,
-                $"the engine's stdout reached end of stream while '{pending.Method}' (id {key}) was still "
-                + "outstanding; the child exited or was killed mid-session"));
+            pending.Completion.TrySetException(unwritable is null
+                ? new AgentPlaneException(
+                    AgentPlaneErrorCodes.EngineStreamEnded,
+                    $"the engine's stdout reached end of stream while '{pending.Method}' (id {key}) was still "
+                    + "outstanding; the child exited or was killed mid-session")
+                : new AgentPlaneException(unwritable.Code, $"'{pending.Method}' (id {key}) failed: {unwritable.Message}"));
         }
     }
 

@@ -1,0 +1,35 @@
+
+Test run for C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:30.30]     AiDe.Core.Tests.Attempts.RunLogOrderTests.ALineThatCannotBeMadeDurable_IsNotPublished_AndFailsThePendingPromptWithRunLogUnwritable [FAIL]
+  Failed AiDe.Core.Tests.Attempts.RunLogOrderTests.ALineThatCannotBeMadeDurable_IsNotPublished_AndFailsThePendingPromptWithRunLogUnwritable [30 s]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+            ↓ (pos 1)
+Expected: "AIDE-RUN-LOG-UNWRITABLE"
+Actual:   "AP-0015"
+            ↑ (pos 1)
+  Stack Trace:
+     at AiDe.Core.Tests.Attempts.RunLogOrderTests.ALineThatCannotBeMadeDurable_IsNotPublished_AndFailsThePendingPromptWithRunLogUnwritable() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.Core.Tests\Attempts\RunLogOrderTests.cs:line 53
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:30.32]     AiDe.Core.Tests.Attempts.RunLogOrderTests.AStopRequestedTurn_StaysStopRequested_WhenAWaitOrAResumeArrives [FAIL]
+[xUnit.net 00:00:30.32]     AiDe.Core.Tests.Attempts.RunLogOrderTests.EveryEvent_IsInTheRunLog_BeforeThePeerPublishesIt [FAIL]
+  Failed AiDe.Core.Tests.Attempts.RunLogOrderTests.AStopRequestedTurn_StaysStopRequested_WhenAWaitOrAResumeArrives [6 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: StopRequested
+Actual:   Waiting
+  Stack Trace:
+     at AiDe.Core.Tests.Attempts.RunLogOrderTests.AStopRequestedTurn_StaysStopRequested_WhenAWaitOrAResumeArrives() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.Core.Tests\Attempts\RunLogOrderTests.cs:line 66
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Attempts.RunLogOrderTests.EveryEvent_IsInTheRunLog_BeforeThePeerPublishesIt [5 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.Attempts.RunLogOrderTests.EveryEvent_IsInTheRunLog_BeforeThePeerPublishesIt() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.Core.Tests\Attempts\RunLogOrderTests.cs:line 33
+   at AiDe.Core.Tests.Attempts.RunLogOrderTests.EveryEvent_IsInTheRunLog_BeforeThePeerPublishesIt() in C:\Projects\ai-de-wl1a-attempt-host\tests\AiDe.Core.Tests\Attempts\RunLogOrderTests.cs:line 31
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 30 s - AiDe.Core.Tests.dll (net10.0)
