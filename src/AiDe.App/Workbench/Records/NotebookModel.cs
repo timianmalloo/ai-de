@@ -56,8 +56,8 @@ public enum ResultCurrentness
 /// disposing it.
 /// </summary>
 /// <remarks>
-/// <para><b>Not yet moved here (node 2 of T8):</b> the per-run cancellation and the queue (they go to the attempt host,
-/// ADR-0041), and the envelope store's handle, whose lifetime follows the runs.</para>
+/// <para><b>The runs are the model's</b> (<see cref="Runs"/>): the per-run cancellation, the queue and the drain, so a
+/// surface closed mid-run leaves the run running. The envelope store's handle stays the surface's (ADR-0034 rule 7).</para>
 /// <para><b>Disposal is counted, not trusted:</b> <see cref="Dispose"/> opens <see cref="DisposeActivity"/> first, on
 /// the normal path, so a test can show that nothing disposed a model (the <c>SessionDisposalLedger</c> idiom).</para>
 /// </remarks>
@@ -90,11 +90,15 @@ public sealed class NotebookModel : IDisposable
         Session = session;
         Id = NotebookId.ForSession(session.SessionId);
         _revisions = revisions;
+        Runs = new NotebookRuns(this);
     }
 
     public NotebookId Id { get; }
 
     public SessionDocumentViewModel Session { get; }
+
+    /// <summary>The notebook's runs: they outlive every surface and end only with the model.</summary>
+    public NotebookRuns Runs { get; }
 
     /// <summary>The thread of turns. The model's, so a surface built later over this model shows the same turns.</summary>
     public RunChannelSessionThread Thread { get; } = new(caughtUp: true);
@@ -241,5 +245,6 @@ public sealed class NotebookModel : IDisposable
         // to release it.
         using var counted = Signal.StartActivity(DisposeActivity);
         IsDisposed = true;
+        Runs.Dispose();
     }
 }

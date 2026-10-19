@@ -40,7 +40,7 @@ namespace AiDe.App.Workbench.Sessions;
 /// when open. Focus lands in the editor on open unless the operator has already acted (K7); every
 /// refusal is announced (<c>THR-0002</c>), never silent.</para>
 /// </remarks>
-public sealed class SessionDocumentSurface : ContentControl, IDisposable
+public sealed class SessionDocumentSurface : ContentControl, IDisposable, INotebookRunObserver
 {
     /// <summary>
     /// The least the thread keeps once it has turns — half a turn (the words line and its
@@ -76,12 +76,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly ColumnDefinition _splitterColumn = new() { Width = new GridLength(0) };
     private readonly Border _composerHost = new() { BorderThickness = new Thickness(0, 1, 0, 0), SnapsToDevicePixels = true };
     private readonly GridSplitter _splitter = new();
-    private readonly CancellationTokenSource _closing = new();
-    private readonly Dictionary<int, CancellationTokenSource> _runs = [];
     private readonly Dictionary<int, (string EnvelopeId, string TaskClassSource)> _envelopeByOrdinal = [];
-
-    /// <summary>The one queued turn's request, by ordinal (Ruling 95: exactly one); null when nothing is queued.</summary>
-    private (int Ordinal, GovernedRunRequest Request)? _queued;
     private readonly Lock _envelopeGate = new();
     private EnvelopeStore? _envelopes;
     private readonly SessionDocumentStore? _store;
@@ -165,6 +160,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.RevisionPreparer = text => Notebook.PrepareRevisionAsync(text, CancellationToken.None);
         Composer.DraftChanged += RenderStale;
         Notebook.Changed += OnNotebookChanged;
+
+        // THE RUNS ARE THE MODEL'S (ADR-0045 §4): this surface only hears them — it attaches a lane, records the
+        // envelope's consumed row — and a surface closed mid-run leaves the run to the next one bound here.
+        Notebook.Runs.Observer = this;
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
         Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
@@ -364,7 +363,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     }
 
     /// <summary>The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is <see cref="LastRunFailure"/>.</summary>
-    public Task LastLaunch { get; private set; } = Task.CompletedTask;
+    public Task LastLaunch => Notebook.Runs.LastRun;
 
     /// <summary>What the last completed run reported, or null when none has completed.</summary>
     public GovernedRunResult? LastRunResult { get; private set; }
@@ -601,65 +600,48 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
         Composer.BeginNextTurn();
 
+        // The run is the MODEL's (ADR-0045 §4): queued or started there, so closing this pane leaves it running.
+        var launch = new RunLaunch(LastBinding, submission?.TaskClassSource);
         if (queue)
         {
-            _queued = (ordinal, request);
+            Notebook.Runs.Queue(ordinal, request, launch);
             return;
         }
 
-        LastLaunch = Run(request, ordinal);
+        Notebook.Runs.Start(ordinal, request, launch);
     }
 
-    /// <summary>One run for one accepted turn: the lane, the relay, the cancellation, and the run itself.</summary>
-    private Task Run(GovernedRunRequest request, int ordinal)
-    {
-        var relay = new RunEventRelay();
-        var lane = new SessionLane($"lane:{Model.SessionId}:{ordinal}", request.EngineId, relay.Reader, Model, Marshal);
-        AttachLane(lane);
-        LastRelay = relay;
-
-        var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
-        _runs[ordinal] = cancel;
-        return RunOneAsync(request, relay, ordinal, cancel);
-    }
-
-    /// <summary>
-    /// The drain (Ruling 95): the queued turn is sent when the turn it waited behind ended
-    /// <c>Completed</c> or <c>Answered</c> — and only then. After a Stop or a failure it stays
-    /// queued, waiting on the operator (<i>Send now</i>); a closing document sends nothing.
-    /// </summary>
-    private void DrainAfter(TurnState ending)
-    {
-        if (ending is not (TurnState.Completed or TurnState.Answered) || _closing.IsCancellationRequested)
+    /// <summary>A run of this notebook started: the lane that renders it is this surface's, held for its lifetime.</summary>
+    void INotebookRunObserver.RunStarted(int ordinal, string engineId, RunEventRelay relay) =>
+        Marshal(() =>
         {
-            return;
-        }
+            AttachLane(new SessionLane($"lane:{Model.SessionId}:{ordinal}", engineId, relay.Reader, Model, Marshal));
+            LastRelay = relay;
+        });
 
-        StartQueued();
-    }
-
-    /// <summary>Sends the queued turn now — the drain's act, and <i>Send now</i>'s. Nothing to send, or a turn in flight: no act.</summary>
-    private void StartQueued()
+    /// <summary>A run of this notebook ended: the readouts, and the envelope's one consumed row (E6).</summary>
+    void INotebookRunObserver.RunEnded(NotebookRunEnd end)
     {
-        if (_queued is not { } queued || _thread.Current.InFlight is not null)
+        if (end.Result is { } result)
         {
+            LastRunResult = result;
+            RecordConsumed(end.Ordinal, result.RunId, result.EpisodeId, result.Outcome, end.ConsumedReason);
             return;
         }
 
-        _queued = null;
-        _thread.Start(queued.Ordinal, DateTimeOffset.Now);
-        LastLaunch = Run(queued.Request, queued.Ordinal);
+        LastRunFailure = end.Failure;
+        var outcome = end.ConsumedReason == ConsumedReasons.StoppedByOperator ? "Abandoned" : Envelope.NotRecorded;
+        RecordConsumed(end.Ordinal, Envelope.NotRecorded, null, outcome, end.ConsumedReason);
     }
 
     /// <summary>Cancel on the queued turn (Ruling 95): dropped from the queue, its row concluded cancelled, its envelope consumed, its words back in the editor.</summary>
     private void CancelQueued(int ordinal)
     {
-        if (_queued is not { } queued || queued.Ordinal != ordinal)
+        if (!Notebook.Runs.Cancel(ordinal))
         {
             return;
         }
 
-        _queued = null;
         var turn = _thread.Current.Turns.First(t => t.Ordinal == ordinal);
         _thread.Conclude(ordinal, TurnState.Cancelled, DateTimeOffset.Now);
         RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.CancelledByOperator);
@@ -672,62 +654,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// call, so the two can never disagree. Internal so a test can hand the product's own sink to a
     /// hand-wired lane and prove the relay → fold leg (DC-135: construct what the product constructs).
     /// </summary>
-    internal Action<ObservedRunEvent> RunSink(string lane, RunEventRelay relay, int ordinal) =>
-        observed =>
-        {
-            relay.Publish(observed);
-
-            // The fold reads the same event the lane dispatches — one definition of a line's text
-            // (the console model's), one origin rule (the read model's), one reading of a tool
-            // frame's facts (Ruling 82: the call and its results are one item, joined by id).
-            var evt = observed.Event;
-            var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
-            _thread.Append(
-                ordinal,
-                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
-                cost);
-        };
-
-    private async Task RunOneAsync(GovernedRunRequest request, RunEventRelay relay, int ordinal, CancellationTokenSource cancel)
-    {
-        var sink = RunSink(request.EngineId, relay, ordinal);
-
-        try
-        {
-            var result = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
-            LastRunResult = result;
-            var ending = request.Goal is null ? TurnState.Answered : TurnState.Completed;
-            _thread.Conclude(ordinal, ending, DateTimeOffset.Now);
-            var consumed = RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
-            StampTaskClassSource(request.DataDirectory, result, consumed?.TaskClassSource);
-            Marshal(() => DrainAfter(ending));
-        }
-        catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
-        {
-            LastRunFailure = "OperationCanceledException: stopped by the operator";
-            // Our own token cancel is not a native acknowledgment, so the turn is StopRequested, never Interrupted (ADR-0041 §2).
-            _thread.RequestStop(ordinal);
-            RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.StoppedByOperator);
-        }
-        catch (Exception error) when (error is AgentPlaneException or IOException or OperationCanceledException)
-        {
-            // Reported, never thrown away. These are the three refusals ConductorEntry already
-            // treats as "the run did not complete", and the operator is owed the same sentence.
-            LastRunFailure = $"{error.GetType().Name}: {error.Message}";
-
-            // The sentence is a line of the run, under the lane that refused, in the one stream the
-            // fold and the Console both read (Ruling 81) — never a text stored beside the outcome.
-            _thread.Append(ordinal, new EventLine(DateTimeOffset.Now, request.EngineId, "stderr", LastRunFailure, "run"));
-            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null);
-            RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.LaneExited(null));
-        }
-        finally
-        {
-            relay.Complete();
-            _runs.Remove(ordinal);
-            cancel.Dispose();
-        }
-    }
+    internal Action<ObservedRunEvent> RunSink(string lane, RunEventRelay relay, int ordinal) => Notebook.Runs.Sink(lane, relay, ordinal);
 
     /// <summary>
     /// Appends the envelope's <c>consumed</c> row — the pair (outcome, reason) by identity (E6) —
@@ -879,8 +806,6 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return outcome;
     }
 
-    private static bool IsCompileEvent(RunEvent evt) => CompileSignal.IsCompileEvent(evt);
-
     private void OnTurnAction(TurnAction action)
     {
         var turn = _thread.Current.Turns.FirstOrDefault(t => t.Ordinal == action.Ordinal);
@@ -888,11 +813,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         switch (action.Kind)
         {
             case TurnActionKind.Stop:
-                if (_runs.TryGetValue(action.Ordinal, out var cancel))
-                {
-                    cancel.Cancel();
-                }
-
+                Notebook.Runs.Stop(action.Ordinal);
                 break;
 
             case TurnActionKind.SendAgain:
@@ -918,11 +839,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 break;
 
             case TurnActionKind.SendNow:
-                if (_queued is { } queued && queued.Ordinal == action.Ordinal)
-                {
-                    StartQueued();
-                }
-
+                Notebook.Runs.SendNow(action.Ordinal);
                 break;
 
             default:
@@ -1607,10 +1524,17 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             _envelopes?.Dispose();
         }
 
-        // The run is bound to the document that started it: closing the pane cancels it rather than
-        // leaving an engine process owned by a surface nobody is showing.
-        _closing.Cancel();
-        _closing.Dispose();
+        // THE RUN IS THE MODEL'S, NOT THE PANE'S (ADR-0045 §4; AC-D01a): closing the pane stops hearing the run and
+        // leaves it running — the next surface bound to the model hears its end. Said once, so it is never silent.
+        if (ReferenceEquals(Notebook.Runs.Observer, this))
+        {
+            Notebook.Runs.Observer = null;
+        }
+
+        if (!_ownsNotebook && Notebook.Runs.InFlight)
+        {
+            _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
+        }
 
         foreach (var lane in _lanes)
         {
