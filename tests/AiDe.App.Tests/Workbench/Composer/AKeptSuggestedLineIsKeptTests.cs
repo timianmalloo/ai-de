@@ -46,7 +46,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
             ComposerGesture.CtrlEnter(composer);
             await composer.Preparing!.WaitAsync(NotebookFixture.Bound);
             ComposerGesture.Settle(document);
-            Assert.Equal(StructureLine.SuggestedMark, composer.StructureMarks[GoalBlockFields.GoalKey]);
+            Assert.Equal(StructureLine.ModelLineMark, composer.StructureMarks[GoalBlockFields.GoalKey]);
             Assert.Equal(Suggestion(1, "goal"), Line(composer, "Goal").Text);
 
             Assert.Equal(StructureLine.KeepHelp, AutomationProperties.GetHelpText(KeepButton(composer, "Goal")));
@@ -69,7 +69,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
 
             // The unkept lines were suggested again, and are still only suggestions: never in the draft.
             Assert.Equal(Suggestion(2, "done_when"), Line(composer, "Done when").Text);
-            Assert.Equal(StructureLine.SuggestedMark, composer.StructureMarks[GoalBlockFields.DoneWhenKey]);
+            Assert.Equal(StructureLine.ModelLineMark, composer.StructureMarks[GoalBlockFields.DoneWhenKey]);
             Assert.False(composer.Draft.GoalValues.TryGetValue(GoalBlockFields.DoneWhenKey, out var doneWhen) && doneWhen.Length > 0, $"an unkept suggestion reached the draft: \"{doneWhen}\"");
         });
     }

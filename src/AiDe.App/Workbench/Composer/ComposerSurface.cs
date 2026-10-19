@@ -2276,7 +2276,7 @@ internal sealed class StructureLine
     public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft.";
 
     /// <summary>The mark of a line the model suggested and the user has not kept or edited (Ruling 180 (3); DESIGN.md's Derived structure row). UIA's ItemStatus reads the word without the glyph.</summary>
-    public const string SuggestedMark = "? suggested";
+    public const string ModelLineMark = "? suggested";
 
     public StructureLine(string field, string derived, Action<string> onChanged, Action? onKeep = null)
     {
@@ -2429,13 +2429,13 @@ internal sealed class StructureLine
         {
             _mark.Text = empty ? "— fill in"
                 : _kept ? "✓ kept"
-                : _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal) ? (_suspect ? SuggestedMark + " · suspect" : SuggestedMark)
+                : _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal) ? (_suspect ? ModelLineMark + " · suspect" : ModelLineMark)
                 : "✓ edited";
             _why.Visibility = Visibility.Collapsed;
             AutomationProperties.SetHelpText(_value, string.Empty);
         }
 
-        _keep.Visibility = _mark.Text.StartsWith(SuggestedMark, StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
+        _keep.Visibility = _mark.Text.StartsWith(ModelLineMark, StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
         AutomationProperties.SetItemStatus(_value, _mark.Text.TrimStart('—', '✓', '!', '?', ' '));
     }
 
