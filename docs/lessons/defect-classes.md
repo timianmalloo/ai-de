@@ -8686,3 +8686,14 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Core and App suites N ≥ 10 times on a clean origin/main, with no join in flight and rule 19 respected. It records each
   failing test's rate, then for each one a deterministic repro under load, or NOT REPRODUCED with N stated.
 - **Status:** `partially-controlled`, until the measurement track reports.
+- **DC-NEW-wl-leader2, an OWNER instance (2026-10-19, Ruling 182 (4)):** the ruling asserted that a sent turn's compiled
+  prompt "is on the turn row's disclosure after a restart", citing Rulings 163 and 181 rather than a writer. T30 n3 read
+  the restore path. `NotebookRuns.RestoreAsync` (`NotebookRuns.cs:525`) calls `Thread.Accept(words, [], string.Empty, …)`,
+  and the store keeps only `Submitted.TextSha256` and `ProjectionSha` (`EnvelopeEvents.cs:218`). So no writer puts the sent
+  bytes back on a restored row. That is the same shape as the third and fourth instances above: the control "cite the
+  writer by file:line" was not applied by the ruling seat. Inferred until T30 observes the red on the real revive path
+  (seam `req-01M5B3NHP0143W53J11CRKPVAX`, granted with that as condition 1). The control stands, and holds for the Owner
+  too.
+- **Leader, same session:** the Leader told the Owner "every WL-S track is on main (T4, T9, T11, T18, T20, T21)" before
+  reading it in that turn. It was verified afterwards by `git branch --merged origin/main` and was true. It is the same
+  unread-claim shape (the 6th recurrence under wl-leader3), and the claim was right by luck rather than by check.
