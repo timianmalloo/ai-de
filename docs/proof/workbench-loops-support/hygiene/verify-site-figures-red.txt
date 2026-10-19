@@ -1,0 +1,7 @@
+STALE collaboration.html: audit-entries says 846, source says 851
+STALE index.html: artifacts says 587, source says 588
+STALE index.html: ledger says 1,005, source says 1,010
+STALE index.html: artifacts says 587, source says 588
+STALE index.html: ledger says 1,005, source says 1,010
+STALE model.html: artifacts says 587, source says 588
+6 stale, 0 unknown, out of 14 checked

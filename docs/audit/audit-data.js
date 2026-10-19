@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:38:59Z",
+  "generated": "2026-10-19T01:22:24Z",
   "audit": [
     {
       "actor": null,
@@ -22685,6 +22685,140 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T00:04:03Z",
       "duration_seconds": 2096.0
+    },
+    {
+      "id": "al-01M58TW311DTEEXYVK853QTTV2",
+      "shortname": "wl-t13-correct-J8AW3F",
+      "datetime": "2026-10-19T01:02:03Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M55TPKC6J24DWNFXNSJ8AW3F (session codex-cleanup-20261017) that recorded no evidence",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-cleanup-20261017 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/worktree-cleanup-20261017.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Commit and push remaining AI-DE work and retire linked worktrees.",
+      "done_when": "Remote recovery verified; only primary checkout remains locally.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "started_at": "2026-10-19T00:55:13Z",
+      "duration_seconds": 410.0,
+      "supersedes": "al-01M55TPKC6J24DWNFXNSJ8AW3F"
+    },
+    {
+      "id": "al-01M58TW34S8WPXSJ3M03N7MH1W",
+      "shortname": "wl-t13-correct-H2FSAQ",
+      "datetime": "2026-10-19T01:02:03Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581X9Z8CKSZ9P0XEZH2FSAQ (session codex-workbench-loops-20261018) that recorded no evidence",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/workbench-loops-ux.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Elevate the local dockable workbench proposal and complete HTML interaction model.",
+      "done_when": "Reviewable proposal and full loop mockups are source-grounded, independently reviewed, verified and linked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M581X9Z8CKSZ9P0XEZH2FSAQ"
+    },
+    {
+      "id": "al-01M58TW38PS72VK4NFBQDE6KY5",
+      "shortname": "wl-t13-correct-1BS5ZD",
+      "datetime": "2026-10-19T01:02:03Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M581XA7C6Z11H96W8Y1BS5ZD (session codex-workbench-loops-20261018) that recorded no evidence",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-workbench-loops-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/local-software-factory-v2.html",
+        "docs/proposals/local-software-factory-v2-interactive.html",
+        "docs/knowledge/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Evolve AI-DE as a local desktop software factory and system-understanding workbench.",
+      "done_when": "Both entry paths and all three loops have reviewable HTML and an honest migration proposal.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M581XA7C6Z11H96W8Y1BS5ZD"
+    },
+    {
+      "id": "al-01M58TW3CENZA0DWJB30MA06Q6",
+      "shortname": "wl-t13-correct-9778RM",
+      "datetime": "2026-10-19T01:02:03Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 gate hygiene: correct audit entry al-01M58CGVHSXSDW79EB399778RM (session codex-specify-evolution-20261018) that recorded no evidence",
+      "summary": "Correction by supersession (the log is append-only). The original run codex-specify-evolution-20261018 recorded its goal and done-when but no verification evidence; none can be reconstructed now, so verification-path is recorded false rather than left silent.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/workbench-loops-20261018.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Use the proposal to specify AI-DE evolution while retaining work and system as distinct user journeys.",
+      "done_when": "One three-layer specification has independently reviewed functional requirements, distinct journey outcomes and bridges, rendered HTML, traceability, proof and a local commit.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M58CGVHSXSDW79EB399778RM"
+    },
+    {
+      "id": "al-01M58W1C1NSTRCGGGZJMTNJNQK",
+      "shortname": "wl-t13-hygiene",
+      "datetime": "2026-10-19T01:22:24Z",
+      "session": "wl-t13-hygiene",
+      "prompt": "T13 gate hygiene (Ruling 151): burn down main's red verify gates, union-merge the defect register, fix DesktopHold.Occupant",
+      "summary": "Register unions on merge (merge=union + test); DesktopHold.Occupant sees R115 holds (red-first); audit-capture, no-machine-paths, portable-text-io, preservation-policy, workbench-v2, ui-craft-floor, project-coverage (spikes) fixed; ruling-citations and the frozen front-door oracle filed as pack defects; suite 3978 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Burn down main's pre-existing red verify gates and remove the two join-time defect classes",
+      "done_when": "Each item green red-first with proof files, or filed as a pack defect; gates-before/after show the red set shrink with no green-to-red",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
     }
   ],
   "changes": [
