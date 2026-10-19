@@ -234,16 +234,28 @@ public sealed class TheCompileModeControlTests(ITestOutputHelper output) : IDisp
         {
             var ready = new ManualResetEventSlim();
             System.Windows.Threading.Dispatcher? dispatcher = null;
+            Exception? failure = null;
             var thread = new Thread(() =>
             {
-                Open();
-                dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                try
+                {
+                    Open();
+                    dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                    ready.Set();
+                    return;
+                }
+
                 ready.Set();
                 System.Windows.Threading.Dispatcher.Run();
             }) { IsBackground = true };
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             Assert.True(ready.Wait(TimeSpan.FromSeconds(30)), "the concurrent window on another thread did not open");
+            if (failure is not null) throw failure;
             return new ConcurrentWindow(thread, dispatcher!);
         }
 
