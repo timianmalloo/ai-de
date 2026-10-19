@@ -2643,7 +2643,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 136 members, 95% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 138 members, 95% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2656,7 +2656,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d8e7241ef6d451241e1d57cb536784a6ef3b05ff0386333f401411d57e46b598"
+      "sourceSha256": "27629418d0faf347ddf012e4062fb168073f28dae59a3db1f564587922460256"
     },
     {
       "id": "api-aide-app-workbench-records",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "63d2dba8e6dc167b1748906619c7496b11cdec0f3f938745cb170e44bb230d1b"
+      "sourceSha256": "46f7c4b79fdab54c4c0fd743ddea25012ad0b0443268988982ab9cf37077ea4e"
     },
     {
       "id": "design-session-profiler",
@@ -22689,7 +22689,7 @@ window.DOCS_INDEX = {
       "phase": "workbench-loops WL-1a",
       "reviewBy": "2026-11-18",
       "reviewSuggested": [],
-      "summary": "T28 n1's /investigate of the user's report that the compiled prompt did not show in the compiled field after a submit. Reproduced on the product composition with a real Ctrl+Enter: the text goes from 69 chars to 0 while the box keeps its 48 px floor. The verified cause is the submit's own reset of the draft (BeginNextTurn on Admit), not layout. Node 2 lands Ruling 181: the field keeps the sent turn headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; the resend guard is proved by a planted-leak mutation; Ruling 96's tests are re-driven through the gesture.",
+      "summary": "T28 n1's /investigate of the user's report that the compiled prompt did not show in the compiled field after a submit. Reproduced on the product composition with a real Ctrl+Enter: the text goes from 69 chars to 0 while the box keeps its 48 px floor. The verified cause is the submit's own reset of the draft (BeginNextTurn on Admit), not layout. Node 2 lands Ruling 181: the field keeps the sent turn headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; the resend guard is proved by a planted-leak mutation; Ruling 96's tests are re-driven through the gesture. Node 3: a queued send shows its turn headed 'Compiled prompt — queued as b{n}' under the same guard (mutation red M3), and the class gate ComposerContentOraclesDriveTheGestureTests refuses a content oracle that skips the gesture.",
       "tags": [
         "workbench-loops",
         "wl-1a",
@@ -22705,7 +22705,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "459d647a38f3c4b4790fc1baf61dee18f9bb5234cbab4c21e9116f9339fd0ca1"
+      "sourceSha256": "ca7f10ece742bc39e02a950c637a827f54bf9ac0f8fb1feb90c13096f5d0855e"
     },
     {
       "id": "proof-workbench-loops-wl-1a-compiled-field-handoff",
@@ -22717,7 +22717,7 @@ window.DOCS_INDEX = {
       "phase": "workbench-loops WL-1a",
       "reviewBy": "2026-11-18",
       "reviewSuggested": [],
-      "summary": "T28 after node 2: Ruling 181 (1)-(3) landed red then green through the user's gesture. The field keeps the sent turn, headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; a second Ctrl+Enter sends nothing (planted-leak mutation red); Ruling 96's tests are re-driven. Next is n3, the class gate.",
+      "summary": "T28 after node 3: a queued send shows its turn headed 'Compiled prompt — queued as b{n}', display-only, until the next keystroke (red then green); a second press right after it queues and sends nothing, and after the drain sends nothing (planted-leak mutation red M3); the class gate ComposerContentOraclesDriveTheGestureTests refuses a composer content oracle that skips the gesture (red on a plant, green on the tree). Next is T30 (Ruling 180, the prefill).",
       "tags": [
         "workbench-loops",
         "evidence",
@@ -22733,7 +22733,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "497ddc301e4126bf611c147185d374b5de70f3b6ae4967a3d29d04697b2406eb"
+      "sourceSha256": "9f55e911d99d36296dd2f8fa071ad3f0756024a035f33bbe998a152df02b0f09"
     },
     {
       "id": "proof-workbench-loops-wl-1a-dispose-race",
@@ -25087,5 +25087,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "482222a255465df56b6cc08b8f56a4cd2bfc2ed776d1cc99f3e219492b2e9de1"
+  "graphSha256": "b6b98ddece702224845f9b9b6f00f7a03963132c73e7039dab4b632837bb4caf"
 };

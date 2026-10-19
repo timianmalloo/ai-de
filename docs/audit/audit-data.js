@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T17:23:17Z",
+  "generated": "2026-10-19T18:20:32Z",
   "audit": [
     {
       "actor": null,
@@ -25735,6 +25735,59 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T16:48:22Z",
       "duration_seconds": 2095.0
+    },
+    {
+      "id": "al-01M5ANHA7RDMHN7322X7PWE3KP",
+      "shortname": "wl-t28-compiled",
+      "datetime": "2026-10-19T18:07:16Z",
+      "session": "wl-t28-compiled",
+      "prompt": "T28 n3: a queued send shows its prompt headed 'Compiled prompt — queued as b{n}'; the resend guard holds for the queued state; the DC-NEW-wl-t28-compiled class gate",
+      "summary": "A: QueuedHeadingFormat + BeginNextTurn heads a queued submit (13b32da6 red, 1874cb5e green) + DESIGN row. B: queued resend guard test, mutation red M3 resent b2 as b3 (65bde9a9), green db516197. C: ComposerContentOraclesDriveTheGestureTests gate, red on a plant (d4995b84), green on the tree (23c7c461), DC-NEW status partially-controlled. Core 3046/0/1, App 1177/2/2 (ADeadHolder passes alone; SolutionTreeChord Ruling 155 (3)).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "every submit, sent or queued, shows its prompt in the compiled field, nothing shown can be sent again, and the class is closed by a gate",
+      "done_when": "A, B, C red then green through the gesture, committed; suite-node3.txt; README/handoff; done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T17:23:56Z",
+      "duration_seconds": 2600.0
+    },
+    {
+      "id": "al-01M5AP9K2YHXT98FK4HZ5C96VW",
+      "shortname": "join-wl1a-compiled-field-n3",
+      "datetime": "2026-10-19T18:20:31Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T28 n3 (Opus): queued-as heading after a queued send (Owner direction under Ruling 181 (1)); the queued resend guard (planted-leak mutation red resent b2 as b3); ComposerContentOraclesDriveTheGestureTests class gate (red on a planted bare-composer assertion; 3 shrink-only pre-admit entries). Recount ran in full (App 1181 counted; Core 3047/2864/183); its only refusal was SolutionTreeChordTests 'foreground not held', which refused alone on the join head ae24e512 and on the first parent b9e740d5 in a clean detached tree (Ruling 155 (3), NOT CHECKED). NoDispatchOutsideTheHostTests.ADeadHolder (load-only failure in n3's suite) did not recur in this recount. Owed next: n4 drain heading (Owner). recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/compiled-field/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 181 (1)/(3): every submit shows its prompt; the class gate",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T18:20:30Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -31324,6 +31377,42 @@ window.AUDIT_DATA = {
       "kind": "kick",
       "ref": null,
       "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5AKFY8NV3SZCV0GA416P0CV",
+      "ts": "2026-10-19T17:31:34Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5AKXF0PDWBMM0P9HXM95QHP",
+      "ts": "2026-10-19T17:38:57Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t28-compiled",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5ANHTWJWMGVVEGDRX767MQT",
+      "ts": "2026-10-19T18:07:33Z",
+      "from": "wl-t28-compiled",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t28-compiled"
+    },
+    {
+      "id": "mail-01M5ANZD1FS9H08KNW5VCP3GX2",
+      "ts": "2026-10-19T18:14:57Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
     }
   ]
 };
