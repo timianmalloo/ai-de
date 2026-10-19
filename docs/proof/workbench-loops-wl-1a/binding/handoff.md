@@ -1,6 +1,6 @@
 ---
 id: proof-workbench-loops-wl-1a-binding-handoff
-title: "Hand-off — WL-1a T8 node 4: withdraw a host-held turn, no dispatch outside the host"
+title: "Hand-off — WL-1a T8 nodes 4 and 5: withdraw a host-held turn, no dispatch outside the host, Send disabled"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -14,8 +14,55 @@ review-by: "2026-11-18"
 summary: >-
   Track T8 (wl-t8-bind) node 4: attempt.withdraw (Rejected/never_dispatched plus the completed command receipt in one
   store transaction) and Cancel on a host-held turn; Ruling 159 — a turn waits for the host's open, a window that
-  cannot open it refuses and never runs directly, the epoch is read at dispatch. UIA names and the composer's disabled
-  Send are handed to node 5.
+  cannot open it refuses and never runs directly, the epoch is read at dispatch. Node 5: the composer's Send is disabled
+  with the host's refusal (UIA help text, Retry wired to RetryHostAsync); the no-client refusal, the pipe test, the
+  execution-state UIA names and the withdrawn copy are handed to node 6.
+---
+
+# WL-1a T8 node 5 — hand-off
+
+Node 5 started at 8bb6db9c. It finished one of its three checks. Rule 16's 21-minute window ended before the other two.
+
+## Done
+
+| Check | Tests (`tests/AiDe.App.Tests/Workbench/Records/NoDispatchOutsideTheHostTests.cs`) | Red | Green |
+|---|---|---|---|
+| 1 Ruling 159(1), finished | `WhileAnotherWindowHoldsTheHost_SendIsDisabledWithTheCopy_TheViewsStillWork_AndClosingTheHolderEnablesIt` · `AnyOtherOpenFailure_DisablesSendWithItsCause_AndTheRetryControlBindsTheHost` | `send-disabled-red.txt` (372778c5). Both are assertion failures: "Send stayed enabled …" | `send-disabled-green.txt` (629be5ac). All 7 tests in the class pass |
+
+What changed:
+- `NotebookRuns.HostRefusalChanged` is raised on the home context. A `HostedElsewhere` refusal tries the open again
+  every `HolderProbe` (1 s) until it binds or the workspace closes. So the copy shows only while a live holder exists.
+  Any other cause stops, and waits for the operator's Retry.
+- `ComposerSurface.ShowHostRefusal(refusal, retry)` disables Send and sets its UIA HelpText to the refusal. It shows the
+  refusal in the status line, and shows a `Retry hosting runs` button when a retry is given. `Send()` refuses while Send
+  is disabled, so Ctrl+Enter follows the button. The composer surface and the document stay enabled (the read-only views).
+- `SessionDocumentSurface` sends the refusal to the composer. Retry is offered only for causes other than `HostedElsewhere`.
+
+## Not done / next (node 6)
+
+1. **Check 2, not started: no turn runs unrecorded.** `NotebookRuns.Start` still runs a turn directly
+   (`RunAsync`, via `GovernedRunHost`) when there is no host and no opener. 27 App test files send turns or use
+   `GovernedRunHost`, and only 6 bind a host. So a refusal here turns most of them red. Next step: count which of the 27
+   rely on the direct path, then either bind them to a fixture host or ask the Leader for a ruling on test shells. The
+   pipe test for `attempt.withdraw` (like T14's `TheThreeOperations_RoundTripOverThePipe`) is part of this check.
+2. **Check 3, not started:** the UIA names for the execution states.
+3. **The withdrawn copy (Owner ruling, Leader mail to node 5): not done. It needs two answers first.**
+   - The Cancelled reason sentence `TurnCopy.ReasonSentence` (Core, `SessionThread.cs:354`) is shared with Ruling 95's
+     queued-turn cancel ("Cancelled before it was sent; its words went back to the editor."). A T3-owned test pins that
+     string: `tests/AiDe.Core.Tests/Sessions/Thread/TheQueuedTurnIsOneTurnOfTheStreamTests.cs:109`. If the string is
+     replaced with "b2 cancelled by you before it was sent.", the queued cancel changes too and that test fails. Does the
+     ruling cover both cases, and is that test file granted?
+   - Condition (c), "the UIA name of that turn row carries the same words": the row's UIA Name is `TurnCopy.Name`
+     (the ordinal and the turn's words) for every state, and the reason sentence is its HelpText
+     (`ThreadFeed.cs:485-487`). Putting the sentence in the Name changes `TurnCopy.Name`, which is outside the one-string
+     grant. Is HelpText meant, or is `Name` granted?
+4. Earlier residuals stand: `attempt.withdraw` has no daemon-pipe test (see 1).
+
+## Suites, node 5
+
+See `suite-core.txt` and `suite-app.txt` (this node's runs). The `SolutionTreeChordTests` re-run alone is in
+`solution-tree-chord-alone.txt`.
+
 ---
 
 # WL-1a T8 node 4 — hand-off
