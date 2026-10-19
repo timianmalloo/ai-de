@@ -1,0 +1,3 @@
+verify-surface-ownership: FAILED
+  - src/AiDe.App/Workbench/Execution/ExecutionSurface.cs has no owner in §2 and is not listed as unassigned. With no entry to look up, an owner gets inferred from what the symptom looks like — which has already sent a Core-owned registry defect to the design session. Add a row to §2, or add it to UNASSIGNED in tools/verify-surface-ownership.py with the reason.
+exit 1
