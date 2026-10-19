@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Versioning;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
 using AiDe.Core.Store.Records;
 using AiDe.Core.Workbench;
+using Xunit.Abstractions;
 
 namespace AiDe.App.Tests.Records;
 
@@ -32,7 +34,7 @@ namespace AiDe.App.Tests.Records;
 /// host, a new model and a new surface over the same store and the same session envelope file.
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
+public sealed class TheReadBackRunsWhenTheHostBindsTests(ITestOutputHelper output) : IDisposable
 {
     private readonly NotebookFixture _fixture = new();
 
@@ -78,6 +80,7 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
                 configure: window => { window.Width = 1440; window.Height = 900; },
                 body: async (window, border) =>
                 {
+                    using var timings = new Timings();
                     using var shell = new WorkbenchShell(client);
                     border.Child = shell.WorkbenchRoot;
 
@@ -99,6 +102,15 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
                     Assert.Equal(["b1 first words", "b2 second words"], rows.Select(r => r.DisplayOrdinal + " " + r.Words));
                     Assert.Equal([Line(recorded.A!), Line(recorded.B!)], rows.Select(r => r.BindingLine));
                     await document.LastReadBack.WaitAsync(NotebookFixture.Bound);
+
+                    // Ruling 175(4) through the shell's own path: the open and the read-back each emit their duration.
+                    var open = Assert.Single(timings.Of("notebook.host-open", model));
+                    Assert.Equal("bound", open.GetProperty("outcome").GetString());
+                    var read = Assert.Single(timings.Of("notebook.read-back", model));
+                    Assert.Equal("read", read.GetProperty("outcome").GetString());
+                    Assert.Equal(2, read.GetProperty("attempts").GetInt32());
+                    output.WriteLine("timing " + open.GetRawText());
+                    output.WriteLine("timing " + read.GetRawText());
                     border.Child = null;
                 });
         }
@@ -376,6 +388,155 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
     private const string ReadBackFailedLine = "Restoring this notebook's turns failed: the attempt store is locked by a backup. Retry to restore them.";
 
     private const string HostOpenFailedLine = "Runs cannot be hosted in this window: the lock file's folder is read-only Retry to open the host again.";
+
+    /// <summary>How long each held step takes at least, measured by the Stopwatch the durations are measured by.</summary>
+    private static readonly TimeSpan Held = TimeSpan.FromMilliseconds(300);
+
+    /// <summary>
+    /// Ruling 175 (4), node 4 check C: the host open (bind start to bound) and the read-back (start to end) each emit one
+    /// record with its duration on the normal path, with no flag (IO1). Each step here takes at least <see cref="Held"/>,
+    /// so each duration is at least that.
+    /// </summary>
+    [Fact]
+    public void TheHostOpenAndTheReadBack_EachEmitTheirDuration_AtLeastTheTimeEachTook()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                await RecordTwoAttemptsAsync(window);
+                using var timings = new Timings();
+                var (model, surface, opened) = await ReopenTakingAsync(window, () => { AtLeast(Held); return null; });
+                await UntilAsync(window, () => model.Runs.Host is not null, () => "the host never bound");
+                await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
+
+                var open = Assert.Single(timings.Of("notebook.host-open", model));
+                Assert.Equal("bound", open.GetProperty("outcome").GetString());
+                Assert.True(open.GetProperty("duration_ms").GetDouble() >= Held.TotalMilliseconds, open.GetRawText());
+                var read = Assert.Single(timings.Of("notebook.read-back", model));
+                Assert.Equal("read", read.GetProperty("outcome").GetString());
+                Assert.Equal(2, read.GetProperty("attempts").GetInt32());
+                Assert.True(read.GetProperty("duration_ms").GetDouble() >= Held.TotalMilliseconds, read.GetRawText());
+                Close(window, opened()!, model, surface);
+            });
+    }
+
+    /// <summary>
+    /// Ruling 175 (4), check C on failure: an open that fails still emits its duration, with the outcome and the error's
+    /// type, never a duration that reads as a bind. No read-back ran, so none is recorded.
+    /// </summary>
+    [Fact]
+    public void AnOpenThatFails_EmitsItsDuration_WithTheFailedOutcome_AndNoReadBack()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                using var timings = new Timings();
+                var model = _fixture.NewModel();
+                model.Runs.BindHostWhenOpen(
+                    async () =>
+                    {
+                        await Task.Run(() => AtLeast(Held));
+                        throw new IOException("the lock file's folder is read-only");
+                    },
+                    Scope);
+                var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = surface;
+                _fixture.ConfigureStub(surface);
+                await UntilAsync(window, () => model.Runs.HostRefusal is not null && model.Runs.CanRetryHost, () => "the open never failed");
+                await Settle(window);
+
+                var open = Assert.Single(timings.Of("notebook.host-open", model));
+                Assert.Equal("failed", open.GetProperty("outcome").GetString());
+                Assert.Equal(nameof(IOException), open.GetProperty("error_type").GetString());
+                Assert.True(open.GetProperty("duration_ms").GetDouble() >= Held.TotalMilliseconds, open.GetRawText());
+                Assert.Empty(timings.Of("notebook.read-back", model));
+                window.Content = null;
+                surface.Dispose();
+                model.Dispose();
+            });
+    }
+
+    /// <summary>Ruling 175 (4), check C on failure: a read-back that fails still emits its duration, with the outcome.</summary>
+    [Fact]
+    public void AReadBackThatFails_EmitsItsDuration_WithTheFailedOutcome()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                await RecordTwoAttemptsAsync(window);
+                using var timings = new Timings();
+                var (model, surface, opened) = await ReopenTakingAsync(window, () => { AtLeast(Held); return new IOException("the attempt store is locked by a backup"); });
+                await UntilAsync(window, () => model.Runs.HostRefusal is not null, () => "the read-back never failed");
+                await Settle(window);
+
+                var read = Assert.Single(timings.Of("notebook.read-back", model));
+                Assert.Equal("failed", read.GetProperty("outcome").GetString());
+                Assert.Equal(nameof(IOException), read.GetProperty("error_type").GetString());
+                Assert.Equal(JsonValueKind.Null, read.GetProperty("attempts").ValueKind);
+                Assert.True(read.GetProperty("duration_ms").GetDouble() >= Held.TotalMilliseconds, read.GetRawText());
+                Close(window, opened()!, model, surface);
+            });
+    }
+
+    /// <summary>
+    /// A reopen in the shell's order whose open takes at least <see cref="Held"/>, and each of whose read-back reads first
+    /// runs <paramref name="read"/> (null lets the read through; an exception fails it).
+    /// </summary>
+    private async Task<(NotebookModel Model, SessionDocumentSurface Surface, Func<AttemptHost?> Opened)> ReopenTakingAsync(Window window, Func<Exception?> read)
+    {
+        AttemptHost? opened = null;
+        var model = _fixture.NewModel();
+        model.Runs.BindHostWhenOpen(
+            async () =>
+            {
+                await Task.Run(() => AtLeast(Held));
+                opened = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+                return FailingReads.Over(opened, read);
+            },
+            Scope);
+        var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+        window.Content = surface;
+        _fixture.ConfigureStub(surface);
+        await Settle(window);
+        return (model, surface, () => opened);
+    }
+
+    /// <summary>Blocks until <paramref name="span"/> has passed by the Stopwatch, so a held step is never shorter than it.</summary>
+    private static void AtLeast(TimeSpan span)
+    {
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        while (System.Diagnostics.Stopwatch.GetElapsedTime(started) < span)
+        {
+            Thread.Sleep(5);
+        }
+    }
+
+    /// <summary>The workbench diagnostics records written while it lives; the sink it replaced still hears every line.</summary>
+    private sealed class Timings : IDisposable
+    {
+        private readonly ConcurrentQueue<string> _lines = new();
+        private readonly Action<string>? _previous = WorkbenchDiagnostics.Sink;
+
+        public Timings() => WorkbenchDiagnostics.Sink = line =>
+        {
+            _lines.Enqueue(line);
+            _previous?.Invoke(line);
+        };
+
+        public JsonElement[] Of(string evt, NotebookModel model) =>
+            [.. _lines.Select(l => JsonDocument.Parse(l).RootElement)
+                .Where(r => r.TryGetProperty("evt", out var e) && e.GetString() == evt
+                    && r.TryGetProperty("notebook", out var n) && n.GetString() == model.Id.Value)];
+
+        public void Dispose() => WorkbenchDiagnostics.Sink = _previous;
+    }
 
     /// <summary>Ruling 175 (1): the restoring sentence is DESIGN.md's copy, one row citing the ruling, pinned to the const.</summary>
     [Fact]
