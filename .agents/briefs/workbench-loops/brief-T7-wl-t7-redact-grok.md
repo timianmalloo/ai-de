@@ -41,8 +41,8 @@ for a genuine product trade-off the repo, spec, ADRs or a spike cannot answer, w
 and a default.
 
 1. **First command, before any reading:** in your tree,
-   `cd C:\Projects\ai-de-wl1a-redaction && AGENT_SESSION=wl-t7-redact AGENT_HOST=grok AGENT_WI=workbench-loops python docs/ai-forward-pack/scripts/audit-log.py start --session wl-t7-redact --skill implement`.
-   Prefix **every** coord / audit-log / git command with `AGENT_SESSION=wl-t7-redact AGENT_HOST=grok AGENT_WI=workbench-loops`.
+   `cd C:\Projects\ai-de-wl1a-redaction && AGENT_SESSION=wl-t7-grok AGENT_HOST=grok AGENT_WI=workbench-loops python docs/ai-forward-pack/scripts/audit-log.py start --session wl-t7-grok --skill implement`.
+   Prefix **every** coord / audit-log / git command with `AGENT_SESSION=wl-t7-grok AGENT_HOST=grok AGENT_WI=workbench-loops`.
 2. **Your tree is `C:\Projects\ai-de-wl1a-redaction` (branch `wl1a-redaction`).** Every shell command starts with `cd C:\Projects\ai-de-wl1a-redaction && `.
    Every Read/Edit/Write uses an absolute path under `C:\Projects\ai-de-wl1a-redaction\`. **Never** touch `C:\Projects\ai-de\`
    (the primary checkout) or another track's tree. **Never change into another checkout.**
@@ -71,8 +71,8 @@ and a default.
    no Co-Authored-By trailer (the runner records the harness and served model). The Leader joins via `conductor-join.py`.
 10. **No dead code survives** (HYG-A): no commented-out code, no unused members.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
-    `DC-NEW-wl-t7-redact` (class / sweep / derive / prevent), in the same commit as the fix.
-12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "wl-t7-redact" --session wl-t7-redact --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
+    `DC-NEW-wl-t7-grok` (class / sweep / derive / prevent), in the same commit as the fix.
+12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "wl-t7-grok" --session wl-t7-grok --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
     commit it; then `coord mail send --to wl-leader2-20261019 --kind done --body "<exit evidence: commits, test names, proof files>"`.
     Your final message to the Leader is the same exit-evidence report: every commit sha (red and green),
     every test name added, every proof file, the suite result with pass/fail counts, any seam request
