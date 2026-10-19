@@ -1,0 +1,25 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.Restore_DeletesTheStaleWalAndShmSidecars_SoNothingReplaysOverTheSnapshot [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.WriteUnderWal_Capture_WriteMore_Restore_YieldsPreMigrationRowsOnly [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.Restore_DeletesTheStaleWalAndShmSidecars_SoNothingReplaysOverTheSnapshot [49 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.Restore_DeletesTheStaleWalAndShmSidecars_SoNothingReplaysOverTheSnapshot() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 267
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.WriteUnderWal_Capture_WriteMore_Restore_YieldsPreMigrationRowsOnly [52 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 2
+Actual:   0
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.WalSafeSnapshotTests.WriteUnderWal_Capture_WriteMore_Restore_YieldsPreMigrationRowsOnly() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 251
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 111 ms - AiDe.Core.Tests.dll (net10.0)

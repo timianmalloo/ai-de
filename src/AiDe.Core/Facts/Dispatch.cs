@@ -50,6 +50,29 @@ public enum DispatchState
     /// confirm a new dispatch key (ADR-0006).
     /// </summary>
     DeliveryUnknown,
+
+    // ---- ADR-0039 §3: the one outcome vocabulary (schema v2). The PTY values above stay readable.
+
+    /// <summary>The native-route host launched the attempt. At most one per attempt.</summary>
+    Dispatched,
+
+    /// <summary>A stop was requested for a running attempt.</summary>
+    StopRequested,
+
+    /// <summary>A pending permission request was cancelled because the attempt was stopped.</summary>
+    PermissionCancelledByStop,
+
+    /// <summary>Terminal: the host's own correlated prompt completed.</summary>
+    ResponseComplete,
+
+    /// <summary>Terminal: the attempt was interrupted.</summary>
+    Interrupted,
+
+    /// <summary>A worktree was provisioned for the attempt; <c>detail</c> carries <c>{path, branch}</c>.</summary>
+    WorktreeProvisioned,
+
+    /// <summary>A worktree was disposed; <c>detail</c> carries <c>{kind, reason, dirty}</c>.</summary>
+    WorktreeDisposed,
 }
 
 /// <summary>The folded receipt for one dispatch key, derived from its attempt and outcome events.</summary>

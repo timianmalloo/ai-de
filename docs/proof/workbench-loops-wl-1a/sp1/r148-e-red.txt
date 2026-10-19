@@ -1,0 +1,86 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"a\":{\"b\":{\"closed\":true}}}") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"Satisfied\":true}") [FAIL]
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"satisfied\":true}") [FAIL]
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"findings\":[{\"id\":\"f1\",\"stale\":false}]}") [FAIL]
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"current\":true}") [FAIL]
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"stale\":true}") [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"accepted\":false}") [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.APayloadThatIsNotJson_IsRefused [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"a\":{\"b\":{\"closed\":true}}}") [37 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"Satisfied\":true}") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"satisfied\":true}") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"findings\":[{\"id\":\"f1\",\"stale\":false}]}") [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"current\":true}") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"stale\":true}") [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(payload: "{\"accepted\":false}") [10 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(String payload) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 341
+   at InvokeStub_Ruling148AssessmentPayloadTests.AForbiddenDerivedStateKey_AtAnyDepth_IsRefused(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.APayloadThatIsNotJson_IsRefused [11 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.Ruling148.Violation(Action`1 act, WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 24
+   at AiDe.Core.Tests.SchemaV2.Ruling148AssessmentPayloadTests.APayloadThatIsNotJson_IsRefused() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\Ruling148Tests.cs:line 350
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     8, Passed:     1, Skipped:     0, Total:     9, Duration: 139 ms - AiDe.Core.Tests.dll (net10.0)
+exit=1

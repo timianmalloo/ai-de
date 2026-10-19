@@ -174,6 +174,20 @@ public sealed class StoreCompactor(string databasePath)
 
                 tx.Commit();
 
+                // Triggers are down on this scratch copy, so nothing enforced the trigger-backed references
+                // while rows were deleted. Run the migration gate's own queries before the copy can be swapped in.
+                foreach (var check in WorkspaceSchema.ReferenceChecks)
+                {
+                    using var count = rebuilt.CreateCommand();
+                    count.CommandText = check.CountSql;
+                    var violations = Convert.ToInt64(count.ExecuteScalar());
+                    if (violations != 0)
+                    {
+                        throw new WorkspaceStoreException(StoreErrorCodes.ReferenceViolation,
+                            $"compaction refused: {check.Name} found {violations} {check.Failed}");
+                    }
+                }
+
                 Execute(rebuilt, WorkspaceSchema.TriggerSql());
                 Execute(rebuilt, "VACUUM;");
             }

@@ -1,0 +1,53 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.58]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [FAIL]
+[xUnit.net 00:00:00.58]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.TheV1Baseline_IsFrozen [FAIL]
+[xUnit.net 00:00:00.79]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AFailedMigration_PutsTheV1StoreBack_AndOpenReportsIt [FAIL]
+[xUnit.net 00:00:00.99]     AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AV1Store_MigratesToV2_CarryingEveryRowAndBackfillingNothingItCannotKnow [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api [229 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AMigratedStore_AcceptsTheV2Api() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 91
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.TheV1Baseline_IsFrozen [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "a1e6b5f8fb7ed7fc6f5d5a9e5ab3a3f34f6c0a0a0"···
+Actual:   "377d2dbc5d4b8949506e70f8e059bedcf756b80a5"···
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.TheV1Baseline_IsFrozen() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 32
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AFailedMigration_PutsTheV1StoreBack_AndOpenReportsIt [208 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AFailedMigration_PutsTheV1StoreBack_AndOpenReportsIt() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 117
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AV1Store_MigratesToV2_CarryingEveryRowAndBackfillingNothingItCannotKnow [202 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.SchemaV2.MigrationGoldenTests.AV1Store_MigratesToV2_CarryingEveryRowAndBackfillingNothingItCannotKnow() in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\MigrationTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 652 ms - AiDe.Core.Tests.dll (net10.0)

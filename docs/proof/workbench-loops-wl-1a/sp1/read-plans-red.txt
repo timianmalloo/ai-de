@@ -1,0 +1,226 @@
+
+Test run for C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadNotebookRevision", sql: "SELECT draft_id, revision_no, body, parent_revisio"···) [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadOutcomes", sql: "SELECT dispatch_key, state, error_code, cause, det"···) [FAIL]
+[xUnit.net 00:00:00.48]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadAttempt", sql: "SELECT dispatch_key, workspace_id, workspace_epoch"···) [FAIL]
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadObligations", sql: "SELECT obligation_id, checklist_id, revision, text"···) [FAIL]
+[xUnit.net 00:00:00.57]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadLatestProfileObservation", sql: "SELECT profile_key, kind, value, source, observed_"···) [FAIL]
+[xUnit.net 00:00:00.61]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadLatestAssessment", sql: "SELECT assessment_id, kind, scope, baseline, omiss"···) [FAIL]
+[xUnit.net 00:00:00.66]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadEvidenceLinks", sql: "SELECT link_id, subject_kind, subject_id, subject_"···) [FAIL]
+[xUnit.net 00:00:00.70]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadDispositions", sql: "SELECT subject_kind, subject_id, kind, actor, base"···) [FAIL]
+[xUnit.net 00:00:00.74]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadNotebook", sql: "SELECT notebook_id, owner_journey_id, legacy, vers"···) [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadNotebookRevision", sql: "SELECT draft_id, revision_no, body, parent_revisio"···) [72 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadOutcomes", sql: "SELECT dispatch_key, state, error_code, cause, det"···) [40 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadAttempt", sql: "SELECT dispatch_key, workspace_id, workspace_epoch"···) [42 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadObligations", sql: "SELECT obligation_id, checklist_id, revision, text"···) [44 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadLatestProfileObservation", sql: "SELECT profile_key, kind, value, source, observed_"···) [41 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadLatestAssessment", sql: "SELECT assessment_id, kind, scope, baseline, omiss"···) [44 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadEvidenceLinks", sql: "SELECT link_id, subject_kind, subject_id, subject_"···) [47 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadDispositions", sql: "SELECT subject_kind, subject_id, kind, actor, base"···) [41 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadNotebook", sql: "SELECT notebook_id, owner_journey_id, legacy, vers"···) [38 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.78]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadPermissionDecision", sql: "SELECT session_id, run_id, seq, action, scope, arg"···) [FAIL]
+[xUnit.net 00:00:00.82]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadJourney", sql: "SELECT journey_id, purpose, title, origin_scope, o"···) [FAIL]
+[xUnit.net 00:00:00.86]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadHarnessProfileByKey", sql: "SELECT profile_id, engine_id, family, native_home,"···) [FAIL]
+[xUnit.net 00:00:00.89]     AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadHarnessProfile", sql: "SELECT profile_id, engine_id, family, native_home,"···) [FAIL]
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadPermissionDecision", sql: "SELECT session_id, run_id, seq, action, scope, arg"···) [39 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadJourney", sql: "SELECT journey_id, purpose, title, origin_scope, o"···) [39 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadHarnessProfileByKey", sql: "SELECT profile_id, engine_id, family, native_home,"···) [36 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(name: "SqlReadHarnessProfile", sql: "SELECT profile_id, engine_id, family, native_home,"···) [34 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: journey_dim'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at AiDe.Core.Store.StoreWriter.ScalarRow(String sql, ValueTuple`2[] parameters) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 185
+   at AiDe.Core.Store.StoreWriter.AppendJourney(JourneyRow row) in C:\Projects\ai-de-sp1-schema-v2\src\AiDe.Core\Store\Records\StoreWriter.Workbench.cs:line 16
+   at AiDe.Core.Tests.SchemaV2.SchemaV2Support.SeedEveryV2Table(WorkspaceStore store) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\SchemaV2Support.cs:line 132
+   at AiDe.Core.Tests.SchemaV2.ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(String name, String sql) in C:\Projects\ai-de-sp1-schema-v2\tests\AiDe.Core.Tests\Store\SchemaV2\ConstraintTests.cs:line 424
+   at InvokeStub_ReadPlanTests.TheReadIsAnIndexSearch_NeverAFullScan(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:    13, Passed:     0, Skipped:     0, Total:    13, Duration: 576 ms - AiDe.Core.Tests.dll (net10.0)

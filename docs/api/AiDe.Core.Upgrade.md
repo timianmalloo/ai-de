@@ -223,10 +223,20 @@ Copies the store aside so a migration can be undone.
 which no store exists at all — which is the one state a crash must never find, and the exact
 instant this whole mechanism is defending.
 
+
+
+
+
+**WAL-safe.** A store in WAL mode keeps recent commits in its `-wal` file, so copying
+only the main file captures a database that is missing them. A SQLite database is therefore
+captured with `VACUUM INTO`, which reads one consistent view through the engine. The restore
+deletes the `-wal`/`-shm` sidecars first: left in place, SQLite would replay frames from
+after the snapshot over the restored file.
+
 | Member | Summary |
 |---|---|
-| `string Capture(string storePath, string directory)` | Copies  into . |
-| `void Restore(string snapshotPath, string storePath)` | Puts a snapshot back. |
+| `string Capture(string storePath, string directory)` | Captures  into . |
+| `void Restore(string snapshotPath, string storePath)` | Puts a snapshot back, discarding any WAL the replaced file left behind. |
 
 ## `UpgradeResult`
 

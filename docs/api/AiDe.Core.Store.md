@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 10 types, 56 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 13 types, 95 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**10 public types · 56 public members · 71% documented.**
+**13 public types · 95 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -37,6 +37,306 @@ and being shown a class called `Element` is correct and looks like a bug until t
 *record* — `NodeSearchHit.cs`
 
 One search hit: the node, why it matched, and the text that matched.
+
+## `StoreReader`
+
+*class* — `StoreReader.Workbench.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `JourneyRow? ReadJourney(string journeyId)` | The latest version of one journey, or null. |
+| `IReadOnlyList<JourneyRow> ListJourneys()` | Every journey's latest version, in creation order. |
+| `NotebookRow? ReadNotebook(string notebookId)` | **(gap)** |
+| `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
+| `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
+| `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
+| `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
+| `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
+| `AssessmentRow? ReadLatestAssessment(string kind, string scope)` | The newest assessment of one kind for one scope (any baseline), or null. |
+| `IReadOnlyList<DispositionRow> ReadDispositions(string subjectKind, string subjectId)` | Every disposition on one subject, oldest first. The caller picks the current one per actor. |
+| `IReadOnlyList<ObligationRow> ReadObligations(string checklistId, int revision)` | The obligations of one checklist revision. |
+| `int? ReadLatestChecklistRevision(string checklistId)` | The highest checklist revision recorded, or null. |
+| `HarnessProfileRow? ReadHarnessProfile(string profileId)` | The latest version of one harness profile, or null. |
+| `HarnessProfileRow? ReadHarnessProfileByKey(long profileKey)` | One profile version by the surrogate key an attempt carries. |
+| `IReadOnlyList<HarnessProfileRow> ListHarnessProfiles()` | **(gap)** |
+| `ProfileObservationRow? ReadLatestProfileObservation(long profileKey, string kind)` | The newest observation of one kind on one profile version, or null (= Not recorded). |
+| `(long Generation, string ArtifactRevision, int AssertionCount)? LatestCommittedSnapshot(string scopeId)` | The latest committed generation for a scope, or null if nothing complete exists yet. |
+| `IReadOnlyList<StoredAssertion> CurrentAssertions(string scopeId)` | Current evidence for a scope: assertions of the latest COMPLETE snapshot only. A partial or superseded snapshot never contributes, so the graph cannot silently mix generations. |
+| `IReadOnlyList<StoredAssertion> AssertionsTouching(string nodeId, int limit)` | Assertions where the node is the subject OR the object, bounded in SQL. |
+| `int CountAssertionsTouching(string nodeId)` | Total assertions touching a node, so a bounded read can report what it omitted. |
+| `IReadOnlyList<StoredAssertion> OutgoingAssertions(string nodeId, int limit)` | Outgoing edges only — one traversal step of a bounded impact walk. |
+| `StoredAssertion? DeclaringAssertion(string nodeId)` | Assertions with a given predicate — the knowledge projection's entry point.  The assertion that says where a node was DECLARED — its scope and its path within it. |
+| `IReadOnlyList<(string Callee, string Member, string Location)> OutgoingCallsInOrder(` | One caller's outgoing calls, in the order they are written. |
+| `IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit)` | The distinct files the graph knows about, each with a node that is declared in it. |
+| `IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch()` | Same grain as `FilesToSearch(int)` with no silent LIMIT — the tree projection ranks and omits, and a store cap would drop files without `OmittedByCap`. |
+| `string? ScopeLocation(string scopeId)` | Where a scope's files live, relative to the workspace root, or null when it never said. |
+| `IReadOnlyList<(string ScopeId, string DeclaredAt)> AllScopeLocations()` | Every latest-generation `declared_at`, so coverage can join without a second walk. |
+| `(IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(` | The ids currently classified as knowledge.  The knowledge nodes a query asks for, with their declared type, and how many matched in all. |
+| `IReadOnlyList<(string NodeId, string TypeKind)> SourceHasTypeNodes()` | Latest-generation source `has_type` nodes (not knowledge). D-1 UV-0 listing input. Unbounded in SQL; the projection applies the listing cap so omitted count is honest. |
+| `IReadOnlyList<(string TypeNodeId, string Member)> SourceHasMembers()` | Latest-generation `has_member` facts. Listing display only — not Core observation ids (r5). |
+| `IReadOnlySet<string> KnowledgeNodeIds(int limit)` | **(gap)** |
+| `IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)` | **(gap)** |
+| `IReadOnlyList<string> ReadDeclaredSubjects()` | Node identities matching a substring, with the total matched so omissions are reportable.  Subjects this workspace's own artifacts DECLARE — the things it owns. |
+| `(IReadOnlyList<NodeSearchHit> Matches, int TotalMatched) SearchNodes(string term, int limit)` | Nodes whose identity contains the term, and nodes one of whose ATTRIBUTE VALUES does. |
+| `long HighestDesiredGeneration()` | The highest generation any scope has ever been asked for, or 0 for an empty store. |
+| `string CurrentSourceRevision()` | The source revision currently rendered, for a result's provenance header. |
+| `IReadOnlyList<StoredAssertion> CurrentAssertionPage(` | All current assertions across every scope that has a complete snapshot.  A page of the current assertions, ordered stably, starting after . |
+| `IReadOnlyList<StoredAssertion> AllCurrentAssertions()` | **(gap)** |
+| `DispatchReceipt? ReadDispatchReceipt(string dispatchKey)` | Folds a dispatch key's attempt + outcome events into one displayed receipt. |
+| `IReadOnlyList<string> PendingDispatchKeys()` | Dispatch keys with an attempt but no outcome — what recovery must resolve. |
+| `string? ReadCommandOutcome(string workspaceId, CallerPrincipal caller, string commandType, string commandId)` | **(gap)** |
+| `(long Generation, SessionProcessingClass ProcessingClass)? ReadSession(string sessionId)` | **(gap)** |
+| `string? ReadNodeKind(string nodeId)` | **(gap)** |
+| `string? ReadNodeLabel(string nodeId)` | **(gap)** |
+| `IReadOnlyCollection<string> ReadKnowledgeIds(IReadOnlyCollection<string> nodeIds)` | Which of  the workspace classifies as knowledge. |
+| `IReadOnlyList<(string Subject, string Predicate, string Object, string Status, int Count, string Revision)>` | Reads the labelled cache. Provably equal to its derivation — see the rebuild test. |
+| `void Dispose()` | **(gap)** |
+
+### `IReadOnlyList<StoredAssertion> AssertionsTouching(string nodeId, int limit)`
+
+Assertions where the node is the subject OR the object, bounded in SQL.
+
+**Remarks.** Deliberately a UNION ALL of two single-column lookups rather than one `OR` predicate:
+SQLite will not use two different indexes to satisfy one OR, so the OR form degrades into
+the full scan this method exists to avoid (measured, P1-PERF 2026-08-26).
+
+### `StoredAssertion? DeclaringAssertion(string nodeId)`
+
+Assertions with a given predicate — the knowledge projection's entry point.
+
+The assertion that says where a node was DECLARED — its scope and its path within it.
+
+**Remarks.** Asked of the store rather than picked out of a neighbour list, because a neighbour list
+is capped. The content reader first filtered `AssertionsTouching(id, 50)` for the fact
+carrying a path, and on a node with 244 edges that fact was not among the first 50 — so the
+most connected types in a real workspace reported "no recorded source" while the least
+connected ones worked. DC-035, in code written the same day the class was recorded twice.
+
+
+
+
+
+Ordered so a declaration wins over a mention: `has_type` and `declared_in` are
+what a producer emits ABOUT a thing it declared, and their provenance is that thing's own
+file. Any other assertion's path is where it was REFERRED to.
+
+### `IReadOnlyList<(string Callee, string Member, string Location)> OutgoingCallsInOrder(`
+
+One caller's outgoing calls, in the order they are written.
+
+**Remarks.** The interaction, as opposed to the relationship. `calls` is deduplicated to one
+row per `(caller, callee)` pair — right for a graph, where the same relationship written
+seven times is one arrow, and wrong for a sequence diagram, where `A→B, A→C, A→B` must
+stay three messages. A diagram that silently drops a repeat is confidently incomplete.
+
+
+
+
+
+**Ordered by source position, because that is the only order there is.** No ordinal
+column was added: every assertion already carries `source_location` as `line:col`,
+and a call sequence has exactly one correct order — the order it is written in. Sorted
+numerically rather than as text, or line 10 would come before line 9.
+
+### `IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit)`
+
+The distinct files the graph knows about, each with a node that is declared in it.
+
+**Remarks.** The corpus a content search may read. It is the set of files the EXTRACTORS chose to
+index, not the directory tree: walking the tree would open `node_modules`, `bin`
+and every generated bundle the readers already decided to skip, and would return hits in
+files the graph cannot navigate to — a result nobody can act on.
+
+
+
+
+
+One representative node per file, chosen the same way `DeclaringAssertion`
+chooses one: a declaration before a reference, then lowest id for determinism. A file holds
+many nodes and the hit needs somewhere to go, not everywhere it could go.
+
+### `string? ScopeLocation(string scopeId)`
+
+Where a scope's files live, relative to the workspace root, or null when it never said.
+
+**Remarks.** Written by the core when it indexes a scope, because the core is what chose the path. An
+empty string is a real answer — the scope IS the workspace root — and is distinct from null,
+which means nothing recorded it and no content can be resolved.
+
+### `(IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(`
+
+The ids currently classified as knowledge.
+
+The knowledge nodes a query asks for, with their declared type, and how many matched in all.
+
+**Remarks.** `node_kind` is the dimension that separates knowledge from source — the one thing that
+knows, now that `has_type` is emitted by six extractors and says nothing about which
+half of the graph a node belongs to (INV-0004).
+
+**The term and the type are applied HERE, not to the result.** The caller used to
+take 200 knowledge ids in id order and then filter them by term in memory, so a search only
+ever saw the alphabetically first 200 of 1,255 — and a document whose id sorted later was
+reported as not existing. That is DC-035 for the third time in this file: a bounded read
+whose filter is applied to the RESULT of the read rather than expressed in it.
+
+
+
+
+
+The total is counted over the same filtered set, so a caller can say what it left out
+instead of presenting a truncation as an answer.
+
+### `IReadOnlyList<string> ReadDeclaredSubjects()`
+
+Node identities matching a substring, with the total matched so omissions are reportable.
+
+Subjects this workspace's own artifacts DECLARE — the things it owns.
+
+**Remarks.** A leading-wildcard LIKE cannot use an index, so this selects only the identity columns: it
+scans a covering index rather than hydrating every row's provenance, which is what made the
+naive version cost a full-corpus materialization.
+
+Distinct from every node in the graph, which also contains external package types a
+repository merely depends on. Any denominator that counts those is measuring the wrong
+population — bounded-context coverage above all, because nobody can assign
+`Azure.Storage.Blobs.BlobClient` to a context in their own codebase.
+
+### `(IReadOnlyList<NodeSearchHit> Matches, int TotalMatched) SearchNodes(string term, int limit)`
+
+Nodes whose identity contains the term, and nodes one of whose ATTRIBUTE VALUES does.
+
+**Remarks.** Identity-only search cannot answer the question a person actually asks. Searching
+`addEventListener` found ONE node by id and could not find the class that HAS that
+member; searching a Bicep resource's deployed name found the name and not the resource.
+MEASURED across TheTerrace: matching attribute values adds 1–14 nodes per term that identity
+search cannot reach at all, and they are the ones a person meant.
+
+
+
+
+
+**An attribute match returns the node that OWNS the attribute, never the value.**
+That is why the original query excluded attribute objects: a value is not a node, and putting
+`api_version = 2023-01-01` in a result list as though it were a thing you can navigate
+to is how dates ended up in the graph. The exclusion was right about the object and wrong
+about the subject — the owner is a real node, and it is the answer.
+
+
+
+
+
+Each row carries WHY it matched and the matched text, because a result whose relevance
+is invisible reads as a wrong result. The evidence is truncated in SQL rather than after, so
+a long value never crosses the boundary just to be trimmed on the far side.
+
+### `long HighestDesiredGeneration()`
+
+The highest generation any scope has ever been asked for, or 0 for an empty store.
+
+**Remarks.** The in-memory counter starts at zero on every open, so without this a workspace's SECOND
+index after a restart re-uses generation 1 and violates the desired-generation primary key.
+The daemon opens the store fresh every time it starts, which made "index, restart, index"
+a guaranteed failure — found by a test that indexed twice across a reopen, which nothing had
+done before.
+
+### `IReadOnlyList<StoredAssertion> CurrentAssertionPage(`
+
+All current assertions across every scope that has a complete snapshot.
+
+A page of the current assertions, ordered stably, starting after .
+
+**Remarks.** A deliberate full read, used only where the whole set IS the answer — the claim-cache rebuild.
+Bounded reads must never call this: at 50,000 edges it costs roughly 350 ms of materialization
+no matter how small the caller's result is (measured, P1-PERF 2026-08-26).
+
+**Paged because the caller is across a pipe.** The panes want every current
+assertion — 12,085 of them on one real repository — and they were reconstructing that set one
+node at a time through `Describe`, which is bounded at 50 neighbours per node and lost
+two join edges out of 124 doing it. A single unbounded response would blow the result-byte
+cap instead, so the answer is neither: pages, with a cursor.
+
+
+
+
+
+The cursor is the last row's `(subject, predicate, object)` — the same tuple the
+ORDER BY uses, so a page boundary cannot skip or repeat a row. An id-based cursor would order
+by something the query does not, which is how paging quietly loses records.
+
+### `IReadOnlyCollection<string> ReadKnowledgeIds(IReadOnlyCollection<string> nodeIds)`
+
+Which of  the workspace classifies as knowledge.
+
+**Remarks.** Reads the same `node_class = knowledge` fact `GraphProjection` reads, rather
+than deciding again from the kind. Two authorities on what counts as knowledge is the shape
+of INV-0004 — where a hardcoded default rendered a table, a bicep resource and a class all as
+"source" — and two definitions of one quantity is a defect signature in its own right.
+
+
+
+
+
+Bounded by the caller's id list, so it costs what the result costs rather than what the
+graph costs (P1-PERF-02); an empty input reads nothing at all.
+
+## `StoreWriter`
+
+*class* — `StoreWriter.Workbench.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `void AppendJourney(JourneyRow row)` | **(gap)** |
+| `void AppendNotebook(NotebookRow row)` | **(gap)** |
+| `void AppendNotebookRevision(NotebookRevisionRow row)` | **(gap)** |
+| `void AppendAttempt(AttemptRow row)` | **(gap)** |
+| `void AppendOutcome(OutcomeRow row)` | **(gap)** |
+| `void AppendPermissionDecision(PermissionDecisionRow row)` | **(gap)** |
+| `void AppendEvidenceLink(EvidenceLinkRow row)` | **(gap)** |
+| `void AppendAssessment(AssessmentRow row)` | **(gap)** |
+| `void AppendDisposition(DispositionRow row)` | **(gap)** |
+| `void AppendObligation(ObligationRow row)` | **(gap)** |
+| `long AppendHarnessProfile(HarnessProfileRow row)` | Appends a profile version and returns its surrogate key (what attempts bind to). |
+| `void AppendProfileObservation(ProfileObservationRow row)` | **(gap)** |
+| `long NextIngressSequence()` | Allocates the next total-order position. Monotonic within the workspace. |
+| `void DesireScopeGeneration(string scopeId, long generation, string artifactRevision)` | **(gap)** |
+| `(long Generation, string ArtifactRevision)? ReadDesired(string scopeId)` | The latest desired (generation, revision) pair for a scope, or null if none. |
+| `void CommitSnapshot(` | Commits a complete snapshot and its assertions in ONE transaction, but only when the worker's (generation, revision) pair still equals the durable desired pair. A late or stale worker is rejected here rather than bein… |
+| `void RecordCommandReceipt(` | Records a completed command. Its uniqueness is what makes a retry return the original outcome. |
+| `void RecordDispatchAttempt(` | The write-ahead half of ADR-0010: durable BEFORE any byte leaves the process. |
+| `void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)` | Appends an outcome event. Never rewrites a prior row — a late acceptance appends. |
+| `void SavePromptRevision(string draftId, int revisionNo, string body)` | The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it under `TerminalJourneyId`: a non-legacy notebook with an owner, because a legacy row comes only from the migration… |
+| `void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)` | **(gap)** |
+| `void UpsertNode(string nodeId, string nodeKind, string displayLabel)` | Records a node's kind and label, closing the previous row when either changes. |
+| `void Commit()` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+
+### `void AppendNotebook(NotebookRow row)`
+
+**Remarks.** The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
+explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
+a new version row with `Legacy = false` and an owner.
+
+### `void UpsertNode(string nodeId, string nodeKind, string displayLabel)`
+
+Records a node's kind and label, closing the previous row when either changes.
+
+**Remarks.** **Unchanged is a NO-OP, deliberately.** This is a Type-2 dimension: every call used
+to close the current row and open a new one, so re-indexing a workspace rewrote the history
+of every node that had not changed. History whose every row is an artefact of re-running the
+indexer cannot answer the question it exists for — "when did this change?" — because the
+answer is always "just now".
+
+
+
+
+
+It also removed a flip-flop: while a node's kind was computed per scope, a node
+declared by one scope and referenced by another alternated between rows on every index.
 
 ## `CompactionResult`
 
@@ -128,6 +428,23 @@ accident (spike S6).
 
 | Member | Summary |
 |---|---|
+| `JourneyRow? ReadJourney(string journeyId)` | The latest version of one journey, or null. |
+| `IReadOnlyList<JourneyRow> ListJourneys()` | Every journey's latest version, in creation order. |
+| `NotebookRow? ReadNotebook(string notebookId)` | **(gap)** |
+| `IReadOnlyList<NotebookRow> ListNotebooks()` | Every notebook's latest version; legacy (unowned) notebooks included. |
+| `NotebookRevisionRow? ReadNotebookRevision(string notebookId, int revisionNo)` | **(gap)** |
+| `AttemptRow? ReadAttempt(string dispatchKey)` | **(gap)** |
+| `IReadOnlyList<OutcomeRow> ReadOutcomes(string dispatchKey)` | Every outcome event of an attempt, oldest first. The caller folds them. |
+| `PermissionDecisionRow? ReadPermissionDecision(string sessionId, string runId, long seq)` | **(gap)** |
+| `IReadOnlyList<EvidenceLinkRow> ReadEvidenceLinks(string subjectKind, string subjectId, int subjectRevision)` | Every link to one claim/criterion revision, oldest first. |
+| `AssessmentRow? ReadLatestAssessment(string kind, string scope)` | The newest assessment of one kind for one scope (any baseline), or null. |
+| `IReadOnlyList<DispositionRow> ReadDispositions(string subjectKind, string subjectId)` | Every disposition on one subject, oldest first. The caller picks the current one per actor. |
+| `IReadOnlyList<ObligationRow> ReadObligations(string checklistId, int revision)` | The obligations of one checklist revision. |
+| `int? ReadLatestChecklistRevision(string checklistId)` | The highest checklist revision recorded, or null. |
+| `HarnessProfileRow? ReadHarnessProfile(string profileId)` | The latest version of one harness profile, or null. |
+| `HarnessProfileRow? ReadHarnessProfileByKey(long profileKey)` | One profile version by the surrogate key an attempt carries. |
+| `IReadOnlyList<HarnessProfileRow> ListHarnessProfiles()` | **(gap)** |
+| `ProfileObservationRow? ReadLatestProfileObservation(long profileKey, string kind)` | The newest observation of one kind on one profile version, or null (= Not recorded). |
 | `(long Generation, string ArtifactRevision, int AssertionCount)? LatestCommittedSnapshot(string scopeId)` | The latest committed generation for a scope, or null if nothing complete exists yet. |
 | `IReadOnlyList<StoredAssertion> CurrentAssertions(string scopeId)` | Current evidence for a scope: assertions of the latest COMPLETE snapshot only. A partial or superseded snapshot never contributes, so the graph cannot silently mix generations. |
 | `IReadOnlyList<StoredAssertion> AssertionsTouching(string nodeId, int limit)` | Assertions where the node is the subject OR the object, bounded in SQL. |
@@ -366,6 +683,18 @@ triggers (spike S4), so forbidding it in the writer API is the control, and the 
 
 | Member | Summary |
 |---|---|
+| `void AppendJourney(JourneyRow row)` | **(gap)** |
+| `void AppendNotebook(NotebookRow row)` | **(gap)** |
+| `void AppendNotebookRevision(NotebookRevisionRow row)` | **(gap)** |
+| `void AppendAttempt(AttemptRow row)` | **(gap)** |
+| `void AppendOutcome(OutcomeRow row)` | **(gap)** |
+| `void AppendPermissionDecision(PermissionDecisionRow row)` | **(gap)** |
+| `void AppendEvidenceLink(EvidenceLinkRow row)` | **(gap)** |
+| `void AppendAssessment(AssessmentRow row)` | **(gap)** |
+| `void AppendDisposition(DispositionRow row)` | **(gap)** |
+| `void AppendObligation(ObligationRow row)` | **(gap)** |
+| `long AppendHarnessProfile(HarnessProfileRow row)` | Appends a profile version and returns its surrogate key (what attempts bind to). |
+| `void AppendProfileObservation(ProfileObservationRow row)` | **(gap)** |
 | `long NextIngressSequence()` | Allocates the next total-order position. Monotonic within the workspace. |
 | `void DesireScopeGeneration(string scopeId, long generation, string artifactRevision)` | **(gap)** |
 | `(long Generation, string ArtifactRevision)? ReadDesired(string scopeId)` | The latest desired (generation, revision) pair for a scope, or null if none. |
@@ -373,11 +702,17 @@ triggers (spike S4), so forbidding it in the writer API is the control, and the 
 | `void RecordCommandReceipt(` | Records a completed command. Its uniqueness is what makes a retry return the original outcome. |
 | `void RecordDispatchAttempt(` | The write-ahead half of ADR-0010: durable BEFORE any byte leaves the process. |
 | `void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode)` | Appends an outcome event. Never rewrites a prior row — a late acceptance appends. |
-| `void SavePromptRevision(string draftId, int revisionNo, string body)` | **(gap)** |
+| `void SavePromptRevision(string draftId, int revisionNo, string body)` | The terminal (PTY) save path. Every revision needs a notebook, so the first save of a draft creates it under `TerminalJourneyId`: a non-legacy notebook with an owner, because a legacy row comes only from the migration… |
 | `void UpsertSession(string sessionId, long generation, SessionProcessingClass processingClass, string displayName)` | **(gap)** |
 | `void UpsertNode(string nodeId, string nodeKind, string displayLabel)` | Records a node's kind and label, closing the previous row when either changes. |
 | `void Commit()` | **(gap)** |
 | `void Dispose()` | **(gap)** |
+
+### `void AppendNotebook(NotebookRow row)`
+
+**Remarks.** The owner is Type-0 except for the legal transitions: a legacy notebook (no owner) adopted by an
+explicit user action, or a terminal draft re-owned out of the standing journey (Ruling 150). Each is
+a new version row with `Legacy = false` and an owner.
 
 ### `void UpsertNode(string nodeId, string nodeKind, string displayLabel)`
 
@@ -407,6 +742,15 @@ Stable error codes this layer can raise. Never a bare exception message.
 | `string ImmutableViolation = "AIDE-STORE-IMMUTABLE-VIOLATION"` | **(gap)** |
 | `string ScopeGenerationStale = "AIDE-SCOPE-GENERATION-STALE"` | **(gap)** |
 | `string EpochStale = "AIDE-AUTH-EPOCH-STALE"` | **(gap)** |
+| `string VocabularyViolation = "AIDE-STORE-VOCABULARY-VIOLATION"` | **(gap)** |
+| `string ReferenceViolation = "AIDE-STORE-REFERENCE-VIOLATION"` | **(gap)** |
+| `string Type0Violation = "AIDE-STORE-TYPE0-VIOLATION"` | **(gap)** |
+| `string NewerSchemaReadOnly = "AIDE-STORE-NEWER-SCHEMA-READ-ONLY"` | **(gap)** |
+| `string MigrationFailed = "AIDE-STORE-MIGRATION-FAILED"` | **(gap)** |
+| `string VersionOrderViolation = "AIDE-STORE-VERSION-ORDER-VIOLATION"` | **(gap)** |
+| `string BodyHashRequired = "AIDE-STORE-BODY-HASH-REQUIRED"` | **(gap)** |
+| `string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD"` | **(gap)** |
+| `string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY"` | **(gap)** |
 
 ## `WorkspaceStoreException`
 
@@ -417,6 +761,12 @@ A store-layer failure carrying a stable, greppable code.
 | Member | Summary |
 |---|---|
 | `string ErrorCode { get; } = errorCode` | **(gap)** |
+
+## `StoreOpenReport`
+
+*record* — `WorkspaceStore.cs`
+
+What opening the store found and did: the file's version, the binary's, and any migration.
 
 ## `WorkspaceStore`
 
@@ -430,8 +780,16 @@ enforced by the writer semaphore rather than an ambient transaction scope.
 
 | Member | Summary |
 |---|---|
-| `long CoreEpoch { get; }` | Monotonic, store-persisted, incremented inside the open transaction. Never random and never clock-derived, so "stale" is decidable and an old epoch value cannot recur (ABA). |
+| `long CoreEpoch { get; }` | Monotonic, store-persisted, incremented inside the open transaction. Never random and never clock-derived, so "stale" is decidable and an old epoch value cannot recur (ABA). Zero for a read-only store: it never opened… |
+| `StoreOpenReport Report { get; }` | What opening found and did. Never null. |
 | `WorkspaceStore Open(string databasePath)` | **(gap)** |
 | `StoreWriter BeginWrite()` | Acquire the single writer. Blocks until the previous writer completes — the control path waits rather than erroring, which is the right shape for one local operator. |
 | `StoreReader BeginRead()` | A read connection pinned to `query_only=1`, so a read path physically cannot write (spike S6) — reads never queue behind the writer. |
 | `void Dispose()` | **(gap)** |
+
+### `StoreWriter BeginWrite()`
+
+Acquire the single writer. Blocks until the previous writer completes — the control path
+waits rather than erroring, which is the right shape for one local operator.
+
+**Throws `WorkspaceStoreException`.** The store was opened read-only because the file is newer than this build.
