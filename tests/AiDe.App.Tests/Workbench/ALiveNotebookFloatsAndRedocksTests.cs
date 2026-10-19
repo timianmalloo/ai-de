@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
 using AiDe.App.Tests.Records;
@@ -95,6 +97,183 @@ public sealed partial class ALiveNotebookFloatsAndRedocksTests : IDisposable
                     Assert.DoesNotContain(SessionDocumentSurface.PaneHiddenCopy, live.Said);
                     border.Child = null;
                 }));
+
+    /// <summary>
+    /// (B) The floating notebook redocks by its tab's <i>Move to → Center</i>, mid-run and after the run ended. It returns to
+    /// Factory's Center with the same thread, composer draft and attempt. A float is not a hide, so DOCK1's sentence is
+    /// never said, and the focus lands in the notebook.
+    /// </summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt(bool midRun) =>
+        WithDaemonAsync((client, config) =>
+            Sta.Pump(
+                create: () => new Border(),
+                configure: window => { window.Width = 1440; window.Height = 900; },
+                body: async (window, border) =>
+                {
+                    using var shell = new WorkbenchShell(client);
+                    var live = await OpenALiveNotebookAsync(window, border, shell, config);
+                    live.Document.Composer.Draft.SetFreeFormText("words for the next turn");
+                    var thread = live.Model.Thread;
+
+                    await FloatByThePaletteAsync(window, shell, live);
+                    var floating = Assert.Single(shell.Factory.Manager.FloatingWindows);
+                    if (!midRun)
+                    {
+                        _fixture.ReleaseRun();
+                        await UntilAsync(window, () => live.Model.Thread.Current.Turns is [{ State: TurnState.Answered }],
+                            () => $"the floating notebook's run never ended; it reads {live.Model.Thread.Current.Turns.FirstOrDefault()?.State}");
+                    }
+
+                    var turnsBefore = live.Model.Thread.Current.Turns.ToList();
+                    var attemptBefore = live.Model.Runs.AttemptOf(live.Ordinal)!;
+
+                    // The redock: the floating tab's own menu, Move to → Center (the keyboard reaches it by the menu key).
+                    var tab = ComposedCoding.Visuals<TabItem>(floating).FirstOrDefault(t => Equals(t.Tag, live.SurfaceId));
+                    Assert.True(tab?.ContextMenu is not null, $"the floating notebook's tab carries no menu (tab found: {tab is not null})");
+                    var moveTo = tab!.ContextMenu!.Items.OfType<MenuItem>().Single(i => Equals(i.Header, "Move to"));
+                    var center = moveTo.Items.OfType<MenuItem>().Single(i => Equals(i.Header, "_Center"));
+                    center.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    await Settle(window);
+                    await Task.Delay(300);
+                    await Settle(window);
+
+                    // Back in its zone, drawn in the workbench, and no floating window is left.
+                    var zones = shell.Factory.Service.Zones;
+                    Assert.Equal(ZoneId.Center, zones.FindZoneOf(live.SurfaceId));
+                    Assert.Empty(zones.Floating);
+                    Assert.Empty(shell.Factory.Manager.FloatingWindows);
+                    Assert.Equal(live.SurfaceId, ((ZoneStack)zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
+                    Assert.Same(live.Document, DocumentOf(shell, live.SurfaceId));
+                    Assert.True(FloatRenderTests.HostedBy(live.Document, window), "the redocked notebook is not drawn in the workbench window");
+
+                    // The same thread, draft and attempt as before the redock.
+                    Assert.Same(live.Model, shell.Notebook(live.Id));
+                    Assert.Same(thread, live.Document.ReadModel);
+                    Assert.Equal(turnsBefore.Select(t => (t.Ordinal, t.State)), live.Model.Thread.Current.Turns.Select(t => (t.Ordinal, t.State)));
+                    Assert.Equal("words for the next turn", live.Document.Composer.Draft.FreeFormText);
+                    var attemptAfter = live.Model.Runs.AttemptOf(live.Ordinal)!;
+                    Assert.Equal(attemptBefore.Attempt.DispatchKey, attemptAfter.Attempt.DispatchKey);
+                    Assert.Equal(attemptBefore.Outcomes.Select(o => o.State), attemptAfter.Outcomes.Select(o => o.State));
+                    Assert.Equal(midRun, live.Model.Runs.InFlight);
+
+                    // A float is not a hide (DOCK1 is for a close), and the focus is in the notebook.
+                    Assert.DoesNotContain(SessionDocumentSurface.PaneHiddenCopy, live.Said);
+                    Assert.True(live.Document.IsKeyboardFocusWithin, $"the focus is not in the redocked notebook; it is on {Keyboard.FocusedElement?.GetType().Name ?? "nothing"}");
+
+                    if (midRun)
+                    {
+                        _fixture.ReleaseRun();
+                        await UntilAsync(window, () => live.Document.ReadModel.Current.Turns is [{ State: TurnState.Answered }],
+                            () => $"the redocked notebook never heard the run end; it reads {live.Document.ReadModel.Current.Turns.FirstOrDefault()?.State}");
+                        Assert.Equal(live.Key, live.Model.Runs.AttemptOf(live.Ordinal)!.Attempt.DispatchKey);
+                    }
+
+                    var (processes, prompts) = Dispatches();
+                    Assert.True(processes == 1 && prompts == 1, $"the float or redock restarted or re-sent the run: {processes} process(es), {prompts} prompt(s)");
+                    Assert.DoesNotContain(SessionDocumentSurface.PaneHiddenCopy, live.Said);
+                    border.Child = null;
+                }));
+
+    /// <summary>
+    /// (C) A floating live notebook survives a restart. The first window floats the notebook mid-run, moves it, saves its
+    /// layout and closes with the turn still running. The second window restores the slot and revives the notebook the way
+    /// <c>MainWindow.AttachWorkspace</c> does: it is floating at the moved bounds (Ruling 174), and it reads its attempt back
+    /// (T17d). The turn that was running at close reads <see cref="TurnState.DeliveryUnknown"/>, T17's restored state for an
+    /// attempt with no terminal row (Proof Pack row 12).
+    /// </summary>
+    [Fact]
+    public Task ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown() =>
+        WithDaemonAsync((client, config) =>
+            Sta.Pump(
+                create: () => new Border(),
+                configure: window =>
+                {
+                    window.Left = SystemParameters.WorkArea.Left + 40;
+                    window.Top = SystemParameters.WorkArea.Top + 40;
+                    window.Width = 1440;
+                    window.Height = 900;
+                },
+                body: async (window, border) =>
+                {
+                    var layoutPath = Path.Combine(_fixture.Root, "shell-state", "layout.json");
+                    Directory.CreateDirectory(Path.GetDirectoryName(layoutPath)!);
+                    var work = SystemParameters.WorkArea;
+                    var moved = new LayoutRect(Math.Round(work.Left) + 160, Math.Round(work.Top) + 120, 900, 640);
+                    string key;
+
+                    // The first window: float mid-run, move the floating window, save, and close with the run in flight.
+                    {
+                        var first = new WorkbenchShell(client);
+                        var live = await OpenALiveNotebookAsync(window, border, first, config);
+                        key = live.Key;
+                        await FloatByThePaletteAsync(window, first, live);
+                        var floating = Assert.Single(first.Factory.Manager.FloatingWindows);
+                        floating.Left = moved.X;
+                        floating.Top = moved.Y;
+                        floating.Width = moved.Width;
+                        floating.Height = moved.Height;
+                        await Task.Delay(200);
+                        SendMessage(new WindowInteropHelper(floating).Handle, WmExitSizeMove, IntPtr.Zero, IntPtr.Zero);
+                        await Task.Delay(300);
+                        await Settle(window);
+                        Assert.True(first.Factory.Service.Zones.Floating.Single().FloatingBounds == moved,
+                            $"the move was not written to the model: {first.Factory.Service.Zones.Floating.Single().FloatingBounds}");
+                        using (var save = new LayoutPersistence(first.Service, layoutPath, new HashSet<string>(StringComparer.Ordinal), restorableKinds: SurfaceContentFactory.RestorableKinds))
+                        {
+                            save.SaveNow();
+                            Assert.Null(save.LastSaveFailure);
+                        }
+
+                        Assert.True(live.Model.Runs.InFlight, "the run ended before the close, so the running-at-close case is not exercised");
+                        border.Child = null;
+                        first.Dispose();
+                        await Settle(window);
+                    }
+
+                    // The restart: a new shell restores the slot and revives the notebook, as the window's workspace open does.
+                    using var shell = new WorkbenchShell(client);
+                    border.Child = shell.WorkbenchRoot;
+                    using var persistence = new LayoutPersistence(shell.Service, layoutPath, new HashSet<string>(StringComparer.Ordinal), restorableKinds: SurfaceContentFactory.RestorableKinds);
+                    var restored = persistence.Restore();
+                    shell.Adapter.Render();
+                    var revived = shell.ReviveRestoredSessionDocuments(_fixture.Root);
+                    Assert.Equal([NotebookFixture.SessionId], revived.Select(c => c.SessionId));
+                    shell.Adapter.Render();
+                    await Settle(window);
+
+                    // Floating, at its bounds, drawn in a floating window.
+                    var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
+                    var zones = shell.Factory.Service.Zones;
+                    Assert.True(zones.FindZoneOf(surfaceId) is null, $"the restore docked the floating notebook in {zones.FindZoneOf(surfaceId)}; it said: {restored.Announcement}");
+                    var stack = Assert.Single(zones.Floating);
+                    Assert.Equal(surfaceId, Assert.Single(stack.Surfaces).SurfaceId);
+                    Assert.True(stack.FloatingBounds == moved, $"the notebook restored floating at {stack.FloatingBounds?.ToString() ?? "the default placement"}, not {moved}; the restore said: {restored.Announcement}");
+                    var window2 = Assert.Single(shell.Factory.Manager.FloatingWindows);
+                    Assert.True(window2.IsVisible, "the restored floating window is not shown");
+                    Assert.Equal(moved, new LayoutRect(window2.Left, window2.Top, window2.Width, window2.Height));
+                    var document = DocumentOf(shell, surfaceId);
+                    Assert.True(FloatRenderTests.HostedBy(document, window2), "the restored notebook is not drawn in its floating window");
+                    var restoredTab = ComposedCoding.Visuals<TabItem>(window2).FirstOrDefault(t => Equals(t.Tag, surfaceId));
+                    Assert.True(restoredTab?.ContextMenu?.Items.OfType<MenuItem>().Any(i => Equals(i.Header, "Move to")) == true,
+                        $"the restored floating notebook's tab carries no Move to menu, so it cannot be redocked from its tab (tab found: {restoredTab is not null})");
+
+                    // Its attempt is read back, and the turn running at close reads T17's restored state.
+                    var model = shell.Notebook(NotebookId.ForSession(config.SessionId))!;
+                    Assert.Same(model, document.Notebook);
+                    await UntilAsync(window, () => model.Thread.Current.Turns is [{ State: TurnState.DeliveryUnknown }],
+                        () => $"the revived floating notebook reads {model.Thread.Current.Turns.Count} turn(s) [{string.Join(",", model.Thread.Current.Turns.Select(t => t.State))}], "
+                            + $"host bound={model.Runs.Host is not null}, read back={model.Runs.ReadBack.Count}; expected one DeliveryUnknown turn for attempt {key}");
+                    Assert.Equal(key, Assert.Single(model.Runs.ReadBack).Attempt.DispatchKey);
+                    border.Child = null;
+                }));
+
+    private const uint WmExitSizeMove = 0x0232;
+
+    [DllImport("user32.dll", EntryPoint = "SendMessageW")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>A notebook open in the shell's Center with one turn held running by the stub.</summary>
     private sealed record Live(NotebookId Id, string SurfaceId, NotebookModel Model, SessionDocumentSurface Document, int Ordinal, string Key, List<string> Said)
