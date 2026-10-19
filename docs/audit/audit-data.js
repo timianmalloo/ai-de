@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T19:17:08Z",
+  "generated": "2026-10-19T19:30:51Z",
   "audit": [
     {
       "actor": null,
@@ -26350,6 +26350,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T19:17:06Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5ATAC09ZDY0RHRMH355GKX2",
+      "shortname": "join-wl1b-step8",
+      "datetime": "2026-10-19T19:30:51Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the combined WL-1b join d78c6245",
+      "summary": "ONE record, THREE attributions (Owner condition 1). T23 wl1b-folds tip 27e761b7 - docs/proof/workbench-loops-wl-1b/folds/README.md - Rulings 177, 179. T24 wl1b-service tip c3f05dca - docs/proof/workbench-loops-wl-1b/service/README.md - Rulings 176, 177, 179. T27 wl1b-currentness tip c64907bc - docs/proof/workbench-loops-wl-1b/currentness/README.md - Ruling 178. T22 design b43307ba (in T24). Ruling 180 (5) is NOT carried here: it moved to T26 D2 (Owner accepted). Integration branch wl1b-join = wl1b-service + wl1b-currentness + origin/main (Leader merges, no conflicts; Owner accepted the combined join). Recount ran in full (App 1221 counted; Core 3116 / portable 2933 / nonportable 183). Refusals: SolutionTreeChordTests 'foreground not held' and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground held=False', each refused ALONE on the join head 4298bfa7 and on the first parent 74849010 in a clean detached tree (removed): Ruling 155 (3), NOT CHECKED. Step 8 strict 6/48. Ratchet vs 74849010, head d78c6245: PASS 0/49 (no attribution needed, condition 2); repo verify-ruling-citations ok (strict). Release build 0 errors. NOT WL-1b's acceptance (condition 3): owed T25 perf (100x), T26 checklist kind (with Ruling 180 (5) and the null-sha condition in D2), the WL-1b demo script and the user's walk-through.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1b.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "WL-1b Core: obligations, evidence and acceptance as folds and a service",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T19:03:14Z",
+      "duration_seconds": 1657.0
     }
   ],
   "changes": [
