@@ -135,6 +135,9 @@ public sealed record SessionConfig(
     /// </remarks>
     public string CompileMode { get; init; } = CompileModes.MechanicalOnly;
 
+    /// <summary>The compile mode a new session opens in.</summary>
+    public static string DefaultCompileModeFor(CompileModeAvailability? availability) => CompileModes.MechanicalOnly;
+
     /// <summary>
     /// The task class a prompt in this session carries when it declares none of its own (Ruling 70;
     /// Ruling 72; ADR-0033 §4) — <c>default_task_class</c> in the ADR's vocabulary.

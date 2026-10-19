@@ -71,7 +71,8 @@ public sealed class SessionConfigStore
         int? fanOutCeiling = null,
         RunBudget? budgetCap = null,
         string? defaultTaskClass = null,
-        string origin = SessionOrigins.Direct)
+        string origin = SessionOrigins.Direct,
+        CompileModeAvailability? compileModes = null)
     {
         lock (_gate)
         {
