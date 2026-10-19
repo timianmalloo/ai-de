@@ -65,6 +65,33 @@ public sealed class FloatGuardTests : IDisposable
             });
 
     [Fact]
+    public void TheGuardsCopy_DOCK2AndDOCK3_AppearsNowhereInSrcOrDesignMd()
+    {
+        string[] phrases =
+        [
+            "Floating a pane is not available yet",
+            "Floating is not available yet",
+            "floating panes in your saved layout are docked",
+        ];
+        var root = RepoRoot();
+        var files = Directory.EnumerateFiles(Path.Combine(root, "src"), "*", SearchOption.AllDirectories)
+            .Where(f => f.EndsWith(".cs", StringComparison.Ordinal) || f.EndsWith(".xaml", StringComparison.Ordinal) || f.EndsWith(".json", StringComparison.Ordinal))
+            .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
+                && !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
+            .Append(Path.Combine(root, "DESIGN.md"));
+
+        var hits = files
+            .SelectMany(f => File.ReadAllLines(f).Select((line, i) => (f, i, line)))
+            .Where(x => phrases.Any(p => x.line.Contains(p, StringComparison.Ordinal))
+                || x.line.StartsWith("| DOCK2 |", StringComparison.Ordinal)
+                || x.line.StartsWith("| DOCK3 |", StringComparison.Ordinal))
+            .Select(x => $"{Path.GetRelativePath(root, x.f)}:{x.i + 1}")
+            .ToList();
+
+        Assert.True(hits.Count == 0, $"T20's guard copy is still present: {string.Join(", ", hits)}");
+    }
+
+    [Fact]
     public void APaneSavedFloating_RestoresThroughLayoutPersistence_Floating_DrawnVisibleAndNeverDocked() =>
         Sta.Pump(
             create: () => new DockingManager(),
@@ -112,4 +139,16 @@ public sealed class FloatGuardTests : IDisposable
                 Assert.False(FloatRenderTests.HostedBy(content, main), "the restored pane is drawn in the workbench window");
                 Assert.True(content.IsVisible, "the restored pane is not visible");
             });
+
+    private static string RepoRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AiDe.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        Assert.NotNull(dir);
+        return dir!.FullName;
+    }
 }
