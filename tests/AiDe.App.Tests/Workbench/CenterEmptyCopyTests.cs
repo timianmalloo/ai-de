@@ -48,7 +48,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
     }
 
     [Fact]
-    public void WhileASessionIsOpenAtLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen()
+    public void WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen()
     {
         var config = _workspace.Session("payments extraction");
 
@@ -72,10 +72,17 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.Contains(ComposedCoding.Visuals<TextBlock>(action!), t => t.Text == "Ctrl+N");
             Assert.True(action!.Focusable && action.IsEnabled, "the first action is not a focus target");
 
-            // State 2 — a session open at Left: the docked sentence, the View-menu line, NO first action.
+            // State 2 — a notebook opens in the Center (ADR-0045 §1(a)) and the operator's drop moves
+            // it to the Left (drops follow the operator, with no kind guard): the docked sentence, the
+            // View-menu line, NO first action.
             shell.OpenSessionDocument(config);
             frame.Settle();
-            Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(config.SessionId)));
+            var notebookId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
+            Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(notebookId));
+            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.MoveSurface(notebookId, new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack))).Applied);
+            shell.Factory.Adapter.Render();
+            frame.Settle();
+            Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(notebookId));
             var docked = frame.CenterEmpty();
             Assert.NotNull(docked);
             texts = Texts(docked!).ToList();
