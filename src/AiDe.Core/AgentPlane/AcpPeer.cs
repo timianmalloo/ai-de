@@ -282,6 +282,7 @@ public sealed class AcpPeer
     private readonly TimeProvider _time;
     private readonly AcpPeerOptions _options;
     private readonly Action<string> _diagnostics;
+    private readonly RunLogStore? _runLog;
 
     private readonly SemaphoreSlim _writeLock = new(1, 1);
     private readonly Lock _pendingGate = new();
@@ -303,14 +304,17 @@ public sealed class AcpPeer
     /// <param name="time">Stamps receipt and publication. Defaults to the system clock.</param>
     /// <param name="options">The peer's bounds. Defaults to <see cref="AcpPeerOptions"/>'s stated values.</param>
     /// <param name="diagnostics">Where everything that is not protocol goes. Defaults to stderr.</param>
+    /// <param name="runLog">The attempt's durable run log; every event is appended to it before it is published (ADR-0041 §3). Null: no run log.</param>
     public AcpPeer(
         TextReader input,
         TextWriter output,
         AcpRunEventMapper mapper,
         TimeProvider? time = null,
         AcpPeerOptions? options = null,
-        Action<string>? diagnostics = null)
+        Action<string>? diagnostics = null,
+        RunLogStore? runLog = null)
     {
+        _runLog = runLog;
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(mapper);
@@ -500,6 +504,13 @@ public sealed class AcpPeer
             }
         }
     }
+
+    /// <summary>
+    /// Sends a notification — a frame with no id, so nothing waits for a reply — serialized through the same
+    /// write lock as every request and answer (ADR-0041 §4: <c>session/cancel</c>).
+    /// </summary>
+    public Task NotifyAsync(string method, JsonObject? parameters, CancellationToken cancellationToken = default) =>
+        throw new NotImplementedException("WL-1a node 2: Stop");
 
     /// <summary>
     /// Normalizes one frame, publishes it, and only then acts on it.

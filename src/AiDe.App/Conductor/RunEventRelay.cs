@@ -49,6 +49,12 @@ public sealed class RunEventRelay : IDisposable
     /// </summary>
     public long Refused => Interlocked.Read(ref _refused);
 
+    /// <summary>The highest <see cref="RunEvent.Seq"/> published so far; 0 before the first.</summary>
+    public long HighWaterSeq => 0;
+
+    /// <summary>A new subscriber's own channel.</summary>
+    public ChannelReader<ObservedRunEvent> Subscribe() => Channel.CreateUnbounded<ObservedRunEvent>().Reader;
+
     /// <summary>The sink itself: pass this as <c>GovernedRunHost.RunAsync</c>'s <c>sink</c>.</summary>
     public void Publish(ObservedRunEvent observed)
     {

@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Facts;
+using AiDe.Core.Health;
 using AiDe.Core.Ipc;
 using AiDe.Core.Store;
 using AiDe.Core.Store.Records;
@@ -27,7 +28,59 @@ public interface IAttemptHost
 
     /// <summary>The attempt and its outcome events, or null when the key was never attempted.</summary>
     Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken);
+
+    /// <summary>Launches a held queued successor now; one launch however many callers race.</summary>
+    Task<AttemptStart> SendNowAsync(string dispatchKey, CancellationToken cancellationToken);
+
+    /// <summary>Stops a live attempt (ADR-0041 §4) and returns the receipt after its terminal row committed.</summary>
+    Task<AttemptReceipt> StopAsync(string dispatchKey, CancellationToken cancellationToken);
+
+    /// <summary>The attempt's events: the run log so far, then the live relay, each seq once and in order.</summary>
+    Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken);
+
+    /// <summary>The attempt's NFR-11 measures, derived from its rows and its run log.</summary>
+    Task<AttemptMeasures> MeasureAsync(string dispatchKey, CancellationToken cancellationToken);
 }
+
+/// <summary>What the host is configured with.</summary>
+/// <param name="WorkspaceRoot">The workspace: run logs at <c>&lt;ws&gt;/.aide/sessions/&lt;id&gt;/runs/</c>, the rolling log at <c>&lt;ws&gt;/.aide/attempt-telemetry.jsonl</c>.</param>
+public sealed record AttemptHostOptions(string WorkspaceRoot)
+{
+    /// <summary>How long a Stop waits for the engine's <c>cancelled</c> reply (ADR-0041 §4: 10 s, config).</summary>
+    public TimeSpan StopDeadline { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>The backstop sweep's interval (ADR-0041 §4: 30 s).</summary>
+    public TimeSpan SweepBackstop { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>Where an unwritable run log is reported; null reports nowhere.</summary>
+    public HealthIncidentSidecar? Incidents { get; init; }
+
+    /// <summary>Opens an attempt's run log from <c>(session_id, dispatch_key)</c>; null opens <see cref="RunLogStore.Open"/> under <see cref="WorkspaceRoot"/>.</summary>
+    public Func<string, string, RunLogStore>? RunLogs { get; init; }
+
+    /// <summary>The rolling log the host's metrics go to.</summary>
+    public string TelemetryLog => Path.Combine(WorkspaceRoot, ".aide", "attempt-telemetry.jsonl");
+}
+
+/// <summary>One subscriber's view of one attempt's events.</summary>
+public sealed class AttemptSubscription
+{
+    /// <summary>Every event, each seq once, in seq order; ends when the run ends.</summary>
+    public IAsyncEnumerable<RunEvent> ReadAllAsync(CancellationToken cancellationToken) =>
+        throw new NotImplementedException("WL-1a node 2: subscribe");
+}
+
+/// <summary>NFR-11 (ADR-0041 §7): every value measured from a row or the run log, or null when not recorded.</summary>
+/// <param name="Usage">The terminal's <c>usage</c> as JSON, or the JSON string <c>"not recorded"</c>.</param>
+public sealed record AttemptMeasures(
+    string DispatchKey,
+    DateTimeOffset? DispatchedAt,
+    DateTimeOffset? TerminalAt,
+    TimeSpan? Duration,
+    long Events,
+    long Bytes,
+    string? Outcome,
+    string Usage);
 
 /// <summary>A prepared revision, ready for the gate.</summary>
 /// <param name="Run">What the composition root runs.</param>
@@ -114,7 +167,7 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
     /// workspace is refused here, so it can neither dispatch nor sweep another host's live attempts.
     /// </summary>
     /// <param name="hostLockFile"><c>&lt;workspace&gt;/.aide/attempt-host.lock</c>; the OS releases it when the process dies.</param>
-    public static async Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken)
+    public static async Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken, AttemptHostOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(ledger);
         ArgumentException.ThrowIfNullOrEmpty(hostLockFile);
@@ -202,6 +255,21 @@ public sealed class AttemptHost : IAttemptHost, IDisposable
 
     public Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken) =>
         _ledger.ReadAttemptAsync(dispatchKey, cancellationToken);
+
+    /// <summary>The activity source T6's fold reports on; the host turns each stopped activity into <c>fold.duration_ms</c>.</summary>
+    public const string FoldActivitySourceName = "aide.attempt.fold";
+
+    public Task<AttemptStart> SendNowAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        throw new NotImplementedException("WL-1a node 2: queue");
+
+    public Task<AttemptReceipt> StopAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        throw new NotImplementedException("WL-1a node 2: Stop");
+
+    public Task<AttemptSubscription> SubscribeAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        throw new NotImplementedException("WL-1a node 2: subscribe");
+
+    public Task<AttemptMeasures> MeasureAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        throw new NotImplementedException("WL-1a node 2: NFR-11");
 
     /// <summary>Resolves abandoned attempts; the live-set snapshot and the sweep are one critical section with L→G0.</summary>
     internal async Task<AttemptSweepResult> SweepAsync(string dispatchedCause, CancellationToken cancellationToken)
