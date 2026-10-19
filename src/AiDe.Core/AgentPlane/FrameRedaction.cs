@@ -8,9 +8,11 @@ namespace AiDe.Core.AgentPlane;
 /// pattern-set version: the same inputs always return the same redacted frame and spans.
 /// </summary>
 /// <remarks>
-/// <para>Offsets and lengths are indexes into the <b>original</b> frame. A marker shorter or
-/// longer than the secret would make a later span lie if it were measured on the redacted
-/// text, and the caller has to be able to name the bytes that were removed.</para>
+/// <para><c>Offset</c> is where the marker starts in the <b>redacted</b> (stored) frame; <c>Len</c>
+/// is the length of the original span the marker replaced. The original is never retained
+/// (ADR-0042 §6), so only an offset into the stored frame can locate a redaction for disclosure
+/// (§8). The marker is longer or shorter than the secret, so each span's offset already counts
+/// the markers before it.</para>
 /// <para>v1 scans the raw frame text and does not decode JSON string values. That decode is
 /// the mapper's job (ADR-0042, consequences). Overlapping matches collapse to one span; the
 /// id kept is the match that starts earliest, then the longest, then the earlier pattern.
@@ -100,9 +102,9 @@ public static class FrameRedaction
         {
             var span = merged[i];
             builder.Append(frame, cursor, span.Offset - cursor);
+            redactions[i] = new RunEventRedaction(builder.Length, span.Length, span.PatternId);
             builder.Append(Marker);
             cursor = span.Offset + span.Length;
-            redactions[i] = new RunEventRedaction(span.Offset, span.Length, span.PatternId);
         }
 
         builder.Append(frame, cursor, frame.Length - cursor);
@@ -138,7 +140,7 @@ public static class FrameRedaction
     }
 }
 
-/// <summary>The redacted frame, the original-frame spans, and the pattern set that scanned it.</summary>
+/// <summary>The redacted frame, the spans located in it, and the pattern set that scanned it.</summary>
 /// <param name="Frame">The frame with each secret span replaced by <see cref="FrameRedaction.Marker"/>.</param>
 /// <param name="Redactions">Empty when the scan matched nothing. Never null: this function always scans.</param>
 /// <param name="ScannedWith"><see cref="FrameRedaction.PatternsVersion"/>.</param>
