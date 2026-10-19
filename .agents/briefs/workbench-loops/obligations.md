@@ -6,3 +6,5 @@
 - ADR-0045 amendment of record = Rulings 149 + 152; ADR-0039 = Rulings 148 + 150. Gate policy = Ruling 151.
 - GO9 defect signal: T4 344/280 calls, 632k/400k — split re-row-sized tracks in the refreshed plan.
 - Defect class (Leader): seam requests read only on notification -> 5 expired. Control: request census each report.
+- T5 node 2: subscribe a listener to ActivitySource aide.attempt.fold and write fold.duration_ms to the rolling log (T6 seam req-01M59AQ4...). T5 fixes T6's four fold inputs in its design ('Fold inputs'); T6 joins only after that, with a fix-forward if the values differ.
+- T7: offsets index the stored (redacted) frame, len = original span length (RunEvent.cs:193; T7b fix-forward). T5 wires FrameRedaction.Apply in the mapper.

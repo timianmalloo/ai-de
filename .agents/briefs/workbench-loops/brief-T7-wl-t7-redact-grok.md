@@ -16,7 +16,7 @@ retained sink; a redacted span is disclosed".
 ## Do
 `src/AiDe.Core/AgentPlane/FrameRedaction.cs`: a static, allocation-light, pure function over the frame text with a
 versioned pattern set (`PatternsVersion`), returning the redacted text and the list of `{offset, len, pattern_id}`
-(offsets into the **original** frame). Use T3's envelope types for the redaction record (read
+(offsets into the **stored, redacted** frame, as `RunEventRedaction` on main documents; `len` is the original span length — corrected by the Leader 2026-10-19, T7b). Use T3's envelope types for the redaction record (read
 `src/AiDe.Core/AgentPlane/RunEvent.cs` on `main`). Reuse any existing sentinel/secret patterns in the repo first
 (grep `sentinel`, `Redact`, `credential` in `src/`) — one definition of a credential pattern, not two; if one exists,
 call it. Patterns cover at least: Anthropic/OpenAI/xAI/Google/GitHub token shapes and `Bearer …` headers, and the
