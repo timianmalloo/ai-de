@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:53:13Z",
+  "generated": "2026-10-19T08:17:13Z",
   "audit": [
     {
       "actor": null,
@@ -24410,6 +24410,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T07:53:11Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M59KRWV2F6G7DZ7PW036NZCF",
+      "shortname": "join-wl1a-attempt-host-n2-step8",
+      "datetime": "2026-10-19T08:17:13Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T5 node 2 join f7a12954 (+ fix 116076cf)",
+      "summary": "Recount: env-gated AttemptRealLaneStopTests NotExecuted without AIDE_REAL_ADAPTER_ROOT -> added to expectedSkips with provenance (Owner accepted, engine-tests precedent); --no-run OK 4062. Step 8 5/48 (baseline); identity gate OK on the join head (913 files: the scrubbed real-lane proof passes). Ratchet vs debdaf3f under the pre-160 policy: first REFUSE (pack ruling-citations: 'Ruling 38 ... no heading in rulings.md', citer count 7->8 from T5's handoff.md; Ruling 38 is defined by a decision note, PD-1); fix-forward 116076cf names the note in words; re-ratchet PASS 0/49. Pushed 116076cf:main; Release build exit 0. Ruling 160 (pack copy excluded, repo copy strict) applies from the next join.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T5 node 2 on main under Ruling 151",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T07:50:40Z",
+      "duration_seconds": 1593.0
     }
   ],
   "changes": [
@@ -28973,6 +28997,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59KAEJ9JM5Q3P7Z7TTZWQFN",
+      "ts": "2026-10-19T08:09:19Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59KBWWQ6QJ25NHX79DGQ03H",
+      "ts": "2026-10-19T08:10:07Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-owner-20261018"
     }
   ]
 };

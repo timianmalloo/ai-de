@@ -71,3 +71,10 @@ Steps I would add to the `ubuntu-latest` gates job in `.github/workflows/build.y
   moment the tool goes multi-user or uploads, shares or exports run logs.
 
 **RES-1 addendum (Leader, 2026-10-19):** `tools/verify-no-account-identity.py` (T15, Ruling 157) joins this list. It runs in `python tools/run-verify-gates.py`, but no `.github/workflows/*.yml` step invokes it, so `verify-project-coverage` names it, and Ruling 151(3) never ratchets that gate. The step to add beside the others: `python tools/verify-no-account-identity.py` in the gates job. The workflow edit is the user's call, the same as for the two gates above.
+
+## RES-4 — Earlier step-8 ratchets kept only the repo copy's raw ruling-citations output (Leader, 2026-10-19)
+
+- **What:** `gate_ratchet.py` before Ruling 160 wrote each gate's parent and head output to `<basename>.parent.txt` / `.head.txt` (old lines 99-100). The pack copy `docs/ai-forward-pack/scripts/verify-ruling-citations.py` and the repo copy `tools/verify-ruling-citations.py` share a basename. In sorted path order (old line 80, `names = sorted(...)`) the pack copy runs first, so the repo copy's iteration overwrote the pack copy's saved files.
+- **Why the verdicts stand:** each gate's parent run, head run and verdict are computed in memory within one iteration (old lines 84-87), so no comparison ever mixed the two copies. Every recorded verdict, and its printed `verdict  gate  parent=… head=…` line, is valid for the gate it names.
+- **What was lost:** the pack copy's raw output text for the drive's joins through T5 node 2 (WL-0 … T10, T7, T5 n1, T6, T14, T15, T5 n2). The repo copy's raw output, and both copies' verdict lines, are intact.
+- **Fixed:** outputs are keyed by the gate's path from the T8 join on (Ruling 160's application). Nothing is re-joined (Owner).
