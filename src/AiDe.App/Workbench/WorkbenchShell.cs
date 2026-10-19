@@ -3893,6 +3893,16 @@ public sealed class WorkbenchShell : IDisposable
             return;
         }
 
+        // DOCK1 (ADR-0045 §4): the shell keeps a closed notebook's document, so no Dispose comes to say that its run
+        // goes on. The close says it here, so a pane hidden mid-run is never silent.
+        if (BoundDocument(surfaceId) is { Notebook.Runs.InFlight: true })
+        {
+            Announcer.Announce(new AiDe.Core.Presentation.Sessions.Announcement(
+                Sessions.SessionDocumentSurface.PaneHiddenCopy,
+                AiDe.Core.Presentation.Sessions.Urgency.Status,
+                AiDe.Core.Presentation.Sessions.AnnouncementKind.Completed));
+        }
+
         if (Sessions.SessionDocumentSurface.SessionIdOf(surfaceId) is { } sessionId
             && host.Service.Zones.FindZoneOf(Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId)) is not null)
         {
