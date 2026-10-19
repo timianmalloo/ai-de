@@ -3343,3 +3343,15 @@ The decision:
 (4) Option C's ingest redaction stays available if the tool ever becomes multi-user or uploads logs. Record that as the upgrade trigger.
 
 - request: req-01M59DPQZM7BQ4CRNDQ7DVQE3D · ruled by: wl-owner-20261018 · at: 2026-10-19T06:32:12Z
+
+### Ruling 158 — Ruling 157's allow-list adds the one exact address noreply@anthropic.com (the required commit-attribution trailer); Ruling 156 reads as T8 applied it
+
+Option A. The Owner counted every email-shaped string in tracked docs/proof/** and .agents/** on origin/main. There are 7 instances of noreply@anthropic.com, all in the brief files under .agents/briefs/workbench-loops/, and 1 of redacted@example.invalid. There are no others. noreply@anthropic.com is the public no-reply address of the attribution trailer every commit in this drive must carry. It is a service address, not an account, so it identifies no person.
+
+The allow-list gains that exact address only: an exact match, not the anthropic.com domain. The gate's self-test adds one case showing a different @anthropic.com address is still refused. Option B is rejected, because removing the trailer from the briefs would make each track reconstruct it from memory.
+
+On Ruling 156: T8's change to the adoption step in the 3 older Core tests, so they assert the refusal, is the correct reading. Ruling 156 makes the store refuse adoption until v3 lands. The positive adoption assertions move to the v3 slice as an obligation, and they come back red-first with v3.
+
+T8 node 3's seam in T5's ConductorEntry and CompositionRootLedger is agreed, because T5 is finished. It is held within rule 16's three items.
+
+- request: req-01M59E463DZEPBDFCRBPS7C7AX · ruled by: wl-owner-20261018 · at: 2026-10-19T06:38:58Z

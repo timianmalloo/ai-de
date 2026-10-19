@@ -132,3 +132,17 @@
 {"agent": "wl-leader2-20261019", "at": 1792391920.8363485, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792391920.8664155, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792391920.89461, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.3272955, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T15-wl-t15-idgate.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.3568223, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T15.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.3876555, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.4172988, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t15-idgate.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.4459255, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t8-bind.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.4748874, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.5066633, "code": null, "kind": "allowed", "path": ".agents/log/wl-owner-20261018.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.535875, "code": null, "kind": "allowed", "path": ".agents/log/wl-t15-idgate.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.5646732, "code": null, "kind": "allowed", "path": ".agents/log/wl-t8-bind.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.5949256, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.6252277, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.655304, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.6845624, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792392795.716176, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/residuals.md", "session": "wl-leader2-20261019", "wi": ""}
