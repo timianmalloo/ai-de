@@ -1,8 +1,8 @@
 ## Standing rules for this track (CTX-F — every line binds)
 
-You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader2-20261019`. The
+You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader3-20261019`. The
 coordination plan is `docs/coordination/coordination-workbench-loops.md` (your row in "Tracks" and
-"Track contracts" is your contract). Leader epoch: **2**. Decision requests go to the Owner
+"Track contracts" is your contract). Leader epoch: **3**. Decision requests go to the Owner
 `wl-owner-20261018` (`python docs/ai-forward-pack/scripts/coord-decide.py request --to wl-owner-20261018 ...`) — only
 for a genuine product trade-off the repo, spec, ADRs or a spike cannot answer, with a recommendation
 and a default.
@@ -15,7 +15,7 @@ and a default.
    (the primary checkout) or another track's tree. **Never call `EnterWorktree` or `ExitWorktree`.**
 3. **Windows:** run `python`, never `python3`. `coord <verb>` = `python docs/ai-forward-pack/scripts/coord-core.py <verb>`.
 4. **Owned authored paths** are listed below. You edit nothing else. Need a change outside them →
-   `coord request add --to wl-leader2-20261019 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
+   `coord request add --to wl-leader3-20261019 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
    and carry on with what you own. `derived` files (docs/docs-index.js, docs/audit/audit-data.js,
    docs/audit/index.html, docs/api/*.md, docs/_site/*, docs/_meta.json) are regenerated at the join —
    do not edit or claim them. `register` files (docs/audit/*.jsonl, .agents/log/*.jsonl) are
@@ -40,7 +40,7 @@ and a default.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
     `DC-NEW-{TRACK}` (class / sweep / derive / prevent), in the same commit as the fix.
 12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "{TRACK}" --session {TRACK} --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
-    commit it; then `coord mail send --to wl-leader2-20261019 --kind done --body "<exit evidence: commits, test names, proof files>"`.
+    commit it; then `coord mail send --to wl-leader3-20261019 --kind done --body "<exit evidence: commits, test names, proof files>"`.
     Your final message to the Leader is the same exit-evidence report: every commit sha (red and green),
     every test name added, every proof file, the suite result with pass/fail counts, any seam request
     raised, anything not done. **Your "done" is evidence, not authority** — the Leader re-runs and reads back.
@@ -69,3 +69,10 @@ and a default.
 17. **Add no `.html` file under `docs/`.** Do not render HTML views of your README, hand-off or proof files. The docs
     graph's HTML knowledge-surface cap is full (`SURFACE_LIMIT = 100`, `docs-graph.py:82`; a pack defect), and one rendered
     `handoff.html` stopped T8's join at step 6 (2026-10-19). Markdown stays canonical, and proof is `.md` and `.txt` only.
+18. **A kick never skips the whole-suite run (DC-NEW-wl-leader2, 15th instance).** At a kick, finish or commit the check
+    you are in, then run the whole affected suites (rule 7), then hand off. A node with no `suite-node<N>.txt` is not done.
+19. **Do not start an App suite while a join is in flight (DC-NEW-wl-leader3).** A join's recount needs the Ruling 115
+    desktop hold for its shown-window probe. A track suite that holds it makes the join refuse for a cause outside the
+    join (T17e join, 2026-10-19 15:03Z). Before `dotnet test tests/AiDe.App.Tests`, read the board
+    (`python docs/ai-forward-pack/scripts/coord-board.py board --since <last id you read>`). If a `join in flight` post has
+    no matching `join done` or `join abandoned` post, run Core first and start App after the join ends.
