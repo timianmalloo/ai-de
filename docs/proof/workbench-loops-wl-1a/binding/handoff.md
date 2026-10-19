@@ -56,6 +56,10 @@ What changed:
 
 1. **Check 3, not started:** the UIA names for the execution states (brief, node-4 obligation).
 
+## Suites, node 6
+
+Core: 3018 passed, 1 skipped, 0 failed (`suite-core.txt`). App: 1084 passed, 1 skipped, 1 failed: `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, the same "foreground not held" test as nodes 4 and 5 (`suite-app.txt`). Run alone, it passed (`solution-tree-chord-alone.txt`). `docs-graph.py validate`: 0 problems, 5 index-drift items, which the join regenerates.
+
 ---
 
 # WL-1a T8 node 5 — hand-off
