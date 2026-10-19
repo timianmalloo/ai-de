@@ -3627,3 +3627,15 @@ Conditions, each red-first:
 Option B would leave the user filling the fields by default. Option C contradicts the stated requirement.
 
 - request: req-01M5AE9DXW4KNPPMBJB385J14P · ruled by: wl-owner-20261018 · at: 2026-10-19T16:01:57Z
+
+### Ruling 181 — After a submit the compiled field keeps showing what was sent, headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; it can never be resent
+
+Option A. The user expected to see the compiled prompt in the compiled field after submitting it. T28 verified why they could not, on branch wl1a-compiled-field (e3ec0278). A submit consumes the draft: NextBlock sets RenderedView = null (ComposerSendGate.cs:230), and the field is written only from RenderView over the now-empty draft (ComposerSurface.cs:1224-1225). Measured: 69 characters before the submit, 0 after. Ruling 96's inferred layout cause is ruled out. Nothing is lost, since the sent bytes are on the turn row's 'Compiled prompt of b{n}' disclosure. Option B would answer the user's expectation with an empty field.
+
+The decision, red-first through the user's real gesture (type, then Ctrl+Enter, then read the open field):
+(1) After a submit, the field shows the sent turn's compiled text, headed 'Compiled prompt — sent as b{n}', until the next keystroke in the editor. Then it returns to the live view of the new draft. One const for the heading, a DESIGN.md row amending line 879's 'exactly the outgoing text' to name this state, and the same words in UIA.
+(2) RESEND GUARD, hard: the shown text is display-only and never reaches RenderedView. Sending uses 'RenderedView ?? RenderView(draft, template)' (ComposerSendGate.cs:347), so a leak would resend b{n}. A test asserts that a second Ctrl+Enter immediately after a submit, with no keystroke, sends nothing and leaves the turn count unchanged.
+(3) Ruling 96's tests are re-driven through the gesture (phase 2). TheWriterKeepsItsRoomTests.cs:107-142 passing as an empty string equals an empty string is the defect class DC-NEW-wl-t28-compiled. The class gate is n3: a content oracle on a user-visible field must drive the user's gesture, not set up the fixture directly.
+T30 (Ruling 180) follows on the same file after this lands.
+
+- request: req-01M5AEZY8REW390YCZ0SBRFRTX · ruled by: wl-owner-20261018 · at: 2026-10-19T16:13:29Z
