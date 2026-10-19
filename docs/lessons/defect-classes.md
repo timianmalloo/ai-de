@@ -8662,3 +8662,53 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   **Control (mechanical, Leader session):** a monitor polls `coord request list` every 60 s and raises an event for each
   new typed request addressed to the Leader. Its gap: it lives only as long as the Leader's session, so the next Leader's
   kickoff must start it. That makes the status `partially-controlled`; a hand-off brief line is owed.
+
+### DC-NEW-wl-t21-float-d — A layout command changes the model and never renders, so the view and the model disagree until an unrelated render
+- **Class:** a command applies a layout operation to the model and announces it, and no code on its route draws the
+  result. The live region says the pane floated or closed, the model agrees, every model-level test passes, and the
+  screen shows the layout from before the command. A float has no window, so the pane vanishes.
+- **Instance (T21 n7 red 0097164f, live on main per the Leader's run of it on origin/main):** the palette's *Float pane*
+  on a live notebook: "the model floats the notebook, but the view shows 0 floating window(s)". Every catalog route
+  (palette, menu, `PerspectiveShell.Execute`, `WorkbenchShell.Execute`) ends in `WorkbenchController.ApplyAndAnnounce`,
+  which applied and announced and never rendered. Only the tab menu's `MoveToZone` and `CloseSurface`
+  (`WorkbenchAdapter.cs`) rendered after their own apply.
+- **Sweep:** every `ApplyAndAnnounce` caller: reset, close, float, collapse, maximize, next/previous tab, reorder, and
+  `Move` (keyboard destination and `Drop`). The red `626c7221` measured float, close, collapse, maximize and next tab
+  through the palette: all five drew the layout before. Routes that already render and do not pass through
+  `ApplyAndAnnounce`: the native drag (`WorkbenchShell.cs:226`, reconciles the view into the model by `ReconcileFromView`
+  and deliberately does not render), the restore (`LayoutPersistence.Restore`, then the caller's render), the shell's
+  opens (`Service.Apply` then `Adapter.Render`), and the tab menu. One route renders twice now:
+  `MainWindow.OnResetLayout` (`MainWindow.xaml.cs:579-580`) renders after `Shell.Execute`. A second render is a
+  reconcile (DC-029): `LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt`
+  renders again after the command and asserts the same content element, one floating window, and no surface closed.
+- **Fix:** `WorkbenchController.LayoutApplied`, raised by `ApplyAndAnnounce` after the announcement when the operation
+  applied; `DockHost.Create` wires it to `adapter.Render` (seam `req-01M5ATF6PNMEW0SX2KKZA34D4D`, granted).
+- **Control:** `LayoutCommandsRenderTests` (five tests, the palette over `DockHost.Create`'s own controller, oracles on
+  the drawn view, no render by hand after the command) and `ALiveNotebookFloatsAndRedocksTests` (A).
+- **Derive:** a view-state test drives the command route the user uses and reads the drawn view. A test that renders by
+  hand after the command certifies a route no user has: T21 n2's
+  `FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable` called `adapter.Render()` after
+  `controller.Execute` and passed while the palette drew 0 windows (DC-NEW-wl-t28-compiled's class; deleted d82df79e).
+- **Residual (Inferred, not tested):** a render after a command reverts a native within-pane tab reorder the model has
+  not seen, because that drag raises no signal (the known gap in `WorkbenchAdapter`'s `LayoutRoot.Updated` comment).
+  Before this fix the next unrelated render reverted it the same way.
+- **Status:** `controlled` for the controller's routes. Candidate gate, not built: a sibling of
+  `ComposerContentOraclesDriveTheGestureTests` for layout-command tests.
+- DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
+
+### DC-NEW-wl-leader3-b — Tests that fail only under full-suite load, and so are read as flakes and waved through
+- **Class:** a test that passes when run alone but fails inside the whole suite. A green re-run is taken as proof that
+  nothing is wrong, so the failure is never measured, and a real ordering, timing or shared-resource defect hides.
+- **Instances (2026-10-19):** (1) `NoDispatchOutsideTheHostTests.ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds`
+  failed in T28 n3's App suite (`suite-node3.txt`, `cecc0245`) and passed alone (`suite-node3-rerun-app.txt`). (2)
+  `TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives` failed in the T21 n8
+  join's first recount ("the helper never wrote 'child-exited=' to its report"), passed 3/3 alone on the join head
+  `be5a497a`, and 3/3 on the first parent `aa8247ff`. The join's source diff touches no terminal-host or process code.
+- **Sweep:** every test the recounts and track suites have shown failing under load but passing alone.
+- **Derive:** a green re-run is not evidence of absence; a failure RATE is. A load-only failure is a defect until a
+  deterministic repro, or NOT REPRODUCED with N stated, says otherwise.
+- **Control:** (a) Owner rule: one full re-run per join at most; a second failure stops the join. (b) A measurement
+  track, scheduled after the WL-S joins and ahead of T25's perf bench, both needing a quiet machine. It runs the full
+  Core and App suites N ≥ 10 times on a clean origin/main, with no join in flight and rule 19 respected. It records each
+  failing test's rate, then for each one a deterministic repro under load, or NOT REPRODUCED with N stated.
+- **Status:** `partially-controlled`, until the measurement track reports.

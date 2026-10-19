@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 420 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "083a8732e4bef730240ab1d34d072e612160b542608a7b2d37e9407ded2dfb7e"
+      "sourceSha256": "5f57489baab5fcee025234d8ae517c6984a62d2ec42dee4d3254f17290995e83"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -10837,7 +10837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6e7fe606bbf26a5ccdbf8ef6d1ba31155799b033e605e9ea6096c58cbf5044a"
+      "sourceSha256": "1eb8efb4992b79bea096cd2a982e2e0255bcbc0dd4f7f3d929144badd6e11687"
     },
     {
       "id": "design-session-profiler",
@@ -12448,7 +12448,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "82b85c46d68492a06b0353ae550e6ab117d4f2cf6462e023584528a97445a609"
+      "sourceSha256": "834f57633d378eac3d0c0bc3cb1a6bebf56975be349d143c7558e0f3130b84cf"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22740,7 +22740,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "588ea1d1551b8855f62d1e7365715a95d326ee423f1807dc5d2a60147da62d86"
+      "sourceSha256": "43db723370f7e98ddacf1db4166c1b00882081c0fd91d513f89edf448e124be6"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -23426,7 +23426,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4116353cef194df07565bab8597ef6e9c7bde097b11d7c22dd713689de73da5c"
+      "sourceSha256": "a1ae4ae9776582040555d597910fb66e232524fd2e35cf030cc6c0921b2ab731"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -23537,14 +23537,14 @@ window.DOCS_INDEX = {
     {
       "id": "wl-s-float-handoff-n1",
       "path": "docs/proof/workbench-loops-wl-s/float/handoff.md",
-      "title": "WL-S T21 float - node 6 hand-off",
+      "title": "WL-S T21 float - node 8 hand-off",
       "type": "proof-pack",
       "status": "active",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "T21 node 6: the owed App suite at node 5's head is 1165/1/2 (the known SolutionTreeChord precondition); floatPane floats the focused tab (close condition 3); a saved floating stack whose id is in use loads with the partial-read sentence; a native float never takes a restored float-view id. Core 3046/0/1, App 1166/1/2. Next is the T21 join, before T11.",
+      "summary": "T21 node 8: the float guard red-first on the Leader's priority order (d82df79e); the float-fix join of 36884736 was abandoned on one cited-controls refusal, fixed by the one-file commit 2213b507; every controller layout command renders (WorkbenchController.LayoutApplied, 36884736, DC-NEW-wl-t21-float-d, five palette tests); floating tabs are named and carry the menu (28c60d1f). (A) and (C) green; (B) green at c80e5fbd (the moved pane takes the focus). Suites App 1225/2/2 (attended probes), Core 3115/0/1; ratchet in ratchet.txt.",
       "tags": [],
       "links": [
         {
@@ -23553,7 +23553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7fa8a0f149c90d3c0e0481991de3c9d5aaadc7b130e808660a2d18b6fccb9a41"
+      "sourceSha256": "95a272822d8466aebae262cd7e402d06f3158a693b7483a67c8ed7f660493af2"
     },
     {
       "id": "wl-s-float-proof",
@@ -23565,7 +23565,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id.",
+      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam. Node 8: the float guard (d82df79e), every controller layout command renders (36884736, DC-NEW-wl-t21-float-d), floating tabs are named and carry the menu (28c60d1f); (A), (B) and (C) green (c80e5fbd).",
       "tags": [],
       "links": [
         {
@@ -23574,7 +23574,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8cfcb72942a1040fa711ef77a40d9bd071131f311dea24585e336eeaad72c63f"
+      "sourceSha256": "6b31db2187219d5b06d2cc21f28379028b9f6f1938c427d3428efd12099338bf"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -25503,5 +25503,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "ab5a1172c78c5d6cdb7c5ff8d19fca4a6c5032bc372846efbc8f4e6e5b2f9f92"
+  "graphSha256": "c2f69e706ade3f4bbbd7496cf931d65e7f110c8906c609f0975eb038fa6e7a95"
 };

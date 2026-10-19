@@ -191,10 +191,16 @@ demo tree's base; it changes only a read-back pending at disposal, which no demo
 
 The user raised two findings during the walk-through. They are work items, not acceptance blockers:
 
-- The compiled prompt did not show in the compiled field after a submit. This is a recurrence of Ruling 96, now under
-  `/investigate`.
-- The user expects the goal and done-criteria fields to be prefilled from an analysis of the prompt (AC-W01a). This is
-  under assessment for a decision request.
+- The compiled prompt did not show in the compiled field after a submit. This was a recurrence of Ruling 96. Its root
+  cause was verified (T28: the submit empties the draft that the field is a live view of), and it is fixed on main under
+  Ruling 181 (`cf31f424`, `367f4de4`).
+- The user expects the goal and done-criteria fields to be prefilled from an analysis of the prompt (AC-W01a). Ruling
+  180 makes this the default; T30 is building it on branch `wl-prefill`.
+
+**Residual (Ruling 182 (3)):** until WL-2's draft store (ADR-0043), **unsent typing and kept suggestions are lost when
+the app restarts.** A revived notebook's composer starts empty (`ComposerSurface.cs:96`, measured by T30 n2 at
+`8afa3a58`). Whatever was **sent** survives: each sent turn's compiled prompt, including its goal block, is on the turn
+row's disclosure after a restart (Rulings 163, 181).
 
 The history before this acceptance:
 

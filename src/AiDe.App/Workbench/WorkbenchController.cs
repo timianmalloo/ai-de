@@ -734,8 +734,25 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         var result = service.Apply(operation);
         // Refusals are announced too: an unannounced no-op is indistinguishable from a dead key.
         announcer.Announce(result.Announcement);
+        if (result.Applied)
+        {
+            LayoutApplied?.Invoke();
+        }
+
         return true;
     }
+
+    /// <summary>Raised after a layout command this controller ran changed the model, so the holder of the view draws it.</summary>
+    /// <remarks>
+    /// <para><b>A command used to end at the announcement (DC-NEW-wl-t21-float-d).</b> Every catalog route — the palette,
+    /// the menu, the window's router — ends here, and nothing rendered after the apply. The palette's <i>Float pane</i>
+    /// floated a live notebook in the model and drew no window, while the shell said it was floating; a close, a collapse,
+    /// a maximize and a next tab were in the model and on no screen until an unrelated render.</para>
+    /// <para>An event, as <see cref="WorkspaceDataChanged"/> is: the controller owns no view. <see cref="DockHost"/> wires it
+    /// to its adapter's render. Raised after the announcement, so a sentence the render says (DOCK1 for a hidden notebook)
+    /// is the last one heard. A refusal changed nothing and raises nothing.</para>
+    /// </remarks>
+    public event Action? LayoutApplied;
 
     /// <summary>
     /// Binds the catalog's gestures on a WPF element — to <paramref name="execute"/> when given (the

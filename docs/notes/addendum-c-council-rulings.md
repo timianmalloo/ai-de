@@ -3639,3 +3639,15 @@ The decision, red-first through the user's real gesture (type, then Ctrl+Enter, 
 T30 (Ruling 180) follows on the same file after this lands.
 
 - request: req-01M5AEZY8REW390YCZ0SBRFRTX · ruled by: wl-owner-20261018 · at: 2026-10-19T16:13:29Z
+
+### Ruling 182 — Ruling 180 (3) amended: a kept line survives the next prepare now; surviving an app restart lands with WL-2's draft store, and the residual is stated to the user
+
+Option A. T30 n2 measured that neither a kept Goal line nor the unsent typed words survive a restart: the revived composer starts from a new ComposerDraft (ComposerSurface.cs:96). That gap predates the drive. The Owner checked: src/AiDe.Core/Presentation/Composer/ComposerDraftStore.cs exists (131 lines) with no caller in src/AiDe.App, and ADR-0043 gives WL-2 the draft store's new shape (:78) with scratch edits living in it until saved (:102). Building persistence into today's field composer (option B), or wiring the store WL-2 reshapes (option C), would be work WL-2 discards. AC-L01a (workbench-loops-ux.md:376) requires recovery only for content 'acknowledged as saved'. An unsent draft is never acknowledged as saved, so no specified behaviour is broken today.
+
+The decision:
+(1) Ruling 180 (3) now requires survival across the next prepare, which is proved by T30 n1 (C). Restart survival of the draft and its kept lines is a WL-2 obligation, owned by the draft-store work in ADR-0043.
+(2) No user-facing text may imply that an unsent draft or a kept line is saved: no 'saved' badge and no saved-state copy on the composer. A test refuses one.
+(3) The residual is stated in the WL-1a and prefill Proof Packs, and told to the user directly: unsent typing and kept suggestions are lost on restart until WL-2.
+(4) Whatever WAS sent survives. A sent turn's compiled prompt, including its goal block, is on the turn row's disclosure after a restart (Rulings 163, 181). A test pins that a restarted notebook shows the sent turn's goal line.
+
+- request: req-01M5AWXP9M7Z9MZE0DNYBCCGE1 · ruled by: wl-owner-20261018 · at: 2026-10-19T20:44:10Z
