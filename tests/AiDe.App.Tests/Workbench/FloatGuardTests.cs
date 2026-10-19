@@ -8,10 +8,11 @@ using AvalonDock.Layout;
 namespace AiDe.App.Tests.Perspectives;
 
 /// <summary>
-/// <b>Ruling 171 (1)</b> — float is guarded until T21 makes it real, so no pane can vanish: the
-/// float verb refuses with a stated cause, and a layout restored with a floating window docks that
-/// pane back with a report line. Both through the real surface (the controller; the persistence
-/// restore over the product's host admission).
+/// <b>Ruling 171 (2), T21 node 2</b> — T20's float guard is removed now that floating windows are
+/// drawn: <c>workbench.floatPane</c> floats the focused pane into a visible, focusable floating
+/// window, and a pane saved floating restores floating through <see cref="LayoutPersistence"/>.
+/// Both through the real surface (the controller, the persistence save and restore, the render).
+/// T20's two guard tests (the refusal and the restore redock) were deleted in the same change.
 /// </summary>
 public sealed class FloatGuardTests : IDisposable
 {
@@ -111,32 +112,4 @@ public sealed class FloatGuardTests : IDisposable
                 Assert.False(FloatRenderTests.HostedBy(content, main), "the restored pane is drawn in the workbench window");
                 Assert.True(content.IsVisible, "the restored pane is not visible");
             });
-
-    [Fact]
-    public void RestoringAFloatingWindow_DocksThePaneIntoItsKindsZone_DrawnReachableAndReported()
-    {
-        Directory.CreateDirectory(_dir);
-        var layoutPath = Path.Combine(_dir, "layout.json");
-        var slot = LayoutPersistence.SlotPathFor(layoutPath, PerspectiveSet.Factory);
-        var floated = new Surface("terminal-float", "terminal", "Terminal — floated");
-        var saved = WorkbenchLayout.Default(PerspectiveSet.Factory) with
-        {
-            Floating = [new StackNode("float-1", [floated], 0, StackState.Floating)],
-        };
-        new ZoneLayoutStore(slot).Save(saved);
-
-        var host = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
-        using var persistence = new LayoutPersistence(
-            host, layoutPath, new HashSet<string>(StringComparer.Ordinal), restorableKinds: SurfaceContentFactory.RestorableKinds);
-
-        var result = persistence.Restore();
-
-        Assert.Empty(host.Zones.Floating);
-        Assert.Equal(ZoneId.Bottom, host.Zones.FindZoneOf("terminal-float"));
-        var drawn = Assert.IsType<StackNode>(host.Current.FindStackOf("terminal-float"));
-        Assert.DoesNotContain(host.Current.Floating, f => f.Id == drawn.Id);
-        Assert.Contains("Terminal — floated", result.Announcement, StringComparison.Ordinal);
-        Assert.Contains("floating", result.Announcement, StringComparison.OrdinalIgnoreCase);
-        Assert.Null(result.ErrorCode);
-    }
 }
