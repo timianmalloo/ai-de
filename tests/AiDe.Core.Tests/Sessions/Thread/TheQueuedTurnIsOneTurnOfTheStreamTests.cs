@@ -106,7 +106,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
         Assert.NotNull(cancelled.Outcome);
         Assert.Equal("cancelled by you", TurnCopy.OutcomeWord(cancelled));
         Assert.Equal(["never sent"], TurnCopy.Counts(cancelled));
-        Assert.Equal("Cancelled before it was sent; its words went back to the editor.", TurnCopy.ReasonSentence(cancelled));
+        Assert.Equal("b2 cancelled by you before it was sent.", TurnCopy.ReasonSentence(cancelled));
 
         // The stream is append-only: the row stays, the next turn is b3, and a new Wait may queue again.
         Assert.Null(thread.Current.Queued);
