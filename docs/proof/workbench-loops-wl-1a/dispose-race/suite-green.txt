@@ -1,0 +1,14 @@
+T17e whole suites, fresh run at d7e0ac1b (HEAD effbadc1: docs only after the fix)
+
+Core: dotnet test tests/AiDe.Core.Tests -nologo -> exit 0
+Passed!  - Failed:     0, Passed:  3024, Skipped:     1, Total:  3025, Duration: 2 m 13 s - AiDe.Core.Tests.dll (net10.0)
+
+App: dotnet test tests/AiDe.App.Tests -nologo -> exit 1
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+Failed!  - Failed:     1, Passed:  1147, Skipped:     2, Total:  1150, Duration: 4 m 43 s - AiDe.App.Tests.dll (net10.0)
+
+The one App failure is environmental: it fails alone too (chord-alone.txt):
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+T17d's teardown-race test (TheRowsAttemptBindingSurvivesRestartAndSequenceTests.ASentTurnsRow_...) is not among the failures in this run (the default logger lists failures only); one run is not evidence the race is gone.
+Full logs: suite-core.txt, suite-app.txt.

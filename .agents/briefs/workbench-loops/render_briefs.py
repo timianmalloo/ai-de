@@ -29,6 +29,8 @@ TRACKS = {
     "T16": ("wl-t16-bindrow", "wl1a-attempt-binding-row", "docs/proof/workbench-loops-wl-1a/binding-row", "Sonnet 5.5"),
     "T17": ("wl-t17-restore", "wl1a-restored-turns", "docs/proof/workbench-loops-wl-1a/restored-turns", "Opus 5.5"),
     "T18": ("wl-t18-knowledge", "wls-knowledge-mode", "docs/proof/workbench-loops-wl-s/knowledge-mode", "Opus 5.5"),
+    "T21": ("wl-t21-float", "wls-float", "docs/proof/workbench-loops-wl-s/float", "Opus 5.5"),
+    "T22": ("wl-t22-wl1b-design", "wl1b-design", "docs/proof/workbench-loops-wl-1b/design", "Opus 5.5"),
 }
 
 common = (HERE / "brief-common.md").read_text(encoding="utf-8")

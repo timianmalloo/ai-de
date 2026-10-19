@@ -2681,7 +2681,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9d3b057aa42a59daa2d048e1d2fc0bf84d0e07a865c91242073eca43c24c265c"
+      "sourceSha256": "049ddaf453ecda8208821b51839943796c5f84716fbb5f24d1b174d82b2d70e8"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -10731,7 +10731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "01612d203dbaa572efc397aebd468c767d0a66db33e22e509fe7cb1f7eca9149"
+      "sourceSha256": "4c907207a5f942e585428c427b6038eab689414ed9a05a6f3502f0d180935fa0"
     },
     {
       "id": "design-session-profiler",
@@ -19079,6 +19079,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "f0471ae9a4259635fe7e2aa92a9afb62760e032c88e3f938d0df68a26b36d811"
     },
     {
+      "id": "coordination-workbench-loops-leader-handoff-2",
+      "path": "docs/coordination/workbench-loops-leader-handoff-2.md",
+      "title": "Leader hand-off 2 — workbench-loops drive (wl-leader2-20261019 → wl-leader3)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Second Leader's hand-off. WL-1a was accepted provisionally, then reopened (Ruling 172) and fixed by T17d. WL-S is near close: T11, T18, T20 and T21. The next Leader starts WL-1b on branches only. Includes the controls added this epoch and a resume brief.",
+      "tags": [
+        "coordination",
+        "handoff",
+        "workbench-loops",
+        "leader"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-handoff-1",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "05dd48661a59c93b470d757e06843efb6066a8ffda01a7db3aa4a61c02b91af3"
+    },
+    {
       "id": "plan-workbench-loops-drive-prompt",
       "path": "docs/plans/workbench-loops-drive-prompt.md",
       "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
@@ -22584,7 +22618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "951895db7c9309dabe37b730a456681cb859645623b7fa91d8270ff91bb3d5e8"
+      "sourceSha256": "d4c7c303f0a4832234de2e3c49ac9d273740127aa2fa744368d0deaafd76253c"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -22644,6 +22678,60 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fc797b730674972340e8ecca41a9d6ec216afb6e9eb70f05e583278c16daf917"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-dispose-race",
+      "path": "docs/proof/workbench-loops-wl-1a/dispose-race/README.md",
+      "title": "Proof Pack: WL-1a T17e — a read-back pending at disposal ends quietly",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17e: since T17d the restart read-back starts when the host binds, so it can still run when the shell disposes the notebook, host and store. Held on a gate, it was red: an ObjectDisposedException escaped, and 2 turn rows were written after disposal, on the unit path and through WorkbenchShell.Dispose over a real WorkspaceClient. The read-back now runs under the notebook's lifetime and ends quietly. T17d's teardown NRE is a different race (a write), and stays open.",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "evidence",
+        "read-back",
+        "dispose",
+        "ruling-172",
+        "ruling-175"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30469604dc5e03df20e79212e7fb4bc3d5aabb55b7ce67a1c27f67e2e82a7213"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-dispose-race-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/dispose-race/handoff.md",
+      "title": "Hand-off — WL-1a T17e: a read-back pending at disposal ends quietly",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T17e: the read-back-at-disposal race was reproduced with a gate on the unit path and through WorkbenchShell.Dispose, then fixed in NotebookRuns (red 31b61650, green d7e0ac1b). The WL-1a residual line is effbadc1, and step 18 is unchanged. T17d's teardown NRE is a different race (a run's write) and stays open.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "54d340e4754f6757223ed7d8b995c15136e4ae6879f54f43f2ed2ac289e44570"
     },
     {
       "id": "proof-workbench-loops-wl-1a-host-handoff",
@@ -24901,5 +24989,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2d790758da318ad7d9a7d8ed2bbbd73482e7e67357da61fd6a98fb7376a06bf8"
+  "graphSha256": "39074c03f832bda06c84e58233d06415cafc6a2b9ff42fbca3ee61af2c285381"
 };

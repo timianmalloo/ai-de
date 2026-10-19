@@ -75,3 +75,28 @@
 {"agent": "wl-t21-float", "at": 1792418872.8248048, "kind": "release", "path": "docs/proof/workbench-loops-wl-s/float/handoff.md", "seq": 75, "session": "wl-t21-float", "wi": "workbench-loops"}
 {"agent": "wl-t21-float", "at": 1792418872.9279337, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchAdapter.cs", "seq": 76, "session": "wl-t21-float", "wi": "workbench-loops"}
 {"at": 1792418886.857277, "from": "wl-t21-float", "kind": "done", "mail_id": "mail-01M5A7VD69MME76AACHF8RPMG1", "ref": null, "session": "wl-t21-float", "to": "wl-leader2-20261019", "type": "mail"}
+{"action": "add", "agent": "wl-t21-float", "at": 1792421019.044335, "deadline_at": 1792422819.044335, "id": "req-01M5A9WFD8G87N4DFPRB0B5C9X", "kind": "request", "path": "-", "seq": 78, "session": "wl-t21-float", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"action": "add", "agent": "wl-t21-float", "at": 1792421100.69095, "deadline_at": 1792423500.69095, "id": "req-01M5A9YZ4PB93ZD06KE5EMC5X8", "kind": "request", "path": "-", "seq": 79, "session": "wl-t21-float", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"action": "add", "agent": "wl-t21-float", "at": 1792421100.7807362, "deadline_at": 1792423500.7807362, "id": "req-01M5A9YZ7H7QPANKV4YMECM31H", "kind": "request", "path": "-", "seq": 80, "session": "wl-t21-float", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t21-float", "at": 1792421191.5582247, "kind": "claim", "path": "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs", "seq": 81, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421191.7415826, "kind": "claim", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 82, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421303.0011554, "kind": "release", "path": "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs", "seq": 83, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421426.9669535, "kind": "claim", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 84, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421427.2173834, "kind": "claim", "path": "src/AiDe.App/Workbench/LayoutPersistence.cs", "seq": 85, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421545.3965476, "kind": "claim", "path": "DESIGN.md", "seq": 86, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421545.5652766, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 87, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421567.0141814, "kind": "release", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 88, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421567.1002145, "kind": "release", "path": "DESIGN.md", "seq": 89, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421567.2208688, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 90, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421638.3699327, "kind": "claim", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 91, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421638.5741417, "kind": "claim", "path": "src/AiDe.Core/Workbench/LayoutStore.cs", "seq": 92, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421638.7405636, "kind": "claim", "path": "src/AiDe.Core/Workbench/DropTargetResolver.cs", "seq": 93, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421684.4830818, "kind": "release", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 94, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421684.572356, "kind": "release", "path": "src/AiDe.Core/Workbench/LayoutStore.cs", "seq": 95, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421684.6958249, "kind": "release", "path": "src/AiDe.Core/Workbench/DropTargetResolver.cs", "seq": 96, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421684.790202, "kind": "release", "path": "src/AiDe.App/Workbench/LayoutPersistence.cs", "seq": 97, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421693.6335838, "kind": "claim", "path": "docs/proof/workbench-loops-wl-s/float/README.md", "seq": 98, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792421693.8167913, "kind": "claim", "path": "docs/proof/workbench-loops-wl-s/float/handoff.md", "seq": 99, "session": "wl-t21-float", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792422206.677327, "kind": "release", "path": "docs/proof/workbench-loops-wl-s/float/README.md", "seq": 100, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"agent": "wl-t21-float", "at": 1792422206.7688415, "kind": "release", "path": "docs/proof/workbench-loops-wl-s/float/handoff.md", "seq": 101, "session": "wl-t21-float", "wi": "workbench-loops"}
+{"at": 1792422227.5594013, "from": "wl-t21-float", "kind": "done", "mail_id": "mail-01M5AB1BK7RV9JHH5E39Q3W4B3", "ref": null, "session": "wl-t21-float", "to": "wl-leader3-20261019", "type": "mail"}
