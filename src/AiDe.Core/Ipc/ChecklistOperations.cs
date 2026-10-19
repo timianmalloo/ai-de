@@ -9,9 +9,9 @@ namespace AiDe.Core.Ipc;
 /// <summary>One obligation a caller declares. A null id is minted by the service; a given id must already be in the checklist's history.</summary>
 public sealed record ObligationInput(string? ObligationId, string Text, bool Mandatory);
 
-/// <summary>Sets the complete obligation list of a journey's checklist. <paramref name="ChecklistId"/> may only be null or the journey id (Ruling 176).</summary>
+/// <summary>Sets the complete obligation list of a journey's checklist. The journey has one checklist, keyed by its id (Ruling 176).</summary>
 public sealed record ObligationsSetRequest(
-    string JourneyId, string IntentNotebookId, IReadOnlyList<ObligationInput> Obligations, string? ChecklistId = null);
+    string JourneyId, string IntentNotebookId, IReadOnlyList<ObligationInput> Obligations);
 
 /// <summary>The checklist revision now at the head, whether this call wrote it or found it.</summary>
 public sealed record ObligationsSetResult(int Revision);
@@ -77,15 +77,6 @@ public sealed class ChecklistService(WorkspaceStore store)
         using var writer = store.BeginWrite();
         using var reader = store.BeginRead();
         RequireWorkJourney(reader, request.JourneyId, request.IntentNotebookId);
-
-        // simplify: one checklist per journey, checklist_id = journey_id (Ruling 176). Ceiling: WL-1b and WL-1c need no
-        // more. Upgrade trigger: the first spec story that needs two checklists in one journey requires the v3 owner
-        // column on checklist_obligation_fact, backfilled from this alias.
-        if (request.ChecklistId is not null && request.ChecklistId != request.JourneyId)
-        {
-            throw new WorkspaceStoreException(StoreErrorCodes.WorkSecondChecklist,
-                $"'{request.ChecklistId}' would be a second checklist for journey '{request.JourneyId}'; a journey has one");
-        }
 
         var latest = reader.ReadLatestChecklistRevision(request.JourneyId);
         var current = latest is { } revision ? reader.ReadObligations(request.JourneyId, revision) : [];

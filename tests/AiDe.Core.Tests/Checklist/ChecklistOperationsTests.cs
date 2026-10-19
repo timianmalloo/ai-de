@@ -440,31 +440,6 @@ public sealed class ChecklistOperationsTests : IDisposable
         Assert.StartsWith("obl-", two);
     }
 
-    [Fact]
-    public void B3_AWriteThatWouldCreateASecondChecklistForAJourney_IsRefusedAndWritesNothing()
-    {
-        var journey = OpenWork();
-
-        var ex = Assert.Throws<WorkspaceStoreException>(() => Service.SetObligations(
-            new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, "Tests pass", true)], ChecklistId: "checklist-b")));
-
-        Assert.Equal(StoreErrorCodes.WorkSecondChecklist, ex.ErrorCode);
-        using var reader = _workspace.Store.BeginRead();
-        Assert.Empty(reader.ReadObligationHistory("checklist-b"));
-        Assert.Empty(reader.ReadObligationHistory(journey));
-    }
-
-    [Fact]
-    public void B3_NamingTheJourneyAsTheChecklist_IsTheSameChecklist_NotASecond()
-    {
-        var journey = OpenWork();
-
-        var result = Service.SetObligations(
-            new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, "Tests pass", true)], ChecklistId: journey));
-
-        Assert.Equal(1, result.Revision);
-    }
-
     // ---- A: checklist.evaluate ------------------------------------------------------------------
 
     [Fact]
