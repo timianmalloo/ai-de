@@ -305,7 +305,7 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
 
                 Assert.Empty(model.Thread.Current.Turns);
                 Assert.Equal("fourth words", surface.Composer.Draft.SourceText);
-                Assert.Contains("the lock file's folder is read-only", surface.Composer.Status, StringComparison.Ordinal);
+                Assert.Equal(HostOpenFailedLine, surface.Composer.Status);
                 Assert.Equal(model.Runs.HostRefusal, surface.Composer.Status);
                 Assert.Equal(model.Runs.HostRefusal, AutomationProperties.GetHelpText(send));
                 Assert.False(send.IsEnabled, "Send was enabled while the host refused");
@@ -323,7 +323,7 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
 
     /// <summary>
     /// Ruling 175 (2), node 3 check B: a Send while the turns restore, whose read-back then fails, keeps the words in the
-    /// editor and shows the read-back's own cause in Ruling 159's refusal words, with the Retry; nothing joins the
+    /// editor and shows the read-back's own cause in the Owner's words (node 4 check 2), with the Retry; nothing joins the
     /// thread. The Retry reads back again, the restored turns appear, and the same words then send as b3.
     /// </summary>
     [Fact]
@@ -350,7 +350,8 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
 
                 Assert.Empty(model.Thread.Current.Turns);
                 Assert.Equal("third words", surface.Composer.Draft.SourceText);
-                Assert.Equal("Runs cannot be hosted in this window: the attempt store is locked by a backup Retry to open the host again.", surface.Composer.Status);
+                Assert.Equal(ReadBackFailedLine, surface.Composer.Status);
+                Assert.Equal(ReadBackFailedLine, AutomationProperties.GetHelpText(send));
                 Assert.Equal(model.Runs.HostRefusal, AutomationProperties.GetHelpText(send));
                 Assert.False(send.IsEnabled, "Send was enabled after the read-back failed: a send now would number ahead of the unrestored turns");
                 var retry = FindButton(surface.Composer, b => AutomationProperties.GetName(b) == AiDe.App.Workbench.Composer.ComposerSurface.RetryHostName);
@@ -368,9 +369,35 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
             });
     }
 
+    /// <summary>
+    /// Node 4 check 2 (the Owner's copy): a failed read-back reads "Restoring this notebook's turns failed: {cause}. Retry
+    /// to restore them.", status and UIA alike. A failed host open keeps Ruling 159's words.
+    /// </summary>
+    private const string ReadBackFailedLine = "Restoring this notebook's turns failed: the attempt store is locked by a backup. Retry to restore them.";
+
+    private const string HostOpenFailedLine = "Runs cannot be hosted in this window: the lock file's folder is read-only Retry to open the host again.";
+
     /// <summary>Ruling 175 (1): the restoring sentence is DESIGN.md's copy, one row citing the ruling, pinned to the const.</summary>
     [Fact]
     public void TheRestoringSentence_IsOneDesignCopyRow_CitingRuling175()
+    {
+        var row = Assert.Single(DesignRows(), l => l.Contains($"`{SessionDocumentSurface.RestoringTurns}`", StringComparison.Ordinal));
+        Assert.Contains("Ruling 175", row, StringComparison.Ordinal);
+    }
+
+    /// <summary>Node 4 check 2: the read-back failure's sentence is one DESIGN.md copy row, beside the restoring sentence's.</summary>
+    [Fact]
+    public void TheReadBackFailedSentence_IsOneDesignCopyRow_BesideTheRestoringSentence()
+    {
+        var rows = DesignRows();
+        var restoring = Array.FindIndex(rows, l => l.Contains($"`{SessionDocumentSurface.RestoringTurns}`", StringComparison.Ordinal));
+        var failed = Array.FindIndex(rows, l => l.Contains("`Restoring this notebook's turns failed: {cause}. Retry to restore them.`", StringComparison.Ordinal));
+        Assert.True(failed >= 0, "DESIGN.md has no copy row for the read-back failure's sentence");
+        Assert.Equal(restoring + 1, failed);
+        Assert.Contains("Ruling 175", rows[failed], StringComparison.Ordinal);
+    }
+
+    private static string[] DesignRows()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AiDe.sln")))
@@ -379,9 +406,7 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
         }
 
         Assert.NotNull(dir);
-        var rows = File.ReadAllLines(Path.Combine(dir!.FullName, "DESIGN.md"));
-        var row = Assert.Single(rows, l => l.Contains($"`{SessionDocumentSurface.RestoringTurns}`", StringComparison.Ordinal));
-        Assert.Contains("Ruling 175", row, StringComparison.Ordinal);
+        return File.ReadAllLines(Path.Combine(dir!.FullName, "DESIGN.md"));
     }
 
     /// <summary>
