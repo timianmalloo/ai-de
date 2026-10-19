@@ -231,30 +231,48 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     [InlineData(typeof(ZoneContentDto), typeof(Frozen.ZoneContentDto))]
     [InlineData(typeof(ZoneStackDto), typeof(Frozen.ZoneStackDto))]
     [InlineData(typeof(ZoneSurfaceDto), typeof(Frozen.ZoneSurfaceDto))]
-    public void TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters(Type live, Type frozen)
+    public void TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters(Type live, Type frozen) =>
+        Assert.Empty(FreezeViolations(live, frozen));
+
+    // The freeze's own control: a field no ruling added, or a ruled field under another wire name,
+    // is refused even when it is optional, nullable and null by default.
+    [Theory]
+    [InlineData(typeof(Planted.UnruledField))]
+    [InlineData(typeof(Planted.RuledFieldRenamed))]
+    public void TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed(Type planted) =>
+        Assert.NotEmpty(FreezeViolations(planted, typeof(Frozen.ZoneStackDto)));
+
+    // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as surely
+    // as a removed member does. The frozen parameters are the live constructor's exact prefix. A
+    // parameter after them is an additive field, which schema 1 admits only when it is optional,
+    // nullable and null by default, so a file without it still reads.
+    private static List<string> FreezeViolations(Type live, Type frozen)
     {
-        // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as
-        // surely as a removed member does. The frozen parameters are the live constructor's exact
-        // prefix. A parameter after them is an additive field, which schema 1 admits (Ruling 174's
-        // floating bounds) only when it is optional, nullable and null by default, so a file without
-        // it still reads.
-        static string[] Parameters(Type t) =>
-            t.GetConstructors().Single().GetParameters()
-                .Select(p => $"{p.Name}:{p.ParameterType.Name}:{Wire(t, p.Name!)}")
-                .ToArray();
+        static string Parameter(Type t, ParameterInfo p) =>
+            $"{p.Name}:{p.ParameterType.Name}:{t.GetProperty(p.Name!)?.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? "(none)"}";
 
-        static string Wire(Type t, string parameter) =>
-            t.GetProperty(parameter)?.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? "(none)";
-
-        var frozenParameters = Parameters(frozen);
-        Assert.Equal(frozenParameters, Parameters(live).Take(frozenParameters.Length));
-        var added = live.GetConstructors().Single().GetParameters().Skip(frozenParameters.Length);
-        Assert.All(added, p =>
+        var frozenParameters = frozen.GetConstructors().Single().GetParameters().Select(p => Parameter(frozen, p)).ToArray();
+        var liveParameters = live.GetConstructors().Single().GetParameters();
+        var violations = new List<string>();
+        if (!frozenParameters.SequenceEqual(liveParameters.Take(frozenParameters.Length).Select(p => Parameter(live, p))))
         {
-            Assert.True(p.HasDefaultValue && p.DefaultValue is null, $"{live.Name}.{p.Name} is added to schema 1 without a null default");
-            Assert.True(Nullable.GetUnderlyingType(p.ParameterType) is not null || !p.ParameterType.IsValueType,
-                $"{live.Name}.{p.Name} is added to schema 1 as a non-nullable {p.ParameterType.Name}");
-        });
+            violations.Add($"{live.Name}: the frozen parameters are not the live constructor's prefix");
+        }
+
+        foreach (var p in liveParameters.Skip(frozenParameters.Length))
+        {
+            if (!(p.HasDefaultValue && p.DefaultValue is null))
+            {
+                violations.Add($"{live.Name}.{p.Name} is added to schema 1 without a null default");
+            }
+
+            if (p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) is null)
+            {
+                violations.Add($"{live.Name}.{p.Name} is added to schema 1 as a non-nullable {p.ParameterType.Name}");
+            }
+        }
+
+        return violations;
     }
 
     // Test 6, the backup: the .pre-perspectives.bak exists after the first post-drop save and equals
@@ -633,6 +651,32 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             [property: JsonPropertyName("surfaceId")] string SurfaceId,
             [property: JsonPropertyName("kind")] string Kind,
             [property: JsonPropertyName("title")] string Title);
+    }
+
+    /// <summary>
+    /// Live-shaped <c>ZoneStackDto</c> copies the freeze must refuse. Each is today's live record with
+    /// one change that no ruling made.
+    /// </summary>
+    private static class Planted
+    {
+        public sealed record UnruledField(
+            [property: JsonPropertyName("id")] string Id,
+            [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
+            [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+            [property: JsonPropertyName("floatX")] double? FloatX = null,
+            [property: JsonPropertyName("floatY")] double? FloatY = null,
+            [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+            [property: JsonPropertyName("floatHeight")] double? FloatHeight = null,
+            [property: JsonPropertyName("floatZ")] double? FloatZ = null);
+
+        public sealed record RuledFieldRenamed(
+            [property: JsonPropertyName("id")] string Id,
+            [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
+            [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+            [property: JsonPropertyName("x")] double? FloatX = null,
+            [property: JsonPropertyName("floatY")] double? FloatY = null,
+            [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+            [property: JsonPropertyName("floatHeight")] double? FloatHeight = null);
     }
 
     public void Dispose()
