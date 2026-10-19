@@ -8,7 +8,7 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test)."
+summary: "Node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
 ---
 
 # T11 node 9 — hand-off
@@ -35,7 +35,20 @@ summary: "Node 9: P (prompt kept, Ruling 173) red then green, with design sectio
 
 ## Suites (`suite-node9.txt`)
 
-Running at the rule-16 kick (started before it, so it is allowed to finish). The result is recorded here when it ends.
+Started before the rule-16 kick, so it was allowed to finish.
+
+- **Core: 3024 passed, 0 failed, 1 skipped (3025).**
+- **App: 1146 passed, 7 failed, 2 skipped (1155).** The 7, by cause:
+  - **Expected (3):**
+    - `ARevivedNotebookReopensItsLiveAttemptsExecutionTests…(diedMidRun: False/True)`: D2, waiting on T17d (Ruling 172).
+    - `PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_…`: R removed the alias it pins (seam req-01M5A3V1Q07WEFR57AGDMQKD92).
+  - **Environment (2).** Both need the foreground for real OS input, and this background run did not hold it:
+    - `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`: "foreground not held". Ruling 155 marks it as failing only in full runs.
+    - `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_…`: "foreground held=False".
+    - Neither was re-run alone at node 9: the kick said to start nothing new. *Unverified* that they pass with the foreground held. `B-ctrl-digit-green.txt` (node 5) is the last green run.
+  - **Branch regressions (2), new since `suite-node3.txt`.** Both are source-scan controls on files node 9 did not touch. They come from nodes 4 to 8, which skipped the whole-suite run:
+    - `TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation`: "a Loaded hook outside the allow-list (DC-138): SessionDocumentSurface.cs". Blame: line 131, `Loaded += (_, _) => _paneHiddenSaid = false;`, from **`c736c96f`** (node 7, C-hide shutdown).
+    - `EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender`: "the opening command at offset 183576 raises DocumentOpening BEFORE its add at offset 186328", in `WorkbenchShell.OpenSessionConsole`. Not tied to one commit. The branch changed this area at `e3ead08d`, `583dddc6` and `bbf1465b`.
 
 ## Not done / open
 
@@ -49,6 +62,11 @@ Running at the rule-16 kick (started before it, so it is allowed to finish). The
 
 ## Next step
 
+0. **Before any join: fix the two branch regressions** (Suites, above). They are red now, so each needs its fix only, then a re-run of its class.
+   - DC-138: reset `_paneHiddenSaid` without a `Loaded` hook, or add the hook to the allow-list with its reason.
+   - The seam ordering in `OpenSessionConsole`: raise `DocumentOpening` only after the add is applied.
+   Then re-run the two environment reds alone, with the foreground held.
+   - *Candidate defect class:* a node that skips the whole-suite run lets source-scan regressions pile up across nodes. Here two piled up across nodes 4 to 8. It goes in the register with the fix commit (rule 11). The control: a node that changes `src/` runs at least the source-scan control classes before its handoff.
 1. Grant or answer the two seam requests. On the alias grant, re-pin `PerspectiveLayoutSlotTests.cs:73` (3 lines).
 2. After the Leader merges T17d: build D2's granted shell change (`ReviveRestoredSessionDocuments` → `OpenExecution(document, ordinal, activate:false)`) and the `Execution/` predicate, and turn D2 green.
 3. After T21: fill Proof Pack row 10 and demo step 5. Then the Owner runs the demo.

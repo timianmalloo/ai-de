@@ -53,7 +53,11 @@ summary: >-
 | 16 | Knowledge-inclusive canvas mode (Ruling 149 (2)): a mode of the canvas kind, default off, with its own E2E over the real daemon projection | T18 n1-n3 | checks 1-7 in `workbench-loops-wl-s/knowledge-mode/README.md`, E2E `KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt` | `74e690fd` → `2ff09885` (E2E); the rest in the README | Verified by T18 (cited, not re-run here except in the suite) |
 | 17 | Float guard (Ruling 171 (1)): `workbench.floatPane` refuses with a stated cause; a restored floating window is docked with a report line | T20 | `workbench-loops-wl-s/float-guard/README.md` (`floatpane-refusal`, `restore-docking`, `dock3-wording`, `dock3-zone-label`) | each `-red.txt` → `-green.txt` in that folder; joined `5b47615e` | Verified by T20 (cited) |
 
-**Node 9's suite run:** see `kinds/suite-node9.txt` and the line below, which the node writes after the run.
+**Node 9's suite run** (`kinds/suite-node9.txt`): Core 3024/3025 passed (1 skipped, 0 failed). App 1146/1155
+passed (2 skipped, **7 failed**). The 7: three expected (D2 ×2, the alias pin), two environmental (real-input tests
+without the foreground), and **two branch regressions from T11 nodes 4–8** (DC-138's Loaded-hook control on
+`SessionDocumentSurface.cs`, from `c736c96f`; the open-seam ordering control in `WorkbenchShell.OpenSessionConsole`).
+**The branch is not join-ready until those two are fixed.** Detail: `kinds/handoff.md`, node 9, Suites.
 
 ## Merge conditions
 
