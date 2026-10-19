@@ -1,4 +1,5 @@
 using AiDe.Core.Ipc;
+using AiDe.Core.Store;
 
 namespace AiDe.App.Workbench.Records;
 
@@ -14,13 +15,26 @@ namespace AiDe.App.Workbench.Records;
 /// <param name="journeyTitle">The title the notebook's work journey is created with on first open.</param>
 public sealed class DaemonNotebookRevisions(WorkspaceClient client, string journeyTitle) : INotebookRevisions
 {
+    /// <summary>What the model shows when <c>notebook.open</c> refused: nothing was written, so no revision is recorded.</summary>
+    public const string OpenRefusedCopy = "notebook revisions are not recorded: the workspace refused to open this notebook";
+
     private bool _opened;
 
     public async Task<NotebookRevision> SaveAsync(NotebookId notebook, string body, int? parentRevisionNo, CancellationToken cancellationToken)
     {
         if (!_opened)
         {
-            await client.OpenNotebookAsync(notebook.Value, journeyTitle, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await client.OpenNotebookAsync(notebook.Value, journeyTitle, cancellationToken).ConfigureAwait(false);
+            }
+            catch (IpcRequestException refused) when (refused.Code is StoreErrorCodes.JourneyIdCollision or StoreErrorCodes.ReservedJourney)
+            {
+                // T14b: the derived journey id is taken or reserved, and the op wrote nothing. Not retried as if
+                // transient: every later save asks again and is refused the same way, so no revision is ever claimed.
+                throw new NotebookOpenRefusedException(refused.Message);
+            }
+
             _opened = true;
         }
 
@@ -32,3 +46,8 @@ public sealed class DaemonNotebookRevisions(WorkspaceClient client, string journ
         return new NotebookRevision(notebook, saved.RevisionNo, saved.BodySha, parent);
     }
 }
+
+/// <summary><c>notebook.open</c> refused with a stable store code; nothing was written.</summary>
+/// <param name="reason">The client's message, which leads with the stable code.</param>
+public sealed class NotebookOpenRefusedException(string reason)
+    : InvalidOperationException($"{DaemonNotebookRevisions.OpenRefusedCopy} ({reason})");

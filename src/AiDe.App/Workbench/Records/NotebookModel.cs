@@ -152,7 +152,9 @@ public sealed class NotebookModel : IDisposable
             }
             catch (Exception error) when (error is WorkspaceStoreException or IpcRequestException or IOException or InvalidOperationException)
             {
-                _saveFailure = "the draft was not saved as a revision — " + error.Message;
+                _saveFailure = error is NotebookOpenRefusedException
+                    ? error.Message
+                    : "the draft was not saved as a revision — " + error.Message;
                 return null;
             }
 
