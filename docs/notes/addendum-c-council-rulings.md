@@ -3454,3 +3454,17 @@ T17c, a small Sonnet track:
 Then T17 joins under Ruling 160. Option B is rejected because the full recount would stay flaky. Option C gains nothing over (1) and (2), since the cause is known by code reading.
 
 - request: req-01M59S63G76ZPF0V8KFMRZ2YGB · ruled by: wl-owner-20261018 · at: 2026-10-19T09:52:18Z
+
+### Ruling 166 — The knowledge-inclusive mode is a per-instance toggle on the graph canvas toolbar beside Group; Ruling 53's 'no in-surface knowledge toggle' clause is amended
+
+Option A, and it explicitly amends Ruling 53. Ruling 53 forbade an in-surface knowledge or architecture toggle on the premise that Explorer was the knowledge surface. Ruling 149 retired Explorer, and in its condition (2) it already asked for a mode of the admitted canvas kind. ADR-0045 section 2 (lines 98-101) defines the representation selector as the admitted Understand kinds following linked selection, and no selector control exists. CanvasSurface and CanvasPage have only the 2D/3D and Group toolbar toggles, which are the existing representation options. A third toggle there adds the least new surface. Option B would make the mode unreachable.
+
+Conditions, each red-first:
+(1) A toggle button beside Group, text 'Knowledge-inclusive', UI Automation name 'Knowledge-inclusive mode', exposing the Toggle pattern (aria-pressed in the web page). Both strings are one const each, with a DESIGN.md entry.
+(2) Default OFF, so today's docked graph is unchanged. The state is per canvas instance and persists with the layout, like Group.
+(3) The toggle drives the existing exclusion seam. Its writer is the ExcludeKnowledge assignment at WorkbenchShell.cs:1386, cited by file:line: the toggle changes that value, not a second filter.
+(4) The WL-S end-to-end check: with the toggle on, knowledge and spec nodes appear in the Understand graph; with it off, they do not. It is keyboard-reachable from the toolbar.
+(5) Ruling 53's other clauses stand: one graph substrate, one neighbourhood query, no second graph store, no second graph surface.
+This also discharges Ruling 149 (2)'s 'representation selector' wording.
+
+- request: req-01M59VQGBWQN4AB0DHWNYE6587 · ruled by: wl-owner-20261018 · at: 2026-10-19T10:37:52Z
