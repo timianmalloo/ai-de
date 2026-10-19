@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
@@ -159,9 +160,46 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 Assert.Equal($"Sent from revision {attempt.RevisionNo} · request {attempt.ProjectionSha![..7]} · via claude-code", row.BindingLine);
                 var lines = row.View.Events.Select(e => e.Text).ToList();
                 Assert.Contains(lines, l => l.StartsWith($"DeliveryUnknown: {DispatchErrorCodes.DeliveryUnknown} host_restart", StringComparison.Ordinal));
-                Assert.Equal(
-                    string.Create(CultureInfo.InvariantCulture, $"Last recorded event: seq {last.Seq} at {last.Ts:O}"),
-                    lines[^1]);
+
+                // Ruling 164: the line follows the cause's reason sentence, and the row's UIA HelpText repeats it verbatim.
+                var expected = TurnCopy.ReasonSentence(row.View) + " "
+                    + string.Create(CultureInfo.InvariantCulture, $"Last event received: #{last.Seq} at {last.Ts.ToLocalTime():HH:mm:ss}.");
+                Assert.Equal(expected, row.HelpText);
+                Assert.Equal(expected, AutomationProperties.GetHelpText(ThreadFixtures.Container(surface.Thread, 0)));
+                Assert.DoesNotContain(lines, l => l.StartsWith("Last ", StringComparison.Ordinal));
+                Close(window, host, model, surface);
+            });
+    }
+
+    [Fact]
+    public void AKilledAttemptWithNoEvents_ReopensAsDeliveryUnknown_WithLastEventNotRecorded()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                _fixture.ReleaseRun();
+
+                var dying = new DyingAtTheTerminal(new BoundaryDispatcher(_fixture.Store));
+                var (host, model, surface) = await ReopenAsync(window, dying);
+                surface.Composer.Draft.SetFreeFormText("words before the kill");
+                Assert.NotNull(surface.Composer.Send());
+                await UntilAsync(window, () => dying.Died, () => "the host never reached its terminal write");
+                var attempt = model.Runs.AttemptOf(1)!.Attempt;
+                Close(window, host, model, surface);
+
+                // The attempt is recorded; its run log holds no event.
+                File.WriteAllText(RunLogStore.PathFor(_fixture.Root, NotebookFixture.SessionId, attempt.DispatchKey), string.Empty);
+
+                (host, model, surface) = await ReopenAsync(window);
+                await UntilAsync(window, () => surface.Thread.Rows.Count >= 1, () => "the reopened notebook renders no row for the killed attempt");
+                var row = Assert.Single(surface.Thread.Rows);
+                Assert.Equal(TurnState.DeliveryUnknown, row.State);
+                var expected = TurnCopy.ReasonSentence(row.View) + " Last event received: not recorded.";
+                Assert.Equal(expected, row.HelpText);
+                Assert.Equal(expected, AutomationProperties.GetHelpText(ThreadFixtures.Container(surface.Thread, 0)));
                 Close(window, host, model, surface);
             });
     }
