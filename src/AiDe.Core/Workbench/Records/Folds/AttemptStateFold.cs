@@ -52,7 +52,7 @@ public static class AttemptStateFold
     };
 
     /// <summary>The <c>artifact_ref</c> an evidence link to this attempt carries.</summary>
-    /// <remarks>assume: WL-1b's evidence writer uses this form. Confirm: its first link row. If false: HasEvidence reads false.</remarks>
+    /// <remarks>Written only by <c>ChecklistService.LinkEvidence</c>, which refuses any other form of attempt reference.</remarks>
     public static string AttemptArtifactRef(string dispatchKey) => "attempt://" + dispatchKey;
 
     public static AttemptState Evaluate(AttemptStateInput input)

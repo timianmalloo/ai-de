@@ -51,6 +51,9 @@ public sealed record WorkAcceptResult(WorkClosure Closure, int IntentRevisionNo,
 /// </remarks>
 public sealed class ChecklistService(WorkspaceStore store)
 {
+    /// <summary>The longest obligation text or disposition reason one frame may carry.</summary>
+    public const int MaxTextLength = 2000;
+
     public ChecklistEvaluateResult Evaluate(ChecklistEvaluateRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -74,6 +77,18 @@ public sealed class ChecklistService(WorkspaceStore store)
         using var reader = store.BeginRead();
         var latest = reader.ReadLatestChecklistRevision(request.JourneyId);
         var current = latest is { } revision ? reader.ReadObligations(request.JourneyId, revision) : [];
+        foreach (var o in request.Obligations)
+        {
+            RequireWithinCap(o.Text, "obligation text");
+        }
+
+        var known = reader.ReadObligationHistory(request.JourneyId).Select(o => o.ObligationId).ToHashSet(StringComparer.Ordinal);
+        var unknown = request.Obligations.FirstOrDefault(o => o.ObligationId is not null && !known.Contains(o.ObligationId));
+        if (unknown is not null)
+        {
+            throw UnknownObligation(unknown.ObligationId!);
+        }
+
         var declared = request.Obligations
             .Select(o => (Id: o.ObligationId ?? MintObligationId(), o.Text, o.Mandatory))
             .ToList();
@@ -102,6 +117,13 @@ public sealed class ChecklistService(WorkspaceStore store)
         var head = reader.ReadLatestNotebookRevision(request.IntentNotebookId);
         var baseline = AcceptanceBaseline.For(request.IntentNotebookId, head?.RevisionNo);
         var isIntent = request.Kind == "intent-accepted";
+        RequireWithinCap(request.Reason, "disposition reason");
+        if (!isIntent)
+        {
+            RequireKnownObligation(reader, request.JourneyId, request.ObligationId);
+        }
+
+        RequireKindForSubject(isIntent ? "intent" : "obligation", request.Kind);
 
         writer.AppendDisposition(isIntent
             ? new DispositionRow("intent", request.JourneyId, request.Kind, actor, baseline, request.Reason,
@@ -121,14 +143,29 @@ public sealed class ChecklistService(WorkspaceStore store)
         using var writer = store.BeginWrite();
         using var reader = store.BeginRead();
         var head = reader.ReadLatestNotebookRevision(request.IntentNotebookId);
+        RequireKnownObligation(reader, request.JourneyId, request.ObligationId);
+        RequireEligibleAttempt(reader, request, head?.RevisionNo);
+
+        var artifactRef = AttemptStateFold.AttemptArtifactRef(request.DispatchKey);
+        var baseline = AcceptanceBaseline.For(request.IntentNotebookId, head?.RevisionNo);
+        var checklistRevision = reader.ReadLatestChecklistRevision(request.JourneyId)!.Value;
+        var existing = reader.ReadEvidenceLinksForSubject("obligation", request.ObligationId).FirstOrDefault(l =>
+            l.ArtifactRef == artifactRef && l.Baseline == baseline && l.SubjectRevision == checklistRevision
+            && l.VerificationStatus == AcceptanceFold.ObservedStatus);
+        if (existing is not null)
+        {
+            return new EvidenceLinkResult(existing);
+        }
+
         var link = new EvidenceLinkRow(
-            "lnk-" + Guid.NewGuid().ToString("N"), "obligation", request.ObligationId,
-            reader.ReadLatestChecklistRevision(request.JourneyId) ?? 0,
-            AttemptStateFold.AttemptArtifactRef(request.DispatchKey), actor,
-            AcceptanceBaseline.For(request.IntentNotebookId, head?.RevisionNo), AcceptanceFold.ObservedStatus);
+            "lnk-" + Guid.NewGuid().ToString("N"), "obligation", request.ObligationId, checklistRevision,
+            artifactRef, actor, baseline, AcceptanceFold.ObservedStatus);
         writer.AppendEvidenceLink(link);
         writer.Commit();
-        return new EvidenceLinkResult(link);
+
+        using var after = store.BeginRead();
+        return new EvidenceLinkResult(
+            after.ReadEvidenceLinksForSubject("obligation", request.ObligationId).Single(l => l.LinkId == link.LinkId));
     }
 
     public WorkAcceptResult Accept(WorkAcceptRequest request, string actor)
@@ -194,6 +231,67 @@ public sealed class ChecklistService(WorkspaceStore store)
             dispositions.ToDictionary(p => p.Key, p => (IReadOnlyList<DispositionRow>)p.Value, StringComparer.Ordinal),
             reader.ReadDispositions("intent", journeyId), attempts, liveProjectionSha));
     }
+
+    private static void RequireWithinCap(string? value, string field)
+    {
+        if (value is { Length: > MaxTextLength })
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.WorkFieldTooLong,
+                $"{field} is {value.Length} characters; the limit is {MaxTextLength}");
+        }
+    }
+
+    private static WorkspaceStoreException UnknownObligation(string obligationId) =>
+        new(StoreErrorCodes.WorkObligationUnknown, $"'{obligationId}' is not an obligation of this checklist");
+
+    private static void RequireKnownObligation(StoreReader reader, string journeyId, string? obligationId)
+    {
+        var latest = reader.ReadLatestChecklistRevision(journeyId);
+        var inLatest = latest is { } revision
+            && reader.ReadObligations(journeyId, revision).Any(o => o.ObligationId == obligationId);
+        if (!inLatest)
+        {
+            throw UnknownObligation(obligationId ?? "(none)");
+        }
+    }
+
+    private static void RequireKindForSubject(string subjectKind, string kind)
+    {
+        var allowed = subjectKind == "intent"
+            ? WorkbenchVocabulary.DispositionKindsBySubject["intent"]
+            : WorkbenchVocabulary.DispositionKindsBySubject["obligation"];
+        if (!allowed.Contains(kind))
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.VocabularyViolation,
+                $"'{kind}' is not a {subjectKind} disposition; the kinds are {string.Join(", ", allowed)}");
+        }
+    }
+
+    /// <summary>
+    /// The attempt must belong to this journey's intent notebook, have ended <c>ResponseComplete</c>, and still
+    /// belong to the live draft. The message starts with the cause.
+    /// </summary>
+    private static void RequireEligibleAttempt(StoreReader reader, EvidenceLinkRequest request, int? headRevision)
+    {
+        var attempt = reader.ReadAttempt(request.DispatchKey);
+        if (attempt is null || attempt.NotebookId != request.IntentNotebookId)
+        {
+            throw NotEligible("not-this-journey", "that attempt does not belong to this work's intent notebook");
+        }
+
+        if (!Completed(reader, request.DispatchKey))
+        {
+            throw NotEligible("not-complete", "that attempt has not ended with a complete response");
+        }
+
+        if (CurrentnessFold.Evaluate(attempt, headRevision, request.LiveProjectionSha).State != Currentness.Current)
+        {
+            throw NotEligible("not-current", CurrentnessFold.StaleCopy);
+        }
+    }
+
+    private static WorkspaceStoreException NotEligible(string cause, string sentence) =>
+        new(StoreErrorCodes.WorkEvidenceNotEligible, $"{cause}: {sentence}");
 
     private static bool Completed(StoreReader reader, string dispatchKey) =>
         AttemptStateFold.Evaluate(new AttemptStateInput(dispatchKey, [], reader.ReadOutcomes(dispatchKey), [], [])).State
