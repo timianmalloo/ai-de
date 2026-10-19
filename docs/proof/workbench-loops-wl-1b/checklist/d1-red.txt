@@ -1,0 +1,38 @@
+
+Test run for C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.93]     AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.FromViewInUnderstand_OpensInUnderstandsRightZone_BoundToTheFocusedNotebooksJourney [FAIL]
+  Failed AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.FromViewInUnderstand_OpensInUnderstandsRightZone_BoundToTheFocusedNotebooksJourney [724 ms]
+  Error Message:
+   View in understand offers no "New checklist"; it offers [Factory perspective, Review perspective, Understand perspective, Next tab in pane, Previous tab in pane, Move tab left/right, Focus graph canvas, Clear the status message, Show graph, Show evidence, New class diagram, New sequence diagram, Show contexts, Show joins, Show solution tree, Show entry-points, New code viewer]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 64
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:01.55]     AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.FromViewInFactory_EmptyThenProposed_ReadsEvidenceMissing_ThenAcknowledged_StillBlocked [FAIL]
+[xUnit.net 00:00:01.74]     AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.WithNoNotebookOpen_TheOpenerRefuses_AndAddsNoChecklist [FAIL]
+  Failed AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.FromViewInFactory_EmptyThenProposed_ReadsEvidenceMissing_ThenAcknowledged_StillBlocked [619 ms]
+  Error Message:
+   View in factory offers no "New checklist"; it offers [Factory perspective, Review perspective, Understand perspective, Next tab in pane, Previous tab in pane, Move tab left/right, Raise score dispute on the latest scored episode, Clear the status message, Cycle session region, Cycle session region backward, Session console, New search, New code viewer, Show diagnostics, Show terminal sessions, Show message board, Show leaderboard, Show ledger, Show daydreams]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 64
+--- End of stack trace from previous location ---
+  Failed AiDe.App.Tests.Checklist.TheChecklistDemoPathTests.WithNoNotebookOpen_TheOpenerRefuses_AndAddsNoChecklist [182 ms]
+  Error Message:
+   View in understand offers no "New checklist"; it offers [Factory perspective, Review perspective, Understand perspective, Next tab in pane, Previous tab in pane, Move tab left/right, Focus graph canvas, Clear the status message, Show graph, Show evidence, New class diagram, New sequence diagram, Show contexts, Show joins, Show solution tree, Show entry-points, New code viewer]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 54
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 64
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 1 s - AiDe.App.Tests.dll (net10.0)
