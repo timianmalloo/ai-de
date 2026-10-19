@@ -1,0 +1,55 @@
+D1 mutation check (uncommitted; reverted with git checkout). The mutation, then the probe run:
+diff --git a/src/AiDe.App/Workbench/Notebook/NotebookSlotMigration.cs b/src/AiDe.App/Workbench/Notebook/NotebookSlotMigration.cs
+index c0e17af1..9d012596 100644
+--- a/src/AiDe.App/Workbench/Notebook/NotebookSlotMigration.cs
++++ b/src/AiDe.App/Workbench/Notebook/NotebookSlotMigration.cs
+@@ -46,7 +46,7 @@ public static class NotebookSlotMigration
+     private static ZoneContent? Map(ZoneContent? content, HashSet<string> taken, List<Surface> migrated) => content switch
+     {
+         null => null,
+-        ZoneStack stack => stack with { Tabs = [.. stack.Tabs.Select(s => Map(s, taken, migrated))] },
++        ZoneStack stack => stack with { Tabs = [.. stack.Tabs.Select(s => Map(s, taken, migrated))], ActiveIndex = 0 },
+         ZoneSplit split => split with { Children = [.. split.Children.Select(c => Map(c, taken, migrated)!)] },
+         _ => throw new InvalidOperationException($"zone content '{content.GetType().Name}' has no migration"),
+     };
+
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.96]     AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [FAIL]
+  Failed AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement [4 s]
+  Error Message:
+   the session-render probe failed with exit 33. options: priorDocument=True away=False returnToWorkbench=False reopen=False sibling=False bindOnRestore=False chooser=False windowHeight=720
+diag: {"ts":"2026-10-19T12:18:27.6183084\u002B00:00","evt":"thread.layout","surface":"notebook:20261019T121827Z-2ebf0a35","turns":0,"realized":0,"composer_top":null,"viewport":null,"layout_ms":0.4782,"pinned":true,"moved":true,"version":0}
+diag: {"ts":"2026-10-19T12:18:27.6703434\u002B00:00","evt":"layout.mutation","operation":"open-notebook","placement":"zone-rule","surface":"notebook:20261019T121827Z-2ebf0a35","active":"welcome","stack":null,"stacks":[{"id":"zone-center","active":0,"surfaces":["notebook:20261019T121827Z-2ebf0a35:notebook"]}]}
+diag: {"ts":"2026-10-19T12:18:27.6994882\u002B00:00","evt":"composer.layout","surface":"composer:20261019T121827Z-2ebf0a35","composer":{"width":1137.3333333333333,"height":506.3766666666666},"editor":{"width":1137.3333333333333,"height":354.41666666666663},"compiled":{"width":null,"height":null},"visible":true,"loaded":false,"inputs":0}
+diag: {"ts":"2026-10-19T12:18:27.7048584\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121827Z-2ebf0a35","transition":"initialising","navigations":null,"inputs":null,"drops":null,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:18:27.9465563\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121827Z-2ebf0a35","transition":"navigation-started","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:18:28.1102171\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121827Z-2ebf0a35","transition":"page-ready","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+diag: {"ts":"2026-10-19T12:18:28.1190171\u002B00:00","evt":"thread.focus","surface":"notebook:20261019T121827Z-2ebf0a35","gesture":"page_ready","from":"outside","to":"Composer","landed":true,"error_code":null}
+prior document (22:33:28Z replay): announced='Session ôprior sessionö opened.' initialising=1 page-ready=1 configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot: this window has no open workspace, so a run has no checkout to cut a worktree from' zones=zone-center@0[notebook:20261019T121827Z-2ebf0a35]
+diag: {"ts":"2026-10-19T12:18:28.6716835\u002B00:00","evt":"terminal.start","surface":"terminal#b356ea","executable":null,"integration":"PowerShell","readinessProfile":false,"shellPath":"powershell.exe","environmentCount":5,"failure":null}
+restore (22:33:53Z replay): applied-saved=True announced='6 panes from your saved layout aren't available in Factory ù Graph, Domain (evidence), Explore (evidence), Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row), Contexts, Joins. They live in Understand (Ctrl+3); open them from its View menu.' dropped=6 zones=zone-left@0[sessions] | zone-center@0[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+diag: {"ts":"2026-10-19T12:18:30.2428144\u002B00:00","evt":"terminal.stop","surface":"terminal#b356ea","session":"terminal#b356ea","reason":"owner-closing","durationMs":1577.402,"exitCode":null}
+diag: {"ts":"2026-10-19T12:18:30.2626786\u002B00:00","evt":"web-surface.handshake","surface":"composer:20261019T121827Z-2ebf0a35","transition":"disposed","navigations":1,"inputs":0,"drops":0,"detail":null,"errorCode":null,"exceptionType":null}
+ the replay did not reach the operator's arrangement: expected zone-left@0[sessions] | zone-center@4[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea] but the shell holds zone-left@0[sessions] | zone-center@0[ledger,leaderboard,board,notebook:20260911T125502Z-bd59855b,notebook:20260911T175821Z-1edfa710] | zone-bottom@0[terminal#b356ea]
+
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionRendersInTheOperatorsRestoredArrangement() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\ASessionDocumentIsShownWhereTheOperatorIsTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - AiDe.App.Tests.dll (net10.0)
