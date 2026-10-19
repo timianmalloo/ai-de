@@ -14,6 +14,21 @@ public sealed class TheFoldIsGivenWhatItComparesTests
             nameof(CurrentnessFold.Evaluate),
             [typeof(int), typeof(int?), typeof(string), typeof(string)]));
 
+    [Theory]
+    [InlineData(3, 3, "a", "a", Currentness.Current)]
+    [InlineData(3, 4, "a", "a", Currentness.Stale)]
+    [InlineData(3, 3, "a", "b", Currentness.Stale)]
+    [InlineData(3, null, "a", "a", Currentness.NotRecorded)]
+    [InlineData(3, 3, null, "a", Currentness.NotRecorded)]
+    [InlineData(3, 3, "a", null, Currentness.NotRecorded)]
+    public void TheNamedInput_AnswersAsTheAttemptRowOverloadDoes(int ran, int? current, string? ranSha, string? liveSha, Currentness expected)
+    {
+        var viaRow = CurrentnessFold.Evaluate(new AiDe.Core.Store.Records.AttemptRow("dk", "w", 1, "n", ran, "s", 1, ranSha), current, liveSha);
+
+        Assert.Equal(expected, CurrentnessFold.Evaluate(ran, current, ranSha, liveSha).State);
+        Assert.Equal(viaRow, CurrentnessFold.Evaluate(ran, current, ranSha, liveSha));
+    }
+
     [Fact]
     public void NoCallerOutsideTheStore_ConstructsAnAttemptRow()
     {

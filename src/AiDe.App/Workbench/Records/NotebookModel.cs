@@ -225,11 +225,10 @@ public sealed class NotebookModel : IDisposable
             return ResultCurrentness.NotRecorded;
         }
 
-        // The one definition (Ruling 178): the ran revision is the attempt's binding, the saved head is the current
-        // revision, and the draft's body sha is the live side. An empty draft is read as the ran bytes (see the assume).
-        var attempt = new AttemptRow(string.Empty, string.Empty, 0, ran.Notebook.Value, ran.RevisionNo, string.Empty, 0, ran.BodySha);
-        var liveSha = liveDraft.Length == 0 ? ran.BodySha : BodySha(liveDraft);
-        return CurrentnessFold.Evaluate(attempt, latest?.RevisionNo ?? ran.RevisionNo, liveSha).State switch
+        // The one definition (Ruling 178): both shas are body shas, the ran revision's and the draft's; the saved head is
+        // the current revision. An empty draft is read as the ran bytes (see the assume).
+        var liveBodySha = liveDraft.Length == 0 ? ran.BodySha : BodySha(liveDraft);
+        return CurrentnessFold.Evaluate(ran.RevisionNo, latest?.RevisionNo ?? ran.RevisionNo, ran.BodySha, liveBodySha).State switch
         {
             Currentness.Current => ResultCurrentness.Current,
             Currentness.Stale => ResultCurrentness.Stale,
