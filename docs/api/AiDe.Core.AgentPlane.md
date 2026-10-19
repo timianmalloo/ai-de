@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 65 types, 181 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 67 types, 183 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**65 public types · 181 public members · 92% documented.**
+**67 public types · 183 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1779,6 +1779,24 @@ building on a value that is always null.
 **`Ext` preservation is load-bearing.** Anything the mapper did not recognize
 survives verbatim under `Ext`. §13's mitigation for adapter drift is precisely "unknown
 events preserved under ext" — a dropped field is silent data loss in what §7.1 calls the truth.
+
+## `RunEventRedaction`
+
+*record* — `RunEvent.cs`
+
+One redacted span of a stored raw frame (ADR-0042 §6): where it was and which pattern matched.
+
+## `RunEventKinds`
+
+*class* — `RunEvent.cs`
+
+The kinds of the raw-frame fallbacks. Unknown kinds are carried namespaced (the existing
+`RunEvent` rule): `acp.*` from an ACP adapter, `native.*` from a native harness.
+
+| Member | Summary |
+|---|---|
+| `string AcpFrame = "acp.frame"` | The stored raw ACP frame (redacted per ADR-0042 §6). |
+| `string NativeFrame = "native.frame"` | The stored raw native-harness frame (redacted per ADR-0042 §6). |
 
 ## `RunStage`
 

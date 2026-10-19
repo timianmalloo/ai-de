@@ -77,4 +77,19 @@ public sealed class ConsoleHostCensusTests
         Assert.False(snapshot.Readable);
         Assert.Contains("did not start: cannot start", snapshot.Cause);
     }
+
+    [Fact]
+    public void ARawControlCharacterInACommandLine_IsKept_AndEveryOtherRowStillParses()
+    {
+        var every = string.Concat(Enumerable.Range(0, 0x20).Select(c => (char)c));
+        var json = "[{\"ProcessId\":5,\"ParentProcessId\":1,\"Name\":\"a.exe\",\"Created\":\"\",\"CommandLine\":\"a " + every + " z\"},\r\n"
+            + "{\"ProcessId\":7,\"ParentProcessId\":42,\"Name\":\"conhost.exe\",\"Created\":\"\",\"CommandLine\":\"conhost.exe --headless\"}]";
+
+        var snapshot = ConsoleHostCensus.Take(() => Good(json), ConsoleHostCensus.MaxAttempts, NoWait);
+
+        Assert.True(snapshot.Readable, snapshot.Cause);
+        Assert.Equal(2, snapshot.Rows.Count);
+        Assert.Equal("a " + every + " z", snapshot.Rows[0].CommandLine);
+        Assert.Single(snapshot.HeadlessHostsOwnedBy(42));
+    }
 }

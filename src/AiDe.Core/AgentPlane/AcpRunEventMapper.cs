@@ -117,7 +117,7 @@ public sealed class AcpRunEventMapper
             // can invent from one line.
             kind = frame["error"] is not null ? "acp.error"
                 : frame["result"] is not null ? "acp.result"
-                : "acp.frame";
+                : RunEventKinds.AcpFrame;
         }
 
         return new RunEvent(

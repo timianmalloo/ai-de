@@ -14,3 +14,8 @@
 {"at": 1792364743.222663, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58M72HP63VY4DTDJGZQ8JCD", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}
 {"at": 1792372464.1514502, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58VJPGQP9F5YHNSSHFA7ZTC", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}
 {"agent": "wl-t12-census", "at": 1792372467.5219364, "kind": "release", "path": "tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs", "seq": 16, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792375068.8934135, "kind": "claim", "path": "tests/Shared/ConsoleHostCensus.cs", "seq": 17, "session": "wl-t12-census", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t12-census", "at": 1792375092.7826977, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 18, "session": "wl-t12-census", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792375334.3163548, "from": "wl-t12-census", "kind": "done", "mail_id": "mail-01M58YA9DCS999B1QS9VS42GST", "ref": null, "session": "wl-t12-census", "to": "wl-leader-20261018", "type": "mail"}
+{"agent": "wl-t12-census", "at": 1792375338.1357813, "kind": "release", "path": "tests/Shared/ConsoleHostCensus.cs", "seq": 20, "session": "wl-t12-census", "wi": "WI-0"}
+{"agent": "wl-t12-census", "at": 1792375338.246186, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 21, "session": "wl-t12-census", "wi": "WI-0"}

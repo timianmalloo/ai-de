@@ -1,0 +1,68 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-sp2-runevent-vocab\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.RunEvent_CarriesRedactionsAndScannedWith_UnderTheirExactKeys [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TheKindVocabulary_NamesTheNativeFrameNamespaceBesideAcpFrame [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TurnState_IsExtendedAndStoppedIsRenamedInterrupted [FAIL]
+  Failed AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.RunEvent_CarriesRedactionsAndScannedWith_UnderTheirExactKeys [27 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                      ↓ (pos 9)
+Expected: [···, "RunId", "Seq", "Ts", "redactions", "scanned_with"]
+Actual:   [···, "RunId", "Seq", "Ts"]
+  Stack Trace:
+     at AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.RunEvent_CarriesRedactionsAndScannedWith_UnderTheirExactKeys() in C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\AgentPlane\RunEventVocabularyTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TheKindVocabulary_NamesTheNativeFrameNamespaceBesideAcpFrame [< 1 ms]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TheKindVocabulary_NamesTheNativeFrameNamespaceBesideAcpFrame() in C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\AgentPlane\RunEventVocabularyTests.cs:line 77
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TurnState_IsExtendedAndStoppedIsRenamedInterrupted [2 ms]
+  Error Message:
+   Assert.All() Failure: 7 out of 7 items in the collection did not pass.
+[0]: Item:  "Preparing"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "Preparing"
+[1]: Item:  "StopRequested"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "StopRequested"
+[2]: Item:  "DeliveryUnknown"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "DeliveryUnknown"
+[3]: Item:  "Rejected"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "Rejected"
+[4]: Item:  "Denied"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "Denied"
+[5]: Item:  "OverLimit"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "OverLimit"
+[6]: Item:  "Interrupted"
+     Error: Assert.Contains() Failure: Item not found in collection
+            Collection: ["Running", "Waiting", "Completed", "Answered", "Failed", ···]
+            Not found:  "Interrupted"
+  Stack Trace:
+     at AiDe.Core.Tests.AgentPlane.RunEventVocabularyTests.TurnState_IsExtendedAndStoppedIsRenamedInterrupted() in C:\Projects\ai-de-sp2-runevent-vocab\tests\AiDe.Core.Tests\AgentPlane\RunEventVocabularyTests.cs:line 23
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     3, Skipped:     0, Total:     6, Duration: 84 ms - AiDe.Core.Tests.dll (net10.0)

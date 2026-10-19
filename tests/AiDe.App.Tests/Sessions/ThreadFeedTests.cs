@@ -291,7 +291,7 @@ public sealed class ThreadFeedTests
     [Fact]
     public void AToolCallWithNoResultOnANonLiveTurn_ReadsInterrupted_NeverRunning()
     {
-        var stopped = ThreadFixtures.Turn(1, "Write the proof pack.", ThreadFixtures.Decorations("free-form", "T1", "docs/proof/**", "goal block"), TurnState.Stopped,
+        var stopped = ThreadFixtures.Turn(1, "Write the proof pack.", ThreadFixtures.Decorations("free-form", "T1", "docs/proof/**", "goal block"), TurnState.Interrupted,
             new OutcomeView(Lane, null, 0, null, TimeSpan.FromSeconds(9), 0),
             [.. Thought(1, "Read before writing."), Call(2, "t1", "read", "Read docs/proof/pp-0141.md", "file_path: docs/proof/pp-0141.md"), Result(2, "t1", "completed", "40 lines"), Call(3, "t2", "edit", "Edit docs/proof/pp-0142.md", "file_path: docs/proof/pp-0142.md")]);
 
