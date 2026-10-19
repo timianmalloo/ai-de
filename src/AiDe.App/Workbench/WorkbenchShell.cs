@@ -1392,12 +1392,15 @@ public sealed class WorkbenchShell : IDisposable
         // make navigation cost scale with the map.
         graph.ContextLookup = BuildContextLookup();
 
-        // Understand's kind-filtered second instance (Ruling 53; US-C8): this docked "canvas" kind
-        // is admitted only to Understand, so BindCanvas always binds ITS graph. A parameter on the
-        // existing neighbourhood query, never a second store or an in-surface toggle.
-        graph.ExcludeKnowledge = true;
-
-        canvas.GraphSource = (rootId, ct) => LoadRouted(graph, rootId, ct);
+        // Understand's docked "canvas" kind is code-only by default (Ruling 53; US-C8): a parameter on
+        // the existing neighbourhood query, never a second store. Its knowledge-inclusive mode
+        // (Ruling 149 (2); design WL-S §8) turns that parameter off for THIS canvas instance only, so
+        // the mode is read per load rather than fixed at bind.
+        canvas.GraphSource = (rootId, ct) =>
+        {
+            canvas.ApplyKnowledgeMode(graph);
+            return LoadRouted(graph, rootId, ct);
+        };
 
         // Subscribed once per canvas instance: reconcile reuses the surface across renders, and a
         // lambda handler cannot be removed, so an unguarded += would accumulate on every mutation.

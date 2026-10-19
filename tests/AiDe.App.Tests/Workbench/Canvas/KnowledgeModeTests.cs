@@ -132,7 +132,7 @@ public sealed class KnowledgeModeTests
             Assert.Equal("\"false\"", await Attr(canvas, "aria-pressed"));
 
             await canvas.EvaluateAsync("document.getElementById('knowledge').focus()");
-            Assert.True(await canvas.SendKeyAsync("Enter", 0x0D), "the key could not be sent");
+            Assert.True(await canvas.SendKeyAsync("Enter", 0x0D, text: "\r"), "the key could not be sent");
 
             await WaitFor(() => Task.FromResult(canvas.KnowledgeInclusive), "Enter to choose the mode");
             Assert.Equal("\"true\"", await Attr(canvas, "aria-pressed"));
