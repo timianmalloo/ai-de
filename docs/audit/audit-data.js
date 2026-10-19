@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T04:54:05Z",
+  "generated": "2026-10-19T04:54:11Z",
   "audit": [
     {
       "actor": null,
@@ -23474,24 +23474,102 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M597BR22ZA2PNY6RAJN8G2TH",
-      "shortname": "join-wls-unparent-spike",
+      "actor": null,
+      "artifacts": [
+        "spikes/second-dock-host-unparent/RESULT.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T04:40:19Z",
-      "session": "wl-leader-20261018",
+      "done_when": "spike exit 0 with the budget recorded; ratchet PASS",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Prove three DockHosts under one presenter with live WebView2",
+      "id": "al-01M597BR22ZA2PNY6RAJN8G2TH",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wls-unparent-spike into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-wls-unparent-spike",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T04:40:18Z",
       "summary": "T9: three DockHosts under one presenter, live WebView2 + raw HwndHost survive A->B->C x3 and C->A->C (54 checks, exit 0, re-run by the Leader); private bytes recorded (~150 MiB total; WebView2 32.9 MiB idle, +4.4 MiB with the 100k doc); per-host idle rows are GC noise, stated. Spike-only diff -> --docs-only. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "spikes/second-dock-host-unparent/RESULT.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T04:54:05Z",
+      "done_when": "pushed with ratchet PASS",
+      "duration_seconds": 27543.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "Land T9 on main",
+      "id": "al-01M5984Z7BG8W4EAPSJM9WPWEG",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the T9 spike join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t9-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T21:15:02Z",
+      "summary": "T9 spike pushed e651d3e0 (b1c7b980..e651d3e0), spike-only diff joined --docs-only; ratchet PASS 0/48.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "spikes/notebook-editor-e1/RESULT.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:39:02Z",
+      "done_when": "ADR-0043 §7 floor items each measured natively with red/green proof; RESULT.md with a pass/reverse verdict",
+      "duration_seconds": 2093.0,
+      "fan_out": 0,
+      "goal": "Qualify CodeMirror 6 as the notebook floor, or trigger the reversal",
+      "id": "al-01M58SHY3V08H31QBJZB5RGTRE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Qualify CodeMirror 6 as the notebook floor, or trigger the reversal (ADR-0043 §7, spike E-1)",
+      "session": "wl-t10-e1",
+      "shortname": "wl-t10-e1",
+      "skill": "implement",
+      "started_at": "2026-10-19T00:04:09Z",
+      "summary": "E-1 PASS, not reverse: clipboard, multi-selection undo, LF/CRLF round-trip, 100k-char p95 5.5 ms (harness shipped) and completion UIA all pass natively in WebView2 155; IME passes on the renderer composition path, native Windows IME manual-pending (no Japanese TSF profile for the user). DC-NEW-wl-t10-e1 added.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59853XTV5J58G6YNPQF1WJE",
+      "shortname": "join-e1-notebook-spike",
+      "datetime": "2026-10-19T04:54:10Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of e1-notebook-spike into main",
+      "summary": "T10 E-1: PASS, not reverse (reversal trigger not fired). Native in real WebView2: clipboard sha fixed point, 3-cursor edit + one Ctrl+Z exact, LF/CRLF byte-exact across toggles/save/reload, 100,076-char input p95 5.5 ms page / 7.1 ms host (harness shipped), completion-popup UIA no dangling option; IME passes on the renderer composition path; NATIVE Windows IME is MANUAL pending a dated record (needs a Japanese input profile enabled by the user) - WL-2 may build the notebook but not make it the default until then. Spike-only diff -> --docs-only. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "spikes/second-dock-host-unparent/RESULT.md"
+        "spikes/notebook-editor-e1/RESULT.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Prove three DockHosts under one presenter with live WebView2",
-      "done_when": "spike exit 0 with the budget recorded; ratchet PASS",
+      "goal": "Qualify CodeMirror 6 as the notebook floor, or trigger the reversal",
+      "done_when": "a measured verdict per floor item; ratchet PASS",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -23499,33 +23577,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T04:40:18Z",
+      "started_at": "2026-10-19T04:54:09Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5984Z7BG8W4EAPSJM9WPWEG",
-      "shortname": "join-t9-step8-ratchet",
-      "datetime": "2026-10-19T04:54:05Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153 step-8 completion for the T9 spike join",
-      "summary": "T9 spike pushed e651d3e0 (b1c7b980..e651d3e0), spike-only diff joined --docs-only; ratchet PASS 0/48.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "spikes/second-dock-host-unparent/RESULT.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T9 on main",
-      "done_when": "pushed with ratchet PASS",
-      "tier": "T1",
-      "fan_out": 0,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T21:15:02Z",
-      "duration_seconds": 27543.0
     }
   ],
   "changes": [
