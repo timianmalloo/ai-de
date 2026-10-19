@@ -79,7 +79,7 @@ Leader and granted retroactively in T4b). **Open DRs: 0.**
 3. **PASS** → `git push origin <join-sha>:main`, run the join's Release build, write an `audit-log.py append`
    recording the ratchet (filter counts, exclusions), commit `docs/audit` + `.agents`, push. **REFUSE** → the finding
    is real: send it back to its track as a fix-forward, re-join, and re-ratchet.
-4. Lessons from tonight: evidence READMEs need frontmatter (rule 13). "R-n" or "Rulings 1 to N" in prose reads as a
+4. Lessons from tonight: evidence READMEs need frontmatter (rule 13). a short ruling id or a numbered ruling range in prose reads as a
    ruling citation. Tests must derive kind lists (fixture-derivation). Comments must cite existing controls. `-X ours`
    on authored files needs a three-way diff.
 
