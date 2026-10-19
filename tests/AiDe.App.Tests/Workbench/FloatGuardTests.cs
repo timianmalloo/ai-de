@@ -11,7 +11,7 @@ namespace AiDe.App.Tests.Perspectives;
 /// <see cref="LayoutPersistence"/>, and T20's restore guard (DOCK3) stays gone.
 /// </summary>
 /// <remarks>
-/// T21 n2's <c>FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable</c> was deleted with the
+/// T21 n2's float-pane test (added in 650d65c2) was deleted with the
 /// palette guard's return (Owner's order, 2026-10-19). It passed while the palette's Float pane drew 0 windows, because
 /// it rendered by hand after the command (<c>adapter.Render()</c>), which no product route does
 /// (DC-NEW-wl-t28-compiled's class). <c>LayoutCommandsRenderTests</c> now drives the float through the palette.
