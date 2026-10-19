@@ -1,0 +1,38 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-compiled-field\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-compiled-field\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.13]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.23]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.24]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary [982 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 0) [91 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 1) [46 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(count: 40) [5 s]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText [589 ms]
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AQueuedSend_ShowsItsQueuedState_NotTheSentState [1 s]
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing [1 s]
+  Passed AiDe.App.Tests.Composer.TheSentPromptIsNeverResentTests.AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted [770 ms]
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft [359 ms]
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt [380 ms]
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.TheSentHeading_IsTheCopyDesignMdNames [16 ms]
+[xUnit.net 00:00:11.37]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompiledFieldAfterASubmitTests.OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt [382 ms]
+
+Test Run Successful.
+Total tests: 12
+     Passed: 12
+ Total time: 11.8080 Seconds

@@ -86,6 +86,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private string _taskClass = AiDe.Core.Watcher.TaskClasses.FreeForm;
     private string _leaseLine = ComposerCompiler.LeaseLine(null);
     private TurnView? _inFlight;
+
+    /// <summary>The turn just sent and its heading while the field shows it (Ruling 181 (1)); null when it shows the live draft.</summary>
+    private (string Text, string Heading)? _sent;
     private TurnView? _queued;
     private string? _queuedSentence;
     private StatusKind _statusKind;
@@ -894,6 +897,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 return;
         }
 
+        // The next keystroke ends the sent-state (Ruling 181 (1)): the field is the live draft's view again.
+        _sent = null;
         _inputs++;
         if (!_inputSinceInit)
         {
@@ -1150,6 +1155,13 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// </summary>
     public void BeginNextTurn()
     {
+        // WHAT WAS SENT STAYS ON SCREEN (Ruling 181 (1)), read before the gate's view is dropped: the bytes the send
+        // took, when the thread admitted them as the turn now in flight. A queued turn (Ruling 95) is not sent yet and
+        // keeps its own sentence; a parallel session's first turn is not this thread's.
+        _sent = _queued is null && _inFlight is { } turn && _gate.RenderedView is { Text.Length: > 0 } view
+            && string.Equals(turn.SentBytes, view.Text, StringComparison.Ordinal)
+                ? (view.Text, SentHeading(turn.DisplayOrdinal))
+                : null;
         _gate.NextBlock();
         _compileRow.Visibility = Visibility.Collapsed;
         _draft.SetFreeFormText(string.Empty);
@@ -1239,7 +1251,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         }
 
         var compiled = _gate.RenderView(_draft, _template);
-        _compiled.Text = compiled.Text;
+        ShowCompiled(compiled.Text);
 
         // THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT (Ruling 66) — the same symbol
         // `ComposerSendGate.Send` derives the sent lease from, and THE SAME TWO INPUTS it decides the
@@ -1258,6 +1270,34 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         }
 
         DraftChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Writes the compiled field: the live draft's compile, or — after a submit, until the next keystroke — the turn just
+    /// sent under <see cref="SentHeadingFormat"/> (Ruling 181 (1)).
+    /// </summary>
+    /// <remarks>
+    /// <b>DISPLAY-ONLY (Ruling 181 (2), the hard resend guard).</b> The sent text is written to the box and to nothing
+    /// else. The gate's view stays the live draft's (<see cref="RenderCompiledView"/> rendered it before this call), and a
+    /// send takes <c>RenderedView ?? RenderView(draft)</c> — so a press in the sent-state sends the empty draft, which the
+    /// gate refuses as <i>an empty prompt is not a task</i>, never b{n} again. A draft that compiles to words (Use as the
+    /// next draft, an attachment) ends the sent-state as a keystroke does: the field never shows other bytes than the
+    /// ones a press would send, except the turn just sent, named as sent.
+    /// </remarks>
+    private void ShowCompiled(string live)
+    {
+        if (!string.IsNullOrWhiteSpace(live))
+        {
+            _sent = null;
+        }
+
+        var (text, heading, name) = _sent is { } sent
+            ? (sent.Text, sent.Heading, sent.Heading)
+            : (live, CompiledPromptHeading, CompiledPromptLiveName);
+        _compiled.Text = text;
+        _compiledDisclosure.Header = heading;
+        AutomationProperties.SetName(_compiled, name);
+        AutomationProperties.SetItemStatus(_compiledDisclosure, _sent is null ? string.Empty : heading);
     }
 
     /// <summary>
