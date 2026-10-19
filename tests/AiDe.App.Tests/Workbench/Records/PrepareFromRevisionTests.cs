@@ -73,7 +73,7 @@ public sealed class PrepareFromRevisionTests : IDisposable
         var model = _fixture.NewModel();
 
         Sta.Pump(
-            create: () => new SessionDocumentSurface(model),
+            create: () => new SessionDocumentSurface(model).Unhosted(),
             body: async (_, document) =>
             {
                 _fixture.Configure(document);

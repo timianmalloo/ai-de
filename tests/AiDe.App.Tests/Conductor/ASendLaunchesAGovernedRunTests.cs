@@ -72,7 +72,7 @@ public sealed class ASendLaunchesAGovernedRunTests
                 var model = new SessionDocumentViewModel(
                     "20260911T130000Z-runseam", "Run seam", root, [CanvasModeCatalog.ConsoleModeId]);
 
-                using var document = new SessionDocumentSurface(model);
+                using var document = new SessionDocumentSurface(model).Unhosted();
 
                 document.Composer.Configure(
                     new SessionConfig("20260911T130000Z-runseam", "Run seam", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),

@@ -374,12 +374,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// <summary>The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is <see cref="LastRunFailure"/>.</summary>
     public Task LastLaunch => Notebook.Runs.LastRun;
 
-    /// <summary>Ruling 159(1): the composer's Send follows the host's refusal; a hold elsewhere has no Retry, it clears itself.</summary>
-    private void ShowHostRefusal()
-    {
-        var refusal = Notebook.Runs.HostRefusal;
-        Composer.ShowHostRefusal(refusal, refusal is null or NotebookRuns.HostedElsewhere ? null : Notebook.Runs.RetryHostAsync);
-    }
+    /// <summary>
+    /// Ruling 159: the composer's Send follows the host's refusal. Retry is offered only where it can help — a hold
+    /// elsewhere clears itself, and a window with no workspace client has nothing to retry.
+    /// </summary>
+    private void ShowHostRefusal() =>
+        Composer.ShowHostRefusal(Notebook.Runs.HostRefusal, Notebook.Runs.CanRetryHost ? Notebook.Runs.RetryHostAsync : null);
 
     /// <summary>What the last completed run reported, or null when none has completed.</summary>
     public GovernedRunResult? LastRunResult { get; private set; }

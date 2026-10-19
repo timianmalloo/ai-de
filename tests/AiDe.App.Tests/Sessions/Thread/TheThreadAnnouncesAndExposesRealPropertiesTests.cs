@@ -369,7 +369,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
     public void AThrowingApply_LogsTHR0001_ShowsTheRowOutsideTheScroller_AnnouncesOnce_AndTheChannelSurvives()
     {
         Sta.Pump(
-            create: () => new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-thr", "thr", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()),
+            create: () => new SessionDocumentSurface(new AiDe.App.Workbench.Records.NotebookModel(new SessionDocumentViewModel("20260912T140000Z-thr", "thr", Path.GetTempPath(), ["console"])).Unhosted(), null, new RecordingAnnouncer()),
             configure: window => { window.Width = 1000; window.Height = 700; },
             body: async (window, document) =>
             {

@@ -80,7 +80,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var flow = new ParallelSessionFlow(
                 open: config =>
                 {
-                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId]));
+                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                     return $"Session “{config.Name}” opened.";
                 },
                 bind: config => Bind(documents[config.SessionId].Composer, config, root),
@@ -133,7 +133,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var flow = new ParallelSessionFlow(
                 open: config =>
                 {
-                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId]));
+                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                     return $"Session “{config.Name}” opened.";
                 },
                 bind: _ => "The composer has no run binding — providers: there is no provider file.",
@@ -157,7 +157,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
         Sta.Pump(
             create: () =>
             {
-                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260914T183000Z-alone", "alone", _workspace.Root, [CanvasModeCatalog.ConsoleModeId]));
+                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260914T183000Z-alone", "alone", _workspace.Root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                 Bind(document.Composer, new SessionConfig("20260914T183000Z-alone", "alone", _workspace.Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")), _workspace.Root);
                 document.ReadModel.Accept("first", [], "first", DateTimeOffset.Now);
                 return document;
@@ -193,12 +193,12 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var bound = new List<string>();
 
             shell.ParallelSessionStarter = (parent, request) => new ParallelSessionFlow(
-                open: shell.OpenSessionDocument,
+                open: shell.OpenSessionDocumentUnhosted,
                 bind: config => { bound.Add(config.Name); return Bind(shell.SessionComposer(config.SessionId)!, config, root); },
                 composerOf: shell.SessionComposer)
                 .Start(root, new SessionConfigStore(root, parent.Model.SessionId).Load(), request);
 
-            shell.OpenSessionDocument(parentConfig);
+            shell.OpenSessionDocumentUnhosted(parentConfig);
             frame.Settle();
             var parentSurface = SessionDocumentSurface.SurfaceIdFor(parentConfig.SessionId);
             var parent = frame.Document(parentSurface);
@@ -251,7 +251,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var flow = new ParallelSessionFlow(
                 open: config =>
                 {
-                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId]));
+                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                     return "opened";
                 },
                 bind: _ => "not bound",

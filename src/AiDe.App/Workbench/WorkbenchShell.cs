@@ -3584,7 +3584,8 @@ public sealed class WorkbenchShell : IDisposable
 
             // The run is the host's (ADR-0041; ADR-0045 §4): the notebook binds to the workspace's attempt host over the
             // same client, so a sent turn is an attempt of its revision; a turn sent while the host opens waits for it,
-            // and a window that cannot open it refuses Send (Ruling 159). With no client its turns run directly.
+            // and a window that cannot open it refuses Send (Ruling 159). With no client nothing can record a turn, so
+            // Send is refused with NotebookRuns.NoWorkspace and no turn runs directly (Ruling 159(2)).
             if (client is not null)
             {
                 // assume: a session document has no PTY generation, so its attempts carry generation 1 (one lifetime per

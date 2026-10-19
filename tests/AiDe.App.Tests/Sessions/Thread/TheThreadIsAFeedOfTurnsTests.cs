@@ -240,7 +240,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
     public void F6_CyclesHeaderThreadComposer_TheSplitOnlyWhenOpen()
     {
         Sta.Pump(
-            create: () => new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-f6", "f6", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()),
+            create: () => new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-f6", "f6", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted(),
             configure: window => { window.Width = 1200; window.Height = 800; },
             body: (window, document) =>
             {
@@ -318,7 +318,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 }
 
                 // Not caught up: the outside text reads Restoring…, never Nothing has run yet.
-                var restoring = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-r", "payments", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var restoring = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-r", "payments", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted();
                 var field = typeof(SessionDocumentSurface).GetField("_thread", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
                 var uncaught = new RunChannelSessionThread(caughtUp: false);
                 Assert.False(uncaught.Current.IsCaughtUp);
@@ -378,7 +378,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
         Sta.Pump(
             create: () =>
             {
-                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-jump", "jump", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-jump", "jump", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted();
                 foreach (var turn in ThreadFixtures.Forty())
                 {
                     var o = document.ReadModel.Accept(turn.SourceText, turn.Decorations, turn.SentBytes, turn.At);
@@ -440,7 +440,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 Assert.Same(document.Thread.Rows[16], focused!.DataContext);
 
                 // At 0 turns the button stays enabled and says so.
-                var empty = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-e", "e", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var empty = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-e", "e", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted();
                 Assert.Equal("no turns yet", empty.TurnCountCaption);
                 empty.Dispose();
                 return Task.CompletedTask;
@@ -460,7 +460,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
         Sta.Pump(
             create: () =>
             {
-                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-link", "link", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-link", "link", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted();
 
                 // Wired (Ruling 95's offer sits behind the gate, which needs a session): a context
                 // whose engine the catalog refuses — nothing is sent here, so nothing is spawned.
@@ -522,7 +522,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
         Sta.Pump(
             create: () =>
             {
-                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-tail", "tail", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-tail", "tail", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer()).Unhosted();
                 foreach (var turn in ThreadFixtures.Five())
                 {
                     var o = document.ReadModel.Accept(turn.SourceText, turn.Decorations, turn.SentBytes, turn.At);

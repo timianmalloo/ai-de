@@ -59,7 +59,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
             try
             {
                 var model = new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]);
-                using var document = new SessionDocumentSurface(model);
+                using var document = new SessionDocumentSurface(model).Unhosted();
                 Configure(document, root, config);
 
                 // The store opened with the document (ADR-0034 rule 2) and history is being recorded.
@@ -155,7 +155,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
             var (root, config) = Session();
             try
             {
-                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]));
+                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                 Configure(document, root, config);
                 var composer = document.Composer;
                 composer.Draft.SwitchTo(ComposerShape.GoalBlock);
@@ -196,7 +196,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
                 var directory = SessionPaths.SessionDirectory(root, config.SessionId);
                 var model = new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]);
 
-                var document = new SessionDocumentSurface(model);
+                var document = new SessionDocumentSurface(model).Unhosted();
                 Assert.NotNull(document.Envelopes);
                 Assert.Throws<EnvelopeStoreException>(() => EnvelopeStore.Open(directory));   // held by the document
 
@@ -220,7 +220,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
             try
             {
                 using var other = EnvelopeStore.Open(SessionPaths.SessionDirectory(root, config.SessionId));   // "another AI-DE"
-                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]));
+                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                 Configure(document, root, config);
 
                 Assert.Null(document.Envelopes);
@@ -247,7 +247,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
     {
         Sta.Run(() =>
         {
-            using var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T150000Z-nodir00", "nodir", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId]));
+            using var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T150000Z-nodir00", "nodir", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId])).Unhosted();
             Assert.Null(document.Envelopes);
             Assert.Contains("no session directory", document.Composer.HistoryState, StringComparison.Ordinal);
             Assert.False(Directory.Exists(SessionPaths.SessionDirectory(Path.GetTempPath(), "20260912T150000Z-nodir00")));   // never created
@@ -313,7 +313,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
             var (root, config) = Session();
             try
             {
-                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]));
+                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId])).Unhosted();
                 Configure(document, root, config);
                 var file = Path.Combine(SessionPaths.SessionDirectory(root, config.SessionId), EnvelopeStore.FileName);
 
@@ -375,7 +375,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
             {
                 var directory = SessionPaths.SessionDirectory(root, config.SessionId);
                 string envelopeId;
-                using (var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId])))
+                using (var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId])).Unhosted())
                 {
                     Configure(document, root, config);
                     document.Composer.Draft.SetFreeFormText("explain the store\n");

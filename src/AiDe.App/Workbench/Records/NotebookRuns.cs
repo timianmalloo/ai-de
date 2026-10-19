@@ -108,7 +108,7 @@ public sealed class NotebookRuns : IDisposable
         }
     }
 
-    /// <summary>The attempt host this notebook's turns dispatch through, or null when they run directly.</summary>
+    /// <summary>The attempt host this notebook's turns dispatch through, or null while none is bound.</summary>
     public IAttemptHost? Host => _host?.Host;
 
     /// <summary>The attempts read back from the store for this notebook's submitted envelopes (restart read-back).</summary>
@@ -118,12 +118,21 @@ public sealed class NotebookRuns : IDisposable
     /// Binds the notebook to the workspace's attempt host (ADR-0041): from now on a sent turn is an attempt of the
     /// revision it ran, launched and owned by the host, never by a surface.
     /// </summary>
+    /// <remarks>Called on the model's home context: <see cref="HostRefusalChanged"/> is raised inline.</remarks>
     public void BindHost(IAttemptHost host, AttemptScope scope)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(scope);
-        _host = (host, scope);
+        ChangeRefusal(() => _host = (host, scope), inline: true);
     }
+
+    /// <summary>
+    /// The test seam (Ruling 159(2)): turns run directly through <see cref="GovernedRunHost"/>, unrecorded, with no host.
+    /// Internal, reached only through InternalsVisibleTo; a census test fails on any call under <c>src/</c>.
+    /// </summary>
+    internal void UnhostedForTests() => ChangeRefusal(() => _unhosted = true, inline: true);
+
+    private bool _unhosted;
 
     /// <summary>Ruling 159(1): the copy Send shows while another window holds the workspace's attempt host.</summary>
     public const string HostedElsewhere = "This workspace's runs are hosted in another window. Send from that window, or close it to host runs here.";
@@ -131,8 +140,20 @@ public sealed class NotebookRuns : IDisposable
     /// <summary>The refusal when the host's open ended with no cause this binding knows.</summary>
     public const string NotOpened = "Runs cannot be hosted in this window: the attempt host did not open. Retry to open the host again.";
 
-    /// <summary>Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly.</summary>
-    public string? HostRefusal { get; private set; }
+    /// <summary>Ruling 159(2): the refusal of a window with no workspace client — nothing here can record a turn, and no retry can help.</summary>
+    public const string NoWorkspace = "Runs cannot be hosted in this window: the workspace service is not connected, so a turn would not be recorded. Reopen the workspace once the service runs.";
+
+    /// <summary>
+    /// Why this window cannot host runs, or null. A turn sent meanwhile is refused with it and never runs directly.
+    /// With neither a host nor an opener the window has no workspace client: <see cref="NoWorkspace"/>.
+    /// </summary>
+    public string? HostRefusal =>
+        _host is not null || _unhosted ? null : _openFailure ?? (_opener is null ? NoWorkspace : null);
+
+    /// <summary>True while a retry can help: the refusal came from an open that may succeed on another try.</summary>
+    public bool CanRetryHost => _host is null && _opener is not null && _openFailure is not null and not HostedElsewhere;
+
+    private string? _openFailure;
 
     /// <summary>
     /// Binds to the workspace's attempt host once <paramref name="open"/> completes (Ruling 159): a turn sent before then
@@ -143,7 +164,7 @@ public sealed class NotebookRuns : IDisposable
     {
         ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(scope);
-        _opener = (open, scope);
+        ChangeRefusal(() => _opener = (open, scope), inline: true);
         _hostOpening = OpenHostAsync(open, scope);
     }
 
@@ -167,18 +188,18 @@ public sealed class NotebookRuns : IDisposable
         {
             try
             {
-                BindHost(await open().ConfigureAwait(false), scope);
-                SetHostRefusal(null);
+                var host = await open().ConfigureAwait(false);
+                ChangeRefusal(() => (_host, _openFailure) = ((host, scope), null), inline: false);
                 return;
             }
             catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)
             {
                 // Only a live holder keeps the lock: the OS releases it with the holding process (AttemptHost.OpenAsync).
-                SetHostRefusal(HostedElsewhere);
+                ChangeRefusal(() => _openFailure = HostedElsewhere, inline: false);
             }
             catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
             {
-                SetHostRefusal($"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.");
+                ChangeRefusal(() => _openFailure = $"Runs cannot be hosted in this window: {error.Message} Retry to open the host again.", inline: false);
                 return;
             }
 
@@ -186,14 +207,25 @@ public sealed class NotebookRuns : IDisposable
         }
     }
 
-    private void SetHostRefusal(string? refusal)
+    /// <summary>
+    /// Applies <paramref name="change"/> and raises <see cref="HostRefusalChanged"/> when the refusal it derives changed:
+    /// inline for a caller on the home context, else posted there (the open's continuation runs on the pool).
+    /// </summary>
+    private void ChangeRefusal(Action change, bool inline)
     {
-        if (HostRefusal == refusal)
+        var before = HostRefusal;
+        change();
+        if (before == HostRefusal)
         {
             return;
         }
 
-        HostRefusal = refusal;
+        if (inline)
+        {
+            HostRefusalChanged?.Invoke();
+            return;
+        }
+
         Home(() => HostRefusalChanged?.Invoke());
     }
 
@@ -255,6 +287,19 @@ public sealed class NotebookRuns : IDisposable
         if (_opener is not null)
         {
             return LastRun = AfterTheHostOpensAsync(request, launch, ordinal, cancel);
+        }
+
+        if (!_unhosted)
+        {
+            // Ruling 159(2): no workspace client, so nothing can record the turn — refused, never run directly.
+            lock (_gate)
+            {
+                _runs.Remove(ordinal);
+            }
+
+            cancel.Dispose();
+            Fail(ordinal, request.EngineId, NoWorkspace);
+            return LastRun = Task.CompletedTask;
         }
 
         var relay = new RunEventRelay();

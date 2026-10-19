@@ -29,7 +29,7 @@ public sealed class TheRunOutlivesItsPaneTests : IDisposable
         var announcer = new RecordingAnnouncer();
 
         Sta.Pump(
-            create: () => new SessionDocumentSurface(model, null, announcer),
+            create: () => new SessionDocumentSurface(model, null, announcer).Unhosted(),
             configure: window => { window.Width = 1200; window.Height = 800; },
             body: async (window, first) =>
             {
@@ -50,7 +50,7 @@ public sealed class TheRunOutlivesItsPaneTests : IDisposable
                 Assert.False(model.IsDisposed);
 
                 // Reopen over the same model, then let the run answer: the new surface sees it end.
-                var second = new SessionDocumentSurface(model, null, announcer);
+                var second = new SessionDocumentSurface(model, null, announcer).Unhosted();
                 window.Content = second;
                 _fixture.ReleaseRun();
                 await UntilAsync(window, () => model.Thread.Current.Turns[0].State == TurnState.Answered,
