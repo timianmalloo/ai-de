@@ -71,6 +71,10 @@ public enum ZoneLoadRefusal
 /// <param name="PartlyRead">True when the layout was returned without a part of the file that could not be read.</param>
 public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal, bool PartlyRead = false)
 {
+    /// <summary>
+    /// The saved titles of the surfaces in the part that was left out, in saved order. Empty when that
+    /// part held no surface with a title, or when nothing was left out.
+    /// </summary>
     public IReadOnlyList<string> LeftOutTitles { get; init; } = [];
 }
 
@@ -201,6 +205,15 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         // are reported as a partial read.
         var partlyRead = envelope.Layout.Zones is null;
         var savedZones = envelope.Layout.Zones ?? [];
+        var leftOutTitles = new List<string>();
+
+        // A zone entry whose id names no zone of this build cannot be placed. It is left out, and its
+        // surfaces are named by their saved titles (T21 node 5, the Owner's refinement).
+        foreach (var unknown in savedZones.Where(z => !Enum.GetNames<ZoneId>().Contains(z.Id, StringComparer.Ordinal)))
+        {
+            partlyRead = true;
+            leftOutTitles.AddRange(TitlesIn(unknown.Content));
+        }
 
         var zones = ImmutableDictionary.CreateBuilder<ZoneId, ZoneState>();
         foreach (var id in Enum.GetValues<ZoneId>())
@@ -238,8 +251,15 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt); // e.g. a duplicated surface → keep current
         }
 
-        return new ZoneLoadResult(layout, ZoneLoadRefusal.None, partlyRead);
+        return new ZoneLoadResult(layout, ZoneLoadRefusal.None, partlyRead) { LeftOutTitles = leftOutTitles };
     }
+
+    private static IEnumerable<string> TitlesIn(ZoneContentDto? content) =>
+        content is null
+            ? []
+            : (content.Tabs ?? []).Select(t => t.Title)
+                .Concat((content.Children ?? []).SelectMany(TitlesIn))
+                .Where(title => !string.IsNullOrEmpty(title));
 
     // ── mapping ────────────────────────────────────────────────────────────────────────────
 

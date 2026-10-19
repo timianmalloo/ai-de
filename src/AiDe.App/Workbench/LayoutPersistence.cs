@@ -24,11 +24,15 @@ public sealed class LayoutPersistence : IDisposable
     public const string RefusedBackupSuffix = ".bak";
 
     /// <summary>
-    /// The zone restore's report sentence when part of the saved file could not be read and was left out
-    /// (T21 node 4; seam req-01M5A9YZ4PB93ZD06KE5EMC5X8, accepted provisionally).
+    /// The zone restore's report sentence when part of the saved file could not be read and was left out,
+    /// and that part held no surface with a title (T21 node 4; confirmed by the Owner).
     /// </summary>
     internal const string PartlyReadSentence = "Part of your saved layout could not be read and was left out.";
 
+    /// <summary>
+    /// The same sentence when the left-out part held titled surfaces: this prefix, then their saved
+    /// titles in saved order joined with ", ", then a period (T21 node 5, the Owner's refinement).
+    /// </summary>
     internal const string PartlyReadNamingPrefix = "Part of your saved layout could not be read and was left out: ";
 
     private readonly ILayoutService _service;
@@ -178,7 +182,9 @@ public sealed class LayoutPersistence : IDisposable
 
                 if (read.PartlyRead)
                 {
-                    sentences.Add(PartlyReadSentence);
+                    sentences.Add(read.LeftOutTitles.Count > 0
+                        ? $"{PartlyReadNamingPrefix}{string.Join(", ", read.LeftOutTitles)}."
+                        : PartlyReadSentence);
                 }
 
                 var result = new RestoreResult(
