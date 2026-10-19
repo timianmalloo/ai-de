@@ -8,7 +8,47 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+summary: "Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join."
+---
+
+# T11 node 10 — hand-off
+
+## Done (each check committed alone)
+
+- **DC-138, the `Loaded` hook (join blocker 1).**
+  - Red: `suite-node9.txt:53`. The hook was `SessionDocumentSurface.cs:131`, `Loaded += (_, _) => _paneHiddenSaid = false;`, from `c736c96f`.
+  - Green `005b8da5`, `DC138-reset-green.txt`, 10/10: the guard, `ALiveNotebookSurvivesHideAndReopenTests` (2) and `TheRunOutlivesItsPaneTests`.
+  - The reset is now `SessionDocumentSurface.PaneShown()`, called by the shell's `RegisterSessionDocument`. It runs only when a kept document is shown again; a new document starts with the flag false. The DC-138 allow-list is unchanged.
+- **The open-seam order (join blocker 2) was a guard defect, not a product change.**
+  - `git diff main` shows no change to `OpenSessionConsole`. The add the guard reported (offset 186328) belongs to **`OpenExecution`** (`583dddc6`, node 5).
+  - `OpenExecution` was not in the guard's hand-kept `Heads` list. So the guard took `OpenSessionConsole`, the head above it, as that add's command, and read `OpenSessionConsole`'s seam as "BEFORE" the add.
+  - Green `3b567ce9`, `open-seam-green.txt`, 12/12 with `TheExecutionOpensFromOpenLogTests` and `ConsoleSplitPlacementTests`. The guard now derives each head from the nearest member declaration at the class's member indent, or from a `Requested = ` delegate.
+  - Proved both ways. Moving a seam call before `OpenExecution`'s add turns the guard red, and the red names `OpenExecution` (`open-seam-mutation-red.txt`). The mutation was reverted before the commit.
+  - New class **DC-NEW-wl-t11-kinds** is in `docs/lessons/defect-classes.md`, in the same commit. The sweep found one instance.
+  - The test file `tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs` is outside the owned paths. It was claimed before the edit. **Not covered by a seam grant: the Leader should confirm.**
+- **3a, the slot re-pin** (seam `req-01M5A3V1Q07WEFR57AGDMQKD92`, granted).
+  - `1b95c589`, `slot-repin-green.txt`, 27/27. The path is now `layout.understand.zones.json`, the test is `SlotPathFor_MapsEachRowToItsFile_FactoryKeepsCodingsEmptySuffix_UnderstandAndReviewTheirIds`, and the comment is updated.
+  - No red-first, per the grant: the test was red by design at `suite-node9.txt:129`.
+- **3b, the kept-prompt row.**
+  - Red `47df88af`: `LayoutSlotMigrationTests.TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord` failed with "DESIGN.md has no DOCK4 row" (`DOCK4-row-red.txt`).
+  - Green `6d214263`: DESIGN.md row DOCK4, singular and plural (`DOCK4-row-green.txt`, 5/5).
+  - **Residual:** the product's plural (`LayoutPersistence.cs:391`) is an inline string, and no test reaches it. It is in the Proof Pack's Flagged risks.
+- **Proof Pack:** rows 13 and 14 corrected, rows 18 to 20 added, open items 3 and 4 updated, and the node-10 suite paragraph added.
+
+## Suites (`suite-node10.txt`, HEAD `6d214263`)
+
+- **Core: 3024 passed, 0 failed, 1 skipped (3025).**
+- **App: 1150 passed, 4 failed, 2 skipped (1156).**
+  - **D2 ×2, expected.** `ARevivedNotebookReopensItsLiveAttemptsExecutionTests…(diedMidRun: False/True)`: "read back=0". This waits on T17d (Ruling 172).
+  - **Environmental ×2.** `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_…` ("foreground held=False") and `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` ("foreground not held"). Re-run alone, they fail the same way (`suite-node10-foreground-solo.txt`): this background session cannot take the foreground. *Unverified* that they pass with it. The last green is `B-ctrl-digit-green.txt` (node 5).
+  - Gone since node 9: both guard reds and the alias pin.
+
+## Next step (node 11)
+
+1. D2 green, after T17d is merged into this branch (the shell grant: open the execution after the read-back, without focus).
+2. The D6 amendment (Owner): switch statements over `SurfaceEntry` list all three types; a switch expression's discard arm throws `UnreachableException`; one reflection test covers every subtype for each consumer.
+3. Optional: a test for the kept-prompt plural against `LayoutPersistence`, so the plural is tied to DOCK4.
+
 ---
 
 # T11 node 9 — hand-off

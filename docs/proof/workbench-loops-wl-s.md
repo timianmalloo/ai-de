@@ -47,17 +47,27 @@ summary: >-
 | 10 | **Float and redock a live notebook** (Ruling 171 (2)) | T21 | not written | **pending T21**. Probe `C-float-probe.txt` (`8b190778`) measured that a floated pane vanished | **Open** |
 | 11 | Slot migration: today's Factory slot restores each `session-document:<id>` as `notebook:<id>` (same zone, tab position and caption), drops the rest with a report, keeps a one-time `.pre-notebook.bak`, and round-trips | T11 n7-n8 | `LayoutSlotMigrationTests.TodaysSlot_RestoresEachSessionPaneAsItsNotebook_ReportsTheRest_KeepsAOneTimeBak_AndRoundTrips`; operator probe `ASessionDocumentIsShownWhereTheOperatorIsTests` (6) | `22649126` → `28cbad3a`; probe `0da0c3be` → `863c2df4`, mutation `D1-probe-mutation-red.txt` | Verified |
 | 12 | **D2: a revived notebook whose attempt was live at close reopens its execution in the Bottom, without moving focus** | T11 (after T17d) | `ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose` | red `98b5d7e6` (`D2-execution-at-revive-red.txt`: "the revived notebook reads 0 turn(s)"). **Green pending T17d** (Ruling 172). The shell part is granted: `ReviveRestoredSessionDocuments` → `OpenExecution(document, ordinal, activate:false)` | **Open (expected red)** |
-| 13 | `prompt` is kept (Ruling 173): the migration leaves a prompt draft as it was, `prompt` is not in `RetiredKinds`, and the migrating restore's report says so once | T11 n9 | `LayoutSlotMigrationTests.APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once` | `94c374d6` → `7383f868`; `P-prompt-kept-red.txt` → `-green.txt`; design §4 amended `31c75c3f` | Verified. The sentence is pending the wording seam (`req-01M5A3FJRCNCXBRTB6RQKVMPMA`) |
-| 14 | §7 rename: Understand reads `.understand`, falls back to `.architecture` once, writes the new name, keeps `<old>.bak`; T4's alias is removed | T11 n9 | `LayoutSlotMigrationTests.UnderstandsSlot_IsRenamedFromArchitecture_ReadingTheOldNameOnce_KeepingAOneTimeBak_AndRoundTrips` | `54863920` → `c56da52c`; `R-rename-fold-red.txt` → `-green.txt` | Verified. `PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_…` still pins the alias; re-pin on seam `req-01M5A3V1Q07WEFR57AGDMQKD92` |
+| 13 | `prompt` is kept (Ruling 173): the migration leaves a prompt draft as it was, `prompt` is not in `RetiredKinds`, and the migrating restore's report says so once | T11 n9 | `LayoutSlotMigrationTests.APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once` | `94c374d6` → `7383f868`; `P-prompt-kept-red.txt` → `-green.txt`; design §4 amended `31c75c3f` | Verified. The Owner confirmed the sentence; DESIGN.md row DOCK4 carries it (row 20) |
+| 14 | §7 rename: Understand reads `.understand`, falls back to `.architecture` once, writes the new name, keeps `<old>.bak`; T4's alias is removed | T11 n9 | `LayoutSlotMigrationTests.UnderstandsSlot_IsRenamedFromArchitecture_ReadingTheOldNameOnce_KeepingAOneTimeBak_AndRoundTrips` | `54863920` → `c56da52c`; `R-rename-fold-red.txt` → `-green.txt` | Verified. The alias pin is re-pinned to `.understand` as `PerspectiveLayoutSlotTests.SlotPathFor_MapsEachRowToItsFile_FactoryKeepsCodingsEmptySuffix_UnderstandAndReviewTheirIds` (T11 n10 `1b95c589`, `slot-repin-green.txt`, 27/27; seam `req-01M5A3V1Q07WEFR57AGDMQKD92` granted) |
 | 15 | §7 fold: every surface of the Coordination slot is appended to Factory's Center as tabs, never its Left. The Center stays on the notebook. What Factory refuses is dropped with a report, the coordination file is kept once as `.bak`, and the slot round-trips | T11 n9 | `LayoutSlotMigrationTests.CoordinationsSlot_FoldsIntoFactorysCenter_AsTabs_NeverItsLeft_LandingOnTheNotebook_DropsWithAReport_AndRoundTrips` | `54863920` → `c56da52c` | Verified |
 | 16 | Knowledge-inclusive canvas mode (Ruling 149 (2)): a mode of the canvas kind, default off, with its own E2E over the real daemon projection | T18 n1-n3 | checks 1-7 in `workbench-loops-wl-s/knowledge-mode/README.md`, E2E `KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt` | `74e690fd` → `2ff09885` (E2E); the rest in the README | Verified by T18 (cited, not re-run here except in the suite) |
 | 17 | Float guard (Ruling 171 (1)): `workbench.floatPane` refuses with a stated cause; a restored floating window is docked with a report line | T20 | `workbench-loops-wl-s/float-guard/README.md` (`floatpane-refusal`, `restore-docking`, `dock3-wording`, `dock3-zone-label`) | each `-red.txt` → `-green.txt` in that folder; joined `5b47615e` | Verified by T20 (cited) |
+| 18 | DOCK1 is said once per close with no `Loaded` hook (DC-138). The reset runs when the shell shows a kept document again (`RegisterSessionDocument` → `SessionDocumentSurface.PaneShown`) | T11 n10 | `TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation`, `ALiveNotebookSurvivesHideAndReopenTests` (2), `TheRunOutlivesItsPaneTests` | red `suite-node9.txt` (from `c736c96f`) → `005b8da5`; `DC138-reset-green.txt` (10/10) | Verified |
+| 19 | Every `AddSurface` in the shell raises the seam after its add, and each add is judged within its own command: the head is derived from member declarations, not from a hand-kept list (DC-NEW-wl-t11-kinds) | T11 n10 | `EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender`, `TheExecutionOpensFromOpenLogTests`, `ConsoleSplitPlacementTests` | red `suite-node9.txt` → `3b567ce9`; `open-seam-green.txt` (12/12); mutation `open-seam-mutation-red.txt` names `OpenExecution` | Verified, both ways |
+| 20 | DESIGN.md row DOCK4 carries the kept-prompt sentence, singular and plural (Ruling 173; the Owner confirmed it) | T11 n10 | `LayoutSlotMigrationTests.TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord` | `47df88af` → `6d214263`; `DOCK4-row-red.txt` → `-green.txt` | Verified for the singular against the product's sentence. The plural is pinned against the doc only (see Flagged risks) |
 
 **Node 9's suite run** (`kinds/suite-node9.txt`): Core 3024/3025 passed (1 skipped, 0 failed). App 1146/1155
 passed (2 skipped, **7 failed**). The 7: three expected (D2 ×2, the alias pin), two environmental (real-input tests
 without the foreground), and **two branch regressions from T11 nodes 4–8** (DC-138's Loaded-hook control on
 `SessionDocumentSurface.cs`, from `c736c96f`; the open-seam ordering control in `WorkbenchShell.OpenSessionConsole`).
 **The branch is not join-ready until those two are fixed.** Detail: `kinds/handoff.md`, node 9, Suites.
+
+**Node 10's suite run** (`kinds/suite-node10.txt`, HEAD `6d214263`): Core 3024/3025 passed (1 skipped, 0 failed). App
+1150/1156 passed (2 skipped, **4 failed**). Both branch regressions and the alias pin are green (rows 18, 19, 14). The
+4 left: **D2 ×2**, expected until T17d ("read back=0"). **Two environmental:** `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests`
+("foreground held=False") and `SolutionTreeChordTests.CtrlEnter_…` ("foreground not held"). Re-run alone, they fail the
+same way (`kinds/suite-node10-foreground-solo.txt`): this background session cannot take the foreground. *Unverified*
+that they pass with it. The last green is `B-ctrl-digit-green.txt` (node 5).
 
 ## Merge conditions
 
@@ -145,6 +155,10 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
 - **The fold re-runs if its `.bak` already exists.** The first save after a fold moves the coordination file to
   `<file>.bak`, but never over an existing `.bak`. In that case the file stays, and the next restore folds it
   again. Surfaces already in Factory are skipped by id, so no tab is doubled. The drop report repeats.
+- **DOCK4's plural is not tied to the product.** `LayoutPersistence.KeptPromptsReport`'s plural sentence
+  (`LayoutPersistence.cs:391`) is an inline string. No test restores a slot with two prompt drafts, so the product's
+  plural and DOCK4's plural could drift apart unseen. The singular is tied: the P test asserts the report contains
+  `KeptPromptSentence`, and DOCK4's test asserts the row does too.
 - **A rename's old file that cannot be read is left in place.** If `.architecture` is corrupt or newer, Understand
   restores its default and never reads it. Nothing is lost.
 
@@ -153,8 +167,10 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
 1. **D2 green** waits for T17d (Ruling 172). The Leader merges T17d into this branch, and a later node turns D2
    green with the granted shell change.
 2. **Float/redock** waits for T21 (Ruling 171 (2)). **WL-S is not accepted until T21 lands.**
-3. Seam `req-01M5A3FJRCNCXBRTB6RQKVMPMA`: the wording of the kept-prompt sentence (built with the proposed text).
-4. Seam `req-01M5A3V1Q07WEFR57AGDMQKD92`: re-pin `PerspectiveLayoutSlotTests.SlotPathFor_…` to `.understand`.
+3. Closed at node 10. The Owner confirmed the kept-prompt sentence (DOCK4, row 20). The alias pin was re-pinned (row 14).
+4. The D6 amendment (the Owner's): a switch statement over `SurfaceEntry` lists all three types with no default case,
+   a switch expression's discard arm throws `UnreachableException` naming the type, and one reflection test covers
+   every `SurfaceEntry` subtype for each consumer. This is node 11's.
 5. The `prompt` kind's retirement waits until the notebook has all six capabilities, each tested (design §4; Ruling 173).
 6. Captions "Notebook — <journey>" (ADR-0045 §5): node 1 recorded the notebook's title as the session's name.
    Not re-checked at node 9.
