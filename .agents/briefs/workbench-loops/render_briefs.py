@@ -33,6 +33,7 @@ TRACKS = {
     "T22": ("wl-t22-wl1b-design", "wl1b-design", "docs/proof/workbench-loops-wl-1b/design", "Opus 5.5"),
     "T23": ("wl-t23-wl1b-folds", "wl1b-folds", "docs/proof/workbench-loops-wl-1b/folds", "Sonnet 5.5"),
     "T24": ("wl-t24-wl1b-service", "wl1b-service", "docs/proof/workbench-loops-wl-1b/service", "Sonnet 5.5"),
+    "T26": ("wl-t26-checklist", "wl1b-checklist-kind", "docs/proof/workbench-loops-wl-1b/checklist", "Opus 5.5"),
     "T27": ("wl-t27-currentness", "wl1b-currentness", "docs/proof/workbench-loops-wl-1b/currentness", "Sonnet 5.5"),
     "T28": ("wl-t28-compiled", "wl1a-compiled-field", "docs/proof/workbench-loops-wl-1a/compiled-field", "Sonnet 5.5"),
     "T30": ("wl-t30-prefill", "wl-prefill", "docs/proof/workbench-loops-wl-1a/prefill", "Opus 5.5"),
