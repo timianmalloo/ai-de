@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T04:30:18Z",
+  "generated": "2026-10-19T04:39:55Z",
   "audit": [
     {
       "actor": null,
@@ -23424,6 +23424,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T04:08:49Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M597B0G9SWYZ0AQ94K3EMRK9",
+      "shortname": "join-t4-step8-ratchet",
+      "datetime": "2026-10-19T04:39:55Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 155 + Rulings 151/153 step-8 completion for the T4 re-row join",
+      "summary": "T4 re-row pushed c3013bd2 (3e1bd2ae..c3013bd2): FullWindow/Explorer retired, three DockHost rows, Rulings 149/152. App floor lowered 1064->1026 with the stated reason (37 test attributes in 5 deleted files). First ratchet REFUSED 2 green->red (verify-cited-controls, verify-fixture-derivation) -> T4c 9fe4e99f; the re-join recount's only failure was SolutionTreeChordTests 'foreground not held; SendInput would prove another window' (probe exit 2) - NOT CHECKED on an unattended desktop, identical on origin/main 3e1bd2ae; joined under Ruling 155 (attended run owed to the user; T4 reopens if it fails with foreground held). Two further ratchet refusals were the Leader's own: hand-off note prose read as a citation of Ruling 1 (reworded) and a stale docs-index.js (regenerated). Final ratchet PASS 0/48. Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T4 under Rulings 151/153/155",
+      "done_when": "pushed with ratchet PASS; Ruling 155 and the NOT CHECKED reason recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-19T03:51:24Z",
+      "duration_seconds": 2911.0
     }
   ],
   "changes": [
