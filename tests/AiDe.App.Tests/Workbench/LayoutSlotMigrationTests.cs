@@ -401,7 +401,7 @@ public sealed class LayoutSlotMigrationTests : IDisposable
 
     /// <summary>
     /// The DESIGN.md row DOCK4 carries the kept-prompt sentence word for word (Ruling 173; the Owner confirmed the
-    /// wording on 2026-10-19), as T20's <c>FloatingRedockCopyTests</c> pins DOCK3.
+    /// wording on 2026-10-19), and the product's plural is the one const that row holds.
     /// </summary>
     [Fact]
     public void TheDesignRowDock4_CarriesTheKeptPromptSentenceWordForWord()
@@ -413,7 +413,7 @@ public sealed class LayoutSlotMigrationTests : IDisposable
 
         // The product's plural is ONE const, and DOCK4 carries it word for word.
         var constant = typeof(LayoutPersistence).GetField("KeptPromptsSentence", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-        Assert.True(constant is { IsLiteral: true }, "LayoutPersistence has no KeptPromptsSentence const: its plural is an inline string no test pins (LayoutPersistence.cs:391)");
+        Assert.True(constant is { IsLiteral: true }, "LayoutPersistence has no KeptPromptsSentence const: its plural is an inline string no test pins (KeptPromptsReport's plural arm)");
         Assert.Equal(Dock4Plural(), (string)constant!.GetRawConstantValue()!);
     }
 

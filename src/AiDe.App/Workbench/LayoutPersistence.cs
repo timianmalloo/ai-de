@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using AiDe.Core.Workbench;
 
@@ -38,6 +39,12 @@ public sealed class LayoutPersistence : IDisposable
     /// titles in saved order joined with ", ", then a period (T21 node 5, the Owner's refinement).
     /// </summary>
     internal const string PartlyReadNamingPrefix = "Part of your saved layout could not be read and was left out: ";
+
+    /// <summary>
+    /// DESIGN.md DOCK4's plural (Ruling 173 (3)): the restore that migrates a slot with more than one prompt draft says
+    /// this, with <c>{N}</c> replaced by the number of drafts kept.
+    /// </summary>
+    internal const string KeptPromptsSentence = "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks.";
 
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
@@ -421,7 +428,7 @@ public sealed class LayoutPersistence : IDisposable
     {
         (0, _) or (_, 0) => null,
         (_, 1) => "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.",
-        _ => $"Kept {kept} prompt drafts as they were: prompt drafts do not become notebooks.",
+        _ => KeptPromptsSentence.Replace("{N}", kept.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal),
     };
 
     /// <summary>The drop-with-report sentence (spec §C4, plural forms as fixed there), or the plain restore sentence.</summary>
