@@ -223,17 +223,17 @@ public sealed class SurfaceContentFactory(
             static (_, s) => new DiagnosticsSurface(s.Title),
             Perspectives: [PerspectiveSet.Factory], Instances.One, new SurfaceEntry.Derived("_View")),
 
-        // The session document (R13 b3, R16). "session-document", never "session" (Ruling 18): the
-        // "sessions" row above is the Loomkeeper watcher pane, and a kind one letter away from it
-        // would be resolved by whichever row was read first, silently. Opened by the front door
-        // `session.new` (File, every perspective), never by a derived entry.
-        new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, "Session",
-            "One session: its composer and its canvas.",
+        // The notebook (ADR-0045 §2 and §4): the session document's surface, bound to the shell's
+        // NotebookModel, under the kind the ADR names. It replaces `session-document` (see
+        // RetiredKinds). Opened by the front door `session.new` (File, every perspective), never by
+        // a derived entry.
+        new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, "Notebook",
+            "One notebook: its composer, its thread and its canvas.",
             static (f, s) => f.SessionDocument(s),
             Perspectives: [PerspectiveSet.Factory], Instances.Many, new SurfaceEntry.Verb("session.new"),
-            // Ruling 83: a new session docks in the Left, docked, never maximized; the operator's
-            // own words and gesture ("new sessions should default into the left dock").
-            Zone: ZoneId.Left),
+            // ADR-0045 §1(a), "Factory: Center = notebook". This supersedes Ruling 83's Left dock,
+            // and Factory's Landing moves to the Center in the same change (Ruling 152 D2).
+            Zone: ZoneId.Center),
 
         // The session's Console as a document (Ruling 89; CV-5.2's seam request): identity
         // `console:<sessionId>`, caption "Console — <session>", one per session, opened into the
@@ -310,6 +310,10 @@ public sealed class SurfaceContentFactory(
             // Ruling 94: "eliminate the provenance tab" — the detail half of the Evidence pair,
             // folded into a second muted line under the selected Evidence row.
             ["inspector"] = "retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row",
+
+            // ADR-0045 §2: the session document is now the notebook. Until the slot migration maps a saved placement
+            // to its notebook (§7, the WL-S design), the placement is dropped with this report.
+            ["session-document"] = "retired by ADR-0045: a session now opens as a notebook in the Center; reopen it from File → Recent sessions",
         };
 
     /// <summary>

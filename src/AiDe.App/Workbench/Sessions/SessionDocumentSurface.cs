@@ -211,8 +211,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             ? surfaceId[(Kind.Length + 1)..]
             : null;
 
-    /// <summary>The surface kind <c>SurfaceContentFactory</c> builds this for — <c>session-document</c>, never <c>session</c> (Ruling 18).</summary>
-    public const string Kind = "session-document";
+    /// <summary>
+    /// The surface kind <c>SurfaceContentFactory</c> builds this for: <c>notebook</c> (ADR-0045 §2). This surface binds
+    /// the <see cref="Records.NotebookModel"/>, so it is the notebook kind. The <c>session-document</c> kind it replaces is
+    /// retired, and a saved layout that still names it is reported (<c>SurfaceContentFactory.RetiredKinds</c>).
+    /// </summary>
+    public const string Kind = "notebook";
 
     /// <summary>Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a).</summary>
     public const string PaneHiddenCopy = "Pane hidden. The run continues.";

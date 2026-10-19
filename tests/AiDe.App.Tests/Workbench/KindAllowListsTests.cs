@@ -79,7 +79,7 @@ public sealed class KindAllowListsTests
             ["search"] = ["factory"],
             ["codeviewer"] = ["factory", "understand"],
             ["diagnostics"] = ["factory"],
-            ["session-document"] = ["factory"],
+            ["notebook"] = ["factory"],
             ["console"] = ["factory"],
         };
 

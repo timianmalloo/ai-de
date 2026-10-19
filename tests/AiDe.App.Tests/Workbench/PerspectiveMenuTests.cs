@@ -212,7 +212,7 @@ public sealed class PerspectiveMenuTests
     {
         var expected = new (string Kind, string[] Admitting, SurfaceContentFactory.Instances Instances)[]
         {
-            ("session-document", ["factory"], SurfaceContentFactory.Instances.Many),
+            ("notebook", ["factory"], SurfaceContentFactory.Instances.Many),
             ("console",          ["factory"], SurfaceContentFactory.Instances.Many),   // Ruling 89: the session's Console as a document
             ("terminal",         ["factory"], SurfaceContentFactory.Instances.Many),
             ("prompt",           ["factory"], SurfaceContentFactory.Instances.Many),
@@ -253,7 +253,7 @@ public sealed class PerspectiveMenuTests
     public void EveryEntryVerbRowNamesAGlobalCatalogCommand_AndEveryOtherRowDerivesItsEntry()
     {
         var verbs = SurfaceContentFactory.Kinds.Where(k => k.Entry is SurfaceContentFactory.SurfaceEntry.Verb).ToList();
-        Assert.Equal(["terminal", "session-document", "console"], verbs.Select(k => k.Kind));
+        Assert.Equal(["terminal", "notebook", "console"], verbs.Select(k => k.Kind));
 
         foreach (var row in verbs)
         {
@@ -261,7 +261,7 @@ public sealed class PerspectiveMenuTests
             var command = Assert.Single(WorkbenchCommandCatalog.All, c => c.Id == verb.CommandId);
             if (row.Kind == "console")
             {
-                Assert.Equal(CommandScope.Admits("session-document"), command.Scope);
+                Assert.Equal(CommandScope.Admits("notebook"), command.Scope);
                 Assert.Equal("_View", command.Menu);
             }
             else
