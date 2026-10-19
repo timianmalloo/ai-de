@@ -597,7 +597,7 @@ and every derived surface followed. **Tests** is a reserved name with no row (Ru
 
 | Member | Summary |
 |---|---|
-| `Perspective Factory { get; } = new(` | **(gap)** |
+| `Perspective Factory { get; } = new(` | Make the change. It lands on the Center, where the notebook docks (ADR-0045 §1(a); Ruling 152 D2 flipped it from the Left in the same change that docked the notebook there). |
 | `Perspective Review { get; } = new(` | Review a change against its intent. It admits no surface kind until WL-5 lands the change packet (the WL-S design's D3): an honest empty host, never a borrowed kind. |
 | `Perspective Understand { get; } = new(` | **(gap)** |
 | `IReadOnlyList<Perspective> All { get; } = [Factory, Review, Understand]` | The rows, in rail order: Factory · Review · Understand (spec §B1). |

@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 96 types, 419 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f55f53f2b23f2f0699bed7d20281bb39916068423fe3944909976a99aa9941c3"
+      "sourceSha256": "083a8732e4bef730240ab1d34d072e612160b542608a7b2d37e9407ded2dfb7e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2657,6 +2657,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "27629418d0faf347ddf012e4062fb168073f28dae59a3db1f564587922460256"
+    },
+    {
+      "id": "api-aide-app-workbench-execution",
+      "path": "docs/api/AiDe.App.Workbench.Execution.md",
+      "title": "API: AiDe.App.Workbench.Execution",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Execution: 2 types, 5 members, 86% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "feb6db02bafb947b580a5aa51946bb38630e00230088dceaff9603bf1415205c"
+    },
+    {
+      "id": "api-aide-app-workbench-notebook",
+      "path": "docs/api/AiDe.App.Workbench.Notebook.md",
+      "title": "API: AiDe.App.Workbench.Notebook",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Notebook: 1 types, 3 members, 100% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e3d876772bcf4e35d71a20f502096b8e08342aee360b8d5bc70a5c16c4068221"
     },
     {
       "id": "api-aide-app-workbench-records",
@@ -2693,7 +2743,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 223 members, 76% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 37 types, 224 members, 76% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2706,7 +2756,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77ddb4484879d4eeb3ee7891801cb3b3849cc860ecabffb1d08f62fada2a96cc"
+      "sourceSha256": "37d8b720defcb638afd1d44a8974f3fbc7792386be74e594589f62b0730c89a6"
     },
     {
       "id": "api-aide-core",
@@ -3206,7 +3256,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f6dcee4b04afdf1bb0016c61d7946d30ab9e3c6adeb650708671e40c1ae87c25"
+      "sourceSha256": "29c6d9d4a78dc3a4eb031c5ea10edfbb74c0b0e3d5b3a0adb62c5fd8a20c191c"
     },
     {
       "id": "api-aide-core-workbench-records-folds",
@@ -10219,7 +10269,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08a6ddc658b2c938a42648c0f17ee0d519011928e15e133713bf715b476dfd63"
+      "sourceSha256": "32ab6686880e831e91e52ab3076fb4df0b5f2047b1c27a80bc0a7185c53e913c"
     },
     {
       "id": "ui-bounded-count-chip",
@@ -10731,7 +10781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46f7c4b79fdab54c4c0fd743ddea25012ad0b0443268988982ab9cf37077ea4e"
+      "sourceSha256": "b6e7fe606bbf26a5ccdbf8ef6d1ba31155799b033e605e9ea6096c58cbf5044a"
     },
     {
       "id": "design-session-profiler",
@@ -14183,7 +14233,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4a01980468da05fcc115a62dd927c6da568adb5b29a038538b4fb0e8058e2f82"
+      "sourceSha256": "f3d3a7bb0df8f1132afe9e84d5c0cb2c4105ab562ea4c3285e153f24c92c43c9"
     },
     {
       "id": "session-profiles",
@@ -22518,6 +22568,22 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ba4a76daba33ff0bb5e0804c8f87b9accf668fc42e14da3761d6f19371a2a1c"
     },
     {
+      "id": "proof-wl-s-kinds-node1-handoff",
+      "path": "docs/proof/workbench-loops-wl-s/kinds/handoff.md",
+      "title": "WL-S T11 kinds - node 1 hand-off (rule 16 kick)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Node 12 (kicked, after the merge of main with T21 joined): the merge head 31077bb7 brought in no red, and both of the Leader's conflict resolutions hold; the DOCK4 plural is green (KeptPromptsSentence const, c25e3e90, mutation proved); the WL-S demo script has the attended list (Ruling 155 (3)) and the float step pending close condition 4; the node-10 seam guard is green at the merge head. suite-node12: Core 3046/0/1, App 1202/2/2 (the two foreground tests). Node 11 (kicked): D2 green (ca392933 to caa5df81; ExecutionAtRevive.LiveAtClose plus OpenExecution activate:false); D6 amended with the reflection test (06e37edb to cb5cb59b; CS8509 observed); DOCK4 plural const red only (b62261e8), its green blocked by T21's lease on LayoutPersistence.cs. Node 10: the two join-blocking guard reds are green (DC-138 reset off Loaded, 005b8da5; open-seam guard derives its heads, 3b567ce9, DC-NEW-wl-t11-kinds); the slot alias pin is re-pinned (1b95c589); DOCK4 holds the kept-prompt sentence (47df88af to 6d214263). suite-node10: Core 3024/3025 green; App 4 red of 1156, D2 x2 (T17d) and 2 foreground tests that also fail alone in this session. Earlier, node 9: P (prompt kept, Ruling 173) red then green, with design section 4 amended and D6 added; R (the .architecture to .understand rename and the coordination fold, design section 7) red then green; F, the WL-S Proof Pack, drafted. D2 stays red until T17d (Ruling 172); float/redock waits on T21. Two seam requests open (the kept-prompt wording; re-pinning PerspectiveLayoutSlotTests' alias test). suite-node9: Core 3024/3025 green; App 7 red of 1155, two of them branch regressions from nodes 4-8 (DC-138 Loaded hook, c736c96f; the open-seam ordering in OpenSessionConsole) that block the join.",
+      "tags": [],
+      "links": [],
+      "diagrams": [],
+      "sourceSha256": "da08488473376677cca17ef6b0bc0b11cc303a59c014db276be676bf590ee56e"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -23011,6 +23077,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
+    },
+    {
+      "id": "proof-workbench-loops-wl-s",
+      "path": "docs/proof/workbench-loops-wl-s.md",
+      "title": "Proof Pack: WL-S - the notebook and execution kinds, slot migration, knowledge mode, float guard",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-S",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The slice Proof Pack for WL-S, drafted by T11 node 9. Each row cites its red and green commits: T11 nodes 1-9 (notebook and execution kinds, Factory's Center landing, Ctrl+1/2/3 inside a WebView2 page, hide, slot migration with its .bak and report, prompt kept, the .architecture rename and the coordination fold), T18's knowledge mode and T20's float guard. D2 is green (node 11) and DOCK4's plural const is green (node 12). Open: T21's close condition 4, a live notebook floated and redocked, owed after the T11 join (Ruling 171 (2)); and two foreground tests on the user's attended list (Ruling 155 (3)).",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-s",
+        "notebook",
+        "execution",
+        "slot-migration",
+        "knowledge-mode",
+        "float-guard"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-s",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-wl-s-kinds-node1-handoff",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4116353cef194df07565bab8597ef6e9c7bde097b11d7c22dd713689de73da5c"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -25087,5 +25195,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "b6b98ddece702224845f9b9b6f00f7a03963132c73e7039dab4b632837bb4caf"
+  "graphSha256": "3796e011de23e579a1304d8624e9ee4855728dcca4fc1cd11e1e0420a35f1d76"
 };
