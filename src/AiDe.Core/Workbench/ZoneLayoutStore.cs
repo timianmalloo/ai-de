@@ -183,7 +183,9 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
                     Collapsed: id != ZoneId.Center && dto.Collapsed);
         }
 
-        var floating = envelope.Layout.Floating
+        // System.Text.Json passes null for an absent positional member, so a file with no "floating"
+        // field (hand-edited, or written before floating was stored) reads as no floating panes.
+        var floating = (envelope.Layout.Floating ?? [])
             .Select(f => FromStackDto(f, Available))
             .Where(f => f is not null)
             .Cast<StackNode>()

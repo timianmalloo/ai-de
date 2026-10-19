@@ -8473,3 +8473,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   n4 9.3k tokens/min, so 200k is reached at about 19 min, earlier than the 21-min call kick. T8's kick is therefore
   at about 19 min, and both rates are re-derived after every node.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
+
+### DC-NEW-wl-t21-float — An absent JSON field arrives null in a non-nullable positional DTO, and the reader dereferences it
+
+- **Shape:** a persistence DTO is a positional record whose collection parameter is declared non-nullable (`List<T> Floating`). System.Text.Json passes `null` for a constructor parameter whose property is absent from the file, whatever the annotation says, unless `RespectNullableAnnotations` / `RespectRequiredConstructorParameters` is set. The reader trusts the annotation, calls `.Select` on the member, and a read documented as "never throws on a bad file" throws on a file that is merely older or hand-edited.
+- **Observed instance:** T21 null check (Ruling 171 (2)). `ZoneLayoutStore.Read` threw `ArgumentNullException (source)` at `ZoneLayoutStore.cs:186` for a schema-1 file with no `"floating"` field. Red: `ZoneLayoutWithoutFloatingTests.ASavedLayoutWithNoFloatingField_RestoresWithAnEmptyFloatingList_AndNeverThrows` (fixture `tests/AiDe.Core.Tests/fixtures/zone-layout-no-floating.json`).
+- **Sweep:** every non-nullable collection member of the schema-1 zone DTOs that `Read` dereferences. Two siblings have the same shape and stay **open**: `ZoneLayoutDto.Zones` (`envelope.Layout.Zones.FirstOrDefault`, the zones loop in `Read`) and `ZoneStackDto.Surfaces` (`FromStackDto`). `ZoneContentDto.Tabs/Children/Weights` are already declared nullable and coalesced. The other JSON stores in `src/` were not swept in this node.
+- **Control:** the read coalesces the absent member to empty (`envelope.Layout.Floating ?? []`), pinned by the fixture test above. The schema-1 DTO shape is unchanged, so `PerspectiveLayoutSlotTests.TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters` still holds.
+- **Derive:** a reader of a persisted file treats every member as possibly absent, whatever its C# annotation. The annotation describes what the writer writes, not what the reader will be given.
+- **Status:** `partially-controlled` (the `floating` instance is controlled; the two named siblings are open).
