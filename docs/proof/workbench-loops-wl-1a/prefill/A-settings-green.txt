@@ -1,0 +1,43 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:01.37]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneAdmits_TheNewSessionsSettingsSayAgenticAdvisoryAndWhy_AndTheKeyboardCanChooseMechanicalOnly [596 ms]
+  Standard Output Messages:
+ open: selected agentic-advisory · why "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the compile-pin spike matches the installed adapter." · items mechanical-only | agentic-advisory | agentic — not available (disabled)
+ after Up: selected mechanical-only · stored mechanical-only · gate mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is available; choose it to have the compile step suggest the lines."
+
+
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WithNoLadderInjected_TheSettingsEvaluateTheGateOverTheBoundAdapter_AndOfferAgenticAdvisory [271 ms]
+  Standard Output Messages:
+ open: bound adapter C:\Users\malla\AppData\Local\Temp\aide-t8-binding-9bec9e4bc38d4ad78ab2f04d122d0998\install · gate asked about [C:\Users\malla\AppData\Local\Temp\aide-t8-binding-9bec9e4bc38d4ad78ab2f04d122d0998\install] · selected agentic-advisory · why "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the compile-pin spike matches the installed adapter." · items mechanical-only | agentic-advisory | agentic — not available (disabled)
+
+
+  Passed AiDe.App.Tests.Composer.TheCompileModeControlTests.WhenGateOneRefuses_TheSettingsSayMechanicalOnlyWithTheGatesReason_AndAdvisoryIsDisabled [282 ms]
+  Standard Output Messages:
+ open: selected mechanical-only · why "Mechanical-only: one gesture, you fill the structure. Agentic-advisory is not available: the compile-pin-spike artifact was not found at C:\Users\malla\AppData\Local\Temp\aide-t8-binding-878f68c9690a49da841efd483bd99056\no-proof\compile-pin-spike.json; run spikes/compile-session-pin-wire/Run-PinSpike.ps1 (PD-5) — a failed spike is a hard stop, never a fallback (Ruling 68)." · items mechanical-only | agentic-advisory — not available (disabled) | agentic — not available (disabled)
+
+
+
+Test Run Successful.
+Total tests: 3
+     Passed: 3
+ Total time: 1.7184 Seconds

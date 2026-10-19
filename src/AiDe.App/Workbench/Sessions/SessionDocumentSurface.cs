@@ -1353,9 +1353,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
 
     /// <summary>
     /// The compile-mode ladder as the gates read it now (ADR-0036 rule 1), evaluated at every open of the settings and
-    /// at every change; null when this document cannot evaluate it — only <c>mechanical-only</c> is then offered. The
-    /// product binds it to <see cref="CompileModeGate.Evaluate(string)"/> over the session's adapter install root; a
-    /// test injects the gate's input here.
+    /// at every change. A test may inject a whole ladder here. Left null (the product), the settings evaluate
+    /// <see cref="CompileModeGateInput"/> over the bound composer's adapter install root; with no root bound either, only
+    /// <c>mechanical-only</c> is offered.
     /// </summary>
     public Func<CompileModeAvailability>? CompileModeLadder { get; set; }
 
@@ -1374,6 +1374,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         if (CompileModeLadder?.Invoke() is { } ladder)
         {
             return ladder;
+        }
+
+        if (Composer.AdapterInstallRoot is { } adapterInstallRoot)
+        {
+            return CompileModeGateInput(adapterInstallRoot);
         }
 
         var refused = new CompileModeRefusal(Envelope.NotRecorded, LadderNotEvaluated);
