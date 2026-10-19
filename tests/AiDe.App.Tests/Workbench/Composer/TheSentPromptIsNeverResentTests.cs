@@ -1,8 +1,6 @@
 using System.IO;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using AiDe.App.Conductor;
 using AiDe.App.Tests.Records;
 using AiDe.App.Tests.Sessions.Thread;
@@ -21,8 +19,9 @@ namespace AiDe.App.Tests.Composer;
 /// <b>Ruling 181 (2), the hard resend guard.</b> After a submit the compiled field shows what was sent — display-only.
 /// The send takes <c>RenderedView ?? RenderView(draft, template)</c> (<c>ComposerSendGate.Send</c>), so a sent text that
 /// reached the gate's view would go again on the next press. A second Ctrl+Enter with no keystroke sends nothing: no
-/// turn, no dispatch, no attempt row, and the gate's own refusal. A queued send (Ruling 95) and a send held by the
-/// restart read-back (Ruling 175) each show their own state, never <i>sent as</i>.
+/// turn, no dispatch, no attempt row, and the gate's own refusal. A queued send (Ruling 95) shows its bytes headed
+/// <i>queued as b{n}</i> under the same guard (T28 n3); a send held by the restart read-back (Ruling 175) shows its own
+/// state, never <i>sent as</i>.
 /// </summary>
 public sealed class TheSentPromptIsNeverResentTests(ITestOutputHelper output) : IDisposable
 {
@@ -78,45 +77,78 @@ public sealed class TheSentPromptIsNeverResentTests(ITestOutputHelper output) : 
     }
 
     /// <summary>
-    /// Ruling 95: a send while b1 runs, taken as <i>Wait — send after b1</i>, is queued, not sent. The field does not
-    /// claim <i>sent as b2</i>: it shows the live new draft under the live heading, and the status line says b2 is queued.
+    /// Ruling 181 (2) for a queued send (T28 n3): the field shows b2's bytes headed <i>queued as b2</i>, display-only. A
+    /// second Ctrl+Enter right after the queued send, with no keystroke, queues nothing and sends nothing — no second
+    /// queued row, no dispatch, no attempt row — and shows Ruling 95's own refusal. Once b1 and then b2 have run, a further
+    /// press with no keystroke still sends nothing: the shown text never reached the gate's view, so the gate refuses the
+    /// empty draft and never sends b2's bytes as b3.
     /// </summary>
     [Fact]
-    public void AQueuedSend_ShowsItsQueuedState_NotTheSentState()
+    public void ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing()
     {
         ComposerGesture.Drive(
             _fixture,
             async (window, document) =>
             {
                 var composer = document.Composer;
-                ComposerGesture.Open(composer);
                 ComposerGesture.Type(composer, "first words");
                 ComposerGesture.Settle(document);
                 ComposerGesture.CtrlEnter(composer);
                 await document.LastBinding.WaitAsync(NotebookFixture.Bound);
                 ComposerGesture.Settle(document);
                 Assert.NotNull(document.Notebook.Thread.Current.InFlight);
-                Assert.Equal(ComposerSurface.SentHeading("b1"), ComposerGesture.Heading(composer).Header);
 
-                ComposerGesture.Type(composer, "second words");
+                ComposerGesture.Type(composer, Words);
+                ComposerGesture.Settle(document);
+                ComposerGesture.CtrlEnterThenWait(composer, "b1");
+                await document.LastBinding.WaitAsync(NotebookFixture.Bound);
+                ComposerGesture.Settle(document);
+                var b2 = document.Notebook.Thread.Current.Turns[1];
+                var attempts = ComposerGesture.AttemptRows(_fixture);
+                var blocks = composer.Gate.BlocksSent;
+                var launch = document.LastLaunch;
+
+                // The guard first: what a second press SENDS is asserted before what the field SHOWS.
                 ComposerGesture.CtrlEnter(composer);
                 ComposerGesture.Settle(document);
-                var wait = Link(composer, "Wait — send after b1");
-                Assert.True(wait is not null, $"the status line offers no Wait action; it reads \"{composer.Status}\"");
-                wait!.RaiseEvent(new RoutedEventArgs(Hyperlink.ClickEvent));
+                await Task.Delay(200);
                 ComposerGesture.Settle(document);
+                var turns = document.Notebook.Thread.Current.Turns;
+                var shown = (ComposerGesture.Field(composer).Text, ComposerGesture.Heading(composer));
+                output.WriteLine($"after the second press: turns {string.Join(", ", turns.Select(t => t.DisplayOrdinal + " " + t.State))} · attempt rows {ComposerGesture.AttemptRows(_fixture)} (was {attempts}) · blocks sent {composer.Gate.BlocksSent} (was {blocks}) · status \"{composer.Status}\" · field {shown.Text.Length} chars · header \"{shown.Item2.Header}\"");
 
-                var (header, name, itemStatus) = ComposerGesture.Heading(composer);
-                var field = ComposerGesture.Field(composer);
-                output.WriteLine($"after Wait: turns {string.Join(", ", document.Notebook.Thread.Current.Turns.Select(t => t.DisplayOrdinal + " " + t.State))} · status \"{composer.Status}\" · header \"{header}\" · name \"{name}\" · field {field.Text.Length} chars · draft \"{composer.Draft.SourceText}\"");
+                Assert.Equal(2, turns.Count);
+                Assert.Single(turns, t => t.State == TurnState.Queued);
+                Assert.Equal(attempts, ComposerGesture.AttemptRows(_fixture));
+                Assert.Equal(blocks, composer.Gate.BlocksSent);
+                Assert.Same(launch, document.LastLaunch);
+                Assert.Equal("b2 is queued; cancel it or wait.", composer.Status);
 
-                Assert.Equal(TurnState.Queued, document.Notebook.Thread.Current.Turns[1].State);
-                Assert.Equal("b2 queued — sends after b1", composer.Status);
-                Assert.Equal(ComposerSurface.CompiledPromptHeading, header);
-                Assert.Equal(ComposerSurface.CompiledPromptLiveName, name);
-                Assert.Equal(string.Empty, itemStatus);
-                Assert.Equal(string.Empty, composer.Draft.SourceText);
-                Assert.Equal(string.Empty, field.Text);
+                // b1 ENDS, THE DRAIN SENDS b2, b2 ENDS: the session is idle with an open block, where a leaked view would
+                // really go. A press with no keystroke since the queued send sends nothing.
+                _fixture.ReleaseRun();
+                await ComposerGesture.UntilAsync(
+                    window,
+                    () => document.Notebook.Thread.Current is { InFlight: null, Queued: null, Turns.Count: 2 } && ComposerGesture.AttemptRows(_fixture) == 2,
+                    () => $"b1 and b2 never both ran: turns {string.Join(", ", document.Notebook.Thread.Current.Turns.Select(t => t.DisplayOrdinal + " " + t.State))} · attempt rows {ComposerGesture.AttemptRows(_fixture)}");
+                await document.LastLaunch.WaitAsync(NotebookFixture.Bound);
+                ComposerGesture.Settle(document);
+                var drained = ComposerGesture.AttemptRows(_fixture);
+                var drainedBlocks = composer.Gate.BlocksSent;
+                ComposerGesture.CtrlEnter(composer);
+                ComposerGesture.Settle(document);
+                await Task.Delay(200);
+                ComposerGesture.Settle(document);
+                output.WriteLine($"after the drain and a further press: turns {string.Join(", ", document.Notebook.Thread.Current.Turns.Select(t => t.DisplayOrdinal + " " + t.State))} · attempt rows {ComposerGesture.AttemptRows(_fixture)} (was {drained}) · blocks sent {composer.Gate.BlocksSent} (was {drainedBlocks}) · status \"{composer.Status}\"");
+
+                Assert.Equal(2, document.Notebook.Thread.Current.Turns.Count);
+                Assert.Equal(drained, ComposerGesture.AttemptRows(_fixture));
+                Assert.Equal(drainedBlocks, composer.Gate.BlocksSent);
+                Assert.Equal(EmptyPromptRefusal, composer.Status);
+
+                // The display after the refused press right after the queue: still b2's bytes, still headed as queued.
+                Assert.Equal(b2.SentBytes, shown.Text);
+                Assert.Equal(ComposerSurface.QueuedHeading("b2"), shown.Item2.Header);
             },
             releaseRun: false);
     }
@@ -203,11 +235,5 @@ public sealed class TheSentPromptIsNeverResentTests(ITestOutputHelper output) : 
                     opened?.Dispose();
                 }
             });
-    }
-
-    private static Hyperlink? Link(ComposerSurface composer, string name)
-    {
-        var status = ThreadFixtures.Visuals<TextBlock>(composer).Single(t => AutomationProperties.GetName(t) == "Send status");
-        return status.Inlines.OfType<Hyperlink>().FirstOrDefault(l => AutomationProperties.GetName(l) == name);
     }
 }

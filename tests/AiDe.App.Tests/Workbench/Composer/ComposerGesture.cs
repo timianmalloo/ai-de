@@ -5,6 +5,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
 using AiDe.App.Tests.Records;
@@ -109,6 +110,26 @@ internal static class ComposerGesture
     /// <summary>Ctrl+Enter through the WebView2 accelerator handler.</summary>
     public static void CtrlEnter(ComposerSurface composer) =>
         Assert.True(composer.OnAcceleratorKey(Enter, controlHeld: true, isKeyDown: true), "Ctrl+Enter was not the send gesture");
+
+    /// <summary>
+    /// A queued send (Ruling 95): Ctrl+Enter while a turn is in flight, then the status line's <i>Wait — send after b{n}</i>
+    /// action, clicked. Fails when the press did not offer it.
+    /// </summary>
+    public static void CtrlEnterThenWait(ComposerSurface composer, string inFlightOrdinal)
+    {
+        CtrlEnter(composer);
+        var name = $"Wait — send after {inFlightOrdinal}";
+        var wait = StatusLink(composer, name);
+        Assert.True(wait is not null, $"the status line offers no \"{name}\"; it reads \"{composer.Status}\"");
+        wait!.RaiseEvent(new RoutedEventArgs(Hyperlink.ClickEvent));
+    }
+
+    /// <summary>The status line's action named <paramref name="name"/>, or null.</summary>
+    public static Hyperlink? StatusLink(ComposerSurface composer, string name)
+    {
+        var status = ThreadFixtures.Visuals<TextBlock>(composer).Single(t => AutomationProperties.GetName(t) == "Send status");
+        return status.Inlines.OfType<Hyperlink>().FirstOrDefault(l => AutomationProperties.GetName(l) == name);
+    }
 
     /// <summary>The disclosure named <i>Compiled prompt</i> in the composer's visual tree.</summary>
     public static Expander Disclosure(ComposerSurface composer) =>

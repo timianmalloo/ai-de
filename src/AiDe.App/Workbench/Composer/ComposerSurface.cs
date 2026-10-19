@@ -326,6 +326,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public static string SentHeading(string displayOrdinal) =>
         string.Format(System.Globalization.CultureInfo.InvariantCulture, SentHeadingFormat, displayOrdinal);
 
+    /// <summary>
+    /// Ruling 181 (1), a queued send (Ruling 95): the heading while the field shows the turn just queued behind the one
+    /// in flight, until the next keystroke — the visible header, the field's UIA name and the disclosure's ItemStatus,
+    /// one string. <c>{0}</c> is the queued turn's ordinal (<c>b2</c>).
+    /// </summary>
+    public const string QueuedHeadingFormat = "Compiled prompt — queued as {0}";
+
+    /// <summary>The <see cref="QueuedHeadingFormat"/> heading for one turn's ordinal.</summary>
+    public static string QueuedHeading(string displayOrdinal) =>
+        string.Format(System.Globalization.CultureInfo.InvariantCulture, QueuedHeadingFormat, displayOrdinal);
+
     /// <summary>A disclosure's header row (DESIGN.md: each line 24 px) — what the compiled prompt costs at rest.</summary>
     private const double DisclosureHeaderHeight = 24;
 
