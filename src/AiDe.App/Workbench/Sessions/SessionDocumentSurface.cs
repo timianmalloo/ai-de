@@ -84,6 +84,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     private bool _operatorActed;
     private bool _placedFocus;
     private bool _disposed;
+    private bool _paneHiddenSaid;
 
     /// <param name="model">The document's state.</param>
     /// <param name="store">Where the document's envelope is persisted, or null to keep none — the compiled-prompt disclosure's open state is written there on every toggle (Ruling 96), so a reopen restores it.</param>
@@ -125,6 +126,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         SurfaceId = SurfaceIdFor(model.SessionId);
 
         AutomationProperties.SetName(this, model.Title);
+
+        // A pane shown again is a new pane to close: its next close may say DOCK1's copy again (SayPaneHidden).
+        Loaded += (_, _) => _paneHiddenSaid = false;
         SetResourceReference(BackgroundProperty, "SurfaceRaisedBrush");
         SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, "TextBrush");
 
@@ -1654,10 +1658,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             Notebook.Runs.Observer = null;
         }
 
-        if (!_ownsNotebook && Notebook.Runs.InFlight)
-        {
-            _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
-        }
+        SayPaneHidden();
 
         foreach (var lane in _lanes)
         {
@@ -1672,5 +1673,22 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         {
             Notebook.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Says DOCK1's <see cref="PaneHiddenCopy"/> when a bound pane closes with its run in flight, at most once per close.
+    /// The shell says it when the pane closes (<c>WorkbenchShell.OnSurfaceClosed</c>), and <see cref="Dispose"/> says it
+    /// when the pane goes with its document. The shell disposes the documents it keeps at shutdown, so a close that has
+    /// already said it makes the later Dispose say nothing more.
+    /// </summary>
+    internal void SayPaneHidden()
+    {
+        if (_paneHiddenSaid || _ownsNotebook || !Notebook.Runs.InFlight)
+        {
+            return;
+        }
+
+        _paneHiddenSaid = true;
+        _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
     }
 }
