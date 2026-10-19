@@ -107,9 +107,11 @@ public sealed class ARevivedNotebookReopensItsLiveAttemptsExecutionTests : IDisp
                     Assert.Equal([NotebookFixture.SessionId], revived.Select(c => c.SessionId));
                     shell.Adapter.Render();
 
-                    // The store answers "was live": the revived notebook reads its attempt back as its one turn.
+                    // The store answers "was live": the revived notebook reads its attempt back as its one turn. A concluded
+                    // attempt reads back Completed: the store's ResponseComplete folds to Completed (AttemptStateFold's
+                    // TerminalStates), because a receipt does not carry the goal that told Answered from Completed live.
                     var model = shell.Notebook(NotebookId.ForSession(NotebookFixture.SessionId))!;
-                    var expected = diedMidRun ? TurnState.DeliveryUnknown : TurnState.Answered;
+                    var expected = diedMidRun ? TurnState.DeliveryUnknown : TurnState.Completed;
                     await UntilAsync(window, () => model.Thread.Current.Turns is [{ } only] && only.State == expected,
                         () => $"the revived notebook reads {model.Thread.Current.Turns.Count} turn(s) [{string.Join(",", model.Thread.Current.Turns.Select(t => t.State))}], "
                             + $"host bound={model.Runs.Host is not null}, read back={model.Runs.ReadBack.Count}; expected one {expected} turn for attempt {key}");
