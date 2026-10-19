@@ -136,3 +136,10 @@
 {"agent": "wl-t8-bind", "at": 1792395612.2370205, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792395612.2705405, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792395687.3309534, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/handoff.md", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396166.8726258, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/handoff.md", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396166.9006486, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/solution-tree-chord-alone.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396166.9296489, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-app.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396166.9586487, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-core.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396166.985666, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/suite-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396167.513996, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792396167.5429962, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t8-bind", "wi": ""}

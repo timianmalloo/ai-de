@@ -201,3 +201,8 @@
 {"agent": "wl-leader2-20261019", "at": 1792395669.509296, "code": null, "kind": "allowed", "path": "docs/coordination/proposal-call-budget-hook.md", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792395669.5418537, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader2-20261019", "wi": ""}
 {"agent": "wl-leader2-20261019", "at": 1792395669.572643, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/residuals.md", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792395700.7565286, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792395700.7876794, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t8-bind.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792395700.8187628, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792395700.8523307, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader2-20261019", "wi": ""}
+{"agent": "wl-leader2-20261019", "at": 1792395700.8830616, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader2-20261019", "wi": ""}

@@ -2568,7 +2568,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 16 types, 34 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 19 types, 49 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2581,7 +2581,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d1d7c1601fa504e8e9f5af528febde176083c99d6ac2b7b8978273e8ed4e9280"
+      "sourceSha256": "3d22fbfa85e1b7dd5dc742764c5e1e681b19f1bbeb488e1d05e36aa5c11c94d2"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -2718,7 +2718,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 69 types, 187 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 70 types, 200 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2731,7 +2731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2b9907d26b60ce0760880995d5df6ecec13321959e9fb51874ca4fc191dcca0"
+      "sourceSha256": "c9b9fc070ef8688256ba57ff823a2ff57173d672b6580ec50bd9f0a9b3454f69"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -10706,7 +10706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f9e8c26f85fd6cf79e1373871a529c7c52ae7900fb977ff8da91b04695ab11dc"
+      "sourceSha256": "bbf7da18bf6c18e853c5bf35636afb0dca612be0d6cd07d442e91de884944fad"
     },
     {
       "id": "design-session-profiler",
@@ -19108,6 +19108,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffe66ed7ccba57ca81f9b722fa0d776b322b0d22d3414cc4cc7c7978877a771d"
     },
     {
+      "id": "proposal-call-budget-hook",
+      "path": "docs/coordination/proposal-call-budget-hook.md",
+      "title": "Proposal — a per-agent tool-call budget hook (hard stop for rule 16)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Not wired. Four Opus nodes in a row overran rule 16's hand-off point, because the cap lives only in the brief. This proposes a Claude Code PreToolUse hook that counts each agent's tool calls and denies the next call once a budget is reached, with a message telling the agent to hand off. Applying it is a settings change, so the user decides. Until then, the Leader's wall-clock kick ladder is the interim control (DC-NEW-wl-leader2-b).",
+      "tags": [
+        "proposal",
+        "hooks",
+        "budget",
+        "go9",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fda2f84cbda42b29ae819cadd96fdfe33204b75de1e4f48cd73967b13d285445"
+    },
+    {
       "id": "privacy-review-ai-native-ide",
       "path": "docs/security/ai-native-ide-privacy-review.md",
       "title": "AI-native IDE — Privacy and data-governance review",
@@ -22403,7 +22430,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5c64faf67392db5af8d69ca8810a67ce5fea06031a67564a7ced552070c28d55"
+      "sourceSha256": "88881b346234802289bf45758b90b31e23d61a18a52a9a046b8c6f926ea2e3d7"
     },
     {
       "id": "proof-wl-identity-gate",
@@ -22496,21 +22523,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "f78b5f78940915ac886915e28a3bc54320d1447c2594d2e5853a90b3d0292118"
     },
     {
-      "id": "proof-workbench-loops-wl-1a-host-handoff",
-      "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md",
-      "title": "WL-1a host (T5) — node 1 hand-off: gate, write-ahead, W1–W4 green; node 2 next",
+      "id": "proof-workbench-loops-wl-1a",
+      "path": "docs/proof/workbench-loops-wl-1a.md",
+      "title": "Proof Pack: WL-1a — the revision ↔ attempt seam (walking skeleton)",
       "type": "proof-pack",
       "status": "draft",
       "owner": "@timianmalloo",
       "phase": "workbench-loops WL-1a",
       "reviewBy": "2026-11-18",
       "reviewSuggested": [],
-      "summary": "Track T5 node 1 (GO9 split) is done: design committed with both adversary verdicts, the host-interface commit, and the gate, dispatch_key idempotency, stale-prepare, W1–W4 crash-window and sole-host checks, each red then green. Node 2 (Stop, sweep triggers and emission, run log, redaction wiring, queue, NFR-11, the slice Proof Pack) starts from here in the same tree.",
+      "summary": "The slice Proof Pack for WL-1a: one row per §WL.11 WL-1a check, each citing its evidence folder. The host checks (T5) are red-then-green with the recorded real claude-code Stop (Interrupted); the schema checks are T2's, the redaction function T7's, the folds T6's and the App binding T8's. The human demo script is left for the Leader after T8 joins.",
+      "tags": [
+        "proof",
+        "workbench-loops",
+        "wl-1a",
+        "attempt",
+        "run-log",
+        "stop",
+        "sweep",
+        "redaction",
+        "nfr-11"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-1a",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "097207ce34585c8a1ed291136f0e6a7e53623e31f284d764912cdc9ba77dddea"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-host-handoff",
+      "path": "docs/proof/workbench-loops-wl-1a/host/handoff.md",
+      "title": "WL-1a host (T5) — hand-off after node 2: (a)–(g) green, real-lane Stop Interrupted",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T5 after node 2. Node 1 built the gate, write-ahead and W1–W4; node 2 built the run log, relay fan-out and subscribe, RunLogUnwritable, the sweep triggers and attempt.sweep emission, Stop (stub and one real claude-code run: Interrupted), queue and Send-now, redaction wiring, fold.duration_ms, the NFR-11 oracle and the slice Proof Pack. Each check red then green. What remains is listed under \"Not done\".",
       "tags": [
         "proof",
         "handoff",
         "attempt",
-        "gate",
+        "stop",
+        "sweep",
+        "run-log",
         "workbench-loops",
         "wl-1a",
         "t5"
@@ -22526,7 +22594,41 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4c5c415fa63c0bb3d2801692a0168983a8594e60abf5c834159c9846a15bd776"
+      "sourceSha256": "91f674f19ae9360fb497515e3a7ff69fa8646977ecd5006cad2f4bbe9f24dddd"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-real-lane-stop",
+      "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/README.md",
+      "title": "WL-1a — Stop on the real claude-code lane: session/cancel honoured, Interrupted",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "One recorded Stop on the real claude-code ACP lane (claude-agent-acp 0.75.1, Claude Max subscription), driven through AttemptHost and GovernedRunHost.RunAsync. The adapter honoured session/cancel: StopRequested was taken at high-water seq 86, the prompt's cancelled reply arrived at seq 143, and the terminal row is Interrupted. The design's Flagged risk \"session/cancel honoured by the adapter\" is now Verified for this version.",
+      "tags": [
+        "proof",
+        "stop",
+        "real-lane",
+        "claude-code",
+        "acp",
+        "workbench-loops",
+        "wl-1a",
+        "t5"
+      ],
+      "links": [
+        {
+          "to": "adr-0041-execution-attempt-lifecycle",
+          "rel": "implements"
+        },
+        {
+          "to": "design-workbench-loops-wl-1a",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5cc998caae1610f7cb167992b221e15d58659f3346384e9a064fba9dc4f799c2"
     },
     {
       "id": "proof-workbench-loops-wl-1a-sp1",
@@ -24556,5 +24658,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "3ec40cbd96757138ca30e206d4bba47b9a22a025361e8e5e34905b3242c22400"
+  "graphSha256": "992e5fb41d593af2ee5dcb07e56ff9df7761445af4fd5f037e9f78f5b501e9c8"
 };

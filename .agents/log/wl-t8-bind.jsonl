@@ -48,3 +48,4 @@
 {"agent": "wl-t8-bind", "at": 1792394925.9276388, "kind": "release", "path": "src/AiDe.Core/Store/Records/StoreReader.Workbench.cs", "seq": 48, "session": "wl-t8-bind", "wi": "WI-0"}
 {"agent": "wl-t8-bind", "at": 1792394926.0602894, "kind": "release", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostTests.cs", "seq": 49, "session": "wl-t8-bind", "wi": "WI-0"}
 {"agent": "wl-t8-bind", "at": 1792394926.1768632, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 50, "session": "wl-t8-bind", "wi": "WI-0"}
+{"at": 1792396176.234195, "from": "wl-t8-bind", "kind": "done", "mail_id": "mail-01M59J6AVA9KCHKAADKC165C2M", "ref": null, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "mail"}
