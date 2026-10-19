@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T05:07:34Z",
+  "generated": "2026-10-19T06:15:32Z",
   "audit": [
     {
       "actor": null,
@@ -23684,6 +23684,78 @@ window.AUDIT_DATA = {
         "speedup": 2.38,
         "peak_concurrency": 4
       }
+    },
+    {
+      "id": "al-01M59B13H0EQ2Q6QVGPKJVA7FY",
+      "shortname": "wl-t5-host",
+      "datetime": "2026-10-19T05:44:24Z",
+      "session": "wl-t5-host",
+      "prompt": "Make an execution attempt write-ahead, deterministic, durable and honestly stoppable on the real claude-code lane (T5 node 1: design + host interface + gate/write-ahead/idempotency/stale-prepare/W1-W4)",
+      "summary": "Node 1 green: WL-1a design (DSA veto cleared on re-review, Simplifier conditions applied), host interface IAttemptHost/IAttemptLedger/attempt.* IPC, gate G0/G2/G3 in one writer txn, stale-prepare refusal, native sweep with predicate, PTY sweep narrowed (DC-NEW-wl-t5-host), sole-host lock; 17 tests red then green; Core 2944/2945, App 1033/1034 (foreground flake passes alone). Node 2 handed off.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1a.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T5 node 1: design, host interface, gate checks red then green",
+      "done_when": "design + interface committed and mailed; gate, idempotency, stale-prepare, W1-W4 red then green; handoff written",
+      "tier": "T2",
+      "fan_out": 2,
+      "started_at": "2026-10-19T05:12:40Z",
+      "duration_seconds": 1904.0
+    },
+    {
+      "id": "al-01M59CDMEPJDQHJPJRT0BRTTWG",
+      "shortname": "wl-t14-nbops",
+      "datetime": "2026-10-19T06:08:43Z",
+      "session": "wl-t14-nbops",
+      "prompt": "Give the App notebook.open, notebook.revision.save, notebook.revision.latest end to end",
+      "summary": "Three notebook IPC ops (constants, client methods, daemon registration, store writer/reader), red then green, suite 2954 pass",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/NotebookOperations.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Give the App notebook.open, notebook.revision.save, notebook.revision.latest end to end",
+      "done_when": "three ops green against a real store; AiDe.Core.Tests green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:02:09Z",
+      "duration_seconds": 394.0
+    },
+    {
+      "id": "al-01M59CT3K9QDM2WRWF5REZ3Q7X",
+      "shortname": "wl-t14b-nbops",
+      "datetime": "2026-10-19T06:15:32Z",
+      "session": "wl-t14b-nbops",
+      "prompt": "Close two T14 notebook.open gaps: journey-id collision refusal and one-transaction test",
+      "summary": "notebook.open refuses derived journey collision (AIDE-STORE-JOURNEY-ID-COLLISION; reserved id keeps AIDE-STORE-RESERVED-JOURNEY); atomicity test added, not red; suite 2957 pass",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/Records/StoreWriter.Notebook.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Close two T14 notebook.open gaps: journey-id collision refusal and one-transaction test",
+      "done_when": "collision + reserved refused, atomicity tested, AiDe.Core.Tests green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:09:41Z",
+      "duration_seconds": 351.0
     }
   ],
   "changes": [
