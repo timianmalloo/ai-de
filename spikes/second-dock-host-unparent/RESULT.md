@@ -68,3 +68,40 @@ general HwndHost case under the presenter swap**. The T1 control in the slice (P
 a class diagram in host B keeps selection and scroll offset across a cycle; no `CoreWebView2`
 re-initialisation) has a green path. Ruling 52 is not re-issued; Architecture's body stays a docking
 host.
+
+---
+
+# Extension — A↔B↔C (WL-S, ADR-0045 §3)
+
+- **Run:** 2026-10-19 · Intel Core Ultra 9 275HX, 127 GB · Windows 11 Pro 10.0.26300 · .NET 10.0.11 ·
+  `Dirkster.AvalonDock` 5.0.0 · WebView2 wrapper 1.0.3485.44 · Runtime 155.0.4283.62
+- **Command:** `dotnet run --project spikes/second-dock-host-unparent` · exit code `0` · 54 checks PASS, 0 FAIL
+- **Raw output:** appended to [`RESULT-raw.txt`](RESULT-raw.txt); red/green copies in
+  `docs/proof/workbench-loops-wl-s/spike/spike-red.txt` (exit 1, only the five host-C presenter checks failed) and `spike-green.txt`.
+
+## What was run
+
+Three `DockingManager`s (A Factory, B Review, C Understand stand-ins) under one `ContentControl` presenter.
+The live WebView2 and a raw `HwndHost` sit in B. Cycles: A→B→C ×3, then C→A→C (Q6). The old two-host
+assertions (Q1–Q5) are kept and pass. After every step: same `CoreWebView2` object, JS state `n == 41`,
+`scrollY == 500`, one initialisation, and the raw `HwndHost` has the same HWND, 1 build, 0 destroys, and
+answers `WM_GETTEXTLENGTH` within 1 s.
+
+**Verdict: PASS.** Three hosts is the same mechanism as two; ADR-0045 §3's Inferred clause on the cycle is Verified here.
+
+## Private bytes (forced GC; `Process.PrivateMemorySize64`)
+
+Host shown | idle, this process | idle, WebView2 browser process | 100k doc, this process | 100k doc, browser
+---|---|---|---|---
+A | 161.5 MiB | 32.9 MiB | 156.7 MiB | 37.3 MiB
+B | 148.3 MiB | 32.9 MiB | 152.3 MiB | 37.3 MiB
+C | 153.2 MiB | 32.9 MiB | 152.5 MiB | 37.2 MiB
+
+- The 100k-character document (`textContent.length == 100000`, loaded by `NavigateToString`) adds about **4.4 MiB to the
+  WebView2 browser process** (the only measurable effect) and nothing attributable in this process.
+- **Reading caveat:** all three hosts are alive in one process, so which host the presenter shows does not change
+  what is allocated. The spread across rows (about 13 MiB, also negative deltas after the document) is GC/working-set
+  noise of one run, not a per-host cost. A single run; no repeat variance measured. The honest budget figure is the
+  process total of roughly **150 MiB with three hosts + a live WebView2 + the document, plus about 37 MiB in the
+  WebView2 browser process** (renderer and GPU child processes are not counted).
+- Not measured: marginal cost of a host (build the hosts one at a time and diff) and the non-selected-tab WebView2 case.
