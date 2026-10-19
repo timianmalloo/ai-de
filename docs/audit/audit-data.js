@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T11:16:38Z",
+  "generated": "2026-10-19T12:11:02Z",
   "audit": [
     {
       "actor": null,
@@ -24985,6 +24985,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T11:06:37Z",
       "duration_seconds": 601.0
+    },
+    {
+      "id": "al-01M5A151JEF6WFJ3PG6KXC6NAX",
+      "shortname": "wl-t20-floatguard",
+      "datetime": "2026-10-19T12:11:02Z",
+      "session": "wl-t20-floatguard",
+      "prompt": "T20 float guard: floatPane refuses; restore docks floating windows (Ruling 171 (1))",
+      "summary": "floatPane refuses with a stated cause; restored floating windows dock into their kind's zone with a report line; DOCK2/DOCK3 copy rows",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/FloatingRedock.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "no pane can vanish via float",
+      "done_when": "two checks red then green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T11:57:19Z",
+      "duration_seconds": 823.0
     }
   ],
   "changes": [
