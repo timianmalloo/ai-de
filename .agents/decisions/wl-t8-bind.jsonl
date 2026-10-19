@@ -135,3 +135,4 @@
 {"agent": "wl-t8-bind", "at": 1792395612.1999702, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792395612.2370205, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792395612.2705405, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792395687.3309534, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/handoff.md", "session": "wl-t8-bind", "wi": ""}

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:27:09Z",
+  "generated": "2026-10-19T07:41:40Z",
   "audit": [
     {
       "actor": null,
@@ -24333,6 +24333,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T07:17:48Z",
       "duration_seconds": 560.0
+    },
+    {
+      "id": "al-01M59HQT1XPMW192NAKKBK4WFB",
+      "shortname": "join-account-identity-gate-step8",
+      "datetime": "2026-10-19T07:41:40Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T15 account-identity-gate join fb72f351",
+      "summary": "conductor-join recount OK; strict step 8 5 of 48 (the new gate green; same 5 red). gate_ratchet vs first parent f323f2b1: PASS, 0 refusals over 49 gates; verify-project-coverage (never ratcheted, 151(3)) names the new gate as invoked by no workflow -> RES-1 addendum (user's call). Step 8 also found the Leader's own defect: f323f2b1's proposal carried type: proposal (unknown to docs-graph), red on main since; fixed in 11461079 (type: plan), pushed with the join; Leader pre-push check introduced (DC-NEW-wl-leader2 5th instance). Pushed fb72f351 + 11461079; identity gate OK on main; Release build exit 0.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/identity-gate/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T15 on main before T5 n2's real-lane proof",
+      "done_when": "ratchet PASS; pushed; gate OK on main",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T07:36:20Z",
+      "duration_seconds": 320.0
     }
   ],
   "changes": [
