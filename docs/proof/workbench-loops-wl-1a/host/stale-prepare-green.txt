@@ -1,0 +1,9 @@
+# stale-prepare — green
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Passed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.AStalePrepare_IsRejected_AndStartsNoProcess [30 ms]
+     Passed: 8
+
+runs:

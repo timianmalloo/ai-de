@@ -1,0 +1,18 @@
+# gate — red
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.ASecondTerminal_IsNotCommitted_AndTheFirstStands [70 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'UNIQUE constraint failed: dispatch_outcome_fact.dispatch_key'.
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.Dispatched_AfterATerminal_IsNotCommitted [32 ms]
+  Error Message:
+   Assert.False() Failure
+  Failed AiDe.Core.Tests.Attempts.AttemptGateTests.ASecondDispatchedRow_IsNotCommitted [27 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'UNIQUE constraint failed: dispatch_outcome_fact.dispatch_key'.
+
+runs:
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 324 ms - AiDe.Core.Tests.dll (net10.0)
+Failed!  - Failed:     8, Passed:     0, Skipped:     0, Total:     8, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

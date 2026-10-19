@@ -1,0 +1,12 @@
+# stale-prepare — red
+
+dotnet test tests/AiDe.Core.Tests --filter FullyQualifiedName~AiDe.Core.Tests.Attempts -nologo
+dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~Conductor.Attempts -nologo
+
+  Failed AiDe.App.Tests.Conductor.Attempts.AttemptHostTests.AStalePrepare_IsRejected_AndStartsNoProcess [141 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+
+runs:
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 324 ms - AiDe.Core.Tests.dll (net10.0)
+Failed!  - Failed:     8, Passed:     0, Skipped:     0, Total:     8, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

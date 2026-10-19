@@ -138,6 +138,54 @@ public sealed partial class StoreWriter : IDisposable
             RouteFingerprint: "pty"));
     }
 
+    // ---- Reads INSIDE the writer transaction, for the attempt gate (ADR-0041 §1). The writer holds the single-writer
+    // semaphore for its whole life, so a check here and the insert after it are one atomic step.
+
+    /// <summary>Whether an attempt row exists for <paramref name="dispatchKey"/>.</summary>
+    public bool AttemptExists(string dispatchKey) => WorkspaceStore.ExecuteScalar(_connection,
+        "SELECT 1 FROM dispatch_attempt_fact WHERE dispatch_key = $key;", _transaction, ("$key", dispatchKey)) is not null;
+
+    /// <summary>Whether the attempt already has an outcome row in one of <paramref name="states"/>.</summary>
+    public bool HasOutcome(string dispatchKey, IEnumerable<DispatchState> states)
+    {
+        var names = states.Select(s => s.ToString()).ToArray();
+        var list = string.Join(", ", names.Select((_, i) => "$s" + i));
+        var parameters = names.Select((n, i) => ("$s" + i, (object?)n)).Prepend(("$key", (object?)dispatchKey)).ToArray();
+        return WorkspaceStore.ExecuteScalar(_connection,
+            $"SELECT 1 FROM dispatch_outcome_fact WHERE dispatch_key = $key AND state IN ({list}) LIMIT 1;",
+            _transaction, parameters) is not null;
+    }
+
+    /// <summary>
+    /// The sweep's candidates (ADR-0041 §4): native attempts (route not PTY) with no terminal row, except a queued
+    /// successor whose predecessor has no <c>ResponseComplete</c> row; each with whether it has a <c>Dispatched</c> row.
+    /// </summary>
+    public IReadOnlyList<(string DispatchKey, bool Dispatched)> UnresolvedNativeAttempts()
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = _transaction;
+        command.CommandText = """
+            SELECT a.dispatch_key,
+                   EXISTS (SELECT 1 FROM dispatch_outcome_fact o WHERE o.dispatch_key = a.dispatch_key AND o.state = 'Dispatched')
+            FROM dispatch_attempt_fact a
+            WHERE a.route_fingerprint IS NOT NULL AND a.route_fingerprint <> 'pty'
+              AND NOT EXISTS (SELECT 1 FROM dispatch_outcome_fact t WHERE t.dispatch_key = a.dispatch_key
+                              AND t.state IN ('ResponseComplete', 'Failed', 'Interrupted', 'DeliveryUnknown', 'Rejected'))
+              AND NOT (a.queued_after_dispatch_key IS NOT NULL
+                       AND NOT EXISTS (SELECT 1 FROM dispatch_outcome_fact p WHERE p.dispatch_key = a.queued_after_dispatch_key
+                                       AND p.state = 'ResponseComplete'))
+            ORDER BY a.ingress_seq;
+            """;
+        using var reader = command.ExecuteReader();
+        var rows = new List<(string, bool)>();
+        while (reader.Read())
+        {
+            rows.Add((reader.GetString(0), reader.GetInt64(1) == 1));
+        }
+
+        return rows;
+    }
+
     /// <summary>Appends an outcome event. Never rewrites a prior row — a late acceptance appends.</summary>
     public void RecordDispatchOutcome(string dispatchKey, DispatchState state, string? errorCode) =>
         AppendOutcome(new OutcomeRow(dispatchKey, state, errorCode));
