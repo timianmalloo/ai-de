@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T15:08:55Z",
+  "generated": "2026-10-19T15:22:19Z",
   "audit": [
     {
       "actor": null,
@@ -25389,6 +25389,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T15:08:53Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5AC39QMCJD0W1QMAQZHAVSP",
+      "shortname": "join-wl1a-dispose-race-step8",
+      "datetime": "2026-10-19T15:22:19Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T17e join 59cd35a9",
+      "summary": "Recount ran in full at step 4 (App 1150 counted; Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'Ruling 115 desktop hold is occupied' (occupant: a concurrent track suite, PID 40900 started 14:57:08Z, under wl-leader2's session id; the process had exited by the check). With the hold free (released 15:05:35Z) the probe was run ALONE on the join head 293c18a4 and PASSED (1/1, 20 s; Ruling 155 as corrected), so the join continued with --docs-only only to skip a re-run. The other two non-passes are the named expected skips (KnowledgeModeRealProjectionTests, AttemptRealLaneStopTests). Step 8 6/48 strict. Ratchet vs first parent 52f83032 on clean trees, head 59cd35a9: PASS 0/49; no gate green->red; verify-site-figures red->green; verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage excluded (Ruling 151 (3), evidence is the recount). Release build 0 errors. Finding for the register (Leader, wl-leader3): a join's recount races a running track's shown-window suite for the Ruling 115 desktop hold, so the recount refuses a probe for a cause outside the join. T17e (Opus, 1 node, Owner 14:15Z): read-back pending at disposal ends quietly, red 31b61650 -> green d7e0ac1b. Residual: T17d's teardown NRE (a run's write vs fixture disposal) stays open.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/dispose-race/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Owner 14:15Z: a read-back pending at disposal ends quietly, no NRE, no turn",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T14:54:58Z",
+      "duration_seconds": 1641.0
     }
   ],
   "changes": [
@@ -30681,6 +30705,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5ABB8XJ3DD4G2WQFWJPJ5X6",
+      "ts": "2026-10-19T15:09:12Z",
+      "from": "wl-t11-kinds",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t11-kinds"
     }
   ]
 };
