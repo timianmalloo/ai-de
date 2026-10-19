@@ -46,9 +46,9 @@ public sealed class PerspectiveSetTests
     // Ruling 83) until T11 docks the notebook in the Center and flips this value in the same change;
     // Review lands on its Center (the change packet's zone); Understand on its Center (the visualizer).
     [Fact]
-    public void EachRowHasItsOwnLandingZone_FactoryLeftUntilTheNotebook_ReviewAndUnderstandCenter()
+    public void EachRowHasItsOwnLandingZone_FactoryOnItsNotebookInTheCenter_ReviewAndUnderstandCenter()
     {
-        Assert.Equal([ZoneId.Left, ZoneId.Center, ZoneId.Center], PerspectiveSet.All.Select(p => p.Landing));
+        Assert.Equal([ZoneId.Center, ZoneId.Center, ZoneId.Center], PerspectiveSet.All.Select(p => p.Landing));
     }
 
     // ADR-0045 §1(b): no row keeps a full-window body, and none can. The WL-S design's D5 deletes the
