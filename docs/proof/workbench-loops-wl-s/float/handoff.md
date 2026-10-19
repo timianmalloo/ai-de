@@ -1,38 +1,47 @@
 ---
 id: wl-s-float-handoff-n1
-title: "WL-S T21 float - node 1b hand-off"
+title: "WL-S T21 float - node 2 hand-off"
 type: proof-pack
 status: active
 owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "T21 node 1b: check 3 (read-back and restart through the store) and the null check are green; node 2 removes T20's guard, so the restart can also run through LayoutPersistence."
+summary: "T21 node 2: T20's float guard is removed in three red-then-green checks (floatPane floats again, LayoutPersistence restores floating, the DOCK2/DOCK3 copy and FloatingRedock are deleted); node 3 is Ruling 174's floating bounds."
 ---
 
-# T21 node 1b hand-off
+# T21 node 2 hand-off
 
-Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. Node 1's hand-off
-(checks 0 to 2) is in git history at e16d0467.
+Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`. All claims are released. The node 1b
+hand-off is in git history at 29cfd609.
 
 ## Done (green, committed)
 
-- Node 1: step 0, the WebView2 float probe (18c844c2); check 1, red 49f39e6c and green 591f94b1; check 2, red 44da2272 and green 11b2216e.
-- Node 1b, null check: red 7302703f, green b581cc5d.
-- Node 1b, check 3 (read-back and restart): red 0fd316bd, green 268f0994.
-- Suite at 268f0994 (suite-node1.txt): Core 3029/0/1. App 1132 passed, 1 failed, 2 skipped. The failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held", and it was also red in two runs alone. It is not proven either way, and the next run should be on a quiet desktop.
+- Nodes 1 and 1b: see README.md.
+- Node 2, check 1 (floatPane floats again): red aa64c64e, green 650d65c2.
+- Node 2, check 2 (LayoutPersistence restores floating): red 975f4430, green aec61ebe.
+- Node 2, check 3 (DOCK2/DOCK3 copy, FloatingRedock and its copy tests deleted): red 629815fa, green e9591175.
+- Suite (suite-node2.txt): Core 3025 passed / 0 failed / 1 skipped; App 1133 / 1 / 2. The one failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held" at the probe precondition, also red alone (same as node 1b). It is not proven either way. Counts match node 1b: Core minus the 4 deleted copy tests; App minus 2 T20 tests plus 3 new.
 
 ## Red / half done
 
 Nothing.
 
-## Next step: node 2
+## Next step: node 3 (Ruling 174)
 
-1. **Remove T20's guard, red first.** `LayoutPersistence.cs:151` calls `FloatingRedock.Dock`, so a restart through the product still docks every floating pane. `workbench.floatPane` still refuses (DOCK2). Write the red through `LayoutPersistence`/the controller: a pane saved floating restores floating. Then remove the call and the DOCK2/DOCK3 copy. `FloatReadBackRestartTests` already proves everything beneath that call.
-2. **Duplicate floating stack id after a restore (found by reading, not tested).** `ZoneBackedLayoutService._floatSeq` (`:17`) starts at 0 in every new service, and `Float` mints `float-{++_floatSeq}` (`:518`). A restored layout keeps `float-1`, and the read-back keeps any `float-` id, so the first float after a restart mints `float-1` again. `WorkbenchLayout.AssertInvariant` does not check stack ids. `Layout.AssertInvariant` (LayoutModel.cs:192) does ("duplicate node id"), but I did not check whether anything calls it on the projection. Red first: restore a layout holding `float-1`, float another pane, and assert the ids are distinct. The fix is to mint past the highest id held (or a fresh id).
-3. **The two open siblings of DC-NEW-wl-t21-float:** a file with no `"zones"` field, and a floating stack with no `"surfaces"` field, still throw in `ZoneLayoutStore.Read`.
-4. The live-notebook float, per the Leader's report 32.
+1. ZoneStackDto gets four optional `double?` fields (X, Y, Width, Height), read all-or-none as `LayoutStore.cs:318` does. No schemaVersion bump. Red first: an older-shaped file still loads.
+2. A writer: the dock library's move and resize end events write FloatingBounds. Cite it by file:line.
+3. Off-screen recovery (AC-D01b) with a report line, tested with bounds outside every display. `LayoutPersistence.cs` already has `VirtualScreen.IsOnAConnectedDisplay(StackNode)` (:353), which I did not read. Check what it already does before you build one.
+4. `FloatReadBackRestartTests` asserts that the file holds no bounds (`Assert.All(... Assert.Null(s.FloatingBounds))`). Ruling 174 turns that red. Its remarks also still say LayoutPersistence calls `FloatingRedock.Dock` (:18), which is now false. Fix both there.
 
-## Open
+## Open (from node 1b, still open)
 
-- Seam request req-01M5A43ANDG4G188C55BY7BM3S: floating bounds are not stored in the zone file. Until it is ruled, a restored floating window opens at the default placement. Two restored windows therefore open at the same spot, one over the other. Within a session the bounds are kept, because the read-back takes them from the view.
+- Duplicate floating stack id after a restore: `ZoneBackedLayoutService._floatSeq` (:17) restarts at 0. Found by reading, not tested.
+- DC-NEW-wl-t21-float siblings: a file with no `"zones"` field, or a floating stack with no `"surfaces"` field, still throws in `ZoneLayoutStore.Read`.
+- The live-notebook float and redock, after T11's notebook kind lands on main.
+
+## New findings (node 2)
+
+- floatPane floats the zone's first surface, not the focused tab (`ZoneBackedLayoutService.cs:584`). This is older than T20.
+- floatPane on the empty center's placeholder says "No surface “”.".
+- With FloatingRedockCopyTests deleted, no test references `ZoneName` (grep of tests/), so nothing pins that every `ZoneLayoutService.ZoneName` label differs from its enum name.
