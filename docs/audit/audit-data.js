@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T19:02:08Z",
+  "generated": "2026-10-19T19:30:51Z",
   "audit": [
     {
       "actor": null,
@@ -25191,102 +25191,6 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T13:03:09Z",
-      "done_when": "probe recorded; each check red then green with proof; README; audit; done mail",
-      "duration_seconds": 806.0,
-      "fan_out": 0,
-      "goal": "Make float real in node 1: probe, render, move/close, read-back",
-      "id": "al-01M5A44EYY5JJ13BKEQKFMM1HF",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T21 wls-float node 1 (Ruling 171 (2)): WebView2 float probe, render floating, move/close floating, read-back",
-      "session": "wl-t21-float",
-      "shortname": "wl-t21-float",
-      "skill": "implement",
-      "started_at": "2026-10-19T12:49:43Z",
-      "summary": "Probe: canvas and composer survive an AvalonDock float and redock (no crash). Check 1 green (Render draws floating stacks as AvalonDock floating windows). Check 2 green (ZoneLayoutService redocks, closes, activates floating surfaces). Check 3 not started (kick). Seam req-01M5A43ANDG4G188C55BY7BM3S on floating bounds schema.",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T13:21:05Z",
-      "done_when": "red and green commits for each check, suite-node1.txt, README and handoff updated, audit entry, done mail",
-      "duration_seconds": 989.0,
-      "fan_out": 0,
-      "goal": "Check 3 and the null check, each red then green, then one suite run",
-      "id": "al-01M5A55ABXR5ND8EZ7V5KPYXHV",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T21 node 1b: check 3 (adapter+store round-trip floating windows; a pane floating at save restores floating after restart) and the null check (a layout with no floating field restores empty, never throws), red then green",
-      "session": "wl-t21-float",
-      "shortname": "wl-t21-float",
-      "skill": "implement",
-      "started_at": "2026-10-19T13:04:36Z",
-      "summary": "Null check red 7302703f green b581cc5d (ZoneLayoutStore.Read coalesces an absent floating field; DC-NEW-wl-t21-float). Check 3 red 0fd316bd green 268f0994 (ReadLayoutFromView maps floating windows; TryMapByPosition takes tree.Floating; mutation proved red). Restart leg via ZoneLayoutStore+RestoreZones, not LayoutPersistence (T20 guard, node 2). Suite: Core 3029/0/1; App 1132/1/2, SolutionTreeChordTests foreground-not-held, red alone twice, not proven.",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T13:44:16Z",
-      "done_when": "three checks green and committed, suite run saved, README/handoff/audit updated, Leader mailed",
-      "duration_seconds": 1250.0,
-      "fan_out": 0,
-      "goal": "T21 node 2: T20's float guard removed red-first",
-      "id": "al-01M5A6FR8GCKGMRDV137RHP12H",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T21 node 2: remove T20's float guard, restore redock, delete the DOCK2/DOCK3 copy, each red-first, plus the whole suite",
-      "session": "wl-t21-float",
-      "shortname": "wl-t21-float",
-      "skill": "implement",
-      "started_at": "2026-10-19T13:23:26Z",
-      "summary": "Guard removed in 3 red-then-green checks: floatPane floats the focused pane again (aa64c64e->650d65c2); LayoutPersistence restores a saved floating window floating (975f4430->aec61ebe); DOCK2/DOCK3 rows, FloatingRedock.cs and FloatingRedockCopyTests.cs deleted (629815fa->e9591175). Suite Core 3025/0/1, App 1133/1/2 (SolutionTreeChordTests foreground precondition, also red alone).",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T14:07:53Z",
-      "done_when": "three checks green, suite-node3.txt written, README and handoff updated, done mail sent",
-      "duration_seconds": 1342.0,
-      "fan_out": 0,
-      "goal": "Ruling 174's three checks red then green, with the suite run",
-      "id": "al-01M5A7TZP32MD9AY4471VB1DXP",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T21 node 3 (Ruling 174): store a floating window's bounds in the zone layout as four optional fields, write them at move or resize end, recover off-screen bounds with a report line",
-      "session": "wl-t21-float",
-      "shortname": "wl-t21-float",
-      "skill": "implement",
-      "started_at": "2026-10-19T13:45:31Z",
-      "summary": "Check 1 47074ff7->99226792 (ZoneStackDto floatX/Y/Width/Height double?, all-or-none, schema 1); check 2 3b15c959->2ac90f20 (FloatingPropertiesUpdated writer via the arrangement signature; floating windows now placed from the root panel, DC-NEW-wl-t21-float-b); 60779f03 frozen-constructor theory admits additive optional fields (seam); check 3 74eba6d2->f8bee27a (zone restore clears off-screen bounds, RehomedFloating, PartialRestore, one sentence). Suite Core 3031/0/1, App 1135/1/2 (chord focus flake). DropTargetResolver comment not done.",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
         "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
       ],
       "compiled": false,
@@ -25436,30 +25340,6 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
-      ],
-      "compiled": false,
-      "datetime": "2026-10-19T15:03:34Z",
-      "done_when": "Three checks green and committed, suite-node4.txt, README and handoff updated, audit entry, done mail",
-      "duration_seconds": 1294.0,
-      "fan_out": 0,
-      "goal": "Finish T21 node 4's three checks red-then-green on wls-float",
-      "id": "al-01M5AB0YS472C495A904QQS23B",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "T21 node 4: schema-1 freeze allow-list; the two crashing zone-file shapes load with a report line; LayoutRect comment and one off-screen sentence const",
-      "session": "wl-t21-float",
-      "shortname": "wl-t21-float",
-      "skill": "implement",
-      "started_at": "2026-10-19T14:42:00Z",
-      "summary": "Check 0 freeze allow-list (9e20dcd0 red, 1da9f822 green); check 1 no-zones and no-surfaces load with PartlyRead + PartialRestore + one sentence (96ffc26a, 7c3a40aa); check 2 one off-screen sentence const, LayoutRect comment (c2dd868e, 08f62223); suite Core 3034/0/1, App 1155/1/2 (known foreground probe); Owner sentence refinement handed to next node",
-      "tags": [],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
         "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
       ],
       "compiled": false,
@@ -25530,6 +25410,270 @@ window.AUDIT_DATA = {
       "skill": "execute-with-coordination",
       "started_at": "2026-10-19T14:54:58Z",
       "summary": "Recount ran in full at step 4 (App 1150 counted; Core 3025 / portable 2842 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'Ruling 115 desktop hold is occupied' (occupant: a concurrent track suite, PID 40900 started 14:57:08Z, under wl-leader2's session id; the process had exited by the check). With the hold free (released 15:05:35Z) the probe was run ALONE on the join head 293c18a4 and PASSED (1/1, 20 s; Ruling 155 as corrected), so the join continued with --docs-only only to skip a re-run. The other two non-passes are the named expected skips (KnowledgeModeRealProjectionTests, AttemptRealLaneStopTests). Step 8 6/48 strict. Ratchet vs first parent 52f83032 on clean trees, head 59cd35a9: PASS 0/49; no gate green->red; verify-site-figures red->green; verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage excluded (Ruling 151 (3), evidence is the recount). Release build 0 errors. Finding for the register (Leader, wl-leader3): a join's recount races a running track's shown-window suite for the Ruling 115 desktop hold, so the recount refuses a probe for a cause outside the join. T17e (Opus, 1 node, Owner 14:15Z): read-back pending at disposal ends quietly, red 31b61650 -> green d7e0ac1b. Residual: T17d's teardown NRE (a run's write vs fixture disposal) stays open.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1b.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:39:39Z",
+      "done_when": "docs/design/workbench-loops-wl-1b.md committed on wl1b-design with patterns, contracts, E7 list, track cut, draft demo, Proof Pack skeleton, Patterns-vs-Simplifier and D&P reviews",
+      "duration_seconds": 823.0,
+      "fan_out": 0,
+      "goal": "Run /design-slice for WL-1b and cut it into red-first implementation tracks",
+      "id": "al-01M5AD31DTZH3R1CAQ2Q2QNZBF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Run /design-slice for WL-1b and cut it into red-first implementation tracks.",
+      "session": "wl-t22-wl1b-design",
+      "shortname": "wl-t22-wl1b-design",
+      "skill": "design-slice",
+      "started_at": "2026-10-19T15:25:56Z",
+      "summary": "WL-1b design committed (a768644c): no schema change, no v3 (no disposition is an adoption, Ruling 156); AcceptanceFold + WorkClosureFold; ChecklistService with in-txn eligibility and 5 IPC ops; wl1b bench at 100x; minimal checklist kind; tracks T23-T26; DR-1..DR-4 drafts; Proof Pack skeleton with draft demo.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/ChecklistOperations.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:58:36Z",
+      "done_when": "B1, B2, B3 red then green; Core suite green",
+      "duration_seconds": 706.0,
+      "fan_out": 0,
+      "goal": "WL-1b checklist service in Core: one writer txn per write, re-fold inside work.accept, stable refusal codes",
+      "id": "al-01M5AE5QP6AKMBVQY15EGT2XFD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T24 wl1b-service node 1: WL-1b checklist service in Core, checks B1-B3 (B3 with Ruling 176 enforcement), red then green",
+      "session": "wl-t24-wl1b-service",
+      "shortname": "wl-t24-wl1b-service",
+      "skill": "implement",
+      "started_at": "2026-10-19T15:46:50Z",
+      "summary": "B1-B3 red then green; five checklist operations registered; Core suite 3069 pass / 11 fail (all T23 wl1b-folds red tests)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/Records/Folds/AcceptanceFold.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:50:06Z",
+      "done_when": "A1, A2, A3 red then green; fold record types published first; Core suite green",
+      "duration_seconds": 428.0,
+      "fan_out": 0,
+      "goal": "Acceptance eligibility and work closure as pure Core folds over the v2 rows",
+      "id": "al-01M5ADP555JAXKRW7SPHB1G5G3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T23 wl1b-folds node 1: WL-1b acceptance and work-closure folds, checks A1-A3 red then green",
+      "session": "wl-t23-wl1b-folds",
+      "shortname": "wl-t23-wl1b-folds",
+      "skill": "implement",
+      "started_at": "2026-10-19T15:42:58Z",
+      "summary": "Published fold record types (ab72eaca); A1, A2, A3 red then green; Core suite 3052 passed, 1 skipped, 0 failed; Rulings 177 and 179 applied",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/service/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:09:20Z",
+      "done_when": "A, B, C red-green; Core suite green",
+      "duration_seconds": 542.0,
+      "fan_out": 0,
+      "goal": "WL-1b checklist service node 2",
+      "id": "al-01M5AESCD6RANGE1R2JQPE637H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T24 node 2: checklist.evaluate, endpoint round-trip, Ruling 176 at the store writer",
+      "session": "wl-t24-wl1b-service",
+      "shortname": "wl-t24-wl1b-service",
+      "skill": "implement",
+      "started_at": "2026-10-19T16:00:18Z",
+      "summary": "A, B (mutation reds) and C (natural red) green; ChecklistId removed; Core suite 3085/0/1",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/currentness/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:02:46Z",
+      "done_when": "A, B, C red then green; suites run",
+      "duration_seconds": 670.0,
+      "fan_out": 0,
+      "goal": "currentness gets one definition",
+      "id": "al-01M5AEDBP8RSXAEC70J034VTMF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T27 wl1b-currentness: CurrentnessOf delegates to CurrentnessFold (Ruling 178)",
+      "session": "wl-t27-currentness",
+      "shortname": "wl-t27-currentness",
+      "skill": "implement",
+      "started_at": "2026-10-19T15:51:36Z",
+      "summary": "Checks A, B, C red then green; one fold, one stale literal; Core 3052 green, App 1150 pass / 1 foreground failure outside the track",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/currentness/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T16:15:12Z",
+      "done_when": "A2 green, B resolved or seam, C measured, suites run",
+      "duration_seconds": 670.0,
+      "fan_out": 0,
+      "goal": "currentness has one definition; each input means one thing",
+      "id": "al-01M5AF445TJ7YZ1G2C2V5FEYTX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T27 n2: explicit fold input, no placeholder AttemptRow, Ruling 180(5) stored sha, chord on the base",
+      "session": "wl-t27-currentness",
+      "shortname": "wl-t27-currentness",
+      "skill": "implement",
+      "started_at": "2026-10-19T16:04:02Z",
+      "summary": "A2 red/green (fold takes ran/live shas by name; NotebookModel builds no AttemptRow); B seam request (no src builder of AcceptanceInput); C chord refuses on base 27e761b7; Core 3060/0, App 1150/1",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:03:09Z",
+      "done_when": "probe recorded; each check red then green with proof; README; audit; done mail",
+      "duration_seconds": 806.0,
+      "fan_out": 0,
+      "goal": "Make float real in node 1: probe, render, move/close, read-back",
+      "id": "al-01M5A44EYY5JJ13BKEQKFMM1HF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 wls-float node 1 (Ruling 171 (2)): WebView2 float probe, render floating, move/close floating, read-back",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T12:49:43Z",
+      "summary": "Probe: canvas and composer survive an AvalonDock float and redock (no crash). Check 1 green (Render draws floating stacks as AvalonDock floating windows). Check 2 green (ZoneLayoutService redocks, closes, activates floating surfaces). Check 3 not started (kick). Seam req-01M5A43ANDG4G188C55BY7BM3S on floating bounds schema.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:21:05Z",
+      "done_when": "red and green commits for each check, suite-node1.txt, README and handoff updated, audit entry, done mail",
+      "duration_seconds": 989.0,
+      "fan_out": 0,
+      "goal": "Check 3 and the null check, each red then green, then one suite run",
+      "id": "al-01M5A55ABXR5ND8EZ7V5KPYXHV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 1b: check 3 (adapter+store round-trip floating windows; a pane floating at save restores floating after restart) and the null check (a layout with no floating field restores empty, never throws), red then green",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:04:36Z",
+      "summary": "Null check red 7302703f green b581cc5d (ZoneLayoutStore.Read coalesces an absent floating field; DC-NEW-wl-t21-float). Check 3 red 0fd316bd green 268f0994 (ReadLayoutFromView maps floating windows; TryMapByPosition takes tree.Floating; mutation proved red). Restart leg via ZoneLayoutStore+RestoreZones, not LayoutPersistence (T20 guard, node 2). Suite: Core 3029/0/1; App 1132/1/2, SolutionTreeChordTests foreground-not-held, red alone twice, not proven.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T13:44:16Z",
+      "done_when": "three checks green and committed, suite run saved, README/handoff/audit updated, Leader mailed",
+      "duration_seconds": 1250.0,
+      "fan_out": 0,
+      "goal": "T21 node 2: T20's float guard removed red-first",
+      "id": "al-01M5A6FR8GCKGMRDV137RHP12H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 2: remove T20's float guard, restore redock, delete the DOCK2/DOCK3 copy, each red-first, plus the whole suite",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:23:26Z",
+      "summary": "Guard removed in 3 red-then-green checks: floatPane floats the focused pane again (aa64c64e->650d65c2); LayoutPersistence restores a saved floating window floating (975f4430->aec61ebe); DOCK2/DOCK3 rows, FloatingRedock.cs and FloatingRedockCopyTests.cs deleted (629815fa->e9591175). Suite Core 3025/0/1, App 1133/1/2 (SolutionTreeChordTests foreground precondition, also red alone).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T14:07:53Z",
+      "done_when": "three checks green, suite-node3.txt written, README and handoff updated, done mail sent",
+      "duration_seconds": 1342.0,
+      "fan_out": 0,
+      "goal": "Ruling 174's three checks red then green, with the suite run",
+      "id": "al-01M5A7TZP32MD9AY4471VB1DXP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 3 (Ruling 174): store a floating window's bounds in the zone layout as four optional fields, write them at move or resize end, recover off-screen bounds with a report line",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T13:45:31Z",
+      "summary": "Check 1 47074ff7->99226792 (ZoneStackDto floatX/Y/Width/Height double?, all-or-none, schema 1); check 2 3b15c959->2ac90f20 (FloatingPropertiesUpdated writer via the arrangement signature; floating windows now placed from the root panel, DC-NEW-wl-t21-float-b); 60779f03 frozen-constructor theory admits additive optional fields (seam); check 3 74eba6d2->f8bee27a (zone restore clears off-screen bounds, RehomedFloating, PartialRestore, one sentence). Suite Core 3031/0/1, App 1135/1/2 (chord focus flake). DropTargetResolver comment not done.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T15:03:34Z",
+      "done_when": "Three checks green and committed, suite-node4.txt, README and handoff updated, audit entry, done mail",
+      "duration_seconds": 1294.0,
+      "fan_out": 0,
+      "goal": "Finish T21 node 4's three checks red-then-green on wls-float",
+      "id": "al-01M5AB0YS472C495A904QQS23B",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 node 4: schema-1 freeze allow-list; the two crashing zone-file shapes load with a report line; LayoutRect comment and one off-screen sentence const",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T14:42:00Z",
+      "summary": "Check 0 freeze allow-list (9e20dcd0 red, 1da9f822 green); check 1 no-zones and no-surfaces load with PartlyRead + PartialRestore + one sentence (96ffc26a, 7c3a40aa); check 2 one off-screen sentence const, LayoutRect comment (c2dd868e, 08f62223); suite Core 3034/0/1, App 1155/1/2 (known foreground probe); Owner sentence refinement handed to next node",
       "tags": [],
       "tier": "T2",
       "tool": null
@@ -26126,23 +26270,76 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5AQW4M6YBSN1TWZ9SAYK2WJ",
-      "shortname": "join-wls-kinds-migration",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T18:48:08Z",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "WL-S: the notebook and execution kinds admitted, and saved layouts migrated with a report",
+      "id": "al-01M5AQW4M6YBSN1TWZ9SAYK2WJ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-kinds-migration",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T18:48:07Z",
+      "summary": "T11 (13 nodes): notebook + execution kinds, Factory Landing -> Center (Ruling 152 D2), execution from Open log and at revive, Ctrl+1/2/3 inside WebView2, hide with DOCK1 once, slot migration golden round-trip with .bak and drop report, prompt kept (Ruling 173, DOCK4 pinned), Ruling 168/170 MinWidth 840 derived test, open-seam guard derived, D6 amended with a reflection test. Re-join after the first join was refused at the ratchet (orphan hand-off, stale cited control, surface without an owner; fixed forward by n13; refused join kept at backup/t11-join-070d2637). Recount ran in full (App 1218 counted; Core 3047/2864/183). Two refusals, both 'foreground' environmental: SolutionTreeChordTests refused alone on the join head e0420d30 and on the first parent 33a45e6f (Ruling 155 (3)); CtrlDigitSwitchesThePerspectiveFromInsideAPageTests (new in T11) refused alone on the join head with 'foreground held=False' - NOT CHECKED unattended by the Owner's direction (item 4), on the user's attended list in the WL-S demo script. --continue --docs-only skips only those re-runs. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T19:02:08Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 835.0,
+      "fan_out": 0,
+      "goal": "WL-S: the notebook and execution kinds admitted, and saved layouts migrated with a report",
+      "id": "al-01M5ARNS5TBM2Z8EWTKADS35GD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T11 re-join 3874b65a",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-kinds-migration-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T18:48:13Z",
+      "summary": "Re-join after the first T11 join (refused at the ratchet: orphan hand-off, stale cited control, surface without an owner; kept at backup/t11-join-070d2637) was fixed forward by n13. Recount ran in full (App 1218 counted; Core 3047/2864/183). Refusals: SolutionTreeChordTests 'foreground not held', refused alone on the join head e0420d30 and on the first parent 33a45e6f in a clean detached tree (Ruling 155 (3), NOT CHECKED); CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground held=False', new in T11 (no parent to compare), refused alone on the join head; NOT CHECKED unattended by the Owner's direction (item 4) and on the user's attended list in the WL-S demo script (f8ac6dd8). Step 8 strict 6/48. Ratchet vs 33a45e6f, head 3874b65a: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. WL-S is not accepted until close condition 4 (live-notebook float and redock, Ruling 171 (3)) is green; dispatched next as a T21 node.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5ASH7DNMP2819TMPN7RK1D3",
+      "shortname": "join-wl1b",
+      "datetime": "2026-10-19T19:17:07Z",
       "session": "wl-leader3-20261019",
       "prompt": "the join of the resolved merge into main",
-      "summary": "T11 (13 nodes): notebook + execution kinds, Factory Landing -> Center (Ruling 152 D2), execution from Open log and at revive, Ctrl+1/2/3 inside WebView2, hide with DOCK1 once, slot migration golden round-trip with .bak and drop report, prompt kept (Ruling 173, DOCK4 pinned), Ruling 168/170 MinWidth 840 derived test, open-seam guard derived, D6 amended with a reflection test. Re-join after the first join was refused at the ratchet (orphan hand-off, stale cited control, surface without an owner; fixed forward by n13; refused join kept at backup/t11-join-070d2637). Recount ran in full (App 1218 counted; Core 3047/2864/183). Two refusals, both 'foreground' environmental: SolutionTreeChordTests refused alone on the join head e0420d30 and on the first parent 33a45e6f (Ruling 155 (3)); CtrlDigitSwitchesThePerspectiveFromInsideAPageTests (new in T11) refused alone on the join head with 'foreground held=False' - NOT CHECKED unattended by the Owner's direction (item 4), on the user's attended list in the WL-S demo script. --continue --docs-only skips only those re-runs. recount_seconds=0 (docs_only=True).",
+      "summary": "WL-1b Core as ONE integration branch (Owner accepted, conditions: one record, three attributions; ratchet refusals attributed per track tip; not WL-1b's acceptance). T23 wl1b-folds 27e761b7 (docs/proof/workbench-loops-wl-1b/folds/README.md; Rulings 177, 179): AcceptanceFold and WorkClosureFold. T24 wl1b-service c3f05dca (service/README.md; Rulings 176, 177, 179): ChecklistOperations, re-fold inside work.accept's writer transaction, three readers, pipe round-trip, Ruling 176 at StoreWriter.AppendObligation. T27 wl1b-currentness c64907bc (currentness/README.md; Ruling 178): one CurrentnessFold definition, NotebookModel delegates, no placeholder AttemptRow. T22 design b43307ba. Ruling 180 (5) is NOT here: it moved to T26 D2 (Owner accepted). Recount ran in full (App 1221 counted; Core 3116/2933/183). Refusals: SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests, both 'foreground' environmental, each refused alone on the join head 4298bfa7 and on the first parent 74849010 in a clean detached tree (Ruling 155 (3), NOT CHECKED). Owed for WL-1b: T25 perf, T26 checklist kind, the WL-1b demo and the user's walk-through. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s.md"
+        "docs/design/workbench-loops-wl-1b.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "WL-S: the notebook and execution kinds admitted, and saved layouts migrated with a report",
+      "goal": "WL-1b Core: obligations, evidence and acceptance as folds and a service",
       "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -26151,32 +26348,32 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T18:48:07Z",
+      "started_at": "2026-10-19T19:17:06Z",
       "duration_seconds": 1.0
     },
     {
-      "id": "al-01M5ARNS5TBM2Z8EWTKADS35GD",
-      "shortname": "join-wls-kinds-migration-step8",
-      "datetime": "2026-10-19T19:02:08Z",
+      "id": "al-01M5ATAC09ZDY0RHRMH355GKX2",
+      "shortname": "join-wl1b-step8",
+      "datetime": "2026-10-19T19:30:51Z",
       "session": "wl-leader3-20261019",
-      "prompt": "Step 8 (Rulings 151/155/160) for the T11 re-join 3874b65a",
-      "summary": "Re-join after the first T11 join (refused at the ratchet: orphan hand-off, stale cited control, surface without an owner; kept at backup/t11-join-070d2637) was fixed forward by n13. Recount ran in full (App 1218 counted; Core 3047/2864/183). Refusals: SolutionTreeChordTests 'foreground not held', refused alone on the join head e0420d30 and on the first parent 33a45e6f in a clean detached tree (Ruling 155 (3), NOT CHECKED); CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground held=False', new in T11 (no parent to compare), refused alone on the join head; NOT CHECKED unattended by the Owner's direction (item 4) and on the user's attended list in the WL-S demo script (f8ac6dd8). Step 8 strict 6/48. Ratchet vs 33a45e6f, head 3874b65a: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. WL-S is not accepted until close condition 4 (live-notebook float and redock, Ruling 171 (3)) is green; dispatched next as a T21 node.",
+      "prompt": "Step 8 (Rulings 151/155/160) for the combined WL-1b join d78c6245",
+      "summary": "ONE record, THREE attributions (Owner condition 1). T23 wl1b-folds tip 27e761b7 - docs/proof/workbench-loops-wl-1b/folds/README.md - Rulings 177, 179. T24 wl1b-service tip c3f05dca - docs/proof/workbench-loops-wl-1b/service/README.md - Rulings 176, 177, 179. T27 wl1b-currentness tip c64907bc - docs/proof/workbench-loops-wl-1b/currentness/README.md - Ruling 178. T22 design b43307ba (in T24). Ruling 180 (5) is NOT carried here: it moved to T26 D2 (Owner accepted). Integration branch wl1b-join = wl1b-service + wl1b-currentness + origin/main (Leader merges, no conflicts; Owner accepted the combined join). Recount ran in full (App 1221 counted; Core 3116 / portable 2933 / nonportable 183). Refusals: SolutionTreeChordTests 'foreground not held' and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground held=False', each refused ALONE on the join head 4298bfa7 and on the first parent 74849010 in a clean detached tree (removed): Ruling 155 (3), NOT CHECKED. Step 8 strict 6/48. Ratchet vs 74849010, head d78c6245: PASS 0/49 (no attribution needed, condition 2); repo verify-ruling-citations ok (strict). Release build 0 errors. NOT WL-1b's acceptance (condition 3): owed T25 perf (100x), T26 checklist kind (with Ruling 180 (5) and the null-sha condition in D2), the WL-1b demo script and the user's walk-through.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-s.md"
+        "docs/design/workbench-loops-wl-1b.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "WL-S: the notebook and execution kinds admitted, and saved layouts migrated with a report",
+      "goal": "WL-1b Core: obligations, evidence and acceptance as folds and a service",
       "done_when": "ratchet PASS; step-8 recorded before push",
       "tier": "T2",
       "fan_out": 0,
-      "started_at": "2026-10-19T18:48:13Z",
-      "duration_seconds": 835.0
+      "started_at": "2026-10-19T19:03:14Z",
+      "duration_seconds": 1657.0
     }
   ],
   "changes": [
@@ -30252,6 +30449,30 @@ window.AUDIT_DATA = {
           "ed821a6e docs: design WL-S"
         ]
       }
+    },
+    {
+      "id": "cl-01M5AD31P43K0GJA9K2NY7XSBD",
+      "datetime": "2026-10-19T15:39:40Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "WL-1b design: acceptance as folds plus an in-transaction guarded accept; no schema change, no v3",
+      "prompt": "Run /design-slice for WL-1b and cut it into red-first implementation tracks.",
+      "summary": "Design doc and track cut T23-T26",
+      "rationale": "The v2 rows and raw writers/readers exist; ADR-0039/0040 make eligibility and closure fold-only; no WL-1b write touches notebook_dim, so Ruling 156's v3 is not owed",
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1b.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e8944ebc",
+        "after": "a768644c36a8dd0995d395f6c2e842213fde0da6",
+        "branch": "wl1b-design",
+        "pushed": null,
+        "commits": [
+          "a768644c docs: design WL-1b - obligations, evidence and acceptance; Proof Pack skeleton with draft demo; T22 hand-off"
+        ]
+      }
     }
   ],
   "messages": [
@@ -31802,6 +32023,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t11-kinds"
+    },
+    {
+      "id": "mail-01M5ARWWQKDMDS83273FSSNVW9",
+      "ts": "2026-10-19T19:06:01Z",
+      "from": "wl-t28-compiled",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t28-compiled"
     }
   ]
 };

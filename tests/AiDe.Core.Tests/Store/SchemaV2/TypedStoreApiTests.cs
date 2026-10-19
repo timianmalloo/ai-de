@@ -41,8 +41,8 @@ public sealed class TypedStoreApiTests : IDisposable
 
         Assert.Equal("artifact://a", Assert.Single(reader.ReadEvidenceLinks("criterion", "c1", 1)).ArtifactRef);
         Assert.Equal("as1", reader.ReadLatestAssessment("drift", "scope-1")!.AssessmentId);
-        Assert.True(Assert.Single(reader.ReadObligations("cl1", 1)).Mandatory);
-        Assert.Equal(1, reader.ReadLatestChecklistRevision("cl1"));
+        Assert.True(Assert.Single(reader.ReadObligations("j1", 1)).Mandatory);
+        Assert.Equal(1, reader.ReadLatestChecklistRevision("j1"));
         Assert.Equal("acknowledged", Assert.Single(reader.ReadDispositions("obligation", "ob1")).Kind);
 
         var hp = reader.ReadHarnessProfile("hp1")!;

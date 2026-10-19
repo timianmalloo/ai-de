@@ -184,6 +184,7 @@ internal static class Program
         WorkspaceOperations.Register(endpoint, core.Projections);
         WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(core.Store));
         WorkspaceOperations.RegisterNotebook(endpoint, new NotebookService(core.Store));
+        WorkspaceOperations.RegisterChecklist(endpoint, new ChecklistService(core.Store));
         WorkspaceOperations.RegisterIndex(endpoint, async (revision, force, ct) =>
         {
             var result = await core.IndexCSharpAsync(revision, ct, force: force);

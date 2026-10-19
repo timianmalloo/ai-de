@@ -1,0 +1,122 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-service\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-service\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-service\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:03.12]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+  Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
+[xUnit.net 00:01:40.42]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkAtAnOldBaseline_IsStale() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 167
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale [FAIL]
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleLinkBesideAnUnrecordedOne_ReadsStale() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 214
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: NotRecorded
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ANullProjection_IsNotRecorded_NeverCurrent() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 204
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass", mandatoryAtLinkTime: False) [FAIL]
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass and lint is clean", mandatoryAtLinkTime: True) [FAIL]
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold [FAIL]
+[xUnit.net 00:01:40.43]     AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass", mandatoryAtLinkTime: False) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(String textAtLinkTime, Boolean mandatoryAtLinkTime) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 186
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(textAtLinkTime: "Tests pass and lint is clean", mandatoryAtLinkTime: True) [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AChangedCriterion_IsStale(String textAtLinkTime, Boolean mandatoryAtLinkTime) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 186
+   at InvokeStub_AcceptanceFoldTests.A2_AChangedCriterion_IsStale(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Stale
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_AStaleAttempt_IsStale_ByTheCurrentnessFold() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 195
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: NotRecorded
+Actual:   Satisfied
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceFoldTests.A2_ALinkToAnAttemptTheInputDoesNotHold_IsNotRecorded() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceFoldTests.cs:line 231
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:01:41.68]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent [FAIL]
+[xUnit.net 00:01:41.68]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent [FAIL]
+[xUnit.net 00:01:41.68]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists [FAIL]
+[xUnit.net 00:01:41.68]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 34
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 29
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 23
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 39
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    11, Passed:  3069, Skipped:     1, Total:  3081, Duration: 2 m 18 s - AiDe.Core.Tests.dll (net10.0)

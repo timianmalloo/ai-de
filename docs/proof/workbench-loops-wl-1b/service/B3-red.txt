@@ -1,0 +1,90 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-service\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-service\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-service\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.47]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ALegacyUnownedNotebook_IsRefusedOnEveryOperation_AndNeverAdopted [FAIL]
+[xUnit.net 00:00:00.51]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ANotebookOwnedByAnotherJourney_AndAnUnknownJourney_AreRefused [FAIL]
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AWriteThatWouldCreateASecondChecklistForAJourney_IsRefusedAndWritesNothing [FAIL]
+[xUnit.net 00:00:00.61]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ATerminalDraftNotebook_IsRefusedOnEveryOperation [FAIL]
+[xUnit.net 00:00:00.63]     AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AnInvestigationJourneysNotebook_IsRefusedOnEveryOperation [FAIL]
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ALegacyUnownedNotebook_IsRefusedOnEveryOperation_AndNeverAdopted [26 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.AssertEveryOperationRefused(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ALegacyUnownedNotebook_IsRefusedOnEveryOperation_AndNeverAdopted() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 384
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Ipc.ChecklistService.Evaluate(ChecklistEvaluateRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 63
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass31_0.<EveryOperation>b__0(ChecklistService s) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 335
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass32_0.<AssertEveryOperationRefused>b__0() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ANotebookOwnedByAnotherJourney_AndAnUnknownJourney_AreRefused [41 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.AssertEveryOperationRefused(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ANotebookOwnedByAnotherJourney_AndAnUnknownJourney_AreRefused() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 424
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Ipc.ChecklistService.Evaluate(ChecklistEvaluateRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 63
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass31_0.<EveryOperation>b__0(ChecklistService s) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 335
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass32_0.<AssertEveryOperationRefused>b__0() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AWriteThatWouldCreateASecondChecklistForAJourney_IsRefusedAndWritesNothing [21 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AWriteThatWouldCreateASecondChecklistForAJourney_IsRefusedAndWritesNothing() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 447
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ATerminalDraftNotebook_IsRefusedOnEveryOperation [21 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.AssertEveryOperationRefused(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_ATerminalDraftNotebook_IsRefusedOnEveryOperation() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 402
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Ipc.ChecklistService.Evaluate(ChecklistEvaluateRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 63
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass31_0.<EveryOperation>b__0(ChecklistService s) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 335
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass32_0.<AssertEveryOperationRefused>b__0() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+  Failed AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AnInvestigationJourneysNotebook_IsRefusedOnEveryOperation [24 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Store.WorkspaceStoreException)
+Actual:   typeof(System.NotImplementedException)
+---- System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.AssertEveryOperationRefused(String journeyId, String notebookId) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.B3_AnInvestigationJourneysNotebook_IsRefusedOnEveryOperation() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 415
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Ipc.ChecklistService.Evaluate(ChecklistEvaluateRequest request) in C:\Projects\ai-de-wl1b-service\src\AiDe.Core\Ipc\ChecklistOperations.cs:line 63
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass31_0.<EveryOperation>b__0(ChecklistService s) in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 335
+   at AiDe.Core.Tests.Checklist.ChecklistOperationsTests.<>c__DisplayClass32_0.<AssertEveryOperationRefused>b__0() in C:\Projects\ai-de-wl1b-service\tests\AiDe.Core.Tests\Checklist\ChecklistOperationsTests.cs:line 346
+
+Failed!  - Failed:     5, Passed:     3, Skipped:     0, Total:     8, Duration: 328 ms - AiDe.Core.Tests.dll (net10.0)

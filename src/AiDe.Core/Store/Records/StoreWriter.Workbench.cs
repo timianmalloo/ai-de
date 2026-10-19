@@ -161,14 +161,33 @@ public sealed partial class StoreWriter
         ("$reason", row.Reason), ("$baseline", row.Baseline), ("$nb", row.NotebookId), ("$rev", row.RevisionNo),
         ("$at", Now()), ("$seq", NextIngressSequence()));
 
-    public void AppendObligation(ObligationRow row) => Exec("""
-        INSERT INTO checklist_obligation_fact
-            (obligation_id, checklist_id, revision, text, mandatory, recorded_at, ingress_seq)
-        VALUES ($id, $checklist, $rev, $text, $mandatory, $at, $seq);
-        """,
-        ("$id", row.ObligationId), ("$checklist", row.ChecklistId), ("$rev", row.Revision),
-        ("$text", row.Text), ("$mandatory", row.Mandatory ? 1 : 0), ("$at", Now()),
-        ("$seq", NextIngressSequence()));
+    /// <summary>
+    /// Appends one obligation. The checklist is the work journey that owns it: <c>checklist_id</c> is that journey's id
+    /// (Ruling 176), so any other id would open a second checklist and is refused here, whoever the caller is.
+    /// </summary>
+    public void AppendObligation(ObligationRow row)
+    {
+        RequireNotReserved(row.ChecklistId, "a checklist cannot belong to the reserved owner");
+
+        // simplify: one checklist per journey, checklist_id = journey_id (Ruling 176). Ceiling: WL-1b and WL-1c need no
+        // more. Upgrade trigger: the first spec story that needs two checklists in one journey requires the v3 owner
+        // column on checklist_obligation_fact, backfilled from this alias.
+        if (ScalarRow("SELECT 1 FROM journey_dim WHERE journey_id = $id AND purpose = 'work' LIMIT 1;",
+                ("$id", row.ChecklistId)) is null)
+        {
+            throw new WorkspaceStoreException(StoreErrorCodes.WorkSecondChecklist,
+                $"'{row.ChecklistId}' is not a work journey's id, so it would be a second checklist; a journey has one");
+        }
+
+        Exec("""
+            INSERT INTO checklist_obligation_fact
+                (obligation_id, checklist_id, revision, text, mandatory, recorded_at, ingress_seq)
+            VALUES ($id, $checklist, $rev, $text, $mandatory, $at, $seq);
+            """,
+            ("$id", row.ObligationId), ("$checklist", row.ChecklistId), ("$rev", row.Revision),
+            ("$text", row.Text), ("$mandatory", row.Mandatory ? 1 : 0), ("$at", Now()),
+            ("$seq", NextIngressSequence()));
+    }
 
     /// <summary>Appends a profile version and returns its surrogate key (what attempts bind to).</summary>
     public long AppendHarnessProfile(HarnessProfileRow row)
