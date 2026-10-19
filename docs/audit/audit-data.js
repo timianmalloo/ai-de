@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T16:31:52Z",
+  "generated": "2026-10-19T16:46:33Z",
   "audit": [
     {
       "actor": null,
@@ -25610,6 +25610,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T16:31:50Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5AGXGHQ29FVE5XK2T0K1X6F",
+      "shortname": "join-wls-float-step8",
+      "datetime": "2026-10-19T16:46:33Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 join bcd3d121",
+      "summary": "Recount ran in full at step 4 (App 1169 counted; Core 3047 / portable 2864 / nonportable 183 completed). Its only refusal was SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph 'foreground not held; SendInput would prove another window' (probe exit 2). It refused ALONE on the join head 0ccb0299 and ALONE on the first parent a1555fc1 in a clean detached tree (C:/Projects/rt-t21p, removed), same environment, same words: Ruling 155 (3) excused, NOT CHECKED; the join continued with --docs-only only to skip that re-run. The other two non-passes are the named expected skips. No App suite ran elsewhere during the join (T28 held by rule 19). Step 8 strict 6/48. Ratchet vs first parent a1555fc1 on clean trees, head bcd3d121: PASS 0/49; the pack verify-ruling-citations copy is excluded under Ruling 160 (PD-1; +2 findings for Rulings 171 and 174, which the pack copy looks for in rulings.md), the repo copy is ok (strict) 0/0. Release build 0 errors. T21 (Opus, 6 nodes): float and redock real (Ruling 171 (2)), Ruling 174 bounds, T21 close conditions 1-3; close condition 4 (live-notebook float and redock) is owed after the T11 join. WL-S is not accepted until it is green (Ruling 171 (3)).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Ruling 171 (2): float and redock made real in WL-S",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T16:20:11Z",
+      "duration_seconds": 1582.0
     }
   ],
   "changes": [
@@ -31172,6 +31196,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-float"
+    },
+    {
+      "id": "mail-01M5AGCPKGNKVSHCK14ZC26T63",
+      "ts": "2026-10-19T16:37:22Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t28-compiled",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
     }
   ]
 };

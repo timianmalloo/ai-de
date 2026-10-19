@@ -14,3 +14,9 @@
 {"agent": "wl-t28-compiled", "at": 1792426703.3262706, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/suite-node1.txt", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792426715.2368555, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792426715.2750187, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.5219781, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.5626493, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.6038005, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.6428561, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.687126, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterASubmitTests.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792427883.7289252, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheSentPromptIsNeverResentTests.cs", "session": "wl-t28-compiled", "wi": ""}
