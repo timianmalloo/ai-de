@@ -121,6 +121,20 @@ The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.c
 - The gate does not mechanize the non-empty check on an equality oracle (DC-NEW's second shape). It is a source scan, so a content read behind a helper in another file is not seen. DC-NEW-wl-t28-compiled's status is therefore `partially-controlled`.
 - **Rule 19 lapse:** the T11 join (`join-wls-kinds-migration`) went in flight at 17:32:18Z. This node's four filtered App runs of the gate test (about 17:33–17:37Z) started during it, because I did not re-read the board before each run. Those facts are source scans that open no window and take no desktop hold. The (A) and (B) runs ended before 17:31Z. The whole App suite waited for the join's end.
 
+## 7. Node 4 - the drain heading (Ruling 181, the Owner's direction)
+
+**What landed:** `ComposerSurface.SetQueued(null, ...)` switches a shown queued state to `SentHeading(b{n})` when the turn now in flight is that same turn (same ordinal text and `SentBytes`) and nothing was typed since (`_sent` is still set). One `ShowCompiled` call; the header, UIA name and ItemStatus move together. If the user typed, `_sent` is already null and nothing changes. A queue that is held (b1 failed or stopped) never reaches `SetQueued(null)`, so the heading stays `queued as b2`.
+
+| Check | Test (`TheCompiledFieldAfterTheQueueDrainsTests`) | Red | Green |
+|---|---|---|---|
+| A - drain to sent | `WhenTheQueueDrainsAndB2IsSent_WithNoKeystroke_TheHeadingSwitchesToSentAsB2`; `WhenTheQueueDrains_AfterTheUserTyped_TheLiveDraftStays` | `n4-red.txt` (`1a5150a0`): the heading read `queued as b2` after the drain. The typed-since fact passes on the unfixed code by design. | `n4-green.txt` (`ed2a655e`), 14 of 14 with the n3 neighbours |
+| B - drain refused | `WhenB1Fails_AndTheDrainIsRefused_TheHeadingStaysQueuedAsB2` (stub `FailAtInitialize`; b2 cancelled at the end so the run tail has no queued launch) | `n4-B-red-mutation.txt`: mutation, a switch to sent whenever the turn in flight ends (`SetInFlight(null)`); the test fails, `sent as b2` where `queued as b2` is true. Reverted. | in `n4-green.txt` |
+| C - resend guard after the switch | `AfterTheSwitchToSentAsB2_ACtrlEnterWithNoKeystroke_SendsNothing` | `n4-C-red-mutation.txt`: mutation, the switch writes the sent bytes into the draft; a press resent b2 as b3 (3 turns, expected 2). Reverted. | in `n4-green.txt` |
+
+**Suites:** Core 3046 passed, 0 failed, 1 skipped (`suite-node4-core.txt`, before the App-only change). App 1182 passed, 1 failed, 2 skipped (`suite-node4-app.txt`); the failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, the known Ruling 155 (3) shown-window probe refusal, as at n3.
+
+**Residual:** if b2 finishes before the UI takes a snapshot with b2 in flight, the heading would stay `queued as b2`. The stub run held long enough in the test; not forced otherwise. I did not claim `ComposerSurface.cs` with `coord claim` (the call needed `--wi`); no other track touched it.
+
 ## Files
 
 - `reproduction.txt` — the numbers, the observed writer, and Ruling 96's tests' own output.
@@ -138,3 +152,4 @@ The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.c
 - `n3-verify-defect-register.txt` — `tools/verify-defect-register.py` after the DC-NEW entry update: OK.
 - `suite-node3.txt` (`suite-node3-core.txt`, `suite-node3-app.txt`) — the whole Core and App suites at the node-3 head.
 - No "Ruling 115 desktop hold is occupied" result occurred in node 3, so there is no `desktop-hold.txt`. App: 1177/2/2. The 2 failures were re-run alone in `suite-node3-rerun-app.txt`: `ADeadHolder` passes; the SolutionTreeChord probe is refused, "foreground not held" (Ruling 155 (3)).
+- `n4-red.txt`, `n4-green.txt`, `n4-B-red-mutation.txt`, `n4-C-red-mutation.txt`, `suite-node4-core.txt`, `suite-node4-app.txt` - node 4, see section 7.
