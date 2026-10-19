@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Versioning;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
@@ -175,6 +176,117 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
                 Assert.Equal(1, CountingHost.Reads(counted, b.DispatchKey));
                 Close(window, opened!, model, surface);
             });
+    }
+
+    /// <summary>
+    /// Ruling 175 (1), (3), node 3 check A: a Send while the read-back is pending keeps the words in the editor, disables
+    /// Send and says why it waits, in the status line and in UIA. A second press admits nothing. Once the read-back ends
+    /// the turn is admitted as b3, after the restored turns (Ruling 163), and only then does the editor clear.
+    /// </summary>
+    [Fact]
+    public void ASendWhileTheTurnsRestore_KeepsTheWordsAndSaysWhyItWaits_ThenAdmitsExactlyOneTurnAsB3_AndClears()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                await RecordTwoAttemptsAsync(window);
+                var (model, surface, opening, opened) = await ReopenWithTheOpenHeldAsync(window, host => host);
+                var send = SendButton(surface);
+
+                surface.Composer.Draft.SetFreeFormText("third words");
+                Assert.NotNull(surface.Composer.Send());
+                await Settle(window);
+
+                Assert.Equal("third words", surface.Composer.Draft.SourceText);
+                Assert.False(send.IsEnabled, "Send stayed enabled while the sent turn waits for the read-back");
+                Assert.Equal(SessionDocumentSurface.RestoringTurns, surface.Composer.Status);
+                Assert.Equal(SessionDocumentSurface.RestoringTurns, AutomationProperties.GetHelpText(send));
+
+                Assert.Null(surface.Composer.Send());
+                await Settle(window);
+                Assert.Empty(model.Thread.Current.Turns);
+                Assert.Equal("third words", surface.Composer.Draft.SourceText);
+
+                opening.SetResult();
+                await UntilAsync(window, () => model.Runs.Host is not null, () => "the host never bound");
+                await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
+                await surface.LastAdmission.WaitAsync(NotebookFixture.Bound);
+                await UntilAsync(window, () => surface.Thread.Rows.Count >= 3 && Ended(model, 2),
+                    () => $"{surface.Thread.Rows.Count} rows: [{string.Join(", ", surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words))}]");
+                await Settle(window, rounds: 5);
+
+                Assert.Equal(["b1 first words", "b2 second words", "b3 third words"], surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words));
+                Assert.Equal(string.Empty, surface.Composer.Draft.SourceText);
+                Assert.True(send.IsEnabled, "Send stayed disabled after the waiting turn was admitted");
+                Assert.NotEqual(SessionDocumentSurface.RestoringTurns, surface.Composer.Status);
+                Close(window, opened()!, model, surface);
+            });
+    }
+
+    /// <summary>Ruling 175 (1): the restoring sentence is DESIGN.md's copy, one row citing the ruling, pinned to the const.</summary>
+    [Fact]
+    public void TheRestoringSentence_IsOneDesignCopyRow_CitingRuling175()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AiDe.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        Assert.NotNull(dir);
+        var rows = File.ReadAllLines(Path.Combine(dir!.FullName, "DESIGN.md"));
+        var row = Assert.Single(rows, l => l.Contains($"`{SessionDocumentSurface.RestoringTurns}`", StringComparison.Ordinal));
+        Assert.Contains("Ruling 175", row, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A reopen in the shell's order with the host's open held until the test releases it: the model binds with
+    /// <see cref="NotebookRuns.BindHostWhenOpen"/>, the document is built at once, and the opened host is passed through
+    /// <paramref name="wrap"/> (the host the notebook binds).
+    /// </summary>
+    private async Task<(NotebookModel Model, SessionDocumentSurface Surface, TaskCompletionSource Opening, Func<AttemptHost?> Opened)> ReopenWithTheOpenHeldAsync(
+        Window window, Func<IAttemptHost, IAttemptHost> wrap)
+    {
+        var opening = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        AttemptHost? opened = null;
+        var model = _fixture.NewModel();
+        model.Runs.BindHostWhenOpen(
+            async () =>
+            {
+                await opening.Task;
+                opened = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+                return wrap(opened);
+            },
+            Scope);
+        var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+        window.Content = surface;
+        _fixture.ConfigureStub(surface);
+        await Settle(window, rounds: 5);
+        Assert.False(surface.LastReadBack.IsCompleted, "the read-back is not pending while the host opens");
+        return (model, surface, opening, () => opened);
+    }
+
+    private static Button SendButton(DependencyObject root) =>
+        FindButton(root, b => Equals(b.Content, "Send")) ?? throw new InvalidOperationException("no Send button in the composer");
+
+    private static Button? FindButton(DependencyObject root, Func<Button, bool> match)
+    {
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            if (child is Button button && match(button))
+            {
+                return button;
+            }
+
+            if (FindButton(child, match) is { } found)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>

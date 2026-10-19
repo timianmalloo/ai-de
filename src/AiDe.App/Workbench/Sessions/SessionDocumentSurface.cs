@@ -603,6 +603,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// <summary>The admission of a turn sent while the read-back ran: completed when it joined the thread.</summary>
     internal Task LastAdmission { get; private set; } = Task.CompletedTask;
 
+    /// <summary>
+    /// Ruling 175(1): the composer status, and the disabled Send's UIA help text, while a turn sent during the restart
+    /// read-back waits for it (DESIGN.md's copy).
+    /// </summary>
+    public const string RestoringTurns = "Restoring this notebook's turns. Your message sends when they are back.";
+
     private async Task AfterTheReadBackAsync(GovernedRunRequest request, (string Text, IReadOnlyList<DecorationRow> Decorations, SubmittedEnvelope? Submission, DateTimeOffset At) sent)
     {
         await LastReadBack.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
