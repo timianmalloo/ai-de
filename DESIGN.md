@@ -1120,6 +1120,12 @@ measured at the shell's startup size, 1440 × 900.
   so within-turn is visibly tighter than between-turn. A 40px gutter carries the ordinal; every
   turn's text, reply and outcome share **one left edge**. Prose (the words, the reply) wraps at a
   96ch measure; evidence lines run the width.
+- **The minimum window holds the measure (Ruling 170).** `MainWindow` `MinWidth` is **840**, derived, never
+  chosen: 71 px activity bar and window frame + 43 px pane chrome + 672.6 px measure (96ch at 13 px) + 40 px
+  gutter + 12 px body padding = 838.6 px, rounded up. At 820 the turn's row was 706 px against the 724.6 it needs.
+  `TheThreadMeasureMovesWithTheNotebookTests.TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere`
+  measures the chrome at the startup size, reads `MinWidth` from the window, and re-measures the row there.
+  `MinHeight` stays 520.
 
 ### Trigger map (delta from the section above)
 

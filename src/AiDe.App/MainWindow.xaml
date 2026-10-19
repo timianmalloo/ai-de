@@ -8,7 +8,7 @@
         Title="AI-DE"
         Width="1440"
         Height="900"
-        MinWidth="820"
+        MinWidth="840"
         MinHeight="520"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource SurfaceBrush}"
