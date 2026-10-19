@@ -32,3 +32,23 @@ It repeats alone, is a foreground/SendInput probe, and no file this track touche
 tree, so "pre-existing" is Inferred. Logged in `desktop-hold.txt`.
 
 **Next:** none for T27. The caller `SessionDocumentSurface.cs:1560` is unchanged.
+
+## Node 2
+
+**Done:** (A) `CurrentnessFold.Evaluate(int ranRevisionNo, int? currentRevisionNo, string? ranSha, string? liveSha)` is the one
+definition; the `AttemptRow` overload is a thin call passing `ProjectionSha`. `NotebookModel.CurrentnessOf` (line ~230) calls the
+named form with body shas and builds no `AttemptRow`. Red `ec07c1e0`, green `21785bfc`. A source scan fails if any `src/` file
+outside `src/AiDe.Core/Store/` constructs an `AttemptRow`. No `ShaKind` enum: the fold only compares two strings, and a label it
+never reads would be dead code; the caller's one digest definition is named in the doc comment.
+
+**(B) / Ruling 180 (5): no red test is possible; seam request sent** (`req-01M5AEKWQQYP4YK499Y5DN6GPD`). The notebook delegation
+already reads no stored projection and makes no compile call: `NotebookModel.cs:232` compares the ran revision's `BodySha` with the
+draft's body sha, so a re-prepare cannot move it. The only src path passing a live projection sha to the fold is
+`AcceptanceFold.cs:140` via `AcceptanceInput.LiveProjectionSha` (`AcceptanceFold.cs:17`), and no src code builds an
+`AcceptanceInput` yet (tests only). `SessionDocumentSurface.cs:728` re-projects the stored envelope fold for the attempt gate, not
+for the fold. C2 is a contract on T24's builder: take the live side from stored rows, never `RenderView` or a prepare call.
+
+**(C)** `SolutionTreeChord...RequestsRevealInGraph` fails on the clean base `27e761b7` ("foreground not held"), so it is
+pre-existing, observed (`C2-base-chord.txt`). The base tree was removed.
+
+**Suites:** Core 3060/0/1 skipped; App 1150 passed, 1 failed (the chord), 2 skipped. `suite-node2.txt`.

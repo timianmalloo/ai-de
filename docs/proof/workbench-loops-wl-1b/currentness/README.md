@@ -30,3 +30,15 @@ behaviour is pinned by the existing `TheOldResultIsMarkedStaleTests` and `ThePro
 
 Suites: `suite-node1.txt` (Core 3052 passed / 1 skipped / 0 failed; App 1150 passed / 2 skipped / 1 failed, see handoff).
 `desktop-hold.txt` logs the one foreground failure.
+
+## Node 2
+
+Test file: `tests/AiDe.Core.Tests/Workbench/Folds/TheFoldIsGivenWhatItComparesTests.cs`.
+
+| Check | Tests | Red | Green |
+|---|---|---|---|
+| A2 | `TheFold_HasAnInputThatNamesTheBindingAndBothShas`; `NoCallerOutsideTheStore_ConstructsAnAttemptRow` (source scan, red named `NotebookModel.cs`); `TheNamedInput_AnswersAsTheAttemptRowOverloadDoes` (6 rows, added at green) | `A2-red.txt` | `A2-green.txt` (fold, acceptance and new tests, 39 passed) |
+| B (C2) | none: no red can exist, see the seam request in `handoff.md` | - | - |
+| C | measurement: `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` alone on a clean detached `27e761b7` | `C2-base-chord.txt`: refuses there too ("foreground not held") | - |
+
+Suites: `suite-node2.txt` (Core 3060 passed / 1 skipped / 0 failed; App 1150 passed / 2 skipped / 1 failed, the chord probe).
