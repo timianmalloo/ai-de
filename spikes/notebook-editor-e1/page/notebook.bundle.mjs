@@ -1,0 +1,2 @@
+window.nb={ready:!0,load(){return{lineSeparator:`
+`,mixed:!1}},getDoc(){return""},docLength(){return 0},setMode(){},mode(){return"rich"},decorationCount(){return 0},fences(){return[]},setCursor(){},selections(){return[]},coords(){return{x:10,y:10}},hasFocus(){return!1},events(){return[]},clearEvents(){},completion(){return{status:null,listbox:!1,activedescendant:null,controls:null,selectedIndex:-1,selectedId:null}},latency:{start(){},stop(){return{samples:[],eventTiming:[]}},count(){return 0}}};

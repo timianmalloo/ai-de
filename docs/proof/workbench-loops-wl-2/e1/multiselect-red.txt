@@ -1,0 +1,10 @@
+source run log: red-all.txt
+== multiselect: FAIL - cursors=False, 3-cursor edit=False, one undo restores exact bytes=False, one redo=False
+   method: SendInput click + 2 Ctrl+clicks at coordsAtPos (rich projection, cursors in prose, a JSON fence and a heading), SendInput 'xyz', Ctrl+Z, Ctrl+Y; SHA-256 compare
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 0
+   | cursors after click + 2 Ctrl+clicks: [], wanted [29,100,363]
+   | typed 'xyz' at every cursor: sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, expected 97b05a71262e88ced594a5e3c806fd475b9ee920ec63083855972ca98365d6ce: False
+   | one Ctrl+Z: sha e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 vs original 61f6d695c249af71ca78f0ee450c9fa85cf580170119e86e8713936bc428ff72: False
+   | one Ctrl+Y: equals the edited bytes False
+E-1 exit 1: 0/7 passed

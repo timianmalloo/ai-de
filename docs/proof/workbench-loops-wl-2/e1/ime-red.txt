@@ -1,0 +1,20 @@
+source run log: red-all.txt
+== ime: FAIL - paragraph end: '<surrounding text changed>'; rich heading text: '<surrounding text changed>'
+   method: Microsoft Japanese IME (KLID 00000411) switched onto the browser's focus window via WM_INPUTLANGCHANGEREQUEST, opened via WM_IME_CONTROL, then SendInput VK keys 'nihongo', Space (convert), Enter (commit); then one SendInput Ctrl+Z
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | [paragraph end] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409
+   | [paragraph end] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x17b0b40, open status 1
+   | [paragraph end] unloaded 0x4110411: True
+   | [paragraph end] focus layout restored to 0x4090409
+   | [paragraph end] composition events: 0 (start 0, end []); inserted '<surrounding text changed>'; rest of document intact: False
+   | [paragraph end] one Ctrl+Z restores the original bytes: False
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 70
+   | [rich heading text] focus hwnd 0x2c70a9a in pid 37008, layout 0x4090409
+   | [rich heading text] loaded 0x4110411 (new this run: True); focus layout now 0x4110411; IME window 0x17b0b40, open status 1
+   | [rich heading text] unloaded 0x4110411: True
+   | [rich heading text] focus layout restored to 0x4090409
+   | [rich heading text] composition events: 0 (start 0, end []); inserted '<surrounding text changed>'; rest of document intact: False
+   | [rich heading text] one Ctrl+Z restores the original bytes: False
+E-1 exit 1: 0/7 passed

@@ -1,0 +1,22 @@
+source run log: red-all.txt
+== completion-uia: FAIL - open=FAIL; ArrowDown moves DOM and UIA selection to option 1=FAIL; Escape=FAIL; zero matches=FAIL; Enter accepts and leaves nothing active=FAIL
+   method: SendInput '@sp' / ArrowDown / Escape / '@zzq' / Enter; System.Windows.Automation over the WebView2 window (List 'Completions', ListItem SelectionItem.IsSelected, FocusedElement) cross-checked with the DOM's aria-activedescendant
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | open: DOM listbox False; DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}
+   | open: UIA list NOT FOUND; items []; UIA selected index -1
+   | editor: UIA NOT FOUND
+   | ArrowDown: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA selected index -1
+   | Escape: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'E-1 notebook' ControlType.Document
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | zero matches: DOM {"activedescendant":null,"controls":null,"listbox":false,"selectedId":null,"selectedIndex":-1,"status":null}; UIA list gone True; selected ListItems left 0; UIA focus 'E-1 notebook' ControlType.Document
+   | load: 402 chars, mode rich, page reports {"lineSeparator":"\n","mixed":false}
+   | focus: native click at (556,299); editor hasFocus=false; caret 63
+   | accept: applied '@spec/workbench-loops' False
+   | FAIL open: listbox named, options, first selected in DOM and UIA
+   | FAIL ArrowDown moves DOM and UIA selection to option 1
+   | FAIL Escape: no listbox, no aria-activedescendant/controls, no UIA list or selected item, focus on the editor
+   | FAIL zero matches: nothing open, nothing active
+   | FAIL Enter accepts and leaves nothing active
+E-1 exit 1: 0/7 passed
