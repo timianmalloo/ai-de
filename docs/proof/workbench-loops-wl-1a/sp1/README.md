@@ -1,3 +1,18 @@
+---
+id: proof-workbench-loops-wl-1a-sp1
+title: "Evidence — WL-1a spine T2: WorkspaceSchema v2"
+type: proof-pack
+status: draft
+owner: "@timianmalloo"
+phase: "workbench-loops WL-1a"
+tags: [workbench-loops, evidence]
+links:
+  - { to: adr-0039-workbench-records-durable-representation, rel: implements }
+review-by: "2026-11-18"
+summary: >-
+  Track T2's red and green evidence for schema v2, the migration chain and the Ruling 148/150 conditions; cited by the WL-1a Proof Pack.
+---
+
 # WL-1a sp1 — workspace schema v2 (ADR-0039 §1–§5)
 
 Track `wl-t2-sp1`, branch `sp1-schema-v2`. Commits: API `a5e66bea` · red `c9e2c8c3` · green `586a7eae`.
