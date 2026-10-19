@@ -130,3 +130,148 @@ defines the mark as the `?` glyph + the word *suggested* (Ruling 180 (3)). `Comp
 **Code (seams `req-01M5B3NHP0143W53J11CRKPVAX` and `req-01M5B3TTNQXVZ3C8AEHXNV6G2Y`, granted with conditions):** `ComposerSendGate.SentBytesOf` rebuilds the bytes through the existing `ProjectForSend`, so the census stays at 2 `Projection.Project` calls in that file. It returns them only when their sha256 equals the accepted `submitted.text_sha256`. `SessionDocumentSurface.SubmittedEnvelopes` yields them, and `NotebookRuns.ReadBackAsync` and `RestoreAsync` carry them to `Thread.Accept`, or `NotebookRuns.CompiledPromptNotRecorded` when they do not verify. The read-back tuple's type changed with them (`_submitted` and `ReadBackOnEachBind`). There is no store or schema change. A turn whose bytes carried attachment bodies or a template does not rebuild, so its row reads *not recorded*. `SessionDocumentSurface.CompileModeWhy`: a rung held but now refused states the refusal. DESIGN.md: the restored-turn row and the demoted-rung copy.
 
 **Residual line:** added at the top of this file, in the same words as the WL-1a Proof Pack's (`aa8247ff`).
+
+## Human demo script — the prefill
+
+*Written by T30 node 4 (`wl-t30-prefill`) for the Owner, at `71498c77`. Keyboard only. Every gesture, label and string
+below was read from the code at that commit; the gesture table under the script gives file:line for each one. Lines
+marked **rehearse** are gestures or strings the code does not fix (a Tab count, a model's words), so check them on the
+first run. Every GUI step is **owed to the user** until a person runs it.*
+
+### 0. When and where
+1. Run this **after** the WL-S walk-through ends (the board's `USER DEMO DONE`). Use a **fresh, clean worktree of
+   origin/main at `d986e4a4` or later**, never the primary checkout (`C:\Projects\ai-de`). Build it in Release:
+   `dotnet build AiDe.sln -c Release`, then start `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`.
+2. Gate 1 reads `%USERPROFILE%\.aide\proof\compile-pin-spike.json` and the adapter under the providers file's adapter
+   root, not the worktree. A fresh worktree therefore needs no `npm ci` for this script.
+
+### 1. A new session opens in agentic-advisory, and the settings row says why
+3. **Ctrl+N** opens *New session…* (a workspace chooser comes first if none is open). Tick an Anthropic account, reach
+   its *Default for this session* radio (UIA "Default account: {label}") and press **Space**, then **Enter** (*Create
+   session*). As in WL-1a step 4.
+4. Reach the session header's **Session settings** button (**rehearse** the Tab count from the editor) and press
+   **Space**. In the popup, reach the combo box named **Compile mode**.
+5. **Expect:** the combo box reads `agentic-advisory`. The line under it reads *"Agentic-advisory: the compile step
+   suggests Goal, Done when and Not in scope; each counts only once you keep or edit it. Gate 1 admits it: the
+   compile-pin spike matches the installed adapter."* The combo box's UIA HelpText is the same sentence. Open the list
+   (**Alt+Down**): the third item reads `agentic — not available`, disabled, and its HelpText is Gate 2's refusal.
+   If the line instead says *"This session is set to agentic-advisory, but the gate now refuses it: …"* or
+   *"Agentic-advisory is not available: …"*, Gate 1 refused on this machine: record the sentence and stop here.
+6. Close the popup (**Esc**, **rehearse**) and return to the editor.
+
+### 2. One prepare, one model call
+7. Type a prompt that names a goal and a finish line, e.g. *"Add a unit test for the parser's empty-input case. Done
+   when the test fails on the current code. Do not change the parser."*
+8. **The next step spends real model usage on your Claude account: one compile call.** It is a toolless call on the
+   bound engine and account, bounded at 60 s. The script makes **no other compile call**: step 13's prepare has no open
+   line, so it skips the call. Step 15's send then runs the turn on the real lane, like every WL-1a turn.
+9. Press **Ctrl+Enter** once. **Expect:** the status line reads *"Preparing… — the model is reading your draft"* and
+   the compile line reads *"Preparing…"* with a **Cancel** control. A second Ctrl+Enter now is ignored with *"Preparing…
+   — press again when prepared"*. Nothing is sent: the thread has no new row.
+10. **Expect, when the call returns:** the status line reads *"prepared — press again to send"*. The compile line reads
+    *"Compiled on {model} · {family} · read 0 turns · {tier rationale}"* (the model and rationale words: **rehearse**).
+    If the call degraded, the line reads *"compiled mechanically — {reason}"* with **Prepare again**. That is a correct
+    result; record it and continue with the lines left blank.
+
+### 3. The suggested lines: edit one, keep the others, read Keep's help
+11. The structure stays folded after a prepare (finding 1 below). Reach the fold's header *"Goal · Done when · Not in
+    scope"* (UIA "Goal, Done when, Not in scope"; **rehearse** the Tab count) and press **Space** to open it.
+    **Expect:** each line the model proposed shows its value with the mark **`? suggested`** and a **keep** button.
+    In UIA the line's ItemStatus reads `suggested`, without the glyph.
+12. **Tab** to the **Keep Goal** button. In Accessibility Insights (or Narrator), read its HelpText. **Expect, exactly:**
+    *"Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your
+    draft until you send it. It is not yet kept when AI-DE restarts."* Press **Space**. **Expect:** the Goal mark reads
+    **`✓ kept`** (ItemStatus `kept`), and the keep button is gone. Then **Tab** into the *Done when* line, add a word to
+    it, and see its mark read **`✓ edited`**. Keep *Not in scope* the same way as Goal (**Keep Not in scope**). A
+    goal block cannot be sent with a blank *Not in scope*.
+13. Return to the editor and add one word to the prompt. Press **Ctrl+Enter** once. **Expect:** it prepares again with
+    **no model call**: the compile line reads *"structure supplied by you"* (**rehearse**: this is the operator-source
+    string; the code reads the source from the projection). **The kept Goal line is still there, still `✓ kept`**, and
+    so are the other two. Before node 1 (C) this prepare asked the model again and the Goal came back as a new
+    suggestion.
+14. Open the composer's **Compiled prompt** disclosure (UIA "Compiled prompt"; **rehearse** the reach). **Expect:** the
+    goal block in it carries your three lines, the kept and the edited ones.
+
+### 4. Send, and switch to mechanical-only
+15. Press **Ctrl+Enter**. **Expect:** turn b1 joins the thread and runs on the real lane. When it ends, its outcome line
+    counts the compile call's tokens with the run's (Ruling 78; node 4 (A) makes every compile call of the turn count,
+    not only the last).
+16. Open **Session settings** again (step 4). In **Compile mode**, press **Up** to choose `mechanical-only`. **Expect:**
+    a screen reader announces *"Compile mode is now mechanical-only for new prompts."*. The line reads *"Mechanical-only:
+    one gesture, you fill the structure. Agentic-advisory is available; choose it to have the compile step suggest the
+    lines."*. Close the popup.
+17. Type a short prompt and press **Ctrl+Enter** once. **Expect:** it sends on one press, with no prepare and no compile
+    line, as turn b2. Then type some words in the editor and **do not send them**.
+
+### 5. Restart: what was sent survives; what was not sent does not
+18. Close the app (**Alt+F4**) and start it again (step 1). Reopen the session: **Alt+F**, **S** (*Recent sessions*),
+    arrow to the session, **Enter**.
+19. Reach b1's row (**Shift+F6** or **Shift+Tab** from the composer; **rehearse**), **Tab** to its *compiled prompt*
+    disclosure (UIA "Compiled prompt of b1") and press **Space**. **Expect:** the bytes that were sent, rebuilt from the
+    stored envelope and shown only because their sha256 equals the one recorded at the send. The goal block is in them,
+    with the Goal line you kept. b2's disclosure shows its bytes the same way.
+20. **The not-recorded case cannot be produced from the keyboard on this build.** A turn rebuilds only when its bytes
+    carried no attachment body and no template. Neither can reach a turn in this demo: the binder passes no template
+    catalog, so *Start from template* stays collapsed, and *Attach file…* is off by default with no control that turns
+    it on. Such a turn's row would read *"Compiled prompt not recorded: this turn's sent bytes could not be rebuilt and
+    verified after the restart."*. The test `ASentGoalLineSurvivesARestartTests` proves that string through a one-byte
+    mutation (`B-byte-change-mutation-red.txt`).
+21. **Expect, said plainly (Ruling 182 (3)):** the composer is empty. **The words you typed but did not send are gone,
+    and so are any kept suggestions of an unsent prompt. They are lost on every restart until WL-2's draft store.**
+    Nothing on the composer ever says they were saved (node 3 (A)).
+
+### Findings for the Owner (read from code, not run)
+1. **The suggested lines arrive inside a folded section.** The structure fold is collapsed at rest
+   (`ComposerSurface.cs:1648-1652`), and a prepare only fills the lines (`:831-837`). Nothing in the prepare path opens
+   the fold. The only code that opens it is a refusal that names a line (`:1674`); `StructureOpen` has no product
+   caller. So after step 9 the user sees *"prepared — press again to send"* but no suggestion until they open the fold.
+   A second Ctrl+Enter would send without the suggested lines, because unkept suggestions never count. This is not
+   changed here; it is the Owner's call whether a prepare that proposed lines should open the fold.
+2. **The not-recorded restored row is unreachable through the UI today** (step 20). It becomes reachable when a template
+   catalog or an attach control is wired.
+
+### Gesture table (read at `71498c77`)
+
+| Step | Gesture or string | Source |
+|---|---|---|
+| 1 | Release output path `bin/Release/net10.0-windows` | `src/AiDe.App/AiDe.App.csproj:5` (TargetFramework); path as WL-1a step 2 |
+| 2 | Gate 1 reads `<proof dir>/compile-pin-spike.json` and the installed adapter | `src/AiDe.Core/Sessions/CompileModeGate.cs:52-53`, `:61`, `:103-113`; adapter root from the providers file: `src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs:156`; default `~/.aide/adapters`: `src/AiDe.Core/AgentPlane/FirstUse.cs:31-35` |
+| 3 | **Ctrl+N** *New session…* | `src/AiDe.Core/Workbench/WorkbenchCommands.cs:98` |
+| 3 | *Default for this session*, UIA "Default account: {label}", *Create session* | `src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs:388`, `:394`, `:189` |
+| 3 | A new session's mode is the gate's default | `src/AiDe.Core/Sessions/SessionConfig.cs` `DefaultCompileModeFor` (node 1 (A)); `NewSessionSheetViewModel.CompileModeGateInput` (node 2 (A)) |
+| 4 | Header button **Session settings**, a popup toggled by its click | `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs:1221-1223` |
+| 4 | Combo box named **Compile mode** | `SessionDocumentSurface.cs:1525-1528` |
+| 5 | Items in ladder order: `mechanical-only`, `agentic-advisory`, `agentic` | `src/AiDe.Core/Sessions/CompileModeGate.cs:49`; `SessionDocumentSurface.cs:1539-1545` |
+| 5 | `{mode} — not available`, disabled, HelpText = refusal | `SessionDocumentSurface.cs:1542-1543` |
+| 5 | The advisory line's two sentences; the HelpText equals the line | `SessionDocumentSurface.cs:1397`, `:1418`, `:1548-1549` |
+| 5 | Demoted: *"This session is set to {mode}, but the gate now refuses it: …"*; refused: *"Agentic-advisory is not available: …"* | `SessionDocumentSurface.cs:1413`, `:1427` |
+| 8 | Toolless call on the bound engine and account; bound 60 s | `src/AiDe.App/Workbench/Composer/ComposerSendGate.cs:148`, `:650-651`; `src/AiDe.App/Conductor/CompileCallHost.cs:13-22`; `src/AiDe.Core/Compilation/PreCompile.cs:63` |
+| 8, 13 | No call when no line is open | `ComposerSendGate.cs:605-621` |
+| 9 | First Ctrl+Enter prepares under an agentic rung | `src/AiDe.App/Workbench/Composer/ComposerSurface.cs:660-670`; Ctrl+Enter = `ComposerSendGate.cs:909-917` |
+| 9 | *"Preparing… — the model is reading your draft"*; compile line *"Preparing…"* with Cancel | `ComposerSurface.cs:809-810`, `:852` |
+| 9 | Ctrl+Enter while preparing: *"Preparing… — press again when prepared"* | `ComposerSurface.cs:662-666`; `ComposerSendGate.cs:512` |
+| 10 | *"prepared — press again to send"* | `ComposerSurface.cs:842-844` |
+| 10 | *"Compiled on {model} · {family} · read {k} turns · {rationale}"*, k = 0 here | `src/AiDe.Core/Compilation/CompileLine.cs:49`; `ComposerSendGate.cs:739` |
+| 10 | Degraded: *"compiled mechanically — {reason}"* with Prepare again | `CompileLine.cs:53-55`; `ComposerSurface.cs:853` |
+| 11 | Fold header *"Goal · Done when · Not in scope"*, UIA "Goal, Done when, Not in scope", collapsed at rest | `ComposerSurface.cs:1648-1657` |
+| 11 | Mark `? suggested`; UIA ItemStatus without the glyph; keep button shown only then | `ComposerSurface.cs:2279`, `:2432`, `:2438-2439` |
+| 12 | Button content *keep*, UIA Name "Keep {Goal / Done when / Not in scope}", HelpText = KeepHelp | `ComposerSurface.cs:2313-2315`, `:2442-2448` |
+| 12 | KeepHelp, exact | `ComposerSurface.cs:2276` |
+| 12 | `✓ kept`; `✓ edited` | `ComposerSurface.cs:2431`, `:2433` |
+| 12 | Keep writes the draft | `ComposerSurface.cs:1628-1640` |
+| 12 | A blank Not in scope refuses a goal block | `ComposerSendGate.cs:411-420` |
+| 13 | An edit to the prompt makes the envelope stale; the next press prepares | `ComposerSendGate.cs:524-525`, `:802`; `ComposerSurface.cs:660` |
+| 13 | *"structure supplied by you"* when the call is skipped | `CompileLine.cs:29-33`; `ComposerSendGate.cs:607`, `:615` |
+| 14 | Disclosure UIA "Compiled prompt", HelpText *"exactly the bytes that will be sent; no diff, no comments"* | `ComposerSurface.cs:245-246` |
+| 15 | The compile's cost is the turn's spend on its outcome line | `ComposerSendGate.cs:490-495`; `SessionDocumentSurface.cs:658`; `src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs:164`; `src/AiDe.Core/Presentation/Sessions/SessionThread.cs:422-423` |
+| 16 | **Up** in the combo box selects; announcement *"Compile mode is now {mode} for new prompts."* | `SessionDocumentSurface.cs:1557-1566`, `:1438`; Up/Down driven in `TheCompileModeControlTests` (node 1 (B)) |
+| 16 | *"Mechanical-only: one gesture, you fill the structure. Agentic-advisory is available; choose it to have the compile step suggest the lines."* | `SessionDocumentSurface.cs:1399`, `:1428` |
+| 17 | One press sends under mechanical-only | `ComposerSurface.cs:660` (the prepare branch is skipped), `:683` |
+| 18 | **Alt+F4** (*E_xit*); **Alt+F → S** (*Recent _sessions*) | `src/AiDe.App/Workbench/MainMenuBuilder.cs:256`, `:209` |
+| 19 | Disclosure UIA "Compiled prompt of b{n}" | `src/AiDe.App/Workbench/Sessions/TurnItem.cs:200`; `src/AiDe.App/Workbench/Sessions/ThreadFeed.cs:665`, `:673` |
+| 19 | Rebuilt bytes shown only on a sha match | `ComposerSendGate.cs:269-288` |
+| 20 | The rebuild uses no template and no attachment | `ComposerSendGate.cs:277-281` |
+| 20 | No template catalog in the product | `SessionComposerBinder.cs:151-173` (no catalog argument); `ComposerSurface.cs:538`, `:564-565` |
+| 20 | Attach off by default; no App caller of `SetAttachEnabled` | `src/AiDe.Core/Sessions/SessionConfig.cs:76`; `src/AiDe.Core/Sessions/SessionConfigStore.cs:320`; `ComposerSurface.cs:1735-1741` |
+| 20 | *"Compiled prompt not recorded: …"* | `src/AiDe.App/Workbench/Records/NotebookRuns.cs:504`, `:531` |
+| 21 | Unsent draft and kept lines are not restored | Ruling 182; measured in `c1-restart-measure.txt` (node 2 (0)) |
