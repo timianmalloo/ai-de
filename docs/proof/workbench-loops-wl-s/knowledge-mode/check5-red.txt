@@ -1,0 +1,29 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-knowledge-mode\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:02:31.94]     AiDe.App.Tests.EvaluateAsyncCallersGuardTests.EveryCallerChecksForTheFailureSentinel [FAIL]
+  Failed AiDe.App.Tests.EvaluateAsyncCallersGuardTests.EveryCallerChecksForTheFailureSentinel [102 ms]
+  Error Message:
+   these files call EvaluateAsync and never check for its failure sentinel, so a page that never loaded reads as a measurement: tests\AiDe.App.Tests\Workbench\Canvas\KnowledgeModeTests.cs. Check the result starts with "(evaluate failed" before using it — failure and success come back in the same type and the compiler cannot help.
+  Stack Trace:
+     at AiDe.App.Tests.EvaluateAsyncCallersGuardTests.EveryCallerChecksForTheFailureSentinel() in C:\Projects\ai-de-wls-knowledge-mode\tests\AiDe.App.Tests\EvaluateAsyncCallersGuardTests.cs:line 93
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:03:53.67]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
+
+Failed!  - Failed:     1, Passed:  1127, Skipped:     1, Total:  1129, Duration: 4 m 41 s - AiDe.App.Tests.dll (net10.0)
