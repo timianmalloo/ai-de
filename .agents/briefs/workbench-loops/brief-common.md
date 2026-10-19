@@ -63,6 +63,9 @@ and a default.
     checks, or one check plus its real-lane run. At 120 tool calls or 200k context, commit what is green and write
     `handoff.md`, even if a check is half done. The Leader starts the next node fresh. Three Opus nodes in a row
     overran caps sized for twice their real scope (T5 n1 346k, T8 n1 285k, T5 n2 330k).
+    **Never stop on your own wall-clock estimate.** A node stops only at the Leader's kick mail (read your mail between
+    checks) or at 120 calls / 200k. T11 n4 stopped itself after 5 minutes, believing it had used the 12-minute kick
+    time, with two of three checks unstarted (2026-10-19).
 17. **Add no `.html` file under `docs/`.** Do not render HTML views of your README, hand-off or proof files. The docs
     graph's HTML knowledge-surface cap is full (`SURFACE_LIMIT = 100`, `docs-graph.py:82`; a pack defect), and one rendered
     `handoff.html` stopped T8's join at step 6 (2026-10-19). Markdown stays canonical, and proof is `.md` and `.txt` only.
