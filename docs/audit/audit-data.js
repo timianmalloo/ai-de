@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:49:27Z",
+  "generated": "2026-10-19T08:26:37Z",
   "audit": [
     {
       "actor": null,
@@ -24354,52 +24354,252 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59HBCMSVEQ814JPX35QKM0W",
-      "shortname": "wl-t8-bind",
-      "datetime": "2026-10-19T07:34:53Z",
-      "session": "wl-t8-bind",
-      "prompt": "T8 node 4: WithdrawAsync, host lifecycle (Ruling 159), UIA names",
-      "summary": "attempt.withdraw + Cancel on a host-held turn; Ruling 159 wait/refuse/retry/epoch-at-dispatch; UIA names and composer disabled-Send handed off",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Withdraw a host-held turn and dispatch nothing outside the host",
+      "datetime": "2026-10-19T07:34:53Z",
       "done_when": "check 1 and 2 red then green; suites run",
-      "tier": "T2",
+      "duration_seconds": 1441.0,
       "fan_out": 0,
+      "goal": "Withdraw a host-held turn and dispatch nothing outside the host",
+      "id": "al-01M59HBCMSVEQ814JPX35QKM0W",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T8 node 4: WithdrawAsync, host lifecycle (Ruling 159), UIA names",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind",
+      "skill": "implement",
       "started_at": "2026-10-19T07:10:52Z",
-      "duration_seconds": 1441.0
+      "summary": "attempt.withdraw + Cancel on a host-held turn; Ruling 159 wait/refuse/retry/epoch-at-dispatch; UIA names and composer disabled-Send handed off",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M59J61XEVMGMZ2D75ATX3ZDE",
-      "shortname": "wl-t8-bind",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T07:49:27Z",
-      "session": "wl-t8-bind",
+      "done_when": "Ruling 159(1) Send disabled with UIA cause and Retry, red then green; rest handed off",
+      "duration_seconds": 778.0,
+      "fan_out": 0,
+      "goal": "Bind the session document to a notebook revision and an attempt, so a run outlives its pane",
+      "id": "al-01M59J61XEVMGMZ2D75ATX3ZDE",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "T8 node 5: Ruling 159(1) Send disabled; no-client refusal; UIA names; withdrawn copy",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind",
+      "skill": "implement",
+      "started_at": "2026-10-19T07:36:29Z",
       "summary": "Node 5: Send disabled with the host refusal as UIA help text, Retry wired, hosted-elsewhere re-probe (372778c5 red, 629be5ac green). Check 2, check 3 and the withdrawn copy handed to node 6 with two questions.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/notebook-ops/suite-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T07:17:43Z",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "duration_seconds": 425.0,
+      "fan_out": 0,
+      "goal": "Land T14 on main under Ruling 151",
+      "id": "al-01M59GBZCHSQBGJCSJ3NCAPWDE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T14 wl1a-notebook-ops join d5e6b877",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-ops-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T07:10:38Z",
+      "summary": "conductor-join recount OK; strict step 8 5/47 (baseline). gate_ratchet vs first parent dafcbee8: PASS, 0 refusals over 48 gates. Pushed d5e6b877:main; Release build exit 0. T14 + T14b Sonnet (54 calls/217k/13 min): notebook.open / revision.save / revision.latest red->green over a real pipe; journey-id collision refused (AIDE-STORE-JOURNEY-ID-COLLISION); one-transaction open tested (not red). Retroactive grant: one StoreErrorCodes constant in WorkspaceStore.cs (no running owner). T8 node 4 had merged this join before its push; it is now on main.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tools/verify-no-account-identity.py"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:47:55Z",
+      "done_when": "gate exists, self-test proves refusal, green on tree, runs in run-verify-gates",
+      "duration_seconds": 857.0,
+      "fan_out": 0,
+      "goal": "public repo never receives an account email via proof or ledger files",
+      "id": "al-01M59ENCCHAV5F43KHG0ATXQ53",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T15 account-identity gate",
+      "session": "wl-t15-idgate",
+      "shortname": "wl-t15-idgate",
+      "skill": "implement",
+      "started_at": "2026-10-19T06:33:38Z",
+      "summary": "tools/verify-no-account-identity.py with masked findings, exact allow-list, self-test; red-first",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/identity-gate/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T07:27:08Z",
+      "done_when": "recount green; ratchet PASS; pushed; gate OK on main",
+      "duration_seconds": 560.0,
+      "fan_out": 0,
+      "goal": "join T15 to main before T5 n2's real-lane proof",
+      "id": "al-01M59GX6S6RWSYVA4RDY663Z0A",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of account-identity-gate into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-account-identity-gate",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T07:17:48Z",
+      "summary": "T15 (Sonnet): tools/verify-no-account-identity.py red->green with a self-test that plants a real-shaped address; allow-list exactly per Rulings 157/158 (noreply@anthropic.com exact, never the domain) recount_seconds=559 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/identity-gate/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T07:41:40Z",
+      "done_when": "ratchet PASS; pushed; gate OK on main",
+      "duration_seconds": 320.0,
+      "fan_out": 0,
+      "goal": "Land T15 on main before T5 n2's real-lane proof",
+      "id": "al-01M59HQT1XPMW192NAKKBK4WFB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T15 account-identity-gate join fb72f351",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-account-identity-gate-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T07:36:20Z",
+      "summary": "conductor-join recount OK; strict step 8 5 of 48 (the new gate green; same 5 red). gate_ratchet vs first parent f323f2b1: PASS, 0 refusals over 49 gates; verify-project-coverage (never ratcheted, 151(3)) names the new gate as invoked by no workflow -> RES-1 addendum (user's call). Step 8 also found the Leader's own defect: f323f2b1's proposal carried type: proposal (unknown to docs-graph), red on main since; fixed in 11461079 (type: plan), pushed with the join; Leader pre-push check introduced (DC-NEW-wl-leader2 5th instance). Pushed fb72f351 + 11461079; identity gate OK on main; Release build exit 0.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:16:01Z",
+      "done_when": "each check red then green and committed; Core and App suites green bar the known chord flake",
+      "duration_seconds": 1495.0,
+      "fan_out": 0,
+      "goal": "No turn runs unrecorded; withdrawn copy",
+      "id": "al-01M59KPQBWJZYSXX3F5JX90V8X",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T8 node 6: Ruling 159(2) no-client refusal + internal test seam + src census + withdraw over the pipe; withdrawn copy; check 3 if it fits",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind",
+      "skill": "implement",
+      "started_at": "2026-10-19T07:51:06Z",
+      "summary": "No-client Send refusal (NotebookRuns.NoWorkspace); internal UnhostedForTests seam with src/ census (planted-call red); attempt.withdraw pipe round-trip (guard); copy 'b2 cancelled by you before it was sent.' announced once. Check 3 handed to node 7.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T07:53:12Z",
+      "done_when": "recount green; identity gate OK; ratchet PASS; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "join T5 node 2 to main",
+      "id": "al-01M59JCY2X7TDCWY746TY5DJMQ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-attempt-host-n2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T07:53:11Z",
+      "summary": "T5 node 2 (Opus): (a)-(g) red->green; real claude-code lane Stop -> Interrupted (StopRequested seq 86, cancelled seq 143); DC-NEW-wl-t5-host-n2; real-lane proof scrubbed per rule 15. Recount: the env-gated AttemptRealLaneStopTests test is NotExecuted without AIDE_REAL_ADAPTER_ROOT; added to expectedSkips with provenance (Leader; accepted by the Owner on the engine-tests precedent), then --no-run OK (4062). recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:17:13Z",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "duration_seconds": 1593.0,
+      "fan_out": 0,
+      "goal": "Land T5 node 2 on main under Ruling 151",
+      "id": "al-01M59KRWV2F6G7DZ7PW036NZCF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T5 node 2 join f7a12954 (+ fix 116076cf)",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-attempt-host-n2-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T07:50:40Z",
+      "summary": "Recount: env-gated AttemptRealLaneStopTests NotExecuted without AIDE_REAL_ADAPTER_ROOT -> added to expectedSkips with provenance (Owner accepted, engine-tests precedent); --no-run OK 4062. Step 8 5/48 (baseline); identity gate OK on the join head (913 files: the scrubbed real-lane proof passes). Ratchet vs debdaf3f under the pre-160 policy: first REFUSE (pack ruling-citations: 'Ruling 38 ... no heading in rulings.md', citer count 7->8 from T5's handoff.md; Ruling 38 is defined by a decision note, PD-1); fix-forward 116076cf names the note in words; re-ratchet PASS 0/49. Pushed 116076cf:main; Release build exit 0. Ruling 160 (pack copy excluded, repo copy strict) applies from the next join.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59MA3HTAHK88HHFDZGMN8NK",
+      "shortname": "wl-t8-bind-n7",
+      "datetime": "2026-10-19T08:26:36Z",
+      "session": "wl-t8-bind",
+      "prompt": "T8 node 7: UIA names for the execution states",
+      "summary": "Guard theory: every TurnState row keeps Name=ordinal+words, reason in HelpText; passed on first run (already true). Cancelled-reason theory not built: TurnCopy has one inline Cancelled arm, no enumerable source.",
       "kind": "skill",
       "skill": "implement",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"
+        "tests/AiDe.App.Tests/Workbench/Records/EveryExecutionStateKeepsTheUiaNameTests.cs"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Bind the session document to a notebook revision and an attempt, so a run outlives its pane",
-      "done_when": "Ruling 159(1) Send disabled with UIA cause and Retry, red then green; rest handed off",
+      "goal": "UIA names for execution states",
+      "done_when": "every state's row Name pinned; suites green",
       "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T07:36:29Z",
-      "duration_seconds": 778.0
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -28927,6 +29127,60 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t15-idgate"
+    },
+    {
+      "id": "mail-01M59FV7Y404W91MFB8ZAXTMY0",
+      "ts": "2026-10-19T07:08:35Z",
+      "from": "wl-t8-bind",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59FX8EKH802J7X4PC4YBQFC",
+      "ts": "2026-10-19T07:09:41Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59FX8EAK66B8PQEDQR4TRGN",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59FZQ0AQKRR0DRVNSPQMQTW",
+      "ts": "2026-10-19T07:11:02Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59FX8EAK66B8PQEDQR4TRGN",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59J6AVA9KCHKAADKC165C2M",
+      "ts": "2026-10-19T07:49:36Z",
+      "from": "wl-t8-bind",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59KAEJ9JM5Q3P7Z7TTZWQFN",
+      "ts": "2026-10-19T08:09:19Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59KBWWQ6QJ25NHX79DGQ03H",
+      "ts": "2026-10-19T08:10:07Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-owner-20261018"
     }
   ]
 };
