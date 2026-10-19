@@ -463,4 +463,55 @@ public sealed class ChecklistOperationsTests : IDisposable
 
         Assert.Equal(1, result.Revision);
     }
+
+    // ---- A: checklist.evaluate ------------------------------------------------------------------
+
+    [Fact]
+    public void A_Evaluate_BeforeAnyAcceptance_IsNotEligible_NotAccepted_AndOffersOnlyCompletedAttemptsOfTheHeadRevision()
+    {
+        var journey = OpenWork();
+        MandatoryObligation(journey);
+        Attempt("done-r1");
+        new NotebookService(_workspace.Store).SaveRevision(new NotebookSaveRequest("nb-1", "intent v2"));
+        Attempt("done-r2", revision: 2);
+        Attempt("failed-r2", revision: 2, terminal: DispatchState.Failed);
+
+        var result = Service.Evaluate(new ChecklistEvaluateRequest(journey, "nb-1", LiveSha));
+
+        Assert.False(result.Evaluation.Eligible);
+        Assert.Equal(WorkClosureState.NotAccepted, result.Closure.State);
+        Assert.Equal(["done-r2"], result.EvidenceCandidates);
+    }
+
+    [Fact]
+    public void A_Evaluate_AfterAcceptance_ShowsTheClosureAtTheCurrentBaseline_ThenHistoricalAfterAnEdit()
+    {
+        var journey = OpenWork();
+        var obligation = MandatoryObligation(journey);
+        Attempt("a1");
+        AcceptIntent(journey);
+        Link(journey, obligation, "a1");
+        Accept(journey);
+
+        var accepted = Service.Evaluate(new ChecklistEvaluateRequest(journey, "nb-1", LiveSha));
+        Assert.Equal(WorkClosureState.Accepted, accepted.Closure.State);
+        Assert.True(accepted.Closure.AtCurrentBaseline);
+        Assert.Equal(accepted.Evaluation.Baseline, accepted.Closure.AcceptedBaseline);
+
+        new NotebookService(_workspace.Store).SaveRevision(new NotebookSaveRequest("nb-1", "intent v2"));
+        var edited = Service.Evaluate(new ChecklistEvaluateRequest(journey, "nb-1", LiveSha));
+        Assert.Equal(WorkClosureState.Accepted, edited.Closure.State);
+        Assert.False(edited.Closure.AtCurrentBaseline);
+        Assert.Equal(accepted.Evaluation.Baseline, edited.Closure.AcceptedBaseline);
+        Assert.NotEqual(accepted.Evaluation.Baseline, edited.Evaluation.Baseline);
+    }
+
+    [Fact]
+    public void A_Evaluate_OnANotebookThatIsNotAWorkJourneys_IsRefused()
+    {
+        var ex = Assert.Throws<WorkspaceStoreException>(() =>
+            Service.Evaluate(new ChecklistEvaluateRequest("journey-nobody", "nb-none", LiveSha)));
+
+        Assert.Equal(StoreErrorCodes.WorkNotAWorkJourney, ex.ErrorCode);
+    }
 }
