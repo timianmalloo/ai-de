@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T01:23:50Z",
+  "generated": "2026-10-19T01:36:17Z",
   "audit": [
     {
       "actor": null,
@@ -22791,6 +22791,84 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T01:14:45Z",
       "duration_seconds": 544.0
+    },
+    {
+      "id": "al-01M58WCRBWDKPAEBZKBEEMMCN8",
+      "shortname": "compile-workbench-loops-coordination-correction",
+      "datetime": "2026-10-19T01:28:38Z",
+      "session": "wl-owner-20261018",
+      "prompt": "Correction of al-01M58FV33ZKBC7NJBSJW2C7QWZ (missing goal/done_when/evidence).",
+      "summary": "Supersedes the compile entry: the drive prompt was compiled to al-01M58FTCXG1K5J5BWC5X6MGVC2 (raw al-01M58FTC4GNXDXPCT023Y6J72K); the compile gate passed on its second run and the result was dispatchable with zero decision requests.",
+      "kind": "command",
+      "skill": "compile",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "compile the workbench-loops drive prompt into a dispatchable starting prompt",
+      "done_when": "the compile gate passes and the compiled prompt is logged with its raw source",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T22:00:05Z",
+      "duration_seconds": 12513.0,
+      "supersedes": "al-01M58FV33ZKBC7NJBSJW2C7QWZ"
+    },
+    {
+      "id": "al-01M58WCRGVJK5X7QK9SYP37AG2",
+      "shortname": "coordination-workbench-loops-owner-handoff-correction",
+      "datetime": "2026-10-19T01:28:38Z",
+      "session": "wl-owner-20261018",
+      "prompt": "Correction of al-01M58G5X47WPDGWXM0S4JBABR0 (missing evidence).",
+      "summary": "Supersedes the Owner hand-off entry: the kickoff brief (docs/coordination/workbench-loops-leader-kickoff.md) was executed. The Leader launched 2026-10-18 and pinned itself; coord leader who showed wl-leader-20261018 epoch 1 live within ~30 s, observed by the Owner.",
+      "kind": "command",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "hand the workbench-loops plan to the Opus Leader seat",
+      "done_when": "the Leader is live and pinned as coordination leader",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-18T21:46:40Z",
+      "duration_seconds": 13318.0,
+      "supersedes": "al-01M58G5X47WPDGWXM0S4JBABR0"
+    },
+    {
+      "id": "al-01M58WTRP7JRWDFSP5TKHPC7MS",
+      "shortname": "join-t12-step8-ratchet",
+      "datetime": "2026-10-19T01:36:17Z",
+      "session": "wl-leader-20261018",
+      "prompt": "Ruling 151/153 step-8 completion for the T12 census join",
+      "summary": "T12 census fix pushed 36bcfaea (2de9d373..36bcfaea), joined ahead of T3 (Owner-approved reorder). First T12 ratchet REFUSED verify-harness-diagnostics green->red (lambda throw pattern in ConsoleHostCensusTests); fix-forward 5daac116; re-join ratchet PASS 0/48, Ruling 153 filter 104/104, recount gates excluded per 151(3) with the recount green. Register EOF conflict kept both. Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/census-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land the census fix on main under Ruling 151/153",
+      "done_when": "pushed with ratchet PASS recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-19T01:11:25Z",
+      "duration_seconds": 1492.0
     }
   ],
   "changes": [
@@ -27080,6 +27158,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t12-census"
+    },
+    {
+      "id": "mail-01M58W9M9GBPKXDCJA3R78K59F",
+      "ts": "2026-10-19T01:26:55Z",
+      "from": "wl-t13-hygiene",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t13-hygiene"
+    },
+    {
+      "id": "mail-01M58WAMADAKM573XFD40814DB",
+      "ts": "2026-10-19T01:27:28Z",
+      "from": "wl-leader-20261018",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
+      "session": "wl-leader-20261018"
+    },
+    {
+      "id": "mail-01M58WD2P89P6XEXQDSVJ4RD16",
+      "ts": "2026-10-19T01:28:48Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader-20261018",
+      "kind": "ruling",
+      "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
+      "session": "wl-owner-20261018"
     }
   ]
 };

@@ -93,3 +93,6 @@
 {"agent": "wl-t13-hygiene", "at": 1792372954.883075, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-t13-hygiene", "wi": ""}
 {"agent": "wl-t13-hygiene", "at": 1792372954.9063802, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-t13-hygiene", "wi": ""}
 {"agent": "wl-t13-hygiene", "at": 1792372968.5622647, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373208.1960397, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373208.2195551, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/gates-after.txt", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373208.2450676, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/residuals.md", "session": "wl-t13-hygiene", "wi": ""}
