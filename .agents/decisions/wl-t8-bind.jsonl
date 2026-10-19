@@ -80,3 +80,15 @@
 {"agent": "wl-t8-bind", "at": 1792392045.98575, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Store/SchemaV2/TypedStoreApiTests.cs", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792392459.41134, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/host-run-red.txt", "session": "wl-t8-bind", "wi": ""}
 {"agent": "wl-t8-bind", "at": 1792392459.4428694, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheAttemptHostBindingTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392830.8861027, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/host-run-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392830.920036, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392868.8288343, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/projection-call-sites-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392918.5263274, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/projection-call-sites-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392918.556855, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792392918.5883815, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393131.9326699, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/shell-opens-host-red.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393131.9600194, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookFixture.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393131.988546, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheShellOpensTheAttemptHostTests.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393204.9680738, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/binding/shell-opens-host-green.txt", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393204.9970741, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/ConductorEntry.cs", "session": "wl-t8-bind", "wi": ""}
+{"agent": "wl-t8-bind", "at": 1792393205.025599, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "wl-t8-bind", "wi": ""}
