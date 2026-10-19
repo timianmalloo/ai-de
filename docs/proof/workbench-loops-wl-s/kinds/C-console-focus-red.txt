@@ -1,0 +1,6 @@
+Red for check C (Console focus return): the existing test, unchanged, at d8746b1d+.
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [835 ms]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: System.Windows.Controls.Primitives.ToggleButton Content:Console IsChecked:False
+Actual:   System.Windows.Controls.Primitives.ToggleButton Content:Goal · Done when · Not in scope IsChecked:False

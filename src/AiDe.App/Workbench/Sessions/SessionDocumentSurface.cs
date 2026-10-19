@@ -84,6 +84,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     private bool _operatorActed;
     private bool _placedFocus;
     private bool _disposed;
+    private bool _paneHiddenSaid;
 
     /// <param name="model">The document's state.</param>
     /// <param name="store">Where the document's envelope is persisted, or null to keep none — the compiled-prompt disclosure's open state is written there on every toggle (Ruling 96), so a reopen restores it.</param>
@@ -209,8 +210,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             ? surfaceId[(Kind.Length + 1)..]
             : null;
 
-    /// <summary>The surface kind <c>SurfaceContentFactory</c> builds this for — <c>session-document</c>, never <c>session</c> (Ruling 18).</summary>
-    public const string Kind = "session-document";
+    /// <summary>
+    /// The surface kind <c>SurfaceContentFactory</c> builds this for: <c>notebook</c> (ADR-0045 §2). This surface binds
+    /// the <see cref="Records.NotebookModel"/>, so it is the notebook kind. The <c>session-document</c> kind it replaces is
+    /// retired, and a saved layout that still names it is reported (<c>SurfaceContentFactory.RetiredKinds</c>).
+    /// </summary>
+    public const string Kind = "notebook";
 
     /// <summary>Spec §C3's copy for a pane closed while its notebook's run is in flight (AC-D01a).</summary>
     public const string PaneHiddenCopy = "Pane hidden. The run continues.";
@@ -305,6 +310,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     /// beside the thread. Unset (a document composed without a shell), the split opens here.
     /// </summary>
     public Action<int?>? ConsoleRequested { get; set; }
+
+    /// <summary>
+    /// The shell's execution opener (the WL-S design's §4): when set, a turn's <i>Open the log</i> opens or focuses
+    /// that turn's attempt's execution in the Bottom zone through it, with the turn's ordinal. Unset (a document
+    /// composed without a shell), <i>Open the log</i> opens the split at the turn, as <i>Open the Console at</i> does.
+    /// </summary>
+    public Action<int>? ExecutionRequested { get; set; }
 
     /// <summary>
     /// The shell's close (the other half of the seam): when hosted, unchecking the header's toggle
@@ -942,6 +954,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
                     Composer.UseAsNextDraft(turn.SourceText);
                 }
 
+                break;
+
+            case TurnActionKind.OpenLog when ExecutionRequested is { } execution:
+                execution(action.Ordinal);
                 break;
 
             case TurnActionKind.OpenLog:
@@ -1664,10 +1680,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             Notebook.Runs.Observer = null;
         }
 
-        if (!_ownsNotebook && Notebook.Runs.InFlight)
-        {
-            _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
-        }
+        SayPaneHidden();
 
         foreach (var lane in _lanes)
         {
@@ -1683,4 +1696,31 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
             Notebook.Dispose();
         }
     }
+
+    /// <summary>
+    /// Says DOCK1's <see cref="PaneHiddenCopy"/> when a bound pane closes with its run in flight, at most once per close.
+    /// The shell says it when the pane closes (<c>WorkbenchShell.OnSurfaceClosed</c>), and <see cref="Dispose"/> says it
+    /// when the pane goes with its document. The shell disposes the documents it keeps at shutdown, so a close that has
+    /// already said it makes the later Dispose say nothing more.
+    /// </summary>
+    internal void SayPaneHidden()
+    {
+        if (_paneHiddenSaid || _ownsNotebook || !Notebook.Runs.InFlight)
+        {
+            return;
+        }
+
+        _paneHiddenSaid = true;
+        _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
+    }
+
+    /// <summary>
+    /// Starts the next close's lifetime: the shell calls it when it shows this kept document again
+    /// (<c>WorkbenchShell.RegisterSessionDocument</c>), so that pane's close may say <see cref="PaneHiddenCopy"/> again.
+    /// </summary>
+    /// <remarks>
+    /// Not on <c>Loaded</c>. <c>Loaded</c> fires on every attach, and a re-render re-parents an open pane, so the gate
+    /// would be keyed to the attach and not to the close (DC-138).
+    /// </remarks>
+    internal void PaneShown() => _paneHiddenSaid = false;
 }

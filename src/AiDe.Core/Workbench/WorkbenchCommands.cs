@@ -249,12 +249,12 @@ public static class WorkbenchCommandCatalog
         new("session.cycleRegion", "Cycle session region", "F6",
             string.Empty,
             "Moves focus to the open session's next region: header, thread, composer, then the Console when it is open.",
-            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+            Menu: "_View", Scope: CommandScope.Admits("notebook")),
 
         new("session.cycleRegionBack", "Cycle session region backward", "Shift+F6",
             string.Empty,
             "Moves focus to the open session's previous region.",
-            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+            Menu: "_View", Scope: CommandScope.Admits("notebook")),
 
         // The session's Console as a document (Ruling 89): the `console` kind's only door — the
         // session header's toggle, this row in View and the palette all run it. Offered where a
@@ -264,7 +264,7 @@ public static class WorkbenchCommandCatalog
             nameof(LayoutOperation.AddSurface),
             "Opens the focused session's Console — every wire frame, one row per message — as a "
             + "document in the Center zone, or focuses it when it is already open.",
-            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+            Menu: "_View", Scope: CommandScope.Admits("notebook")),
 
         // ── Window: the arrangement (a host only) ─────────────────────────────────────────────
 

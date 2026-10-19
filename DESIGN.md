@@ -1138,6 +1138,12 @@ measured at the shell's startup size, 1440 × 900.
   so within-turn is visibly tighter than between-turn. A 40px gutter carries the ordinal; every
   turn's text, reply and outcome share **one left edge**. Prose (the words, the reply) wraps at a
   96ch measure; evidence lines run the width.
+- **The minimum window holds the measure (Ruling 170).** `MainWindow` `MinWidth` is **840**, derived, never
+  chosen: 71 px activity bar and window frame + 43 px pane chrome + 672.6 px measure (96ch at 13 px) + 40 px
+  gutter + 12 px body padding = 838.6 px, rounded up. At 820 the turn's row was 706 px against the 724.6 it needs.
+  `TheThreadMeasureMovesWithTheNotebookTests.TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere`
+  measures the chrome at the startup size, reads `MinWidth` from the window, and re-measures the row there.
+  `MinHeight` stays 520.
 
 ### Trigger map (delta from the section above)
 
@@ -1401,6 +1407,7 @@ Copy added by this section (review oracles quote these strings):
 | RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
 | DOCK1 | Pane hidden. The run continues. |
+| DOCK4 | Kept 1 prompt draft as it was: prompt drafts do not become notebooks. — plural: Kept {N} prompt drafts as they were: prompt drafts do not become notebooks. (Ruling 173: said once, on the restore that migrates a slot) |
 | AUTH1 | Signed in does not mean this route is qualified. |
 | DEMO1 | Interactive prototype. Runs, accounts and evidence are simulated. |
 

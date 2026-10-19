@@ -134,9 +134,9 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
     [Fact]
     public void TheSessionDocumentKindIsNotTheWatcherSessionsKind()
     {
-        // Ruling 18: "session-document", never "session" — one letter from the "sessions" row that
+        // Ruling 18 still holds under ADR-0045's name: "notebook", never "session" — one letter from the "sessions" row that
         // already exists, and a collision there would be resolved by read order, silently.
-        Assert.Equal("session-document", SessionDocumentSurface.Kind);
+        Assert.Equal("notebook", SessionDocumentSurface.Kind);
         Assert.Contains("sessions", SurfaceContentFactory.KnownKinds);
         Assert.DoesNotContain("session", SurfaceContentFactory.KnownKinds);
 
@@ -155,7 +155,7 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
         var text = Sta.Run(() =>
         {
             var content = new SurfaceContentFactory(queries: null)
-                .Create(new Surface("session-document:none", SessionDocumentSurface.Kind, "Session"));
+                .Create(new Surface("notebook:none", SessionDocumentSurface.Kind, "Session"));
 
             // The factory wraps every non-windowed pane in SurfaceChrome's island border.
             var inner = content is System.Windows.Controls.Border { Child: System.Windows.FrameworkElement child }

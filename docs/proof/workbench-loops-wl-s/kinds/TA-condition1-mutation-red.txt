@@ -1,0 +1,95 @@
+# Owner condition (1) on SurfaceEntry.TurnAction - MUTATION red (the product already passes; this mutation was never committed).
+# Mutation (src/AiDe.App/Workbench/SurfaceContentFactory.cs, reverted by git checkout after the run):
+diff --git a/src/AiDe.App/Workbench/SurfaceContentFactory.cs b/src/AiDe.App/Workbench/SurfaceContentFactory.cs
+index 3a8948b0..d845ed19 100644
+--- a/src/AiDe.App/Workbench/SurfaceContentFactory.cs
++++ b/src/AiDe.App/Workbench/SurfaceContentFactory.cs
+@@ -256,8 +256,8 @@ public sealed class SurfaceContentFactory(
+         new(AiDe.App.Workbench.Execution.ExecutionSurface.Kind, "Execution",
+             "One attempt's execution: its dispatch key and what the host recorded for it.",
+             static (_, s) => new AiDe.App.Workbench.Execution.ExecutionSurface(s.Title),
+-            Perspectives: [PerspectiveSet.Factory], Instances.Many,
+-            new SurfaceEntry.TurnAction(AiDe.Core.Presentation.Sessions.TurnActionKind.OpenLog),
++            Perspectives: [PerspectiveSet.Factory, PerspectiveSet.Review], Instances.Many,
++            new SurfaceEntry.Derived("_View"),
+             Zone: ZoneId.Bottom),
+ 
+         // ── Factory → Coordination: the fleet's panes (ADR-0045 §1(b)) ────────────────────────
+
+# Run:
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(perspectiveId: "factory") [FAIL]
+[xUnit.net 00:00:00.36]     AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(perspectiveId: "review") [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(perspectiveId: "review") [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(perspectiveId: "factory") [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.TheExecutionsOnlyDoor_IsTheTurnsOpenTheLog [FAIL]
+  Failed AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(perspectiveId: "factory") [8 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Filter matched in collection
+                                                         ↓ (pos 27)
+Collection: [···, "New code viewer", "Show diagnostics", "New execution", "Show terminal sessions", "Show message board", ···]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(String perspectiveId) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionIsOfferedOnlyByItsTurnTests.cs:line 29
+   at InvokeStub_TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(perspectiveId: "review") [5 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Filter matched in collection
+                                                                     ↓ (pos 20)
+Collection: [···, "Move tab left/right", "Clear the status message", "New execution", "_Window", "Float pane", ···]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(String perspectiveId) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionIsOfferedOnlyByItsTurnTests.cs:line 29
+   at InvokeStub_TheExecutionIsOfferedOnlyByItsTurnTests.NoViewMenu_OffersTheExecution(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(perspectiveId: "review") [57 ms]
+  Error Message:
+   Review, its default layout: the empty state points at a View menu that offers the execution [_File, New session…, New terminal, New Claude Code session, New GitHub Copilot session, Open a repository as a workspace…, Index C# projects in this workspace, Re-index everything (ignore the cache), Re-index this workspace, _Edit, Move pane…, Resize pane…, _View, Factory perspective, Review perspective, Understand perspective, Next tab in pane, Previous tab in pane, Move tab left/right, Clear the status message, New execution, _Window, Float pane, Collapse pane, Maximize pane, Close surface, Lock/unlock layout, Reset workbench layout, _Help, Diagnostics report]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(String perspectiveId) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionIsOfferedOnlyByItsTurnTests.cs:line 40
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(perspectiveId: "factory") [23 ms]
+  Error Message:
+   Factory, a live notebook at the left: the empty state points at a View menu that offers the execution [_File, New session…, New terminal, New Claude Code session, New GitHub Copilot session, Open a repository as a workspace…, Index C# projects in this workspace, Re-index everything (ignore the cache), Re-index this workspace, _Edit, Move pane…, Resize pane…, _View, Factory perspective, Review perspective, Understand perspective, Next tab in pane, Previous tab in pane, Move tab left/right, Raise score dispute on the latest scored episode, Clear the status message, Cycle session region, Cycle session region backward, Session console, New search, New code viewer, Show diagnostics, New execution, Show terminal sessions, Show message board, Show leaderboard, Show ledger, Show daydreams, _Window, Float pane, Collapse pane, Maximize pane, Close surface, Lock/unlock layout, Reset workbench layout, _Prompt, Dispatch prompt to terminal…, New prompt draft, _Help, Diagnostics report]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sta.Run(Action body, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 79
+   at AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(String perspectiveId) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionIsOfferedOnlyByItsTurnTests.cs:line 40
+   at InvokeStub_TheExecutionIsOfferedOnlyByItsTurnTests.NoCenterEmptyState_OffersTheExecution(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.TheExecutionsOnlyDoor_IsTheTurnsOpenTheLog [3 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: TurnAction { Action = OpenLog }
+Actual:   Derived { Menu = _View }
+  Stack Trace:
+     at AiDe.App.Tests.Kinds.TheExecutionIsOfferedOnlyByItsTurnTests.TheExecutionsOnlyDoor_IsTheTurnsOpenTheLog() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionIsOfferedOnlyByItsTurnTests.cs:line 68
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     5, Passed:     2, Skipped:     0, Total:     7, Duration: 247 ms - AiDe.App.Tests.dll (net10.0)

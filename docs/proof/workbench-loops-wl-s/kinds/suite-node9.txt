@@ -1,0 +1,179 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:27.31]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:51.22]     AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt [SKIP]
+  Skipped AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt [1 ms]
+[xUnit.net 00:01:12.98]     AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: False) [FAIL]
+  Failed AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: False) [20 s]
+  Error Message:
+   the revived notebook reads 0 turn(s) [], host bound=True, read back=0; expected one Answered turn for attempt 5fd5e11e2abea36381657c95f61a367ceda4e59e6669924c0f2c7f57c934f7de
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 90
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 90
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 143
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:33.40]     AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: True) [FAIL]
+  Failed AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(diedMidRun: True) [20 s]
+  Error Message:
+   the revived notebook reads 0 turn(s) [], host bound=True, read back=0; expected one DeliveryUnknown turn for attempt 1892289d0730d9346bde1e514107f02eef36605ba9556304595ee6195795c9de
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 90
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 90
+   at AiDe.App.Tests.Kinds.ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose(Boolean diedMidRun) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\ARevivedNotebookReopensItsLiveAttemptsExecutionTests.cs:line 143
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:38.99]     AiDe.App.Tests.TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation [FAIL]
+  Failed AiDe.App.Tests.TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation [10 ms]
+  Error Message:
+   a Loaded hook outside the allow-list — one-time work on a per-attach event (DC-138): src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs
+  Stack Trace:
+     at AiDe.App.Tests.TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs:line 259
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:02:13.24]     AiDe.App.Tests.Sessions.EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender [FAIL]
+  Failed AiDe.App.Tests.Sessions.EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender [2 ms]
+  Error Message:
+   the opening command at offset 183576 raises DocumentOpening BEFORE its add at offset 186328 — a refused add would switch the body:
+private string OpenSessionConsole(Sessions.SessionDocumentSurface document, int? ordinal)
+    {
+        var host = HostOf(document.SurfaceId) ?? Factory;
+        ReconcileViewIntoModel(host);
+
+        var sessionId = Sessions.SessionDocumentSurface.SessionIdOf(document.SurfaceId) ?? document.SurfaceId;
+        var consoleId = Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId);
+
+        if (host.Service.Zones.FindZoneOf(consoleId) is { } holder)
+        {
+            return ShowOpenConsole(host, consoleId, holder, ordinal);
+        }
+
+        var result = host.Service.Apply(new LayoutOperation.AddSurface(
+            ZonesToTree.StackIdOf(ZoneId.Center),
+            new Surface(consoleId, Sessions.ConsoleDocumentHost.Kind, Sessions.ConsoleDocumentHost.CaptionFor(document.Model.Title))));
+        if (result.Applied)
+        {
+            OpeningDocument(host);   // document first, then the switch (US-C5)
+        }
+
+        WorkbenchDiagnostics.LayoutMutation("open-console", "zone-rule", consoleId, host.Adapter.ActiveSurfaceId, host.Service.Current);
+        host.Adapter.Render();
+
+        if (!result.Applied)
+        {
+            document.ReflectConsole(open: false);   // a refused open leaves the toggle honest
+            return result.Announcement;
+        }
+
+        return FocusConsole(host, consoleId, ordinal, "Console open");
+    }
+
+    /// <summary>
+    /// Opens turn <paramref name="ordinal"/>'s execution in the Bottom zone, or focuses the one already open (the WL-S
+    /// design's §4): identity <c>execution:&lt;DispatchKey&gt;</c>, the key read through
+    /// <see cref="Records.NotebookRuns.AttemptOf"/>, one per attempt. A collapsed Bottom is expanded first. A turn with
+    /// no attempt opens nothing. Returns what to announce.
+    /// </summary>
+    private string OpenExecution(Sessions.SessionDocumentSurface document, int ordinal)
+    {
+        if (document.Notebook.Runs.AttemptOf(ordinal) is not { } receipt)
+        {
+            return "This turn was never sent to the host, so it has no execution to open.";
+        }
+
+        var host = HostOf(document.SurfaceId) ?? Factory;
+        ReconcileViewIntoModel(host);
+
+        var executionId = Execution.ExecutionSurface.SurfaceIdFor(receipt.DispatchKey);
+        var caption = Execution.ExecutionSurface.CaptionFor(receipt.DispatchKey);
+        var holder = host.Service.Zones.FindZoneOf(executionId) ?? ZoneId.Bottom;
+        if (host.Service.Zones.Zone(holder).Collapsed)
+        {
+            ExpandZone(host, holder);
+        }
+
+        var shown = host.Service.Zones.FindZoneOf(executionId) is not null;
+        var result = shown
+            ? host.Service.Apply(new LayoutOperation.ActivateSurface(executionId))
+            : host.Service.Apply(
+  Stack Trace:
+     at AiDe.App.Tests.Sessions.EveryOpeningCommandPassesThroughTheSeamTests.EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sessions\EveryOpeningCommandPassesThroughTheSeamTests.cs:line 60
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:04:03.30]     AiDe.App.Tests.PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew [FAIL]
+  Failed AiDe.App.Tests.PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                                                                                                                                      ↓ (pos 2)
+Expected: <generated>                              ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···, "C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···, "C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···]
+Actual:   IListSelectIterator<Perspective, string> ["C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···, "C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···, "C:\\Users\\malla\\AppData\\Local\\Temp\\aide-slots"···]
+                                                                                                                                                                      ↑ (pos 2)
+  Stack Trace:
+     at AiDe.App.Tests.PerspectiveLayoutSlotTests.SlotPathFor_MapsTheReRowedIdsToTodaysFiles_FactoryToCodingsUnderstandToArchitecturesReviewNew() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\PerspectiveLayoutSlotTests.cs:line 69
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:04:14.47]     AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [FAIL]
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [4 s]
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 209
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 37
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.FocusInsideAsync(Window window, WebView2 page, Func`1 focus) in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 136
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.<>c__DisplayClass2_0.<<CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective>b__1>d.MoveNext() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 66
+--- End of stack trace from previous location ---
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Sta.cs:line 140
+[xUnit.net 00:04:56.22]     AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [SKIP]
+  Skipped AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded [1 ms]
+
+Failed!  - Failed:     7, Passed:  1146, Skipped:     2, Total:  1155, Duration: 5 m 35 s - AiDe.App.Tests.dll (net10.0)
+App exit=1
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:01:29.61]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+  Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
+
+Passed!  - Failed:     0, Passed:  3024, Skipped:     1, Total:  3025, Duration: 2 m 12 s - AiDe.Core.Tests.dll (net10.0)
+Core exit=0

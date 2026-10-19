@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
@@ -36,8 +37,16 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
     /// </summary>
     private const string Handling = "OnDocumentOpening(";
 
-    /// <summary>The heads a command body starts at: a controller delegate assignment, one of the two shared open methods (the derived "New/Show" opener since ADR-0030), or the console document's opener (Ruling 89).</summary>
-    private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument(", "private string OpenKind(", "private string OpenSessionConsole("];
+    /// <summary>A head a command body starts at inside a method: a controller delegate assignment.</summary>
+    private const string DelegateHead = "Requested = ";
+
+    /// <summary>
+    /// The other head a command body starts at: the declaration of the shell member that holds it, at the class's member
+    /// indent. It is derived, not listed. A hand-kept list of opener names credited a new opener's add
+    /// (<c>OpenExecution</c>, 583dddc6) to the opener declared above it, so that opener's own seam read as "before the
+    /// add" (DC-068's shape; DC-NEW-wl-t11-kinds).
+    /// </summary>
+    private static readonly Regex MemberHead = new(@"\n    (?:private|internal|public|protected)\b[^\n;=]*\(", RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Document first, then the switch (ADR-0031 rule 2; US-C5): after every <c>AddSurface</c> in
@@ -54,7 +63,8 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
 
         foreach (var at in openings)
         {
-            var head = Heads.Select(h => shell.LastIndexOf(h, at, StringComparison.Ordinal)).Max();
+            var member = MemberHead.Matches(shell[..at]).LastOrDefault()?.Index ?? -1;
+            var head = Math.Max(member, shell.LastIndexOf(DelegateHead, at, StringComparison.Ordinal));
             Assert.True(head >= 0, $"no command head precedes the AddSurface at offset {at}");
 
             Assert.False(

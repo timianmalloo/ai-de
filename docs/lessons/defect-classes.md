@@ -8485,6 +8485,28 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   at about 19 min, and both rates are re-derived after every node.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
+### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it
+
+- **Shape:** a structural guard scopes each match to a "head" taken from a hand-written list of member names (the
+  population). A new member that the list does not name has no head of its own. So the guard reads its match as part of
+  the listed member declared above it, and judges it with that member's text. The result is a red that names the wrong
+  member and describes a fault the code does not have. It can equally hide a fault that falls between the two members.
+- **Instance (T11 node 9 to 10, 2026-10-19):** `EveryOpeningCommandPassesThroughTheSeamTests` listed four heads.
+  `OpenExecution` (583dddc6, node 5) was declared just after `OpenSessionConsole` and was not listed. The guard read
+  `OpenExecution`'s add as `OpenSessionConsole`'s, with `OpenSessionConsole`'s own seam "BEFORE its add"
+  (`suite-node9.txt`). The dispatch then asked for `OpenSessionConsole`'s order to be restored. That order was never
+  changed: `git diff main` shows the new opener as the only opener change.
+- **Class → sweep → derive → prevent.** *Class:* DC-068's shape (a parallel hand-kept list drifts from the code), seen
+  in a guard's scoping rule rather than in a product list. *Sweep:* every test in `tests/` that takes a head with
+  `LastIndexOf` over a name list, or declares a `string[]` of member declarations: one, the instance. *Derive:* a guard's
+  scope must come from the code's own structure, not from names someone has to remember to add. *Prevent:* below.
+- **Control:** the guard derives the head: the nearest member declaration at the class's member indent, or a
+  `Requested = ` delegate, whichever is closer. Proved both ways. Green on the tree (`open-seam-green.txt`, 12/12 with
+  `TheExecutionOpensFromOpenLogTests` and `ConsoleSplitPlacementTests`). A seam call moved before `OpenExecution`'s add
+  turns it red, and the red names `OpenExecution` as the head (`open-seam-mutation-red.txt`).
+- **Status:** `controlled`.
+
+---
 ### DC-NEW-wl-t21-float — An absent JSON field arrives null in a non-nullable positional DTO, and the reader dereferences it
 
 - **Shape:** a persistence DTO is a positional record whose collection parameter is declared non-nullable (`List<T> Floating`). System.Text.Json passes `null` for a constructor parameter whose property is absent from the file, whatever the annotation says, unless `RespectNullableAnnotations` / `RespectRequiredConstructorParameters` is set. The reader trusts the annotation, calls `.Select` on the member, and a read documented as "never throws on a bad file" throws on a file that is merely older or hand-edited.

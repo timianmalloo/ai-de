@@ -25,7 +25,7 @@ public sealed class SessionDocumentPlacementTests : IDisposable
     public void Dispose() => _workspace.Dispose();
 
     [Fact]
-    public void ANewSessionDocument_OpensInTheLeftZone_Docked_WithMaximizedNull()
+    public void ANewNotebook_OpensInTheCenterZone_Docked_WithMaximizedNull()
     {
         var config = _workspace.Session("Front door");
 
@@ -40,12 +40,12 @@ public sealed class SessionDocumentPlacementTests : IDisposable
 
             var zones = shell.Factory.Service.Zones;
             var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
-            Assert.Equal(ZoneId.Left, zones.FindZoneOf(surfaceId));
+            Assert.Equal(ZoneId.Center, zones.FindZoneOf(surfaceId));
             Assert.Null(zones.Maximized);
-            Assert.False(zones.Zone(ZoneId.Left).Collapsed);
+            Assert.False(zones.Zone(ZoneId.Center).Collapsed);
 
             // Docked, not maximized: no sibling zone changed its collapsed state because of the open.
-            foreach (var id in new[] { ZoneId.Right, ZoneId.Bottom, ZoneId.Center })
+            foreach (var id in new[] { ZoneId.Left, ZoneId.Right, ZoneId.Bottom })
             {
                 Assert.Equal(zonesBefore.Zone(id).Collapsed, zones.Zone(id).Collapsed);
             }
@@ -81,8 +81,8 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             frame.Settle();
 
             var zones = shell.Factory.Service.Zones;
-            Assert.Equal(ZoneId.Left, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(reopened.SessionId)));
-            Assert.Equal(ZoneId.Left, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(first.SessionId)));   // a sibling tab; the first stays
+            Assert.Equal(ZoneId.Center, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(reopened.SessionId)));
+            Assert.Equal(ZoneId.Center, zones.FindZoneOf(SessionDocumentSurface.SurfaceIdFor(first.SessionId)));   // a sibling tab; the first stays
             Assert.Null(zones.Maximized);
             Assert.True(zones.Zone(ZoneId.Bottom).Collapsed, "a reopen rearranged the Bottom");
             Assert.NotEqual(shapeBefore, zones.Shape());   // DC-016: the open did change the model (a second tab)
@@ -92,11 +92,11 @@ public sealed class SessionDocumentPlacementTests : IDisposable
 
     /// <summary>
     /// The landing (spec §C5; DESIGN.md's row as amended): through the real shell, Coding lands on
-    /// the session document at Left when one is open, else on the Center's empty copy — and each
+    /// the notebook in the Center when one is open, else on the Center's empty copy — and each
     /// landing has a focus target (the UX &amp; Accessibility lens's SH-4.1 condition, inherited).
     /// </summary>
     [Fact]
-    public void TheCodingLanding_IsTheSessionAtLeft_ElseTheCentersEmptyCopy_EachWithAFocusTarget()
+    public void TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget()
     {
         var config = _workspace.Session("landing");
 
@@ -125,15 +125,11 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             var focused = System.Windows.Input.Keyboard.FocusedElement as System.Windows.DependencyObject;
             Assert.True(focused is not null && IsInside(focused, document.Composer), $"focus landed on {focused?.GetType().Name ?? "(none)"}, not inside the composer");
 
-            // And the Center's copy's landing: its heading, with the sentence as the name.
+            // A collapsed Left no longer moves the landing: the notebook is in the Center.
             Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
             shell.Factory.Adapter.Render();
             frame.Settle();
-            var fallback = shell.Factory.Adapter.ContentFor(PerspectiveShell.LandingSurfaceFor(shell.Factory)!);
-            Assert.True(fallback is not null && PerspectiveShell.FocusLanding(fallback));
-            frame.Settle();
-            var landed = System.Windows.Input.Keyboard.FocusedElement as System.Windows.Controls.TextBlock;
-            Assert.True(landed is not null && landed.Text.StartsWith("The session is docked at the left", StringComparison.Ordinal), $"the fallback landing is {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
+            Assert.Equal(surfaceId, PerspectiveShell.LandingSurfaceFor(shell.Factory));
             return 0;
         }, 60);
 
@@ -211,10 +207,10 @@ public sealed class SessionDocumentPlacementTests : IDisposable
 
     /// <summary>The zone rule is data on the kind's row — what the open reads, and what a reader can check without a window.</summary>
     [Fact]
-    public void TheSessionDocumentKindsRow_NamesTheLeftZone()
+    public void TheNotebookKindsRow_NamesTheCenterZone()
     {
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == SessionDocumentSurface.Kind);
-        Assert.Equal(ZoneId.Left, row.Zone);
+        Assert.Equal(ZoneId.Center, row.Zone);
     }
 
     /// <summary>
