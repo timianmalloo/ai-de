@@ -14,7 +14,7 @@ namespace AiDe.App.Tests.Perspectives;
 /// T21 n2's <c>FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable</c> was deleted with the
 /// palette guard's return (Owner's order, 2026-10-19). It passed while the palette's Float pane drew 0 windows, because
 /// it rendered by hand after the command (<c>adapter.Render()</c>), which no product route does
-/// (DC-NEW-wl-t28-compiled's class). <c>FloatPaneGuardTests</c> pins the guard through the palette.
+/// (DC-NEW-wl-t28-compiled's class). <c>LayoutCommandsRenderTests</c> now drives the float through the palette.
 /// </remarks>
 public sealed class FloatGuardTests : IDisposable
 {
@@ -64,7 +64,7 @@ public sealed class FloatGuardTests : IDisposable
                 var layoutPath = Path.Combine(_dir, "layout.json");
 
                 // Before the restart: a saved layout with one floating pane. The subject is the restore, so the float is
-                // the service's operation; the palette's Float pane is guarded while a command does not render.
+                // the service's operation, with no view to draw it.
                 var before = new ZoneBackedLayoutService();
                 var ids = before.Zones.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
                 var stack = before.Current.AllStacks().First(s => s.Surfaces.Count > 0 && before.Zones.FindZoneOf(s.Surfaces[0].SurfaceId) is not null);

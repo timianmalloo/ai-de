@@ -16,13 +16,6 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnouncer announcer)
 {
-    /// <summary>
-    /// Why <c>workbench.floatPane</c> refuses: a layout command run through the controller is not drawn yet, so a
-    /// floated pane would vanish while the shell said it floats (T21 n7's red; the Owner's guard order, 2026-10-19).
-    /// T20's guard shape (0ea50971). T21 removes it, red-first, when the command renders.
-    /// </summary>
-    public const string FloatUnavailableAnnouncement = "Floating a pane is not available yet. The pane stays where it is.";
-
     private readonly KeyboardResizeSession _resize = new(service);
 
     /// <summary>The stack the user is working in. Layout commands act on this.</summary>
@@ -213,8 +206,8 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
                     && ApplyAndAnnounce(new LayoutOperation.CloseSurface(FocusedSurfaceId));
 
             case "workbench.floatPane":
-                announcer.Announce(FocusedStackId is null ? "No pane is focused." : FloatUnavailableAnnouncement);
-                return true;
+                return WithFocusedStack(id =>
+                    new LayoutOperation.SetStackState(id, StackState.Floating));
 
             case "workbench.collapsePane":
                 return WithFocusedStack(id =>
@@ -741,8 +734,25 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         var result = service.Apply(operation);
         // Refusals are announced too: an unannounced no-op is indistinguishable from a dead key.
         announcer.Announce(result.Announcement);
+        if (result.Applied)
+        {
+            LayoutApplied?.Invoke();
+        }
+
         return true;
     }
+
+    /// <summary>Raised after a layout command this controller ran changed the model, so the holder of the view draws it.</summary>
+    /// <remarks>
+    /// <para><b>A command used to end at the announcement (DC-NEW-wl-t21-float-d).</b> Every catalog route — the palette,
+    /// the menu, the window's router — ends here, and nothing rendered after the apply. The palette's <i>Float pane</i>
+    /// floated a live notebook in the model and drew no window, while the shell said it was floating; a close, a collapse,
+    /// a maximize and a next tab were in the model and on no screen until an unrelated render.</para>
+    /// <para>An event, as <see cref="WorkspaceDataChanged"/> is: the controller owns no view. <see cref="DockHost"/> wires it
+    /// to its adapter's render. Raised after the announcement, so a sentence the render says (DOCK1 for a hidden notebook)
+    /// is the last one heard. A refusal changed nothing and raises nothing.</para>
+    /// </remarks>
+    public event Action? LayoutApplied;
 
     /// <summary>
     /// Binds the catalog's gestures on a WPF element — to <paramref name="execute"/> when given (the
