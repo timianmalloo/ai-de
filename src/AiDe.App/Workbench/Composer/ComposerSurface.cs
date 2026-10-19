@@ -2273,7 +2273,7 @@ internal sealed class StructureLine
     private bool _showing;
 
     /// <summary>The keep control's description (Ruling 180 (3); DESIGN.md SC6): the line is a suggestion until kept, and Keep makes it the user's.</summary>
-    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft.";
+    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft until you send it. It is not yet kept when AI-DE restarts.";
 
     /// <summary>The mark of a line the model suggested and the user has not kept or edited (Ruling 180 (3); DESIGN.md's Derived structure row). UIA's ItemStatus reads the word without the glyph.</summary>
     public const string ModelLineMark = "? suggested";
