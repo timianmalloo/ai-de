@@ -1,0 +1,38 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-notebook-binding\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:21.22]     AiDe.App.Tests.Records.TheAttemptHostBindingTests.AQueuedTurn_IsTheHostsHeldSuccessor_AndEachAttemptsLiveLinesReachTheThread [FAIL]
+  Failed AiDe.App.Tests.Records.TheAttemptHostBindingTests.AQueuedTurn_IsTheHostsHeldSuccessor_AndEachAttemptsLiveLinesReachTheThread [20 s]
+  Error Message:
+   the queued turn was never dispatched to the host at queue time
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheAttemptHostBindingTests.AQueuedTurn_IsTheHostsHeldSuccessor_AndEachAttemptsLiveLinesReachTheThread() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheAttemptHostBindingTests.cs:line 165
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:42.05]     AiDe.App.Tests.Records.TheAttemptHostBindingTests.APaneStop_ReachesTheHostsStopAsync_AndTheAttemptEndsByItsStopRule [FAIL]
+  Failed AiDe.App.Tests.Records.TheAttemptHostBindingTests.APaneStop_ReachesTheHostsStopAsync_AndTheAttemptEndsByItsStopRule [20 s]
+  Error Message:
+   the stopped attempt never ended; the turn reads Running
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheAttemptHostBindingTests.APaneStop_ReachesTheHostsStopAsync_AndTheAttemptEndsByItsStopRule() in C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.App.Tests\Workbench\Records\TheAttemptHostBindingTests.cs:line 125
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     2, Passed:     2, Skipped:     0, Total:     4, Duration: 41 s - AiDe.App.Tests.dll (net10.0)

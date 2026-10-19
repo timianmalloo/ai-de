@@ -1,9 +1,14 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
+using AiDe.App.Tests.Sessions.Thread;
 using AiDe.App.Workbench;
+using AiDe.App.Workbench.Composer;
 using AiDe.App.Workbench.Records;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Dispatch;
@@ -96,24 +101,123 @@ public sealed class TheAttemptHostBindingTests : IDisposable
     }
 
     /// <summary>
-    /// The design's node-2 members the binding routes through — Stop (§4), Send now (the queue) and Subscribe (live
-    /// events and run-log catch-up). Red until T5 node 2 (wl-t5-host) lands them on <see cref="IAttemptHost"/>.
+    /// The members the binding routes through, by the names T5 node 2 declared (rule 14: the code outranks the design's
+    /// <c>Subscribe</c>) — Stop (§4), the queue (Dispatch with a predecessor, Send now) and the live lines.
     /// </summary>
     [Fact]
     public void TheHostInterface_CarriesTheDesignedStopSendNowAndSubscribeMembers()
     {
-        string[] designed = ["StopAsync", "SendNowAsync", "Subscribe"];
-        var missing = designed.Where(name => typeof(IAttemptHost).GetMethod(name) is null).ToArray();
+        string[] declared = ["DispatchAsync", "StopAsync", "SendNowAsync", "SubscribeAsync"];
+        var missing = declared.Where(name => typeof(IAttemptHost).GetMethod(name) is null).ToArray();
 
-        Assert.True(missing.Length == 0,
-            $"IAttemptHost has no {string.Join(", ", missing)} yet (design 'IAttemptHost', T5 node 2). Until then a host-run "
-            + "turn cannot be stopped, a queued turn is drained by the notebook rather than the host, and its live lines "
-            + "do not reach the thread.");
+        Assert.True(missing.Length == 0, $"IAttemptHost has no {string.Join(", ", missing)}");
+        Assert.Equal(typeof(Task<AttemptSubscription>), typeof(IAttemptHost).GetMethod("SubscribeAsync")!.ReturnType);
     }
+
+    /// <summary>
+    /// A Stop pressed on the pane is the host's Stop (ADR-0041 §4): the attempt carries the StopRequested mark only
+    /// <see cref="IAttemptHost.StopAsync"/> writes, and ends by its rule — the stub never answers <c>session/cancel</c>, so
+    /// the deadline makes it <c>DeliveryUnknown{stop_not_acknowledged}</c>, never a token cancel's guess.
+    /// </summary>
+    [Fact]
+    public void APaneStop_ReachesTheHostsStopAsync_AndTheAttemptEndsByItsStopRule()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                using var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None,
+                    new AttemptHostOptions(_fixture.Root) { StopDeadline = TimeSpan.FromSeconds(1) });
+                using var model = _fixture.NewModel();
+                model.Runs.BindHost(host, Scope);
+                using var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = document;
+                _fixture.ConfigureStub(document);
+
+                document.Composer.Draft.SetFreeFormText("hold");
+                Assert.NotNull(document.Composer.Send());
+                var ordinal = Assert.Single(model.Thread.Current.Turns).Ordinal;
+                await UntilAsync(window, () => _fixture.RunOpened && model.Runs.AttemptOf(ordinal) is not null, () => "the attempt never launched");
+                await UntilAsync(window, () => Button(document, "Stop this turn") is not null, () => "the turn offers no Stop");
+
+                Button(document, "Stop this turn")!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                await UntilAsync(window, () => model.Thread.Current.Turns[0].State is not (TurnState.Running or TurnState.Preparing or TurnState.StopRequested),
+                    () => $"the stopped attempt never ended; the turn reads {model.Thread.Current.Turns[0].State}");
+
+                var attempt = (await host.ReadAsync(model.Runs.AttemptOf(ordinal)!.DispatchKey, CancellationToken.None))!;
+                Assert.Contains(attempt.Outcomes, o => o.State == DispatchState.StopRequested);
+                Assert.Equal((DispatchState.DeliveryUnknown, "stop_not_acknowledged"), (attempt.Terminal?.State, attempt.Terminal?.Cause));
+                Assert.Equal(TurnState.DeliveryUnknown, model.Thread.Current.Turns[0].State);
+                window.Content = null;
+            });
+    }
+
+    /// <summary>
+    /// The queue is the host's (ADR-0045 §4, design "Queued launch"): a turn sent while one runs is dispatched at once
+    /// as the held successor of the running attempt, the host launches it after its predecessor's
+    /// <c>ResponseComplete</c>, and both turns' live lines reach the thread through <see cref="IAttemptHost.SubscribeAsync"/>.
+    /// </summary>
+    [Fact]
+    public void AQueuedTurn_IsTheHostsHeldSuccessor_AndEachAttemptsLiveLinesReachTheThread()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                using var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+                using var model = _fixture.NewModel();
+                model.Runs.BindHost(host, Scope);
+                using var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = document;
+                _fixture.ConfigureStub(document);
+
+                document.Composer.Draft.SetFreeFormText("first");
+                Assert.NotNull(document.Composer.Send());
+                await UntilAsync(window, () => _fixture.RunOpened, () => "the first attempt never opened its session");
+
+                document.Composer.Draft.SetFreeFormText("second");
+                Assert.Null(document.Composer.Send());
+                var wait = WaitLink(document.Composer);
+                Assert.True(wait is not null, $"the status line offers no Wait; it reads \"{document.Composer.Status}\"");
+                wait!.RaiseEvent(new RoutedEventArgs(Hyperlink.ClickEvent));
+                var turns = model.Thread.Current.Turns;
+                await UntilAsync(window, () => model.Runs.AttemptOf(turns[1].Ordinal) is not null,
+                    () => "the queued turn was never dispatched to the host at queue time");
+                Assert.Equal(TurnState.Queued, model.Thread.Current.Turns[1].State);
+
+                _fixture.ReleaseRun();
+                await UntilAsync(window, () => model.Thread.Current.Turns.All(t => t.State == TurnState.Answered),
+                    () => $"the turns read {string.Join(", ", model.Thread.Current.Turns.Select(t => t.State))}");
+
+                var first = model.Runs.AttemptOf(turns[0].Ordinal)!;
+                var second = model.Runs.AttemptOf(turns[1].Ordinal)!;
+                Assert.Equal(first.DispatchKey, second.Attempt.QueuedAfterDispatchKey);
+                Assert.Equal(DispatchState.ResponseComplete, second.Terminal?.State);
+                foreach (var turn in model.Thread.Current.Turns)
+                {
+                    Assert.True(turn.Events.Any(e => e.Text.Contains("ok", StringComparison.Ordinal)),
+                        $"turn {turn.Ordinal} holds no live line from its attempt: [{string.Join(", ", turn.Events.Select(e => e.Text))}]");
+                }
+
+                window.Content = null;
+            });
+    }
+
+    private static Button? Button(SessionDocumentSurface document, string word) =>
+        ThreadFixtures.Visuals<Button>(ThreadFixtures.Container(document.Thread, 0))
+            .FirstOrDefault(b => b.Content is string s && s == word);
+
+    private static Hyperlink? WaitLink(ComposerSurface composer) =>
+        ThreadFixtures.Visuals<TextBlock>(composer).Single(t => AutomationProperties.GetName(t) == "Send status")
+            .Inlines.OfType<Hyperlink>().FirstOrDefault(l => AutomationProperties.GetName(l)?.StartsWith("Wait", StringComparison.Ordinal) == true);
 
     private static async Task UntilAsync(Window window, Func<bool> condition, Func<string> what)
     {
-        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(60);
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(20);
         while (!condition() && DateTime.UtcNow < deadline)
         {
             await Task.Delay(20);
