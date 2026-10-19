@@ -3608,3 +3608,22 @@ Option C, bounded. Two definitions of one quantity is a defect signature (DM7), 
 Option A. Spec :104 requires acceptance to name the declared deliverable, and AC-W03c requires a plan deliverable accepted without claiming implementation. No v2 column holds a deliverable kind, and option B would be a migration for no WL-1b need. Conditions: the Accepted line names the intent revision by its number (for example 'revision 3'), never says 'implemented' or 'done', and a test refuses an Accepted line that claims implementation. A typed deliverable kind is a later v3 column, if a slice needs to distinguish kinds. T23's assume: marker for DR-4 is resolved by this ruling.
 
 - request: req-01M5AD6EH3Y1VE7BGNGM5KHJHH · ruled by: wl-owner-20261018 · at: 2026-10-19T15:43:38Z
+
+### Ruling 180 — AC-W01a: goal and done criteria are prefilled by the model by default; new sessions open in agentic-advisory when Ruling 68's gate 1 admits, the compile-mode control is exposed, and a kept line is kept; amends Ruling 68's default only
+
+Option A. The user stated the requirement directly after the WL-1a demo: 'i should not be the one filling in goal and done criteria - that should come from the LLM analysis of my prompt'. AC-W01a (workbench-loops-ux.md:146) requires goal, completion conditions, exclusions and scope to be 'derived/prefilled where possible, editable inline and visible before submission'.
+
+The capability exists but is off. The default is CompileModes.MechanicalOnly (SessionConfig.cs:136, Ruling 68). SessionConfigStore.SetCompileMode (:342) has one caller in src, ParallelSessionFlow.cs:120, which copies the parent's mode, so no user can turn it on.
+
+Ruling 68 makes agentic-advisory selectable once gate 1 holds: the pin spike artifact exists with an adapter sha equal to the installed adapter's. The Owner checked this machine. %USERPROFILE%/.aide/proof/compile-pin-spike.json exists, and the installed acp-agent.js sha256 is c22424c297429378166524b59ee6bed239c999a420ad0dd06571b768efa7525b, the pinned value (ADR-0035, compile-pin-spike.md:58). The rung is therefore admitted here. This ruling amends only Ruling 68's DEFAULT. The full 'agentic' rung stays behind the 50 scored plus 50 holdout floors.
+
+Conditions, each red-first:
+(1) A new session's compile mode is agentic-advisory when gate 1 admits, and mechanical-only otherwise. The settings row states which, and why (C3).
+(2) The compile-mode control is exposed in session settings with keyboard and UIA. Choosing mechanical-only is always allowed.
+(3) Derived lines are visibly marked as suggested and editable inline (AC-W01a). They count only when kept. Keeping one writes it into the draft, so it survives the next prepare and a restart (C1, fixing ComposerSurface.cs:1543-1546).
+(4) The cost is shown: each advisory call's spend reaches the existing compile-cost line, and the first 50 advisory calls' cost and latency are read and recorded (C4).
+(5) Currentness reads projection_sha from stored rows inside T27 under Ruling 178 (C2).
+(6) The existing eval, tools/compile-eval with ADR-0036's floors, runs in the track, and the AI-systems lens's conditions are carried as written in docs/notes/wl-dr-prefill-goal-done.md.
+Option B would leave the user filling the fields by default. Option C contradicts the stated requirement.
+
+- request: req-01M5AE9DXW4KNPPMBJB385J14P · ruled by: wl-owner-20261018 · at: 2026-10-19T16:01:57Z
