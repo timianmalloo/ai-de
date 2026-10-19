@@ -9,7 +9,7 @@
   AiDe.Core.Tests -> C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
 Test run for C:\Projects\ai-de-wl1a-notebook-binding\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:00:41.16]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+[xUnit.net 00:01:17.80]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
   Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
 
-Passed!  - Failed:     0, Passed:  3013, Skipped:     1, Total:  3014, Duration: 2 m 7 s - AiDe.Core.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:  3017, Skipped:     1, Total:  3018, Duration: 2 m 8 s - AiDe.Core.Tests.dll (net10.0)
