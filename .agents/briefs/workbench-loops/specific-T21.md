@@ -1,34 +1,33 @@
-# Brief — T21 `wls-float` (slice WL-S) · Claude Code · Opus · node 7 (close condition 4)
+# Brief — T21 `wls-float` (slice WL-S) · Claude Code · Opus · node 8 (close condition 4, continued)
 
-**Goal (Ruling 171 (3)):** WL-S is not accepted until **a live notebook floats and redocks**. T21 (nodes 1–6) is joined on
-main (`8608d4eb`), and T11's notebook kind is now joined on main too (`d25d0311`). This node proves the live case.
+**Goal (Ruling 171 (3)):** WL-S is not accepted until **a live notebook floats and redocks**.
+**Node 7** (e83a4d7d) made (A) red through the real shell, at `0097164f`: "the model floats the notebook, but the view
+shows 0 floating window(s)". Its cause, from reading: `WorkbenchController.ApplyAndAnnounce` (:732) applies and announces
+but never renders, and every command route ends there. (B) and (C) are drafted in `{PROOF}/n8-draft-B-C-tests.txt`.
+**Seam `req-01M5ATF6PNMEW0SX2KKZA34D4D` is GRANTED** (late; the Leader missed it during node 7). It covers one line in
+`src/AiDe.App/Workbench/DockHost.cs` after :73, `controller.LayoutApplied += adapter.Render;`, plus the `LayoutApplied`
+event in `WorkbenchController`, raised after `service.Apply` in `ApplyAndAnnounce`.
+**The Leader merged origin/main into your tree** (`3b8c6fe3`), so claims pass again.
 
-**This node (n7). Each check is red then green, through real gestures on the real shell composition
-(`WorkbenchShell` + the `notebook` kind + a bound `AttemptHost`, as T11's and T17d's tests build it):**
-- **(A) A notebook with a turn running floats, and the run continues.** Open a notebook, send a long turn on the stub
-  lane so it is Running, then float its pane (floatPane, the user's gesture). Expect: one floating window holds the
-  notebook; the same `NotebookModel` instance and the same in-flight attempt keep going, with no restart, no second
-  dispatch and no lost events; the turn completes inside the floating window, and its row reads as completed there.
-- **(B) It redocks, and the run's state is intact.** Redock the floating notebook, mid-run and after completion (two
-  cases). Expect: it returns to its zone (Center for Factory). The thread, the composer draft and the attempt row are
-  the same as before the float. No "Pane hidden" announcement is made, since a float is not a hide (DOCK1 is for a
-  close). Focus lands in the notebook.
-- **(C) A floating live notebook survives a restart.** Save the layout with a floating notebook, then restart (the
-  shell's revive path). Expect: the notebook restores floating, with its bounds (Ruling 174), and reads its attempts
-  back (T17d). A turn that was running at close shows as T17's restored state. Do not invent a new state.
-- **Then** update the WL-S Proof Pack (`docs/proof/workbench-loops-wl-s.md`). The float step in the human demo script
-  stops being "pending: close condition 4"; it gets its exact keyboard steps and expected observations, and the
-  float/redock risk row moves to the evidence. Run rule 22's ratchet before the done mail.
+**This node (n8), each red then green through the real gesture:**
+- **(A) green.** Add the event and its wiring. (A)'s red at `0097164f` turns green. Then **sweep the class**: close,
+  collapse, maximize and next-tab run as commands probably have the same gap. Give each a test through the palette,
+  red on the parent of your fix (or by reverting the wiring), then green. Show that routes which already render (drag,
+  restore) do not render twice, or that a second render is harmless, by a test or by file:line. Register the class in
+  `docs/lessons/defect-classes.md` as `DC-NEW-wl-t21-float-d` (a layout command that changes the model and never
+  renders), in the same commit as the fix.
+- **(B) redock**, from the draft: mid-run and after completion, with the state intact, no DOCK1, and focus in the
+  notebook. Node 7 expects from reading that focus after a redock may be wrong. Show it.
+- **(C) a floating live notebook survives a restart**, from the draft: it restores floating, with its bounds and its
+  read-back. Node 7 expects from reading that the floating window's tab has no context menu, because `DecorateTabs`
+  walks only `Manager` (`WorkbenchAdapter.cs:82`). If that is red, it is part of (C).
+- **Then** the WL-S Proof Pack's demo step 5 with real keyboard steps (the palette's *Float pane*, then
+  *Move to → Center*; `Ctrl+K, F` is unbound). Then rule 22's ratchet: this node hands off for a join.
 
-If the shell needs a code change outside T21's window (for example `WorkbenchShell.cs` routing the notebook's float),
-send a seam request naming file:line and keep the red committed. Do not edit the file without a grant.
-
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 15 min by mail.
-**Desktop hold:** a "desktop hold occupied" result is re-run after 2 min and logged. Rules 19, 20, 21 and 22 apply.
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16). Node 7 measured 258k: **hand off at 180k**.
+**Kick** at 15 min by mail.
+**Desktop hold:** rules 19, 20, 21 and 22 apply. A "desktop hold occupied" result is re-run after 2 min and logged.
 
 ## Owned authored paths
-T21's window, as in node 6. Plus new tests under `tests/AiDe.App.Tests/Workbench/` for (A)–(C), and
-`docs/proof/workbench-loops-wl-s.md` (the float step, the float risk row and the evidence rows only).
-
-## Not in scope
-The move-then-crash residual (`WorkbenchShell.cs`, needs a grant; it stays Inferred), and the "No surface “”." copy.
+T21's window, plus the one granted `DockHost.cs` line, the new tests under `tests/AiDe.App.Tests/Workbench/`, the WL-S
+Proof Pack's float rows and step 5, and `docs/lessons/defect-classes.md` (your DC-NEW entry only).

@@ -1,48 +1,39 @@
-# Brief — T30 `wl-prefill` (AC-W01a, Ruling 180) · Claude Code · Opus · node 1
+# Brief — T30 `wl-prefill` (AC-W01a, Ruling 180) · Claude Code · Opus · node 2
 
-**Goal (Ruling 180; read it in `docs/notes/addendum-c-council-rulings.md`):** goal, done criteria and exclusions are
-prefilled by the compile step's model by default, as the user asked after the WL-1a demo ("i should not be the one filling
-in goal and done criteria - that should come from the LLM analysis of my prompt"). New sessions open in
-`agentic-advisory` when Ruling 68's gate 1 admits it, the compile-mode control is exposed, and a kept line is kept.
-**Only Ruling 68's DEFAULT is amended.** The full `agentic` rung stays behind the 50+50 floors. Condition (5), C2, is
-**not** this track's: it moved to T26's D2.
-**Read first:** T29's assessment `docs/notes/wl-dr-prefill-goal-done.md`, merged into your branch. It names every seam
-with file:line: `SessionConfig.cs:136`, `SessionConfigStore.SetCompileMode` (:342), `ComposerSendGate.PrepareAsync`
-(:148, :579-670), `ComposerSurface.cs:1537-1547` and `:2361-2368`, `CompileModeGate.cs:43-44`, `Envelope.cs:68-79`, and
-the settings row at `SessionDocumentSurface.cs:1413`. Rule 14 holds: re-open each one on your branch, because T28 changed
-`ComposerSurface.cs` after T29 read it.
+**Goal (Ruling 180):** goal, done criteria and exclusions are prefilled by the model by default, visibly suggested, and
+kept when kept. This node makes it reach the user.
+**Node 1 is accepted as a branch node** (bd8ef0d7): the advisory default with an injected gate, the Compile mode control,
+and Keep writing into the draft across a re-prepare. **It is not user-visible yet:** File > New Session still opens
+mechanical-only.
 
-**This node (n1), each red then green, through the user's real gesture where a UI is involved:**
-- **(A) Ruling 180 (1): the default.** A new session's compile mode is `agentic-advisory` when gate 1 admits it, and
-  `mechanical-only` otherwise. The settings row states which mode and why, with the gate's own reason text. Test both
-  branches through a deterministic gate seam: no real `~/.aide/proof` read in a unit test; inject the gate's input.
-- **(B) Ruling 180 (2): the control.** The compile mode is exposed in session settings and changeable by keyboard,
-  with UIA name and role. Choosing `mechanical-only` is always allowed. Choosing `agentic-advisory` is offered only
-  when gate 1 admits it, otherwise disabled with the reason. It goes through `SetCompileMode` and the gate.
-- **(C) Ruling 180 (3): suggested, editable, kept.** Derived lines are visibly marked as suggested (the existing
-  *? derived* mark, or the Owner's word "suggested"; read DESIGN.md first) and are editable inline. They count only
-  when kept, so an unkept line never enters `projection_sha` (`Envelope.cs:68-79`). **Keep writes the line into the
-  draft (C1)**, so it survives the next prepare and a restart. That fixes the lost-on-re-prepare defect T29 found at
-  `ComposerSurface.cs:1543-1546`. Red through the gesture: type, prepare (stub compile returns three derived lines),
-  Keep one, prepare again or restart, and the kept line is still there.
-**Node 2 (not this one):** Ruling 180 (4), the cost line per advisory call and the first 50 calls' cost and latency
-recorded; (6) `tools/compile-eval` run in the track, with the AI-systems lens's conditions carried; the Proof Pack.
+**This node (n2), in this order:**
+- **(0) Measure C1's restart half before anything is decided (rule 14).** Keep a suggested line, prepare (stub), then
+  restart through the shell's revive path, as T17d's tests reopen a notebook. Read the composer draft. Node 1 found
+  `ComposerDraftStore` has no caller in `src/AiDe.App`, but a notebook revision saved at prepare may carry the draft.
+  Record in `{PROOF}/c1-restart-measure.txt` whether the kept line survives, and through which path (file:line). If it
+  does not survive, **stop that item**, say so in handoff.md with the evidence, and the Leader brings the Owner a DR on
+  draft persistence. Do not build persistence.
+- **(A) Wire the default into the real app**, red first through the real menu: **File > New Session** opens
+  `agentic-advisory` when gate 1 admits, and the real session settings evaluate the gate over the bound adapter. Use
+  the two granted lines from seam `req-01M5ATGTTQS78NG5W7ZMZE8G00`: the `compileModes` argument at
+  `NewSessionSheetViewModel.cs:556`, and a read-only `ComposerSurface.AdapterInstallRoot` getter. The sheet's gate
+  input is injected so the red is deterministic. No real `~/.aide/proof` read happens in a test.
+- **(B) The visible mark reads "suggested" (Owner, under Ruling 180 (3)).** "suggested" replaces "? derived" for
+  model-derived lines, as one const; UIA uses the same word; DESIGN.md is amended at the row that defines "? derived".
+  Keep "? derived" only if DESIGN.md uses it for a different, non-model derivation, and cite that row. Red: a
+  model-derived line shows "suggested", and a kept line no longer shows it.
+- **(C) DC-NEW-wl-t30-prefill, the class control (Owner).** Add a fixture that scopes window queries to the test's own
+  window, so a test never reads another test thread's window. Red: one test that fails under the whole-suite interleave
+  (or a forced concurrent window), then green through the fixture. Sweep the App tests that query windows globally;
+  name them in handoff.md and move each one you can onto the fixture.
+**Node 3 (not this one):** Ruling 180 (4), the cost line and the first 50 calls; (6) compile-eval; the Proof Pack; rule 22.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16) · **kick** at 15 min by mail.
-**Desktop hold:** rules 19, 20, 21 and 22 apply. A "desktop hold occupied" result is re-run after 2 min and logged.
-**No real model call in any test.** The compile host is stubbed. A real advisory call spends the user's subscription.
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Node 1 measured 275k, the fourth node over cap this
+epoch: **hand off at 150k**, measured from your own usage. **Kick** at 12 min by mail.
+**Rules 19, 20, 21 apply.** No real model call in any test.
 
 ## Owned authored paths
-- `src/AiDe.Core/Sessions/SessionConfig.cs` (the default only) and `SessionConfigStore.cs` (if the default needs it)
-- `src/AiDe.App/Workbench/Composer/ComposerSurface.cs` (the derived-line Keep and mark regions; T28's sent and queued
-  regions are read only)
-- `src/AiDe.App/Workbench/Composer/ComposerSendGate.cs` (the Prepare path for kept lines only)
-- the session-settings row in `SessionDocumentSurface.cs` (:1413's region only)
-- new tests under `tests/AiDe.App.Tests/Workbench/Composer/` and `tests/AiDe.Core.Tests/Sessions/`
-- the DESIGN.md rows for the mode copy and the suggested mark
-- `{PROOF}/**`
-
-Any other file needs a seam request.
-
-## Not in scope
-Condition (5) (T26). Raising the `agentic` rung. Any change to the compile prompt or the eval floors.
+As in node 1, plus the two granted lines, the new fixture and the tests moved onto it under
+`tests/AiDe.App.Tests/`, the DESIGN.md "? derived" row, and `docs/lessons/defect-classes.md` (your DC-NEW entry only).
+`ComposerGesture.cs` (T28's helper) may be extended for the binder's goal-block form; node 1's finding is that it
+leaves the draft free-form. Say what you changed.

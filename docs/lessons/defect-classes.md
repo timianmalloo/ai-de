@@ -8648,3 +8648,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (`docs/proof/workbench-loops-wl-1a/prefill/suite-node1.txt`). Class: **not built** — a source scan that refuses an
   unscoped `CurrentSources` / `Application.Current.Windows` read in `tests/AiDe.App.Tests` is the next step.
 - **Status:** `open` (instance fixed; the class control is not built).
+- **DC-NEW-wl-leader3, fourth instance (2026-10-19, T21 n7):** a seam request (`req-01M5ATF6PNMEW0SX2KKZA34D4D`, a
+  one-line `DockHost.cs` grant that blocked close condition 4) sat unanswered through the whole node. The Leader watched
+  mail and the board, and seam requests arrive in the requests ledger. The node stopped at its kick with no check green.
+  **Control (mechanical, Leader session):** a monitor polls `coord request list` every 60 s and raises an event for each
+  new typed request addressed to the Leader. Its gap: it lives only as long as the Leader's session, so the next Leader's
+  kickoff must start it. That makes the status `partially-controlled`; a hand-off brief line is owed.
