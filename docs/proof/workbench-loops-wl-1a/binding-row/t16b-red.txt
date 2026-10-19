@@ -1,0 +1,58 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1a-attempt-binding-row\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1a-attempt-binding-row\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1a-attempt-binding-row\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1a-attempt-binding-row\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.00]     AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AfterARestart_EachTurnsRowNamesItsOwnRevisionRequestAndRoute [FAIL]
+  Failed AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AfterARestart_EachTurnsRowNamesItsOwnRevisionRequestAndRoute [803 ms]
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. Outcome ⇔ a terminal state; Preparing, Running, Waiting, StopRequested, Queued and NotRecorded carry none (Parameter 'outcome')
+---- System.ArgumentException : Outcome ⇔ a terminal state; Preparing, Running, Waiting, StopRequested, Queued and NotRecorded carry none (Parameter 'outcome')
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Sta.cs:line 209
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AfterARestart_EachTurnsRowNamesItsOwnRevisionRequestAndRoute() in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Workbench\Records\TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at AiDe.Core.Presentation.Sessions.TurnView..ctor(Int32 ordinal, String envelopeId, String sourceText, IReadOnlyList`1 decorations, TurnState state, OutcomeView outcome, WaitingRequest waiting, IReadOnlyList`1 events, String sentBytes, DateTimeOffset at) in C:\Projects\ai-de-wl1a-attempt-binding-row\src\AiDe.Core\Presentation\Sessions\SessionThread.cs:line 201
+   at AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.<AfterARestart_EachTurnsRowNamesItsOwnRevisionRequestAndRoute>b__8_1(Window window, Border _) in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Workbench\Records\TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs:line 88
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext() in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Sta.cs:line 140
+[xUnit.net 00:00:01.59]     AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.TheTerminalWord_HasOneSource_AndBothSurfacesShowIt [FAIL]
+[xUnit.net 00:00:01.76]     AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AReceiptThatLandsAfterTheSnapshot_ShowsItsBindingOnRefresh_NotAttemptNotRecorded [FAIL]
+  Failed AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.TheTerminalWord_HasOneSource_AndBothSurfacesShowIt [19 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Sub-string found
+                                 ↓ (pos 11494)
+String: ···"remove.\n        new("terminal", "Terminal"···
+Found:  ""terminal", "Terminal""
+  Stack Trace:
+     at AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.TheTerminalWord_HasOneSource_AndBothSurfacesShowIt() in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Workbench\Records\TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs:line 163
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AReceiptThatLandsAfterTheSnapshot_ShowsItsBindingOnRefresh_NotAttemptNotRecorded [160 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "Sent from revision 4 · request ab12cd3 · "···
+Actual:   "Attempt not recorded"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.TheRowsAttemptBindingSurvivesRestartAndSequenceTests.AReceiptThatLandsAfterTheSnapshot_ShowsItsBindingOnRefresh_NotAttemptNotRecorded() in C:\Projects\ai-de-wl1a-attempt-binding-row\tests\AiDe.App.Tests\Workbench\Records\TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs:line 138
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     1, Skipped:     0, Total:     4, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

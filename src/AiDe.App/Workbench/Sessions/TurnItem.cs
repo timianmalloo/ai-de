@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Store.Records;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -130,6 +131,35 @@ public sealed class TurnItem : INotifyPropertyChanged
     /// </summary>
     public IReadOnlyList<ConversationRow> Conversation => _conversation;
     public string SentBytes => _view.SentBytes;
+    /// <summary>The attempt this turn ran as, read from the attempt host by the feed; null when none is recorded.</summary>
+    public AttemptRow? Attempt
+    {
+        get => _attempt;
+        set
+        {
+            if (Equals(_attempt, value))
+            {
+                return;
+            }
+
+            _attempt = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        }
+    }
+
+    private AttemptRow? _attempt;
+
+    /// <summary>
+    /// <c>Sent from revision {n} · request {first 7 of projection_sha} · via {route}</c> (Ruling 161): the turn's own
+    /// attempt, in the provenance disclosure and as its HelpText. A field the row does not carry reads <i>not recorded</i>.
+    /// </summary>
+    public string BindingLine => _attempt is not { } attempt
+        ? AttemptNotRecorded
+        : string.Create(CultureInfo.InvariantCulture,
+            $"Sent from revision {attempt.RevisionNo} · request {(attempt.ProjectionSha is { Length: > 0 } sha ? sha[..Math.Min(7, sha.Length)] : NotRecorded)} · via {(attempt.RouteFingerprint is { Length: > 0 } route ? RouteWords.For(route) : NotRecorded)}");
+
+    private const string NotRecorded = "not recorded";
+    private const string AttemptNotRecorded = "Attempt not recorded";
     public string ProvenanceName => "Provenance of " + _view.DisplayOrdinal;
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;
 

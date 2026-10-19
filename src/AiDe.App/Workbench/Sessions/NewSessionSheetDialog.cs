@@ -365,7 +365,7 @@ public static class NewSessionSheetDialog
         }
 
         var lines = new StackPanel();
-        var engine = new TextBlock { Text = account.EngineId, FontSize = 12, Margin = new Thickness(22, 0, 0, 0) };
+        var engine = new TextBlock { Text = RouteWords.Engine(account.EngineId), FontSize = 12, Margin = new Thickness(22, 0, 0, 0) };
         engine.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
         if (account.Ref is { } reference)

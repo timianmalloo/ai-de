@@ -111,6 +111,9 @@ public sealed class NotebookRuns : IDisposable
     /// <summary>The attempt host this notebook's turns dispatch through, or null while none is bound.</summary>
     public IAttemptHost? Host => _host?.Host;
 
+    /// <summary>Raised each time an attempt becomes known to this notebook: a live receipt recorded.</summary>
+    public event Action? AttemptsChanged;
+
     /// <summary>The attempts read back from the store for this notebook's submitted envelopes (restart read-back).</summary>
     public IReadOnlyList<AttemptReceipt> ReadBack { get; private set; } = [];
 
@@ -740,6 +743,8 @@ public sealed class NotebookRuns : IDisposable
         {
             _attempts[ordinal] = receipt;
         }
+
+        AttemptsChanged?.Invoke();
     }
 
     /// <summary>Reported, never thrown away: the sentence is a line of the run, under the lane that refused (Ruling 81).</summary>
