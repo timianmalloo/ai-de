@@ -1,0 +1,49 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-folds\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.29]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent [1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtAnOldBaseline_StaysAccepted_ButNotAtCurrent() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 34
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptedRowAtTheCurrentBaseline_IsAcceptedAtCurrent() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 29
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_NoAcceptedRow_IsNotAccepted_WhateverElseExists() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 23
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne [< 1 ms]
+  Error Message:
+   System.NotImplementedException : The method or operation is not implemented.
+  Stack Trace:
+     at AiDe.Core.Workbench.Records.Folds.WorkClosureFold.Evaluate(IReadOnlyList`1 workDispositions, String currentBaseline) in C:\Projects\ai-de-wl1b-folds\src\AiDe.Core\Workbench\Records\Folds\WorkClosureFold.cs:line 17
+   at AiDe.Core.Tests.Workbench.Folds.WorkClosureFoldTests.A3_AnAcceptanceAtTheCurrentBaseline_WinsOverAnOlderOne() in C:\Projects\ai-de-wl1b-folds\tests\AiDe.Core.Tests\Workbench\Folds\WorkClosureFoldTests.cs:line 39
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 17 ms - AiDe.Core.Tests.dll (net10.0)
