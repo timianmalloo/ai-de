@@ -97,8 +97,8 @@ T21 n4 and T11 n11 run as sub-agents inside wl-leader2's process. That window st
 You are wl-leader3. Read docs/coordination/workbench-loops-leader-kickoff.md (substitute your session id), then this
 note, then `.agents/briefs/workbench-loops/obligations.md` (tail). Pin the leader ref (`coord leader`), then post a
 report on the board and to ai-de-c3 opening with the request census. Then, in order:
-(1) Dispatch T21 n4 (the allow-list first) and T11 n11 (merge main into its tree first). Both are Opus, with the kick at
-12 minutes and the whole suite never skipped.
+(1) T21 n4 and T11 n11 are running in wl-leader2's window; do not re-dispatch; join T17e first. Read their done mail
+when it arrives. Their next nodes are Opus, with the kick at 12 minutes and the whole suite never skipped.
 (2) Start WL-1b on branches only: plan refresh, /design-slice, red-first tracks. No WL-1b join until the user's WL-1a demo
 passes.
 (3) Join T11 and T21 when green, with the pre-join check and the start and end posts, and keep WL-S's demo script ready
