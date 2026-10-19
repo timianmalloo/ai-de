@@ -122,13 +122,16 @@ public sealed class TheHeldTurnIsWithdrawnTests : IDisposable
 
                 // The Owner's copy (Leader ruling, node 6): the turn's own label; the row's UIA help text carries it
                 // (Owner: HelpText, the Name stays ordinal + words), and the announcer speaks it unfocused, as Stop's is.
+                await UntilAsync(window, () => document.Thread.Rows[1].HelpText == "b2 cancelled by you before it was sent.",
+                    () => $"the withdrawn row's help text reads '{document.Thread.Rows[1].HelpText}'");
                 var row = document.Thread.Rows[1];
-                Assert.Equal("b2 cancelled by you before it was sent.", row.HelpText);
                 Assert.DoesNotContain("stopped by you", row.HelpText, StringComparison.Ordinal);
                 Assert.False(row.HelpText.StartsWith("Refused before it started", StringComparison.Ordinal), row.HelpText);
                 await UntilAsync(window, () => said.Messages.Any(m => m.Contains("b2 cancelled by you before it was sent.", StringComparison.Ordinal)),
                     () => $"the withdraw was never announced; heard: {string.Join(" | ", said.Messages)}");
-                Assert.DoesNotContain(said.Messages, m => m.Contains("b2 b2", StringComparison.Ordinal));
+                // TurnCopy has one Cancelled reason sentence (SessionThread.ReasonSentence); its announcement names the ordinal once.
+                var spoken = said.Messages.Last(m => m.Contains("cancelled by you before it was sent.", StringComparison.Ordinal));
+                Assert.Equal("Turn b2 cancelled by you before it was sent.", spoken);
 
                 _fixture.ReleaseRun();
                 await UntilAsync(window, () => model.Thread.Current.Turns[0].State == TurnState.Answered,

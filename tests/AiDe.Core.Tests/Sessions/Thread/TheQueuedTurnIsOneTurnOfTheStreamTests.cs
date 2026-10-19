@@ -197,7 +197,7 @@ public sealed class TheQueuedTurnIsOneTurnOfTheStreamTests
         announced.Clear();
         thread.Conclude(b3, TurnState.Cancelled, T0.AddSeconds(12));
         var cancelled = Assert.Single(announced);
-        Assert.Equal("Turn b3 cancelled before it was sent; its words went back to the editor.", cancelled.Text);
+        Assert.Equal("Turn b3 cancelled by you before it was sent.", cancelled.Text);
         Assert.Equal(AnnouncementKind.Aborted, cancelled.Kind);
         Assert.Equal("queued→cancelled", cancelled.Transition);
 

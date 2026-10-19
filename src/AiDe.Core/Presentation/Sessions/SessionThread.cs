@@ -351,7 +351,7 @@ public static class TurnCopy
             TurnState.OverLimit => "This turn went over a limit and ended. Send the same turn again as a new turn, or open the log.",
             TurnState.Waiting => turn.Waiting!.Text,
             TurnState.NotRecorded => "The outcome was not recorded: the turn was submitted and nothing consumed it.",
-            TurnState.Cancelled => "Cancelled before it was sent; its words went back to the editor.",
+            TurnState.Cancelled => $"{turn.DisplayOrdinal} cancelled by you before it was sent.",
             _ => string.Empty,
         };
     }
