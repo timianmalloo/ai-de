@@ -275,6 +275,100 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
             });
     }
 
+    /// <summary>
+    /// Leader's check (the T17 condition on ordinals): a turn sent while the read-back of two attempts is still pending
+    /// waits for it, so it is b3 after the two restored rows, and every row names its own attempt.
+    /// </summary>
+    [Fact]
+    public void ATurnSentBeforeTheReadBackFinishes_WaitsForIt_AndIsB3_AndEveryRowNamesItsOwnAttempt()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                _fixture.ReleaseRun();
+
+                var (host, model, surface) = await ReopenAsync(window);
+                surface.Composer.Draft.SetFreeFormText("first words");
+                await NotebookFixture.SendAndSettleAsync(surface);
+                await UntilAsync(window, () => Ended(model, 0), () => "A never ended");
+                surface.Composer.Draft.SetFreeFormText("second words");
+                await NotebookFixture.SendAndSettleAsync(surface);
+                await UntilAsync(window, () => Ended(model, 1), () => "B never ended");
+                var a = model.Runs.AttemptOf(1)!.Attempt;
+                var b = model.Runs.AttemptOf(2)!.Attempt;
+                Close(window, host, model, surface);
+
+                // Reopen with the host's reads held: the read-back is pending when the next turn is sent.
+                var held = new HeldReads(new BoundaryDispatcher(_fixture.Store));
+                host = await AttemptHost.OpenAsync(held, LockFile, CancellationToken.None);
+                held.Hold();
+                model = _fixture.NewModel();
+                model.Runs.BindHost(host, Scope);
+                surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = surface;
+                _fixture.ConfigureStub(surface);
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                Assert.False(surface.LastReadBack.IsCompleted, "the read-back finished before the send; the race is not exercised");
+
+                surface.Composer.Draft.SetFreeFormText("third words");
+                Assert.NotNull(surface.Composer.Send());
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                held.Release();
+                await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
+                await UntilAsync(window, () => surface.Thread.Rows.Count == 3 && Ended(model, 2),
+                    () => $"{surface.Thread.Rows.Count} rows; [{string.Join(", ", surface.Thread.Rows.Select(r => r.DisplayOrdinal + " " + r.Words))}]");
+
+                var rows = surface.Thread.Rows;
+                Assert.Equal(["b1 first words", "b2 second words", "b3 third words"], rows.Select(r => r.DisplayOrdinal + " " + r.Words));
+                var c = model.Runs.AttemptOf(rows[2].Ordinal)!.Attempt;
+                Assert.Equal(a.DispatchKey, model.Runs.AttemptOf(rows[0].Ordinal)!.Attempt.DispatchKey);
+                Assert.Equal(b.DispatchKey, model.Runs.AttemptOf(rows[1].Ordinal)!.Attempt.DispatchKey);
+                Assert.NotEqual(a.DispatchKey, c.DispatchKey);
+                Assert.NotEqual(b.DispatchKey, c.DispatchKey);
+                await UntilAsync(window, () => rows[2].BindingLine.StartsWith("Sent from", StringComparison.Ordinal), () => $"b3 reads \"{rows[2].BindingLine}\"");
+                Assert.Equal($"Sent from revision {a.RevisionNo} · request {a.ProjectionSha![..7]} · via claude-code", rows[0].BindingLine);
+                Assert.Equal($"Sent from revision {b.RevisionNo} · request {b.ProjectionSha![..7]} · via claude-code", rows[1].BindingLine);
+                Assert.Equal($"Sent from revision {c.RevisionNo} · request {c.ProjectionSha![..7]} · via claude-code", rows[2].BindingLine);
+                Close(window, host, model, surface);
+            });
+    }
+
+    /// <summary>The real ledger, with its attempt reads held from <see cref="Hold"/> until <see cref="Release"/>.</summary>
+    private sealed class HeldReads(IAttemptLedger inner) : IAttemptLedger
+    {
+        private readonly TaskCompletionSource _released = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private bool _holding;
+
+        public void Hold() => _holding = true;
+
+        public void Release() => _released.TrySetResult();
+
+        public Task<AttemptBeginResult> BeginAttemptAsync(AttemptRow attempt, CancellationToken cancellationToken) =>
+            inner.BeginAttemptAsync(attempt, cancellationToken);
+
+        public Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken) =>
+            inner.AppendAttemptOutcomeAsync(outcome, cancellationToken);
+
+        public async Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken)
+        {
+            if (_holding)
+            {
+                await _released.Task.WaitAsync(cancellationToken);
+            }
+
+            return await inner.ReadAttemptAsync(dispatchKey, cancellationToken);
+        }
+
+        public Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
+            inner.SweepAttemptsAsync(request, cancellationToken);
+
+        public Task<AttemptAppendResult> WithdrawAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+            inner.WithdrawAttemptAsync(dispatchKey, cancellationToken);
+    }
+
     private static void Collect(AutomationPeer? peer, List<string> names)
     {
         if (peer is null)
