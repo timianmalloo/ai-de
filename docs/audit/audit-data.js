@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T00:38:59Z",
+  "generated": "2026-10-19T00:58:31Z",
   "audit": [
     {
       "actor": null,
@@ -22605,24 +22605,130 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58R1P58WC1KKB9XF6CZEJ0C",
-      "shortname": "join-sp1-schema-v2",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T00:12:41Z",
+      "done_when": "migration golden round-trip incl. WAL; DM11; one violation test per ADR-0039 s4 row; read-only-on-newer; Ruling 148/150 conditions",
+      "duration_seconds": 557.0,
+      "fan_out": 0,
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "id": "al-01M58R1P58WC1KKB9XF6CZEJ0C",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-schema-v2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:03:24Z",
+      "summary": "Schema v2: migration chain, WAL-safe snapshot, constraints, typed record API; Ruling 148 (a)-(h) and Ruling 150 landed red-first. Defect-register EOF conflict resolved by keeping both entries (DC-NEW-wl-t1-wl0, DC-NEW-wl-t2-sp1). Step 8 per Rulings 151/153. recount_seconds=555 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:26:33Z",
+      "done_when": "ratchet PASS vs origin/main 17fba9ef",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
+      "id": "al-01M58RV2ZDC0XW76QP43HK8XBF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of sp1-schema-v2 into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-schema-v2-fm",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:26:32Z",
+      "summary": "Re-join of sp1-schema-v2 for 888aeb36 (V2 frontmatter on the evidence README; the first T2 join's ratchet refused docs-graph validate green->red). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T00:38:59Z",
+      "done_when": "pushed with ratchet PASS recorded",
+      "duration_seconds": 2096.0,
+      "fan_out": 0,
+      "goal": "Land schema v2 on main under Ruling 151/153",
+      "id": "al-01M58SHVSQ3VK6266W707QY73V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the T2 schema-v2 join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-sp1-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T00:04:03Z",
+      "summary": "T2 schema v2 pushed d0cee41b (17fba9ef..d0cee41b). First join's ratchet REFUSED docs-graph validate green->red (sp1 evidence README had no frontmatter; Leader brief omission, same class on T3/T4 branches fixed pre-join; brief rule 13 added). Re-join with 888aeb36: ratchet PASS 0/48, Ruling 153 filter dropped 104/104, recount gates excluded per 151(3) (first join's recount green). Defect-register EOF conflict resolved by keeping both entries. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/Shared/ConsoleHostCensus.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:05:42Z",
+      "done_when": "retry test, cause in snapshot, suites green",
+      "duration_seconds": 995.0,
+      "fan_out": 0,
+      "goal": "census reliable",
+      "id": "al-01M58M71V17RJM3KKXXKBZN3N0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Make the console-host census read reliably under load",
+      "session": "wl-t12-census",
+      "shortname": "wl-t12-census",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:49:07Z",
+      "summary": "Census retries only its read 3x, reports cause; consumers say NOT CHECKED; DC-NEW-wl-t12-census registered",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M58TNJX0QVXXYH6ZZTN4ZWHM",
+      "shortname": "join-census-flake",
+      "datetime": "2026-10-19T00:58:30Z",
       "session": "wl-leader-20261018",
       "prompt": "the join of the resolved merge into main",
-      "summary": "Schema v2: migration chain, WAL-safe snapshot, constraints, typed record API; Ruling 148 (a)-(h) and Ruling 150 landed red-first. Defect-register EOF conflict resolved by keeping both entries (DC-NEW-wl-t1-wl0, DC-NEW-wl-t2-sp1). Step 8 per Rulings 151/153. recount_seconds=555 (docs_only=False).",
+      "summary": "T12: ConsoleHostCensus.Take retries only the WMI read (3 attempts, 300 ms backoff); persistent failure NOT CHECKED with cause; a good read showing a leak still fails at once. Joined before T3 (T3's recount failed on 6 census reads). Register EOF conflict kept both. Step 8 per Rulings 151/153. recount_seconds=518 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
+        "docs/proof/workbench-loops-support/census/census-green.txt"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
-      "done_when": "migration golden round-trip incl. WAL; DM11; one violation test per ADR-0039 s4 row; read-only-on-newer; Ruling 148/150 conditions",
+      "goal": "Make the console-host census read the process table reliably under concurrent test load",
+      "done_when": "transient read absorbed, real leak still fails, persistent failure explained; suites green",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -22630,61 +22736,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T00:03:24Z",
-      "duration_seconds": 557.0
-    },
-    {
-      "id": "al-01M58RV2ZDC0XW76QP43HK8XBF",
-      "shortname": "join-sp1-schema-v2-fm",
-      "datetime": "2026-10-19T00:26:33Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of sp1-schema-v2 into main",
-      "summary": "Re-join of sp1-schema-v2 for 888aeb36 (V2 frontmatter on the evidence README; the first T2 join's ratchet refused docs-graph validate green->red). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land WorkspaceSchema v2 with the first workspace.db migration chain and a typed store API for every v2 row",
-      "done_when": "ratchet PASS vs origin/main 17fba9ef",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-10-19T00:26:32Z",
-      "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M58SHVSQ3VK6266W707QY73V",
-      "shortname": "join-sp1-step8-ratchet",
-      "datetime": "2026-10-19T00:38:59Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153 step-8 completion for the T2 schema-v2 join",
-      "summary": "T2 schema v2 pushed d0cee41b (17fba9ef..d0cee41b). First join's ratchet REFUSED docs-graph validate green->red (sp1 evidence README had no frontmatter; Leader brief omission, same class on T3/T4 branches fixed pre-join; brief rule 13 added). Re-join with 888aeb36: ratchet PASS 0/48, Ruling 153 filter dropped 104/104, recount gates excluded per 151(3) (first join's recount green). Defect-register EOF conflict resolved by keeping both entries. Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/sp1/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land schema v2 on main under Ruling 151/153",
-      "done_when": "pushed with ratchet PASS recorded",
-      "tier": "T1",
-      "fan_out": 0,
-      "started_at": "2026-10-19T00:04:03Z",
-      "duration_seconds": 2096.0
+      "started_at": "2026-10-19T00:49:50Z",
+      "duration_seconds": 520.0
     }
   ],
   "changes": [
@@ -26947,6 +27000,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t9-spike"
+    },
+    {
+      "id": "mail-01M58SJJ6637QZ4B3ZH2TKTZ7P",
+      "ts": "2026-10-19T00:39:22Z",
+      "from": "wl-t10-e1",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t10-e1"
+    },
+    {
+      "id": "mail-01M58SMHXMCXPYMZ1PDDCPP3QT",
+      "ts": "2026-10-19T00:40:27Z",
+      "from": "wl-t10-e1",
+      "to": "wl-leader-20261018",
+      "kind": "blocked",
+      "ref": null,
+      "session": "wl-t10-e1"
     }
   ]
 };

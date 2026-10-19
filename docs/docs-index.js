@@ -10584,7 +10584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7e0a5f7f2a327bae9e2c8f67df43ebfb335fefb7da3df9248d0ed15b967418ec"
+      "sourceSha256": "a1d8441a884c38f62ad5843c29e8740ba8fbcb1b426f5932c9fbf19f9af9f803"
     },
     {
       "id": "design-session-profiler",
@@ -24243,5 +24243,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "a15a9c371695e15eac28ecd5b45d3669c802fe049988aabec2f79d8d9d5d8769"
+  "graphSha256": "c194f7cda3d3370614ff5e1b3c98de439a9a3574b56cc31af765ebd18b8d724b"
 };
