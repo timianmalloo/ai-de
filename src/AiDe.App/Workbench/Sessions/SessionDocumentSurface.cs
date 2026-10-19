@@ -1351,8 +1351,75 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         return chrome;
     }
 
-    /// <summary>The compile-mode ladder as the gates read it now.</summary>
-    public Func<AiDe.Core.Sessions.CompileModeAvailability>? CompileModeLadder { get; set; }
+    /// <summary>
+    /// The compile-mode ladder as the gates read it now (ADR-0036 rule 1), evaluated at every open of the settings and
+    /// at every change; null when this document cannot evaluate it — only <c>mechanical-only</c> is then offered. The
+    /// product binds it to <see cref="CompileModeGate.Evaluate(string)"/> over the session's adapter install root; a
+    /// test injects the gate's input here.
+    /// </summary>
+    public Func<CompileModeAvailability>? CompileModeLadder { get; set; }
+
+    /// <summary>What the settings row says when no ladder can be read: every agentic rung refused, by name.</summary>
+    private const string LadderNotEvaluated = "this session document cannot read the compile-mode gates, so only mechanical-only is offered";
+
+    private CompileModeAvailability CompileModeLadderNow()
+    {
+        if (CompileModeLadder?.Invoke() is { } ladder)
+        {
+            return ladder;
+        }
+
+        var refused = new CompileModeRefusal(Envelope.NotRecorded, LadderNotEvaluated);
+        return new CompileModeAvailability(
+            new Dictionary<string, CompileModeRefusal>(StringComparer.Ordinal) { [CompileModes.AgenticAdvisory] = refused, [CompileModes.Agentic] = refused },
+            Recount: null,
+            ArtifactPath: Envelope.NotRecorded);
+    }
+
+    /// <summary>What a rung does, in the user's words (DESIGN.md's session-settings copy).</summary>
+    internal static string CompileModeMeaning(string mode) => mode switch
+    {
+        CompileModes.AgenticAdvisory => "Agentic-advisory: the compile step suggests Goal, Done when and Not in scope; each counts only once you keep or edit it.",
+        CompileModes.Agentic => "Agentic: the compile step fills the structure and Send confirms it.",
+        _ => "Mechanical-only: one gesture, you fill the structure.",
+    };
+
+    /// <summary>
+    /// The row's stated reason (Ruling 180 (1), C3): what the session's mode does, and why it is the one in force —
+    /// the gate's admission for an agentic rung, or the gate's own refusal text when agentic-advisory is not available.
+    /// </summary>
+    internal static string CompileModeWhy(string mode, CompileModeAvailability ladder)
+    {
+        var meaning = CompileModeMeaning(mode);
+        if (mode is CompileModes.AgenticAdvisory)
+        {
+            return meaning + " Gate 1 admits it: the compile-pin spike matches the installed adapter.";
+        }
+
+        if (mode is CompileModes.Agentic)
+        {
+            return meaning + " Gate 2 admits it.";
+        }
+
+        return ladder.RefusalFor(CompileModes.AgenticAdvisory) is { } refusal
+            ? meaning + " Agentic-advisory is not available: " + refusal.Reason + "."
+            : meaning + " Agentic-advisory is available; choose it to have the compile step suggest the lines.";
+    }
+
+    /// <summary>Selects the session's compile mode through the store and the gate (<see cref="SessionConfigStore.SetCompileMode"/>), then binds this composer's next envelope to it; returns what to announce.</summary>
+    private string ChangeCompileMode(string mode)
+    {
+        try
+        {
+            var updated = new SessionConfigStore(Model.WorkspaceRoot, Model.SessionId).SetCompileMode(mode, CompileModeLadderNow(), DateTimeOffset.UtcNow);
+            Composer.Gate.BindSession(Composer.Gate.SessionId, updated.CompileMode, Composer.Gate.EngineId, Composer.Gate.DefaultTaskClass);
+            return $"Compile mode is now {updated.CompileMode} for new prompts.";
+        }
+        catch (Exception error) when (error is EnvelopeStoreException or IOException or System.Text.Json.JsonException or InvalidOperationException)
+        {
+            return $"Compile mode stays {Composer.Gate.CompileMode}: {error.Message}";
+        }
+    }
 
     /// <summary>The session settings as a Popup (SC1's header): the four values, read here — editing them is CV-3's settings model.</summary>
     private Popup BuildSettingsPopup(Button target)
@@ -1429,7 +1496,62 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         ReflectAccounts();
         target.Click += (_, _) => ReflectAccounts();
 
-        Row("Compile mode", Composer.Gate.CompileMode, "Mechanical-only: one gesture, you fill the structure.");
+        // Ruling 180 (1)(2): the compile mode, changeable here for NEW envelopes — through the store and the gate,
+        // evaluated at every open of the settings (a demotion is computed, never remembered). Mechanical-only is
+        // always selectable; a refused rung is shown disabled with the gate's own reason.
+        var modeLine = new DockPanel { Margin = new Thickness(0, 2, 0, 2) };
+        var modeKey = new TextBlock { Text = "Compile mode", FontSize = 12, Width = 140, VerticalAlignment = VerticalAlignment.Top };
+        modeKey.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        var modePicker = new ComboBox { FontSize = 12, MinWidth = 140, HorizontalAlignment = HorizontalAlignment.Left };
+        AutomationProperties.SetName(modePicker, "Compile mode");
+        var modeWhy = new TextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap, MaxWidth = 320, Margin = new Thickness(0, 2, 0, 0) };
+        modeWhy.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        var reflectingMode = false;
+        void ReflectCompileMode()
+        {
+            reflectingMode = true;
+            try
+            {
+                var ladder = CompileModeLadderNow();
+                modePicker.Items.Clear();
+                foreach (var mode in CompileModeGate.Modes)
+                {
+                    var refusal = ladder.RefusalFor(mode);
+                    var item = new ComboBoxItem { Content = refusal is null ? mode : $"{mode} — not available", Tag = mode, IsEnabled = refusal is null };
+                    AutomationProperties.SetHelpText(item, refusal?.Reason ?? CompileModeMeaning(mode));
+                    modePicker.Items.Add(item);
+                }
+
+                modePicker.SelectedItem = modePicker.Items.OfType<ComboBoxItem>().FirstOrDefault(i => string.Equals(i.Tag as string, Composer.Gate.CompileMode, StringComparison.Ordinal));
+                modeWhy.Text = CompileModeWhy(Composer.Gate.CompileMode, ladder);
+                AutomationProperties.SetHelpText(modePicker, modeWhy.Text);
+            }
+            finally
+            {
+                reflectingMode = false;
+            }
+        }
+
+        modePicker.SelectionChanged += (_, _) =>
+        {
+            if (reflectingMode || modePicker.SelectedItem is not ComboBoxItem { Tag: string mode } || string.Equals(mode, Composer.Gate.CompileMode, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            var said = ChangeCompileMode(mode);
+            ReflectCompileMode();
+            _announcer.Announce(new Announcement(said, Urgency.Status, AnnouncementKind.Completed));
+        };
+        DockPanel.SetDock(modeKey, Dock.Left);
+        modeLine.Children.Add(modeKey);
+        var modeValue = new StackPanel();
+        modeValue.Children.Add(modePicker);
+        modeValue.Children.Add(modeWhy);
+        modeLine.Children.Add(modeValue);
+        rows.Children.Add(modeLine);
+        ReflectCompileMode();
+        target.Click += (_, _) => ReflectCompileMode();
         Row("Compile history", Composer.HistoryState ?? (_purgedThisOpen > 0 ? "history purged; recording again" : $"recorded in {_envelopes?.Path ?? Envelope.NotRecorded}"), "Every send is a row in this session's append-only envelope file. Purge removes that file and nothing else.");
 
         var purge = new Button { Content = "Purge compile history…", Margin = new Thickness(0, 6, 0, 0), HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(8, 2, 8, 2) };
