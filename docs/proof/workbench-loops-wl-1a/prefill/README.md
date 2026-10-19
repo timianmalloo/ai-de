@@ -24,6 +24,12 @@ summary: >-
 The product does **not** yet reach (A) and (B) on File → New Session and the real settings, because two one-line edits
 outside the owned paths wait on seam request `req-01M5ATGTTQS78NG5W7ZMZE8G00` (see *Not done*).
 
+**Residual (Ruling 182 (3)):** until WL-2's draft store (ADR-0043), **unsent typing and kept suggestions are lost when
+the app restarts.** A revived notebook's composer starts empty (`ComposerSurface.cs:96`, measured by T30 n2 at
+`8afa3a58`). Nothing in the composer says otherwise (node 3 (A)). Whatever was **sent** survives: each sent turn's
+compiled prompt, including its goal block, is on the turn row's disclosure after a restart (Rulings 163, 181). Node 3 (B)
+proves it; before node 3 the restored row's disclosure was empty.
+
 ## Checks
 
 | Check | Ruling | Red | Green | Tests |
@@ -108,3 +114,19 @@ could not start*); `SolutionTreeChordTests` refused (the Ruling 115 desktop hold
 — `AdapterInstallRoot` getter, `StructureLine.ModelLineMark` (`? suggested`); `SessionDocumentSurface.CompileModeGateInput`,
 used when no ladder is injected; `tests/AiDe.App.Tests/OwnWindow.cs`. DESIGN.md: the *Derived structure* row now
 defines the mark as the `?` glyph + the word *suggested* (Ruling 180 (3)). `ComposerGesture.cs` was not changed.
+
+## Node 3 — nothing says the draft is saved; what was sent survives; the row states the gate's real reason (Ruling 182)
+
+**Result:** (A), (B) and (C) green, each observed red first. (A)'s red is a **mutation** red, because no saved-state copy exists on the tree. (B)'s red is a **real** red: the restored row's disclosure was empty. No test calls a model, and no node-3 test reads `~/.aide/proof`.
+
+| Check | Ruling | Red | Green | Tests |
+|---|---|---|---|---|
+| **A** no saved-state copy | 182 (2) | `758fc894` · `A-no-saved-copy-red.txt` (**mutation**: *Kept for later.* planted in `StructureLine.KeepHelp`, not committed; on the tree the same test passed, in `C-gate-reason-red.txt`) | `0599a4da` · `A-no-saved-copy-green.txt` (313 strings across 6 moments, none refused) | `NothingSaysAnUnsentDraftIsSavedTests` (1) |
+| **B** a sent goal line survives a restart | 182 (4); 163, 181 | `19437c6e` · `B-sent-survives-red.txt` (**real**: restored row's SentBytes 0 chars, disclosure `""`; 263 chars were sent) | `9234fc77` · `B-sent-survives-green.txt` (disclosure 263 chars, equal to what was sent; 35 with the census and revive tests); **mutation** red `B-byte-change-mutation-red.txt` (one byte changed after the rebuild: the row reads *not recorded*) | `ASentGoalLineSurvivesARestartTests` (2) |
+| **C** the gate's real reason | 180 (1), C3 | `7f8d6904` · `C-gate-reason-red.txt` (stored advisory, gate refusing: *"Gate 1 admits it"*) | `468b2566` · `C-gate-reason-green.txt` (5 pass) | `TheCompileModeControlTests.ASessionStoredAdvisory_WhenTheGateNowRefusesIt_TheRowStatesTheRefusal_AndClaimsNoAdmission` |
+
+**What each test drives.** **A:** type, Ctrl+Enter (prepare under advisory), Keep Goal through its invoke peer, then *Session settings*. At each step it reads every product string: text, content, headers, tool tips, UIA name, help text and item status, the status line, the marks and the field descriptors. It also reads the composer page markup (`composer.html`, `composer-host.html`), and it refuses *saved*, *for later*, *persist*, *stored*, *survives* and the like. Text boxes hold the user's or the model's words and are not read. **B:** type, prepare, keep all three lines, send; then the shell over a real `WorkspaceClient` to a daemon revives the pane (`ReviveRestoredSessionDocuments`), and the restored row's disclosure is opened through its header toggle and read. **C:** a session created while Gate 1 admits, then the gate refuses; the settings row is opened through its button.
+
+**Code (seams `req-01M5B3NHP0143W53J11CRKPVAX` and `req-01M5B3TTNQXVZ3C8AEHXNV6G2Y`, granted with conditions):** `ComposerSendGate.SentBytesOf` rebuilds the bytes through the existing `ProjectForSend`, so the census stays at 2 `Projection.Project` calls in that file. It returns them only when their sha256 equals the accepted `submitted.text_sha256`. `SessionDocumentSurface.SubmittedEnvelopes` yields them, and `NotebookRuns.ReadBackAsync` and `RestoreAsync` carry them to `Thread.Accept`, or `NotebookRuns.CompiledPromptNotRecorded` when they do not verify. The read-back tuple's type changed with them (`_submitted` and `ReadBackOnEachBind`). There is no store or schema change. A turn whose bytes carried attachment bodies or a template does not rebuild, so its row reads *not recorded*. `SessionDocumentSurface.CompileModeWhy`: a rung held but now refused states the refusal. DESIGN.md: the restored-turn row and the demoted-rung copy.
+
+**Residual line:** added at the top of this file, in the same words as the WL-1a Proof Pack's (`aa8247ff`).

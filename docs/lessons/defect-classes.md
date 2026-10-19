@@ -8723,3 +8723,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Leader, same session:** the Leader told the Owner "every WL-S track is on main (T4, T9, T11, T18, T20, T21)" before
   reading it in that turn. It was verified afterwards by `git branch --merged origin/main` and was true. It is the same
   unread-claim shape (the 6th recurrence under wl-leader3), and the claim was right by luck rather than by check.
+
+### DC-NEW-wl-t30-prefill-b — a restored row fills a field it cannot rebuild with an empty value, so a gap looks like content
+
+- **Instance (T30 n3, 2026-10-19, observed at `19437c6e`):** after a restart, `NotebookRuns.RestoreAsync` accepted each restored turn with `string.Empty` as its sent bytes. The row's *compiled prompt* disclosure opened onto nothing, and nothing said the bytes were missing. The store keeps only the witness (`Submitted.TextSha256`), not the bytes. This observation confirms the Owner instance under DC-NEW-wl-leader2 above (Inferred there until this red).
+- **Class:** a read model rebuilt after a restart fills a field it has no source for with an empty or default value, instead of rebuilding and verifying it or saying *not recorded*.
+- **Sweep:** `grep -rn "Accept(" src/AiDe.App`: two writers of a turn row. The live send (`SessionDocumentSurface.cs:667`) passes `request.Prompt`; the restore was the only empty one. No other restore path builds a turn row.
+- **Derive:** the restored bytes are rebuilt through the send gate's own projection (`ComposerSendGate.SentBytesOf`, no new `Projection.Project` call), and shown only on a sha match with `submitted.text_sha256`. Otherwise the row reads `NotebookRuns.CompiledPromptNotRecorded` (DESIGN.md's restored-turn row).
+- **Prevent:** `ASentGoalLineSurvivesARestartTests` (the real revive path, the disclosure opened through its toggle). The byte-change mutation shows *not recorded* (`B-byte-change-mutation-red.txt`), never wrong text.
+- **Status:** `controlled` for the turn row. Partial for the class, because no scan refuses a new restore writer that passes an empty field.
