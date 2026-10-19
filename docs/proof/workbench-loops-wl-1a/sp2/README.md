@@ -1,3 +1,18 @@
+---
+id: proof-workbench-loops-wl-1a-sp2
+title: "Evidence — WL-1a spine T3: RunEvent and TurnState vocabulary"
+type: proof-pack
+status: draft
+owner: "@timianmalloo"
+phase: "workbench-loops WL-1a"
+tags: [workbench-loops, evidence]
+links:
+  - { to: adr-0041-execution-attempt-lifecycle, rel: implements }
+review-by: "2026-11-18"
+summary: >-
+  Track T3's red and green evidence for the TurnState extension, the Stopped-to-Interrupted rename and the RunEvent redaction envelope; cited by the WL-1a Proof Pack.
+---
+
 # sp2 proof: RunEvent / TurnState vocabulary (T3, wl-t3-sp2)
 
 | Check | Test | Red | Green |
