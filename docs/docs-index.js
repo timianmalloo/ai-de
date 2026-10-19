@@ -22227,6 +22227,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "1ed68b91ba2e690eaca6a70105dbf3541801d59d53beb34e020de9efedd0ea29"
     },
     {
+      "id": "proof-wl-hygiene-residuals",
+      "path": "docs/proof/workbench-loops-support/hygiene/residuals.md",
+      "title": "T13 named residuals - gates no workflow invokes, and the gates that stay red",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-01-19",
+      "reviewSuggested": [],
+      "summary": "Residual red gates after T13, each with its cause and next step. The Leader declined the CI change (req-01M58W131E19CB9H3810ZAN1PG) for this track, so the workflow steps are recorded here, not added.",
+      "tags": [
+        "proof-pack",
+        "gate-hygiene",
+        "residuals",
+        "ruling-151",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "47adfc53c306fb7fd7dbaf09f6c5ca03fb250119a437a94b73c61c1aeb643877"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -24270,5 +24297,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "236943a432363911738a7ea3d18d7b8c73be86d66ce21690234fb3a6ef798bbe"
+  "graphSha256": "b0493b552ea6c9845114b24b2c96d003f7aebdae1f1587b794433f110c021de0"
 };
