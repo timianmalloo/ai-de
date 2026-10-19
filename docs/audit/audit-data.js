@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:08:24Z",
+  "generated": "2026-10-19T07:34:53Z",
   "audit": [
     {
       "actor": null,
@@ -24301,12 +24301,65 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59FTWV72FGPCN1Z73MXHEWQ",
-      "shortname": "wl-t8-bind",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T07:08:24Z",
-      "session": "wl-t8-bind",
+      "done_when": "Checks A, B, C red then green; Core and App suites run and recorded; hand-off and exit report sent",
+      "duration_seconds": 1746.0,
+      "fan_out": 0,
+      "goal": "Node 3: the product's run is the host's, no fourth Projection.Project site, the shell opens the AttemptHost",
+      "id": "al-01M59FTWV72FGPCN1Z73MXHEWQ",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "T8 node 3: merge T5 n2 + origin/main, Ruling 156(3) seam rewrite of three adoption tests, Check A host-run (Stop/queue/live lines on IAttemptHost), Check B G1 through ComposerSendGate, Check C shell opens AttemptHost",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind",
+      "skill": "implement",
+      "started_at": "2026-10-19T06:39:18Z",
       "summary": "Checks A, B and C red then green. The notebook's Stop, queue and live lines run on IAttemptHost. The G1 read goes through ComposerSendGate.CurrentProjectionSha. The shell opens AttemptHost via ConductorEntry.OpenAttemptHostAsync. Core 3013/1 skip/0 fail; App 1070/1 skip/1 fail (chord, foreground; passes alone). Open: Cancel on a host-held turn is refused (seam req-01M59ERYY7362ASCQ4E20XA4MA).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/notebook-ops/suite-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T07:02:38Z",
+      "done_when": "recount green; ratchet PASS; pushed",
+      "duration_seconds": 547.0,
+      "fan_out": 0,
+      "goal": "join T14 wl1a-notebook-ops to main",
+      "id": "al-01M59FGB8E4KN62SWXQ3H0NNNE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of wl1a-notebook-ops into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-ops",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:53:31Z",
+      "summary": "T14 + T14b (Sonnet): three notebook IPC ops red->green over a real pipe; journey-id collision refused (AIDE-STORE-JOURNEY-ID-COLLISION); one-transaction open tested (not red). Retroactive grant: one StoreErrorCodes constant in WorkspaceStore.cs. recount_seconds=545 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M59HBCMSVEQ814JPX35QKM0W",
+      "shortname": "wl-t8-bind",
+      "datetime": "2026-10-19T07:34:53Z",
+      "session": "wl-t8-bind",
+      "prompt": "T8 node 4: WithdrawAsync, host lifecycle (Ruling 159), UIA names",
+      "summary": "attempt.withdraw + Cancel on a host-held turn; Ruling 159 wait/refuse/retry/epoch-at-dispatch; UIA names and composer disabled-Send handed off",
       "kind": "skill",
       "skill": "implement",
       "tool": null,
@@ -24317,12 +24370,12 @@ window.AUDIT_DATA = {
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Node 3: the product's run is the host's, no fourth Projection.Project site, the shell opens the AttemptHost",
-      "done_when": "Checks A, B, C red then green; Core and App suites run and recorded; hand-off and exit report sent",
+      "goal": "Withdraw a host-held turn and dispatch nothing outside the host",
+      "done_when": "check 1 and 2 red then green; suites run",
       "tier": "T2",
       "fan_out": 0,
-      "started_at": "2026-10-19T06:39:18Z",
-      "duration_seconds": 1746.0
+      "started_at": "2026-10-19T07:10:52Z",
+      "duration_seconds": 1441.0
     }
   ],
   "changes": [
