@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AiDe.Core.Projections;
 using AiDe.Core.Dispatch;
+using AiDe.Core.Store.Records;
 using AiDe.Core.Facts;
 using AiDe.Core.Store;
 
@@ -69,6 +70,18 @@ public sealed record DispatchBeginRequest(DispatchCommand Command);
 
 /// <summary>Phase 2 of a dispatch: record the outcome the shell observed.</summary>
 public sealed record DispatchFinalizeRequest(string DispatchKey, DispatchState State, string? ErrorCode);
+
+/// <summary>G0 of a native-route attempt (ADR-0041 §1): the attempt row, written only when its key is new.</summary>
+public sealed record AttemptBeginRequest(AttemptRow Attempt);
+
+/// <summary>G1–G3 of a native-route attempt: one outcome event.</summary>
+public sealed record AttemptOutcomeRequest(OutcomeRow Outcome);
+
+/// <summary>One attempt and its outcome events, by key.</summary>
+public sealed record AttemptReadRequest(string DispatchKey);
+
+/// <summary>The answer to <see cref="AttemptReadRequest"/>: a null receipt means the key was never attempted.</summary>
+public sealed record AttemptReadResult(AttemptReceipt? Receipt);
 
 /// <summary>Index every C# scope in the workspace.</summary>
 /// <param name="Force">
@@ -161,6 +174,10 @@ public static class WorkspaceOperations
     public const string EntryPoints = "entry-points";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
+    public const string AttemptBegin = "attempt.begin";
+    public const string AttemptOutcome = "attempt.outcome";
+    public const string AttemptRead = "attempt.read";
+    public const string AttemptSweep = "attempt.sweep";
     public const string IndexSolution = "index.solution";
 
     /// <summary>
@@ -266,6 +283,19 @@ public static class WorkspaceOperations
         endpoint.Register(DispatchFinalize, (request, _) =>
             Refusable(() => Handle<DispatchFinalizeRequest>(request, body =>
                 dispatcher.Finalize(body.DispatchKey, body.State, body.ErrorCode))));
+
+        // The native-route attempt gate (ADR-0041 §1): each op is one store transaction in the dispatcher.
+        endpoint.Register(AttemptBegin, (request, _) =>
+            Refusable(() => Handle<AttemptBeginRequest>(request, body => dispatcher.BeginAttempt(body.Attempt))));
+
+        endpoint.Register(AttemptOutcome, (request, _) =>
+            Refusable(() => Handle<AttemptOutcomeRequest>(request, body => dispatcher.AppendAttemptOutcome(body.Outcome))));
+
+        endpoint.Register(AttemptRead, (request, _) =>
+            Refusable(() => Handle<AttemptReadRequest>(request, body => new AttemptReadResult(dispatcher.ReadAttempt(body.DispatchKey)))));
+
+        endpoint.Register(AttemptSweep, (request, _) =>
+            Refusable(() => Handle<AttemptSweepRequest>(request, dispatcher.SweepAttempts)));
     }
 
     /// <summary>

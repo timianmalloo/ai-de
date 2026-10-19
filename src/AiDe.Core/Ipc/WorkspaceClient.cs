@@ -2,6 +2,7 @@ using System.Runtime.Versioning;
 using System.Text.Json;
 using AiDe.Core.Projections;
 using AiDe.Core.Dispatch;
+using AiDe.Core.Store.Records;
 using AiDe.Core.Facts;
 
 namespace AiDe.Core.Ipc;
@@ -36,7 +37,7 @@ public sealed class IpcRequestException(string code, string reason)
 /// epoch would defeat it while appearing to work.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWorkspaceDispatch, IAsyncDisposable
+public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWorkspaceDispatch, IAttemptLedger, IAsyncDisposable
 {
     private readonly IpcClient _client;
     private readonly string _workspaceId;
@@ -102,6 +103,23 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         QueryAsync<DispatchReceipt>(
             WorkspaceOperations.DispatchFinalize,
             new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
+
+    /// <summary>G0 of a native-route attempt, answered in one store transaction by the daemon.</summary>
+    public Task<AttemptBeginResult> BeginAttemptAsync(AttemptRow attempt, CancellationToken cancellationToken) =>
+        QueryAsync<AttemptBeginResult>(WorkspaceOperations.AttemptBegin, new AttemptBeginRequest(attempt), cancellationToken);
+
+    /// <summary>G1–G3: one outcome event; <see cref="AttemptAppendResult.Committed"/> says whether the store took it.</summary>
+    public Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken) =>
+        QueryAsync<AttemptAppendResult>(WorkspaceOperations.AttemptOutcome, new AttemptOutcomeRequest(outcome), cancellationToken);
+
+    /// <summary>The attempt and its outcome events, read back from the store.</summary>
+    public async Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        (await QueryAsync<AttemptReadResult>(WorkspaceOperations.AttemptRead, new AttemptReadRequest(dispatchKey), cancellationToken)
+            .ConfigureAwait(false)).Receipt;
+
+    /// <summary>The host's sweep, run by the daemon over the host's own live set.</summary>
+    public Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
+        QueryAsync<AttemptSweepResult>(WorkspaceOperations.AttemptSweep, request, cancellationToken);
 
     /// <summary>What re-indexing has cost in this daemon so far.</summary>
     /// <remarks>

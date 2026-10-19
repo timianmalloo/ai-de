@@ -1,6 +1,10 @@
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 using AiDe.Core.Facts;
+using AiDe.Core.Ipc;
 using AiDe.Core.Store;
+using AiDe.Core.Store.Records;
 
 namespace AiDe.Core.Dispatch;
 
@@ -33,7 +37,7 @@ public sealed record DispatchBeginResult(DispatchReceipt Receipt, bool AlreadyAt
 /// <see cref="DispatchState.DeliveryUnknown"/> rather than a missing row a retry would read as
 /// "never sent".</para>
 /// </remarks>
-public sealed class BoundaryDispatcher(WorkspaceStore store)
+public sealed class BoundaryDispatcher(WorkspaceStore store) : IAttemptLedger
 {
     private readonly DispatchService _dispatch = new(store);
 
@@ -189,4 +193,174 @@ public sealed class BoundaryDispatcher(WorkspaceStore store)
         return await finalize(command.DispatchKey, state, errorCode, CancellationToken.None)
             .ConfigureAwait(false);
     }
+
+    // ---- The native-route attempt gate (ADR-0041 §1, docs/design/workbench-loops-wl-1a.md). Runs where the STORE is.
+
+    /// <summary>G0 — make the attempt durable, or return the attempt that already holds this key.</summary>
+    public AttemptBeginResult BeginAttempt(AttemptRow attempt)
+    {
+        ArgumentNullException.ThrowIfNull(attempt);
+
+        if (attempt.WorkspaceEpoch != store.CoreEpoch)
+        {
+            throw new WorkspaceStoreException(DispatchErrorCodes.EpochStale,
+                $"attempt epoch {attempt.WorkspaceEpoch} is not the current {store.CoreEpoch}");
+        }
+
+        using (var writer = store.BeginWrite())
+        {
+            writer.AppendAttempt(attempt);
+            writer.Commit();
+        }
+
+        return new AttemptBeginResult(ReadAttempt(attempt.DispatchKey)!, AlreadyAttempted: false);
+    }
+
+    /// <summary>G1–G3 — append one outcome event to an attempt.</summary>
+    public AttemptAppendResult AppendAttemptOutcome(OutcomeRow outcome)
+    {
+        ArgumentNullException.ThrowIfNull(outcome);
+
+        using (var writer = store.BeginWrite())
+        {
+            writer.AppendOutcome(outcome);
+            writer.Commit();
+        }
+
+        return new AttemptAppendResult(ReadAttempt(outcome.DispatchKey)!, Committed: true);
+    }
+
+    /// <summary>The attempt row and every outcome event on it, in total order; null when the key was never attempted.</summary>
+    public AttemptReceipt? ReadAttempt(string dispatchKey)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(dispatchKey);
+
+        using var reader = store.BeginRead();
+        var attempt = reader.ReadAttempt(dispatchKey);
+        return attempt is null ? null : new AttemptReceipt(attempt, reader.ReadOutcomes(dispatchKey));
+    }
+
+    /// <summary>Resolves every abandoned native attempt to <see cref="DispatchState.DeliveryUnknown"/> with a cause.</summary>
+    public AttemptSweepResult SweepAttempts(AttemptSweepRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        List<string> pending;
+        using (var reader = store.BeginRead())
+        {
+            pending = [.. reader.PendingDispatchKeys()];
+        }
+
+        var swept = new List<OutcomeRow>();
+        using (var writer = store.BeginWrite())
+        {
+            foreach (var key in pending)
+            {
+                var row = new OutcomeRow(key, DispatchState.DeliveryUnknown, DispatchErrorCodes.DeliveryUnknown);
+                writer.AppendOutcome(row);
+                swept.Add(row);
+            }
+
+            writer.Commit();
+        }
+
+        return new AttemptSweepResult(swept, WorkspaceStore.Iso(DateTimeOffset.UtcNow));
+    }
+
+    Task<AttemptBeginResult> IAttemptLedger.BeginAttemptAsync(AttemptRow attempt, CancellationToken cancellationToken) =>
+        Task.FromResult(BeginAttempt(attempt));
+
+    Task<AttemptAppendResult> IAttemptLedger.AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken) =>
+        Task.FromResult(AppendAttemptOutcome(outcome));
+
+    Task<AttemptReceipt?> IAttemptLedger.ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken) =>
+        Task.FromResult(ReadAttempt(dispatchKey));
+
+    Task<AttemptSweepResult> IAttemptLedger.SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken) =>
+        Task.FromResult(SweepAttempts(request));
 }
+
+/// <summary>The stable codes of the native-route attempt gate (docs/design/workbench-loops-wl-1a.md).</summary>
+public static class AttemptErrorCodes
+{
+    /// <summary>G1: the envelope's current projection is not the one the attempt was prepared from (AC-E04b).</summary>
+    public const string StalePrepare = "AIDE-ATTEMPT-STALE-PREPARE";
+
+    /// <summary>The attempt ended before its <c>Dispatched</c> row committed: no prompt was sent, so Retry is safe.</summary>
+    public const string NotDispatched = "AIDE-ATTEMPT-NOT-DISPATCHED";
+
+    /// <summary>A second terminal was offered for an attempt that already has one; the first stands.</summary>
+    public const string SecondTerminal = "AIDE-ATTEMPT-SECOND-TERMINAL";
+
+    /// <summary>Another attempt host already holds this workspace; a second one can neither dispatch nor sweep.</summary>
+    public const string HostNotSole = "AIDE-ATTEMPT-HOST-NOT-SOLE";
+}
+
+/// <summary>The native-route dispatch key (ADR-0041 §1). One home: the host and the binding compute the same key.</summary>
+public static class AttemptKey
+{
+    /// <summary>Joins the four fields; U+001F cannot occur in an id or a sha, so no two field tuples share a preimage.</summary>
+    private const char Separator = '\u001f';
+
+    /// <summary>
+    /// <c>sha256(envelope_id ‖ projection_sha ‖ queued_after_dispatch_key ‖ parent_dispatch_key)</c>, lower-case hex,
+    /// 64 characters. Deterministic from the prepared envelope, so a retried click or a lost reply recomputes it.
+    /// </summary>
+    public static string For(string envelopeId, string projectionSha, string? queuedAfterDispatchKey, string? parentDispatchKey)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(envelopeId);
+        ArgumentException.ThrowIfNullOrEmpty(projectionSha);
+
+        var joined = string.Join(Separator, envelopeId, projectionSha, queuedAfterDispatchKey ?? "", parentDispatchKey ?? "");
+        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(joined)));
+    }
+}
+
+/// <summary>One attempt as the store holds it: the attempt row and its outcome events in total order.</summary>
+/// <remarks>Every member past the two fields is DERIVED on read (DM: derive, don't store) and never crosses the wire.</remarks>
+public sealed record AttemptReceipt(AttemptRow Attempt, IReadOnlyList<OutcomeRow> Outcomes)
+{
+    /// <summary>The terminal states — exactly the set the store's <c>ux_outcome_one_terminal</c> index names.</summary>
+    public static readonly IReadOnlySet<DispatchState> TerminalStates = new HashSet<DispatchState>
+    {
+        DispatchState.ResponseComplete, DispatchState.Failed, DispatchState.Interrupted,
+        DispatchState.DeliveryUnknown, DispatchState.Rejected,
+    };
+
+    [JsonIgnore]
+    public string DispatchKey => Attempt.DispatchKey;
+
+    /// <summary>The one <see cref="DispatchState.Dispatched"/> row, or null when the prompt was never launched.</summary>
+    [JsonIgnore]
+    public OutcomeRow? Dispatched => Outcomes.FirstOrDefault(o => o.State == DispatchState.Dispatched);
+
+    /// <summary>The one terminal row (the lowest ingress sequence wins, ADR-0041 §2), or null while the attempt is open.</summary>
+    [JsonIgnore]
+    public OutcomeRow? Terminal => Outcomes.FirstOrDefault(o => TerminalStates.Contains(o.State));
+
+    /// <summary>An attempt row with no outcome event yet — the PTY path's meaning of Pending, kept.</summary>
+    [JsonIgnore]
+    public bool IsPending => Outcomes.Count == 0;
+}
+
+/// <param name="Receipt">The attempt as it now stands.</param>
+/// <param name="AlreadyAttempted">True when the key existed and nothing was written: the caller launches NOTHING.</param>
+public sealed record AttemptBeginResult(AttemptReceipt Receipt, bool AlreadyAttempted);
+
+/// <param name="Receipt">The attempt as it now stands.</param>
+/// <param name="Committed">
+/// False when the store already held a row this one may not join — a second <see cref="DispatchState.Dispatched"/>
+/// or a second terminal. A host whose <c>Dispatched</c> did not commit sends no prompt.
+/// </param>
+public sealed record AttemptAppendResult(AttemptReceipt Receipt, bool Committed);
+
+/// <param name="LiveKeys">The attempts the calling host still runs; never swept.</param>
+/// <param name="DispatchedCause">
+/// The cause written on an attempt that has a <see cref="DispatchState.Dispatched"/> row: <c>host_restart</c> at host
+/// startup, <c>relay_lost</c> after an engine exit. One with no <c>Dispatched</c> row is always <c>never_dispatched</c>.
+/// </param>
+public sealed record AttemptSweepRequest(IReadOnlyList<string> LiveKeys, string DispatchedCause);
+
+/// <param name="Swept">One <see cref="DispatchState.DeliveryUnknown"/> row per attempt this sweep resolved.</param>
+/// <param name="SweptAt">When the sweep ran — <c>last_sweep_at</c>, emitted even when nothing was swept.</param>
+public sealed record AttemptSweepResult(IReadOnlyList<OutcomeRow> Swept, string SweptAt);
