@@ -707,8 +707,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _leaseLine = ComposerCompiler.LeaseLine(request.Lease?.Exclusive);
 
         // A QUEUED SEND KEEPS ITS OWN SENTENCE (Ruling 95): the document queued it during the gate's
-        // Sent event and the thread's snapshot already put "b2 queued — sends after b1" here.
-        if (_statusKind == StatusKind.Queued)
+        // Sent event and the thread's snapshot already put "b2 queued — sends after b1" here. A send
+        // the document holds keeps its reason too (Ruling 175): "sent" would say a waiting turn went.
+        if (_statusKind is StatusKind.Queued or StatusKind.Refusal)
         {
             _hasSentBefore = true;
             return request;

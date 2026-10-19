@@ -1,0 +1,16 @@
+T17d whole-suite run, node 2, 2026-10-19, at branch tip 4be08710 (wl1a-readback). NOT GREEN, so there is no suite-green.txt.
+
+AiDe.Core.Tests  exit 0  Passed! - Failed: 0, Passed: 3024, Skipped: 1, Total: 3025   (suite-core.txt)
+AiDe.App.Tests   exit 1  Failed! - Failed: 2, Passed: 1134, Skipped: 2, Total: 1138   (suite-app.txt)
+
+The two App failures:
+
+1. NoDispatchOutsideTheHostTests.ATurnSentBeforeTheHostOpens_WaitsForIt_AndRunsAsAnAttempt  REGRESSION from 69452f35
+   - "Assert.Single() Failure: The collection was empty" at NoDispatchOutsideTheHostTests.cs:47, right after Send while the host opens.
+   - Red alone on the branch (nodispatch-alone-on-branch.txt). Green 8/8 with 69452f35's src/ changes reverted (nodispatch-without-the-fix.txt).
+   - Cause: under Ruling 172(3) a Send made while the host opens waits for the bind's read-back before taking an ordinal, so the row appears after the open. Node 1's check-2 test asserts Assert.Empty(Turns) at the same point. Node 1's 18/18 green run did not include this file.
+   - The file is outside T17d's owned paths: seam req-01M5A52AQHR32CPQFSBS9NGJ4T (open).
+
+2. SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph  ENVIRONMENTAL
+   - "Ctrl+Enter probe failed with exit code 2. foreground not held; SendInput would prove another window"
+   - The same NOT CHECKED cause the Owner recorded at the WL-1a acceptance. It failed alone too. T17d touches no solution-tree or input code.

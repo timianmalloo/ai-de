@@ -44,13 +44,23 @@ public sealed class NoDispatchOutsideTheHostTests : IDisposable
 
             document.Composer.Draft.SetFreeFormText("say ok");
             Assert.NotNull(document.Composer.Send());
-            var ordinal = Assert.Single(model.Thread.Current.Turns).Ordinal;
             await Task.Delay(800);
             Assert.False(_fixture.RunOpened, "a turn ran before the host opened: a direct run, outside the host");
+
+            // Ruling 175(5): while the open's read-back is pending the words stay visible with the restoring status, and
+            // no row joins the thread; the row appears once the read-back completes, numbered after the restored turns
+            // (none here, so b1; the b3 case is TheReadBackRunsWhenTheHostBindsTests).
+            Assert.Empty(model.Thread.Current.Turns);
+            Assert.Equal("say ok", document.Composer.Draft.SourceText);
+            Assert.Equal(SessionDocumentSurface.RestoringTurns, document.Composer.Status);
 
             using var host = (AttemptHost)await OpenHost();
             opening.SetResult(host);
             _fixture.ReleaseRun();
+            await document.LastAdmission.WaitAsync(NotebookFixture.Bound);
+            var turn = Assert.Single(model.Thread.Current.Turns);
+            Assert.Equal("b1", turn.DisplayOrdinal);
+            var ordinal = turn.Ordinal;
             await UntilAsync(window, () => model.Thread.Current.Turns[0].State == TurnState.Answered,
                 () => $"the waiting turn reads {model.Thread.Current.Turns[0].State}");
             Assert.Equal(DispatchState.ResponseComplete, model.Runs.AttemptOf(ordinal)?.Terminal?.State);
