@@ -29,6 +29,12 @@ public sealed class LayoutPersistence : IDisposable
     /// </summary>
     internal const string RehomedFloatingSentenceTail = "moved onto this display because the saved display is not connected.";
 
+    /// <summary>
+    /// The zone restore's report sentence when part of the saved file could not be read and was left out
+    /// (T21 node 4; seam req-01M5A9YZ4PB93ZD06KE5EMC5X8, accepted provisionally).
+    /// </summary>
+    internal const string PartlyReadSentence = "Part of your saved layout could not be read and was left out.";
+
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
     private readonly SurfaceAvailability _availability;
