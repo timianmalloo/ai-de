@@ -514,10 +514,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
 
         var surface = _zones.Zone(zoneId.Value).Surfaces().First(s => s.SurfaceId == surfaceId);
         var removed = ZoneLayoutService.ClosePane(_zones, surfaceId).Layout;
+
+        // The counter starts at 0 in every service, and a restore brings back the ids an earlier
+        // service minted, so an id already in use is skipped (T21 close condition 2).
+        string id;
+        do
+        {
+            id = $"float-{++_floatSeq}";
+        }
+        while (removed.Floating.Any(f => f.Id == id));
+
         var floated = removed with
         {
-            Floating = removed.Floating.Add(
-                new StackNode($"float-{++_floatSeq}", [surface], 0, StackState.Floating)),
+            Floating = removed.Floating.Add(new StackNode(id, [surface], 0, StackState.Floating)),
         };
         return new ZoneLayoutResult(floated, true, null, $"{surface.Title} is now floating.");
     }
