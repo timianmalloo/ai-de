@@ -126,9 +126,6 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         SurfaceId = SurfaceIdFor(model.SessionId);
 
         AutomationProperties.SetName(this, model.Title);
-
-        // A pane shown again is a new pane to close: its next close may say DOCK1's copy again (SayPaneHidden).
-        Loaded += (_, _) => _paneHiddenSaid = false;
         SetResourceReference(BackgroundProperty, "SurfaceRaisedBrush");
         SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, "TextBrush");
 
@@ -1691,4 +1688,14 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         _paneHiddenSaid = true;
         _announcer.Announce(new Announcement(PaneHiddenCopy, Urgency.Status, AnnouncementKind.Completed));
     }
+
+    /// <summary>
+    /// Starts the next close's lifetime: the shell calls it when it shows this kept document again
+    /// (<c>WorkbenchShell.RegisterSessionDocument</c>), so that pane's close may say <see cref="PaneHiddenCopy"/> again.
+    /// </summary>
+    /// <remarks>
+    /// Not on <c>Loaded</c>. <c>Loaded</c> fires on every attach, and a re-render re-parents an open pane, so the gate
+    /// would be keyed to the attach and not to the close (DC-138).
+    /// </remarks>
+    internal void PaneShown() => _paneHiddenSaid = false;
 }

@@ -3629,6 +3629,11 @@ public sealed class WorkbenchShell : IDisposable
             // document. A surface not in the layout is built fresh regardless.
             Adapter.Invalidate([document.SurfaceId]);
         }
+        else
+        {
+            // The kept document is shown again (open or restore), so its next close is a new close (DOCK1, said once per close).
+            _sessionDocuments.GetValueOrDefault(Records.NotebookId.ForSession(config.SessionId))?.PaneShown();
+        }
 
         return surfaceId;
     }
