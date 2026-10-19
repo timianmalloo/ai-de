@@ -1,0 +1,29 @@
+SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph - solo run on the T17 join head 9b5f6011, primary checkout, 2026-10-19, Leader wl-leader2-20261019 (Ruling 155 as corrected: a solo PASS on the join head).
+
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:21.11]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 21.4286 Seconds

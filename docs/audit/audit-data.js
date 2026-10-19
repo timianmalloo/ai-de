@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T10:15:05Z",
+  "generated": "2026-10-19T10:27:34Z",
   "audit": [
     {
       "actor": null,
@@ -24884,6 +24884,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T10:05:10Z",
       "duration_seconds": 593.0
+    },
+    {
+      "id": "al-01M59V7JH0RWAGV7M8W6T15TVK",
+      "shortname": "join-wl1a-restored-turns-step8",
+      "datetime": "2026-10-19T10:27:34Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Rulings 151/160) for the T17 join 9b5f6011",
+      "summary": "Recount OK; step 8 5/48 (baseline); strict repo citations OK (160 cited/151 by a note/9 frozen); identity gate OK (1003). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED solo on the join head (20 s; Ruling 155 as corrected), proof in restored-turns/solution-tree-chord-solo-on-join-head.txt. Ratchet vs first parent 67a4e6b0: PASS 0/49. Release build exit 0. T17 = Opus n1 (restored rows, b1/b3) + n2 (Ruling 164 line, keyboard/UIA guard, early Send waits for the read-back) + T17b (not reproduced 0/35, case (a)) + T17c (LaunchSettledAsync await; RunLogStoreSharingTests; N=15/0). Pushed only after this record exists (leader_precommit join check).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/restored-turns/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T17 on main under Rulings 151/155/160",
+      "done_when": "solo PASS on head; ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T10:05:32Z",
+      "duration_seconds": 1322.0
     }
   ],
   "changes": [
