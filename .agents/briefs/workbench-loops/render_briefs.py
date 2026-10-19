@@ -35,6 +35,7 @@ TRACKS = {
     "T24": ("wl-t24-wl1b-service", "wl1b-service", "docs/proof/workbench-loops-wl-1b/service", "Sonnet 5.5"),
     "T27": ("wl-t27-currentness", "wl1b-currentness", "docs/proof/workbench-loops-wl-1b/currentness", "Sonnet 5.5"),
     "T28": ("wl-t28-compiled", "wl1a-compiled-field", "docs/proof/workbench-loops-wl-1a/compiled-field", "Sonnet 5.5"),
+    "T30": ("wl-t30-prefill", "wl-prefill", "docs/proof/workbench-loops-wl-1a/prefill", "Opus 5.5"),
     "T29": ("wl-t29-prefill", "wl-prefill-assessment", "docs/proof/workbench-loops-wl-1a/prefill-assessment", "Opus 5.5"),
 }
 
