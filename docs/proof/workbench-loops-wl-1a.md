@@ -81,6 +81,12 @@ Slice deliverables owned by other tracks (cited; their folders join with them):
 - **Not built in WL-1a:** the design's `aide.attempt` spans (`attempt.begin` / `attempt.terminal`) — the rolling log
   carries `attempt.sweep` and `fold.duration_ms`; the relay retention cap, steer, retry UI and budget are WL-4.
 - **One real Stop run** proves the adapter version it ran; a new adapter release re-opens check 4.
+- **Closed by T17e: a read-back still running when the shell shuts down.** Before the fix, a read-back that returned
+  after `WorkbenchShell.Dispose` wrote its turns into the disposed notebook. A store that was already disposed let an
+  `ObjectDisposedException` escape. Both were reproduced with a gate, not a rerun (`workbench-loops-wl-1a/dispose-race/`).
+  The demo was only mildly exposed. The kill step (step 19) ends the process and disposes nothing. A normal close would
+  have to land inside a read-back of about 23 ms, which is unlikely. Measured in T17d's shell-path test, n=10: host-open
+  median 16.5 ms, read-back median 23.25 ms (`workbench-loops-wl-1a/readback/README.md`).
 
 ## Human demo script
 
