@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 56 types, 132 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 63 types, 142 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**56 public types · 132 public members · 64% documented.**
+**63 public types · 142 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -713,6 +713,54 @@ user account: a server told to expect a different owner must refuse the connecti
 The alternative was to leave the branch permanently unexercised and say so in a comment,
 which is how a security check quietly becomes decoration.
 
+## `NotebookOpenRequest`
+
+*record* — `NotebookOperations.cs`
+
+Opens (or finds) a notebook and the journey that owns it.
+
+## `NotebookOpenResult`
+
+*record* — `NotebookOperations.cs`
+
+The notebook and the journey that owns it, whether this call wrote them or found them (no journey for an unadopted legacy notebook).
+
+## `NotebookSaveRequest`
+
+*record* — `NotebookOperations.cs`
+
+Saves a body as the next immutable revision of a notebook.
+
+## `NotebookSaveResult`
+
+*record* — `NotebookOperations.cs`
+
+The revision now at the head of the notebook, whether this call wrote it or found it.
+
+## `NotebookLatestRequest`
+
+*record* — `NotebookOperations.cs`
+
+Asks for the latest revision of a notebook.
+
+## `NotebookLatestResult`
+
+*record* — `NotebookOperations.cs`
+
+The answer to `NotebookLatestRequest`: a null revision means the notebook has none.
+
+## `NotebookService`
+
+*class* — `NotebookOperations.cs`
+
+The three notebook operations, answered where the store is. Each write is one writer transaction.
+
+| Member | Summary |
+|---|---|
+| `NotebookOpenResult Open(NotebookOpenRequest request)` | **(gap)** |
+| `NotebookSaveResult SaveRevision(NotebookSaveRequest request)` | **(gap)** |
+| `NotebookLatestResult LatestRevision(NotebookLatestRequest request)` | **(gap)** |
+
 ## `ScopeRefreshState`
 
 *enum* — `ScopeRefreshService.cs`
@@ -926,6 +974,9 @@ epoch would defeat it while appearing to work.
 | `Task<AttemptAppendResult> AppendAttemptOutcomeAsync(OutcomeRow outcome, CancellationToken cancellationToken)` | G1–G3: one outcome event; `Committed` says whether the store took it. |
 | `Task<AttemptReceipt?> ReadAttemptAsync(string dispatchKey, CancellationToken cancellationToken)` | The attempt and its outcome events, read back from the store. |
 | `Task<AttemptSweepResult> SweepAttemptsAsync(AttemptSweepRequest request, CancellationToken cancellationToken)` | The host's sweep, run by the daemon over the host's own live set. |
+| `Task<NotebookOpenResult> OpenNotebookAsync(string notebookId, string journeyTitle, CancellationToken cancellationToken)` | Opens a notebook and its owning journey; idempotent on the notebook id. |
+| `Task<NotebookSaveResult> SaveNotebookRevisionAsync(` | Saves a body as the next immutable revision; the latest body again returns that revision. |
+| `Task<NotebookRevisionRow?> ReadLatestNotebookRevisionAsync(string notebookId, CancellationToken cancellationToken)` | The latest revision of a notebook, or null when it has none. |
 | `Task<RefreshMetrics> RefreshMetricsAsync(CancellationToken cancellationToken)` | What re-indexing has cost in this daemon so far. |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
@@ -1163,6 +1214,10 @@ bound, and two definitions of one quantity is a defect signature.
 | `JsonSerializerOptions Wire { get; } = new(JsonSerializerDefaults.Web)` | How every payload on this boundary is encoded. |
 | `void Register(DaemonEndpoint endpoint, ProjectionService projections)` | Registers the read projections on . |
 | `void RegisterDispatch(DaemonEndpoint endpoint, BoundaryDispatcher dispatcher)` | Registers the two durable phases of prompt dispatch (ADR-0010) on . |
+| `string NotebookOpen = "notebook.open"` | **(gap)** |
+| `string NotebookRevisionSave = "notebook.revision.save"` | **(gap)** |
+| `string NotebookRevisionLatest = "notebook.revision.latest"` | **(gap)** |
+| `void RegisterNotebook(DaemonEndpoint endpoint, NotebookService notebooks)` | Registers the three notebook operations (open, save a revision, read the latest) on . |
 | `void RegisterIndex(DaemonEndpoint endpoint, Func<string, bool, CancellationToken, Task<IndexSummary>> index)` | Turns a domain refusal into a stable error response instead of letting it escape.  Registers the workspace-wide C# index on . |
 
 ### `string SearchContent = "search-content"`

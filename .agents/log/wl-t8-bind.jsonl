@@ -17,3 +17,12 @@
 {"action": "add", "agent": "wl-t8-bind", "at": 1792391469.9766996, "deadline_at": 1792393269.9766996, "id": "req-01M59DPPWWNRG5ZZWC8VNQG3RH", "kind": "request", "path": "-", "seq": 17, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
 {"agent": "wl-t8-bind", "at": 1792392546.6205237, "kind": "claim", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 18, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
 {"action": "add", "agent": "wl-t8-bind", "at": 1792392592.3231978, "deadline_at": 1792394392.3231978, "id": "req-01M59ERYY7362ASCQ4E20XA4MA", "kind": "request", "path": "-", "seq": 19, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792392831.0746727, "kind": "release", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 20, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792392882.9649148, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "seq": 21, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792392883.1560307, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 22, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792392918.7342646, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "seq": 23, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792392918.8323083, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 24, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792393132.1341555, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 25, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792393132.3192296, "kind": "claim", "path": "src/AiDe.App/Conductor/ConductorEntry.cs", "seq": 26, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792393205.169902, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 27, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792393205.2645795, "kind": "release", "path": "src/AiDe.App/Conductor/ConductorEntry.cs", "seq": 28, "session": "wl-t8-bind", "wi": "workbench-loops"}

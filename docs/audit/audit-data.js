@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:53:14Z",
+  "generated": "2026-10-19T07:02:39Z",
   "audit": [
     {
       "actor": null,
@@ -24128,23 +24128,124 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59E48ZSVZ56YTGM3ABCW6FY",
-      "shortname": "join-wl1a-folds",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T06:38:34Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green; ratchet PASS; pushed",
+      "duration_seconds": 560.0,
+      "fan_out": 0,
+      "goal": "join T6 wl1a-folds to main",
+      "id": "al-01M59E48ZSVZ56YTGM3ABCW6FY",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl1a-folds into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-folds",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:29:14Z",
       "summary": "T6 (Sonnet): AttemptStateFold + CurrentnessFold, 31 tests red->green; fold inputs fixed by T5's design 68f3a753 (all T6 assumptions adopted) recount_seconds=559 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:53:14Z",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "duration_seconds": 849.0,
+      "fan_out": 0,
+      "goal": "Land T6 on main under Ruling 151",
+      "id": "al-01M59EZ4N4590EVCJF2GWDHT30",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T6 wl1a-folds join cac40d5a",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-folds-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:39:05Z",
+      "summary": "conductor-join recount OK; strict step 8 5/47 (baseline). gate_ratchet vs first parent 888555bb: PASS, 0 refusals over 48 gates (Ruling 153 filter parent=107 head=108; +1 = Ruling 157 heading swept into the join by step 7 staging, PD-1). Pushed cac40d5a:main; Release build exit 0. T6 Sonnet 32 calls/128k/6 min; its fold inputs were fixed by T5's design 68f3a753 (all adopted).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/NotebookOperations.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:08:43Z",
+      "done_when": "three ops green against a real store; AiDe.Core.Tests green",
+      "duration_seconds": 394.0,
+      "fan_out": 0,
+      "goal": "Give the App notebook.open, notebook.revision.save, notebook.revision.latest end to end",
+      "id": "al-01M59CDMEPJDQHJPJRT0BRTTWG",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Give the App notebook.open, notebook.revision.save, notebook.revision.latest end to end",
+      "session": "wl-t14-nbops",
+      "shortname": "wl-t14-nbops",
+      "skill": "implement",
+      "started_at": "2026-10-19T06:02:09Z",
+      "summary": "Three notebook IPC ops (constants, client methods, daemon registration, store writer/reader), red then green, suite 2954 pass",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/Records/StoreWriter.Notebook.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:15:32Z",
+      "done_when": "collision + reserved refused, atomicity tested, AiDe.Core.Tests green",
+      "duration_seconds": 351.0,
+      "fan_out": 0,
+      "goal": "Close two T14 notebook.open gaps: journey-id collision refusal and one-transaction test",
+      "id": "al-01M59CT3K9QDM2WRWF5REZ3Q7X",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close two T14 notebook.open gaps: journey-id collision refusal and one-transaction test",
+      "session": "wl-t14b-nbops",
+      "shortname": "wl-t14b-nbops",
+      "skill": "implement",
+      "started_at": "2026-10-19T06:09:41Z",
+      "summary": "notebook.open refuses derived journey collision (AIDE-STORE-JOURNEY-ID-COLLISION; reserved id keeps AIDE-STORE-RESERVED-JOURNEY); atomicity test added, not red; suite 2957 pass",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59FGB8E4KN62SWXQ3H0NNNE",
+      "shortname": "join-wl1a-notebook-ops",
+      "datetime": "2026-10-19T07:02:38Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-notebook-ops into main",
+      "summary": "T14 + T14b (Sonnet): three notebook IPC ops red->green over a real pipe; journey-id collision refused (AIDE-STORE-JOURNEY-ID-COLLISION); one-transaction open tested (not red). Retroactive grant: one StoreErrorCodes constant in WorkspaceStore.cs. recount_seconds=545 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
+        "docs/proof/workbench-loops-wl-1a/notebook-ops/suite-green.txt"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T6 wl1a-folds to main",
+      "goal": "join T14 wl1a-notebook-ops to main",
       "done_when": "recount green; ratchet PASS; pushed",
       "tier": "T1",
       "fan_out": 0,
@@ -24153,32 +24254,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T06:29:14Z",
-      "duration_seconds": 560.0
-    },
-    {
-      "id": "al-01M59EZ4N4590EVCJF2GWDHT30",
-      "shortname": "join-wl1a-folds-step8",
-      "datetime": "2026-10-19T06:53:14Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Ruling 151) for the T6 wl1a-folds join cac40d5a",
-      "summary": "conductor-join recount OK; strict step 8 5/47 (baseline). gate_ratchet vs first parent 888555bb: PASS, 0 refusals over 48 gates (Ruling 153 filter parent=107 head=108; +1 = Ruling 157 heading swept into the join by step 7 staging, PD-1). Pushed cac40d5a:main; Release build exit 0. T6 Sonnet 32 calls/128k/6 min; its fold inputs were fixed by T5's design 68f3a753 (all adopted).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T6 on main under Ruling 151",
-      "done_when": "ratchet PASS; pushed; Release green",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T06:39:05Z",
-      "duration_seconds": 849.0
+      "started_at": "2026-10-19T06:53:31Z",
+      "duration_seconds": 547.0
     }
   ],
   "changes": [

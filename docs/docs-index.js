@@ -2843,7 +2843,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 56 types, 132 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 63 types, 142 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2856,7 +2856,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1b6ebe976666c09450cbb1a7f11867f8533524975b36b54f1b03148d9286696b"
+      "sourceSha256": "6b4c16990f563577ebdf40b92f1143e7897eef341cdad64f479560fb742ef2c8"
     },
     {
       "id": "api-aide-core-mcp",
@@ -3043,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 13 types, 98 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 15 types, 102 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3056,7 +3056,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a68e72c5b1f38674ff3d95a4fd9092d9ba3d5f1a7a50977f6904756607847f1b"
+      "sourceSha256": "1b1aab8591d18de99a7a5b72daaf237495b99c307c5b502bffb3c5283c82c776"
     },
     {
       "id": "api-aide-core-store-records",
@@ -10706,7 +10706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "362cd5843ce71ccd70d3a5c037095cd9a98635aa29125875fa54c7cf5129b362"
+      "sourceSha256": "34f2ad9d4a7e05760fec2adb6f64f38c938c082cf65844038211c9b59ebdee6c"
     },
     {
       "id": "design-session-profiler",
@@ -12317,7 +12317,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "03ebad87b02aea604a0acdc822ea4906d58a80a44299a96ad1dd6611ca58f66c"
+      "sourceSha256": "028ac29aa43feb6e3ff49e07735ea0536f0af2a998e28772d9bdf86b11d4a8fb"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22403,7 +22403,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d33df5a0f53e7c4820dae41fc769d74895f96b3e40a79d4788ff06aa9046dbb6"
+      "sourceSha256": "5c64faf67392db5af8d69ca8810a67ce5fea06031a67564a7ced552070c28d55"
     },
     {
       "id": "proof-workbench-loops-20261018",
@@ -24530,5 +24530,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "8eb2481038d29e9cd9dbe723ed6e618df7b507fbb25bb97d1c441eabdd46680d"
+  "graphSha256": "e1775aa4a3ad70fe032e9d10a0bbb23fb5195645f6a88878f8e25bcc040f0f24"
 };
