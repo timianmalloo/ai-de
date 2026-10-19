@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T05:07:34Z",
+  "generated": "2026-10-19T05:42:01Z",
   "audit": [
     {
       "actor": null,
@@ -23684,6 +23684,54 @@ window.AUDIT_DATA = {
         "speedup": 2.38,
         "peak_concurrency": 4
       }
+    },
+    {
+      "id": "al-01M59AJ5R4NQ8QPG37VDF42JX4",
+      "shortname": "wl-t7-grok",
+      "datetime": "2026-10-19T05:36:15Z",
+      "session": "wl-t7-grok",
+      "prompt": "A pure ingest-side credential-sentinel redaction transform.",
+      "summary": "FrameRedaction.Apply maps a frame and patterns v1 to a redacted frame plus original-frame spans. Checks went red on CS0246 then green. Suite passed 2954, failed 0, skipped 1.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/FrameRedaction.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "A pure ingest-side credential-sentinel redaction transform.",
+      "done_when": "pure (frame, patterns vN) to (redacted frame, redactions[]); each named check red then green; dotnet test tests/AiDe.Core.Tests green; commits on wl1a-redaction.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T05:18:46Z",
+      "duration_seconds": 1049.0
+    },
+    {
+      "id": "al-01M59AWQR58WSZWHCPFXCPRPF3",
+      "shortname": "wl-t7b-redact",
+      "datetime": "2026-10-19T05:42:01Z",
+      "session": "wl-t7b-redact",
+      "prompt": "Make FrameRedaction span offsets index the stored (redacted) frame per the RunEvent contract",
+      "summary": "Offset is now the marker start in the redacted frame, Len the original span length; tests red then green; doc comments updated; suite 2954 passed",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/FrameRedaction.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Make FrameRedaction span offsets index the stored (redacted) frame per the RunEvent contract",
+      "done_when": "Offset/Len semantics, tests, docs, full suite green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T05:39:02Z",
+      "duration_seconds": 179.0
     }
   ],
   "changes": [
