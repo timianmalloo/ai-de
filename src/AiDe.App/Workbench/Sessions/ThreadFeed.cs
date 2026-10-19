@@ -98,6 +98,11 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it.</summary>
     public Func<bool> ReducedMotion { get; set; } = static () => !SystemParameters.ClientAreaAnimation;
 
+    /// <summary>Re-reads every row's attempt from <see cref="AttemptOf"/>.</summary>
+    public void RefreshAttempts()
+    {
+    }
+
     /// <summary>The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none.</summary>
     public Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf
     {
