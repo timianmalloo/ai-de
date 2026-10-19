@@ -16,7 +16,7 @@ retained sink; a redacted span is disclosed".
 ## Do
 `src/AiDe.Core/AgentPlane/FrameRedaction.cs`: a static, allocation-light, pure function over the frame text with a
 versioned pattern set (`PatternsVersion`), returning the redacted text and the list of `{offset, len, pattern_id}`
-(offsets into the **original** frame). Use T3's envelope types for the redaction record (read
+(offsets into the **stored, redacted** frame, as `RunEventRedaction` on main documents; `len` is the original span length — corrected by the Leader 2026-10-19, T7b). Use T3's envelope types for the redaction record (read
 `src/AiDe.Core/AgentPlane/RunEvent.cs` on `main`). Reuse any existing sentinel/secret patterns in the repo first
 (grep `sentinel`, `Redact`, `credential` in `src/`) — one definition of a credential pattern, not two; if one exists,
 call it. Patterns cover at least: Anthropic/OpenAI/xAI/Google/GitHub token shapes and `Bearer …` headers, and the
@@ -33,9 +33,9 @@ new `src/AiDe.Core/AgentPlane/FrameRedaction.cs`, new `tests/AiDe.Core.Tests/Age
 
 ## Standing rules for this track (CTX-F — every line binds)
 
-You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader-20261018`. The
+You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader2-20261019`. The
 coordination plan is `docs/coordination/coordination-workbench-loops.md` (your row in "Tracks" and
-"Track contracts" is your contract). Leader epoch: **1**. Decision requests go to the Owner
+"Track contracts" is your contract). Leader epoch: **2**. Decision requests go to the Owner
 `wl-owner-20261018` (`python docs/ai-forward-pack/scripts/coord-decide.py request --to wl-owner-20261018 ...`) — only
 for a genuine product trade-off the repo, spec, ADRs or a spike cannot answer, with a recommendation
 and a default.
@@ -48,7 +48,7 @@ and a default.
    (the primary checkout) or another track's tree. **Never call `EnterWorktree` or `ExitWorktree`.**
 3. **Windows:** run `python`, never `python3`. `coord <verb>` = `python docs/ai-forward-pack/scripts/coord-core.py <verb>`.
 4. **Owned authored paths** are listed below. You edit nothing else. Need a change outside them →
-   `coord request add --to wl-leader-20261018 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
+   `coord request add --to wl-leader2-20261019 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
    and carry on with what you own. `derived` files (docs/docs-index.js, docs/audit/audit-data.js,
    docs/audit/index.html, docs/api/*.md, docs/_site/*, docs/_meta.json) are regenerated at the join —
    do not edit or claim them. `register` files (docs/audit/*.jsonl, .agents/log/*.jsonl) are
@@ -73,7 +73,7 @@ and a default.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
     `DC-NEW-wl-t7-redact` (class / sweep / derive / prevent), in the same commit as the fix.
 12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "wl-t7-redact" --session wl-t7-redact --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
-    commit it; then `coord mail send --to wl-leader-20261018 --kind done --body "<exit evidence: commits, test names, proof files>"`.
+    commit it; then `coord mail send --to wl-leader2-20261019 --kind done --body "<exit evidence: commits, test names, proof files>"`.
     Your final message to the Leader is the same exit-evidence report: every commit sha (red and green),
     every test name added, every proof file, the suite result with pass/fail counts, any seam request
     raised, anything not done. **Your "done" is evidence, not authority** — the Leader re-runs and reads back.

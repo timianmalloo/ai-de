@@ -52,3 +52,24 @@ Nothing under `docs/ai-forward-pack/` was edited. Each row is a next step for th
 - **Interim state:** 117 portable-text-io findings in 47 other `tools/` scripts and the one
   `verify-preservation-workflow-policy.py` subprocess finding are fixed in this repository. Only the
   frozen oracle remains, so both gates stay red on exactly that file until PD-2 lands.
+
+## PD-3 — `coord doctor` reports git's built-in `union` merge driver as NOT EFFECTIVE
+
+Filed by the Leader `wl-leader2-20261019` on 2026-10-19. The Owner confirmed it by running `coord doctor` and asked
+for it to be filed here.
+
+- **Gate:** `coord doctor` (`docs/ai-forward-pack/scripts/coord-core.py`, `driver_status` at line 4671, reported
+  at line 4986).
+- **Finding:** `merge driver NOT EFFECTIVE [COORD-DRIVER-NOT-EFFECTIVE]`: "declared .gitattributes covers 439
+  path(s) via union", "`git config merge.<name>.driver` is unset in this clone". Its remedy is `coord install` in the
+  primary. Measured in the primary at `b256bcd2`. The Owner measured 440 paths.
+- **Why it is the pack's:** `driver_status` collects every `merge=` attribute value from `git check-attr`. It then
+  calls a value missing when no `merge.<value>.driver` key is registered. `union` (like `text` and `binary`) is a
+  driver built into git and needs no config, so no clone can ever satisfy the check. The coord drivers are
+  registered: `merge.coord-regen.driver` and `merge.coord-register.driver` are both in `.git/config`. `coord
+  install` would not change the result. The `union` lines come from the repository's `.gitattributes`
+  register lines (T13).
+- **Proposed fix:** `driver_status` excludes git's built-in drivers (`union`, `text`, `binary`) from the
+  missing set. A self-test covers a `.gitattributes` that declares only `merge=union`, which must report effective.
+- **Interim rule (Owner):** a NOT EFFECTIVE that names only `union` is known noise. A NOT EFFECTIVE that names
+  `coord-regen` or `coord-register` is still real.

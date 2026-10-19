@@ -1,0 +1,10 @@
+{"agent": "wl-t6-folds", "at": 1792388149.7626147, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/folds/folds-red.txt", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388149.7981014, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/Records/Folds/AttemptStateFold.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388149.834145, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388149.8648527, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Workbench/Folds/AttemptStateFoldTests.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388149.8973665, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Workbench/Folds/CurrentnessFoldTests.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388199.5972183, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/folds/folds-green.txt", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388199.6242223, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/Records/Folds/AttemptStateFold.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388199.6532416, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/Records/Folds/CurrentnessFold.cs", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388344.1681597, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t6-folds", "wi": ""}
+{"agent": "wl-t6-folds", "at": 1792388344.2007434, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/folds/suite-green.txt", "session": "wl-t6-folds", "wi": ""}
