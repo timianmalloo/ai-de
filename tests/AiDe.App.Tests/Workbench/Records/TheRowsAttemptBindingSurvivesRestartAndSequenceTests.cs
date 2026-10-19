@@ -153,6 +153,35 @@ public sealed class TheRowsAttemptBindingSurvivesRestartAndSequenceTests : IDisp
     }
 
     [Fact]
+    public void ASentTurnsRow_ShowsItsBinding_WhileTheRunIsStillHeld_ThroughTheSurface()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                using var host = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+                using var model = _fixture.NewModel();
+                model.Runs.BindHost(host, Scope);
+                using var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+                window.Content = document;
+                _fixture.ConfigureStub(document);
+
+                document.Composer.Draft.SetFreeFormText("held words");
+                Assert.NotNull(document.Composer.Send());
+                await UntilAsync(window, () => model.Runs.AttemptOf(model.Thread.Current.Turns[0].Ordinal) is not null, () => "no receipt recorded");
+
+                string Help() => ThreadFixtures.Visuals<Expander>(document)
+                    .Where(e => System.Windows.Automation.AutomationProperties.GetName(e).StartsWith("Provenance of", StringComparison.Ordinal))
+                    .Select(System.Windows.Automation.AutomationProperties.GetHelpText).FirstOrDefault() ?? "no provenance disclosure yet";
+                await UntilAsync(window, () => Help().StartsWith("Sent from revision ", StringComparison.Ordinal), () => $"the row reads \"{Help()}\" with the receipt recorded");
+                _fixture.ReleaseRun();
+                window.Content = null;
+            });
+    }
+
+    [Fact]
     public void TheTerminalWord_HasOneSource_AndBothSurfacesShowIt()
     {
         Assert.Equal(RouteWords.TerminalWord, SurfaceContentFactory.Kinds.Single(k => k.Kind == "terminal").Title);

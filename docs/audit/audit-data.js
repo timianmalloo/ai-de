@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T08:43:30Z",
+  "generated": "2026-10-19T09:04:23Z",
   "audit": [
     {
       "actor": null,
@@ -24624,6 +24624,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T08:32:13Z",
       "duration_seconds": 677.0
+    },
+    {
+      "id": "al-01M59PF93G64ZXC9SXWV95PN1T",
+      "shortname": "wl-t16b-bindrow",
+      "datetime": "2026-10-19T09:04:23Z",
+      "session": "wl-t16b-bindrow",
+      "prompt": "T16b: close three gaps in T16 binding-row read-back",
+      "summary": "Terminal word single-sourced; late receipt refreshes rows (AttemptsChanged, RefreshAttempts, surface wiring); send-edit-send pinned; restart premise pinned (no turn restoration exists)",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "close three gaps in T16 read-back",
+      "done_when": "each gap closed or its premise pinned; suites green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T08:44:40Z",
+      "duration_seconds": 1183.0
     }
   ],
   "changes": [

@@ -141,6 +141,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
         _feed.AttemptOf = ordinal => notebook.Runs.AttemptOf(ordinal)?.Attempt;
+        notebook.Runs.AttemptsChanged += OnAttemptsChanged;
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;
         _feed.Stopped += ShowStoppedRow;
@@ -1467,6 +1468,18 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
     }
 
     /// <summary>A revision saved or a turn bound — possibly off the UI thread (the save's continuation).</summary>
+    /// <summary>A receipt recorded after the last snapshot reaches the rows (fired from the pool by the host's dispatch).</summary>
+    private void OnAttemptsChanged()
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(_feed.RefreshAttempts);
+            return;
+        }
+
+        _feed.RefreshAttempts();
+    }
+
     private void OnNotebookChanged()
     {
         if (!Dispatcher.CheckAccess())
@@ -1567,6 +1580,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         Composer.DraftChanged -= RenderStale;
         Composer.RevisionPreparer = null;
         Notebook.Changed -= OnNotebookChanged;
+        Notebook.Runs.AttemptsChanged -= OnAttemptsChanged;
         _feed.Dispose();
 
         // A RUN MAY OUTLIVE ITS DOCUMENT — ONE LIFETIME RULE (ADR-0034 rule 7): the store's lifetime
