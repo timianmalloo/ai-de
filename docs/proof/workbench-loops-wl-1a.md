@@ -84,4 +84,88 @@ Slice deliverables owned by other tracks (cited; their folders join with them):
 
 ## Human demo script
 
-*Left for the Leader, after T8 lands.*
+*Written by the Leader (`wl-leader2-20261019`) after T8, T16/T16b and T17/T17b/T17c joined (Rulings 161–165). Keyboard
+only (architecture.md:1503). Every gesture and string below was read from the code at the T17 tip, with file:line in
+the Leader's gesture table. Lines marked **rehearse** are gestures whose exact keystroke count is not fixed in code.
+GUI steps not yet run by a person are **owed to the user**.*
+
+### 0. Build and launch
+1. `dotnet build AiDe.sln -c Release`
+2. Run `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`. The path was confirmed on disk at 2026-10-19 08:17Z.
+
+### 1. A notebook on the real claude-code lane
+3. **Ctrl+1** opens the Factory perspective. **Ctrl+N** opens *New session*; if no workspace is open, a workspace
+   chooser comes first.
+4. In the sheet, **Tab** to an account under the Anthropic provider's heading and press **Space** to tick it. The
+   heading's exact text comes from the account's provider key and was not confirmed in code. Then
+   reach its *Default for this session* radio (UIA "Default account: {label}") and press **Space**. The engine
+   sub-line reads `claude-code`. Press **Enter** (*Create session*).
+5. Type a prompt in the editor. Press **Ctrl+Enter**: one press sends in the default mechanical mode; under an agentic
+   compile rung the first press prepares and the second sends ("Preparing… press again when prepared").
+6. **Expect:** turn b1 appears and runs on the real lane.
+
+### 2. See the attempt bound to its revision, request and route (Ruling 161)
+7. Reach b1's row (**Shift+F6** from the composer, or **Shift+Tab**; **rehearse** which lands on the row). Then
+   **Tab** to the *provenance* disclosure (UIA "Provenance of b1") and press **Space**. **Esc** closes it.
+8. **Expect:** the first line inside the disclosure, which is also its HelpText, reads
+   `Sent from revision 1 · request {7 hex characters} · via claude-code`. The 7 characters are the real fingerprint
+   of the request you prepared, never a fixture value.
+
+### 3. Edit, and see the old result marked stale
+9. Return to the editor and change the draft.
+10. **Expect:** the notices strip above the composer reads *"This output belongs to an earlier draft. Run again to
+    refresh it."*. It is also announced politely to a screen reader. b1's provenance line still names revision 1
+    and its own request (AC-R01a).
+
+### 4. Stop on the real lane: StopRequested, then Interrupted
+11. Send a long turn, b2, e.g. *"Write the numbers from 1 to 400 as English words, one per line. Do not use any
+    tools."*. While it runs, reach its row and its **Stop this turn** button (the row's first action; **rehearse**
+    whether Shift+Tab lands on it directly). Press **Space**.
+12. **Expect:** the outcome first reads *stop requested* (box "Stop requested. Waiting for the harness to
+    acknowledge."), then *interrupted* (box "Interrupted after {N edits}; {spend}. Send the same turn again as a new
+    turn, or open the log."). If the adapter does not acknowledge within 10 s, the honest terminal is *delivery
+    unknown* (`stop_not_acknowledged`), which is a correct result, not a failure.
+
+### 5. Hide the pane mid-run; the run continues
+13. Send another long turn, b3. While it runs, press **Ctrl+W**.
+14. **Expect:** a screen reader announces *"Pane hidden. The run continues."*. The line is spoken, not shown; use
+    Narrator (**Win+Ctrl+Enter**) or Accessibility Insights to hear or see it.
+15. Reopen: **Alt+F**, then **S** (*Recent sessions*), arrow to the session, **Enter**. **Expect:** b3 is still
+    running or has finished. No separate "run continued" message is shown.
+
+### 6. Queue a turn, then cancel it
+16. While a turn runs, press **Ctrl+Enter** with new words. **Expect:** the status line offers *"b{n} is running.
+    Wait — send after b{n}, or start a parallel session."*. **Tab** to the *Wait — send after* link and press **Enter**
+    (**rehearse** the Tab count). The queued row reads *"b{m} queued — sends after b{n}"*.
+17. Reach the queued row, **Tab** to **Cancel**, and press **Space**. **Expect:** the outcome reads *cancelled by
+    you*, and the words return to the editor. The row's HelpText reads *"b{m} cancelled by you before it was sent."*,
+    which you can check in Accessibility Insights.
+
+### 7. Restart, and kill the host mid-run
+18. Close the app and start it again (step 2). Reopen the session (**Alt+F → S → the session → Enter**).
+    **Expect:** every recorded attempt is a row again, in dispatch order, each with its provenance line (step 7).
+    A restored free-form turn that finished reads *completed* (not "answered"; a recorded residual).
+19. Send a long turn. While it runs, kill the app from another PowerShell: `Get-Process AiDe.App | Stop-Process -Force`.
+    Start the app and reopen the session.
+20. **Expect:** that turn's row reads *delivery unknown*. Its HelpText is the reason sentence followed by
+    *"Last event received: #{n} at {HH:mm:ss}."* (or *"…: not recorded."* if no event arrived). Focus the row, **Tab**
+    to the *{N} events* fold, and press **Space**; its events are listed and present in the UIA tree.
+21. **Expect:** a new turn sent now continues the numbering after the restored rows. It never takes b1 again.
+
+### 8. The recorded real-lane Stop run (the second recorded run, for the Proof Pack)
+22. **This step spends real adapter usage on your Claude account.** From the repository root in PowerShell:
+    `$env:AIDE_REAL_ADAPTER_ROOT = "$PWD\spikes\acp-subscription-lane"; dotnet test tests/AiDe.App.Tests --filter "FullyQualifiedName~AttemptRealLaneStopTests"`.
+    The adapter is installed in that folder's `node_modules` from the committed lockfile; if it is missing, run
+    `npm ci` there first. Without the variable the test reports **skipped**, never passed.
+23. **Expect:** `AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded` passes.
+    Its PASS output becomes the second recorded real-lane run in this Proof Pack. Scrub any account email or
+    organization from captured files before committing (brief rule 15); the identity gate refuses them.
+
+### 9. Owed from WL-0 (folded into this demo)
+24. WL-0's GUI steps 2–4 (`docs/proof/workbench-loops-wl-0.md`, "Human demo script"): reindex after an uncommitted
+    edit shows the new fact; the entry-points view on a large repository shows a bounded list with an "Omitted (n)"
+    disclosure. Those steps' keys come from the WL-0 script and were not re-read in code for this script.
+
+### Still owed to the user (not observable by the Owner's session)
+- Every GUI step above (1–7, 9) needs a person at the window. Each is labelled not observed until run.
+- The native IME check for E-1 (WL-2).
