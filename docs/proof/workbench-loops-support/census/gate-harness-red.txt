@@ -1,0 +1,2 @@
+verify-harness-diagnostics: FAILED
+  - tests/AiDe.Core.Tests/ConsoleHostCensusTests.cs rethrows a captured failure wrapped, with no XunitException guard before it. An assertion failure in this file is reported as a broken harness with the real message demoted to an inner exception — which reads as flakiness, and the response to flakiness is a re-run, not an investigation. Add: `if (failure is Xunit.Sdk.XunitException) throw failure;` before the wrap.

@@ -9,7 +9,7 @@
   AiDe.Core.Tests -> C:\Projects\ai-de-census-flake\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
 Test run for C:\Projects\ai-de-census-flake\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
-[xUnit.net 00:01:29.89]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+[xUnit.net 00:01:54.72]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
   Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
 
-Passed!  - Failed:     0, Passed:  2788, Skipped:     1, Total:  2789, Duration: 2 m 4 s - AiDe.Core.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:  2788, Skipped:     1, Total:  2789, Duration: 2 m 6 s - AiDe.Core.Tests.dll (net10.0)
