@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T21:25:17Z",
+  "generated": "2026-10-19T21:52:06Z",
   "audit": [
     {
       "actor": null,
@@ -26400,12 +26400,89 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5AZZPJNKP9Q8DF91SKJ17KB",
-      "shortname": "join-wls-float-fix",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T21:09:53Z",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Ruling 171: a floated pane never vanishes; layout commands render",
+      "id": "al-01M5AZZPJNKP9Q8DF91SKJ17KB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T21:09:52Z",
+      "summary": "Re-join of the float fix: wls-float-fix = 36884736 + 2213b507 (one-line cite fix after the first join was refused at verify-cited-controls; Owner approved this path over the guard fallback, which refused identically at d82df79e). Live regression on main (palette Float pane: model floating, 0 windows, 'now floating' announced) measured by the Leader on a clean origin/main tree; fix: WorkbenchController.LayoutApplied raised by ApplyAndAnnounce, wired to adapter.Render in DockHost.Create. The palette Float route renders (red 626c7221 -> green 36884736); the sweep's four routes close/collapse/maximize/next-tab each red by the palette at 626c7221, green at 36884736; the interim guard (9ba8572f -> d82df79e) removed. Floating tab had no context menu (74af5881 red) -> fixed on the branch at 28c60d1f, joins next; redock remains reachable via the palette's Move to -> Center. Recount ran in full (App 1226 counted; Core 3116/2933/183); refusals: SolutionTreeChordTests and CtrlDigit 'foreground', each alone on the head b3d52a60 and the first parent 3f22efa8 (Ruling 155 (3), NOT CHECKED); both had passed in the first float-fix join's recount. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/float/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T21:25:17Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 4602.0,
+      "fan_out": 0,
+      "goal": "Ruling 171: a floated pane never vanishes; layout commands render",
+      "id": "al-01M5B0VWT95GDB4S51JSQ5S1V0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the float-fix re-join 921a65b2",
+      "session": "wl-leader3-20261019",
+      "shortname": "join-wls-float-fix-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T20:08:35Z",
+      "summary": "The first float-fix join (head a7f17301, kept at backup/float-fix-join-a7f17301) passed its recount in full (App 1226/1226) but its ratchet refused verify-cited-controls (FloatGuardTests.cs:14 cited a deleted test); the guard fallback refused identically at d82df79e; Owner approved T21's one-line cite fix 2213b507 on 36884736. This re-join: recount ran in full (App 1226 counted; Core 3116/2933/183); refusals SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground', each ALONE on the join head b3d52a60 and the first parent 3f22efa8 in a clean detached tree: Ruling 155 (3), NOT CHECKED. Step 8 strict 6/48. Ratchet vs 3f22efa8, head 921a65b2: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Owner's join-record lines: the palette Float route renders (red 626c7221 -> green 36884736); the sweep's four routes (close, collapse, maximize, next tab) red at 626c7221, green at 36884736; floating tab has no context menu (74af5881 red) -> fixed on wls-float at 28c60d1f, joins next; redock remains reachable via the palette's Move to -> Center.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchController.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T21:04:31Z",
+      "done_when": "(A), (B), (C) and the sweep green through the palette and the tab menu; whole suites saved; ratchet run",
+      "duration_seconds": 3840.0,
+      "fan_out": 0,
+      "goal": "a live notebook floats and redocks (Ruling 171 (3)), with the float guard on main until it joins",
+      "id": "al-01M5AZNW7TV75PZGGAS831PH4H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T21 n8: the float guard first (Owner's order), then (A) green and the command-render class sweep, then (B) redock and (C) restart of a live floating notebook, each red then green through the real gesture",
+      "session": "wl-t21-float",
+      "shortname": "wl-t21-float",
+      "skill": "implement",
+      "started_at": "2026-10-19T20:00:31Z",
+      "summary": "Guard 9ba8572f->d82df79e; (A)+sweep 626c7221->36884736 (WorkbenchController.LayoutApplied wired in DockHost, DC-NEW-wl-t21-float-d, LayoutCommandsRenderTests x5); floating tabs named and decorated 74af5881/18f9c404->28c60d1f ((C) green); (B) focus 28c60d1f->c80e5fbd; cite fix 2213b507 for the float-fix re-join; App 1225/2/2 (attended probes), Core 3115/0/1; ratchet 3 refusals, all derived views",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5B2CZCXX2BWJT68E02Z352E",
+      "shortname": "join-wls-float-n8",
+      "datetime": "2026-10-19T21:52:05Z",
       "session": "wl-leader3-20261019",
       "prompt": "the join of the resolved merge into main",
-      "summary": "Re-join of the float fix: wls-float-fix = 36884736 + 2213b507 (one-line cite fix after the first join was refused at verify-cited-controls; Owner approved this path over the guard fallback, which refused identically at d82df79e). Live regression on main (palette Float pane: model floating, 0 windows, 'now floating' announced) measured by the Leader on a clean origin/main tree; fix: WorkbenchController.LayoutApplied raised by ApplyAndAnnounce, wired to adapter.Render in DockHost.Create. The palette Float route renders (red 626c7221 -> green 36884736); the sweep's four routes close/collapse/maximize/next-tab each red by the palette at 626c7221, green at 36884736; the interim guard (9ba8572f -> d82df79e) removed. Floating tab had no context menu (74af5881 red) -> fixed on the branch at 28c60d1f, joins next; redock remains reachable via the palette's Move to -> Center. Recount ran in full (App 1226 counted; Core 3116/2933/183); refusals: SolutionTreeChordTests and CtrlDigit 'foreground', each alone on the head b3d52a60 and the first parent 3f22efa8 (Ruling 155 (3), NOT CHECKED); both had passed in the first float-fix join's recount. recount_seconds=0 (docs_only=True).",
+      "summary": "T21 n8 rest: (B) redock with state intact and focus in the notebook (c80e5fbd); (C) restore floating at bounds with read-back; floating tabs named with a menu (28c60d1f). Close condition 4 proved by test. RECOUNT 1 (failed): one Core nonportable failure, TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives ('the helper never wrote child-exited= to its report'); the src diff is one non-terminal file; it passed 3/3 alone on the head be5a497a and 3/3 on the parent aa8247ff. RECOUNT 2 (the ONE re-run the Owner allowed): Core 3116/2933/183 all Completed (the terminal-host test passed); App 1229 counted, only SolutionTreeChordTests and CtrlDigit refused 'foreground', each alone on the head be5a497a and the parent aa8247ff (Ruling 155 (3), NOT CHECKED). The load-only class is DC-NEW-wl-leader3-b (T31 measures rates). recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
@@ -26416,7 +26493,7 @@ window.AUDIT_DATA = {
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Ruling 171: a floated pane never vanishes; layout commands render",
+      "goal": "Ruling 171 (3): a live notebook floats and redocks",
       "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -26425,32 +26502,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T21:09:52Z",
+      "started_at": "2026-10-19T21:52:04Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5B0VWT95GDB4S51JSQ5S1V0",
-      "shortname": "join-wls-float-fix-step8",
-      "datetime": "2026-10-19T21:25:17Z",
-      "session": "wl-leader3-20261019",
-      "prompt": "Step 8 (Rulings 151/155/160) for the float-fix re-join 921a65b2",
-      "summary": "The first float-fix join (head a7f17301, kept at backup/float-fix-join-a7f17301) passed its recount in full (App 1226/1226) but its ratchet refused verify-cited-controls (FloatGuardTests.cs:14 cited a deleted test); the guard fallback refused identically at d82df79e; Owner approved T21's one-line cite fix 2213b507 on 36884736. This re-join: recount ran in full (App 1226 counted; Core 3116/2933/183); refusals SolutionTreeChordTests and CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground', each ALONE on the join head b3d52a60 and the first parent 3f22efa8 in a clean detached tree: Ruling 155 (3), NOT CHECKED. Step 8 strict 6/48. Ratchet vs 3f22efa8, head 921a65b2: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Owner's join-record lines: the palette Float route renders (red 626c7221 -> green 36884736); the sweep's four routes (close, collapse, maximize, next tab) red at 626c7221, green at 36884736; floating tab has no context menu (74af5881 red) -> fixed on wls-float at 28c60d1f, joins next; redock remains reachable via the palette's Move to -> Center.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-s/float/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Ruling 171: a floated pane never vanishes; layout commands render",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T20:08:35Z",
-      "duration_seconds": 4602.0
     }
   ],
   "changes": [

@@ -10837,7 +10837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7f4e6c1a11fb83ba07108336efd5d2e5a2ed32eed1eb2ab01c063def45d5ffd2"
+      "sourceSha256": "1eb8efb4992b79bea096cd2a982e2e0255bcbc0dd4f7f3d929144badd6e11687"
     },
     {
       "id": "design-session-profiler",
@@ -22740,7 +22740,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "588ea1d1551b8855f62d1e7365715a95d326ee423f1807dc5d2a60147da62d86"
+      "sourceSha256": "43db723370f7e98ddacf1db4166c1b00882081c0fd91d513f89edf448e124be6"
     },
     {
       "id": "proof-workbench-loops-wl-1a-binding-handoff",
@@ -23426,7 +23426,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c5bdc2727feb36a9be0a4f6fd398d5bbfbe8578a73e2a2bd4892e245fcb2b775"
+      "sourceSha256": "a1ae4ae9776582040555d597910fb66e232524fd2e35cf030cc6c0921b2ab731"
     },
     {
       "id": "proof-workbench-loops-wl-s-knowledge-mode",
@@ -23537,14 +23537,14 @@ window.DOCS_INDEX = {
     {
       "id": "wl-s-float-handoff-n1",
       "path": "docs/proof/workbench-loops-wl-s/float/handoff.md",
-      "title": "WL-S T21 float - node 7 hand-off",
+      "title": "WL-S T21 float - node 8 hand-off",
       "type": "proof-pack",
       "status": "active",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "T21 node 7 (close condition 4): (A) is red at 0097164f. Through the real shell, the palette's Float pane floats a live notebook in the model and draws no floating window, because no controller-routed layout command renders. The fix needs one line in DockHost.cs (seam req-01M5ATF6PNMEW0SX2KKZA34D4D, no reply at the kick). (B) and (C) are drafted, not run. Core 3046/0/1, App 1214/3/2.",
+      "summary": "T21 node 8: the float guard red-first on the Leader's priority order (d82df79e); the float-fix join of 36884736 was abandoned on one cited-controls refusal, fixed by the one-file commit 2213b507; every controller layout command renders (WorkbenchController.LayoutApplied, 36884736, DC-NEW-wl-t21-float-d, five palette tests); floating tabs are named and carry the menu (28c60d1f). (A) and (C) green; (B) green at c80e5fbd (the moved pane takes the focus). Suites App 1225/2/2 (attended probes), Core 3115/0/1; ratchet in ratchet.txt.",
       "tags": [],
       "links": [
         {
@@ -23553,7 +23553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0854cc6af11a264bb9dd45f94d6d417e096b386b50c45bcfe2a355a4f0ff5811"
+      "sourceSha256": "95a272822d8466aebae262cd7e402d06f3158a693b7483a67c8ed7f660493af2"
     },
     {
       "id": "wl-s-float-proof",
@@ -23565,7 +23565,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-01-19",
       "reviewSuggested": [],
-      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam.",
+      "summary": "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam. Node 8: the float guard (d82df79e), every controller layout command renders (36884736, DC-NEW-wl-t21-float-d), floating tabs are named and carry the menu (28c60d1f); (A), (B) and (C) green (c80e5fbd).",
       "tags": [],
       "links": [
         {
@@ -23574,7 +23574,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cbf09e40d0f0898f40406057bf233b002f6cd1704c5d6ff37d637ea8379a9fd5"
+      "sourceSha256": "6b31db2187219d5b06d2cc21f28379028b9f6f1938c427d3428efd12099338bf"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -25503,5 +25503,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2e83677e32463a9a5c071343ccfaa5dbe7ab1d4426b0a05b95369c8b656097f4"
+  "graphSha256": "c2f69e706ade3f4bbbd7496cf931d65e7f110c8906c609f0975eb038fa6e7a95"
 };
