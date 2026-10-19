@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T18:48:09Z",
+  "generated": "2026-10-19T19:02:08Z",
   "audit": [
     {
       "actor": null,
@@ -26153,6 +26153,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T18:48:07Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5ARNS5TBM2Z8EWTKADS35GD",
+      "shortname": "join-wls-kinds-migration-step8",
+      "datetime": "2026-10-19T19:02:08Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T11 re-join 3874b65a",
+      "summary": "Re-join after the first T11 join (refused at the ratchet: orphan hand-off, stale cited control, surface without an owner; kept at backup/t11-join-070d2637) was fixed forward by n13. Recount ran in full (App 1218 counted; Core 3047/2864/183). Refusals: SolutionTreeChordTests 'foreground not held', refused alone on the join head e0420d30 and on the first parent 33a45e6f in a clean detached tree (Ruling 155 (3), NOT CHECKED); CtrlDigitSwitchesThePerspectiveFromInsideAPageTests 'foreground held=False', new in T11 (no parent to compare), refused alone on the join head; NOT CHECKED unattended by the Owner's direction (item 4) and on the user's attended list in the WL-S demo script (f8ac6dd8). Step 8 strict 6/48. Ratchet vs 33a45e6f, head 3874b65a: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. WL-S is not accepted until close condition 4 (live-notebook float and redock, Ruling 171 (3)) is green; dispatched next as a T21 node.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "WL-S: the notebook and execution kinds admitted, and saved layouts migrated with a report",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T18:48:13Z",
+      "duration_seconds": 835.0
     }
   ],
   "changes": [

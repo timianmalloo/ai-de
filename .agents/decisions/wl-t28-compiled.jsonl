@@ -62,3 +62,10 @@
 {"agent": "wl-t28-compiled", "at": 1792433228.1766138, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/suite-node3-rerun-app.txt", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792433228.2186139, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/suite-node3.txt", "session": "wl-t28-compiled", "wi": ""}
 {"agent": "wl-t28-compiled", "at": 1792433236.6692836, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435774.001056, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-red.txt", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435774.0436628, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/suite-node4-core.txt", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435774.0853698, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterTheQueueDrainsTests.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435812.8503315, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-green.txt", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435812.89233, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435851.6136618, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-B-red-mutation.txt", "session": "wl-t28-compiled", "wi": ""}
+{"agent": "wl-t28-compiled", "at": 1792435851.659711, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/compiled-field/n4-C-red-mutation.txt", "session": "wl-t28-compiled", "wi": ""}
