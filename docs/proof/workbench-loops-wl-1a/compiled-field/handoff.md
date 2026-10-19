@@ -5,42 +5,29 @@ type: proof-pack
 status: draft
 owner: "@timianmalloo"
 phase: "workbench-loops WL-1a"
-tags: [workbench-loops, evidence, handoff, composer, ruling-96]
+tags: [workbench-loops, evidence, handoff, composer, ruling-96, ruling-181]
 links:
   - { to: architecture, rel: implements }
 review-by: "2026-11-18"
 summary: >-
-  T28 after node 1 (/investigate): the bug is reproduced on the product composition with a real Ctrl+Enter, and the root
-  cause is verified (the submit's BeginNextTurn empties the live-draft view). The red test is committed. The fix is not
-  written; it waits for the Owner's ruling on what the field shows after a submit.
+  T28 after node 2: Ruling 181 (1)-(3) landed red then green through the user's gesture. The field keeps the sent turn,
+  headed 'Compiled prompt — sent as b{n}', display-only, until the next keystroke; a second Ctrl+Enter sends nothing
+  (planted-leak mutation red); Ruling 96's tests are re-driven. Next is n3, the class gate.
 ---
 
-# Hand-off — T28 `wl1a-compiled-field`, after node 1
+# Hand-off — T28 `wl1a-compiled-field`, after node 2
 
-**Done (node 1, `/investigate`):**
-- Reproduced with the product composition and a real Ctrl+Enter: `_compiled.Text.Length` 69 → 0, height 48, open (`reproduction.txt`).
-- Root cause **Verified**: `SessionDocumentSurface.cs:672` → `ComposerSurface.cs:1138` / `:1149` / `:1225` (README §1).
-- Defect class `DC-NEW-wl-t28-compiled` appended to `docs/lessons/defect-classes.md`.
-- Red test: `tests/AiDe.App.Tests/Workbench/Composer/TheCompiledFieldAfterASubmitTests.cs` (namespace `AiDe.App.Tests.Composer`).
-  `OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt` and
-  `OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt`, both red at `f3bdf334` (`compiled-after-submit-red.txt`).
-- Whole suites at the node head: `suite-node1-core.txt`, `suite-node1-app.txt` (exit codes in `suite-node1-exits.txt`).
-  The two red facts are the expected App failures.
-- **Finding (coordination, not this node's class):** the session scratchpad is shared across the Leader's sub-agents. A
-  first suite run wrote `core.txt` / `app.txt` there, and T21's run in `C:\Projects\ai-de-wls-float` overwrote both files
-  with its own results (its build paths are in them). That run was discarded. The suites were re-run with output written
-  into this tree's proof folder. Briefs could require per-track scratch file names.
+**Done (node 2, `/implement`, Ruling 181).** The commits are `eaf8966c` (red tests and the heading consts), `1edfc015` (the red evidence) and `5da5d032` (the fix, then green).
+- **(A)** The node-1 red tests (from `f3bdf334`) are **green**: `OpenedAfterACtrlEnterSubmit_TheCompiledFieldShowsTheSentPrompt` and `OpenWhileTyping_ThenCtrlEnter_TheCompiledFieldKeepsTheSentPrompt`. Their oracle is unchanged: the field equals the sent prompt. They now also assert the heading `ComposerSurface.SentHeading("b1")` on the header, the field's UIA name and the disclosure's ItemStatus. New tests: `AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft` and `TheSentHeading_IsTheCopyDesignMdNames`. DESIGN.md:879 is amended, and the sent-state row is added after it.
+- **(B)** `TheSentPromptIsNeverResentTests` has 3 facts. They were red by the planted-leak mutation M1 (`B-red.txt`). Under M1 a second press resent b1 as b2, with 2 attempt rows.
+- **(C)** The two Ruling 96 tests and the `:381` sibling are re-driven through the gesture on a `SessionDocumentSurface`. The sibling is renamed `TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary`. The red is on the unfixed code (`C-red.txt`). The `IsOnScreen` test's red is mutation M2 (`C-red-mutation.txt`), which the original test survives.
+- The shared gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs`.
+- The whole suites are in `suite-node2.txt` (Core, then App), with the per-suite runs in `suite-node2-core.txt` and `suite-node2-app.txt`.
 
-**Red, by design:** the two facts above. Nothing else this node added is red.
+**Red, by design:** none of this node's tests.
 
 **Open:**
-- Seam `req-01M5AE5QGZMKFC36RA4C93QSPJ` (rule 14): the brief's oracle `Text == RenderView(draft).Text, non-empty` cannot
-  hold after a submit, because the code's contract is the live, now-empty draft. The red test asserts option A instead:
-  the field shows the sent prompt.
-- **Owner decision (phase 0 of the README's plan):** A, the field keeps the sent prompt ("sent as b1") until the next
-  keystroke (recommended); or B, an empty state that points to *Compiled prompt of b1*.
+- **Inferred design choice, not ruled:** a queued send shows the live, empty draft under the plain heading, with the queued sentence on the status line. It does not show "queued as b2" (README §5). If the Owner wants a queued heading, add one const.
+- **Seam `req-01M5AE5QGZMKFC36RA4C93QSPJ`** (node 1) is answered by Ruling 181. The Leader can close it.
 
-**Next step (node 2, after the ruling):** phase 1 of the README's plan. Hold the admitted turn's bytes as a display-only
-view. They must never reach `ComposerSendGate.RenderedView` (`ComposerSendGate.cs:347`), or a second Ctrl+Enter would
-resend b1. Turn both facts green, and add the keystroke-replaces-it and empty-resend-refused tests. Then phase 2 (the two
-Ruling 96 tests and `TheComposerRendersItsFieldLevelErrorsTests:381`) and phase 3 (the class gate).
+**Next step (node 3, the class gate):** a content oracle on a user-visible composer field must drive the user's gesture, using `ComposerGesture` or the same verbs, and must not be set up by changing the fixture directly. The gate must be seen failing on the original Ruling 96 test (`2a89cf0b:tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs:107-142`) before it is green on the re-driven ones. After that, T30 (Ruling 180, the prefill) follows on `ComposerSurface.cs`.

@@ -12,13 +12,14 @@ review-by: "2026-11-18"
 summary: >-
   T28 n1's /investigate of the user's report that the compiled prompt did not show in the compiled field after a submit.
   Reproduced on the product composition with a real Ctrl+Enter: the text goes from 69 chars to 0 while the box keeps its
-  48 px floor. The verified cause is the submit's own reset of the draft (BeginNextTurn on Admit), not layout. Red test
-  committed; the fix waits for the Owner.
+  48 px floor. The verified cause is the submit's own reset of the draft (BeginNextTurn on Admit), not layout. Node 2
+  lands Ruling 181: the field keeps the sent turn headed 'Compiled prompt — sent as b{n}', display-only, until the next
+  keystroke; the resend guard is proved by a planted-leak mutation; Ruling 96's tests are re-driven through the gesture.
 ---
 
 # T28 — the compiled field is empty after a submit
 
-- **Branch:** `wl1a-compiled-field`, off `origin/main` `624b46c4`. Node 1 (`wl-t28-compiled`), `/investigate`. **Red only. No product code was changed. This node stops for the Owner's review.**
+- **Branch:** `wl1a-compiled-field`, off `origin/main` `624b46c4` (merged with origin/main at 2a89cf0b). Node 1 (`wl-t28-compiled`), `/investigate`, was red only. **Node 2 (§5) is the fix under Ruling 181.**
 - **Symptom (the user, WL-1a demo, 2026-10-19):** they submitted a prompt, and the compiled prompt did not show in the compiled field.
 - **Prior ruling:** Ruling 96 (`docs/notes/addendum-c-council-rulings.md:1626-1638`). Its cause ("the belt not re-measuring on expand") was **Inferred**.
 
@@ -75,9 +76,34 @@ The class: **a content oracle that is set up by fixture mutation never drives th
 
 **Residual risk / what would change the diagnosis:** this ran in a WPF test host with no WebView2 page. In the running app, `BeginNextTurn` also pushes an empty init to the page (`:1150-1153`). That push cannot repopulate `_compiled`, because `_compiled` is written only at `:1225`, but it was not observed live. A live trace that showed non-empty `_compiled.Text` after a submit would reopen the diagnosis.
 
+## 5. Node 2 — the fix (Ruling 181, Option A)
+
+**What landed** (`src/AiDe.App/Workbench/Composer/ComposerSurface.cs`):
+- `BeginNextTurn` reads the gate's view (`RenderedView`) **before** `NextBlock` drops it. When the thread has admitted those bytes as the turn now in flight (`_inFlight.SentBytes` equal, no queued turn), it keeps them as display-only state with the heading `SentHeading(b{n})`.
+- `ShowCompiled` is now the only writer of `_compiled.Text`. It writes the box, the header, the field's UIA name and the disclosure's ItemStatus from one const, `SentHeadingFormat = "Compiled prompt — sent as {0}"`. `SetFieldText` (the next keystroke) ends the sent-state. So does any draft that compiles to words (Use as the next draft, an attachment).
+- **Resend guard (Ruling 181 (2)).** The sent text is written to the box only. `RenderCompiledView` still renders the live (empty) draft through the gate first, so `RenderedView` is the empty draft's view. A press in the sent-state is refused by the gate as *"an empty prompt is not a task"* (`ComposerSendGate.cs:347` then `:350-354`).
+- `DESIGN.md:879` is amended ("after a submit, the text just sent, named as sent"), and a new row follows it for the sent-state, the queued state and the held state.
+
+**Checks (red then green, through the gesture: `SetFieldText`, then `OnAcceleratorKey` Ctrl+Enter, then the toggle peer, read on the real `SessionDocumentSurface`):**
+
+| Check | Tests | Red | Green |
+|---|---|---|---|
+| A — Ruling 181 (1) | `TheCompiledFieldAfterASubmitTests`: `OpenedAfterACtrlEnterSubmit_…ShowsTheSentPrompt`, `OpenWhileTyping_ThenCtrlEnter_…KeepsTheSentPrompt` (node-1 reds; oracle now also checks the heading), `AfterASubmit_TheNextKeystroke_ReturnsTheFieldToTheLiveViewOfTheNewDraft`, `TheSentHeading_IsTheCopyDesignMdNames` | `A-red.txt` (unfixed code: field empty, 69 chars sent; no DESIGN row) | `ABC-green.txt` |
+| B — Ruling 181 (2) | `TheSentPromptIsNeverResentTests`: `ASecondCtrlEnterRightAfterASubmit_WithNoKeystroke_SendsNothing` (no turn, no attempt row, `BlocksSent` and `LastLaunch` unchanged, the gate's refusal), `AQueuedSend_ShowsItsQueuedState_NotTheSentState` (Ruling 95), `AHeldSend_ShowsItsWaitingWords_NotTheSentState_UntilItIsAdmitted` (Ruling 175) | `B-red.txt`: **mutation red**. M1 is the planted leak: the fix with `BeginNextTurn`'s draft clear deleted, so the field is rendered through `RenderedView`. A second press **resent**: turns 2, attempt rows 2 (was 1), blocks sent 2, status "sent". All 3 tests are red. | `ABC-green.txt` |
+| C — Ruling 181 (3) | `TheWriterKeepsItsRoomTests.TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount` (a typed draft, non-empty, contains the words); `…OpenedAtTheOperatorsBelt_RendersTheCompiledText` (the composition: typed, Ctrl+Enter to 1 turn, the document sized so the belt reads back 517.13, then the toggle; the oracle is b1's `SentBytes` plus the heading); `TheComposerRendersItsFieldLevelErrorsTests.TheCompiledViewOnScreenAfterASubmit_IsTheWholeSentPromptAndNotASummary` (moved onto a `SessionDocumentSurface` and renamed) | `C-red.txt`: belt and whole-prompt are red on the unfixed code. `C-red-mutation.txt`: M2 (the field is never written) kills the re-driven `IsOnScreen` test at 0, 1 and 40 turns. The **original** test (2a89cf0b) **survives** M2, 3/3 passed. That is the DC-NEW-wl-t28-compiled class, measured. | `ABC-green.txt` |
+
+The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.cs`. It has `Drive`, `Type`, `CtrlEnter`, `Open`, `Field`, `Heading` and `AttemptRows`. n3's class gate can require it.
+
+**Design choice, marked (Inferred, not ruled):** a **queued** send (Ruling 95) does not show its bytes in the field. The field shows the live, empty new draft under the plain heading, and the status line carries *"b2 queued — sends after b1"*. Ruling 181 names only *sent as b{n}*, and the only other way to show it needs a new copy string (for example "queued as b2"). If the Owner wants that, it is one more heading const. A **held** send keeps its words in the editor, and the field shows their live compile. Once the turn is admitted it reads *sent as b1*.
+
 ## Files
 
 - `reproduction.txt` — the numbers, the observed writer, and Ruling 96's tests' own output.
 - `compiled-after-submit-red.txt` — `TheCompiledFieldAfterASubmitTests`, 2 failed (red commit `f3bdf334`).
 - `suite-node1-core.txt`, `suite-node1-app.txt`, `suite-node1-exits.txt` — the whole Core and App suites at this node's head, run in this tree.
 - `handoff.md` — the state and the next step.
+- `A-red.txt` — node 2: the 12 new and changed tests on the unfixed code (red commit `eaf8966c`); 9 failed, 3 passed (`IsOnScreen`, which types and does not submit).
+- `B-red.txt` — the planted-leak mutation M1, under which 3 of 3 fail and the second press resends.
+- `C-red.txt`, `C-red-mutation.txt` — C on the unfixed code; mutation M2 against the re-driven and the original Ruling 96 test.
+- `ABC-green.txt` — the 12 tests on the fix (`5da5d032`): 12 of 12 passed.
+- `suite-node2.txt` (`suite-node2-core.txt`, `suite-node2-app.txt`) — the whole Core and App suites at the node head.
