@@ -226,6 +226,40 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
     }
 
     /// <summary>
+    /// Ruling 175, node 4 check 1: a Send while the turns restore is never announced as "sent" before its turn is admitted,
+    /// because a screen reader would tell the user the message went. The restoring sentence is said once, in its place.
+    /// </summary>
+    [Fact]
+    public void ASendWhileTheTurnsRestore_IsNeverAnnouncedAsSent_BeforeTheTurnIsAdmitted()
+    {
+        Sta.Pump(
+            create: () => new Border(),
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: async (window, _) =>
+            {
+                await RecordTwoAttemptsAsync(window);
+                var said = new RecordingAnnouncer();
+                var (model, surface, opening, opened) = await ReopenWithTheOpenHeldAsync(window, host => host, said);
+                var before = said.Messages.Count;
+
+                surface.Composer.Draft.SetFreeFormText("third words");
+                Assert.NotNull(surface.Composer.Send());
+                await Settle(window, rounds: 5);
+                var waiting = said.Messages.Skip(before).Where(m => m.Length > 0).ToArray();
+
+                Assert.Empty(model.Thread.Current.Turns);
+                Assert.DoesNotContain(waiting, m => m.StartsWith("sent", StringComparison.Ordinal));
+                Assert.Equal([SessionDocumentSurface.RestoringTurns], waiting);
+
+                opening.SetResult();
+                await UntilAsync(window, () => model.Runs.Host is not null, () => "the host never bound");
+                await surface.LastAdmission.WaitAsync(NotebookFixture.Bound);
+                await UntilAsync(window, () => surface.Thread.Rows.Count >= 3 && Ended(model, 2), () => $"{surface.Thread.Rows.Count} rows");
+                Close(window, opened()!, model, surface);
+            });
+    }
+
+    /// <summary>
     /// Ruling 175 (2), node 3 check B: a Send while the host opens, whose open then fails, keeps the words in the editor
     /// and shows the open's own cause (Ruling 159's refusal), never the restoring sentence; nothing joins the thread. The
     /// Retry binds the host, and a Send then sends the same words.
@@ -353,10 +387,10 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
     /// <summary>
     /// A reopen in the shell's order with the host's open held until the test releases it: the model binds with
     /// <see cref="NotebookRuns.BindHostWhenOpen"/>, the document is built at once, and the opened host is passed through
-    /// <paramref name="wrap"/> (the host the notebook binds).
+    /// <paramref name="wrap"/> (the host the notebook binds). <paramref name="said"/>, when given, hears the surface.
     /// </summary>
     private async Task<(NotebookModel Model, SessionDocumentSurface Surface, TaskCompletionSource Opening, Func<AttemptHost?> Opened)> ReopenWithTheOpenHeldAsync(
-        Window window, Func<IAttemptHost, IAttemptHost> wrap)
+        Window window, Func<IAttemptHost, IAttemptHost> wrap, RecordingAnnouncer? said = null)
     {
         var opening = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         AttemptHost? opened = null;
@@ -369,7 +403,7 @@ public sealed class TheReadBackRunsWhenTheHostBindsTests : IDisposable
                 return wrap(opened);
             },
             Scope);
-        var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+        var surface = new SessionDocumentSurface(model, null, said ?? new RecordingAnnouncer());
         window.Content = surface;
         _fixture.ConfigureStub(surface);
         await Settle(window, rounds: 5);
