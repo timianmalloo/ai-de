@@ -1,0 +1,91 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-float\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.62]     AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow [2 s]
+  Error Message:
+   the notebook is still docked in Center; the shell said [sent | Turn b1 accepted as a message, tier T0, class implement. | Command palette. 38 commands in the Factory perspective. Type to filter. | Floating a pane is not available yet. The pane stays where it is.]
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.<ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow>b__2_0(WorkspaceClient client, SessionConfig config) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 47
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 176
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 176
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 182
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:03.02]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.MaximizePane_ByThePalette_LeavesOnlyTheMaximizedZoneDrawn [FAIL]
+[xUnit.net 00:00:03.43]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt [FAIL]
+[xUnit.net 00:00:03.84]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CloseSurface_ByThePalette_RemovesTheTabFromTheView [FAIL]
+[xUnit.net 00:00:04.25]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.NextTab_ByThePalette_SelectsTheModelsActiveTabInTheView [FAIL]
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.MaximizePane_ByThePalette_LeavesOnlyTheMaximizedZoneDrawn [394 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in set
+Set:   ["session:s1", "session:s2", "terminal-1", "terminal#t1"]
+Found: "terminal#t1"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 116
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.MaximizePane_ByThePalette_LeavesOnlyTheMaximizedZoneDrawn() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 84
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt [411 ms]
+  Error Message:
+   the model did not float the pane; it said: Floating a pane is not available yet. The pane stays where it is.
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 116
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CloseSurface_ByThePalette_RemovesTheTabFromTheView [408 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in set
+Set:   ["session:s1", "session:s2", "terminal-1", "terminal#t1"]
+Found: "session:s2"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 116
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CloseSurface_ByThePalette_RemovesTheTabFromTheView() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 58
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.NextTab_ByThePalette_SelectsTheModelsActiveTabInTheView [408 ms]
+  Error Message:
+   the model's active tab is session:s1, but the view selects [session:s2, terminal#t1]; it said: Command palette. 38 commands in the Factory perspective. Type to filter.
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 116
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.NextTab_ByThePalette_SelectsTheModelsActiveTabInTheView() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 97
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:04.66]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CollapsePane_ByThePalette_TakesTheZonesTabsOffTheView [FAIL]
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CollapsePane_ByThePalette_TakesTheZonesTabsOffTheView [408 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Item found in set
+Set:   ["session:s1", "session:s2", "terminal-1", "terminal#t1"]
+Found: "terminal#t1"
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 116
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.CollapsePane_ByThePalette_TakesTheZonesTabsOffTheView() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 71
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     6, Passed:     0, Skipped:     0, Total:     6, Duration: 4 s - AiDe.App.Tests.dll (net10.0)

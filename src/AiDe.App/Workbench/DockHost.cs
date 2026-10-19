@@ -71,6 +71,7 @@ public sealed record DockHost(
 
         var adapter = new WorkbenchAdapter(manager, service, content);
         var controller = new WorkbenchController(service, announcer);
+        controller.LayoutApplied += adapter.Render;
 
         DockHost? host = null;
         var rails = new ZoneRails(manager, () => service.Zones, zone => expandZone(host!, zone));

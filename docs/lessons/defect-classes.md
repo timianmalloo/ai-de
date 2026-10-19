@@ -8636,3 +8636,35 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   **Control (mechanical, Leader session):** a monitor polls `coord request list` every 60 s and raises an event for each
   new typed request addressed to the Leader. Its gap: it lives only as long as the Leader's session, so the next Leader's
   kickoff must start it. That makes the status `partially-controlled`; a hand-off brief line is owed.
+
+### DC-NEW-wl-t21-float-d — A layout command changes the model and never renders, so the view and the model disagree until an unrelated render
+- **Class:** a command applies a layout operation to the model and announces it, and no code on its route draws the
+  result. The live region says the pane floated or closed, the model agrees, every model-level test passes, and the
+  screen shows the layout from before the command. A float has no window, so the pane vanishes.
+- **Instance (T21 n7 red 0097164f, live on main per the Leader's run of it on origin/main):** the palette's *Float pane*
+  on a live notebook: "the model floats the notebook, but the view shows 0 floating window(s)". Every catalog route
+  (palette, menu, `PerspectiveShell.Execute`, `WorkbenchShell.Execute`) ends in `WorkbenchController.ApplyAndAnnounce`,
+  which applied and announced and never rendered. Only the tab menu's `MoveToZone` and `CloseSurface`
+  (`WorkbenchAdapter.cs`) rendered after their own apply.
+- **Sweep:** every `ApplyAndAnnounce` caller: reset, close, float, collapse, maximize, next/previous tab, reorder, and
+  `Move` (keyboard destination and `Drop`). The red `626c7221` measured float, close, collapse, maximize and next tab
+  through the palette: all five drew the layout before. Routes that already render and do not pass through
+  `ApplyAndAnnounce`: the native drag (`WorkbenchShell.cs:226`, reconciles the view into the model by `ReconcileFromView`
+  and deliberately does not render), the restore (`LayoutPersistence.Restore`, then the caller's render), the shell's
+  opens (`Service.Apply` then `Adapter.Render`), and the tab menu. One route renders twice now:
+  `MainWindow.OnResetLayout` (`MainWindow.xaml.cs:579-580`) renders after `Shell.Execute`. A second render is a
+  reconcile (DC-029): `LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt`
+  renders again after the command and asserts the same content element, one floating window, and no surface closed.
+- **Fix:** `WorkbenchController.LayoutApplied`, raised by `ApplyAndAnnounce` after the announcement when the operation
+  applied; `DockHost.Create` wires it to `adapter.Render` (seam `req-01M5ATF6PNMEW0SX2KKZA34D4D`, granted).
+- **Control:** `LayoutCommandsRenderTests` (five tests, the palette over `DockHost.Create`'s own controller, oracles on
+  the drawn view, no render by hand after the command) and `ALiveNotebookFloatsAndRedocksTests` (A).
+- **Derive:** a view-state test drives the command route the user uses and reads the drawn view. A test that renders by
+  hand after the command certifies a route no user has: T21 n2's
+  `FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable` called `adapter.Render()` after
+  `controller.Execute` and passed while the palette drew 0 windows (DC-NEW-wl-t28-compiled's class; deleted d82df79e).
+- **Residual (Inferred, not tested):** a render after a command reverts a native within-pane tab reorder the model has
+  not seen, because that drag raises no signal (the known gap in `WorkbenchAdapter`'s `LayoutRoot.Updated` comment).
+  Before this fix the next unrelated render reverted it the same way.
+- **Status:** `controlled` for the controller's routes. Candidate gate, not built: a sibling of
+  `ComposerContentOraclesDriveTheGestureTests` for layout-command tests.

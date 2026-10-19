@@ -7,7 +7,7 @@ owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id."
+summary: "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence; node 5: the partial-read sentence names the left-out surfaces by title, null list elements load with a report line, and floating-window ids are unique across a restore; node 6: floatPane floats the focused tab, a saved floating id in use loads with the sentence, and a native float never takes a restored id. Node 7: a live notebook floated by the palette is in the model and on no screen (red 0097164f); the fix waits for a DockHost.cs seam."
 ---
 
 # T21 float, nodes 1, 1b, 2 (Ruling 171 (2)), 3 (Ruling 174) and 4
@@ -174,3 +174,14 @@ Main was merged into the tree by the Leader at 003688ea before the first claim (
 - **(A)** `ZoneBackedLayoutService.SetState` floats `FocusedIn(zone.Content)`: a stack's active tab. A split renders as one tab strip whose active tab is its first (`ZonesToTree.StackFromContent`), so a split gives its first surface, as before. An empty Center still gives the empty id, so the "No surface “”." copy is unchanged (out of scope).
 - **(B)** `ZoneLayoutStore.Read` keeps a set of node ids, seeded with the frame's six ids (`ZonesToTree` Left/Center/Right/Bottom stack ids, `frame-cols`, `frame-root`). A floating stack whose id is already in the set is left out, the read is partial, and its surfaces are named by their saved titles. The first stack with an id is kept. **DC-NEW-wl-t21-float-c** records the class.
 - **(C)** The code exists; the Leader's grep missed it because the literal `float-view` is never written. `WorkbenchAdapter.MapFloatingWindow` (`WorkbenchAdapter.cs:1008` at f21fdf95) called `NewNodeId("float")`, and `NewNodeId` (`:1102`) builds `$"{prefix}-view-{N}"` from the static `_nodeSeq` (`:1101`). The counter is shared with the split and stack ids and restarts with each process, and the zone file keeps a floating stack's id. The red sets the counter by reflection to the value at which the next native float mints the restored id: that is the restart condition, made deterministic. Now `ReadLayoutFromView` passes the model's node ids (`_service.Current.AllStacks()`) to `MapFloatingWindow`, and `NewFloatId` skips every id in that set and every id this read has taken. Node 5's README and hand-off line on this was right; it needs no correction.
+
+## Node 7: close condition 4, a live notebook floats and redocks (Ruling 171 (3))
+
+The node was held by rule 19 for the WL-1b join (19:04Z to 19:31Z) and kicked at 19:46Z. See handoff.md.
+
+| Check | Test | Red | Green |
+|---|---|---|---|
+| (A) A notebook floated mid-run keeps its model and its one attempt, and the turn completes in the floating window | `tests/AiDe.App.Tests/Workbench/ALiveNotebookFloatsAndRedocksTests.cs` `ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow` | live-float-red.txt (0097164f): "the model floats the notebook, but the view shows 0 floating window(s)". No controller-routed layout command renders | waits for seam req-01M5ATF6PNMEW0SX2KKZA34D4D (DockHost.cs:73) |
+| (B) Redock mid-run and after the run, by the floating tab's Move to, Center | drafted in n8-draft-B-C-tests.txt | not run | - |
+| (C) A floating live notebook survives a restart | drafted in n8-draft-B-C-tests.txt | not run | - |
+| Suite | Core and App, at 0097164f | - | suite-node7.txt: Core 3046 / 0 / 1 skipped. App 1214 / 3 / 2 skipped: (A)'s red and the two foreground tests (attended list). No desktop-hold result |

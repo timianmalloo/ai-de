@@ -46,7 +46,7 @@ summary: >-
 | 7 | The execution's only door is *Open the log*: no View menu, no Center empty state offers it (Owner condition (1)) | T11 n6 | `TheExecutionKindTests`, `TheExecutionOpensFromOpenLogTests`, `PerspectiveMenuTests`, `CenterEmptyCopyTests` | red by mutation `18505b9f` → `56028e94`; `TA-condition1-mutation-red.txt` → `TA-condition1-green.txt` | Verified (the red is a mutation; the product already passed) |
 | 8 | Ctrl+1/2/3 switch the perspective with focus inside a WebView2 page (composer, canvas), by real OS input | T11 n5 | `B-ctrl-digit` tests (38/38 with `PerspectiveMenuTests`) | red by mutation `b1703f64` → `1579f62a`; `B-ctrl-digit-mutation-red.txt` → `B-ctrl-digit-green.txt` | Verified (the red is a mutation; the product already passed) |
 | 9 | Hide a live notebook: closing its pane mid-run keeps the run and says "Pane hidden. The run continues." once | T11 n6-n7 | the hide tests in `C-hide-green.txt` | `8b190778` → `bbf1465b`; shutdown `3c954c94` → `c736c96f` | Verified |
-| 10 | **Float and redock a live notebook** (Ruling 171 (2)) | T21 | not written | **pending T21**. Probe `C-float-probe.txt` (`8b190778`) measured that a floated pane vanished | **Open** |
+| 10 | **Float and redock a live notebook** (Ruling 171 (2)) | T21 n7 | `ALiveNotebookFloatsAndRedocksTests.ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow` ((A)); (B) redock and (C) restart drafted in `float/n8-draft-B-C-tests.txt`, not run | red `0097164f` (`float/live-float-red.txt`): the palette's *Float pane* floats the notebook in the model ("Binding is now floating.") and the view shows **0 floating windows**. No layout command run through the controller renders (`WorkbenchController.ApplyAndAnnounce`, `WorkbenchController.cs:732`). Green waits for seam `req-01M5ATF6PNMEW0SX2KKZA34D4D` (`DockHost.cs:73`, one line) | **Open** (red) |
 | 11 | Slot migration: today's Factory slot restores each `session-document:<id>` as `notebook:<id>` (same zone, tab position and caption), drops the rest with a report, keeps a one-time `.pre-notebook.bak`, and round-trips | T11 n7-n8 | `LayoutSlotMigrationTests.TodaysSlot_RestoresEachSessionPaneAsItsNotebook_ReportsTheRest_KeepsAOneTimeBak_AndRoundTrips`; operator probe `ASessionDocumentIsShownWhereTheOperatorIsTests` (6) | `22649126` → `28cbad3a`; probe `0da0c3be` → `863c2df4`, mutation `D1-probe-mutation-red.txt` | Verified |
 | 12 | **D2: a revived notebook whose attempt was live at close reopens its execution in the Bottom, without moving focus** | T11 (after T17d) | `ARevivedNotebookReopensItsLiveAttemptsExecutionTests.ASessionPane_RestoresAsItsNotebook_PlusOneExecutionInTheBottom_OnlyWhenItsAttemptWasLiveAtClose` | red `98b5d7e6` (`D2-execution-at-revive-red.txt`: "the revived notebook reads 0 turn(s)"). After T17d merged, red `ca392933` (`D2-revive-red.txt`: read back=1, "no execution:<key> opened; the Bottom holds []"; the concluded case's oracle corrected Answered → Completed, rule 14, `AttemptStateFold` maps `ResponseComplete` to `Completed`) → green `caa5df81` (`D2-revive-green.txt`, 9/9); its two guard regressions fixed in `bc1e8836` (`D2-guards-green.txt`, 16/16). App suite at `bc1e8836`: 1179/3/2 of 1184, the 3 being row 22's red and the two foreground tests (`suite-node11-app-rerun.txt`). `ExecutionAtRevive.LiveAtClose` (the LAST receipt, `DeliveryUnknown{host_restart}`) + `OpenExecution(.., activate:false)` (no `ActivateInView`, no `DocumentOpening`). `ExecutionAtReviveTests` (6); mutation `D2-predicate-mutation-red.txt` | Verified (tests); not walked in the running app |
 | 13 | `prompt` is kept (Ruling 173): the migration leaves a prompt draft as it was, `prompt` is not in `RetiredKinds`, and the migrating restore's report says so once | T11 n9 | `LayoutSlotMigrationTests.APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once` | `94c374d6` → `7383f868`; `P-prompt-kept-red.txt` → `-green.txt`; design §4 amended `31c75c3f` | Verified. The Owner confirmed the sentence; DESIGN.md row DOCK4 carries it (row 20) |
@@ -122,13 +122,18 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
    The run continues." once.
 2. Reopen it from **File → Recent sessions** (**Alt**, then the arrow keys). **See:** the run's end is in the thread.
 
-### 5. Float and redock a live notebook — **pending: close condition 4, the live-notebook float after the T11 join**
-T21 is joined (`8608d4eb`), so *Float pane* no longer refuses. Floating and redocking a **live notebook** is T21's
-close condition 4 (`workbench-loops-wl-s/float/handoff.md`, Next step 2). It is owed after this track joins, as a
-T21 node. Do not count this step until that node lands.
-1. With a run going, focus the notebook and press **Ctrl+K, F**. **See:** the notebook in its own window, the run
-   still going.
-2. Redock it to the Center (the T21 node names the gesture). **See:** the same notebook, same thread, focus on it.
+### 5. Float and redock a live notebook — **pending: close condition 4 is red (T21 n7, `0097164f`)**
+Do not count this step yet. T21 node 7 measured that *Float pane* changes the layout model and draws nothing: the
+notebook leaves the Center in the model, and no floating window opens until some other action renders
+(`workbench-loops-wl-s/float/handoff.md`, node 7). The fix needs a one-line seam in `DockHost.cs`
+(`req-01M5ATF6PNMEW0SX2KKZA34D4D`). **Ctrl+K, F is not bound as a key:** the catalog announces it, but
+`KeyGestures.For` binds single-chord gestures only, so the keyboard route is the command palette.
+The steps the T21 node will prove, once the seam lands:
+1. With a run going, focus the notebook (**Tab** into it), press **Ctrl+Shift+P**, type `Float pane`, and press
+   **Enter**. **See:** the notebook in its own window, the run still going; the status reads "Binding is now floating."
+2. In the floating window, focus the notebook's tab and press the **menu key** (or **Shift+F10**), then **Move to**,
+   then **C** (*Center*). **See:** the same notebook back in the Center, the same thread and draft, focus in it, and no
+   "Pane hidden" announcement.
 
 ### 6. Restore an older layout
 1. Close the app, then start it again with step 0's older layout folder.
@@ -171,8 +176,11 @@ A pass is `Passed!` with `Failed: 0`.
   canvas shows them again when you turn on *Knowledge-inclusive* (row 16), and the toggle starts off.
   *Inferred, not checked here:* the canvas shows the documents as nodes and edges. The deleted reader showed each
   document's text. Until a check shows the text in the app, `docs/index.html` stays the way to read it.
-- **A live notebook's float and redock are not proved yet** (Ruling 171 (2)). T21 is joined, so *Float pane*
-  floats. Close condition 4, a live notebook floated and redocked, is owed after the T11 join (demo step 5).
+- **A live notebook's float and redock are not proved yet, and the float is measured broken** (Ruling 171 (2)).
+  T21 node 7's red (`0097164f`, row 10): through the shell, *Float pane* floats the notebook in the model and draws no
+  window, so the notebook disappears from the screen until the next render. The same path serves every layout
+  command run through the controller (close, collapse, maximize, next tab); that they share the gap is *Inferred*
+  from the code, not tested. The fix waits for seam `req-01M5ATF6PNMEW0SX2KKZA34D4D` (demo step 5).
 - **D2 is proved by tests, not in the running app.** After T17d, the revive E2E test over a real daemon is green
   (row 12). No one has walked the restart in the app on this branch yet.
 - **The fold re-runs if its `.bak` already exists.** The first save after a fold moves the coordination file to
