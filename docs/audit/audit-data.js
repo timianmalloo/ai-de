@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T01:36:17Z",
+  "generated": "2026-10-19T02:02:13Z",
   "audit": [
     {
       "actor": null,
@@ -22869,6 +22869,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T01:11:25Z",
       "duration_seconds": 1492.0
+    },
+    {
+      "id": "al-01M58YA8M9249H8F4BKATAT5HE",
+      "shortname": "wl-t12-census",
+      "datetime": "2026-10-19T02:02:13Z",
+      "session": "wl-t12-census",
+      "prompt": "T12c: fix census JSON parse error on raw control chars",
+      "summary": "ConsoleHostCensus escapes raw C0 chars in JSON strings before parsing; red/green test; register cause Verified",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/Shared/ConsoleHostCensus.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "census parses a CommandLine containing 0x15",
+      "done_when": "new case red then green; census, TerminalHost x2, Core suite green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T01:56:24Z",
+      "duration_seconds": 349.0
     }
   ],
   "changes": [
