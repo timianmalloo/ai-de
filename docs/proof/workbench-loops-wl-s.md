@@ -93,12 +93,15 @@ that they pass with it. The last green is `B-ctrl-digit-green.txt` (node 5).
 ## Human demo script (keyboard only)
 
 Every step uses the keyboard. The gestures are the catalog's (`WorkbenchCommands.cs`). Each step says what
-you should see. Run it on the joined build after T17d and T21 land.
+you should see. T17d, T11 and T21 are all on main (the T21 float fix at `dc03007c`, the redock, restart and floating-tab
+menu at `26e14f8b`). Run it on a Release build of a **clean worktree of origin/main**, never the primary checkout,
+because joins change the primary (the WL-1a lesson).
 *Not observed at node 9:* that **F6** reaches a turn's *Open the log* (step 3), and the **File → Recent
 sessions** path (step 4; it is the path the retirement sentence names). Confirm both at the demo.
 
 ### 0. Build and launch
-1. `dotnet build AiDe.sln`, then start `src/AiDe.App`. Open this repository as the workspace.
+1. In a clean worktree of origin/main: `dotnet build AiDe.sln -c Release`, then start
+   `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`. Open this repository as the workspace.
 2. Before the first launch, copy an older layout folder that has a `layout.zones.json` naming a
    `session-document`, a `layout.architecture.zones.json` and a `layout.coordination.zones.json`. Step 6 uses it.
 
@@ -122,10 +125,10 @@ sessions** path (step 4; it is the path the retirement sentence names). Confirm 
    The run continues." once.
 2. Reopen it from **File → Recent sessions** (**Alt**, then the arrow keys). **See:** the run's end is in the thread.
 
-### 5. Float and redock a live notebook — **both steps proved by test on T21's branch; not walked in the app**
-On main until the float-fix join lands, *Float pane* is guarded: it says "Floating a pane is not available yet. The
-pane stays where it is." (`d82df79e`). On T21's branch (`36884736` and later) a layout command renders
-(`WorkbenchController.LayoutApplied`). **Ctrl+K, F is not bound as a key:** the catalog announces it, but
+### 5. Float and redock a live notebook — **proved by test on main; this walk is the first in the running app**
+A layout command renders on main (`WorkbenchController.LayoutApplied`, joined at `dc03007c`). Before that fix, *Float
+pane* floated the notebook in the model and drew no window, so watch for a visible floating window, not only the
+announcement. **Ctrl+K, F is not bound as a key:** the catalog announces it, but
 `KeyGestures.For` binds single-chord gestures only, so the keyboard route is the command palette.
 1. With a run going, focus the notebook (**Tab** into it), press **Ctrl+Shift+P**, type `Float pane`, and press
    **Enter**. **See:** the notebook in its own window, the run still going; the status reads "Binding is now floating."
@@ -148,7 +151,7 @@ pane stays where it is." (`d82df79e`). On T21's branch (`36884736` and later) a 
    `layout.architecture.zones.json.bak`, `layout.coordination.zones.json.bak` and
    `layout.zones.json.pre-notebook.bak` hold the old bytes.
 
-### 7. Restart with a live attempt — **pending T17d**
+### 7. Restart with a live attempt
 1. Start a run, then end the app's process while it runs. Start the app again.
 2. **See:** the notebook reopens with its turns, and the attempt that was running reads as delivery unknown.
    An "Execution — <attempt>" tab is in the Bottom, and the focus stays on the notebook.
@@ -177,11 +180,15 @@ A pass is `Passed!` with `Failed: 0`.
   canvas shows them again when you turn on *Knowledge-inclusive* (row 16), and the toggle starts off.
   *Inferred, not checked here:* the canvas shows the documents as nodes and edges. The deleted reader showed each
   document's text. Until a check shows the text in the app, `docs/index.html` stays the way to read it.
-- **A live notebook's float and redock are proved by test only, on T21's branch** (Ruling 171 (2)). T21 node 7's red (`0097164f`, row 10) found that no
-  layout command run through the controller rendered: *Float pane* floated the notebook in the model and drew no
-  window. Measured in node 8: close, collapse, maximize and next tab by the palette had the same gap (red `626c7221`,
-  DC-NEW-wl-t21-float-d). All five are green on T21's branch (`36884736`); main carries the float guard (`d82df79e`)
-  until that fix joins. The redock (row 10 (B)) is green by test at `c80e5fbd`; neither is walked in the running app yet.
+- **A live notebook's float and redock are proved by test on main, not yet walked in the running app** (Ruling 171
+  (2)/(3)). T21 node 7's red (`0097164f`, row 10) found that no layout command run through the controller rendered:
+  *Float pane* floated the notebook in the model and drew no window. The Leader measured that live on a clean origin/main.
+  Node 8 found that close, collapse, maximize and next tab by the palette had the same gap (red `626c7221`,
+  DC-NEW-wl-t21-float-d). All five are fixed on main (`dc03007c`), and the redock, restart and floating-tab menu are
+  joined at `26e14f8b`. T21 node 2's earlier float test had passed by rendering by hand (DC-NEW-wl-t28-compiled's
+  class); a layout-command class gate is owed (T21 node 9).
+- **A restored turn row's compiled prompt may be empty after a restart** (Inferred; T30 is measuring it under
+  Ruling 182 (4)). The fix rebuilds and verifies the text, or shows "not recorded".
 - **D2 is proved by tests, not in the running app.** After T17d, the revive E2E test over a real daemon is green
   (row 12). No one has walked the restart in the app on this branch yet.
 - **The fold re-runs if its `.bak` already exists.** The first save after a fold moves the coordination file to
@@ -193,7 +200,8 @@ A pass is `Passed!` with `Failed: 0`.
 ## Open items
 
 1. Closed at node 11: D2 is green (row 12).
-2. **Float/redock** waits for T21 (Ruling 171 (2)). **WL-S is not accepted until T21 lands.**
+2. Closed by join: T21 landed (`dc03007c`, `26e14f8b`), and close condition 4 is proved by test. **WL-S is accepted
+   only by the user's walk-through of this script** (Ruling 171 (3)), as WL-1a was.
 3. Closed at node 10. The Owner confirmed the kept-prompt sentence (DOCK4, row 20). The alias pin was re-pinned (row 14).
 4. Closed at node 11: D6 amended (row 21). Closed at node 12: DOCK4's plural const (row 22, `c25e3e90`).
 5. The `prompt` kind's retirement waits until the notebook has all six capabilities, each tested (design §4; Ruling 173).

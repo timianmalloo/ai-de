@@ -10837,7 +10837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1eb8efb4992b79bea096cd2a982e2e0255bcbc0dd4f7f3d929144badd6e11687"
+      "sourceSha256": "d225369bed17a2c2ff78ddb0a0c0775763659f6aaa45f9b1a39a3a4efc879c1a"
     },
     {
       "id": "design-session-profiler",
@@ -22827,7 +22827,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca7f10ece742bc39e02a950c637a827f54bf9ac0f8fb1feb90c13096f5d0855e"
+      "sourceSha256": "49b2ea6bdea006b358e54bad11050c8f412cc15d82afb0ddef8392903295b0cc"
     },
     {
       "id": "proof-workbench-loops-wl-1a-compiled-field-handoff",
@@ -22855,7 +22855,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9f55e911d99d36296dd2f8fa071ad3f0756024a035f33bbe998a152df02b0f09"
+      "sourceSha256": "db522e5fad9a4e11e52e4d2989dc5ffc7f1ae742298f1b18c569240d3008eeda"
     },
     {
       "id": "proof-workbench-loops-wl-1a-dispose-race",
@@ -25503,5 +25503,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "c2f69e706ade3f4bbbd7496cf931d65e7f110c8906c609f0975eb038fa6e7a95"
+  "graphSha256": "3027ac5faa40b9f14d66f86d180d0c5b459790409fc97b30a3b03722ae9f5adc"
 };
