@@ -95,6 +95,43 @@ public sealed class ZoneLayoutPartlyReadTests
         Assert.Empty(result.LeftOutTitles);
     }
 
+    // T21 node 5 check (B) (the Owner named "floating": [null]; node 4's hand-off named the siblings):
+    // a JSON null element in any saved-layout list is left out, the rest loads, the read says part was
+    // left out and names nothing, and it never throws. System.Text.Json reads the null element as a
+    // null DTO, and the read dereferenced it.
+    [Theory]
+    [InlineData("zone-layout-floating-null.json", "explore")]
+    [InlineData("zone-layout-zones-null.json", "explore")]
+    [InlineData("zone-layout-tabs-null.json", "explore")]
+    [InlineData("zone-layout-children-null.json", "explore")]
+    [InlineData("zone-layout-surfaces-null.json", "sessions")]
+    public void ANullElementInASavedLayoutList_IsLeftOut_TheRestLoads_AndTheReadSaysSo(string fixture, string survivor)
+    {
+        ZoneLoadResult? result = null;
+        var thrown = Record.Exception(() => result = new ZoneLayoutStore(Fixture(fixture)).Read(None, Kinds));
+
+        Assert.Null(thrown);
+        Assert.Equal(ZoneLoadRefusal.None, result!.Refusal);
+        Assert.True(result.PartlyRead, "the read did not say that the null element was left out");
+        Assert.Empty(result.LeftOutTitles);
+        var restored = Assert.IsType<WorkbenchLayout>(result.Layout);
+        Assert.Contains(restored.AllSurfaces(), s => s.SurfaceId == survivor);
+    }
+
+    // The same sweep where the left-out part is named: a null tab inside a zone entry the build does
+    // not know adds no title, and the titled tab beside it is still named.
+    [Fact]
+    public void ANullTabInsideAZoneEntryTheBuildDoesNotKnow_AddsNoTitle_AndNeverThrows()
+    {
+        ZoneLoadResult? result = null;
+        var thrown = Record.Exception(
+            () => result = new ZoneLayoutStore(Fixture("zone-layout-unknown-zone-null-tab.json")).Read(None, Kinds));
+
+        Assert.Null(thrown);
+        Assert.True(result!.PartlyRead);
+        Assert.Equal(["Graph"], result.LeftOutTitles);
+    }
+
     // The control against over-reporting: an older file that simply has no "floating" field is not
     // malformed, so nothing is said to be left out.
     [Fact]

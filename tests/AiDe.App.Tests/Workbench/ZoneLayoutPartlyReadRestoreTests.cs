@@ -19,6 +19,11 @@ public sealed class ZoneLayoutPartlyReadRestoreTests : IDisposable
     [InlineData("zone-layout-no-zones.json")]
     [InlineData("zone-layout-floating-no-surfaces.json")]
     [InlineData("zone-layout-unknown-zone-empty.json")]
+    [InlineData("zone-layout-floating-null.json")]
+    [InlineData("zone-layout-zones-null.json")]
+    [InlineData("zone-layout-tabs-null.json")]
+    [InlineData("zone-layout-children-null.json")]
+    [InlineData("zone-layout-surfaces-null.json")]
     public void AMalformedSavedZoneLayout_Restores_WithAPartialRestoreCode_AndOneSentenceSayingPartWasLeftOut(string fixture)
     {
         var result = RestoreFrom(fixture, out var applied);
