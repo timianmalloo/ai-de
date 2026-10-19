@@ -574,4 +574,10 @@ public sealed class NewSessionSheetViewModel
     /// </remarks>
     public bool HealthWasReprobed => !ReferenceEquals(_registry, _initialRegistry);
 
+    /// <summary>
+    /// The compile-mode gates over the adapter install root (<see cref="CompileModeGate.Evaluate(string)"/>); the
+    /// created session's mode is their default (Ruling 180 (1)). A test injects it so no test reads <c>~/.aide/proof</c>.
+    /// </summary>
+    public Func<string, CompileModeAvailability> CompileModeGateInput { get; set; } = CompileModeGate.Evaluate;
+
 }
