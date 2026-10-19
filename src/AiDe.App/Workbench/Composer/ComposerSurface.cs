@@ -2269,6 +2269,9 @@ internal sealed class StructureLine
     private bool _kept;
     private bool _showing;
 
+    /// <summary>The keep control's description (Ruling 180 (3); DESIGN.md SC6): the line is a suggestion until kept, and Keep makes it the user's.</summary>
+    public const string KeepHelp = "Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your draft.";
+
     public StructureLine(string field, string derived, Action<string> onChanged, Action? onKeep = null)
     {
         Field = field;
@@ -2303,7 +2306,7 @@ internal sealed class StructureLine
 
         _keep = new Button { Content = "keep", Padding = new Thickness(6, 0, 6, 0), MinHeight = 22, Margin = new Thickness(6, 0, 0, 0), Visibility = Visibility.Collapsed };
         AutomationProperties.SetName(_keep, "Keep " + LabelOf(field));
-        AutomationProperties.SetHelpText(_keep, "Keep the model's line as written.");
+        AutomationProperties.SetHelpText(_keep, KeepHelp);
         _keep.Click += (_, _) => Keep();
 
         _watermark = new TextBlock { Text = "fill in", FontSize = 13, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };

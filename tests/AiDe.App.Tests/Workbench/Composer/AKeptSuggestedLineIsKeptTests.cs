@@ -49,6 +49,7 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
             Assert.Equal("? derived", composer.StructureMarks[GoalBlockFields.GoalKey]);
             Assert.Equal(Suggestion(1, "goal"), Line(composer, "Goal").Text);
 
+            Assert.Equal(StructureLine.KeepHelp, AutomationProperties.GetHelpText(KeepButton(composer, "Goal")));
             Invoke(KeepButton(composer, "Goal"));
             ComposerGesture.Settle(document);
             Assert.Equal("✓ kept", composer.StructureMarks[GoalBlockFields.GoalKey]);
