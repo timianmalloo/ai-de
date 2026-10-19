@@ -314,7 +314,9 @@ public sealed class NotebookRuns : IDisposable
             }
 
             _readBackFor = _binds;
-            read = new Task<Task>(() => ReadBackAsync(submitted(), CancellationToken.None));
+
+            // The notebook's lifetime (T17e): the shell disposes it while a read-back may still run (WorkbenchShell.Dispose).
+            read = new Task<Task>(() => ReadBackAsync(submitted(), _disposing.Token));
             _bindReadBack = KeepingTheFailureAsync(read.Unwrap());
         }
 
@@ -328,6 +330,8 @@ public sealed class NotebookRuns : IDisposable
     /// <remarks>
     /// Ruling 175(4): writes <c>notebook.read-back</c> with its duration once the read ends, before the refusal is set or
     /// cleared, so a reader that sees the outcome sees the record. The clock starts here, as the read is started.
+    /// T17e: a read-back that ends after the notebook was disposed ends quietly, whatever the disposed host or store threw.
+    /// It records <c>ended</c> with that error's type, sets no refusal, and restores no turn (<see cref="ReadBackAsync"/>).
     /// </remarks>
     private async Task KeepingTheFailureAsync(Task read)
     {
@@ -337,6 +341,11 @@ public sealed class NotebookRuns : IDisposable
         {
             await read.ConfigureAwait(false);
             Timed("notebook.read-back", started, "read", attempts: ReadBack.Count);
+        }
+        catch (Exception error) when (_disposing.IsCancellationRequested)
+        {
+            Timed("notebook.read-back", started, "ended", errorType: error.GetType().Name);
+            return;
         }
         catch (Exception error) when (error is AgentPlaneException or IOException or IpcRequestException or OperationCanceledException or UnauthorizedAccessException or WorkspaceStoreException)
         {
@@ -449,6 +458,10 @@ public sealed class NotebookRuns : IDisposable
     /// after it.
     /// </summary>
     /// <param name="submitted">Each submitted envelope, with the words it opened with (the restored row's words).</param>
+    /// <param name="cancellationToken">
+    /// The notebook's lifetime on a bind's read-back. It is checked after each read and before each thread write, because a
+    /// read already on its way to the store cannot be recalled. So a disposed notebook takes no turn (T17e).
+    /// </param>
     /// <remarks>
     /// assume: an attempt with no terminal row at read-back is live in this host (the host's startup sweep resolves every
     /// other one), so its own dispatch still owns its turn. Confirm: the sweep's live-key exclusion
@@ -465,7 +478,9 @@ public sealed class NotebookRuns : IDisposable
         List<(AttemptReceipt Receipt, string Words)> found = [];
         foreach (var (envelopeId, projectionSha, words) in submitted)
         {
-            if (await host.ReadAsync(AttemptKey.For(envelopeId, projectionSha, null, null), cancellationToken).ConfigureAwait(false) is { } receipt)
+            var read = await host.ReadAsync(AttemptKey.For(envelopeId, projectionSha, null, null), cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (read is { } receipt)
             {
                 found.Add((receipt, words));
             }
@@ -506,6 +521,7 @@ public sealed class NotebookRuns : IDisposable
     private async Task RestoreAsync(IAttemptHost host, AttemptReceipt receipt, string words, CancellationToken cancellationToken)
     {
         var lane = receipt.Attempt.RouteFingerprint is { Length: > 0 } route ? RouteWords.For(route) : "attempt-host";
+        cancellationToken.ThrowIfCancellationRequested();
         var ordinal = Thread.Accept(words, [], string.Empty, Timestamp(receipt.Attempt.AttemptedAt) ?? DateTimeOffset.Now);
         Record(ordinal, receipt);
 
@@ -513,10 +529,12 @@ public sealed class NotebookRuns : IDisposable
         var subscription = await host.SubscribeAsync(receipt.DispatchKey, cancellationToken).ConfigureAwait(false);
         await foreach (var runEvent in subscription.ReadAllAsync(cancellationToken).ConfigureAwait(false))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             events.Add(runEvent);
             FoldEvent(ordinal, lane, runEvent);
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         var state = AttemptStateFold.Evaluate(new AttemptStateInput(receipt.DispatchKey, events, receipt.Outcomes, [], [])).State;
         if (state is not (TurnState.Completed or TurnState.Answered))
         {
