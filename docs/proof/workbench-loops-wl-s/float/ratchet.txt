@@ -1,0 +1,26 @@
+T21 n8 step-8 ratchet (rule 22). Parent = the branch's merge base with origin/main, 078003a5. Out dir docs/proof/workbench-loops-wl-s/float/ratchet (not committed).
+
+== at 36884736 ((A) green + sweep; the Leader's float-fix join branch) ==
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+    + exit 1: validate: 2 defect(s) - 0 problem(s), 0 orphan(s), 2 index-drift item(s).
+REFUSE green->red      tools/verify-cited-controls.py  parent=0 head=1  new=1
+    + tests/AiDe.App.Tests/Workbench/FloatGuardTests.cs:14 claims enforcement and cites `FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable`, which resolves to nothing. A comment naming a control by a name that does not exi
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=3
+    + 1 of 1 file(s) under docs/audit/audit-data.js are not what the generator produces — derived from docs/audit/audit-log.jsonl and docs/audit/change-log.jsonl, so they are stale or were merged by hand. This is the shape a rebase leaves behind:
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+    + exit 1: 7 stale, 0 unknown, out of 14 checked
+ratchet: REFUSE — 4 refusal(s) over 49 gate(s)
+ratchet exit 1
+Expected (derived views, join step 6 regenerates): docs-graph.py (index drift only, 0 problems), verify-derived-views.py, verify-site-figures.py.
+Fixed: verify-cited-controls.py (FloatGuardTests.cs:14) - one-file commit 2213b507 on 36884736 for the join; on wls-float in 90547b54.
+
+== at 09c55815 (the node head) ==
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+    + exit 1: validate: 2 defect(s) - 0 problem(s), 0 orphan(s), 2 index-drift item(s).
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=3
+    + 1 of 1 file(s) under docs/audit/audit-data.js are not what the generator produces — derived from docs/audit/audit-log.jsonl and docs/audit/change-log.jsonl, so they are stale or were merged by hand. This is the shape a rebase leaves behind:
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+    + exit 1: 7 stale, 0 unknown, out of 14 checked
+ratchet: REFUSE — 3 refusal(s) over 49 gate(s)
+ratchet exit 1
+All three refusals are the expected derived-view gates (rule 22). verify-cited-controls.py is ok at the head.

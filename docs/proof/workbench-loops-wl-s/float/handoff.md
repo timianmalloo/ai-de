@@ -1,81 +1,44 @@
 ---
 id: wl-s-float-handoff-n1
-title: "WL-S T21 float - node 7 hand-off"
+title: "WL-S T21 float - node 8 hand-off"
 type: proof-pack
 status: active
 owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "T21 node 7 (close condition 4): (A) is red at 0097164f. Through the real shell, the palette's Float pane floats a live notebook in the model and draws no floating window, because no controller-routed layout command renders. The fix needs one line in DockHost.cs (seam req-01M5ATF6PNMEW0SX2KKZA34D4D, no reply at the kick). (B) and (C) are drafted, not run. Core 3046/0/1, App 1214/3/2."
+summary: "T21 node 8: the float guard red-first on the Leader's priority order (d82df79e); the float-fix join of 36884736 was abandoned on one cited-controls refusal, fixed by the one-file commit 2213b507; every controller layout command renders (WorkbenchController.LayoutApplied, 36884736, DC-NEW-wl-t21-float-d, five palette tests); floating tabs are named and carry the menu (28c60d1f). (A) and (C) green; (B) green at c80e5fbd (the moved pane takes the focus). Suites App 1225/2/2 (attended probes), Core 3115/0/1; ratchet in ratchet.txt."
 ---
 
-# T21 node 7 hand-off
+# T21 node 8 hand-off
 
-Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`, base `74849010`. The node 6 hand-off is in git history at
-`164a3b96`. The node was held by rule 19 for the WL-1b join from
-19:04Z to 19:31Z. The Leader's rule-16 kick came at 19:46Z while (A)'s green waited on a seam grant, so no check is
-green and no new check was started.
+Branch `wls-float`, tree `C:\Projects\ai-de-wls-float`, node base `2a49cdc5`. The node 7 hand-off is in git history at
+`89bcb068`. The node 8 table, the finding on node 2's test and the residuals are in `README.md` (section "Node 8").
 
 ## Done
 
-- **(A) red, committed** `0097164f` (`live-float-red.txt`). Test:
-  `tests/AiDe.App.Tests/Workbench/ALiveNotebookFloatsAndRedocksTests.cs`
-  `ANotebookFloatedMidRun_KeepsItsModelAndItsOneAttempt_AndTheTurnCompletesInTheFloatingWindow`.
-  The shell is the product's (`WorkbenchShell` over a daemon, the `notebook` kind, the shell's own `AttemptHost`, the
-  stub lane holding the turn Running). The gesture is real: `ConsoleToggle.Focus()` puts keyboard focus in the
-  notebook, the shell's focus tracking names the pane, then the palette runs *Float pane* by Enter. The test renders
-  nothing by hand. Failure: "the model floats the notebook, but the view shows 0 floating window(s); the shell said
-  [... | Binding is now floating.]".
-- **Suites** at `0097164f` (`suite-node7.txt`): Core 3046 passed / 0 failed / 1 skipped. App 1214 / 3 / 2. The 3:
-  (A)'s red, and the two foreground tests (`SolutionTreeChordTests.CtrlEnter_…` "foreground not held";
-  `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` "foreground held=False"), on the Owner's attended list. No
-  "desktop hold is occupied" result occurred, so `desktop-hold.txt` was not written.
-- Proof Pack (`docs/proof/workbench-loops-wl-s.md`): row 10, demo step 5 and the float risk row now say what is
-  measured.
+- **Float guard** (Leader, Owner's order): red `9ba8572f` → green `d82df79e`. The Leader cut `wls-float-fix` at
+  `36884736` for the float-fix join (the guard at `d82df79e` is the fallback). That join passed its recount and was
+  abandoned at step 8 on `verify-cited-controls.py` (`FloatGuardTests.cs:14`); the one-file fix is `2213b507`.
+- **(A) green and the class sweep:** red `626c7221` → green `36884736`. `WorkbenchController.LayoutApplied` → `adapter.Render`
+  in `DockHost.Create`. `LayoutCommandsRenderTests`: float, close, collapse, maximize, next tab, each through the palette.
+  DC-NEW-wl-t21-float-d is registered in `docs/lessons/defect-classes.md`.
+- **Floating tabs:** red `18f9c404` → green `28c60d1f`. (C) is green with it.
+- **(B):** red `74af5881` (no menu), then red on focus at `28c60d1f` ("it is on Window") → green `c80e5fbd`: `MoveToZone` focuses the moved pane's content after the layout pass.
+- **Suites** at `c80e5fbd` (`suite-node8.txt`): App 1225 / 2 / 2 (the two attended foreground probes), Core 3115 / 0 / 1. **Ratchet**: `ratchet.txt`.
 
-## (A): what the code does (Verified by the red, and by reading)
+## Next (node 9)
 
-`WorkbenchShell.Execute` (`WorkbenchShell.cs:418`) and the window's router `PerspectiveShell.Execute`
-(`PerspectiveShell.cs:253`) both end in `host.Controller.Execute`. `workbench.floatPane` (`WorkbenchController.cs:208`)
-goes through `ApplyAndAnnounce` (`:732`), which applies and announces and never renders. Only the tab menu's
-`MoveToZone` and `CloseSurface` (`WorkbenchAdapter.cs:723`, `:729`) render after their apply. So the float is in the
-model and on no screen. *Inferred, not tested:* close, collapse, maximize and next-tab by command share the gap.
+1. **The float fix's re-join** (the Leader's): `36884736` + the one-file cite fix `2213b507` (branch `t21-cite-fix`).
+2. **The proposed gate:** a sibling of `ComposerContentOraclesDriveTheGestureTests`
+   (`tests/AiDe.App.Tests/Workbench/Composer/`) for layout-command tests: a view-state oracle must drive the palette
+   or the controller's `Execute` through `DockHost`, never an adapter rendered by hand. Evidence: node 2's
+   `FloatPane_FloatsTheFocusedPane_...` passed while the palette drew 0 windows (README, node 8 finding).
+3. Proof Pack demo step 5 in the running app (the Owner's walk-through): the palette's *Float pane*, then the tab's menu key,
+   *Move to*, *Center*.
 
-**Also measured by reading:** `Ctrl+K, F` is not bound as a key. `KeyGestures.For` (`WorkbenchController.cs`, after
-`:771`) binds single-chord gestures only, so the palette is the keyboard route. The Proof Pack's demo step 5 now
-says so.
+## Rule 19 overlap (recorded, not hidden)
 
-## Seam request (open at the kick)
-
-`req-01M5ATF6PNMEW0SX2KKZA34D4D` to the Leader, deadline 1800 s, sent ~19:33Z: grant one line in
-`src/AiDe.App/Workbench/DockHost.cs` after `:73`, where the adapter (`:72`) and the controller (`:73`) are built:
-`controller.LayoutApplied += adapter.Render;`. In T21's window, `WorkbenchController` would raise
-`event Action? LayoutApplied` in `ApplyAndAnnounce` when the result is applied. It is not added before the grant,
-because an event nobody wires is an unused member (HYG-A). One risk to check at green: a render after every command
-reverts a native within-pane tab reorder the model has not seen yet (the known gap in `WorkbenchAdapter`'s
-`LayoutRoot.Updated` comment).
-
-## Next (node 8)
-
-1. On the grant: add the event and the wiring, then re-run (A) to green. Record the class as `DC-NEW-wl-t21-float-d`
-   in `docs/lessons/defect-classes.md` in the same commit (a model mutation path with no render: the view and the
-   model disagree until an unrelated render). Sweep the other controller commands with one test each.
-2. (B) and (C) are drafted in `n8-draft-B-C-tests.txt` (the whole test file with all three checks). Copy (B) and (C)
-   into the test file, run each red, save `live-redock-red.txt` and `live-restart-red.txt`, then fix. Expected
-   reds, by reading only: the floating window's tab may carry no context menu, because `DecorateTabs` walks
-   `Manager` only (`WorkbenchAdapter.cs:82`), and floating windows are separate windows; the focus after a redock
-   may not land in the notebook.
-3. Then the whole suites, rule 22's ratchet, and the Proof Pack's step 5 and row 10.
-
-## Not done
-
-- (A) green, (B), (C). Rule 22's ratchet was not run: the kick said to run it only if (A)-(C) are all green, and
-  this node's next step is not a join.
-- **Claims.** `coord claim` refused every path with `COORD-CLAIM-STALE-CONTROLS` (one commit on origin/main touches
-  the controls; remedy `git merge origin/main`). The node did not merge main mid-node, so the suite stays at its
-  base. The docs were edited unclaimed; only T21 writes them.
-
-## Findings (not fixed)
-
-- From node 6 and earlier, still open: see the node 6 hand-off at `164a3b96`.
+The float-fix join posted `join in flight` at 20:16:44Z. One App run of mine (`TheFloatingNotebook_RedocksToTheCenter`,
+two cases, about 5 s) ran after that post: the board check printed 3 matching lines in the same command and the run was
+not gated on it. Later runs are gated on the board check.

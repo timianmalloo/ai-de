@@ -1,0 +1,68 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-float\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-float\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-float\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-float\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-float\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.92]     AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt [FAIL]
+  Failed AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt [700 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "S2"
+Actual:   ""
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.WithHost(Action`4 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 125
+   at AiDe.App.Tests.Perspectives.LayoutCommandsRenderTests.FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\LayoutCommandsRenderTests.cs:line 34
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:04.77]     AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown [3 s]
+  Error Message:
+   the restored floating notebook's tab carries no Move to menu, so it cannot be redocked from its tab (tab found: False)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.<ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown>b__4_0(WorkspaceClient client, SessionConfig config) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 190
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 361
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:07.95]     AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt(midRun: False) [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt(midRun: False) [1 s]
+  Error Message:
+   the floating notebook's tab carries no menu (tab found: False)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.<>c__DisplayClass3_0.<TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt>b__0(WorkspaceClient client, SessionConfig config) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 111
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 361
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:09.38]     AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt(midRun: True) [FAIL]
+  Failed AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt(midRun: True) [1 s]
+  Error Message:
+   the floating notebook's tab carries no menu (tab found: False)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.<>c__DisplayClass3_0.<TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt>b__0(WorkspaceClient client, SessionConfig config) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 111
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 355
+   at AiDe.App.Tests.Perspectives.ALiveNotebookFloatsAndRedocksTests.WithDaemonAsync(Action`2 body) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\ALiveNotebookFloatsAndRedocksTests.cs:line 361
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     4, Passed:     1, Skipped:     0, Total:     5, Duration: 9 s - AiDe.App.Tests.dll (net10.0)
