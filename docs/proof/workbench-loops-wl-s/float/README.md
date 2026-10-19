@@ -7,10 +7,10 @@ owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "Ruling 171 (2) nodes 1, 1b and 2, and Ruling 174 node 3: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored in the zone file (four optional fields, no schema bump), written at move or resize end, and recovered to the default placement with a report line when off every display."
+summary: "Ruling 171 (2) nodes 1, 1b and 2, Ruling 174 node 3, and node 4: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored, written at move end, recovered off-screen; the schema-1 freeze as an allow-list; two malformed zone-file shapes load with a report line; one definition of the off-screen sentence."
 ---
 
-# T21 float, nodes 1, 1b, 2 (Ruling 171 (2)) and 3 (Ruling 174)
+# T21 float, nodes 1, 1b, 2 (Ruling 171 (2)), 3 (Ruling 174) and 4
 
 Node 1 did steps 0 to 2 and stopped at the Leader's 13:01Z kick. Node 1b did check 3 and the null
 check. Node 2 removed T20's float guard in three checks. All are green. See handoff.md for node 3.
@@ -124,4 +124,22 @@ units DIPs in virtual-screen coordinates.
 
 - A move followed by a crash, before the next layout pass or the shutdown flush, is not saved. The reconcile does not call `MarkDirty`, and `WorkbenchShell.cs` is outside the grant. This is Inferred from reading, not measured.
 - AvalonDock's own `KeepInsideNearestMonitor` also clamps a window on render. Check 3 asserts both the model and the drawn window, and they agree here. Mixed-DPI placement remains ADR-0015's spike (Ruling 174).
-- The off-screen sentence now has two definitions: `LayoutStore.cs:271` (the tree path, inline) and `LayoutPersistence.RehomedFloatingSentenceTail`. DESIGN.md:277 has a third form. No DESIGN.md row was added, because DESIGN.md is outside the grant.
+- The off-screen sentence had two definitions in code: `LayoutStore.cs:271` (the tree path, inline) and `LayoutPersistence.RehomedFloatingSentenceTail`. Node 4 check 2 closed this (below). DESIGN.md:277 still has an older form ("Display 2 is not connected. …"), which node 4 did not change.
+
+## Node 4: the freeze allow-list, malformed zone files, one sentence
+
+Main was merged into the tree by the Leader at 003688ea before the first claim (seam req-01M5A9WFD8G87N4DFPRB0B5C9X).
+
+| Check | Test | Red | Green |
+|---|---|---|---|
+| 0. The schema-1 freeze is an allow-list (Owner, 14:07Z, on 60779f03) | `tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs` `TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed` (2 planted copies of `ZoneStackDto`: an unruled `floatZ`, and `floatX` renamed to `x` on the wire), plus the existing 6-case theory through the same `FreezeViolations` | freeze-allowlist-red.txt (9e20dcd0): the old rule found nothing wrong with either plant, "Collection was empty" | freeze-allowlist-green.txt (1da9f822), 29/29 slot tests |
+| 1. No `"zones"` field, and a floating stack with no `"surfaces"` field, load with a report line (close condition 1) | `tests/AiDe.Core.Tests/Workbench/ZoneLayoutPartlyReadTests.cs` (3, with fixtures `zone-layout-no-zones.json` and `zone-layout-floating-no-surfaces.json`, and a control that an absent `"floating"` is not reported); `tests/AiDe.App.Tests/Workbench/ZoneLayoutPartlyReadRestoreTests.cs` (2, through `LayoutPersistence.Restore`) | partly-read-red.txt (96ffc26a): `ArgumentNullException (Parameter 'source')` in Core and App, both shapes | partly-read-green.txt (7c3a40aa): Core 37/37, App 44/44 with the persistence, slot, bounds and guard tests |
+| 2. One definition of the off-screen sentence; the `LayoutRect` comment | `tests/AiDe.App.Tests/Workbench/OffScreenSentenceDefinitionTests.cs` `TheOffScreenSentence_IsDefinedOnce_InCore` | offscreen-sentence-red.txt (c2dd868e): 2 definitions, `LayoutPersistence.cs:30` and `LayoutStore.cs:272` | offscreen-sentence-green.txt (08f62223): App 14/14 (including node 3's exact-sentence test), Core 55/55 |
+| Suite | App and Core, once each, at 08f62223 | - | suite-node4.txt: Core 3034 / 0 / 1 skipped; App 1155 / 1 / 2. The one failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held" at the probe precondition, as in nodes 1b to 3. It is not proven either way |
+
+### What changed
+
+- **Check 0.** The freeze rule is now `FreezeViolations(live, frozen)` with a table, `RuledAdditions`. The live constructor must start with the frozen parameters. The parameters after them must be exactly the ruled ones, by name, type and wire name; today that is only Ruling 174's four bounds on `ZoneStackDto`. Each one must also be nullable with a null default. Any other field fails with "added to schema 1 without a ruling". The `Frozen` block is untouched. This check is stricter than the Owner's wording, because it also checks the wire name.
+- **Check 1.** `ZoneLayoutStore.Read` reads a missing `zones` field as empty zones, the same way a zone missing from the list already reads (`ZoneLayoutStore.cs:191`). It leaves out a floating stack whose `surfaces` is missing. Either case sets the new `ZoneLoadResult.PartlyRead` flag. `LayoutPersistence.Restore` then adds `PartlyReadSentence`, "Part of your saved layout could not be read and was left out.", with code PartialRestore. The words were accepted provisionally (seam req-01M5A9YZ4PB93ZD06KE5EMC5X8), and the Owner confirms them before the join. DESIGN.md has the row (granted). The restore now builds its announcement from a list of sentences.
+- **Check 2.** The const `ZoneLayoutStore.RehomedSentenceTail` has no final period, and each caller adds its own. It lives in `ZoneLayoutStore`, not `LayoutStore`, because the grant was LayoutStore.cs:271 alone, that one line (seam req-01M5A9YZ7H7QPANKV4YMECM31H). The edited line was 272 after the merge, since the literal is on the second line of that statement. The App const `RehomedFloatingSentenceTail` is deleted. The `LayoutRect` summary now says drop hit boxes are in window coordinates, and floating bounds are DIPs in virtual-screen coordinates.
+- **DC-NEW-wl-t21-float:** both named siblings are controlled. It stays `partially-controlled`, because reading the code shows a JSON `null` element inside `zones`, `floating`, `tabs` or `surfaces` is still dereferenced. That case is not tested.
