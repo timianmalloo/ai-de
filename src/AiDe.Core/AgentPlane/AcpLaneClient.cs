@@ -269,6 +269,8 @@ public sealed class AcpLaneClient
     private readonly Func<JsonObject, string> _choosePermission;
     private readonly EngineRow? _engine;
     private readonly Action<string> _diagnostics;
+    private readonly System.Collections.Concurrent.ConcurrentQueue<JsonObject> _cancelledPermissions = new();
+    private bool _stopping;
 
     /// <param name="peer">The transport. This client installs itself as its inbound handler.</param>
     /// <param name="capabilities">What to declare. Defaults to <see cref="AcpClientCapabilities.PhaseOne"/>.</param>
@@ -441,20 +443,50 @@ public sealed class AcpLaneClient
     }
 
     /// <summary>
+    /// The permission requests answered <c>cancelled</c> because a Stop was under way, in arrival order — the
+    /// host records each as <c>PermissionCancelledByStop</c> (ADR-0041 §4).
+    /// </summary>
+    public IReadOnlyCollection<JsonObject> CancelledPermissions => _cancelledPermissions;
+
+    /// <summary>
+    /// Asks the engine to stop the session's prompt turn: from now on every permission request is answered
+    /// <c>cancelled</c> (the ACP cancellation contract), then <c>session/cancel</c> is sent as a notification.
+    /// The turn's end is the engine's <c>cancelled</c> reply to the prompt, never this call returning.
+    /// </summary>
+    public Task CancelAsync(string sessionId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
+
+        Volatile.Write(ref _stopping, true);
+        return _peer.NotifyAsync("session/cancel", new JsonObject { ["sessionId"] = sessionId }, cancellationToken);
+    }
+
+    /// <summary>
     /// Answers what this client implements, and <c>null</c> — which the peer turns into
     /// <c>-32601</c> — for everything it does not.
     /// </summary>
     private JsonNode? Handle(string method, JsonObject? parameters)
-        => method == "session/request_permission" && parameters is not null
-            ? new JsonObject
+    {
+        if (method != "session/request_permission" || parameters is null)
+        {
+            return null;
+        }
+
+        if (Volatile.Read(ref _stopping))
+        {
+            _cancelledPermissions.Enqueue((JsonObject)parameters.DeepClone());
+            return new JsonObject { ["outcome"] = new JsonObject { ["outcome"] = "cancelled" } };
+        }
+
+        return new JsonObject
+        {
+            ["outcome"] = new JsonObject
             {
-                ["outcome"] = new JsonObject
-                {
-                    ["outcome"] = "selected",
-                    ["optionId"] = _choosePermission(parameters),
-                },
-            }
-            : null;
+                ["outcome"] = "selected",
+                ["optionId"] = _choosePermission(parameters),
+            },
+        };
+    }
 
     /// <summary>
     /// Picks the reject option, by its declared <c>kind</c> rather than by its id.

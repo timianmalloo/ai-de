@@ -193,7 +193,7 @@ public static class GovernedRunHost
         ProvisionedWorktree? worktree = null;
 
         var peer = new AcpPeer(
-            engine.Output, engine.Input, new AcpRunEventMapper(runId, laneId), diagnostics: Report);
+            engine.Output, engine.Input, new AcpRunEventMapper(runId, laneId), diagnostics: Report, runLog: attempt?.RunLog);
 
         // The permission policy IS the governance: an edit inside the lease is allowed, an edit
         // outside it is refused. A client that allows everything has removed the control the plane
@@ -231,8 +231,10 @@ public static class GovernedRunHost
             var readOnlySession = await OpenReadOnlySessionAsync(client, request.RepositoryRoot, runId, laneId, spawn.Binding, Report, cancellationToken)
                 .ConfigureAwait(false);
 
+            attempt?.Stop.RefuseIfRequested(attempt.DispatchKey);
             await DispatchedGateAsync(attempt, Report, cancellationToken).ConfigureAwait(false);
             var readOnlyPrompt = client.PromptAsync(readOnlySession, request.Prompt, cancellationToken);
+            attempt?.Stop.Bind(client, readOnlySession, readOnlyPrompt);
 
             var readOnlyDrained = await DrainAsync(peer.Events, readOnlyPrompt, seams: null, Report, sink, cancellationToken)
                 .ConfigureAwait(false);
@@ -344,8 +346,10 @@ public static class GovernedRunHost
         var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, spawn.Binding, Report, cancellationToken)
             .ConfigureAwait(false);
 
+        attempt?.Stop.RefuseIfRequested(attempt.DispatchKey);
         await DispatchedGateAsync(attempt, Report, cancellationToken).ConfigureAwait(false);
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);
+        attempt?.Stop.Bind(client, acpSession, prompt);
 
         var drained = await DrainAsync(peer.Events, prompt, seams, Report, sink, cancellationToken)
             .ConfigureAwait(false);
@@ -459,7 +463,12 @@ public static class GovernedRunHost
             return;
         }
 
-        var terminal = AttemptTerminal.For(attempt.DispatchKey, prompt);
+        // The drain can end on the queue completing a beat before the prompt's own task does (the peer fails the
+        // pending completion first, but RequestAsync's continuation runs asynchronously): the terminal is read from
+        // the completed task, never from one still in flight (DC-NEW-wl-t5-host-n2). The pump has ended, so this is bounded.
+        await ((Task)prompt).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await AttemptTerminal.RecordStopPermissionsAsync(attempt.Ledger, attempt.DispatchKey, attempt.Stop).ConfigureAwait(false);
+        var terminal = AttemptTerminal.For(attempt, prompt);
         await attempt.Ledger.AppendAttemptOutcomeAsync(terminal, CancellationToken.None).ConfigureAwait(false);
         report($"attempt {attempt.DispatchKey}: {terminal.State} {terminal.Cause ?? terminal.ErrorCode ?? ""}".TrimEnd());
     }

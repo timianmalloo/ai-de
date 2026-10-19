@@ -129,13 +129,12 @@ public sealed class SessionPathContractTests
     }
 
     /// <summary>
-    /// Files allowed to use the run-log reservation tokens — today, only their declaration site.
-    /// A named constant, not a literal in the scan loop, because Ruling 38 makes this an extension
-    /// point: Phase 3 adds <c>RunLogStore.cs</c> here, citing its ruling, rather than the guard
-    /// being weakened or deleted to let it through.
+    /// Files allowed to use the run-log reservation tokens: their declaration site, and
+    /// <c>RunLogStore.cs</c> — the run log's one writer, added by WL-1a under ADR-0041 §3 (the extension
+    /// point Ruling 38 named), so every write to the reserved path still goes through one file.
     /// </summary>
     private static readonly IReadOnlySet<string> AllowlistedRunLogReservationFiles =
-        new HashSet<string>(StringComparer.Ordinal) { "SessionPaths.cs" };
+        new HashSet<string>(StringComparer.Ordinal) { "SessionPaths.cs", "RunLogStore.cs" };
 
     /// <summary>
     /// Fails if: the session-config path takes a YAML dependency. Ruling 23's subject is session

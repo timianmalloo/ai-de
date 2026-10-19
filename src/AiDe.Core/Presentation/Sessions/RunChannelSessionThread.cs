@@ -201,6 +201,14 @@ public sealed class RunChannelSessionThread : ISessionThread
             var turn = Find(ordinal);
             RefuseIfTerminal(turn);
             RefuseIfQueued(turn);
+
+            // ADR-0041 §4 fold precedence: StopRequested dominates Waiting. A request that arrives while the
+            // stop is unacknowledged is answered cancelled by the host; the turn stays StopRequested.
+            if (turn.State == TurnState.StopRequested)
+            {
+                return;
+            }
+
             turn.State = TurnState.Waiting;
             turn.Waiting = request;
         }
@@ -239,6 +247,13 @@ public sealed class RunChannelSessionThread : ISessionThread
             var turn = Find(ordinal);
             RefuseIfTerminal(turn);
             RefuseIfQueued(turn);
+
+            // Only the harness's acknowledgment (Conclude) moves a StopRequested turn on; never back to Running.
+            if (turn.State == TurnState.StopRequested)
+            {
+                return;
+            }
+
             turn.State = TurnState.Running;
             turn.Waiting = null;
         }
