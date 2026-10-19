@@ -7,10 +7,10 @@ owner: "@timianmalloo"
 links:
   - { to: architecture, rel: implements }
 review-by: 2027-01-19
-summary: "Ruling 171 (2) nodes 1, 1b and 2: the WebView2 float probe (no crash; off-screen, no pixel check); floating stacks drawn, redocked, closed and activated; floating windows read back and restored floating; T20's guard removed (floatPane floats again, LayoutPersistence restores floating, DOCK2/DOCK3 copy and FloatingRedock deleted)."
+summary: "Ruling 171 (2) nodes 1, 1b and 2, and Ruling 174 node 3: the WebView2 float probe; floating stacks drawn, redocked, closed and activated; read back and restored floating; T20's guard removed; floating bounds stored in the zone file (four optional fields, no schema bump), written at move or resize end, and recovered to the default placement with a report line when off every display."
 ---
 
-# T21 float, nodes 1, 1b and 2 (Ruling 171 (2))
+# T21 float, nodes 1, 1b, 2 (Ruling 171 (2)) and 3 (Ruling 174)
 
 Node 1 did steps 0 to 2 and stopped at the Leader's 13:01Z kick. Node 1b did check 3 and the null
 check. Node 2 removed T20's float guard in three checks. All are green. See handoff.md for node 3.
@@ -61,7 +61,7 @@ asserts that the native window's bounds are read back. Both are recorded in read
 
 - **Duplicate floating stack id after a restore (Verified by reading, not tested):** `_floatSeq` (`ZoneBackedLayoutService.cs:17`) restarts at 0 in every service, so the first float after a restore that holds `float-1` mints `float-1` again. handoff.md has the red-first plan.
 - **DC-NEW-wl-t21-float siblings (open):** a zone file with no `"zones"` field, or a floating stack with no `"surfaces"` field, still throws in `Read`.
-- **Placement:** the zone file stores no floating bounds (seam request req-01M5A43ANDG4G188C55BY7BM3S, Data and Persistence review, then the Owner). No bounds fields were added. A restored floating window opens floating and visible at the default placement, and two restored windows open at the same spot. Within a session the bounds survive, because the read-back takes them from the view.
+- **Placement (closed by node 3, Ruling 174):** at node 1b the zone file stores no floating bounds (seam request req-01M5A43ANDG4G188C55BY7BM3S, Data and Persistence review, then the Owner). No bounds fields were added. A restored floating window opens floating and visible at the default placement, and two restored windows open at the same spot. Within a session the bounds survive, because the read-back takes them from the view.
 - T20's guard was removed in node 2 (below).
 
 ## Node 2: T20's guard removed
@@ -94,3 +94,34 @@ real surface: the controller, LayoutPersistence's save and restore, and the rend
 - **floatPane on the empty center's placeholder says "No surface “”."** (Verified by the first run of check 2.) The message names no surface.
 - **`ZoneLayoutService.ZoneName` lost a test.** `FloatingRedockCopyTests` also checked that no zone's label equals its enum name. That check went with the file. A grep of tests/ finds no other test that references `ZoneName`, so the label is now unpinned.
 - **Stale remark:** `FloatReadBackRestartTests.cs:18` still says LayoutPersistence calls `FloatingRedock.Dock`. That file is outside this node's grant. Node 3 has to change the same test's no-bounds assertion anyway (Ruling 174).
+
+## Node 3: floating bounds (Ruling 174)
+
+The Data and Persistence conditions (Leader DR req-01M5A4911PW38Z4E28QBGXMP7P) are met: four
+`double?` fields, read all-or-none, width or height <= 0 is no bounds, `CurrentSchemaVersion` stays 1
+(`ZoneLayoutStore.cs:71`), one rectangle per floating `ZoneStackDto` mapping to `StackNode.FloatingBounds`,
+units DIPs in virtual-screen coordinates.
+
+| Check | Test | Red | Green |
+|---|---|---|---|
+| 1. Four optional fields, no schema bump | `tests/AiDe.Core.Tests/Workbench/ZoneFloatingBoundsStoreTests.cs` (6: round-trip; an old file, fixture `tests/AiDe.Core.Tests/fixtures/zone-layout-floating-no-bounds.json`, loads with null bounds; three partial or empty cases; an older reader ignores the fields) | zone-bounds-store-red.txt (47074ff7): "the saved floating stack has no bounds fields" | zone-bounds-store-green.txt (99226792), 20/20 with the zone store and null-floating tests |
+| 2. Writer at move or resize end | `tests/AiDe.App.Tests/Workbench/FloatBoundsPersistTests.cs` `AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle` | bounds-writer-red.txt (3b15c959): "the restart opened the floating window at the default placement (no saved bounds)" | bounds-writer-green.txt (2ac90f20); bounds-writer-neighbours.txt 33/33 |
+| 3. Off-screen recovery with a report line | same file, `AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo` | offscreen-recovery-red.txt (74eba6d2): "the restore kept the off-screen rectangle" | offscreen-recovery-green.txt (f8bee27a), 40/40 with the guard, slot and persistence tests |
+| 4. Null "floating" fix stays | `ZoneLayoutWithoutFloatingTests` | - | in zone-bounds-store-green.txt and the suite |
+| Suite | App and Core, once each, at f8bee27a | - | suite-node3.txt: Core 3031 / 0 / 1 skipped; App 1135 / 1 / 2. The one failure is `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, "foreground not held" at the probe precondition, also red alone. It is not proven either way. Counts are node 2's plus 6 Core and 2 App tests |
+
+### What changed
+
+- `ZoneLayoutStore.cs`: `ZoneStackDto` gains `floatX`, `floatY`, `floatWidth`, `floatHeight` (`double?`, default null). `ToStackDto` writes `FloatingBounds`. `FromStackDto` reads all four or none, and needs a width and height above 0.
+- **The writer** is `WorkbenchAdapter.WatchTheFloatingPanes` and `OnFloatingBoundsUpdated`, beside `WatchTheDockingModel` in `WorkbenchAdapter.cs`. AvalonDock 5.0.0 handles `WM_EXITSIZEMOVE` in `LayoutFloatingWindowControl`. It copies the window's bounds into its panes and raises `FloatingPropertiesUpdated` (read from the decompiled assembly). A bounds change does not raise `LayoutRoot.Updated`, so before this the model learned of a move only at the next unrelated reconcile. `ViewArrangementSignature` now carries each floating pane's bounds, so a move end raises `ViewArrangementChanged`. The shell's existing reconcile (`WorkbenchShell.cs:226`, `:1892`) then writes the bounds into the model, with no render. The save is the shell's debounce on `Manager.LayoutUpdated` (`WorkbenchShell.cs:632`) or the shutdown flush.
+- **Render defect fixed (DC-NEW-wl-t21-float-b):** `BuildFloatingWindow` set the bounds on the pane only. AvalonDock places a document floating window from its root panel (`DockingManager.CreateUIElementForModel`), so every floating window since node 1 opened at (0, 0), sized to its content. It now writes the pane and the group. Check 2's window assertion is the control.
+- `LayoutPersistence.cs`, the zone restore lines only. Each floating stack that fails `_displayIsConnected` (default `VirtualScreen.IsOnAConnectedDisplay`) loses its bounds before `RestoreZones`. Its title goes into `RestoreResult.RehomedFloating`, and the code is `PartialRestore`. The announcement gains one sentence: `“Sessions” moved onto this display because the saved display is not connected.` It is the const `RehomedFloatingSentenceTail`, in the tree path's words (`LayoutStore.cs:271`). It is the copy proposed in seam request req-01M5A6W4HGN4PREM1CK48Q5X4H, built as that request's fallback.
+- `DropTargetResolver.cs`: the `LayoutRect` comment was **not** changed, because the kick came first. It still says "window coordinates", but a floating pane's bounds are DIPs in virtual-screen coordinates.
+- `FloatReadBackRestartTests`: the "no bounds in the file" assertion became "the file holds each stack's bounds", and the stale `FloatingRedock.Dock` remark is gone.
+- `PerspectiveLayoutSlotTests.TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters` is outside the grant. Check 1's green made its `ZoneStackDto` case red: 3 frozen parameters against 7 live ones. That is Verified by reading; the test was not run at 99226792. The theory now requires the frozen parameters as an exact prefix, and every added parameter optional, nullable and null by default. The `Frozen` block is untouched. Seam request req-01M5A74MXYR2X0YG0EVE501PMF covers it. The change is its own commit, 60779f03, so it can be dropped.
+
+### Residuals
+
+- A move followed by a crash, before the next layout pass or the shutdown flush, is not saved. The reconcile does not call `MarkDirty`, and `WorkbenchShell.cs` is outside the grant. This is Inferred from reading, not measured.
+- AvalonDock's own `KeepInsideNearestMonitor` also clamps a window on render. Check 3 asserts both the model and the drawn window, and they agree here. Mixed-DPI placement remains ADR-0015's spike (Ruling 174).
+- The off-screen sentence now has two definitions: `LayoutStore.cs:271` (the tree path, inline) and `LayoutPersistence.RehomedFloatingSentenceTail`. DESIGN.md:277 has a third form. No DESIGN.md row was added, because DESIGN.md is outside the grant.
