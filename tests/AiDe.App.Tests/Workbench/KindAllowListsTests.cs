@@ -81,6 +81,7 @@ public sealed class KindAllowListsTests
             ["diagnostics"] = ["factory"],
             ["notebook"] = ["factory"],
             ["console"] = ["factory"],
+            ["execution"] = ["factory"],
         };
 
         Assert.Equal(expected.Keys.Order(StringComparer.Ordinal), SurfaceContentFactory.Kinds.Select(k => k.Kind).Order(StringComparer.Ordinal));

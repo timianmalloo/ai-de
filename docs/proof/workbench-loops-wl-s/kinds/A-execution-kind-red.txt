@@ -1,0 +1,51 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wls-kinds-migration\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.22]     AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable [FAIL]
+[xUnit.net 00:00:00.22]     AiDe.App.Tests.Kinds.TheExecutionKindTests.TheExecutionRow_IsFactorysOnly_OnePerAttempt_DocksInTheBottom_OpenedByTheTurnsOpenLog [FAIL]
+[xUnit.net 00:00:00.31]     AiDe.App.Tests.Kinds.TheExecutionKindTests.AnExecutionSurface_IsNamedForItsAttempt_InUia [FAIL]
+  Failed AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                               ↓ (pos 9)
+Expected: [···, "diagnostics", "entry-points", "execution", "joins", "leaderboard", ···]
+Actual:   [···, "diagnostics", "entry-points", "joins", "leaderboard", "ledger", ···]
+                                               ↑ (pos 9)
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.KindAllowListsTests.EveryKindIsAdmittedSomewhere_AndTheColumnIsTheDesignsTable() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\KindAllowListsTests.cs:line 87
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Kinds.TheExecutionKindTests.TheExecutionRow_IsFactorysOnly_OnePerAttempt_DocksInTheBottom_OpenedByTheTurnsOpenLog [1 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: [SurfaceKind { Kind = canvas, Title = Graph, Summary = A windowed graph canvas over the workspace's code, data and architecture nodes., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = True, Zone =  }, SurfaceKind { Kind = view, Title = Evidence, Summary = The evidence list: every fact the workspace's daemon has indexed, searchable; select a row for its provenance., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = classdiagram, Title = Class diagram, Summary = The type hierarchy (classes and interfaces and their inheritance) of the open workspace., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = Many, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = sequence, Title = Sequence diagram, Summary = Participant lifelines and the ordered messages exchanged between them., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = Many, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = contexts, Title = Contexts, Summary = The bounded contexts as boxes, with the traffic that crosses between them., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, ···]
+  Stack Trace:
+     at AiDe.App.Tests.Kinds.TheExecutionKindTests.TheExecutionRow_IsFactorysOnly_OnePerAttempt_DocksInTheBottom_OpenedByTheTurnsOpenLog() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionKindTests.cs:line 18
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Kinds.TheExecutionKindTests.AnExecutionSurface_IsNamedForItsAttempt_InUia [84 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "Execution — dk-1"
+Actual:   ""
+  Stack Trace:
+     at AiDe.App.Tests.Kinds.TheExecutionKindTests.AnExecutionSurface_IsNamedForItsAttempt_InUia() in C:\Projects\ai-de-wls-kinds-migration\tests\AiDe.App.Tests\Workbench\Notebook\TheExecutionKindTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     3, Passed:     1, Skipped:     0, Total:     4, Duration: 111 ms - AiDe.App.Tests.dll (net10.0)
