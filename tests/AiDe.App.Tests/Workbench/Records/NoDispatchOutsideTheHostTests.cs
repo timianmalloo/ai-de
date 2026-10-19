@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using AiDe.App.Conductor;
@@ -121,6 +122,77 @@ public sealed class NoDispatchOutsideTheHostTests : IDisposable
             Assert.Equal(TurnState.Answered, model.Thread.Current.Turns[0].State);
             Assert.Equal(current, model.Runs.AttemptOf(model.Thread.Current.Turns[0].Ordinal)?.Attempt.WorkspaceEpoch);
         });
+    }
+
+    /// <summary>
+    /// Ruling 159(1): while another window holds the host, Send is disabled with the exact copy as its UIA help text,
+    /// the read-only views still work, and the copy shows only while that holder lives — closing it hosts runs here.
+    /// </summary>
+    [Fact]
+    public void WhileAnotherWindowHoldsTheHost_SendIsDisabledWithTheCopy_TheViewsStillWork_AndClosingTheHolderEnablesIt()
+    {
+        Pump(async (window, model, document) =>
+        {
+            var holder = await AttemptHost.OpenAsync(new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+            model.Runs.BindHostWhenOpen(OpenHost, Scope);
+            var send = ButtonIn(document.Composer, b => Equals(b.Content, "Send"));
+            await UntilAsync(window, () => !send.IsEnabled, () => "Send stayed enabled while another window holds the host");
+
+            Assert.Equal(NotebookRuns.HostedElsewhere, AutomationProperties.GetHelpText(send));
+            Assert.True(document.IsEnabled && document.Composer.IsEnabled, "a hosted-elsewhere window must still read its views");
+            Assert.Null(FindButton(document.Composer, b => AutomationProperties.GetName(b) == "Retry hosting runs" && b.IsVisible));
+
+            holder.Dispose();
+            await UntilAsync(window, () => send.IsEnabled && model.Runs.Host is not null,
+                () => $"after the holder closed Send reads enabled={send.IsEnabled}, host={model.Runs.Host is not null}");
+            Assert.NotEqual(NotebookRuns.HostedElsewhere, AutomationProperties.GetHelpText(send));
+            using var host = (AttemptHost)model.Runs.Host!;
+        });
+    }
+
+    /// <summary>Ruling 159(1): any other open failure disables Send with its own cause and shows a Retry wired to the host's retry.</summary>
+    [Fact]
+    public void AnyOtherOpenFailure_DisablesSendWithItsCause_AndTheRetryControlBindsTheHost()
+    {
+        Pump(async (window, model, document) =>
+        {
+            var tries = 0;
+            model.Runs.BindHostWhenOpen(() => ++tries == 1 ? Task.FromException<IAttemptHost>(new IOException("the lock file's folder is read-only")) : OpenHost(), Scope);
+            var send = ButtonIn(document.Composer, b => Equals(b.Content, "Send"));
+            await UntilAsync(window, () => !send.IsEnabled, () => "Send stayed enabled after the host failed to open");
+
+            Assert.Contains("the lock file's folder is read-only", AutomationProperties.GetHelpText(send), StringComparison.Ordinal);
+            var retry = FindButton(document.Composer, b => AutomationProperties.GetName(b) == "Retry hosting runs");
+            Assert.NotNull(retry);
+            Assert.Equal(Visibility.Visible, retry!.Visibility);
+
+            retry.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            await UntilAsync(window, () => send.IsEnabled && model.Runs.Host is not null, () => "the Retry control never bound the host");
+            Assert.Equal(2, tries);
+            Assert.Equal(Visibility.Collapsed, retry.Visibility);
+            using var host = (AttemptHost)model.Runs.Host!;
+        });
+    }
+
+    private static Button ButtonIn(DependencyObject root, Func<Button, bool> match) =>
+        FindButton(root, match) ?? throw new InvalidOperationException("no such button in the composer");
+
+    private static Button? FindButton(DependencyObject root, Func<Button, bool> match)
+    {
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            if (child is Button button && match(button))
+            {
+                return button;
+            }
+
+            if (FindButton(child, match) is { } found)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>Ruling 159(3): the lock is the holding process's own handle, so a holder that died frees it for the next open.</summary>
