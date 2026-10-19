@@ -16,7 +16,46 @@ summary: >-
   store transaction) and Cancel on a host-held turn; Ruling 159 — a turn waits for the host's open, a window that
   cannot open it refuses and never runs directly, the epoch is read at dispatch. Node 5: the composer's Send is disabled
   with the host's refusal (UIA help text, Retry wired to RetryHostAsync); the no-client refusal, the pipe test, the
-  execution-state UIA names and the withdrawn copy are handed to node 6.
+  execution-state UIA names and the withdrawn copy are handed to node 6. Node 6: the no-client refusal, the internal
+  UnhostedForTests seam and its src/ census, withdraw over the pipe, and the withdrawn copy; check 3 to node 7.
+---
+
+# WL-1a T8 node 6 — hand-off
+
+Node 6 started at c5eb4aa8 and merged `origin/main` at 9e6778b9, because `coord claim` refused with STALE-CONTROLS. It
+finished item 1 (Check 2) and item 2 (the withdrawn copy). Check 3 is handed to node 7.
+
+## Done
+
+| Item | Tests | Red | Green |
+|---|---|---|---|
+| Check 2: no-client refusal (Ruling 159(2)) | `NoDispatchOutsideTheHostTests.WithNoWorkspaceClient_SendIsRefusedWithItsCause_NoRetryIsOffered_AndNoTurnRuns` | `no-client-red.txt` (c5c0d7ea), an assertion failure: "Send stayed enabled …" | `no-client-green.txt` (c0a1efc2) |
+| Check 2: the seam is internal, and the src/ census | `TheUnhostedRunIsATestSeamTests.TheDirectRunSeam_IsInternal` · `NothingUnderSrc_CallsTheDirectRunSeam_OnlyItsDeclarationNamesIt` | `no-client-red.txt` (c5c0d7ea). Planted call: `seam-guard-plant-red.txt` (cef15b04) names `AiDe.App/Workbench/WorkbenchShell.cs` as a "call". The plant is removed | `no-client-green.txt` (c0a1efc2) |
+| Withdraw over the pipe | `AttemptWithdrawTests.AWithdraw_RoundTripsOverThePipe_AndTheStoreReadsWithdrawn` | none. It is a **guard**: it passed on its first run, because `attempt.withdraw` was already registered | `withdraw-pipe-green.txt` (6c541288) |
+| Withdrawn copy | Core `TheQueuedTurnIsOneTurnOfTheStreamTests` `:109`/`:200` · App `TheHeldTurnIsWithdrawnTests.CancelOnAHostHeldTurn_…` (row HelpText, the announcement exactly "Turn b2 cancelled by you before it was sent.", not "stopped by you", not "Refused before it started") · `AHostRejectionOfAHeldTurn_…` (a Rejected row never reads "cancelled by you": a guard) | `withdrawn-copy-red-core.txt` (0b95c73f) · `withdrawn-copy-red-app.txt` (4955c7b0) | `withdrawn-copy-green-core.txt` · `withdrawn-copy-green-app.txt` (bf4f3d14) |
+
+What changed:
+- `NotebookRuns.HostRefusal` is now derived. It is null when a host is bound or the seam is set. Otherwise it is the
+  open failure, or `NoWorkspace` when there is no opener. `CanRetryHost` is true only for a non-HostedElsewhere open
+  failure. `BindHost`, `BindHostWhenOpen` and the seam raise `HostRefusalChanged` inline. The open's continuation posts
+  it to the home context. With no host, no opener and no seam, `Start` fails the turn with `NoWorkspace` and never
+  calls `GovernedRunHost`.
+- The seam is `internal void NotebookRuns.UnhostedForTests()`. Test-side, `tests/AiDe.App.Tests/Workbench/Records/UnhostedSeam.cs`
+  spells it as `.Unhosted()` on a surface or a model, and as `shell.OpenSessionDocumentUnhosted(config)`. The census
+  found 10 App test classes and `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs` (the chooser path) on the direct
+  path, not 21. Each was changed only to call the seam. `TheThreadAnnouncesAndExposesRealPropertiesTests:372` sets the
+  seam on the model before the surface binds. Otherwise the no-client refusal is announced first, and the test's
+  `Assert.Single` sees two announcements.
+- `TurnCopy.ReasonSentence(Cancelled)` = `$"{DisplayOrdinal} cancelled by you before it was sent."`. The Cancelled row of
+  `ThreadAnnouncementPolicy` announces `"Turn " + ReasonSentence` (req-01M59JK0HSVX0EYTXEY0CAAAMM). TurnCopy has one
+  Cancelled sentence, and it starts with the label. The Owner chose HelpText (c), and that row is the same announcer
+  path Stop uses, so no `assume:` remains. `DESIGN.md:1204` has the string appended. Its "cancel it" lines do not
+  contradict it, so they are unchanged.
+
+## Not done / next (node 7)
+
+1. **Check 3, not started:** the UIA names for the execution states (brief, node-4 obligation).
+
 ---
 
 # WL-1a T8 node 5 — hand-off
