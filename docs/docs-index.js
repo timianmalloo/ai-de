@@ -10706,7 +10706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "34f2ad9d4a7e05760fec2adb6f64f38c938c082cf65844038211c9b59ebdee6c"
+      "sourceSha256": "f9e8c26f85fd6cf79e1373871a529c7c52ae7900fb977ff8da91b04695ab11dc"
     },
     {
       "id": "design-session-profiler",
@@ -12317,7 +12317,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "028ac29aa43feb6e3ff49e07735ea0536f0af2a998e28772d9bdf86b11d4a8fb"
+      "sourceSha256": "2e343ffe18e14f3f1db4bf3c2fcee9a013969ffcff9ebec68ef0a3c9e3ca6204"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -22406,6 +22406,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "5c64faf67392db5af8d69ca8810a67ce5fea06031a67564a7ced552070c28d55"
     },
     {
+      "id": "proof-wl-identity-gate",
+      "path": "docs/proof/workbench-loops-support/identity-gate/README.md",
+      "title": "Proof Pack - the account-identity gate",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2027-04-19",
+      "reviewSuggested": [],
+      "summary": "tools/verify-no-account-identity.py refuses email-shaped strings in tracked docs/proof/ and .agents/ files, masks the local part in every finding, and proves it can fail with --self-test.",
+      "tags": [
+        "proof-pack",
+        "privacy",
+        "gate",
+        "workbench-loops"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5ba4a76daba33ff0bb5e0804c8f87b9accf668fc42e14da3761d6f19371a2a1c"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -24530,5 +24556,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "e1775aa4a3ad70fe032e9d10a0bbb23fb5195645f6a88878f8e25bcc040f0f24"
+  "graphSha256": "3ec40cbd96757138ca30e206d4bba47b9a22a025361e8e5e34905b3242c22400"
 };

@@ -28,3 +28,13 @@
 {"agent": "wl-t8-bind", "at": 1792393205.2645795, "kind": "release", "path": "src/AiDe.App/Conductor/ConductorEntry.cs", "seq": 28, "session": "wl-t8-bind", "wi": "workbench-loops"}
 {"at": 1792393715.6524734, "from": "wl-t8-bind", "kind": "done", "mail_id": "mail-01M59FV7Y404W91MFB8ZAXTMY0", "ref": null, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "mail"}
 {"action": "add", "agent": "wl-t8-bind", "at": 1792394000.995119, "deadline_at": 1792395800.995119, "id": "req-01M59G3YK7REPTB5W3EDSDKDN7", "kind": "request", "path": "-", "seq": 30, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"agent": "wl-t8-bind", "at": 1792394381.8628945, "kind": "claim", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "seq": 31, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394382.0608828, "kind": "claim", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "seq": 32, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394382.2787807, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 33, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394382.5083053, "kind": "claim", "path": "src/AiDe.Core/Ipc/IWorkspaceDispatch.cs", "seq": 34, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394382.7513459, "kind": "claim", "path": "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs", "seq": 35, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394382.9402807, "kind": "claim", "path": "src/AiDe.Core/Ipc/WorkspaceOperations.cs", "seq": 36, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394383.1358988, "kind": "claim", "path": "src/AiDe.Core/Ipc/WorkspaceClient.cs", "seq": 37, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394383.3382373, "kind": "claim", "path": "src/AiDe.Core/Store/Records/StoreReader.Workbench.cs", "seq": 38, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394383.5727448, "kind": "claim", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptHostTests.cs", "seq": 39, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t8-bind", "at": 1792394647.5417416, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 40, "session": "wl-t8-bind", "ttl": 300.0, "wi": "workbench-loops"}
