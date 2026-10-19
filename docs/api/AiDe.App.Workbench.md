@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 95 types, 416 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 95 types, 417 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**95 public types · 416 public members · 69% documented.**
+**95 public types · 417 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -122,11 +122,20 @@ The outcome of a refresh, with the label to use when speaking about it.
 | `event EventHandler<NodeContextMenuRequest>? NodeContextMenuRequested` | Raised when a node is right-clicked, so the host can show the contextual "Open as…" menu. |
 | `Task<CanvasRefresh> RefreshAsync(` | **(gap)** |
 | `void SetObscured(bool obscured)` | Shows a still frame in place of the live canvas for the duration of a drag (ADR-0015). While set, the canvas refuses focus and says why. |
-| `Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false)` | Sends a key to the page through the browser's own input layer. |
+| `bool KnowledgeInclusive { get; private set; }` | True while this canvas is in its knowledge-inclusive mode (design WL-S §8; Ruling 149 (2)). |
+| `Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false, string? text = null)` | Sends a key to the page through the browser's own input layer. |
 | `Task<string> EvaluateAsync(string script)` | Runs script in the page and returns its result. Used by tests to diagnose input. |
 | `void Dispose()` | **(gap)** |
 
-### `Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false)`
+### `bool KnowledgeInclusive { get; private set; }`
+
+True while this canvas is in its knowledge-inclusive mode (design WL-S §8; Ruling 149 (2)).
+
+**Remarks.** A mode of the one admitted `canvas` kind, held per instance: never a second graph surface,
+kind, store or query. False by default, so the docked canvas stays code-only until the user
+chooses the mode.
+
+### `Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false, string? text = null)`
 
 Sends a key to the page through the browser's own input layer.
 
@@ -144,6 +153,13 @@ and the browser's own focus traversal both see an ordinary key — which is what
 keyboard-trap contract is about. It does not exercise the OS→browser hop, so it cannot catch
 a regression where the host swallows the key before the browser sees it. That gap is stated
 rather than papered over.
+
+
+
+
+**A key that types.** A key with  is sent as `keyDown`
+carrying that text, as a real Enter carries a carriage return: the browser activates a focused
+button from the text, and a `rawKeyDown` has none.
 
 ## `CenterEmptyState`
 

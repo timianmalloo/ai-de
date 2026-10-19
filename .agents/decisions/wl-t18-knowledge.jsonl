@@ -25,3 +25,10 @@
 {"agent": "wl-t18-knowledge", "at": 1792408567.5839388, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/suite-green.txt", "session": "wl-t18-knowledge", "wi": ""}
 {"agent": "wl-t18-knowledge", "at": 1792408567.6192262, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/suite-rerun.txt", "session": "wl-t18-knowledge", "wi": ""}
 {"agent": "wl-t18-knowledge", "at": 1792408568.1687489, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409439.6347144, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check6-red.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409439.6697423, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeRealProjectionTests.cs", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409439.9529881, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/check6-green.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409508.5209363, "code": null, "kind": "allowed", "path": "DESIGN.md", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409801.336572, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/README.md", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409801.368633, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/knowledge-mode/suite-node3.txt", "session": "wl-t18-knowledge", "wi": ""}
+{"agent": "wl-t18-knowledge", "at": 1792409801.8545613, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t18-knowledge", "wi": ""}

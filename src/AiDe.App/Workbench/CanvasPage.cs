@@ -24,7 +24,13 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 internal static class CanvasPage
 {
-    internal const string Html = """
+    /// <summary>The knowledge-inclusive toggle's visible text (Ruling 166 (1); design WL-S §8).</summary>
+    internal const string KnowledgeModeText = "Knowledge-inclusive";
+
+    /// <summary>The knowledge-inclusive toggle's UI Automation name (Ruling 166 (1)).</summary>
+    internal const string KnowledgeModeName = "Knowledge-inclusive mode";
+
+    internal const string Html = $$"""
         <!doctype html>
         <html lang="en">
         <head><meta charset="utf-8"><title>Graph canvas</title>
@@ -115,6 +121,7 @@ internal static class CanvasPage
             <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
             <button id="group" class="chrome" title="Show the workspace as groups (semantic zoom)" aria-label="Show the workspace as groups" aria-pressed="false">Group</button>
+            <button id="knowledge" class="chrome" aria-label="{{KnowledgeModeName}}" aria-pressed="false">{{KnowledgeModeText}}</button>
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
           <details id="warn" hidden><summary class="warnsum" id="warnsum"></summary><div id="warndetail"></div></details>
@@ -293,6 +300,20 @@ internal static class CanvasPage
               history = [];
               current = null;
               pendingGroup = false;
+              post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
+            });
+
+            // The knowledge-inclusive mode (design WL-S §8): this canvas also draws the knowledge/spec
+            // corpus. The host owns the mode; the page then asks for its current top in that mode.
+            var knowledgeButton = document.getElementById('knowledge');
+            var knowledgeInclusive = false;
+            knowledgeButton.addEventListener('click', function () {
+              knowledgeInclusive = !knowledgeInclusive;
+              knowledgeButton.setAttribute('aria-pressed', knowledgeInclusive ? 'true' : 'false');
+              history = [];
+              current = null;
+              pendingGroup = false;
+              post({ kind: 'mode.knowledge', isKnowledge: knowledgeInclusive });
               post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
             });
 

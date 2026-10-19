@@ -3520,3 +3520,15 @@ The decision:
 (4) Ruling 168 (3) then holds at the minimum, at startup and at the wide size.
 
 - request: req-01M59Y8DSSMBMFX4G0P42Q8PHC · ruled by: wl-owner-20261018 · at: 2026-10-19T11:22:37Z
+
+### Ruling 171 — Float is guarded now so no pane can vanish (B), and float/redock is made real in a named WL-S track (A); WL-S is not accepted until a live notebook floats and redocks
+
+Both, in that order. Option B alone is rejected as the slice's answer: architecture.md:1506 makes 'hide/float/redock a live notebook' part of WL-S's human demo, and Rulings 161 and 163 refused to accept a slice with part of its own demo moved out. Option C is rejected because a pane that vanishes and can then be neither moved nor closed (ZoneLayoutService.cs:21-25, :89-93) is a user-visible loss of work surface, not a cosmetic defect.
+
+The Leader's evidence: workbench.floatPane moves the pane to Layout.Floating, WorkbenchAdapter.Render draws only Current.Root, and WorkbenchAdapter.cs:891 abandons read-back of any layout with a floating window. Probe C-float-probe.txt is at 8b190778. The Owner notes that WorkbenchAdapter.cs was last changed 2026-09-13, so this predates the drive. It is an existing defect that the drive's demo surfaced.
+
+(1) Now, small and red-first: workbench.floatPane refuses with a stated cause instead of floating, so no pane on main can vanish. A layout restored with a floating window docks that pane back with a report line, never invisible. Both are tested. The guard lands before any other WL-S join.
+(2) A named WL-S track makes float and redock real: render Layout.Floating, let ZoneLayoutService move and close floating panes, and restore floating windows on read-back. Then (1)'s refusal is removed, red-first. If persistence needs a layout schema change, it gets the Data and Persistence review first. If LayoutModel already holds Floating, no new schema is involved.
+(3) WL-S's human demo keeps 'hide/float/redock a live notebook'. WL-S is not accepted until (2) lands.
+
+- request: req-01M5A05D964584659GYV9HHE64 · ruled by: wl-owner-20261018 · at: 2026-10-19T11:55:02Z

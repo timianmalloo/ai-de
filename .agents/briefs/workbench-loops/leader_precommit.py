@@ -9,6 +9,8 @@ If the commit touches tools/, src/ or tests/, run the full gate_ratchet.py inste
 It also refuses a push whose range (<base>..<commit>, base defaulting to origin/main) carries a join commit
 ("chore(join): join-<name> - ...") with no "join-<name>-step8" audit entry in the pushed tree: a ruling commit
 stacked on an unpushed join once published the join before its step-8 ratchet ran (T16, 657e9e51).
+It refuses a range where any join commit ("chore(join): ..." or "join: ...") changes the rulings register:
+conductor-join's step 7 swept an uncommitted Ruling 171 into the T18 join commit (61c9f4b0, never pushed).
 Usage: python -I leader_precommit.py <repo root> [<commit> [<base>]]   (commit defaults to HEAD)
 """
 import json
@@ -41,8 +43,17 @@ def run(tree, args):
     return out.returncode, (out.stdout or "") + (out.stderr or "")
 
 
-joins = [m.group(1) for line in git("log", "--format=%s", f"{BASE}..{COMMIT}").stdout.splitlines()
-         if (m := JOIN_SUBJECT.match(line))]
+REGISTER = "docs/notes/addendum-c-council-rulings.md"
+JOIN_COMMIT = re.compile(r"^(chore\(join\)|join): ")
+range_log = [line.split(" ", 1) for line in git("log", "--format=%H %s", f"{BASE}..{COMMIT}").stdout.splitlines()]
+swept = [sha[:8] for sha, subject in range_log
+         if JOIN_COMMIT.match(subject) and REGISTER in git("diff", "--name-only", sha + "^1", sha).stdout.split()]
+if swept:
+    print(f"leader-precommit: join commit(s) {', '.join(swept)} change {REGISTER}; a ruling is committed alone, never inside a join")
+    print("  (conductor-join's step 7 stages every uncommitted file: commit or hold the register edit before the join)")
+    sys.exit(1)
+
+joins = [m.group(1) for _, subject in range_log if (m := JOIN_SUBJECT.match(subject))]
 if joins:
     audit = git("show", f"{COMMIT}:docs/audit/audit-log.jsonl").stdout
     unratcheted = [j for j in joins if f'"shortname": "{j}-step8"' not in audit]

@@ -221,6 +221,29 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     public void SetObscured(bool obscured) => _obscured = obscured;
 
     /// <summary>
+    /// True while this canvas is in its knowledge-inclusive mode (design WL-S §8; Ruling 149 (2)).
+    /// </summary>
+    /// <remarks>
+    /// A mode of the one admitted <c>canvas</c> kind, held per instance: never a second graph surface,
+    /// kind, store or query. False by default, so the docked canvas stays code-only until the user
+    /// chooses the mode.
+    /// </remarks>
+    public bool KnowledgeInclusive { get; private set; }
+
+    /// <summary>
+    /// Sets this canvas's mode. The page's <c>mode.knowledge</c> message lands here, and a test drives
+    /// the same seam without a browser.
+    /// </summary>
+    internal void SetKnowledgeInclusive(bool inclusive) => KnowledgeInclusive = inclusive;
+
+    /// <summary>
+    /// Applies this canvas's mode to the <c>ExcludeKnowledge</c> seam of its graph: on in the code-only
+    /// default, off in the knowledge-inclusive mode. Called per load, so a mode change reaches the next
+    /// query without rebinding.
+    /// </summary>
+    internal void ApplyKnowledgeMode(CanvasGraphViewModel graph) => graph.ExcludeKnowledge = !KnowledgeInclusive;
+
+    /// <summary>
     /// Navigates the started browser to the canvas page. Runs once per surface, through the host.
     /// </summary>
     /// <remarks>
@@ -284,6 +307,15 @@ public sealed class CanvasSurface : ContentControl, IDisposable
             return;
         }
 
+        if (string.Equals(message.Kind, "mode.knowledge", StringComparison.Ordinal))
+        {
+            // The knowledge-inclusive mode (design WL-S §8): it widens the next READ of the same
+            // projection. The page follows with its current top (overview or groups), so the redraw
+            // is the page's own request and grouped stays grouped.
+            SetKnowledgeInclusive(message.IsKnowledge);
+            return;
+        }
+
         if (string.Equals(message.Kind, "node.activate", StringComparison.Ordinal))
         {
             // Re-rooting is a READ. The page names a node and the host asks the projection about it;
@@ -342,23 +374,31 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// keyboard-trap contract is about. It does not exercise the OS→browser hop, so it cannot catch
     /// a regression where the host swallows the key before the browser sees it. That gap is stated
     /// rather than papered over.</para>
+    /// <para><b>A key that types.</b> A key with <paramref name="text"/> is sent as <c>keyDown</c>
+    /// carrying that text, as a real Enter carries a carriage return: the browser activates a focused
+    /// button from the text, and a <c>rawKeyDown</c> has none.</para>
     /// </remarks>
-    public async Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false)
+    public async Task<bool> SendKeyAsync(string key, int windowsVirtualKeyCode, bool shift = false, string? text = null)
     {
         var core = _view.CoreWebView2;
         if (core is null) return false;
 
         var modifiers = shift ? 8 : 0;
-        foreach (var type in (string[])["rawKeyDown", "keyUp"])
+        foreach (var type in (string[])[text is null ? "rawKeyDown" : "keyDown", "keyUp"])
         {
-            var payload = JsonSerializer.Serialize(new
+            var fields = new Dictionary<string, object>
             {
-                type,
-                key,
-                windowsVirtualKeyCode,
-                nativeVirtualKeyCode = windowsVirtualKeyCode,
-                modifiers,
-            });
+                ["type"] = type,
+                ["key"] = key,
+                ["windowsVirtualKeyCode"] = windowsVirtualKeyCode,
+                ["nativeVirtualKeyCode"] = windowsVirtualKeyCode,
+                ["modifiers"] = modifiers,
+            };
+
+            // CDP refuses a null text, so the field is present only on the typing keyDown.
+            if (type == "keyDown" && text is not null) fields["text"] = text;
+
+            var payload = JsonSerializer.Serialize(fields);
 
             try
             {
