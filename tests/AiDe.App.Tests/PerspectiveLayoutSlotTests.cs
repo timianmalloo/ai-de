@@ -242,10 +242,24 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     public void TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed(Type planted) =>
         Assert.NotEmpty(FreezeViolations(planted, typeof(Frozen.ZoneStackDto)));
 
+    // The fields a ruling added to schema 1, after each frozen record's own, as name:type:wire. Adding
+    // a field here needs the ruling that admits it and the Data and Persistence review.
+    private static readonly Dictionary<Type, string[]> RuledAdditions = new()
+    {
+        // Ruling 174 (1): a floating window's bounds, optional and read all-or-none.
+        [typeof(Frozen.ZoneStackDto)] =
+        [
+            "FloatX:Nullable`1:floatX",
+            "FloatY:Nullable`1:floatY",
+            "FloatWidth:Nullable`1:floatWidth",
+            "FloatHeight:Nullable`1:floatHeight",
+        ],
+    };
+
     // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as surely
-    // as a removed member does. The frozen parameters are the live constructor's exact prefix. A
-    // parameter after them is an additive field, which schema 1 admits only when it is optional,
-    // nullable and null by default, so a file without it still reads.
+    // as a removed member does. The frozen parameters are the live constructor's exact prefix. The
+    // parameters after them are exactly the ruled additions, each optional, nullable and null by
+    // default, so a file without them still reads.
     private static List<string> FreezeViolations(Type live, Type frozen)
     {
         static string Parameter(Type t, ParameterInfo p) =>
@@ -259,7 +273,15 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             violations.Add($"{live.Name}: the frozen parameters are not the live constructor's prefix");
         }
 
-        foreach (var p in liveParameters.Skip(frozenParameters.Length))
+        var added = liveParameters.Skip(frozenParameters.Length).ToArray();
+        var ruled = RuledAdditions.GetValueOrDefault(frozen, []);
+        var unruled = added.Select(p => Parameter(live, p)).Except(ruled).ToArray();
+        if (unruled.Length > 0 || added.Length != ruled.Length)
+        {
+            violations.Add($"{live.Name}: added to schema 1 without a ruling: {string.Join(", ", unruled)}; ruled: {string.Join(", ", ruled)}");
+        }
+
+        foreach (var p in added)
         {
             if (!(p.HasDefaultValue && p.DefaultValue is null))
             {
