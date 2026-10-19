@@ -137,4 +137,4 @@ The gesture helper is `tests/AiDe.App.Tests/Workbench/Composer/ComposerGesture.c
 - `n3-C-red.txt`, `n3-C-green.txt` — check C: the class gate refusing the planted bare-composer assertion (`d4995b84`), then green on the tree (`23c7c461`).
 - `n3-verify-defect-register.txt` — `tools/verify-defect-register.py` after the DC-NEW entry update: OK.
 - `suite-node3.txt` (`suite-node3-core.txt`, `suite-node3-app.txt`) — the whole Core and App suites at the node-3 head.
-- `desktop-hold.txt` — each "Ruling 115 desktop hold is occupied" result, with its re-run (the Owner's measurement), if any occurred.
+- No "Ruling 115 desktop hold is occupied" result occurred in node 3, so there is no `desktop-hold.txt`. App: 1177/2/2. The 2 failures were re-run alone in `suite-node3-rerun-app.txt`: `ADeadHolder` passes; the SolutionTreeChord probe is refused, "foreground not held" (Ruling 155 (3)).

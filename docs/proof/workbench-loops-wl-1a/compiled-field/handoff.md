@@ -23,7 +23,7 @@ summary: >-
 - **(B)** mutation red `65bde9a9`, green `db516197`. The test is `TheSentPromptIsNeverResentTests.ASecondCtrlEnterRightAfterAQueuedSend_WithNoKeystroke_QueuesNothingAndSendsNothing`, and it replaces node 2's `AQueuedSend_ShowsItsQueuedState_NotTheSentState`. Under M3 (the queued words kept in the draft), the press after the drain resent b2 as b3.
 - **(C)** red `d4995b84` (the plant), green `23c7c461` (the plant removed). **The gate is the test `tests/AiDe.App.Tests/Workbench/Composer/ComposerContentOraclesDriveTheGestureTests.cs`**, with 2 facts: the tree, and a self-test. It is a test rather than a `tools/` gate, because a new `tools/verify-*.py` needs a `.github/workflows` line, which is outside this track's paths. It has 3 `PreAdmit` entries, and the list may only shrink. `DC-NEW-wl-t28-compiled`'s Prevent line names the gate. Its status is `partially-controlled`, because the non-empty check is not mechanized.
 - The gesture helper gained `ComposerGesture.CtrlEnterThenWait` (the queued gesture) and `ComposerGesture.StatusLink`.
-- The whole suites are in `suite-node3.txt` (Core, then App).
+- The whole suites are in `suite-node3.txt` (Core, then App). Core: 3046 passed, 0 failed, 1 skipped. App: 1177 passed, 2 failed, 2 skipped. Re-run alone, `NoDispatchOutsideTheHostTests.ADeadHolder_…` passes (a full-suite timing failure). `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_…` is refused again with "foreground not held" (the shown-window probe, Ruling 155 (3), NOT CHECKED). No desktop-hold result occurred.
 
 **Red, by design:** none.
 
