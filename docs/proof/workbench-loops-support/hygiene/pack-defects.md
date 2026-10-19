@@ -91,3 +91,10 @@ Filed by the Leader `wl-leader2-20261019` on 2026-10-19.
   floor-only join still claims.
 - **Drive mitigation:** running tracks merge `origin/main` before their next claim. This was mailed to T5 and T8 on
   2026-10-19.
+
+## PD-5 — coord-mail's held-lines advisory says "ack and archive", but there is no archive verb
+
+- **Observed (Owner, 2026-10-19):** `coord-mail read` for wl-owner-20261018 prints "advisory: inbox holds 126 lines (held cap 100); ack and archive" with 0 unacked. coord-mail.py's verbs are {send, read, ack, dispatch}; acked lines stay in the inbox file, so the advisory cannot be cleared and grows.
+- **Code (origin/main, docs/ai-forward-pack/scripts/coord-mail.py):** HELD_CAP = 100 at :72 carries `simplify: no archive verb until an inbox exceeds it`; that trigger has fired. The advisory is read-only (:412-415, stderr). The bounce is separate and counts UNACKED messages: send raises MAIL-FULL when queued() >= QUEUE_CAP (:312-313; QUEUE_CAP = 50 at :71; queued() at :210-214). So a large but fully acked inbox cannot bounce mail.
+- **Impact:** advisory noise only; no lost mail. The real cap (50 unacked) did bounce a done mail once (DC-NEW-wl-leader2 13th instance).
+- **Not fixed locally** (pack script). Upgrade: an archive verb that moves acked pairs to a dated archive file, or a lines advisory that counts only unacked.
