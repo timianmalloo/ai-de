@@ -1,0 +1,21 @@
+T21 check 1 RED - render Layout.Floating
+Test: tests/AiDe.App.Tests/Workbench/FloatRenderTests.cs AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent
+Expected red: the service floats the pane (its messaged assert passes), and the first Assert.Single, on Manager.Layout.FloatingWindows, finds none: WorkbenchAdapter.Render draws only Current.Root.
+---
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Test run for C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.29]     AiDe.App.Tests.Shell.FloatRenderTests.AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent [FAIL]
+  Failed AiDe.App.Tests.Shell.FloatRenderTests.AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent [1 s]
+  Error Message:
+   Assert.Single() Failure: The collection was empty
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Shell.FloatRenderTests.AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent() in C:\Projects\ai-de-wls-float\tests\AiDe.App.Tests\Workbench\FloatRenderTests.cs:line 24
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.3.0",
+  "savedUtc": "2026-10-01T09:00:00+00:00",
+  "layout": {
+    "floating": [
+      {
+        "id": "float-1",
+        "surfaces": [ { "surfaceId": "sessions", "kind": "view", "title": "Sessions" } ],
+        "activeIndex": 0
+      }
+    ]
+  }
+}

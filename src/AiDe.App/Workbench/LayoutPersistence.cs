@@ -23,6 +23,18 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4).</summary>
     public const string RefusedBackupSuffix = ".bak";
 
+    /// <summary>
+    /// The zone restore's report sentence when part of the saved file could not be read and was left out,
+    /// and that part held no surface with a title (T21 node 4; confirmed by the Owner).
+    /// </summary>
+    internal const string PartlyReadSentence = "Part of your saved layout could not be read and was left out.";
+
+    /// <summary>
+    /// The same sentence when the left-out part held titled surfaces: this prefix, then their saved
+    /// titles in saved order joined with ", ", then a period (T21 node 5, the Owner's refinement).
+    /// </summary>
+    internal const string PartlyReadNamingPrefix = "Part of your saved layout could not be read and was left out: ";
+
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
     private readonly SurfaceAvailability _availability;
@@ -148,18 +160,40 @@ public sealed class LayoutPersistence : IDisposable
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
                 // reports each drop; the announcement names caption, kind and the admitting
                 // perspective through the same result that reports a missing surface today.
-                var redock = FloatingRedock.Dock(zones);
-                var report = _zoneService.RestoreZones(redock.Layout);
+                // Ruling 174 (3), AC-D01b: a floating window whose saved bounds fall off every display
+                // loses them, so the render opens it at the default placement near the workbench. The
+                // same display test and the same words as the tree path (LayoutStore.Load).
+                var rehomed = new List<string>();
+                foreach (var floating in zones.Floating.Where(f => !_displayIsConnected(f)).ToList())
+                {
+                    rehomed.Add(floating.Active.Title);
+                    zones = zones with { Floating = zones.Floating.Replace(floating, floating with { FloatingBounds = null }) };
+                }
+
+                var report = _zoneService.RestoreZones(zones);
                 LastRestoreDropped = report.Dropped;
                 _backupDue = report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true) : null;
+
+                var sentences = new List<string> { DropAnnouncement(report) };
+                if (rehomed.Count > 0)
+                {
+                    sentences.Add($"{string.Join(", ", rehomed.Select(r => $"“{r}”"))} {ZoneLayoutStore.RehomedSentenceTail}.");
+                }
+
+                if (read.PartlyRead)
+                {
+                    sentences.Add(read.LeftOutTitles.Count > 0
+                        ? $"{PartlyReadNamingPrefix}{string.Join(", ", read.LeftOutTitles)}."
+                        : PartlyReadSentence);
+                }
 
                 var result = new RestoreResult(
                     _zoneService.Current,
                     report.DefaultApplied,
-                    report.Dropped.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
+                    report.Dropped.Count > 0 || rehomed.Count > 0 || read.PartlyRead ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
-                    [],
-                    $"{DropAnnouncement(report)} {redock.Report(_zoneService.Zones)}".TrimEnd());
+                    rehomed,
+                    string.Join(" ", sentences));
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;

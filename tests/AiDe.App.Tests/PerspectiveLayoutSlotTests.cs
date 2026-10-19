@@ -231,19 +231,70 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     [InlineData(typeof(ZoneContentDto), typeof(Frozen.ZoneContentDto))]
     [InlineData(typeof(ZoneStackDto), typeof(Frozen.ZoneStackDto))]
     [InlineData(typeof(ZoneSurfaceDto), typeof(Frozen.ZoneSurfaceDto))]
-    public void TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters(Type live, Type frozen)
+    public void TheSchema1DtoConstructors_CarryExactlyTheirFrozenParameters(Type live, Type frozen) =>
+        Assert.Empty(FreezeViolations(live, frozen));
+
+    // The freeze's own control: a field no ruling added, or a ruled field under another wire name,
+    // is refused even when it is optional, nullable and null by default.
+    [Theory]
+    [InlineData(typeof(Planted.UnruledField))]
+    [InlineData(typeof(Planted.RuledFieldRenamed))]
+    public void TheSchema1Freeze_RefusesAnAddedFieldNoRulingNamed(Type planted) =>
+        Assert.NotEmpty(FreezeViolations(planted, typeof(Frozen.ZoneStackDto)));
+
+    // The fields a ruling added to schema 1, after each frozen record's own, as name:type:wire. Adding
+    // a field here needs the ruling that admits it and the Data and Persistence review.
+    private static readonly Dictionary<Type, string[]> RuledAdditions = new()
     {
-        // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as
-        // surely as a removed member does.
-        static string[] Parameters(Type t) =>
-            t.GetConstructors().Single().GetParameters()
-                .Select(p => $"{p.Name}:{p.ParameterType.Name}:{Wire(t, p.Name!)}")
-                .ToArray();
+        // Ruling 174 (1): a floating window's bounds, optional and read all-or-none.
+        [typeof(Frozen.ZoneStackDto)] =
+        [
+            "FloatX:Nullable`1:floatX",
+            "FloatY:Nullable`1:floatY",
+            "FloatWidth:Nullable`1:floatWidth",
+            "FloatHeight:Nullable`1:floatHeight",
+        ],
+    };
 
-        static string Wire(Type t, string parameter) =>
-            t.GetProperty(parameter)?.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? "(none)";
+    // The C# shape AND the wire name: a renamed [JsonPropertyName] breaks a rollback reader as surely
+    // as a removed member does. The frozen parameters are the live constructor's exact prefix. The
+    // parameters after them are exactly the ruled additions, each optional, nullable and null by
+    // default, so a file without them still reads.
+    private static List<string> FreezeViolations(Type live, Type frozen)
+    {
+        static string Parameter(Type t, ParameterInfo p) =>
+            $"{p.Name}:{p.ParameterType.Name}:{t.GetProperty(p.Name!)?.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? "(none)"}";
 
-        Assert.Equal(Parameters(frozen), Parameters(live));
+        var frozenParameters = frozen.GetConstructors().Single().GetParameters().Select(p => Parameter(frozen, p)).ToArray();
+        var liveParameters = live.GetConstructors().Single().GetParameters();
+        var violations = new List<string>();
+        if (!frozenParameters.SequenceEqual(liveParameters.Take(frozenParameters.Length).Select(p => Parameter(live, p))))
+        {
+            violations.Add($"{live.Name}: the frozen parameters are not the live constructor's prefix");
+        }
+
+        var added = liveParameters.Skip(frozenParameters.Length).ToArray();
+        var ruled = RuledAdditions.GetValueOrDefault(frozen, []);
+        var unruled = added.Select(p => Parameter(live, p)).Except(ruled).ToArray();
+        if (unruled.Length > 0 || added.Length != ruled.Length)
+        {
+            violations.Add($"{live.Name}: added to schema 1 without a ruling: {string.Join(", ", unruled)}; ruled: {string.Join(", ", ruled)}");
+        }
+
+        foreach (var p in added)
+        {
+            if (!(p.HasDefaultValue && p.DefaultValue is null))
+            {
+                violations.Add($"{live.Name}.{p.Name} is added to schema 1 without a null default");
+            }
+
+            if (p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) is null)
+            {
+                violations.Add($"{live.Name}.{p.Name} is added to schema 1 as a non-nullable {p.ParameterType.Name}");
+            }
+        }
+
+        return violations;
     }
 
     // Test 6, the backup: the .pre-perspectives.bak exists after the first post-drop save and equals
@@ -622,6 +673,32 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             [property: JsonPropertyName("surfaceId")] string SurfaceId,
             [property: JsonPropertyName("kind")] string Kind,
             [property: JsonPropertyName("title")] string Title);
+    }
+
+    /// <summary>
+    /// Live-shaped <c>ZoneStackDto</c> copies the freeze must refuse. Each is today's live record with
+    /// one change that no ruling made.
+    /// </summary>
+    private static class Planted
+    {
+        public sealed record UnruledField(
+            [property: JsonPropertyName("id")] string Id,
+            [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
+            [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+            [property: JsonPropertyName("floatX")] double? FloatX = null,
+            [property: JsonPropertyName("floatY")] double? FloatY = null,
+            [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+            [property: JsonPropertyName("floatHeight")] double? FloatHeight = null,
+            [property: JsonPropertyName("floatZ")] double? FloatZ = null);
+
+        public sealed record RuledFieldRenamed(
+            [property: JsonPropertyName("id")] string Id,
+            [property: JsonPropertyName("surfaces")] List<ZoneSurfaceDto> Surfaces,
+            [property: JsonPropertyName("activeIndex")] int ActiveIndex,
+            [property: JsonPropertyName("x")] double? FloatX = null,
+            [property: JsonPropertyName("floatY")] double? FloatY = null,
+            [property: JsonPropertyName("floatWidth")] double? FloatWidth = null,
+            [property: JsonPropertyName("floatHeight")] double? FloatHeight = null);
     }
 
     public void Dispose()
