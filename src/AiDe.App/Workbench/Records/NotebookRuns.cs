@@ -131,6 +131,7 @@ public sealed class NotebookRuns : IDisposable
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(scope);
         ChangeRefusal(() => _host = (host, scope), inline: true);
+        Bound();
     }
 
     /// <summary>
@@ -172,15 +173,115 @@ public sealed class NotebookRuns : IDisposable
         ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(scope);
         ChangeRefusal(() => _opener = (open, scope), inline: true);
-        _hostOpening = OpenHostAsync(open, scope);
+        StartOpening(open, scope);
     }
 
     /// <summary>The refusal's retry: opens the host again. Completes once this try bound the host or set its refusal.</summary>
     public Task RetryHostAsync() =>
-        _host is null && _opener is { } opener ? _hostOpening = OpenHostAsync(opener.Open, opener.Scope) : Task.CompletedTask;
+        _host is null && _opener is { } opener ? StartOpening(opener.Open, opener.Scope) : Task.CompletedTask;
 
     private (Func<Task<IAttemptHost>> Open, AttemptScope Scope)? _opener;
     private Task _hostOpening = Task.CompletedTask;
+    private Task _afterTheOpen = Task.CompletedTask;
+
+    /// <summary>One open of the host, and the wait a read-back reader sees while it runs (<see cref="ReadingBack"/>).</summary>
+    private Task StartOpening(Func<Task<IAttemptHost>> open, AttemptScope scope)
+    {
+        var opening = OpenHostAsync(open, scope);
+        var after = AfterTheOpenAsync(opening);
+        lock (_gate)
+        {
+            _hostOpening = opening;
+            _afterTheOpen = after;
+        }
+
+        return opening;
+    }
+
+    /// <summary>Completes once <paramref name="opening"/> ended and the read-back its bind started (if any) ended.</summary>
+    private async Task AfterTheOpenAsync(Task opening)
+    {
+        await opening.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        Task bound;
+        lock (_gate)
+        {
+            bound = _bindReadBack;
+        }
+
+        await bound.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+    }
+
+    // RESTART READ-BACK PER BIND (Ruling 172): the shell binds asynchronously and builds the document at once, so the
+    // read-back is started by the bind, never by the document's construction. _binds counts binds; _readBackFor is the
+    // bind the last read-back ran for, so a bind reads back once however many surfaces register, and once more on a rebind.
+    private Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>>? _submitted;
+    private int _binds;
+    private int _readBackFor;
+    private Task _bindReadBack = Task.CompletedTask;
+
+    /// <summary>
+    /// The restart read-back a turn sent now must wait for (Ruling 163): while the host opens, the wait for that open's
+    /// bind and its read-back; else the read-back of the last bind (completed when none ran).
+    /// </summary>
+    public Task ReadingBack
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _host is null && !_hostOpening.IsCompleted ? _afterTheOpen : _bindReadBack;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Registers the bound surface's submitted envelopes (AC-L01a) as the restart read-back's source: the read-back runs
+    /// now when a host is bound, and on every later bind, exactly once per bind (Ruling 172).
+    /// </summary>
+    public void ReadBackOnEachBind(Func<IEnumerable<(string EnvelopeId, string ProjectionSha, string Words)>> submitted)
+    {
+        ArgumentNullException.ThrowIfNull(submitted);
+        lock (_gate)
+        {
+            _submitted = submitted;
+        }
+
+        ReadBackForTheBind();
+    }
+
+    /// <summary>A host was bound: its read-back runs once, now, when a surface has registered its envelopes.</summary>
+    private void Bound()
+    {
+        lock (_gate)
+        {
+            _binds++;
+        }
+
+        ReadBackForTheBind();
+    }
+
+    /// <summary>
+    /// Starts the current bind's read-back unless it already ran, no host is bound, or no surface shows the notebook (the
+    /// envelopes are the surface's: a closed one's store is disposed). The claim is taken under the gate; the read runs
+    /// outside it.
+    /// </summary>
+    private void ReadBackForTheBind()
+    {
+        Task<Task> read;
+        lock (_gate)
+        {
+            if (_submitted is not { } submitted || Observer is null || _host is null || _readBackFor == _binds)
+            {
+                return;
+            }
+
+            _readBackFor = _binds;
+            read = new Task<Task>(() => ReadBackAsync(submitted(), CancellationToken.None));
+            _bindReadBack = read.Unwrap();
+        }
+
+        read.RunSynchronously(TaskScheduler.Default);
+    }
 
     /// <summary>Raised on the model's home context each time <see cref="HostRefusal"/> is set or cleared.</summary>
     public event Action? HostRefusalChanged;
@@ -197,6 +298,7 @@ public sealed class NotebookRuns : IDisposable
             {
                 var host = await open().ConfigureAwait(false);
                 ChangeRefusal(() => (_host, _openFailure) = ((host, scope), null), inline: false);
+                Bound();
                 return;
             }
             catch (AgentPlaneException error) when (error.Code == AttemptErrorCodes.HostNotSole)

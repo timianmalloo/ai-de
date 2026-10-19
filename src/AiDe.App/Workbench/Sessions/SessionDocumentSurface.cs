@@ -170,11 +170,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         Notebook.Runs.HostRefusalChanged += ShowHostRefusal;
         ShowHostRefusal();
 
-        // RESTART READ-BACK (AC-L01a): the host's attempts for this session's submitted envelopes, read from the store.
-        if (Notebook.Runs.Host is not null)
-        {
-            LastReadBack = Notebook.Runs.ReadBackAsync(SubmittedEnvelopes(), CancellationToken.None);
-        }
+        // RESTART READ-BACK (AC-L01a; Ruling 172): the host's attempts for this session's submitted envelopes, read from
+        // the store when the host BINDS: at once if it is bound, else when the shell's asynchronous open binds it.
+        Notebook.Runs.ReadBackOnEachBind(SubmittedEnvelopes);
 
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
@@ -689,8 +687,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         RecordConsumed(end.Ordinal, Envelope.NotRecorded, null, outcome, end.ConsumedReason);
     }
 
-    /// <summary>The restart read-back's task: the host's attempts for this session's submitted envelopes (completed when no host is bound).</summary>
-    internal Task LastReadBack { get; private set; } = Task.CompletedTask;
+    /// <summary>The restart read-back a turn sent now waits for (<see cref="NotebookRuns.ReadingBack"/>): pending while the host opens.</summary>
+    internal Task LastReadBack => Notebook.Runs.ReadingBack;
 
     /// <summary>The envelope fold's projection of <paramref name="envelopeId"/> now (G1) — null when it cannot be read, which the gate refuses as stale.</summary>
     private string? CurrentProjectionOf(string envelopeId)
