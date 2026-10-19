@@ -280,12 +280,28 @@ or `acp:<engine-id>` when T8 has none (the route binding proper is WL-3).
 - **Order:** `RunLogStore.Append` + flush **before** `Events.PublishAsync` in `AcpPeer.DispatchAsync`;
   an unwritable line is not published; the prompt fails with `RunLogUnwritable` → G3
   `DeliveryUnknown{run_log_unwritable}` + a sidecar incident.
-- **Redaction (T7):** the mapper calls `FrameRedaction` (T7's pure `(frame, patterns vN) → (redacted
-  frame, redactions[])`) on the raw line before the `RunEvent` is built, and sets `Redactions` /
-  `ScannedWith`. If T7 has not joined, the redaction fixture stays red.
+- **Redaction (T7):** the mapper calls `FrameRedaction.Apply(string frame, string patternsVersion)` →
+  `RedactedFrame(Frame, IReadOnlyList<RunEventRedaction> Redactions, ScannedWith)` on the raw line before
+  the `RunEvent` is built, and sets `Redactions` / `ScannedWith` (signature per the Leader, 2026-10-19;
+  `RunEventRedaction.Offset` indexes the **redacted** stored frame, `RunEvent.cs:193`; `Len` is the
+  original span length). If T7 has not joined, the redaction fixture stays red.
 - **Relay:** `RunEventRelay.Subscribe()` returns a new `SingleReader` channel; `Publish` writes the same
   instance to every subscriber; no channel has two readers. A late subscriber catches up by
   `seq > last_seen` from the run log.
+
+## Fold inputs (fixed for T6; Leader delegation 2026-10-19)
+
+T6's assumptions are **adopted** where the code does not already decide; each line says which.
+
+| Input | Fixed as | Source / status |
+|---|---|---|
+| Waiting on permission | run-log kind `permission.request` | **Verified**: the mapper emits it for `session/request_permission` (`AcpRunEventMapper.cs:46`); the fold already shares the name (`SessionDocumentViewModel.PermissionRequestKind`) |
+| Waiting on input | run-log kind `input.request` | **adopted**, reserved. No ACP frame the claude-code adapter sends maps to it today, so in WL-1a it never occurs and `Waiting` comes from `permission.request` alone. The mapper that first sees an input-elicitation frame emits this kind |
+| Budget exceeded | run-log kind `budget.exceeded` | **adopted**, reserved. Host-emitted, not from the wire; the producer is WL-4's budget enforcement (ADR-0041 §6). No WL-1a producer, so `OverLimit` never folds in WL-1a |
+| Context ceiling | run-log kind `context.ceiling` | **adopted**, reserved, as `budget.exceeded`. It stays a distinct kind because NFR-11 keeps ceiling and consumption budget distinct |
+| Evidence link to an attempt | `artifact_ref = attempt://<dispatch_key>` | **adopted**. The schema leaves the column free text (`WorkspaceSchema.cs:298`) |
+| `PermissionDecisionRow.OptionChosen` | the ACP `PermissionOptionKind` of the chosen option (`allow_once` · `allow_always` · `reject_once` · `reject_always`), **not** the adapter's `optionId` | **adopted**. Matches ADR-0041 §5 ("`allow_always` is recorded as the native option chosen"). The `optionId` survives inside `OptionsOffered`, which stores the offered options array verbatim. The writer is the permission-binding path (§5); no WL-1a node-1 code writes the row |
+| `fold.duration_ms` | node 2: the host subscribes an `ActivityListener` to `aide.attempt.fold` and writes `fold.duration_ms` to the rolling log | node 2 |
 
 ## Stop (node 2 — fixed here so T8 binds to it)
 

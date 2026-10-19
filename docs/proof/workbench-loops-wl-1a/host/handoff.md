@@ -62,7 +62,8 @@ Core tests: `tests/AiDe.Core.Tests/Attempts/AttemptGateTests.cs`. App tests (pro
 - **Run log + relay + subscribe:** `RunLogStore` (append+flush before `Events.PublishAsync`, line =
   `JsonSerializer.Serialize(RunEvent)`), `RunLogUnwritable` ⇒ `DeliveryUnknown{run_log_unwritable}`;
   `RunEventRelay.Subscribe()` fan-out; `IAttemptHost.Subscribe`. `AttemptHost.LaunchAsync` passes `sink: null` today.
-- **Redaction wiring:** the mapper calls T7's `FrameRedaction`; the sentinel fixture end to end.
+- **Redaction wiring:** the mapper calls `FrameRedaction.Apply(frame, patternsVersion)` → `RedactedFrame(Frame, Redactions, ScannedWith)` (T7, branch `wl1a-redaction`; Offset indexes the redacted frame); the sentinel fixture end to end, red until T7 joins.
+- **`fold.duration_ms`:** an `ActivityListener` on `aide.attempt.fold` writing `fold.duration_ms` to the rolling log (design, "Fold inputs").
 - **NFR-11 oracle:** terminal `detail` already carries `{stopReason, usage}` or `usage: "not recorded"`; add event
   count and bytes from the run log and the oracle test.
 - **Proof Pack:** `docs/proof/workbench-loops-wl-1a.md`.
