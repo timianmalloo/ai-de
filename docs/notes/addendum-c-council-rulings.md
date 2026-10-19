@@ -3410,3 +3410,19 @@ The decision:
 Option B is rejected: it would mint product copy and a Core field ahead of WL-3's design. When WL-3's picker lands, its label replaces both surfaces through that one function.
 
 - request: req-01M59MJ37YMWR9MKS49VKMWXZ2 · ruled by: wl-owner-20261018 · at: 2026-10-19T08:31:25Z
+
+### Ruling 163 — A reopened notebook renders its recorded attempts (track T17); WL-1a is not demo-ready until restart shows them
+
+Option A, not the default, for Ruling 161's reason. WL-1a's demo in architecture.md:1503 includes 'restart and see the attempt and its events again' and 'kill the host mid-run, restart, read OutcomeUnknown with last seq/ts'. AC-L01a requires saved content to be recoverable after a restart. Option B would accept the slice with two of its own demo steps moved out.
+
+The Owner checked wl1a-attempt-binding-row. SessionDocumentSurface.cs:174 starts Notebook.Runs.ReadBackAsync, and NotebookRuns.cs:265 assigns ReadBack. The only other occurrences are its declaration (NotebookRuns.cs:118) and the LastReadBack task (SessionDocumentSurface.cs:664). Nothing in src renders ReadBack. The host-level test TheAttemptHostBindingTests ARestartReadsTheAttemptAndItsEventsBack proves the data survives a restart, not that the user sees it.
+
+T17 runs on Opus, in nodes of at most 3 checks each (rule 16), every check red-first and driven through the real notebook surface:
+(1) A reopened notebook renders one turn row per recorded attempt, in dispatch order, read from NotebookRuns.ReadBack. No row is invented for a revision with no attempt.
+(2) Each restored row shows its outcome. A host killed mid-run renders the existing DeliveryUnknown / OutcomeUnknown wording with the attempt's last seq and ts. Its Ruling 161 binding line reads 'Sent from revision ... · request ... · via ...'.
+(3) A restored row's events are reachable from the row by keyboard, the same way a live row's are, and are exposed to UI Automation.
+WL-1a is demo-ready only after T16, T16b and T17 have joined. The demo script's restart step shows the restored rows.
+
+T16b's late-receipt refresh on AttemptsChanged is accepted, together with its one granted wiring line. That removes the residual instead of accepting it.
+
+- request: req-01M59P2Y12AGCTY77NJD2AA217 · ruled by: wl-owner-20261018 · at: 2026-10-19T08:58:21Z
