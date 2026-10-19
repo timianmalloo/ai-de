@@ -216,17 +216,28 @@ body fails the suite. Recorded conformance deviation from §1(a)'s wording.
 (`SurfaceEntry.Derived`), a verb (`SurfaceEntry.Verb`), or a turn action (`SurfaceEntry.TurnAction`), as
 the Owner's review of 2026-10-19 accepted. The third exists because the `execution` kind opens from a
 turn's *Open the log* action on its notebook (T11 node 4): a View-menu entry and a catalog verb both
-misname that door. The rule: a `switch` over `SurfaceEntry` handles all three types explicitly, with no
-default arm, so no type can fall into a silent default. A reader that needs one type only
-(`is SurfaceEntry.Derived`, as `PerspectiveMenu` and `CenterEmptyState` do today) is a test, not a switch,
-and is outside the rule. No `switch` over `SurfaceEntry` exists in `src/` today (grep at T11 node 9).
+misname that door. The rule, as the Owner amended it at T11 node 11, has three parts, so that no type can fall
+into a silent default:
 
-*assume:* C# 14 does not treat `SurfaceEntry` (an abstract record with a private constructor) as a closed
-hierarchy, so a switch **expression** with three type arms and no discard raises CS8509, which
-`TreatWarningsAsErrors` (`Directory.Build.props:5`) makes a build error. Confirm by compiling the first
-such switch. If it holds, the rule's practical form is a switch **statement** with three named arms, or
-an expression whose only extra arm throws and names the unknown type (an unreachable guard, not a default
-behaviour); the first reader's change asks the Owner which. Not verified at node 9 (no reader exists).
+1. A switch **statement** over `SurfaceEntry` lists `Derived`, `Verb` and `TurnAction`, each as its own case,
+   with no `default` case.
+2. A switch **expression** over `SurfaceEntry` lists the same three arms. Its discard arm throws
+   `UnreachableException` naming the type, and never returns a value.
+3. One reflection test enumerates every `SurfaceEntry` subtype. It asserts that each consumer handles each one
+   without reaching that throw: `PerspectiveMenu`, `CenterEmptyState`, `SurfaceContentFactory`, and any other
+   reader. The test is `EverySurfaceEntryIsHandledByEveryReaderTests`. Each reader's arm is a switch expression in
+   the test, and the test checks each reader's real behaviour against its arm. A source scan pins the set of
+   `src/` files that name `SurfaceEntry`, so a new reader fails until it has its arm. A planted fourth subtype
+   failed the test and named all three readers (`kinds/D6-reflection-red.txt`).
+
+A reader that needs one type only (`is SurfaceEntry.Derived`, as `PerspectiveMenu` and `CenterEmptyState` do
+today) is a test, not a switch, so parts 1 and 2 do not apply to it. Part 3 still covers it. No `switch` over
+`SurfaceEntry` exists in `src/` (grep at T11 node 11).
+
+**Why part 2 exists (verified at node 11).** C# 14 does not treat `SurfaceEntry` (an abstract record with a
+private constructor) as a closed hierarchy. A switch expression with the three type arms and no discard is
+`error CS8509` under `TreatWarningsAsErrors` (`Directory.Build.props:5`), so "no default arm" cannot be built
+for an expression. The probe's output is `kinds/D6-cs8509-probe.txt`.
 
 ## §3 — Kind re-admission (T4 builds)
 
