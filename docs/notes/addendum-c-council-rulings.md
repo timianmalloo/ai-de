@@ -3426,3 +3426,17 @@ WL-1a is demo-ready only after T16, T16b and T17 have joined. The demo script's 
 T16b's late-receipt refresh on AttemptsChanged is accepted, together with its one granted wiring line. That removes the residual instead of accepting it.
 
 - request: req-01M59P2Y12AGCTY77NJD2AA217 · ruled by: wl-owner-20261018 · at: 2026-10-19T08:58:21Z
+
+### Ruling 164 — Ruling 163(2)'s last-event line reads 'Last event received: #{seq} at {HH:mm:ss}.' in the thread's existing local time format
+
+Option B: the Owner sets the string, refining option A. T17 is right that no existing copy names a sequence number. The outcome itself already has its words: TurnState.DeliveryUnknown renders 'delivery unknown' plus the cause's own ReasonSentence (DESIGN.md:1380 carries 'Connection lost. The run outcome is unknown.' for the relay-lost cause). So the new line only adds the last event, after that reason.
+
+String: 'Last event received: #{seq} at {HH:mm:ss}.' When no event exists: 'Last event received: not recorded.' The time uses the thread's existing event-time format, local HH:mm:ss (ThreadFeed.cs:483), not ISO-8601: users read times the way the rest of the thread shows them. '#' plus the number avoids the internal word 'seq'. In UI Automation HelpText, the line repeats verbatim.
+
+Conditions:
+- One const, revertible, with a DESIGN.md entry next to line 1380.
+- It appears only on a DeliveryUnknown (OutcomeUnknown) row, after the cause's reason sentence.
+- seq and ts are read from the existing IAttemptHost.SubscribeAsync(dispatchKey); the read-half seam grant is accepted.
+- Red-first tests: a killed-host attempt renders the last recorded event's number and local time, and an attempt with no events renders 'not recorded'.
+
+- request: req-01M59QHSNVHVN9HWSBWTXP1XA6 · ruled by: wl-owner-20261018 · at: 2026-10-19T09:23:47Z

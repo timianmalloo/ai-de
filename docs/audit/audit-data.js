@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T09:04:23Z",
+  "generated": "2026-10-19T09:28:02Z",
   "audit": [
     {
       "actor": null,
@@ -24580,74 +24580,209 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59MA3HTAHK88HHFDZGMN8NK",
-      "shortname": "wl-t8-bind-n7",
-      "datetime": "2026-10-19T08:26:36Z",
-      "session": "wl-t8-bind",
-      "prompt": "T8 node 7: UIA names for the execution states",
-      "summary": "Guard theory: every TurnState row keeps Name=ordinal+words, reason in HelpText; passed on first run (already true). Cancelled-reason theory not built: TurnCopy has one inline Cancelled arm, no enumerable source.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/Workbench/Records/EveryExecutionStateKeepsTheUiaNameTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "UIA names for execution states",
+      "datetime": "2026-10-19T08:26:36Z",
       "done_when": "every state's row Name pinned; suites green",
+      "fan_out": 0,
+      "goal": "UIA names for execution states",
+      "id": "al-01M59MA3HTAHK88HHFDZGMN8NK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T8 node 7: UIA names for the execution states",
+      "session": "wl-t8-bind",
+      "shortname": "wl-t8-bind-n7",
+      "skill": "implement",
+      "summary": "Guard theory: every TurnState row keeps Name=ordinal+words, reason in HelpText; passed on first run (already true). Cancelled-reason theory not built: TurnCopy has one inline Cancelled arm, no enumerable source.",
+      "tags": [],
       "tier": "T2",
-      "fan_out": 0
+      "tool": null
     },
     {
-      "id": "al-01M59N91QZACDAZ2KX5X3JYPE2",
-      "shortname": "wl-t16-bindrow",
-      "datetime": "2026-10-19T08:43:30Z",
-      "session": "wl-t16-bindrow",
-      "prompt": "T16: turn row shows its attempt binding",
-      "summary": "Binding line in provenance disclosure + HelpText; RouteWords shared with the New session sheet",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:36:41Z",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "duration_seconds": 576.0,
+      "fan_out": 0,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "id": "al-01M59MWJ8TDEXXWWV4H408QYYV",
       "kind": "skill",
-      "skill": "implement",
-      "tool": null,
+      "outcome": "success",
+      "prompt": "the join of wl1a-notebook-binding into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-binding",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:27:05Z",
+      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync (Rejected/never_dispatched + attempt.withdraw receipt, one txn); Ruling 159 (no dispatch outside the host; Send disabled with cause; dead holder never locks out); Ruling 156 adoption refusal; withdrawn copy; UIA names guard recount_seconds=575 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:37:14Z",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "join T8 wl1a-notebook-binding to main",
+      "id": "al-01M59MXJJP1SX51CZ8JWK5EKZ4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-binding",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:37:13Z",
+      "summary": "T8 (Opus nodes 1-6, Sonnet node 7): notebook model + revisions over T14's ops; stale mark live; run outlives pane; Stop/queue/live lines on IAttemptHost; WithdrawAsync; Ruling 159; Ruling 156 refusal; withdrawn copy; UIA names guard. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md is canonical; an internal hand-off note), then continued --docs-only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding/handoff.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T08:50:35Z",
+      "done_when": "ratchet PASS; strict repo citations OK; pushed; Release green",
+      "duration_seconds": 360.0,
+      "fan_out": 0,
+      "goal": "Land T8 on main under Rulings 151/160",
+      "id": "al-01M59NP0DX7H60HGNSXQZ40WYW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 for the T8 wl1a-notebook-binding join fa71cd0a (first under Ruling 160)",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-notebook-binding-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T08:44:35Z",
+      "summary": "Recount OK. Step 6 first stopped on the pack's HTML knowledge-surface cap (SURFACE_LIMIT=100, docs-graph.py:82): T8's derived binding/handoff.html removed (the .md canonical), continued --docs-only; standing brief rule 17 added (no .html under docs/). Step 8 5/48 (baseline). Ratchet vs 4f62453b under Ruling 160: PASS 0/49; tools/verify-ruling-citations ok (strict; 157 cited, 148 by a note, 9 frozen); the pack copy excluded (PD-1) with 7 new findings, all addendum-c rulings 156/159-162 it cannot read; identity gate OK (966). Pushed fa71cd0a:main; Release build exit 0. T8 = Opus nodes 1-6 + Sonnet node 7; Leader re-runs accepted every node.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/Sessions/RouteWords.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "WL-1a demo sees attempt bound to revision, request, route",
+      "datetime": "2026-10-19T08:43:30Z",
       "done_when": "line + HelpText + AC-R01a + DESIGN.md + suites green",
-      "tier": "T2",
+      "duration_seconds": 677.0,
       "fan_out": 0,
+      "goal": "WL-1a demo sees attempt bound to revision, request, route",
+      "id": "al-01M59N91QZACDAZ2KX5X3JYPE2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T16: turn row shows its attempt binding",
+      "session": "wl-t16-bindrow",
+      "shortname": "wl-t16-bindrow",
+      "skill": "implement",
       "started_at": "2026-10-19T08:32:13Z",
-      "duration_seconds": 677.0
+      "summary": "Binding line in provenance disclosure + HelpText; RouteWords shared with the New session sheet",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M59PF93G64ZXC9SXWV95PN1T",
-      "shortname": "wl-t16b-bindrow",
-      "datetime": "2026-10-19T09:04:23Z",
-      "session": "wl-t16b-bindrow",
-      "prompt": "T16b: close three gaps in T16 binding-row read-back",
-      "summary": "Terminal word single-sourced; late receipt refreshes rows (AttemptsChanged, RefreshAttempts, surface wiring); send-edit-send pinned; restart premise pinned (no turn restoration exists)",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/Records/NotebookRuns.cs"
       ],
+      "compiled": false,
+      "datetime": "2026-10-19T09:04:23Z",
+      "done_when": "each gap closed or its premise pinned; suites green",
+      "duration_seconds": 1183.0,
+      "fan_out": 0,
+      "goal": "close three gaps in T16 read-back",
+      "id": "al-01M59PF93G64ZXC9SXWV95PN1T",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T16b: close three gaps in T16 binding-row read-back",
+      "session": "wl-t16b-bindrow",
+      "shortname": "wl-t16b-bindrow",
+      "skill": "implement",
+      "started_at": "2026-10-19T08:44:40Z",
+      "summary": "Terminal word single-sourced; late receipt refreshes rows (AttemptsChanged, RefreshAttempts, surface wiring); send-edit-send pinned; restart premise pinned (no turn restoration exists)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59Q3EWRDJPXWSZPBMGDK70X",
+      "shortname": "join-wl1a-attempt-binding-row",
+      "datetime": "2026-10-19T09:15:24Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-attempt-binding-row into main",
+      "summary": "T16 + T16b (Sonnet): the turn row's disclosure shows the attempt's binding read via AttemptHost; RouteWords shared with the New session sheet; AC-R01a end to end; late receipt refreshes the row (AttemptsChanged); one Terminal word; restart premise pinned for T17 (Ruling 163) recount_seconds=548 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding-row/README.md"
+      ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "close three gaps in T16 read-back",
-      "done_when": "each gap closed or its premise pinned; suites green",
+      "goal": "join T16 to main",
+      "done_when": "recount green; ratchet PASS (Ruling 160); pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-19T09:06:15Z",
+      "duration_seconds": 549.0
+    },
+    {
+      "id": "al-01M59QTJQF04ZZZXMF55PXWSPQ",
+      "shortname": "join-wl1a-attempt-binding-row-step8",
+      "datetime": "2026-10-19T09:28:02Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151/160) for the T16 + T16b join 657e9e51 - ratcheted AFTER publication",
+      "summary": "Recount OK; step 8 5/48 (baseline); strict repo citations OK (158 cited/149 by a note/9 frozen); identity gate OK (982). The join was PUBLISHED before its ratchet finished: the Leader pushed Ruling 164 (146b2066) committed on top of the local join (DC-NEW-wl-leader2 7th instance, joint Owner/Leader cause). The ratchet vs bf2eebed then PASSED 0/49 (pack ruling-citations excluded, PD-1), so no fix-forward was needed. Release build at 146b2066 exit 0. Control: leader_precommit refuses a push carrying a join with no '<join>-step8' record.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/binding-row/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Record T16's post-publication ratchet",
+      "done_when": "ratchet PASS recorded; control in place",
       "tier": "T2",
       "fan_out": 0,
-      "started_at": "2026-10-19T08:44:40Z",
-      "duration_seconds": 1183.0
+      "started_at": "2026-10-19T09:25:54Z",
+      "duration_seconds": 128.0
     }
   ],
   "changes": [
@@ -29228,6 +29363,105 @@ window.AUDIT_DATA = {
       "to": "wl-leader2-20261019",
       "kind": "ruling",
       "ref": "req-01M59KAEJ1KF9ZB4X29RN35RTP",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59MA996F1CJR3DVAD87N41D",
+      "ts": "2026-10-19T08:26:42Z",
+      "from": "wl-t8-bind",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59MCRFMT4867WWQ94XKCP3Y",
+      "ts": "2026-10-19T08:28:03Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59MCRFB279FC5CW64MX8AY8",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59MEM0N2YNVG5MYMP9HAH4R",
+      "ts": "2026-10-19T08:29:04Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59MCRFB279FC5CW64MX8AY8",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59MJ388RKXR1AJN6X1GX9JT",
+      "ts": "2026-10-19T08:30:58Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59MJ37YMWR9MKS49VKMWXZ2",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59MJXNG926VWAXW19QS3ERA",
+      "ts": "2026-10-19T08:31:25Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59MJ37YMWR9MKS49VKMWXZ2",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59N9840PPD5X4G2V801V635",
+      "ts": "2026-10-19T08:43:37Z",
+      "from": "wl-t16-bindrow",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t16-bindrow"
+    },
+    {
+      "id": "mail-01M59P2Y1CPN56GHEJJ5K3TCAX",
+      "ts": "2026-10-19T08:57:39Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59P2Y12AGCTY77NJD2AA217",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59P47HSG09PJ6DX9Q41TKGW",
+      "ts": "2026-10-19T08:58:21Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59P2Y12AGCTY77NJD2AA217",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59PF9ZYMFWQNJHG0RTTMZ79",
+      "ts": "2026-10-19T09:04:24Z",
+      "from": "wl-t16b-bindrow",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t16b-bindrow"
+    },
+    {
+      "id": "mail-01M59QHSP5NET34PS48XSJRY6Y",
+      "ts": "2026-10-19T09:23:14Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59QHSNVHVN9HWSBWTXP1XA6",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59QJSB2S546MBMWFFPZ9WP7",
+      "ts": "2026-10-19T09:23:47Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59QHSNVHVN9HWSBWTXP1XA6",
       "session": "wl-owner-20261018"
     }
   ]

@@ -1,0 +1,14 @@
+{"agent": "wl-t17-restore", "at": 1792401257.1676695, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-outcome-red.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401257.2010047, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-rows-red.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401257.2355237, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.2604542, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-outcome-green.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.2926543, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/restored-rows-green.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.328189, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Records/NotebookRuns.cs", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.3607278, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.3947515, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/StoreNotebookRevisions.cs", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401430.4292753, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Records/TheRowsAttemptBindingSurvivesRestartAndSequenceTests.cs", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401468.0804615, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/README.md", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401899.8553014, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/README.md", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401899.8918843, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/handoff.md", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401899.924454, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/restored-turns/suite-green.txt", "session": "wl-t17-restore", "wi": ""}
+{"agent": "wl-t17-restore", "at": 1792401900.5756257, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t17-restore", "wi": ""}

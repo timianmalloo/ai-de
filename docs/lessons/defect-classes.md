@@ -8371,6 +8371,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   rule` is read back, the Leader commits the register ON ITS OWN, together with the ruling's decision mail, as the
   next commit. This happens before any other commit that could cite it, the way Ruling 158 went in alone
   (`dafcbee8`). If a join holds the tree, the ruling commits first thing after the join.
+- **Seventh instance: a ruling commit published an un-ratcheted join (joint cause, Owner and Leader, 2026-10-19).**
+  Following the second control, the Leader committed Ruling 164 (`146b2066`) on top of the LOCAL T16 join `657e9e51`
+  and pushed it. That push published the join before its Ruling 160 step-8 ratchet had finished. The ratchet then
+  PASSED (0/49), so main was never left with an unratcheted regression. That was luck, not control. **Control
+  (Owner):** a ruling commit is never stacked on an unpushed join. While a join is in flight, either commit the ruling
+  on origin/main and push it alone (rebasing the local join afterwards), or hold it until the join is pushed. And
+  `leader_precommit.py` refuses any push whose range (`origin/main..<commit>`) carries a `chore(join): join-<name>`
+  commit with no `join-<name>-step8` audit entry in the pushed tree. It was shown refusing the incident range
+  (`bf2eebed..146b2066`, exit 1) and clearing the join check on a clean one (`dafcbee8..f323f2b1`).
 - **Sweep:** every wave-2 brief (`.agents/briefs/workbench-loops/specific-*.md`) for a field meaning that is stated rather than quoted. One instance, T7's, now corrected in all three T7 brief files. The remaining briefs quote ADR lines verbatim (DC-189) and add no field meaning.
 - **Derive:** a field's meaning has one authority, its declaration on main. A brief may point at the declaration or quote it, but never restate it. Where the ADR is silent, the code's doc comment is the definition until an amendment says otherwise.
 - **Control:** rule 14 in `.agents/briefs/workbench-loops/brief-common.md`, rendered into every brief: open the declaration and doc comment before implementing a briefed field; on a disagreement the code wins and a seam request names both texts. The Leader's read-back of each delegated track compares every record the track constructs with its declaration on main.
