@@ -121,6 +121,70 @@ public sealed class LayoutSlotMigrationTests : IDisposable
         Assert.Equal("kept", File.ReadAllText(bak));
     }
 
+    // Today's Factory slot with a prompt draft beside a session's pane (Ruling 173): the migration maps the pane and keeps the draft.
+    private const string TodaysSlotWithAPromptDraft = """
+        {
+          "schemaVersion": 1,
+          "appVersion": "0.4.0",
+          "savedUtc": "2026-10-18T22:33:53+00:00",
+          "layout": {
+            "zones": [
+              { "id": "Left", "extent": 0.22, "collapsed": false },
+              { "id": "Right", "extent": 0.22, "collapsed": false },
+              { "id": "Bottom", "extent": 0.3, "collapsed": false },
+              { "id": "Center", "content": { "kind": "stack", "tabs": [
+                  { "surfaceId": "session-document:20260911T125502Z-bd59855b", "kind": "session-document", "title": "Binding" },
+                  { "surfaceId": "prompt-1", "kind": "prompt", "title": "Prompt draft" } ], "activeIndex": 1 },
+                "extent": 1.0, "collapsed": false }
+            ],
+            "floating": []
+          }
+        }
+        """;
+
+    // The report's sentence for a kept prompt draft (Ruling 173 (3)); seam request to the Leader proposes it.
+    private const string KeptPromptSentence = "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.";
+
+    [Fact]
+    public void APromptDraft_IsKeptAsItWas_NotRetired_AndTheMigrationsReportSaysSo_Once()
+    {
+        Directory.CreateDirectory(_dir);
+        File.WriteAllText(Slot, TodaysSlotWithAPromptDraft);
+
+        // Ruling 173 (1): prompt stays an admitted kind, so it has no retirement sentence.
+        Assert.False(SurfaceContentFactory.RetiredKinds.ContainsKey("prompt"), "prompt is in RetiredKinds; Ruling 173 keeps it admitted");
+
+        var host = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        using (var persistence = PersistenceFor(host))
+        {
+            var result = persistence.Restore();
+
+            var center = (ZoneStack)host.Zones.Zone(ZoneId.Center).Content!;
+            Assert.Equal([$"notebook:{FirstSession}", "prompt-1"], center.Tabs.Select(s => s.SurfaceId));
+            Assert.Equal(["notebook", "prompt"], center.Tabs.Select(s => s.Kind));
+            Assert.Equal(["Binding", "Prompt draft"], center.Tabs.Select(s => s.Title));
+            Assert.Equal("prompt-1", center.Active.SurfaceId);
+            Assert.Empty(persistence.LastRestoreDropped);
+            Assert.Null(result.ErrorCode);
+
+            // Ruling 173 (3): the migration's report says the draft was kept.
+            Assert.True(
+                result.Announcement.Contains(KeptPromptSentence, StringComparison.Ordinal),
+                $"the restore report does not say the prompt draft was kept: \"{result.Announcement}\"");
+
+            persistence.SaveNow();
+        }
+
+        // The rewritten slot migrates nothing, so its restore does not repeat the migration's sentence.
+        var again = new ZoneBackedLayoutService(DockHost.AdmissionFor(PerspectiveSet.Factory));
+        using (var persistence = PersistenceFor(again))
+        {
+            var result = persistence.Restore();
+            Assert.Contains("prompt-1", again.Zones.AllSurfaces().Select(s => s.SurfaceId));
+            Assert.DoesNotContain("prompt draft", result.Announcement, StringComparison.Ordinal);
+        }
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_dir))
