@@ -8,7 +8,51 @@ links:
   - implements: adr-0045-perspective-set-factory-review-understand
   - implements: design-workbench-loops-wl-s
 review-by: 2026-11-19
-summary: "Node 4 (kicked at 12 min): the execution kind's row is red then green (Factory, Many, Bottom, TurnAction(OpenLog), UIA caption). The Open log opener, checks B and C and the node 4 suite run are not started."
+summary: "Node 5 (kicked at 12 min): A2 (the Open log opener) and B (Ctrl+1/2/3 inside a WebView2 page) are red then green. The Owner's TurnAction condition (1) test, check C and the node 5 suite run are not started."
+---
+
+# T11 node 5 — hand-off (rule 16 kick, about 12 minutes)
+
+## Done
+
+- **A2, the Open log opener (seam req-01M59XNJH52JRRZ1DAJYK40X9D).**
+  - Red `1f78da93`, `A2-open-log-red.txt`. The assertion failed because the press opened `console:<session>`, with no `execution` surface.
+  - Green `583dddc6`, `A2-open-log-green.txt`. 10 of 10 across `TheExecutionOpensFromOpenLogTests`, `TheExecutionKindTests`,
+    `ConsoleSplitPlacementTests` and `TheShellOpensTheAttemptHostTests`.
+  - **The test:** `TheExecutionOpensFromOpenLogTests.OpenLog_OpensOneExecutionForTheTurnsAttempt_InTheBottom_AndASecondPressFocusesIt`.
+    - It runs the real shell over a real `WorkspaceClient` to a daemon endpoint, with a bound `AttemptHost` (the `TheShellOpensTheAttemptHostTests` composition).
+    - The engine is "no-such-engine", so the turn fails, records a host attempt, and offers "Open the log".
+    - The test presses that button with the UIA Invoke pattern.
+    - It then asserts one surface `execution:<DispatchKey>` captioned "Execution — <key>", in an expanded Bottom zone, active, rendering an `ExecutionSurface` whose UIA name is the caption, and no Console opened.
+    - Focus then moves back to the notebook. A second press focuses the same execution, and the count stays 1.
+  - **Product changes:**
+    - `SessionDocumentSurface.ExecutionRequested` (`Action<int>`). `OpenLog` calls it when it is set; unhosted, it falls back to `OpenSplit`. `OpenConsoleAt` is unchanged.
+    - `WorkbenchShell.OpenExecution` sits beside `OpenSessionConsole` and is wired at the document's construction site. A turn with no attempt opens nothing and announces a sentence; that path is not tested.
+  - **Test edit after the red:** the focus-back step changed from a model `ActivateSurface` to `Adapter.ActivateInView`, because `ActiveSurfaceId` is AvalonDock's active content. That step comes after the assertion that went red, and that assertion is unchanged.
+- **B, Ctrl+1/2/3 with focus inside a WebView2 page.**
+  - **The product already passed.** The first run was green, with no product change, so the red is a mutation red.
+  - Mutation red `b1703f64`, `B-ctrl-digit-mutation-red.txt`. The mutation was a window `PreviewKeyDown` that swallows keys whose `OriginalSource` is a WebView2. It was never committed. With it, Ctrl+3 from the composer page left Factory active.
+  - Green `1579f62a`, `B-ctrl-digit-green.txt`. 38 of 38 with `PerspectiveMenuTests`.
+  - **The test:** `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective`.
+    - It uses `MainWindow`'s composition: a `PerspectiveShell` router, `Shell.Bind(window)`.
+    - Keys are real OS input (`SendInput`). Before each chord, the test proves the window holds the foreground, OS focus is a `Chrome_*` HWND, and `document.hasFocus()` is true.
+    - The sequence: Ctrl+3 from the composer page goes to Understand; Ctrl+2 from the canvas page goes to Review; Ctrl+1 from the canvas page goes to Factory.
+    - The foreground was held in-process on this machine (measured). That contradicts the older note in `CanvasFocusIntegrationTests`, which says it could not be held in-process. On a machine where it cannot, the test throws a sentence starting "environment:".
+- **Defect, my own:** my first `Settle` awaited `DispatcherPriority.ContextIdle` inside `Sta.Pump`, which pumps only at Background, so the body hung until the timeout. Fixed in the test before the red. It is a candidate class: a priority below the pump's never runs. It is not recorded in the register; the Leader decides.
+
+## Not done
+
+- **The Owner's TurnAction condition (1), folded into A2 (Leader mail).** Not started; no test is written. The condition is:
+  `execution` appears in no View menu and no Center empty-state offer, and it is reachable from "Open log" (that half is A2's green).
+  - The readers found are `PerspectiveMenu.cs:93` and `:119`, and `CenterEmptyState.cs:59`. Each is an `is SurfaceEntry.Derived` type test, not a switch, so a `TurnAction` row is skipped. Inferred from reading the code; not tested.
+  - No code of mine switches over `SurfaceEntry`.
+  - **Next:** a red-first test that renders the Factory View menu and the Center empty state and asserts that no `execution` item is there. If the product already passes, prove it by mutation (for example, `PerspectiveMenu.cs:93` admitting `TurnAction`), as B does.
+- **Check C** (hide, float and redock a live notebook): not started; there is no test file. Findings so far:
+  - The Center refuses a collapse: `ZoneLayoutService.CollapseZone` says "The Center zone cannot be collapsed." So "hide" for a Center notebook needs a definition. Either move it Left and collapse the Left, or switch the perspective away and back. `assume:` the first, since `TheModelOutlivesItsSurfaceTests` hides by collapsing the holding stack; confirm with the Leader.
+  - Float is `SetStackState(stack, Floating)`, which floats the zone's first surface (`ZoneBackedLayoutService.Float`). No redock operation was found yet. Check whether `MoveSurface` finds a floating surface; `PerspectiveLayoutSlotTests` uses `Floating`.
+  - Use the A2 composition with the stub held (`ConfigureStub`, no `ReleaseRun`) so the run stays live. Then assert the same `NotebookModel`, not disposed, and the same `AttemptOf(ordinal).DispatchKey`, and that the turn ends Answered after `ReleaseRun`.
+- **`suite-node5.txt` was not run** (the kick). The last whole-suite run is `suite-node3.txt`.
+
 ---
 
 # T11 node 4 — hand-off (rule 16 kick, about 12 minutes)
