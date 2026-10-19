@@ -62,12 +62,13 @@ public sealed class AttemptObservabilityTests
         using var host = await f.OpenAsync();
         using var source = new ActivitySource(AttemptHost.FoldActivitySourceName);
 
-        using (source.StartActivity("fold"))
+        var operation = "fold-" + Guid.NewGuid().ToString("n");
+        using (source.StartActivity(operation))
         {
             await Task.Delay(5);
         }
 
-        // The listener is process-global, so another test's fold may land here too: contains, not single.
-        Assert.Contains(f.Telemetry("fold.duration_ms"), line => line.GetProperty("value").GetDouble() >= 5);
+        // The listener is process-global, so another fold may land here too: this one is found by its own name.
+        Assert.Contains(f.Telemetry("fold.duration_ms"), line => line.GetProperty("operation").GetString() == operation && line.GetProperty("value").GetDouble() > 0);
     }
 }
