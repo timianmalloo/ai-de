@@ -96,3 +96,9 @@
 {"agent": "wl-t13-hygiene", "at": 1792373208.1960397, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "wl-t13-hygiene", "wi": ""}
 {"agent": "wl-t13-hygiene", "at": 1792373208.2195551, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/gates-after.txt", "session": "wl-t13-hygiene", "wi": ""}
 {"agent": "wl-t13-hygiene", "at": 1792373208.2450676, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/residuals.md", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373857.9064288, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/r154-green.txt", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373857.932398, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/r154-red.txt", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792373857.9599078, "code": null, "kind": "allowed", "path": "tools/verify-ui-craft-floor.py", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792374113.482083, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792374113.507604, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t13-hygiene", "wi": ""}
+{"agent": "wl-t13-hygiene", "at": 1792374113.53109, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt", "session": "wl-t13-hygiene", "wi": ""}

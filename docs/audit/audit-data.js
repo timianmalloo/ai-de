@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T01:36:17Z",
+  "generated": "2026-10-19T01:56:08Z",
   "audit": [
     {
       "actor": null,
@@ -22764,24 +22764,155 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M58W3YTZXPV8ZJ9XCGT7XD0Z",
-      "shortname": "join-census-flake-fix",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/gate-harness-green.txt"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T01:23:49Z",
-      "session": "wl-leader-20261018",
+      "done_when": "ratchet PASS vs origin/main 2de9d373",
+      "duration_seconds": 544.0,
+      "fan_out": 0,
+      "goal": "Make the console-host census read the process table reliably under concurrent test load",
+      "id": "al-01M58W3YTZXPV8ZJ9XCGT7XD0Z",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of census-flake into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-census-flake-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:14:45Z",
       "summary": "T12 fix-forward 5daac116: the census test's lambda throw tripped verify-harness-diagnostics (green->red at the first T12 join ratchet); moved into a named method. Step 8 per Rulings 151/153. recount_seconds=543 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-10-19T01:28:38Z",
+      "done_when": "the compile gate passes and the compiled prompt is logged with its raw source",
+      "duration_seconds": 12513.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "compile the workbench-loops drive prompt into a dispatchable starting prompt",
+      "id": "al-01M58WCRBWDKPAEBZKBEEMMCN8",
+      "kind": "command",
+      "outcome": "success",
+      "prompt": "Correction of al-01M58FV33ZKBC7NJBSJW2C7QWZ (missing goal/done_when/evidence).",
+      "session": "wl-owner-20261018",
+      "shortname": "compile-workbench-loops-coordination-correction",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "compile",
+      "started_at": "2026-10-18T22:00:05Z",
+      "summary": "Supersedes the compile entry: the drive prompt was compiled to al-01M58FTCXG1K5J5BWC5X6MGVC2 (raw al-01M58FTC4GNXDXPCT023Y6J72K); the compile gate passed on its second run and the result was dispatchable with zero decision requests.",
+      "supersedes": "al-01M58FV33ZKBC7NJBSJW2C7QWZ",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-10-19T01:28:38Z",
+      "done_when": "the Leader is live and pinned as coordination leader",
+      "duration_seconds": 13318.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 1,
+      "goal": "hand the workbench-loops plan to the Opus Leader seat",
+      "id": "al-01M58WCRGVJK5X7QK9SYP37AG2",
+      "kind": "command",
+      "outcome": "success",
+      "prompt": "Correction of al-01M58G5X47WPDGWXM0S4JBABR0 (missing evidence).",
+      "session": "wl-owner-20261018",
+      "shortname": "coordination-workbench-loops-owner-handoff-correction",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T21:46:40Z",
+      "summary": "Supersedes the Owner hand-off entry: the kickoff brief (docs/coordination/workbench-loops-leader-kickoff.md) was executed. The Leader launched 2026-10-18 and pinned itself; coord leader who showed wl-leader-20261018 epoch 1 live within ~30 s, observed by the Owner.",
+      "supersedes": "al-01M58G5X47WPDGWXM0S4JBABR0",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/census/census-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T01:36:17Z",
+      "done_when": "pushed with ratchet PASS recorded",
+      "duration_seconds": 1492.0,
+      "fan_out": 0,
+      "goal": "Land the census fix on main under Ruling 151/153",
+      "id": "al-01M58WTRP7JRWDFSP5TKHPC7MS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153 step-8 completion for the T12 census join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t12-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T01:11:25Z",
+      "summary": "T12 census fix pushed 36bcfaea (2de9d373..36bcfaea), joined ahead of T3 (Owner-approved reorder). First T12 ratchet REFUSED verify-harness-diagnostics green->red (lambda throw pattern in ConsoleHostCensusTests); fix-forward 5daac116; re-join ratchet PASS 0/48, Ruling 153 filter 104/104, recount gates excluded per 151(3) with the recount green. Register EOF conflict kept both. Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T22:45:07Z",
+      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, dotnet test green",
+      "duration_seconds": 1282.0,
+      "fan_out": 0,
+      "goal": "Extend RunEvent envelope and TurnState once",
+      "id": "al-01M58K1BX2VRNZMX3KJB5XC2MV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T3 sp2-runevent-vocab: extend RunEvent envelope and TurnState once",
+      "session": "wl-t3-sp2",
+      "shortname": "wl-t3-sp2",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:23:45Z",
+      "summary": "TurnState +6 values, Stopped->Interrupted, RunEvent redactions/scanned_with, native.frame, TurnState-never-serialized guard; Core green",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M58XZ3GTX9ZAHH3RZXB2JMMJ",
+      "shortname": "join-sp2-runevent-vocab",
+      "datetime": "2026-10-19T01:56:07Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T3 landed. The recount ran (step 4) and its only failures were 3 TerminalHost census reads reported NOT CHECKED with T12's cause (JSON parse error: 0x15 in a process CommandLine, unescaped by ConvertTo-Json) - green under Ruling 151(3); continued with --docs-only so the recount is not re-run; root-cause fix T12c dispatched. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-support/census/gate-harness-green.txt"
+        "docs/proof/workbench-loops-wl-1a/sp2/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Make the console-host census read the process table reliably under concurrent test load",
-      "done_when": "ratchet PASS vs origin/main 2de9d373",
+      "goal": "Extend the RunEvent envelope and TurnState once, so folds, host and UI share one vocabulary",
+      "done_when": "vocabulary tests green, every TurnState.Stopped consumer moved, ratchet PASS",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -22789,86 +22920,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T01:14:45Z",
-      "duration_seconds": 544.0
-    },
-    {
-      "id": "al-01M58WCRBWDKPAEBZKBEEMMCN8",
-      "shortname": "compile-workbench-loops-coordination-correction",
-      "datetime": "2026-10-19T01:28:38Z",
-      "session": "wl-owner-20261018",
-      "prompt": "Correction of al-01M58FV33ZKBC7NJBSJW2C7QWZ (missing goal/done_when/evidence).",
-      "summary": "Supersedes the compile entry: the drive prompt was compiled to al-01M58FTCXG1K5J5BWC5X6MGVC2 (raw al-01M58FTC4GNXDXPCT023Y6J72K); the compile gate passed on its second run and the result was dispatchable with zero decision requests.",
-      "kind": "command",
-      "skill": "compile",
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success",
-      "goal": "compile the workbench-loops drive prompt into a dispatchable starting prompt",
-      "done_when": "the compile gate passes and the compiled prompt is logged with its raw source",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T22:00:05Z",
-      "duration_seconds": 12513.0,
-      "supersedes": "al-01M58FV33ZKBC7NJBSJW2C7QWZ"
-    },
-    {
-      "id": "al-01M58WCRGVJK5X7QK9SYP37AG2",
-      "shortname": "coordination-workbench-loops-owner-handoff-correction",
-      "datetime": "2026-10-19T01:28:38Z",
-      "session": "wl-owner-20261018",
-      "prompt": "Correction of al-01M58G5X47WPDGWXM0S4JBABR0 (missing evidence).",
-      "summary": "Supersedes the Owner hand-off entry: the kickoff brief (docs/coordination/workbench-loops-leader-kickoff.md) was executed. The Leader launched 2026-10-18 and pinned itself; coord leader who showed wl-leader-20261018 epoch 1 live within ~30 s, observed by the Owner.",
-      "kind": "command",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success",
-      "goal": "hand the workbench-loops plan to the Opus Leader seat",
-      "done_when": "the Leader is live and pinned as coordination leader",
-      "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T21:46:40Z",
-      "duration_seconds": 13318.0,
-      "supersedes": "al-01M58G5X47WPDGWXM0S4JBABR0"
-    },
-    {
-      "id": "al-01M58WTRP7JRWDFSP5TKHPC7MS",
-      "shortname": "join-t12-step8-ratchet",
-      "datetime": "2026-10-19T01:36:17Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153 step-8 completion for the T12 census join",
-      "summary": "T12 census fix pushed 36bcfaea (2de9d373..36bcfaea), joined ahead of T3 (Owner-approved reorder). First T12 ratchet REFUSED verify-harness-diagnostics green->red (lambda throw pattern in ConsoleHostCensusTests); fix-forward 5daac116; re-join ratchet PASS 0/48, Ruling 153 filter 104/104, recount gates excluded per 151(3) with the recount green. Register EOF conflict kept both. Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-support/census/census-green.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land the census fix on main under Ruling 151/153",
-      "done_when": "pushed with ratchet PASS recorded",
-      "tier": "T1",
-      "fan_out": 0,
-      "started_at": "2026-10-19T01:11:25Z",
-      "duration_seconds": 1492.0
+      "started_at": "2026-10-19T01:56:06Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -27185,6 +27238,15 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M58WAMA58T3GFHN8E5P0PT9T",
       "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M58X51G5X2AG9GMFE4E882EW",
+      "ts": "2026-10-19T01:41:53Z",
+      "from": "wl-t13-hygiene",
+      "to": "wl-leader-20261018",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t13-hygiene"
     }
   ]
 };
