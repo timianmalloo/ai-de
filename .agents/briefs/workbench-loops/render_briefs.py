@@ -31,6 +31,7 @@ TRACKS = {
     "T18": ("wl-t18-knowledge", "wls-knowledge-mode", "docs/proof/workbench-loops-wl-s/knowledge-mode", "Opus 5.5"),
     "T21": ("wl-t21-float", "wls-float", "docs/proof/workbench-loops-wl-s/float", "Opus 5.5"),
     "T22": ("wl-t22-wl1b-design", "wl1b-design", "docs/proof/workbench-loops-wl-1b/design", "Opus 5.5"),
+    "T23": ("wl-t23-wl1b-folds", "wl1b-folds", "docs/proof/workbench-loops-wl-1b/folds", "Sonnet 5.5"),
 }
 
 common = (HERE / "brief-common.md").read_text(encoding="utf-8")
