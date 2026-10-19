@@ -229,7 +229,11 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
 
         // A file with no "floating" field (hand-edited, or written before floating was stored) reads as
         // no floating panes. That is an older file, not a partial read.
+        // A floating stack's id is a node id in the tree projection, beside the frame's own ids, and
+        // Layout.AssertInvariant throws on a repeat. The zone invariant checks surface ids only, so a
+        // floating stack whose id is already in use is left out here and named by its titles (T21 n6).
         var floating = ImmutableList.CreateBuilder<StackNode>();
+        var nodeIds = new HashSet<string>(FrameNodeIds, StringComparer.Ordinal);
         foreach (var f in Present(envelope.Layout.Floating ?? [], LeftOut))
         {
             if (f.Surfaces is null)
@@ -238,7 +242,15 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             }
             else if (FromStackDto(f, Available, LeftOut) is { } stack)
             {
-                floating.Add(stack);
+                if (nodeIds.Add(stack.Id))
+                {
+                    floating.Add(stack);
+                }
+                else
+                {
+                    partlyRead = true;
+                    leftOutTitles.AddRange(stack.Surfaces.Select(s => s.Title).Where(t => !string.IsNullOrEmpty(t)));
+                }
             }
         }
 
@@ -255,6 +267,13 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
 
         return new ZoneLoadResult(layout, ZoneLoadRefusal.None, partlyRead) { LeftOutTitles = leftOutTitles };
     }
+
+    // The node ids ZonesToTree.ToTree gives the frame. A floating stack may hold none of them.
+    private static readonly string[] FrameNodeIds =
+    [
+        ZonesToTree.LeftStackId, ZonesToTree.CenterStackId, ZonesToTree.RightStackId,
+        ZonesToTree.BottomStackId, ZonesToTree.ColumnsSplitId, ZonesToTree.RootSplitId,
+    ];
 
     private static IEnumerable<string> TitlesIn(ZoneContentDto? content) =>
         content is null

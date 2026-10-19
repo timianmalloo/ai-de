@@ -8521,3 +8521,25 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control, extended (Owner, 2026-10-19):** the same resource is the user's desktop during a demo. Brief rule 20: while
   `USER DEMO IN PROGRESS` is the Owner's latest demo post on the board, no App suite, UI probe or real-lane test runs in
   any tree. Running tracks were told by mail at the rule's commit.
+
+### DC-NEW-wl-t21-float-c — A saved node id meets a check weaker than the one its consumer enforces
+- **Shape:** an id is saved with the layout and read back, while new ids of the same kind are minted from a counter
+  that restarts with the service or the process. The writer and the reader check one invariant (unique *surface* ids,
+  `WorkbenchLayout.AssertInvariant`). The tree projection enforces a stronger one (unique *node* ids, including the
+  frame's own ids, `Layout.AssertInvariant`, `LayoutModel.cs:199`). An id that passes the first check throws at the
+  second, out of `service.Current`, after the read has already said the file was fine.
+- **Instances (T21):** n5 (C) `ZoneBackedLayoutService.Float` minted `float-1` again after a restore that held it
+  (red f3d14d3b). n6 (B) `ZoneLayoutStore.Read` passed two floating stacks with one id, and a floating stack with the
+  id `zone-left` (red 5327d810). n6 (C) `WorkbenchAdapter.MapFloatingWindow` minted `float-view-N` from the static
+  `_nodeSeq`, which restarts with the process, so a native float could take a restored window's id (red f5fc73b0).
+- **Sweep:** every site that mints or admits a floating node id: `ZoneBackedLayoutService.Float` (controlled n5),
+  `ZoneLayoutStore.Read` (controlled n6 B), `WorkbenchAdapter.MapFloatingWindow` (controlled n6 C). The adapter's
+  `split-view-N` and `stack-view-N` ids are not saved (zones do not store split or stack ids), so they are outside the
+  class. Open: a kept `float-` pane id that the model does not hold, read after a window this read minted, is not
+  checked (not reachable from a render, which names panes from the model). Inferred.
+- **Control:** `FloatIdAfterRestoreTests`, `ZoneLayoutFloatingIdInUseTests` (fixtures
+  `zone-layout-floating-{duplicate,reserved}-id.json`), `FloatViewIdAfterRestartTests`. The reader seeds its id set
+  with the frame's six node ids; both minters skip every id in use.
+- **Derive:** a reader that promises "never throws on a bad file" checks every invariant the file's consumer enforces,
+  not only the one its own model asserts. A counter that restarts never mints a saved id without checking the ids in use.
+- **Status:** `controlled` for the three floating-id sites.
