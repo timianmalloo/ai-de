@@ -1,3 +1,18 @@
+---
+id: proof-workbench-loops-wl-s-sp3
+title: "Evidence — WL-S spine T4: Perspective re-row"
+type: proof-pack
+status: draft
+owner: "@timianmalloo"
+phase: "workbench-loops WL-S"
+tags: [workbench-loops, evidence]
+links:
+  - { to: adr-0045-perspective-set-factory-review-understand, rel: implements }
+review-by: "2026-11-18"
+summary: >-
+  Track T4's red and green evidence for the Factory · Review · Understand re-row and FullWindow retirement (Rulings 149, 152); cited by the WL-S Proof Pack.
+---
+
 # T4 `sp3-perspective-rerow` — proof (WL-S spine)
 
 Track T4 of the workbench-loops drive: re-row the Perspective set to Factory · Review · Understand
