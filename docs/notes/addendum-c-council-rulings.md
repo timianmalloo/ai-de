@@ -3558,3 +3558,16 @@ The decision:
 (3) T11's slot migration leaves prompt slots unmigrated, and its report says so.
 
 - request: req-01M5A28A97KF9XW18GX2819ZZR · ruled by: wl-owner-20261018 · at: 2026-10-19T12:31:32Z
+
+### Ruling 174 — A floating window's position is stored in the zone layout as four optional fields, written on move or resize, with the off-screen recovery AC-D01b requires; one T21 node
+
+Option A. US-9 requires a floating pane to return to the display it was on. LayoutModel.cs:100-106 records FloatingBounds for exactly that reason, and says that without it the off-screen guard has nothing to test. AC-D01b (workbench-loops-ux.md:353) and ADR-0045 section 7 (:129) require an off-screen placement to recover to the perspective default. The older pane layout already stores the four values, read all-or-none (LayoutStore.cs:32-33 written, :303-304 read, :318). The zone layout's ZoneStackDto (ZoneLayoutStore.cs:34) has no such fields. That is the gap. Option B would ship floating with a known US-9 failure.
+
+The Data and Persistence review is PASS-WITH-CONDITIONS, with no veto. Conditions, in one T21 node after the guard is removed, each red-first:
+(1) ZoneStackDto gains four optional double? fields (X, Y, Width, Height), read all-or-none exactly as LayoutStore.cs:318 does. schemaVersion is NOT bumped, because the change is additive. A test shows an older-shaped file without the fields still loads, and an older binary's reader ignores them.
+(2) A writer exists: the dock library's move and resize end events write FloatingBounds. Cite the writer by file:line; a field with no writer is not stored.
+(3) On restore, a window whose bounds fall off every current display recovers to the perspective default with a report line (AC-D01b), tested with a bounds rectangle outside all displays.
+(4) The null 'floating' load fix from T21 n1b stays.
+Mixed-DPI placement remains ADR-0015's airspace-spike obligation, and is not claimed here.
+
+- request: req-01M5A4911PW38Z4E28QBGXMP7P · ruled by: wl-owner-20261018 · at: 2026-10-19T13:06:30Z
