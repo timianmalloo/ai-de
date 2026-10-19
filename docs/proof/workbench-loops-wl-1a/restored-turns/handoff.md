@@ -11,7 +11,7 @@ links:
   - { to: proof-workbench-loops-wl-1a-restored-turns, rel: relates-to }
 review-by: "2026-11-18"
 summary: >-
-  What T17 node 1 landed (checks 1 and 2, red then green), what is still open (check 3 and the seam request's answer), and the next step for node 2.
+  What T17 node 1 landed (checks 1 and 2), Ruling 164's copy as node 2's first item, and node 2's status (all three of its checks done).
 ---
 
 # T17 node 1 hand-off
@@ -40,14 +40,7 @@ assertion that pins it is the last one in
 assertion red-first to the ruling's string and HelpText placement, and adds the no-event red test. `DESIGN.md` is not
 in T17's owned paths, so its entry needs a claim or a seam request.
 
-## Open
+## Node 2 status
 
-- Check 3 (node 2): a restored row's events must be reachable from the row by keyboard and exposed to UIA. Restored rows
-  are ordinary thread turns rendered by the same `TurnItem` and `ThreadFeed`. So the live row's keyboard and UIA tests
-  are likely to pass on a restored row the first time they run. This is Inferred and was not run. Node 2 should look for
-  a real red, for example the fold of a row with zero events, or the `IsLast` reason box.
-
-## Next step
-
-Node 2: do Ruling 164 first (above). Then write check 3's test over `AReopenedNotebookRendersItsRecordedAttemptsTests`'s reopen helper. Drive it by
-keyboard through the real surface, and read the events through UIA.
+Done: Ruling 164's line, brief check 3, and the Leader's ordinal check. See README "Node 2". No open item for T17.
+Brief check 3 passed on its first run, so it has no red.
