@@ -111,5 +111,13 @@ def main() -> int:
     return 0
 
 
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
+
 if __name__ == "__main__":
     sys.exit(main())

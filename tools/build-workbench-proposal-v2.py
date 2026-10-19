@@ -23,7 +23,7 @@ prototype.addEventListener('load',()=>{loaded=true;enter(pending)});
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{const view=button.dataset.view;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b===button));reader.hidden=view!=='proposal';prototype.hidden=view==='proposal';document.getElementById('context').textContent=view==='proposal'?'Two legitimate entry paths; one intelligent editor, execution record and dockable evidence model.':view==='system'?'Explore first. Ask the repo or PR, inspect the visualizer and keep a checklist. Create work only when you choose.':view==='review'?'Read the behavioral change, ask questions, inspect evidence and record a deliberate disposition.':'Compose intent in the notebook, use IntelliSense and scoped context, then inspect execution and evaluation beside it.';if(view!=='proposal'){pending=view;if(!prototype.srcdoc)prototype.srcdoc=mockup;else if(loaded)enter(view)}}));
 </script></body></html>'''
  page=page.replace('__PROPOSAL__',js_string(proposal)).replace('__MOCKUP__',js_string(mockup))
- target=ROOT/'docs/proposals/local-software-factory-v2-interactive.html';target.write_text(page,encoding='utf-8')
+ target=ROOT/'docs/proposals/local-software-factory-v2-interactive.html';target.write_text(page,encoding='utf-8', newline="\n")
  design=(ROOT/'DESIGN.md').read_text(encoding='utf-8')
  colors=dict(re.findall(r'^  ([\w-]+): "(#[0-9A-Fa-f]{6})"',design,re.M))
  pairs=[]
@@ -39,8 +39,17 @@ document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener
  template=template.replace('font-size:.72rem','font-size:12px').replace('font-size:.68rem','font-size:12px')
  template,count=re.subn(r'const TOKENS = \{.*?\n\};','const TOKENS = '+json.dumps(tokens,ensure_ascii=False)+';',template,count=1,flags=re.S)
  assert count==1,'Design template token seam not found'
- (ROOT/'docs/mockups/workbench-design-language.html').write_text(template,encoding='utf-8')
+ (ROOT/'docs/mockups/workbench-design-language.html').write_text(template,encoding='utf-8', newline="\n")
  print(target.relative_to(ROOT))
  print('Design preview:',len(colors),'colors;',len(pairs),'audited token pairs')
+
+import sys
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 
 if __name__=='__main__':main()

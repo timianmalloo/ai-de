@@ -152,7 +152,7 @@ def self_test():
             for rel, body in files.items():
                 target = root / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(body, encoding="utf-8")
+                target.write_text(body, encoding="utf-8", newline="\n")
             found, _, _ = check(root, frozen=set())
             if expected is None:
                 if found:
@@ -164,7 +164,7 @@ def self_test():
     with tempfile.TemporaryDirectory() as tmp:
         root = pathlib.Path(tmp) / "docs"
         (root / "notes").mkdir(parents=True)
-        (root / "notes" / "r.md").write_text("## Ruling 91 — filed" + chr(10), encoding="utf-8")
+        (root / "notes" / "r.md").write_text("## Ruling 91 — filed" + chr(10), encoding="utf-8", newline="\n")
         found, _, _ = check(root, frozen={91})
         if not any("frozen-undefined list but is now DEFINED" in d for d in found):
             failures.append("stale frozen entry: expected the gate to demand its removal, "
@@ -199,6 +199,14 @@ def main():
           f"a note, {len(frozen_still)} frozen as pre-existing debt "
           f"({', '.join(str(n) for n in frozen_still)}).")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

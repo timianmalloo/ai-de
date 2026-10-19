@@ -106,7 +106,7 @@ def self_test(root: Path) -> int:
             'out = subprocess.run(["git", "show", "HEAD:x"],\n'
             '                     capture_output=True, text=True)\n'
             'ok = subprocess.run(["git", "x"], capture_output=True, text=True, encoding="utf-8")\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         findings = scan(fake_root)
         if len(findings) != 1 or "probe.py:3" not in findings[0]:
             print(f"self-test: expected one finding at probe.py:3, got {findings}")
@@ -131,6 +131,14 @@ def main() -> int:
     print("verify-subprocess-utf8: OK — every text-mode subprocess under tools/ and spikes/ states its encoding"
           f" ({len(ALLOW)} allowlisted with a reason).")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

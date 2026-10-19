@@ -128,9 +128,18 @@ def main():
     results.append({'check':'Journey execution reached its endpoint','passed':False,'error':str(error)[:900]})
    page.screenshot(path=str(ROOT/'.git/ai-forward/workbench-loops-20261018/interaction-failure.png'))
   output={'artifact':str(TARGET.relative_to(ROOT)),'artifact_sha256':hashlib.sha256(TARGET.read_bytes()).hexdigest(),'checked_at':datetime.now(timezone.utc).isoformat(),'journey_completed':journey_completed,'checks':results,'passed':sum(x['passed'] for x in results),'failed':sum(not x['passed'] for x in results),'browser_errors':errors,'network_requests':[r for r in requests if r.startswith(('http:','https:'))]}
-  out=ROOT/args.out;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(output,indent=2),encoding='utf-8')
+  out=ROOT/args.out;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(output,indent=2),encoding='utf-8', newline="\n")
   browser.close()
  print(json.dumps(output,indent=2))
  return 1 if not journey_completed or output['failed'] or output['browser_errors'] else 0
+
+import sys
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 
 if __name__=='__main__':raise SystemExit(main())

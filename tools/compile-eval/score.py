@@ -420,7 +420,7 @@ def _fixture(n_agentic: int, reused_every: int = 0, mode: str = "agentic-advisor
 def self_test() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         events = Path(tmp) / "envelope-events.jsonl"
-        events.write_text("\n".join(_fixture(120, reused_every=10)) + "\n", encoding="utf-8")
+        events.write_text("\n".join(_fixture(120, reused_every=10)) + "\n", encoding="utf-8", newline="\n")
         report = score([events], prefix_measured=None)
         problems = check_contract(report)
         if problems:
@@ -468,7 +468,7 @@ def self_test() -> int:
         print("SELF-TEST PASS (red as expected): " + " | ".join(red))
 
         # Too few envelopes: the report is written, every measured metric labelled partial, nothing invented.
-        events.write_text("\n".join(_fixture(7)) + "\n", encoding="utf-8")
+        events.write_text("\n".join(_fixture(7)) + "\n", encoding="utf-8", newline="\n")
         small = score([events])
         if small["holdout"]["n"] != 0 or not small["metrics"]["latency_ms"]["partial"] or small["metrics"]["latency_ms"]["p95"] is not None:
             print("SELF-TEST FAILED: a corpus below N must report an empty holdout and partial, never a plausible p95")
@@ -498,7 +498,7 @@ def main(argv: list[str]) -> int:
     text = json.dumps(report, indent=2)
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out).write_text(text + "\n", encoding="utf-8")
+        Path(args.out).write_text(text + "\n", encoding="utf-8", newline="\n")
         print(f"wrote {args.out} (sha256 {hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]}…)")
     else:
         print(text)

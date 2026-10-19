@@ -135,7 +135,7 @@ def read_state(path: Path) -> dict:
 
 def write_state(path: Path, state: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def append_log(path: Path, row: dict) -> None:
@@ -266,7 +266,7 @@ def self_test() -> int:
         print("SELF-TEST PASS (canonicalisation): matches the C# fixture's constant")
 
         # --- GREEN: 120 clean envelopes, unchanged triple, no drift -> no-op, no log row.
-        events.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8")
+        events.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8", newline="\n")
         r1 = run_ring([events], "a" * 64, "b" * 64, None, state_path, log_path)
         if r1["action"] != "rescored" or not r1["holds"]:
             print(f"SELF-TEST FAILED: first run should establish a passing baseline, got {r1['action']} holds={r1['holds']} reasons={r1['reasons']}")
@@ -297,7 +297,7 @@ def self_test() -> int:
         print("SELF-TEST PASS (re-score, no transition): triple changed, floors still hold -> rescored, mode unchanged")
 
         # --- RED: a triple change into a regressed corpus (degraded rate over 5%) demotes with trigger "ring".
-        events.write_text("\n".join(_fixture_lines(120, degraded_every=10)) + "\n", encoding="utf-8")  # 12/120 = 10% > 5%
+        events.write_text("\n".join(_fixture_lines(120, degraded_every=10)) + "\n", encoding="utf-8", newline="\n")  # 12/120 = 10% > 5%
         r4 = run_ring([events], "d" * 64, "b" * 64, None, state_path, log_path)
         if r4["action"] != "demoted":
             print(f"SELF-TEST FAILED: a regressed corpus under a changed triple must demote, got {r4}")
@@ -322,7 +322,7 @@ def self_test() -> int:
         print("SELF-TEST PASS (no flapping): unchanged triple after a demotion re-scores nothing and logs nothing further")
 
         # --- GREEN: the corpus recovers and the triple changes again -> re-admits, readmitted_at watermark set.
-        events.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8")
+        events.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8", newline="\n")
         r6 = run_ring([events], "e" * 64, "b" * 64, None, state_path, log_path)
         if r6["action"] != "readmitted":
             print(f"SELF-TEST FAILED: a passing re-score after a demotion must re-admit, got {r6}")
@@ -341,14 +341,14 @@ def self_test() -> int:
         state2_path = Path(tmp) / "state2.json"
         log2_path = Path(tmp) / "events2.jsonl"
         clean = Path(tmp) / "clean.jsonl"
-        clean.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8")
+        clean.write_text("\n".join(_fixture_lines(120)) + "\n", encoding="utf-8", newline="\n")
         base = run_ring([clean], "f" * 64, "g" * 64, None, state2_path, log2_path)
         if base["action"] != "rescored" or read_state(state2_path)["mode"] != "agentic":
             print(f"SELF-TEST FAILED: drift-test baseline should establish agentic, got {base}")
             return 1
 
         drifted = Path(tmp) / "drifted.jsonl"
-        drifted.write_text("\n".join(_fixture_lines(120, model_observed="claude-opus-5[1m]")) + "\n", encoding="utf-8")
+        drifted.write_text("\n".join(_fixture_lines(120, model_observed="claude-opus-5[1m]")) + "\n", encoding="utf-8", newline="\n")
         r7 = run_ring([drifted], "f" * 64, "g" * 64, None, state2_path, log2_path)  # SAME triple — drift alone must still trip the ring.
         if r7["triple_changed"]:
             print("SELF-TEST FAILED: this step must hold the triple constant to isolate the drift trigger")
@@ -395,7 +395,7 @@ def main(argv: list[str]) -> int:
     result = run_ring(paths, args.adapter_sha, args.cli_sha, args.profile_sha, Path(args.state), Path(args.log), parse_tuple(args.tuple), args.prefix_measured)
     if args.out and result["report"] is not None:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out).write_text(json.dumps(result["report"], indent=2) + "\n", encoding="utf-8")
+        Path(args.out).write_text(json.dumps(result["report"], indent=2) + "\n", encoding="utf-8", newline="\n")
 
     print(json.dumps({k: v for k, v in result.items() if k != "report"}, indent=2))
     return 0

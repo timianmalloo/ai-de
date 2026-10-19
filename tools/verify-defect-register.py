@@ -151,7 +151,7 @@ def main() -> int:
         if header is None:
             print("verify-defect-register: no status-count line to rewrite")
             return 1
-        REGISTER.write_text(text[:header.start()] + rendered + text[header.end():], encoding="utf-8")
+        REGISTER.write_text(text[:header.start()] + rendered + text[header.end():], encoding="utf-8", newline="\n")
         print(f"verify-defect-register: counts rewritten → {rendered}")
         return 0
 

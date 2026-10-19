@@ -185,7 +185,7 @@ def self_test() -> int:
 
         (place / "src" / "AiDe.Core" / "Watcher").mkdir(parents=True)
         (place / "src" / "AiDe.Core" / "Watcher" / "Placeholder.cs").write_text(
-            "namespace AiDe.Core.Watcher;\npublic sealed class Placeholder { }\n", encoding="utf-8")
+            "namespace AiDe.Core.Watcher;\npublic sealed class Placeholder { }\n", encoding="utf-8", newline="\n")
         _run_git(place, "add", "-A")
         _run_git(place, "commit", "-q", "-m", "base")
 
@@ -193,24 +193,24 @@ def self_test() -> int:
         (place / "src" / "AiDe.Core" / "Sessions" / "SessionConfig.cs").write_text(
             "namespace AiDe.Core.Sessions;\n"
             "public sealed record SessionConfig(string SessionId);\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         (place / "src" / "AiDe.Core" / "Watcher" / "MoreWatcherThing.cs").write_text(
             "namespace AiDe.Core.Watcher;\n"
             "internal sealed class WatcherSessionHelper { }\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         (place / "src" / "AiDe.Core" / "AgentPlane").mkdir(parents=True)
         (place / "src" / "AiDe.Core" / "AgentPlane" / "RogueSessionThing.cs").write_text(
             "namespace AiDe.Core.AgentPlane;\n"
             "public sealed class RogueSessionThing { }\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         (place / "tests" / "AiDe.Core.Tests" / "AgentPlane").mkdir(parents=True)
         (place / "tests" / "AiDe.Core.Tests" / "AgentPlane" / "TheSessionScenarioTests.cs").write_text(
             "namespace AiDe.Core.Tests.AgentPlane;\n"
             "public sealed class TheSessionScenarioTests { }\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         _run_git(place, "add", "-A")
         _run_git(place, "commit", "-q", "-m", "slice")
@@ -244,6 +244,14 @@ def self_test() -> int:
     print("verify-r14b2-session-naming: self-test OK — an out-of-container new \"session\" type "
           "fails, a container type and a frozen-directory type do not.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

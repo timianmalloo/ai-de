@@ -445,7 +445,7 @@ def self_test(root: Path) -> int:
         '"""A gate that cannot prove it can fail."""\n'
         "def main():\n"
         "    return 0\n",
-        encoding="utf-8")
+        encoding="utf-8", newline="\n")
 
     try:
         problems, _, _ = check(root)
@@ -516,6 +516,14 @@ def main() -> int:
     print(f"verify-gate-self-tests: OK — {gates} gate(s), {without} without a self-test, "
           "all frozen and none added.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":

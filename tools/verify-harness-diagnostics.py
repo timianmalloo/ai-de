@@ -272,7 +272,7 @@ def self_test() -> int:
         (place / TESTS / "GuardedTests.cs").write_text(
             "if (failure is Xunit.Sdk.XunitException) throw failure;\n"
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         # TWO INDEPENDENT HARNESSES IN ONE FILE: the granularity error, which no pattern width fixes.
         # None exists in the repository today, so without this fixture the check would never be seen
@@ -287,7 +287,7 @@ def self_test() -> int:
             "other.SetApartmentState(ApartmentState.STA);\n"
             'if (failure is not null) '
             'throw new InvalidOperationException("STA work failed", failure);\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         # THE BRACED GUARD, which the first pattern rejected — a correctly guarded file reported as
         # unguarded. Kept so the gate cannot narrow back into a false alarm.
@@ -295,11 +295,11 @@ def self_test() -> int:
         (place / TESTS / "BracedGuardTests.cs").write_text(
             "if (failure is Xunit.Sdk.XunitException) { throw failure; }\n"
             'if (failure is not null) { throw new System.InvalidOperationException("x", failure); }\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         (place / TESTS / "UnguardedTests.cs").write_text(
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         # THE BLIND SPOT THE FIRST PATTERN HAD, kept as a fixture so the widening stays proven. This
         # names the captured variable `error` — two real harnesses do, both currently correct — and
@@ -307,7 +307,7 @@ def self_test() -> int:
         # narrow version missed is indistinguishable from one that changed nothing.
         (place / TESTS / "OtherNameTests.cs").write_text(
             'if (error is not null) throw new InvalidOperationException("STA work failed", error);\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         # THE SECOND BLIND SPOT: a fully-qualified type name. `\w*Exception` does not match
         # `System.InvalidOperationException`, and a real harness writes it that way — the gate
@@ -315,13 +315,13 @@ def self_test() -> int:
         (place / TESTS / "QualifiedTypeTests.cs").write_text(
             'if (failure is not null) '
             'throw new System.InvalidOperationException("STA work failed", failure);\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         # A fixture that throws to SIMULATE an error, built from a literal. Must not be reported —
         # a gate that fires on these would be muted, and then the real check goes with it.
         (place / TESTS / "FixtureTests.cs").write_text(
             'Dispatch = _ => throw new InvalidOperationException("pipe closed");\n',
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
 
         problems, _ = check(place)
 
@@ -371,6 +371,14 @@ def self_test() -> int:
     print("verify-harness-diagnostics: self-test OK — unguarded fails, guarded passes, and a "
           "literal-throwing fixture is left alone.")
     return 0
+
+
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 if __name__ == "__main__":
