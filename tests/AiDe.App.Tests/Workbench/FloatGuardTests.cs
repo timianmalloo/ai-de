@@ -26,30 +26,6 @@ public sealed class FloatGuardTests : IDisposable
     }
 
     [Fact]
-    public void FloatPane_RefusesWithAStatedCause_PaneStaysDockedAndFocused()
-    {
-        var service = new ZoneBackedLayoutService(WorkbenchLayout.Default());
-        var announcer = new RecordingAnnouncer();
-        var surface = service.Zones.AllSurfaces().First(s => service.Current.FindStackOf(s.SurfaceId) is not null);
-        var stackId = service.Current.FindStackOf(surface.SurfaceId)!.Id;
-        var controller = new WorkbenchController(service, announcer)
-        {
-            FocusedStackId = stackId,
-            FocusedSurfaceId = surface.SurfaceId,
-        };
-        var before = service.Current.Shape();
-
-        controller.Execute("workbench.floatPane");
-
-        Assert.Equal(before, service.Current.Shape());
-        Assert.Empty(service.Current.Floating);
-        Assert.NotNull(service.Zones.FindZoneOf(surface.SurfaceId));
-        Assert.Equal(stackId, controller.FocusedStackId);
-        Assert.Equal(surface.SurfaceId, controller.FocusedSurfaceId);
-        Assert.Contains("not available yet", announcer.Last, StringComparison.Ordinal);
-    }
-
-    [Fact]
     public void FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable() =>
         Sta.Pump(
             create: () => new DockingManager(),
