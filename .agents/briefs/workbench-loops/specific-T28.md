@@ -1,37 +1,30 @@
-# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Opus · node 3
+# Brief — T28 `wl1a-compiled-field` (WL-1a fix-forward) · Claude Code · Sonnet · node 4 (the drain heading)
 
-**Goal (Ruling 181; Owner's direction under it, after the T28 n2 join):** every submit shows its prompt in the compiled
-field, and nothing shown there can be sent again. The defect class behind the recurrence is closed by a gate.
-**Nodes 1 and 2 are joined on main** (`join-wl1a-compiled-field`). After a submit, the field shows the sent turn under
-`Compiled prompt — sent as b{n}`. `ShowCompiled` is its only writer. The resend guard is proven by a planted-leak mutation.
+**Goal (Owner's direction under Ruling 181):** the compiled field's heading never states something false.
+**Nodes 1–3 are joined on main** (n3 at `367f4de4`). A submit shows `Compiled prompt — sent as b{n}`. A queued send shows
+`Compiled prompt — queued as b{n}`. A second press never resends, and the gesture-oracle class gate is in place.
 
-**This node (n3), each red then green, through the user's real gesture:**
-- **(A) A queued send shows its prompt (Owner, under Ruling 181 (1)).** A queued send is a submit. Today, after Ctrl+Enter
-  with a turn in flight, the field shows the live empty draft under the plain heading. That reproduces the user's
-  complaint ("I submitted a prompt but the compiled prompt did not show in the compiled field"). After a queued send the
-  field shows **that turn's** compiled text, headed **`Compiled prompt — queued as b{n}`**: one const, the same words in
-  UIA (name and ItemStatus), and a DESIGN.md row beside the sent-state row. The next editor keystroke returns it to the
-  live view. Red through the gesture: a turn in flight, type, Ctrl+Enter (queued), open the field. Read `_queued` and
-  `BeginNextTurn` on main first (rule 14). Node 2 deliberately excluded the queued case (`_queued is null`).
-- **(B) The hard resend guard holds for the queued state.** A second Ctrl+Enter right after a queued send, with no
-  keystroke, must not queue the turn again or send it: no second queued row, no dispatch, no attempt row. The gate's own
-  refusal is shown. The display stays display-only and never feeds `RenderedView`. Prove the red with a planted leak, as
-  in node 2, and record it as a mutation red.
-- **(C) The class gate (Ruling 181 (3), DC-NEW-wl-t28-compiled).** A content oracle on a user-visible composer field must
-  drive the user's gesture, not set its state by changing the fixture directly. Build it as a test or a `tools/` gate
-  that fails when a test asserts composer field content (`_compiled.Text`, `CompiledView`, a UIA name of the compiled
-  field) without going through `ComposerGesture` (node 2's helper) on a `SessionDocumentSurface`, unless an allow-list
-  entry names it as pre-admit with a reason. Show it **failing** on a planted bare-composer content assertion, then
-  green on the tree. Update DC-NEW-wl-t28-compiled's status and control line in `docs/lessons/defect-classes.md`.
+**This node (n4). Each check is red then green, through the real gesture, with a turn in flight
+(`ComposerGesture.CtrlEnterThenWait`):**
+- **(A) Drain → sent.** Queue b2 behind b1, then let b1 complete. When the queue drains and b2 is sent, and the field is
+  still showing b2 because the user has typed nothing since, the heading switches from `queued as b2` to
+  `Compiled prompt — sent as b2`. The text, the UIA name and the ItemStatus switch with it. If the user has typed
+  since, nothing changes: the live draft stays. Red: assert `sent as b2` after b1 completes, with no keystroke. Today
+  it still reads `queued as b2`. Node 3's hand-off: nothing re-renders the field on the drain, and the fix is expected
+  to be one `ShowCompiled` call on the drain path. Open the code first (rule 14).
+- **(B) Drain refused → still queued.** b1 fails, or is stopped, so b2 is held and not sent (Ruling 95: the drain sends
+  only on Completed/Answered). The heading stays `queued as b2`, because that is still true. Red: plant the switch on
+  every drain outcome (mutation), and show this test fails. Then revert.
+- **(C) The resend guard after the switch.** After (A)'s switch to `sent as b2`, a press with no keystroke sends
+  nothing, as node 2's guard does. Prove the red with a planted leak, recorded as a mutation red.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k (rule 16). Node 2 measured 247k: **hand off at 170k**.
-**Kick** at 15 min by mail.
-**Desktop hold:** a "desktop hold occupied" result is re-run after 2 min and logged. Rules 19, 20 and 21 apply.
+**Tier** T2 · **fan-out** 0 · **budget** 80 tool calls · 150k · **kick** at 12 min by mail.
+**Rule 22:** this node hands off for a join, so run the ratchet before the done mail (the derived-view exception applies).
 
 ## Owned authored paths
-As in node 2, plus the new gate (a test under `tests/AiDe.App.Tests/Workbench/Composer/`, or `tools/verify-composer-gesture-oracles.py`;
-name it in handoff.md, and if it is a `tools/` gate, wire it the way the existing `tools/verify-*.py` gates are found),
-`docs/lessons/defect-classes.md` (your DC-NEW entry only), and the DESIGN.md row for the queued state.
+`src/AiDe.App/Workbench/Composer/ComposerSurface.cs` (the drain path's `ShowCompiled` call only), the compiled-field tests
+under `tests/AiDe.App.Tests/Workbench/Composer/`, and `{PROOF}/**`. `ComposerSendGate.cs` and `SessionDocumentSurface.cs`
+are read only.
 
 ## Not in scope
-The prefill (T30, Ruling 180). It is dispatched on this file after this node joins.
+The prefill (T30). It follows on this file after this node joins.
