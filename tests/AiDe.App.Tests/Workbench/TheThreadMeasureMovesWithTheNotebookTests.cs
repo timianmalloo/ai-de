@@ -27,7 +27,7 @@ public sealed class TheThreadMeasureMovesWithTheNotebookTests(ITestOutputHelper 
 
     public void Dispose() => _workspace.Dispose();
 
-    private sealed record Measure(double Body, double Pane, double Row, double WordsColumn, double MeasureWidth, double Words, double Reply, double LongestWord);
+    private sealed record Measure(double Window, double Body, double Pane, double Row, double WordsColumn, double MeasureWidth, double Words, double Reply, double LongestWord);
 
     /// <summary>The words of the long-prose fixture, one sentence repeated so the line runs far past 96 characters.</summary>
     private const string LongWords = "measure the words column against the ninety-six character line and its gutter at the startup size";
@@ -141,7 +141,7 @@ public sealed class TheThreadMeasureMovesWithTheNotebookTests(ITestOutputHelper 
         var longestWord = LongWords.Split(' ')
             .Max(w => new FormattedText(w + " ", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, words.FontSize, Brushes.Black, VisualTreeHelper.GetDpi(words).PixelsPerDip).WidthIncludingTrailingWhitespace);
 
-        var m = new Measure(frame.Body.ActualWidth, pane.ActualWidth, row.ActualWidth, column.ActualWidth, feed.MeasureWidth, words.ActualWidth, reply, longestWord);
+        var m = new Measure(frame.Window.ActualWidth, frame.Body.ActualWidth, pane.ActualWidth, row.ActualWidth, column.ActualWidth, feed.MeasureWidth, words.ActualWidth, reply, longestWord);
         output.WriteLine(string.Create(CultureInfo.InvariantCulture,
             $"{width}×{height} requested, {frame.Window.ActualWidth:F0}×{frame.Window.ActualHeight:F0} given{Clamped(frame, width, height)}: body {m.Body:F0} · Center pane {m.Pane:F0} · turn row {m.Row:F0} · words column {m.WordsColumn:F0} · 96ch = {m.MeasureWidth:F1} · words {m.Words:F1} · reply line {m.Reply:F1} · longest word {m.LongestWord:F1}"));
         return m;
@@ -203,6 +203,34 @@ public sealed class TheThreadMeasureMovesWithTheNotebookTests(ITestOutputHelper 
         {
             Assert.True(m.WordsColumn >= m.MeasureWidth + WideSlack, $"wide: the words column ({m.WordsColumn:F0}) is not {WideSlack} px wider than 96ch ({m.MeasureWidth:F0}) — the row does not test the cap");
         }
+    }
+
+    /// <summary>
+    /// Ruling 170: the window's minimum width is DERIVED, never chosen. The chrome around the turn's row (the activity
+    /// bar and the window frame, then the pane's chrome) is measured at the startup size. The minimum that holds the
+    /// thread is that chrome plus the 96ch measure, its gutter and the body's padding, and the window's own
+    /// <c>MinWidth</c> must reach it. Then, at that <c>MinWidth</c>, the turn's row is measured again and must hold the
+    /// measure, its gutter and padding.
+    /// </summary>
+    [Fact]
+    public void TheWindowsMinWidth_IsDerivedFromTheChromeAndTheMeasure_AndHoldsTheThreadThere()
+    {
+        var (startupWidth, startupHeight) = StartupSize();
+        var (minWidth, minHeight) = MinimumSize();
+
+        var startup = Sta.Run(() => MeasureAt(startupWidth, startupHeight, [LongProse(1)]), 90);
+        var shellChrome = startup.Window - startup.Body;   // the activity bar and the window's frame
+        var paneChrome = startup.Body - startup.Row;       // the pane's chrome around the turn's row
+        var derived = shellChrome + paneChrome + startup.MeasureWidth + Gutter + BodyPadding;
+        output.WriteLine(string.Create(CultureInfo.InvariantCulture,
+            $"derived minimum width: {shellChrome:F0} shell chrome + {paneChrome:F0} pane chrome + {startup.MeasureWidth:F1} measure + {Gutter} gutter + {BodyPadding} padding = {derived:F1}; MainWindow MinWidth = {minWidth}"));
+
+        Assert.True(minWidth >= derived, string.Create(CultureInfo.InvariantCulture,
+            $"MainWindow's MinWidth ({minWidth}) is below the width that holds the thread: {shellChrome:F0} shell chrome + {paneChrome:F0} pane chrome + {startup.MeasureWidth:F1} measure + {Gutter} gutter + {BodyPadding} padding = {derived:F1}"));
+
+        var atMinimum = Sta.Run(() => MeasureAt(minWidth, minHeight, [LongProse(1)]), 90);
+        Assert.True(atMinimum.Row >= atMinimum.MeasureWidth + Gutter + BodyPadding, string.Create(CultureInfo.InvariantCulture,
+            $"at MinWidth {minWidth}, the turn's row ({atMinimum.Row:F1}) cannot hold {atMinimum.MeasureWidth:F1} measure + {Gutter} gutter + {BodyPadding} padding"));
     }
 
     private sealed record Density(double Viewport, double Editor, int Realized, int HalfVisible, string Rows);
