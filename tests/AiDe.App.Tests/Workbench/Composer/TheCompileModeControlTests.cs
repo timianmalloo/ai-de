@@ -136,6 +136,32 @@ public sealed class TheCompileModeControlTests(ITestOutputHelper output) : IDisp
     }
 
     /// <summary>
+    /// T30 n3 (C): the row states the gate's real reason. A session stored <c>agentic-advisory</c> while Gate 1 admitted
+    /// it, then demoted (the gate now refuses advisory): the line names the gate's refusal and claims no admission. The
+    /// stored mode is unchanged, because a demotion is computed, never remembered (<see cref="CompileModeGate"/>).
+    /// </summary>
+    [Fact]
+    public void ASessionStoredAdvisory_WhenTheGateNowRefusesIt_TheRowStatesTheRefusal_AndClaimsNoAdmission()
+    {
+        ComposerGesture.Drive(_fixture, (window, document) =>
+        {
+            var config = NewSession(GateOneAdmits());
+            Assert.Equal(CompileModes.AgenticAdvisory, config.CompileMode);
+            var refusing = GateOneRefuses();
+            document.CompileModeLadder = () => refusing;
+            document.Composer.Gate.BindSession(config.SessionId, config.CompileMode, "claude-code", "implement");
+
+            var picker = OpenSettings(document);
+            var reason = refusing.RefusalFor(CompileModes.AgenticAdvisory)!.Reason;
+            output.WriteLine($"stored {StoredMode()} · gate refuses advisory: \"{reason}\" · selected {Selected(picker)} · why \"{Why(picker)}\" · items {Items(picker)}");
+            Assert.Equal(CompileModes.AgenticAdvisory, StoredMode());
+            Assert.Contains(reason, Why(picker), StringComparison.Ordinal);
+            Assert.DoesNotContain("admits", Why(picker), StringComparison.OrdinalIgnoreCase);
+            return Task.CompletedTask;
+        });
+    }
+
+    /// <summary>
     /// T30 n2 (C), DC-NEW-wl-t30-prefill: the settings query reads this test's own window only. Two concurrent windows are
     /// forced open first, each with an open popup holding a control named <i>Compile mode</i>: one on another STA thread
     /// (another test's, in the whole suite) and one on this thread. The control found must be this document's.
