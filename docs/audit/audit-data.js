@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T10:44:27Z",
+  "generated": "2026-10-19T10:27:34Z",
   "audit": [
     {
       "actor": null,
@@ -24908,30 +24908,6 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T10:05:32Z",
       "duration_seconds": 1322.0
-    },
-    {
-      "id": "al-01M59W6GHR1MDKTNPR7DHFT3TD",
-      "shortname": "wl-t11-kinds",
-      "datetime": "2026-10-19T10:44:27Z",
-      "session": "wl-t11-kinds",
-      "prompt": "T11 node 1: notebook + execution kinds bind T8's models (Ruling 152 D2 flip), Ctrl+1/2/3 inside WebView2, hide/float/redock a live notebook",
-      "summary": "Kicked at rule 16. A notebook half green (Kind=notebook, Center, Landing Center, session-document retired with report); 19 Left-dock tests to re-scope; execution kind, B, C not started",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.App/Workbench/SurfaceContentFactory.cs"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Node 1 checks A, B, C red then green",
-      "done_when": "three checks committed red then green; App and Core suites green",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T10:30:25Z",
-      "duration_seconds": 842.0
     }
   ],
   "changes": [
