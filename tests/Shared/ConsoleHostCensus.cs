@@ -141,7 +141,7 @@ public static class ConsoleHostCensus
         List<ProcessRow> rows = [];
         try
         {
-            using var document = JsonDocument.Parse(result.Stdout);
+            using var document = JsonDocument.Parse(EscapeControlCharactersInStrings(result.Stdout));
             var root = document.RootElement;
             foreach (var item in root.ValueKind == JsonValueKind.Array ? root.EnumerateArray().ToList() : [root])
             {
@@ -170,6 +170,43 @@ public static class ConsoleHostCensus
         }
 
         return rows;
+    }
+
+    /// <summary>
+    /// Windows PowerShell 5.1's <c>ConvertTo-Json</c> leaves C0 control characters (a live process's
+    /// <c>CommandLine</c> held 0x15) raw inside string values, which <see cref="JsonDocument"/> rejects
+    /// for as long as that process lives. Escaping them to <c>\u00XX</c> here keeps the row and every
+    /// other row and cannot change a value a leak assertion reads. It is done on the reading side so it
+    /// holds whichever interpreter emitted the text; whitespace between tokens is left alone.
+    /// </summary>
+    private static string EscapeControlCharactersInStrings(string json)
+    {
+        var escaped = new System.Text.StringBuilder(json.Length);
+        var inString = false;
+        var backslash = false;
+        foreach (var ch in json)
+        {
+            if (inString && ch < ' ')
+            {
+                escaped.Append("\\u").Append(((int)ch).ToString("x4", System.Globalization.CultureInfo.InvariantCulture));
+                backslash = false;
+                continue;
+            }
+
+            if (inString)
+            {
+                inString = backslash || ch != '"';
+                backslash = !backslash && ch == '\\';
+            }
+            else if (ch == '"')
+            {
+                inString = true;
+            }
+
+            escaped.Append(ch);
+        }
+
+        return escaped.ToString();
     }
 
     /// <summary>Polls until <paramref name="ownerPid"/> owns at least one headless host, or the deadline passes.</summary>
