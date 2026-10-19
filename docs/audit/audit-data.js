@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T15:22:19Z",
+  "generated": "2026-10-19T15:58:36Z",
   "audit": [
     {
       "actor": null,
@@ -25413,6 +25413,54 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T14:54:58Z",
       "duration_seconds": 1641.0
+    },
+    {
+      "id": "al-01M5AD31DTZH3R1CAQ2Q2QNZBF",
+      "shortname": "wl-t22-wl1b-design",
+      "datetime": "2026-10-19T15:39:39Z",
+      "session": "wl-t22-wl1b-design",
+      "prompt": "Run /design-slice for WL-1b and cut it into red-first implementation tracks.",
+      "summary": "WL-1b design committed (a768644c): no schema change, no v3 (no disposition is an adoption, Ruling 156); AcceptanceFold + WorkClosureFold; ChecklistService with in-txn eligibility and 5 IPC ops; wl1b bench at 100x; minimal checklist kind; tracks T23-T26; DR-1..DR-4 drafts; Proof Pack skeleton with draft demo.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1b.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Run /design-slice for WL-1b and cut it into red-first implementation tracks",
+      "done_when": "docs/design/workbench-loops-wl-1b.md committed on wl1b-design with patterns, contracts, E7 list, track cut, draft demo, Proof Pack skeleton, Patterns-vs-Simplifier and D&P reviews",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T15:25:56Z",
+      "duration_seconds": 823.0
+    },
+    {
+      "id": "al-01M5AE5QP6AKMBVQY15EGT2XFD",
+      "shortname": "wl-t24-wl1b-service",
+      "datetime": "2026-10-19T15:58:36Z",
+      "session": "wl-t24-wl1b-service",
+      "prompt": "T24 wl1b-service node 1: WL-1b checklist service in Core, checks B1-B3 (B3 with Ruling 176 enforcement), red then green",
+      "summary": "B1-B3 red then green; five checklist operations registered; Core suite 3069 pass / 11 fail (all T23 wl1b-folds red tests)",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/ChecklistOperations.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "WL-1b checklist service in Core: one writer txn per write, re-fold inside work.accept, stable refusal codes",
+      "done_when": "B1, B2, B3 red then green; Core suite green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T15:46:50Z",
+      "duration_seconds": 706.0
     }
   ],
   "changes": [
@@ -29486,6 +29534,30 @@ window.AUDIT_DATA = {
           "547a24f1 test: red — kind-census (Loomkeeper kinds under Factory)",
           "0457daa6 test: red — three-rows, no-fullwindow",
           "ed821a6e docs: design WL-S"
+        ]
+      }
+    },
+    {
+      "id": "cl-01M5AD31P43K0GJA9K2NY7XSBD",
+      "datetime": "2026-10-19T15:39:40Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "WL-1b design: acceptance as folds plus an in-transaction guarded accept; no schema change, no v3",
+      "prompt": "Run /design-slice for WL-1b and cut it into red-first implementation tracks.",
+      "summary": "Design doc and track cut T23-T26",
+      "rationale": "The v2 rows and raw writers/readers exist; ADR-0039/0040 make eligibility and closure fold-only; no WL-1b write touches notebook_dim, so Ruling 156's v3 is not owed",
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1b.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e8944ebc",
+        "after": "a768644c36a8dd0995d395f6c2e842213fde0da6",
+        "branch": "wl1b-design",
+        "pushed": null,
+        "commits": [
+          "a768644c docs: design WL-1b - obligations, evidence and acceptance; Proof Pack skeleton with draft demo; T22 hand-off"
         ]
       }
     }
