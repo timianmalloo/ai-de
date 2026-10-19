@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T07:02:39Z",
+  "generated": "2026-10-19T07:17:43Z",
   "audit": [
     {
       "actor": null,
@@ -24256,6 +24256,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T06:53:31Z",
       "duration_seconds": 547.0
+    },
+    {
+      "id": "al-01M59GBZCHSQBGJCSJ3NCAPWDE",
+      "shortname": "join-wl1a-notebook-ops-step8",
+      "datetime": "2026-10-19T07:17:43Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T14 wl1a-notebook-ops join d5e6b877",
+      "summary": "conductor-join recount OK; strict step 8 5/47 (baseline). gate_ratchet vs first parent dafcbee8: PASS, 0 refusals over 48 gates. Pushed d5e6b877:main; Release build exit 0. T14 + T14b Sonnet (54 calls/217k/13 min): notebook.open / revision.save / revision.latest red->green over a real pipe; journey-id collision refused (AIDE-STORE-JOURNEY-ID-COLLISION); one-transaction open tested (not red). Retroactive grant: one StoreErrorCodes constant in WorkspaceStore.cs (no running owner). T8 node 4 had merged this join before its push; it is now on main.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/notebook-ops/suite-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T14 on main under Ruling 151",
+      "done_when": "ratchet PASS; pushed; Release green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T07:10:38Z",
+      "duration_seconds": 425.0
     }
   ],
   "changes": [
@@ -28783,6 +28807,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t15-idgate"
+    },
+    {
+      "id": "mail-01M59FV7Y404W91MFB8ZAXTMY0",
+      "ts": "2026-10-19T07:08:35Z",
+      "from": "wl-t8-bind",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t8-bind"
+    },
+    {
+      "id": "mail-01M59FX8EKH802J7X4PC4YBQFC",
+      "ts": "2026-10-19T07:09:41Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59FX8EAK66B8PQEDQR4TRGN",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59FZQ0AQKRR0DRVNSPQMQTW",
+      "ts": "2026-10-19T07:11:02Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59FX8EAK66B8PQEDQR4TRGN",
+      "session": "wl-owner-20261018"
     }
   ]
 };
