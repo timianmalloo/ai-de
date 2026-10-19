@@ -2618,7 +2618,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 105 types, 471 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 416 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2631,7 +2631,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "73c9c8def2bd6576b9cbdbd77ee9c7f8af7bd1ab4465758c7bbf0fe416ac238f"
+      "sourceSha256": "82e7c3cb237ec44d1246af7a550e01d5dea7443eb232d8d0cc17245021a76037"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -3168,7 +3168,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 152 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 77 types, 151 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -3181,7 +3181,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fab21f818dce443e4e2c0db53d4813b265a2e1b6971dc4b20e245f5619b9853"
+      "sourceSha256": "693e3b6bd687577e68343ff35ac06146b4931a99032f172cfccbdffe44e8bf0c"
     },
     {
       "id": "api-aide-mcp",
@@ -10073,6 +10073,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "19e50784f6ce1f58cebee32fd631dba02848e23bf9ba69db194289b6b9d4642a"
+    },
+    {
+      "id": "design-workbench-loops-wl-s",
+      "path": "docs/design/workbench-loops-wl-s.md",
+      "title": "Design: WL-S — Factory · Review · Understand perspectives, FullWindow retired, kinds, hosts, named layouts and slot migration (ADR-0045)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops / WL-S",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "The detailed design for all of ADR-0045: the closed Perspective set re-rowed to factory · review · understand (all docking hosts), the full-window Explore body and its presenter path deleted, every existing surface kind re-admitted (Coordination's five under Factory), the notebook/execution kinds that split session-document, three hosts and the A↔B↔C unparent spike, named default layouts, and the slot migration by stable id. T4 builds §1–§2; T11 builds §4 and §7; T9 builds §5.",
+      "tags": [
+        "design",
+        "shell",
+        "perspectives",
+        "docking",
+        "layout",
+        "surfaces",
+        "workbench-loops",
+        "wl-s"
+      ],
+      "links": [
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "08a6ddc658b2c938a42648c0f17ee0d519011928e15e133713bf715b476dfd63"
     },
     {
       "id": "ui-bounded-count-chip",
@@ -22366,6 +22396,30 @@ window.DOCS_INDEX = {
       "sourceSha256": "77cc80d49098a2f418ab750edbbdf6b0aeb37a6257d9e0df54cb7fb4a352591a"
     },
     {
+      "id": "proof-workbench-loops-wl-s-sp3",
+      "path": "docs/proof/workbench-loops-wl-s/sp3/README.md",
+      "title": "Evidence — WL-S spine T4: Perspective re-row",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-S",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Track T4's red and green evidence for the Factory · Review · Understand re-row and FullWindow retirement (Rulings 149, 152); cited by the WL-S Proof Pack.",
+      "tags": [
+        "workbench-loops",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "adr-0045-perspective-set-factory-review-understand",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7ded6bcbcb12b6451738c364be70845a25dede117fbbc5797337bfc389ac1436"
+    },
+    {
       "id": "proof-worktree-cleanup-20261017",
       "path": "docs/proof/worktree-cleanup-20261017.md",
       "title": "AI-DE worktree preservation and retirement",
@@ -24321,5 +24375,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "4e16aacd87726425bfc58d4a27bfb981fda4d749d0a4f87a88fc98af8c1776ed"
+  "graphSha256": "2bc9c6b0ce2fed98d21c1570582e2080c6ca6cd1486e02a2141400e1b90a4e00"
 };

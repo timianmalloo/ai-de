@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T03:22:05Z",
+  "generated": "2026-10-19T03:38:46Z",
   "audit": [
     {
       "actor": null,
@@ -23184,82 +23184,184 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M590MBEP2MRBMHYDJ16PHY5H",
-      "shortname": "join-gate-hygiene",
-      "datetime": "2026-10-19T02:42:41Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of gate-hygiene into main",
-      "summary": "T13 (Ruling 151; exemptions per Ruling 154): register merge=union with a two-branch test; DesktopHold.Occupant contract; audit-capture, portable-text-io, preservation-policy, workbench-v2, gate-self-tests, project-coverage(spikes), site-figures fixed red-first; machine-path opt-outs accepted; mockups scanned with a design-system-colour-only exemption. Owner condition on T13b's -X ours: three-way diff of site/collaboration.html and site/index.html showed only data-figure cells discarded (no prose); main's side taken, then verify-site-figures --update recomputed 6 figures from source (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025, model.html 1 cell). Step 8 per Rulings 151/153. recount_seconds=517 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Burn down main's pre-existing red gates and remove the join-time defect classes",
+      "datetime": "2026-10-19T02:42:41Z",
       "done_when": "red set shrinks, no green->red, ratchet PASS",
-      "tier": "T1",
+      "duration_seconds": 519.0,
       "fan_out": 0,
+      "goal": "Burn down main's pre-existing red gates and remove the join-time defect classes",
+      "id": "al-01M590MBEP2MRBMHYDJ16PHY5H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of gate-hygiene into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-gate-hygiene",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-10-19T02:34:02Z",
-      "duration_seconds": 519.0
+      "summary": "T13 (Ruling 151; exemptions per Ruling 154): register merge=union with a two-branch test; DesktopHold.Occupant contract; audit-capture, portable-text-io, preservation-policy, workbench-v2, gate-self-tests, project-coverage(spikes), site-figures fixed red-first; machine-path opt-outs accepted; mockups scanned with a design-system-colour-only exemption. Owner condition on T13b's -X ours: three-way diff of site/collaboration.html and site/index.html showed only data-figure cells discarded (no prose); main's side taken, then verify-site-figures --update recomputed 6 figures from source (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025, model.html 1 cell). Step 8 per Rulings 151/153. recount_seconds=517 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M591B6SK4TW2BPYAC4ZSN0BR",
-      "shortname": "join-gate-hygiene-labels",
-      "datetime": "2026-10-19T02:55:10Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of gate-hygiene into main",
-      "summary": "Re-join for the RES-n residual labels (T13's R-n section labels were read by verify-ruling-citations as citations of undefined rulings R-1/R-2: the T13 ratchet's only refusal). Site-figure remedy confirmed: commit 18ed1bed changes 12 lines in 3 site files, all data-figure cells, 0 prose lines. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-support/hygiene/residuals.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Burn down main's pre-existing red gates",
+      "datetime": "2026-10-19T02:55:10Z",
       "done_when": "ratchet PASS vs 2390a99b",
-      "tier": "T1",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "goal": "Burn down main's pre-existing red gates",
+      "id": "al-01M591B6SK4TW2BPYAC4ZSN0BR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of gate-hygiene into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-gate-hygiene-labels",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-10-19T02:55:09Z",
-      "duration_seconds": 1.0
+      "summary": "Re-join for the RES-n residual labels (T13's R-n section labels were read by verify-ruling-citations as citations of undefined rulings R-1/R-2: the T13 ratchet's only refusal). Site-figure remedy confirmed: commit 18ed1bed changes 12 lines in 3 site files, all data-figure cells, 0 prose lines. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M5921YJ5W8KGAGWEHQ4MF0NX",
-      "shortname": "join-gate-hygiene-wording",
-      "datetime": "2026-10-19T03:07:35Z",
-      "session": "wl-leader-20261018",
-      "prompt": "the join of gate-hygiene into main",
-      "summary": "Re-join: pack-defects.md 'Rulings 1 to 153' was read by verify-ruling-citations as a citation of Ruling 1 (the second ratchet's only refusal). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-support/hygiene/pack-defects.md"
       ],
+      "compiled": false,
+      "datetime": "2026-10-19T03:07:35Z",
+      "done_when": "ratchet PASS vs 2390a99b",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Burn down main's pre-existing red gates",
+      "id": "al-01M5921YJ5W8KGAGWEHQ4MF0NX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of gate-hygiene into main",
+      "session": "wl-leader-20261018",
+      "shortname": "join-gate-hygiene-wording",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T03:07:34Z",
+      "summary": "Re-join: pack-defects.md 'Rulings 1 to 153' was read by verify-ruling-citations as a citation of Ruling 1 (the second ratchet's only refusal). Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T03:22:05Z",
+      "done_when": "pushed with ratchet PASS and the site-figure diff recorded",
+      "duration_seconds": 22023.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "Land T13 under Rulings 151/153/154",
+      "id": "al-01M592WGGVH0MVSWSEG4P76JCA",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Ruling 151/153/154 step-8 completion for the T13 gate-hygiene join",
+      "session": "wl-leader-20261018",
+      "shortname": "join-t13-step8-ratchet",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-18T21:15:02Z",
+      "summary": "T13 pushed 34e82fc4 (2390a99b..34e82fc4): strict step 8 now 5 of 47 red (was 10-14). Ratchet PASS 0/48 on the third attempt: attempt 1 refused 2 verify-ruling-citations findings from residuals.md R-n section labels (renamed RES-n, f363b8fa); attempt 2 refused 1 from pack-defects.md 'Rulings 1 to 153' prose (reworded). Ruling 154: mockups scanned, design-system-colour-only exemption, machine-path opt-outs accepted. Owner -X ours condition: three-way diff of site/collaboration.html and site/index.html (base 2de9d373, main 4c3e4b0c, T13 77e5a222) showed only data-figure cells discarded; main's side taken; verify-site-figures --update (18ed1bed) changed 12 lines in 3 site files, ALL data-figure cells, 0 prose lines (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025). Release build 0 errors.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-s.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:38:26Z",
+      "done_when": "design doc committed; three-row + no-FullWindow build tests; SH-4.1 oracle on Factory; old-row tests re-scoped red then green; Loomkeeper kinds under Factory; dotnet build + test green",
+      "duration_seconds": 3620.0,
+      "fan_out": 0,
+      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
+      "id": "al-01M58P2ZAQF18AP8CQ6BMX6BNN",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow.",
+      "session": "wl-t4-sp3",
+      "shortname": "wl-t4-sp3",
+      "skill": "implement",
+      "started_at": "2026-10-18T22:38:06Z",
+      "summary": "Design WL-S committed (ed821a6e; Patterns Expert + Simplifier gate). PerspectiveSet = factory/review/understand, FullWindow + Body column + Explorer surface/reader/presenter paths + Escape/Previous deleted; Loomkeeper kinds under Factory -> Coordination (Zone Center); slot alias; SH-4.1 oracle green on Factory; old-row tests re-scoped red->green; Core 2781 pass, App 1038/1039 + env re-run pass; Ruling 149 conditions recorded.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-18T23:51:42Z",
+      "done_when": "items 1-4 committed, build clean, suites green",
+      "duration_seconds": 650.0,
+      "fan_out": 0,
+      "goal": "Remove HYG-A leftovers and give four tests a red run",
+      "id": "al-01M58PV9J02THW6NWER3N7A5HD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T4 fix-forward: delete leftovers and orphans, DESIGN.md rows, mutation reds",
+      "session": "wl-t4-sp3",
+      "shortname": "wl-t4-sp3-fixforward",
+      "skill": "implement",
+      "started_at": "2026-10-18T23:40:52Z",
+      "summary": "ShellMode params, IconExplore, HtmlSandboxHost, NodeReaderContentState deleted; DESIGN.md renamed; four mutation reds saved; suites green bar the environmental chord test",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M593V0STST29FX5GT279V2V8",
+      "shortname": "join-sp3-perspective-rerow",
+      "datetime": "2026-10-19T03:38:45Z",
+      "session": "wl-leader-20261018",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T4: three DockHost rows (factory/review/understand) with Landing + RoutingOrder; FullWindow, ExplorerSurface, NodeReader*, HtmlSandbox* deleted; Loomkeeper kinds under Factory; SH-4.1 on Factory; D2/D4/D5 (Ruling 152); Ruling 149 interim corpus loss (docs/index.html) + knowledge-mode WL-S close row. Recount: the join's --update refused to lower App 1064->1026; the Leader re-baselined down with verify-test-run --allow-lower and the stated reason (37 test attributes in the 5 deleted files + rescopes), then ran the split recounts; verify-test-run --no-run OK (3962 tests). Continued --docs-only so the recount is not run a third time. Budget overrun 413/280 recorded as GO9. Step 8 per Rulings 151/153. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/sp3/README.md"
+      ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Burn down main's pre-existing red gates",
-      "done_when": "ratchet PASS vs 2390a99b",
+      "goal": "Re-row the Perspective set to Factory · Review · Understand and retire FullWindow",
+      "done_when": "three-row and no-FullWindow build tests, SH-4.1 on Factory, old-row tests re-scoped, ratchet PASS",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -23267,33 +23369,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T03:07:34Z",
+      "started_at": "2026-10-19T03:38:44Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M592WGGVH0MVSWSEG4P76JCA",
-      "shortname": "join-t13-step8-ratchet",
-      "datetime": "2026-10-19T03:22:05Z",
-      "session": "wl-leader-20261018",
-      "prompt": "Ruling 151/153/154 step-8 completion for the T13 gate-hygiene join",
-      "summary": "T13 pushed 34e82fc4 (2390a99b..34e82fc4): strict step 8 now 5 of 47 red (was 10-14). Ratchet PASS 0/48 on the third attempt: attempt 1 refused 2 verify-ruling-citations findings from residuals.md R-n section labels (renamed RES-n, f363b8fa); attempt 2 refused 1 from pack-defects.md 'Rulings 1 to 153' prose (reworded). Ruling 154: mockups scanned, design-system-colour-only exemption, machine-path opt-outs accepted. Owner -X ours condition: three-way diff of site/collaboration.html and site/index.html (base 2de9d373, main 4c3e4b0c, T13 77e5a222) showed only data-figure cells discarded; main's side taken; verify-site-figures --update (18ed1bed) changed 12 lines in 3 site files, ALL data-figure cells, 0 prose lines (audit-entries 859->866, artifacts 588->590, ledger 1,018->1,025). Release build 0 errors.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-support/hygiene/gates-after-r154.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T13 under Rulings 151/153/154",
-      "done_when": "pushed with ratchet PASS and the site-figure diff recorded",
-      "tier": "T1",
-      "fan_out": 0,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-18T21:15:02Z",
-      "duration_seconds": 22023.0
     }
   ],
   "changes": [
@@ -27337,6 +27414,37 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-01M58P2ZGJ6G67Q5B90Z5H4K33",
+      "datetime": "2026-10-18T23:38:26Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "WL-S design: Perspective set re-rowed to Factory/Review/Understand, FullWindow and the Body column retired",
+      "prompt": "T4 brief: /design-slice for all of ADR-0045, then implement 1(a)+1(b)",
+      "summary": "docs/design/workbench-loops-wl-s.md; D2 Factory Landing Left until T11; D3 Review admits none; D4 Escape/Previous deleted; D5 Body column deleted; s8 knowledge mode (Ruling 149)",
+      "rationale": "ADR-0045 1(a)/(b); both design adversaries co-signed D4/D5 as HYG-A deletions",
+      "artifacts": [
+        "docs/design/workbench-loops-wl-s.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4b439996",
+        "after": "3d46b718d293ef0e64b8a7c71f0554e4e412a0c1",
+        "branch": "sp3-perspective-rerow",
+        "pushed": null,
+        "commits": [
+          "3d46b718 test: green — kind-census, sh41-factory, slot-alias; suites; runtime; seam fallbacks (T4)",
+          "acfa04de feat: re-row the Perspective set to Factory · Review · Understand and retire FullWindow (ADR-0045 §1)",
+          "1ff6278a test: red — rescope (every old-row test: compile red list, then runtime red list)",
+          "c63a8ae4 test: red — slot-alias",
+          "edc21c7f test: red — sh41-factory (SH-4.1 oracle on the Factory host)",
+          "547a24f1 test: red — kind-census (Loomkeeper kinds under Factory)",
+          "0457daa6 test: red — three-rows, no-fullwindow",
+          "ed821a6e docs: design WL-S"
+        ]
       }
     }
   ],

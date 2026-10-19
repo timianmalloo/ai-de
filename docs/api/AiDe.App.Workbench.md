@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 105 types, 471 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 95 types, 416 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**105 public types · 471 public members · 70% documented.**
+**95 public types · 416 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -151,7 +151,7 @@ rather than papered over.
 
 The Center's empty copy — what the projection's placeholder renders while a host's Center holds
 no document (Ruling 83 condition 2; DESIGN.md's *"The empty states — the Center's copy in
-Coding"* row, and the *Nothing open here* row). **Two true sentences, by state**: the
+Coding"* row — Factory's since ADR-0045 — and the *Nothing open here* row). **True sentences, by state**: the
 copy is a function of the host's zones and of which session surfaces have a live document, so it
 is derived at every render rather than kept in step.
 
@@ -438,8 +438,8 @@ diagram canvas and to the `ScrollViewer` offsets.
 One docking host, composed as a unit (ADR-0031 rule 1): the manager, the adapter that projects
 the model into it, the zone service that IS the model, the controller that dispatches layout
 commands over that service, the collapse-to-rail strips, and — once a workspace attaches — the
-persistence of its own slot. `WorkbenchShell` composes it twice: host A (Coding,
-today's instances) and host B (Architecture).
+persistence of its own slot. `WorkbenchShell` composes it once per row of the
+closed Perspective set — Factory, Review and Understand (ADR-0045 §3).
 
 **Remarks.** **A positional record plus `Create` and `Dispose`, no behaviour**
 (the Tech Lead's bound). The record is what makes "a member host B cannot take" mechanical: a
@@ -578,125 +578,6 @@ Open Sequence is disabled (`mapping-unavailable`) until mapper r4 is frozen and 
 
 *No doc comment on this type.* **(gap)**
 
-## `ExplorerNodeAction`
-
-*enum* — `ExplorerNodeMenu.cs`
-
-What a right-click in Explore's graph offers for a node (Ruling 93).
-
-## `ExplorerNodeOption`
-
-*record* — `ExplorerNodeMenu.cs`
-
-One choice of Explore's node menu — the action and its label.
-
-## `ExplorerNodeMenu`
-
-*class* — `ExplorerNodeMenu.cs`
-
-Explore's node context menu (Ruling 93): **View source** first, then the reading gesture the
-reader already answers. Every action stays in Explore — a reading act on the current pane —
-never a routed kind-open (those are the raising host's `Open as…` grammar, Rulings 58/59,
-frozen). Pure, so the order is asserted without a window.
-
-| Member | Summary |
-|---|---|
-| `IReadOnlyList<ExplorerNodeOption> OptionsFor(NodeContextMenuRequest request)` | **(gap)** |
-
-## `ExplorerLayout`
-
-*enum* — `ExplorerSurface.cs`
-
-How the Explorer arranges its two panes for the available width (US-E8).
-
-## `ExplorerSurface`
-
-*class* — `ExplorerSurface.cs`
-
-The full-window Explorer surface (spec-knowledge-explorer-mode; design D2): a graph region and a
-reader region split by a draggable gutter. The graph is a dedicated `CanvasSurface`
-(its own instance — the workbench's canvas is never reparented across visual trees), and the reader
-follows the graph's selection through the `NodeSelected` seam (D3), while
-activating a reader edge walks the graph (US-E4/E5). Created once and retained by the mode
-controller, so a round-trip does not rebuild it.
-
-**Remarks.** **Responsive (US-E8).** Above `StackBelowWidth` the panes sit side by side; below it
-they stack (graph over reader), so both halves stay usable on one narrow single-monitor window
-rather than the reader being squeezed to its minimum. The layout is recomputed on size change and
-is a pure function of width, so it is testable without rendering.
-
-| Member | Summary |
-|---|---|
-| `ExplorerSurface(CanvasSurface graph, NodeReaderView reader)` | **(gap)** |
-| `CanvasSurface Graph { get; }` | **(gap)** |
-| `NodeReaderView Reader { get; }` | **(gap)** |
-| `double StackBelowWidth { get; set; } = 760` | The width below which the panes stack instead of sitting side by side (US-E8). |
-| `ExplorerLayout Layout { get; private set; } = ExplorerLayout.SideBySide` | The current arrangement of the two panes. |
-| `Func<bool>? ReturnFocusToGraph { get; set; }` | The action that returns focus from the reader to the graph, completing the cycle. Defaults to focusing the graph canvas; replaceable so the routing is testable without a live WebView2. |
-| `void ApplyLayoutForWidth(double width)` | Chooses the layout for a given available width and applies it if it changed. Pure function of width (a width of 0 — before first measure — keeps the side-by-side default). Public so the responsive rule is testable wit… |
-
-## `HtmlSandboxHost`
-
-*class* — `HtmlSandboxHost.cs`
-
-The one WebView2 the Explorer reader owns: it renders a node's HTML under
-`HtmlSandboxPolicy` — script disabled, no navigation, no network — by
-`NavigateToString`, and says so when the sandbox cannot be asserted so the reader can fall
-back to highlighted source (Ruling 93). Created on the first HTML node and kept for the reader's
-life: a WebView2 is a child process, and one per render would be one per right-click.
-
-**Remarks.** **The sandbox is applied before any document, and read back.** `Show` holds
-the HTML until the runtime has started, the settings are set, and `IsAsserted`
-has confirmed them; only then is the string navigated. A runtime that declines a setting, or a
-runtime that is not installed, reaches `SandboxUnavailable` and nothing is rendered.
-
-
-
-
-
-**What is measured on the normal path.** `CancelledNavigations` and
-`BlockedRequests` count every refusal, so a page that tried to leave is a number the
-out-of-process probe reads, never an inference from the policy's text.
-
-| Member | Summary |
-|---|---|
-| `HtmlSandboxHost(string surfaceId)` | **(gap)** |
-| `string SurfaceId { get; }` | **(gap)** |
-| `WebView2 View` | The hosted control. For the probe that measures it. |
-| `bool IsSandboxed { get; private set; }` | True once the runtime has started and the sandbox settings were read back as set. |
-| `string? Unavailable { get; private set; }` | Why the sandbox could not be asserted, or null while it can (or has not been tried). |
-| `int CancelledNavigations { get; private set; }` | How many top-level or frame navigations the policy cancelled. |
-| `int BlockedRequests { get; private set; }` | How many subresource requests the policy answered 403 instead of letting out. |
-| `int DocumentsShown { get; private set; }` | How many documents were navigated to (one per `Show` once sandboxed). |
-| `event Action<string>? SandboxUnavailable` | Raised once, with the reason, when the sandbox cannot be asserted. |
-| `event Action? DocumentShown` | Raised when a sandboxed document has been navigated to. |
-| `void Show(string html)` | Renders  once the sandbox is asserted; holds it until then. |
-| `void Dispose()` | Releases the browser. A WebView2 is a child process, not a visual. |
-
-## `HtmlSandboxPolicy`
-
-*class* — `HtmlSandboxPolicy.cs`
-
-The sandbox a repository's HTML renders under in the Explorer reader (Ruling 93): **script
-disabled, no navigation, no network**. Rendering workspace HTML with script enabled would be
-executing workspace code in the product process, so each rule here is a refusal, not a
-preference — and `IsAsserted` reads the runtime back rather than trusting the set.
-
-**Remarks.** **What "local" means.** A `NavigateToString` document lives at `about:blank`
-(or a `data:` URI, depending on the runtime's own choice for the string's length), and a
-document with no script cannot mint a `blob:`. Everything else — `http(s)`,
-`file`, `ftp`, `ws(s)`, an external scheme — is a request that leaves the
-process, and is cancelled or answered 403 before it does. A null or empty URI is refused too:
-a request whose destination cannot be read cannot be shown to be local.
-
-| Member | Summary |
-|---|---|
-| `void Apply(CoreWebView2Settings settings)` | Applies the sandbox. Script off, no message channel, no host objects, no dev tools. |
-| `bool IsAsserted(CoreWebView2Settings settings)` | Whether the runtime reports the sandbox as set. Read back after `Apply`: a setting the runtime declined is a sandbox that does not exist, and the reader falls back to highlighted source rather than render under a poli… |
-| `bool IsLocal(string? uri)` | Whether a URI stays inside the process: `about:` or `data:`. |
-| `bool MustCancelNavigation(string? uri)` | Whether a top-level or frame navigation must be cancelled. |
-| `bool MustBlockRequest(string? uri)` | Whether a subresource request must be answered without leaving the process. |
-
 ## `IHasDisplayName`
 
 *interface* — `IHasDisplayName.cs`
@@ -767,8 +648,8 @@ and writing the file on each one would turn a smooth drag into a stutter of disk
 | `string PrePerspectivesBackupSuffix = ".pre-perspectives.bak"` | The suffix of the one-time backup the first save after a dropping restore writes (ADR-0032 rule 3). |
 | `string RefusedBackupSuffix = ".bak"` | The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4). |
 | `LayoutPersistence(` | **(gap)** |
-| `string SlotPathFor(string layoutFilePath, Perspective perspective)` | The zone-envelope file of one host perspective's slot (ADR-0032 rule 1): Coding's is today's `<layout>.zones.json` — the empty suffix is the grandfathering decision, so a pre-Addendum-C file IS the Coding slot — and e… |
-| `Perspective Perspective` | The perspective whose slot this persists; `Coding` for the legacy tree path. |
+| `string SlotPathFor(string layoutFilePath, Perspective perspective)` | The zone-envelope file of one host perspective's slot (ADR-0032 rule 1): Factory's is today's `<layout>.zones.json` — the empty suffix is the grandfathering decision, so a pre-Addendum-C file IS the initial host's slo… |
+| `Perspective Perspective` | The perspective whose slot this persists; `Initial` for the legacy tree path. |
 | `IReadOnlyList<DroppedSurface> LastRestoreDropped { get; private set; } = []` | What the last `Restore` dropped from this slot (ADR-0032 rule 2) — by surface, reason and the perspective that admits it. Empty when nothing was dropped or nothing restored. |
 | `string? LastSaveFailure { get; private set; }` | Why the last `SaveNow` wrote nothing, or null when it succeeded (or never ran). |
 | `event Action<string>? SaveFailed` | Raised when a save could not be written, with the reason. May fire on the debounce timer's thread. |
@@ -830,51 +711,6 @@ DC-022) — so the viewer can render and be tested end-to-end while the real que
 | Member | Summary |
 |---|---|
 | `Task<NodeContent> GetAsync(string nodeId, CancellationToken cancellationToken = default)` | **(gap)** |
-
-## `NodeReaderContentState`
-
-*enum* — `NodeReaderContentState.cs`
-
-What the Explorer reader's content area is showing (Ruling 93). One value per rendered state,
-so a test reads the state the operator sees rather than inferring it from the visual tree.
-
-## `NodeReaderView`
-
-*class* — `NodeReaderView.cs`
-
-The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4): a
-selected node's header, metadata and walkable typed edges, and — below them, on the
-**View source** gesture (Ruling 93) — the node's content through ADR-0018's node-content
-query, rendered by the authority's `RenderKind`: code read-only and highlighted (the
-AvalonEdit viewer ADR-0025 chose), markdown as prose (links are text), HTML in a sandbox (script
-off, no navigation, no network — `HtmlSandboxHost`), and `None` as the
-shortfall sentence, verbatim. With no selection it shows an explicit empty state (US-E7).
-
-**Remarks.** **Two rows, one reader.** The top row (header · metadata · edges) scrolls on its own and is
-capped at `TopShare` of the reader once content is shown, so the content keeps a
-room of its own instead of being pushed below twenty-five edge rows (the writer-room lesson,
-DC-137, applied to a reader). With nothing shown the top row takes the whole reader.
-
-| Member | Summary |
-|---|---|
-| `Func<string, CancellationToken, Task<NodeContent>>? ContentSource { get; set; }` | The node-content query (ADR-0018's `NodeContentAsync`, behind the client seam), read live on each gesture so a reader built before a workspace attached still reaches it (DC-040). |
-| `NodeReaderContentState ContentState { get; private set; } = NodeReaderContentState.Idle` | What the content area shows (Ruling 93). |
-| `Task ViewSourceAsync(string nodeId, CancellationToken cancellationToken = default)` | The "View source" gesture for the node the reader is showing: fetches its content through `ContentSource` and renders it by kind. A reply for a node that is no longer the shown one is discarded (ADR-0018 echoes the id… |
-| `void ShowContent(NodeContent content)` | Renders one node's content in the content area, by its kind. A reply whose id is not the shown node's is discarded: the selection moved on while the query was in flight. |
-| `void Dispose()` | Releases the HTML sandbox's browser (a child process), if one was ever created. |
-| `NodeReaderView()` | **(gap)** |
-| `string? SelectedNodeId { get; private set; }` | The id of the node currently shown, or null when empty. |
-| `bool IsEmpty` | **(gap)** |
-| `int WalkableEdgeCount { get; private set; }` | How many typed edges (walk targets) the reader is currently offering. |
-| `void OnWalk(Action<string> walk)` | Registers the walk handler; called with the target id when an edge is activated. |
-| `event EventHandler<CanvasFocusDirection>? FocusLeaveRequested` | Raised when keyboard focus should leave the reader and return to the graph, so the Explorer can complete the graph↔reader cycle (spec US-E7/E8). The direction says which boundary was crossed (Forward = Tab off the las… |
-| `IReadOnlyList<UIElement> FocusStops` | The reader's ordered focus stops: the region itself (the entry) followed by its walkable edge buttons. Exposed so the cycle boundary is testable without a rendered visual tree. |
-| `CanvasFocusDirection? BoundaryLeave(object? focused, bool shift)` | Given the focused element and whether Shift is held, returns the direction focus should leave the reader — or null when the Tab stays inside the reader. Shift+Tab at the first stop leaves Backward; Tab at the last sto… |
-| `bool HandleTabKey(object? focused, bool shift)` | Handles a Tab keypress at the reader boundary: raises `FocusLeaveRequested` and returns true (the caller marks the event handled) when the Tab crosses a boundary; false when it stays inside the reader. |
-| `bool FocusReader()` | Moves keyboard focus into the reader region so a Tab off the graph canvas lands here rather than being swallowed by the canvas's keyboard trap (design D3/Phase-3 interim). From the reader — a normal WPF region — Tab t… |
-| `bool FocusReaderLast()` | Moves keyboard focus to the reader's LAST stop — used when the graph is left Backward (Shift+Tab off the graph's first node), so the cycle lands the user on the reader's end rather than its start (spec US-E7/E8 cycle). |
-| `void Clear()` | **(gap)** |
-| `void Show(CanvasNode node, IReadOnlyList<CanvasEdge> edges)` | **(gap)** |
 
 ## `NodeViewKind`
 
@@ -938,7 +774,7 @@ row says its opener is derived — "New <Title>" for a many-instance kind, "Show
 
 
 **Why one function and not a table in the builder.** The US-C4 mutation test appends a
-test-time kind row admitted only by Architecture and asserts its entry appears there and nowhere
+test-time kind row admitted only by Understand and asserts its entry appears there and nowhere
 else with no edit to the builder. A table cannot pass that; a join can.
 
 
@@ -1012,7 +848,6 @@ The pixels (the 3px bar, the accent glyph, the 44 × 44 target) are the item sty
 | `PerspectiveRailItem? ItemFor(Perspective perspective)` | The container of , or null before the containers exist. |
 | `void Reflect(Perspective active)` | Shows  as the selected destination — the ONE writer of the selection, called from the presenter's change event so the rail follows the body and never leads it. |
 | `void OnSelectionChanged(SelectionChangedEventArgs e)` | Any selection change that `Reflect` did not make is the list selecting on its own — reverted, and the attempted destination raised as an activation request instead. |
-| `void ShowFailure(Perspective perspective, string reason)` | Puts a destination into its error state (spec §C4): the body failed to build; activation retries. |
 | `DependencyObject GetContainerForItemOverride()` | **(gap)** |
 | `bool IsItemItsOwnContainerOverride(object item)` | **(gap)** |
 | `void PrepareContainerForItemOverride(DependencyObject element, object item)` | **(gap)** |
@@ -1027,17 +862,14 @@ The pixels (the 3px bar, the accent glyph, the 44 × 44 target) are the item sty
 
 One destination on the rail: its row, its constant accessible name (*"<Title> perspective"*
 — never suffixed with state), its tooltip with the keystroke rendered from the bound gesture
-(PS-R4), and its error state. The visual states are the item style in `MainWindow.xaml`.
+(PS-R4). The visual states are the item style in `MainWindow.xaml`; there is no error state —
+every body is a docking host built at construction, so no switch can fail to build one (ADR-0045 §1(b)).
 
 | Member | Summary |
 |---|---|
-| `DependencyProperty FailureProperty = DependencyProperty.Register(` | The body-failure reason while the destination is in its error state; null otherwise. |
-| `DependencyProperty HasFailureProperty = DependencyProperty.Register(` | True while `Failure` is set — what the item style's error trigger reads. |
-| `DependencyProperty GlyphProperty = DependencyProperty.Register(` | The glyph, resolved from the icon registry by the row's title (`IconCoding`, `IconExplore`, `IconArchitecture`, `IconCoordination` — PS-R4). |
+| `DependencyProperty GlyphProperty = DependencyProperty.Register(` | The glyph, resolved from the icon registry by the row's title (`IconFactory`, `IconReview`, `IconUnderstand` — PS-R4). |
 | `PerspectiveRailItem()` | **(gap)** |
 | `Perspective? Row { get; private set; }` | **(gap)** |
-| `string? Failure` | **(gap)** |
-| `bool HasFailure` | **(gap)** |
 | `Geometry? Glyph` | **(gap)** |
 | `string TooltipFor(Perspective row)` | The tooltip's text: the title and the bound gesture's display string — never a typed chord (US-C10 b3). |
 
@@ -1047,20 +879,14 @@ One destination on the rail: its row, its constant accessible name (*"<Title> pe
 
 One perspective switch, as the presenter reports it: from, to, and what asked for it.
 
-## `PerspectiveBodyFailure`
-
-*record* — `PerspectiveShell.cs`
-
-A body that could not be built: which perspective, and why (Addendum C §A9 Reliability; the rail's error state).
-
 ## `PerspectiveShell`
 
 *class* — `PerspectiveShell.cs`
 
 The shell-level presenter and command router (ADR-0017 as amended; ADR-0031 rule 2): owns the
-active `Perspective`, the four bodies — host A, host B, host C and the full-window
-Explore surface — the one *previous-perspective* slot (US-C1), and the body-content swap that
-realises a switch. Every catalog command enters through `Execute`, which resolves
+active `Perspective`, the three bodies — one docking host per row (ADR-0045 §3) —
+and the body-content swap that realises a switch. Every catalog command enters through
+`Execute`, which resolves
 the host a body-conditional command reaches and delegates to that host's
 `WorkbenchController`.
 
@@ -1069,14 +895,14 @@ window's life; a switch only *unparents* the one showing. WPF keeps an unparente
 `HwndHost`/`WebView2` child alive rather than destroying it — measured for a second
 docking host holding a live WebView2 and a raw `HwndHost` by
 `spikes/second-dock-host-unparent` (same `CoreWebView2`, HWND identical, zero
-`DestroyWindowCore` across A → B → A → B ×3 and B → Explore → B) — so the swap is a view
-change, not a session loss. The Explore surface is created on first entry and then held.
+`DestroyWindowCore` across A → B → A → B ×3) — so the swap is a view change, not a session
+loss. Every host is built at construction, so a switch never builds a body.
 
 
 
 
 
-**The router is table-driven, bounded (the Tech Lead's ruling).** Active and previous,
+**The router is table-driven, bounded (the Tech Lead's ruling).** The active perspective,
 the bodies, `Execute` = resolve the host then delegate, the perspective commands, the
 entry-verb rule. The host a command reaches is read from the command's own
 `CommandScope` and the kind rows' allow-lists — **a `switch` on any other
@@ -1096,30 +922,23 @@ that changes nothing writes nothing.
 
 | Member | Summary |
 |---|---|
-| `string BodyFailedCode = "AIDE-PERSPECTIVE-BODY-FAILED"` | The stable error code of a switch whose body could not be built. |
-| `string NoHostCode = "AIDE-PERSPECTIVE-NO-HOST"` | The stable error code of a body-conditional command run where no docking host is the body. |
 | `PerspectiveShell(` | **(gap)** |
 | `Perspective Active { get; private set; } = PerspectiveSet.Initial` | The active perspective; `Initial` until a switch. |
-| `Perspective Previous { get; private set; } = PerspectiveSet.Initial` | The one previous-perspective slot (US-C1): what Escape-from-Explore and the drill-to-node return restore. Initialised to Coding; after A → B → A it holds B. |
-| `DockHost? HostFor(Perspective perspective)` | The host of , or null for a full-window perspective. |
-| `DockHost? ActiveHost` | The active perspective's host, or null while a full-window body is showing. |
-| `UIElement? ExplorerSurface` | The Explore surface once it has been created; null until first entry. |
-| `event EventHandler<PerspectiveChange>? Changed` | Raised after the active perspective changes. Never for a no-op, never for a failed switch. |
-| `event EventHandler<PerspectiveBodyFailure>? BodyFailed` | Raised when a switch could not build its body; the active perspective is unchanged. |
-| `Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }` | Where focus lands after a switch, once the new body has had its first layout pass (spec §C5: Coding — the active document; Explore — the reader, never the canvas trap; Architecture — the Center's active tab). Set by t… |
-| `string? LandingSurfaceFor(DockHost host)` | The surface a switch to 's perspective lands focus on (spec §C5): the active tab of the row's `Landing` zone when the row names one and the arrangement has that zone open with content; else the Center's active tab — t… |
+| `DockHost HostFor(Perspective perspective)` | The host of  — every row has one. |
+| `DockHost ActiveHost` | The active perspective's host. |
+| `event EventHandler<PerspectiveChange>? Changed` | Raised after the active perspective changes. Never for a no-op. |
+| `Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }` | Where focus lands after a switch, once the new body has had its first layout pass (spec §C5: the row's `Landing` zone's active tab — `LandingSurfaceFor`). Set by the window, which knows the bodies' insides; returns tr… |
+| `string? LandingSurfaceFor(DockHost host)` | The surface a switch to 's perspective lands focus on (spec §C5): the active tab of the row's `Landing` zone when the arrangement has that zone open with content; else the Center's active tab — the document region, an… |
 | `bool FocusLanding(FrameworkElement content)` | Moves focus into a landing surface's content (spec §C5; DESIGN.md's landing row): a session document lands in its **editor** — the first action, where the operator types — and any other surface on its first focusable.… |
-| `string Activate(Perspective perspective, string trigger)` | Makes  the active one and returns what to announce. Activating the active perspective is a no-op that emits nothing (US-C1); a body that fails to build leaves the active perspective, the focus and the other bodies as … |
-| `bool Escape()` | Escape from the Explore surface's root restores the previous perspective (US-C1). Returns false — and does nothing — from a host, where Escape keeps its other roles. |
+| `string Activate(Perspective perspective, string trigger)` | Makes  the active one and returns what to announce. Activating the active perspective is a no-op that emits nothing (US-C1). |
 | `void OnDocumentOpening(Perspective host)` | The shell's `DocumentOpening` seam (ADR-0017 amendment clause 4, generalised): a dock document is about to open in 's body; if that body is not on screen, it becomes the body — document first, then the switch, as one … |
 | `bool Execute(string commandId)` | Runs a catalog command by id: a perspective command switches; a derived opener and a kind-scoped command reach the host that admits the kind (the active one when it does, else the first in routing order — ADR-0030 `Re… |
 
 ### `PerspectiveShell(`
 
 - **`body`** — The region the docking host occupies; its content is the active perspective's projection.
-- **`hosts`** — One `DockHost` per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).
-- **`explorerFactory`** — Builds the full-window Explore surface, once, on first entry.
-- **`announcer`** — The one live region every switch, refusal and failure is announced through.
+- **`hosts`** — One `DockHost` per row of `All` (ADR-0045 §3).
+- **`announcer`** — The one live region every switch is announced through.
 
 ### `bool FocusLanding(FrameworkElement content)`
 
@@ -1135,11 +954,10 @@ or first line.
 ### `string Activate(Perspective perspective, string trigger)`
 
 Makes  the active one and returns what to announce. Activating
-the active perspective is a no-op that emits nothing (US-C1); a body that fails to build
-leaves the active perspective, the focus and the other bodies as they were and reports why.
+the active perspective is a no-op that emits nothing (US-C1).
 
 - **`perspective`** — The perspective to show.
-- **`trigger`** — What asked for it — a catalog command id, `rail`, `escape`, `document-opening`, a replay step.
+- **`trigger`** — What asked for it — a catalog command id, `rail`, `document-opening`, a replay step.
 
 ## `PromptBar`
 
@@ -2735,10 +2553,7 @@ for it.
 
 - **`from`** — The perspective that was active.
 - **`to`** — The perspective asked for.
-- **`trigger`** — What asked: a catalog command id, `rail`, `escape`, `document-opening`, a replay step.
-- **`firstEntry`** — True when the target body was built by this switch (US-C12).
-- **`outcome`** — `switched` · `failed` (the body could not be built;  is not active) · `refused` (a host command with no host; nothing changed).
-- **`errorCode`** — The stable code of a failure or refusal; null on success (E7: the IO failure-rate axis).
+- **`trigger`** — What asked: a catalog command id, `rail`, `document-opening`, a replay step.
 
 **Remarks.** **Why this exists (INV-0009).** Two session documents were opened into the docking host
 while the Explorer was the body, and the shell announced each as opened. The log could show
@@ -2792,9 +2607,9 @@ of it. A capability nobody can open is not delivered.
 
 
 
-**Two hosts, one of each shared thing (ADR-0031).** Host A (`Coding`) is
-today's instances, unchanged in mechanism; host B (`Architecture`) and host C (`Coordination`, Ruling 84) are the same
-`DockHost` unit composed a second time. Each host owns its service, manager, adapter,
+**Three hosts, one of each shared thing (ADR-0031; ADR-0045 §3).** Host A
+(`Factory`) is today's instances, unchanged in mechanism; `Review` and
+`Understand` are the same `DockHost` unit composed again. Each host owns its service, manager, adapter,
 controller, rails and persistence slot; the shell owns both units and every workspace-level
 member — the factory, the session documents, the watcher, dispatch, the canvas binding. A pane
 binder walks *both* hosts, because the kind it binds lives in whichever host admits it.
@@ -2813,9 +2628,9 @@ one layout while the view rendered another.
 | Member | Summary |
 |---|---|
 | `WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)` | **(gap)** |
-| `DockHost Coding { get; }` | Host A — Coding: today's instances, unchanged in mechanism (ADR-0031). |
-| `DockHost Architecture { get; }` | Host B — Architecture: the same unit composed a second time, over its own allow-list and slot. |
-| `DockHost Coordination { get; }` | Host C — Coordination (Ruling 84): the same unit composed a third time, over the Loomkeeper kinds' allow-list and its own slot. |
+| `DockHost Factory { get; }` | Host A — Factory (ADR-0045 §1): today's instances, re-rowed, plus the Loomkeeper kinds under Factory → Coordination. |
+| `DockHost Review { get; }` | Host B — Review: the same unit composed again, over its own allow-list (no kind until WL-5) and slot. |
+| `DockHost Understand { get; }` | Host C — Understand: the same unit composed again, over the reading kinds' allow-list and the Architecture-named slot file (until T11's migration). |
 | `IReadOnlyList<DockHost> Hosts { get; }` | Every host, in rail order. |
 | `Func<string, bool>? CommandRouter { get; set; }` | Where a catalog command goes. Set by the window to the presenter's router (`Execute`), which resolves the host a body-conditional command reaches; unset — a headless shell, the replay — every command reaches host A's … |
 | `bool Execute(string commandId)` | Runs a catalog command through `CommandRouter`, or host A's controller when none is set. |
@@ -2830,7 +2645,6 @@ one layout while the view rendered another.
 | `PromptBar Prompt { get; }` | Stages a prompt for the focused terminal and reports the delivery receipt. |
 | `void Bind(UIElement host)` | Binds keyboard commands and the palette to a host element — normally the window. |
 | `void AttachWorkspace(` | Points the shell at a workspace that became available after it was built. |
-| `CanvasSurface CreateExplorerGraph()` | Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME workspace queries the workbench canvas reads — two graph-shaped APIs would be two answers that can disagree. A dedicated instan… |
 | `Task<bool> DispatchToAsync(string sessionId, string body)` | Transfers a prompt-draft body to a NAMED ready session (spec-editor-surfaces US-ED6), by its session id, through the same choreography as the focused path. Returns whether the terminal accepted the write (PtyWriteAcce… |
 | `IReadOnlyList<PromptTarget> ReadyPromptTargets()` | The ready terminal sessions a prompt draft may transfer to (US-ED6), live. |
 | `event Action<Perspective>? DocumentOpening` | Raised just before a command adds a dock document to the layout — a terminal, a prompt draft, a reference document, a session document. |
@@ -2849,13 +2663,13 @@ Raised just before a command adds a dock document to the layout — a terminal, 
 a reference document, a session document.
 
 **Remarks.** **The shell does not know which body is on screen, and this is how it stops needing
-to (INV-0009, DC-148).** The window swaps the body between the docking host and the
-full-body Explorer (ADR-0017); every opening command here mutates the layout model, renders
-the docking manager and announces from the result, all of which is true of the model whether
-or not the host is in a visual tree. Two session documents were opened that way into a host
-that was unparented, announced as *opened … maximized*, and never seen. The window
-handles this event by making the workbench the body — the Explorer surface is retained, not
-rebuilt — so a document is only ever opened into a body that is on screen.
+to (INV-0009, DC-148).** The window swaps the body between the perspectives' docking hosts
+(ADR-0017; ADR-0045); every opening command here mutates the layout model, renders the docking
+manager and announces from the result, all of which is true of the model whether or not the
+host is in a visual tree. Two session documents were opened that way into a host that was
+unparented, announced as *opened … maximized*, and never seen. The window handles this
+event by making the document's host the body — the other hosts are retained, not rebuilt — so
+a document is only ever opened into a body that is on screen.
 
 
 
