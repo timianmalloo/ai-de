@@ -12,7 +12,7 @@ links:
   - { to: design-workbench-loops-wl-s, rel: implements }
 review-by: "2026-11-18"
 summary: >-
-  Track T18 red and green evidence (nodes 1 and 2): the canvas toolbar's Knowledge-inclusive toggle turns the ExcludeKnowledge seam off for that canvas only, starts OFF, and names itself through one const per string (Ruling 149 (2); Ruling 166).
+  Track T18 red and green evidence (nodes 1 and 2; checks 1-5): the canvas toolbar's Knowledge-inclusive toggle turns the ExcludeKnowledge seam off for that canvas only, starts OFF, and names itself through one const per string (Ruling 149 (2); Ruling 166).
 ---
 
 # T18 `wls-knowledge-mode` — proof, nodes 1 and 2
@@ -43,8 +43,25 @@ All tests are in `tests/AiDe.App.Tests/Workbench/Canvas/KnowledgeModeTests.cs`.
 | 2 seam off for this canvas only; default code-only | 1 | `TheMode_TurnsTheExcludeKnowledgeSeamOff_ForThisCanvasOnly_AndTheDefaultStaysCodeOnly` | `the mode did not turn the seam off` | `e5599d04` | `0104ed64` | `check2-red.txt`, `check2-green.txt` |
 | 3 keyboard reach and UIA state, in the design's words | 1 | `TheMode_IsKeyboardReachable_AndItsStateIsExposedToUia_InTheDesignsWords` | `Expected: "BUTTON"` / `Actual: "none"` | `e5599d04` | `0104ed64` | `check3-red.txt`, `check3-green.txt` |
 | 4 toggle default OFF; text and UIA name one const each (Ruling 166 (1)(2)) | 2 | `TheToggle_IsDefaultOff_AndItsTextAndUiaNameAreOneConstEach` | `Expected: "Knowledge-inclusive"` / `Actual: null` | `6beddd74` | `44f17286` | `check4-red.txt`, `check4-green.txt` |
+| 5 every page read in the test fails on the `EvaluateAsync` sentinel | 2 | `EvaluateAsyncCallersGuardTests.EveryCallerChecksForTheFailureSentinel` (existing control) | `these files call EvaluateAsync and never check for its failure sentinel … KnowledgeModeTests.cs` | `626ccb36` | `0176c858` | `check5-red.txt`, `check5-green.txt` |
 
-Whole suites (App and Core): `suite-green.txt`.
+Whole suites (App and Core), after check 5: `suite-green.txt`.
+
+- `tests/AiDe.Core.Tests`: **3019 passed, 0 failed, 1 skipped** (3020).
+- `tests/AiDe.App.Tests`: **1126 passed, 2 failed, 1 skipped** (1129). The two failures are not T18 code:
+  `ASendWhileATurnRunsOffersWaitOrParallelTests.AfterStop_TheTurnIsStopRequested_AndTheQueuedTurnStaysQueuedBehindIt`
+  (`the composer editor could not start`) and `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`
+  (`foreground not held; SendInput would prove another window`). Both passed in the suite run before check 5, and both
+  pass when re-run alone: `suite-rerun.txt`, **2 passed, 0 failed**. They read as WebView2 start and foreground contention
+  on this machine (Inferred, not proven).
+
+### Check 5: a gap node 1 left
+
+Node 1 named `suite-green.txt` in this README but never wrote it. The first whole App run in node 2 failed one test:
+the existing guard `EvaluateAsyncCallersGuardTests` fired on `KnowledgeModeTests.cs`, which read the page without
+checking `EvaluateAsync`'s `(evaluate failed` sentinel. Check 5's red is that run, saved unchanged. The fix routes every
+page read in the test through one `Eval` helper that fails on the sentinel. The class already has a control (the guard
+did its job), so no new defect class is recorded.
 
 ### What check 4's red proves, and what it does not
 
@@ -63,11 +80,20 @@ So default OFF is **held** by check 4, not **made** by it. The red does not cove
   Persisting the toggle therefore needs a new per-surface field in Core's layout model and store (a schema change) and
   a factory change (T11's). Neither path is owned by T18. Recommendation and default: persistence matches Group
   (per instance, session only), unless the ruling adds the per-surface field.
+  **Ruling 169 answered it with that option:** the toggle is per instance, default OFF and session only, like Group.
+  There is no persistence and no schema change. Persisted view state for Group, 2D/3D and this toggle together is a
+  future designed feature, outside T18.
+
+## Per-instance non-leak (Ruling 169)
+
+Check 2 already proves that one canvas's toggle never affects another. It builds two `CanvasSurface` instances
+(`canvas-1`, `canvas-2`), turns the mode on for one, and asserts that the other's `ExcludeKnowledge` stays `true`
+(`the mode leaked to another canvas instance`). Its red (`check2-red.txt`) failed at `the mode did not turn the seam off`,
+the assertion just before the non-leak one, because at that commit there was no per-instance mode. No new test was added.
 
 ## Not done
 
-- **Ruling 166 (2) persistence across close and reopen** is not built. It waits on `req-01M59X00WGJBF1EAEGDMDXDZF3`.
-  Per-instance isolation (no leak to another canvas instance) is proven by check 2.
+- **Ruling 166 (2) persistence across close and reopen** is not built, by Ruling 169.
 - **Ruling 166 (1) DESIGN.md entry** for the two strings is not written. `DESIGN.md` is not in T18's owned paths.
 
 ## Residual risks
