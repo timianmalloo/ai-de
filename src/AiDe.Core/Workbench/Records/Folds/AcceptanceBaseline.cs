@@ -5,8 +5,7 @@ namespace AiDe.Core.Workbench.Records.Folds;
 /// <c>intent:&lt;notebook_id&gt;@&lt;revision_no&gt;</c> over the intent notebook's latest saved revision.
 /// </summary>
 /// <remarks>
-/// assume: DR-4 = A (the deliverable is the accepted intent revision). Confirm: the Owner's ruling on
-/// req-01M5AD6EH3Y1VE7BGNGM5KHJHH. If false: only this value object and its test change.
+/// Ruling 179: the deliverable is the accepted intent revision.
 /// HEAD, PR head and dirty-content hash are ADR-0040 baseline parts with no producer in WL-1b; the slice
 /// that adds one extends this type, and an old baseline then compares unequal and reads stale.
 /// </remarks>

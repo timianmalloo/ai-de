@@ -4,8 +4,8 @@ namespace AiDe.Core.Workbench.Records.Folds;
 /// Whether a human disposition removes an evidence gap on a mandatory obligation (ADR-0040 section 3).
 /// </summary>
 /// <remarks>
-/// assume: DR-2 = A (no disposition covers a mandatory obligation). Confirm: the Owner's ruling on
-/// req-01M5AD6E7JA61TVJGM32MHCQKP. If false: only <see cref="CoveringKinds"/> and its pinning test change.
+/// Ruling 177: no disposition covers a mandatory obligation. Adding a covering kind later is a ruling,
+/// not an edit; <see cref="CoveringKinds"/> and its pinning test change together.
 /// </remarks>
 public static class AcceptancePolicy
 {
