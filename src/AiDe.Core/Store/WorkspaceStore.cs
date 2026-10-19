@@ -18,6 +18,7 @@ public static class StoreErrorCodes
     public const string BodyHashRequired = "AIDE-STORE-BODY-HASH-REQUIRED";
     public const string DerivedStateInPayload = "AIDE-STORE-DERIVED-STATE-IN-PAYLOAD";
     public const string ReservedJourney = "AIDE-STORE-RESERVED-JOURNEY";
+    public const string AdoptionNotOffered = "AIDE-STORE-ADOPTION-NOT-OFFERED";
 }
 
 /// <summary>A store-layer failure carrying a stable, greppable code.</summary>
