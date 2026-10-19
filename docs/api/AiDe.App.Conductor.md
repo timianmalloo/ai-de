@@ -10,17 +10,71 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 11 types, 28 members, 100% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 16 types, 34 members, 94% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**11 public types · 28 public members · 100% documented.**
+**16 public types · 34 public members · 94% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `IAttemptHost`
+
+*interface* — `AttemptHost.cs`
+
+The execution-attempt host as the App binding sees it (ADR-0041; docs/design/workbench-loops-wl-1a.md).
+
+**Remarks.** An interface over one class for one reason: T8 builds its binding in parallel and its UI tests need a host
+with no engine behind it (the design's Simplifier condition 3). Every member answers with a receipt read back
+from the store, never an in-memory guess.
+
+## `AttemptDispatch`
+
+*record* — `AttemptHost.cs`
+
+A prepared revision, ready for the gate.
+
+| Member | Summary |
+|---|---|
+| `string DispatchKey` | The attempt's identity and its `run_id`: deterministic from the prepared envelope. |
+| `AttemptRow ToRow()` | The attempt row G0 writes. |
+
+## `AttemptStart`
+
+*record* — `AttemptHost.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AttemptRun`
+
+*record* — `AttemptHost.cs`
+
+The in-run write points `RunAsync` takes for an attempt.
+
+## `AttemptHost`
+
+*class* — `AttemptHost.cs`
+
+The stateful attempt host: one per workspace, holding the live set and the gate choreography, and calling
+`RunAsync` — still the one composition root — for every launch.
+
+| Member | Summary |
+|---|---|
+| `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken)` | Takes the workspace's host lock and runs the startup sweep (`host_restart`). A second host on the same workspace is refused here, so it can neither dispatch nor sweep another host's live attempts. |
+| `Task<AttemptStart> DispatchAsync(AttemptDispatch dispatch, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<AttemptReceipt?> ReadAsync(string dispatchKey, CancellationToken cancellationToken)` | **(gap)** |
+| `void Dispose()` | Releases the host lock — what a process death does, so a restarted host can take it. |
+
+### `Task<AttemptHost> OpenAsync(IAttemptLedger ledger, string hostLockFile, CancellationToken cancellationToken)`
+
+Takes the workspace's host lock and runs the startup sweep (`host_restart`). A second host on the same
+workspace is refused here, so it can neither dispatch nor sweep another host's live attempts.
+
+- **`hostLockFile`** — `<workspace>/.aide/attempt-host.lock`; the OS releases it when the process dies.
 
 ## `CompileRequest`
 

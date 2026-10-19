@@ -12,3 +12,5 @@
 {"agent": "wl-t8-bind", "at": 1792389601.1353538, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 12, "session": "wl-t8-bind", "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792389601.2407055, "kind": "release", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 13, "session": "wl-t8-bind", "wi": "workbench-loops"}
 {"agent": "wl-t8-bind", "at": 1792389601.386944, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Records/NotebookBindingTests.cs", "seq": 14, "session": "wl-t8-bind", "wi": "workbench-loops"}
+{"action": "add", "agent": "wl-t8-bind", "at": 1792390080.7888887, "deadline_at": 1792391880.7888887, "id": "req-01M59CCA8RBZWRMNPSFMFQ4PZF", "kind": "request", "path": "-", "seq": 15, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}
+{"action": "add", "agent": "wl-t8-bind", "at": 1792390150.464054, "deadline_at": 1792391950.464054, "id": "req-01M59CEEA37ER449Q3W3JGSGP2", "kind": "request", "path": "-", "seq": 16, "session": "wl-t8-bind", "to": "wl-leader2-20261019", "type": "request", "wi": "WI-0"}

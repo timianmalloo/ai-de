@@ -1,0 +1,4 @@
+{"agent": "wl-t14b-nbops", "at": 1792390234.5954862, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/journey-collision-red.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.625551, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/notebook-ops/open-atomicity-not-red.txt", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.6567414, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Store/WorkspaceStore.cs", "session": "wl-t14b-nbops", "wi": ""}
+{"agent": "wl-t14b-nbops", "at": 1792390234.6838176, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Notebooks/NotebookOperationsTests.cs", "session": "wl-t14b-nbops", "wi": ""}

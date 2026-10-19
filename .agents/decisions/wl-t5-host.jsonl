@@ -41,3 +41,15 @@
 {"agent": "wl-t5-host", "at": 1792389685.196332, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRunLogTests.cs", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792389685.2412043, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptStopTests.cs", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792389685.277333, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Attempts/RunLogOrderTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.7748265, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.8035603, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/node2-app-green.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.8330002, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/run-log-core-green.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.8626728, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/AttemptHost.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.8902721, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.9188423, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/RunEventRelay.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.9484642, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/AcpLaneClient.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390229.9761102, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/AcpPeer.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390230.0038233, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390230.032396, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390302.7161365, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/redaction-wiring-red.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390302.7471366, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRedactionTests.cs", "session": "wl-t5-host", "wi": ""}

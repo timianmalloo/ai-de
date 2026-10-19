@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:04:26Z",
+  "generated": "2026-10-19T06:13:56Z",
   "audit": [
     {
       "actor": null,
@@ -23974,24 +23974,101 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M59BEE4KEM47HAZWGTPE4TJA",
-      "shortname": "join-wl1a-redaction",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt"
+      ],
+      "compiled": false,
       "datetime": "2026-10-19T05:51:41Z",
-      "session": "wl-leader2-20261019",
+      "done_when": "recount green; step-8 ratchet PASS vs first parent; pushed",
+      "duration_seconds": 514.0,
+      "fan_out": 0,
+      "goal": "join T7 wl1a-redaction to main",
+      "id": "al-01M59BEE4KEM47HAZWGTPE4TJA",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl1a-redaction into main",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-redaction",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T05:43:07Z",
       "summary": "T7 (Grok grok-4.7, run wl-t7-20261019b) + T7b (Sonnet) FrameRedaction joined; offsets index the stored frame recount_seconds=513 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T06:04:26Z",
+      "done_when": "ratchet PASS; pushed; Release build green",
+      "duration_seconds": 25.0,
+      "fan_out": 0,
+      "goal": "Land T7 on main under Ruling 151",
+      "id": "al-01M59C5S5VMREVSVF5CWTJ00FQ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Ruling 151) for the T7 wl1a-redaction join 7c54de9e",
+      "session": "wl-leader2-20261019",
+      "shortname": "join-wl1a-redaction-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T06:04:01Z",
+      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6b062caf, same environment back to back: PASS, 0 refusals over 48 gates; never-ratcheted (151(3)): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage, evidence = conductor recount. Pushed 7c54de9e:main; Release build exit 0 (AiDe.Core.dll 05:54:56Z). T7 = Grok grok-4.7 run wl-t7-20261019b (1198 s) + T7b Sonnet fix-forward (offsets per RunEvent.cs:193, DC-NEW-wl-leader2). Leader read-back: FrameRedaction 19/19 re-run.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/workbench-loops-wl-1a.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-19T05:44:24Z",
+      "done_when": "design + interface committed and mailed; gate, idempotency, stale-prepare, W1-W4 red then green; handoff written",
+      "duration_seconds": 1904.0,
+      "fan_out": 2,
+      "goal": "T5 node 1: design, host interface, gate checks red then green",
+      "id": "al-01M59B13H0EQ2Q6QVGPKJVA7FY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Make an execution attempt write-ahead, deterministic, durable and honestly stoppable on the real claude-code lane (T5 node 1: design + host interface + gate/write-ahead/idempotency/stale-prepare/W1-W4)",
+      "session": "wl-t5-host",
+      "shortname": "wl-t5-host",
+      "skill": "implement",
+      "started_at": "2026-10-19T05:12:40Z",
+      "summary": "Node 1 green: WL-1a design (DSA veto cleared on re-review, Simplifier conditions applied), host interface IAttemptHost/IAttemptLedger/attempt.* IPC, gate G0/G2/G3 in one writer txn, stale-prepare refusal, native sweep with predicate, PTY sweep narrowed (DC-NEW-wl-t5-host), sole-host lock; 17 tests red then green; Core 2944/2945, App 1033/1034 (foreground flake passes alone). Node 2 handed off.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M59CQ4EZBGR187SGDP5PSNQ1",
+      "shortname": "join-wl1a-attempt-host-n1",
+      "datetime": "2026-10-19T06:13:55Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "the join of wl1a-attempt-host-n1 into main",
+      "summary": "T5 node 1 (Opus): design WL-1a + host interface + gate/idempotency/stale-prepare/W1-W4/sole-host red->green; DC-NEW-wl-t5-host recount_seconds=546 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt"
+        "docs/proof/workbench-loops-wl-1a/host/handoff.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T7 wl1a-redaction to main",
-      "done_when": "recount green; step-8 ratchet PASS vs first parent; pushed",
+      "goal": "join T5 node 1 to main",
+      "done_when": "recount green (SolutionTreeChordTests solo on head per Owner); ratchet PASS; pushed",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -23999,32 +24076,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-19T05:43:07Z",
-      "duration_seconds": 514.0
-    },
-    {
-      "id": "al-01M59C5S5VMREVSVF5CWTJ00FQ",
-      "shortname": "join-wl1a-redaction-step8",
-      "datetime": "2026-10-19T06:04:26Z",
-      "session": "wl-leader2-20261019",
-      "prompt": "Step 8 (Ruling 151) for the T7 wl1a-redaction join 7c54de9e",
-      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6b062caf, same environment back to back: PASS, 0 refusals over 48 gates; never-ratcheted (151(3)): verify-test-run, verify-terminal-host-exit-paths, verify-project-coverage, evidence = conductor recount. Pushed 7c54de9e:main; Release build exit 0 (AiDe.Core.dll 05:54:56Z). T7 = Grok grok-4.7 run wl-t7-20261019b (1198 s) + T7b Sonnet fix-forward (offsets per RunEvent.cs:193, DC-NEW-wl-leader2). Leader read-back: FrameRedaction 19/19 re-run.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/redaction/suite-green.txt"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Land T7 on main under Ruling 151",
-      "done_when": "ratchet PASS; pushed; Release build green",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-19T06:04:01Z",
-      "duration_seconds": 25.0
+      "started_at": "2026-10-19T06:04:47Z",
+      "duration_seconds": 548.0
     }
   ],
   "changes": [
@@ -28453,6 +28506,42 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t7b-redact"
+    },
+    {
+      "id": "mail-01M59C63F3T5HJ7T626PAKNZ89",
+      "ts": "2026-10-19T06:04:37Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-t5-host",
+      "kind": "unblocked",
+      "ref": null,
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59C8HME7PXKAM03YGVN7ZJW",
+      "ts": "2026-10-19T06:05:57Z",
+      "from": "wl-leader2-20261019",
+      "to": "wl-owner-20261018",
+      "kind": "decision-request",
+      "ref": "req-01M59C8HM5DG2YX6XHPHE4SJXZ",
+      "session": "wl-leader2-20261019"
+    },
+    {
+      "id": "mail-01M59CA04ZGN9ZP12XEPYQW2F0",
+      "ts": "2026-10-19T06:06:44Z",
+      "from": "wl-owner-20261018",
+      "to": "wl-leader2-20261019",
+      "kind": "ruling",
+      "ref": "req-01M59C8HM5DG2YX6XHPHE4SJXZ",
+      "session": "wl-owner-20261018"
+    },
+    {
+      "id": "mail-01M59CDVMVV5XA9H68X830PBDY",
+      "ts": "2026-10-19T06:08:51Z",
+      "from": "wl-t14-nbops",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t14-nbops"
     }
   ]
 };

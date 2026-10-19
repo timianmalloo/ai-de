@@ -28,3 +28,4 @@
 {"agent": "wl-t5-host", "at": 1792389264.0643659, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 28, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792389264.32152, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 29, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t5-host", "at": 1792389264.5082421, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "seq": 30, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t5-host", "at": 1792390302.897718, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs", "seq": 31, "session": "wl-t5-host", "ttl": 300.0, "wi": "workbench-loops"}

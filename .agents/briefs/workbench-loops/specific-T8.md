@@ -39,3 +39,6 @@ T5's tree or `main`).
 
 ## Not in scope
 The `notebook`/`execution` kind split and slot migration (T11), protocol v2 (WL-2), the host internals (T5), the folds (T6).
+
+## Ruling 156 obligation (adoption actor; Leader, 2026-10-19)
+- **Node 2 also:** AppendNotebook's adoption branch (`src/AiDe.Core/Store/Records/StoreWriter.Workbench.cs`, version_no > 1 setting an owner) refuses with one stable AIDE-STORE-* code (granted: that branch + the code constant only), red first in `tests/AiDe.Core.Tests`. The v3 `adopted_by` migration is NOT T8's unless a WL-1a path must write an adoption row; then it lands inside T8 first (Ruling 156(3)).
