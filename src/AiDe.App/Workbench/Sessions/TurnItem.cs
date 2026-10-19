@@ -115,7 +115,43 @@ public sealed class TurnItem : INotifyPropertyChanged
     public string Words => _view.SourceText;
     public string Name => TurnCopy.Name(_view);
     public string DecorationLine => TurnCopy.DecorationLine(_view.Decorations);
-    public string HelpText => _view.State == TurnState.Queued ? QueuedSentence : TurnCopy.ReasonSentence(_view);
+    public string HelpText => _view.State switch
+    {
+        TurnState.Queued => QueuedSentence,
+        TurnState.DeliveryUnknown when _attempt is not null => TurnCopy.ReasonSentence(_view) + " " + LastEventLine,
+        _ => TurnCopy.ReasonSentence(_view),
+    };
+
+    /// <summary>
+    /// Ruling 164: how far a DeliveryUnknown attempt's run log got — <i>#{seq} at {HH:mm:ss}</i> (the thread's local
+    /// event clock), or <i>not recorded</i> when it holds no event. One const; a row with no attempt carries no line.
+    /// </summary>
+    public const string LastEventReceived = "Last event received: {0}.";
+
+    private string LastEventLine => string.Format(
+        CultureInfo.InvariantCulture,
+        LastEventReceived,
+        _lastEvent is { } last
+            ? string.Create(CultureInfo.InvariantCulture, $"#{last.Seq} at {last.Ts.ToLocalTime():HH:mm:ss}")
+            : NotRecorded);
+
+    /// <summary>The last run event the notebook's fold received for this turn, read by the feed; null when none.</summary>
+    public AiDe.Core.AgentPlane.RunEvent? LastEvent
+    {
+        get => _lastEvent;
+        set
+        {
+            if (Equals(_lastEvent, value))
+            {
+                return;
+            }
+
+            _lastEvent = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HelpText)));
+        }
+    }
+
+    private AiDe.Core.AgentPlane.RunEvent? _lastEvent;
     public IReadOnlyList<DecorationRow> Decorations => _view.Decorations;
     public string Time => _view.At.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture);
     public TurnState State => _view.State;

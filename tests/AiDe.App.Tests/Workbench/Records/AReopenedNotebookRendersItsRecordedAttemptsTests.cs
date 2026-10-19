@@ -156,7 +156,6 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
                 var row = Assert.Single(surface.Thread.Rows);
                 Assert.Equal(TurnState.DeliveryUnknown, row.State);
                 Assert.Equal("delivery unknown", row.OutcomeWord);
-                Assert.Equal(TurnCopy.ReasonSentence(row.View), row.HelpText);
                 Assert.Equal($"Sent from revision {attempt.RevisionNo} · request {attempt.ProjectionSha![..7]} · via claude-code", row.BindingLine);
                 var lines = row.View.Events.Select(e => e.Text).ToList();
                 Assert.Contains(lines, l => l.StartsWith($"DeliveryUnknown: {DispatchErrorCodes.DeliveryUnknown} host_restart", StringComparison.Ordinal));

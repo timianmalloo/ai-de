@@ -141,6 +141,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
         _feed.AttemptOf = ordinal => notebook.Runs.AttemptOf(ordinal)?.Attempt;
+        _feed.LastEventOf = notebook.Runs.LastEventOf;
         notebook.Runs.AttemptsChanged += OnAttemptsChanged;
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;

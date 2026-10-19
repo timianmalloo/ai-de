@@ -98,14 +98,34 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it.</summary>
     public Func<bool> ReducedMotion { get; set; } = static () => !SystemParameters.ClientAreaAnimation;
 
-    /// <summary>Re-reads every row's attempt from <see cref="AttemptOf"/>.</summary>
+    /// <summary>Re-reads every row's attempt from <see cref="AttemptOf"/> and its last event from <see cref="LastEventOf"/>.</summary>
     public void RefreshAttempts()
     {
         foreach (var row in _items)
         {
-            row.Attempt = _attemptOf(row.Ordinal);
+            Bind(row);
         }
     }
+
+    private void Bind(TurnItem row)
+    {
+        row.Attempt = _attemptOf(row.Ordinal);
+        row.LastEvent = _lastEventOf(row.Ordinal);
+    }
+
+    /// <summary>The last run event the notebook's fold received for a turn (Ruling 164); null when none.</summary>
+    public Func<int, AiDe.Core.AgentPlane.RunEvent?> LastEventOf
+    {
+        get => _lastEventOf;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            _lastEventOf = value;
+            RefreshAttempts();
+        }
+    }
+
+    private Func<int, AiDe.Core.AgentPlane.RunEvent?> _lastEventOf = static _ => null;
 
     /// <summary>The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none.</summary>
     public Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf
@@ -115,10 +135,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         {
             ArgumentNullException.ThrowIfNull(value);
             _attemptOf = value;
-            foreach (var row in _items)
-            {
-                row.Attempt = _attemptOf(row.Ordinal);
-            }
+            RefreshAttempts();
         }
     }
 
@@ -269,7 +286,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
                 var row = _items[i];
                 var wasLive = row.IsLive;
                 row.View = turn;
-                row.Attempt = AttemptOf(turn.Ordinal);
+                Bind(row);
 
                 // The running turn shows its lines live; a concluded turn folds them (SC7).
                 if (row.IsLive)
@@ -283,7 +300,8 @@ public sealed class ThreadFeed : FeedList, IDisposable
             }
             else
             {
-                var row = new TurnItem(turn) { Attempt = AttemptOf(turn.Ordinal), IsFoldOpen = turn.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested };
+                var row = new TurnItem(turn) { IsFoldOpen = turn.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested };
+                Bind(row);
                 _items.Add(row);
             }
         }

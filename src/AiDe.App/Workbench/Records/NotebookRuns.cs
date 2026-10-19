@@ -66,6 +66,7 @@ public sealed class NotebookRuns : IDisposable
     private readonly Lock _gate = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
     private readonly Dictionary<int, AttemptReceipt> _attempts = [];
+    private readonly Dictionary<int, RunEvent> _lastEvents = [];
 
     // Host-bound only: each turn's dispatch key, derived at Send (AttemptKey.For — nothing stored beside the envelope);
     // a successor held at the host, by its G0 and the cancellation that becomes its run's once it starts.
@@ -284,11 +285,14 @@ public sealed class NotebookRuns : IDisposable
         }
     }
 
-    /// <summary>The copy a restored row ends with when its host was killed mid-run: how far the run's log got.</summary>
-    public const string RestoredLastEvent = "Last recorded event: seq {0} at {1}";
-
-    /// <summary>The same line when the attempt's run log holds no event.</summary>
-    public const string RestoredNoEvent = "Last recorded event: not recorded";
+    /// <summary>The last run event the one fold received for turn <paramref name="ordinal"/>; null when it received none.</summary>
+    public RunEvent? LastEventOf(int ordinal)
+    {
+        lock (_gate)
+        {
+            return _lastEvents.GetValueOrDefault(ordinal);
+        }
+    }
 
     private bool Holds(string dispatchKey)
     {
@@ -320,14 +324,6 @@ public sealed class NotebookRuns : IDisposable
         if (state is not (TurnState.Completed or TurnState.Answered))
         {
             Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, lane, "stderr", FailureLine(receipt.Terminal), "run"));
-        }
-
-        if (state == TurnState.DeliveryUnknown)
-        {
-            var last = events.Count == 0
-                ? RestoredNoEvent
-                : string.Format(CultureInfo.InvariantCulture, RestoredLastEvent, events[^1].Seq, events[^1].Ts.ToString("O", CultureInfo.InvariantCulture));
-            Thread.Append(ordinal, new EventLine(DateTimeOffset.Now, lane, "stderr", last, "run"));
         }
 
         Thread.Conclude(ordinal, state, Timestamp(receipt.Terminal?.RecordedAt) ?? DateTimeOffset.Now);
@@ -548,6 +544,11 @@ public sealed class NotebookRuns : IDisposable
     /// </summary>
     private void FoldEvent(int ordinal, string lane, RunEvent evt)
     {
+        lock (_gate)
+        {
+            _lastEvents[ordinal] = evt;
+        }
+
         var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
         Thread.Append(
             ordinal,
