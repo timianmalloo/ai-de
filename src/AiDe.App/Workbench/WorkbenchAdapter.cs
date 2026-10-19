@@ -955,10 +955,14 @@ public sealed class WorkbenchAdapter
         var mapped = MapNode(root.RootPanel, known);
         if (mapped is null) { return null; }
 
+        // A floating stack's id is saved with the layout, so a restored window keeps an id an earlier
+        // process minted, and the static counter restarts with each process. A native float's id skips
+        // every node id the model holds and every id this read has taken (T21 n6 check C).
+        var inUse = _service.Current.AllStacks().Select(s => s.Id).ToHashSet(StringComparer.Ordinal);
         var floating = new List<StackNode>();
         foreach (var window in root.FloatingWindows)
         {
-            if (MapFloatingWindow(window, known) is not { } stack) { return null; }
+            if (MapFloatingWindow(window, known, inUse) is not { } stack) { return null; }
             floating.Add(stack);
         }
 
@@ -983,7 +987,7 @@ public sealed class WorkbenchAdapter
     /// natively gets a fresh one. Its bounds are read from the view, so the next render reopens it where
     /// it is. Anything else (an anchorable window, several panes, the Center's placeholder) is null.
     /// </summary>
-    private static StackNode? MapFloatingWindow(LayoutFloatingWindow window, IReadOnlyDictionary<string, Surface> known)
+    private static StackNode? MapFloatingWindow(LayoutFloatingWindow window, IReadOnlyDictionary<string, Surface> known, HashSet<string> inUse)
     {
         if (window is not LayoutDocumentFloatingWindow { RootPanel: { } group }) { return null; }
 
@@ -1005,7 +1009,8 @@ public sealed class WorkbenchAdapter
         }
 
         var paneId = ((ILayoutPaneSerializable)pane).Id;
-        var stackId = paneId is { Length: > 0 } && paneId.StartsWith("float-", StringComparison.Ordinal) ? paneId : NewNodeId("float");
+        var stackId = paneId is { Length: > 0 } && paneId.StartsWith("float-", StringComparison.Ordinal) ? paneId : NewFloatId(inUse);
+        inUse.Add(stackId);
         var bounds = Placed(pane.FloatingLeft, pane.FloatingTop, pane.FloatingWidth, pane.FloatingHeight)
             ?? Placed(group.FloatingLeft, group.FloatingTop, group.FloatingWidth, group.FloatingHeight);
         return new StackNode(stackId, [.. surfaces], Math.Clamp(pane.SelectedContentIndex, 0, surfaces.Count - 1),
@@ -1101,6 +1106,18 @@ public sealed class WorkbenchAdapter
     private static int _nodeSeq;
     private static string NewNodeId(string prefix) =>
         $"{prefix}-view-{System.Threading.Interlocked.Increment(ref _nodeSeq)}";
+
+    private static string NewFloatId(HashSet<string> inUse)
+    {
+        string id;
+        do
+        {
+            id = NewNodeId("float");
+        }
+        while (inUse.Contains(id));
+
+        return id;
+    }
 
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
