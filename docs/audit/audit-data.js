@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T06:13:56Z",
+  "generated": "2026-10-19T06:29:00Z",
   "audit": [
     {
       "actor": null,
@@ -24078,6 +24078,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-19T06:04:47Z",
       "duration_seconds": 548.0
+    },
+    {
+      "id": "al-01M59DJRXBJRZD82NWD68Y6SPT",
+      "shortname": "join-wl1a-attempt-host-n1-step8",
+      "datetime": "2026-10-19T06:29:00Z",
+      "session": "wl-leader2-20261019",
+      "prompt": "Step 8 (Ruling 151) for the T5 node 1 join 22d2484e",
+      "summary": "conductor-join recount OK; strict step 8 5/47 red (baseline). gate_ratchet vs first parent 6c9782ca: PASS, 0 refusals over 48 gates (Ruling 153 filter dropped parent=106 head=107; +1 = Ruling 156's heading, PD-1). Pushed 22d2484e:main; Release build exit 0 (AiDe.App.dll 06:18:07Z). SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph PASSED SOLO on the join head (21 s, T4 present): per the Owner's correction on report 3 this is PASS and DISCHARGES Ruling 155(2)'s attended-run debt for this test; the WL-0 GUI demo and the IME check stay owed. Ruling 156 (Owner register) was swept into the join commit by step 7's staging. Proof: docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/host/solution-tree-chord-solo-on-join-head.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Land T5 node 1 on main under Ruling 151",
+      "done_when": "ratchet PASS; solo SolutionTree PASS recorded; pushed; Release green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T06:09:38Z",
+      "duration_seconds": 1162.0
     }
   ],
   "changes": [
@@ -28542,6 +28566,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t14-nbops"
+    },
+    {
+      "id": "mail-01M59CTMD5YR40G0VCB9R3XDJD",
+      "ts": "2026-10-19T06:15:49Z",
+      "from": "wl-t14b-nbops",
+      "to": "wl-leader2-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t14b-nbops"
     }
   ]
 };

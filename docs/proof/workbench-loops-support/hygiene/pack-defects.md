@@ -73,3 +73,21 @@ for it to be filed here.
   missing set. A self-test covers a `.gitattributes` that declares only `merge=union`, which must report effective.
 - **Interim rule (Owner):** a NOT EFFECTIVE that names only `union` is known noise. A NOT EFFECTIVE that names
   `coord-regen` or `coord-register` is still real.
+
+## PD-4 — `coord claim` refuses every in-flight track after each join, because a recount baseline counts as a control
+
+Filed by the Leader `wl-leader2-20261019` on 2026-10-19.
+
+- **Gate:** `coord claim`'s control-currency check (`docs/ai-forward-pack/scripts/coord-core.py`, `CONTROL_PATHS` at
+  line 1277 = `docs/ai-forward-pack/scripts`, `tools`; refusal `COORD-CLAIM-STALE-CONTROLS` at line 5491).
+- **Finding:** T14 (`wl-t14-nbops`, tree based on 2d3cb1bd) had all three claims on its shared files refused. It then
+  edited them without a claim. Measured cause: the only commit on `origin/main` touching `CONTROL_PATHS` that the tree
+  lacked was the T7 join `7c54de9e`. That join changed exactly one control-path file, `tools/expected-test-counts.json`
+  (2 lines), which is the recount floor `conductor-join.py` rewrites on every join. No executable control changed.
+- **Why it is the pack's:** the check treats a data baseline that every join rewrites as a control change. So after every
+  join, every in-flight track is "stale" until it merges main, and the claim floor is unusable in parallel work.
+- **Proposed fix:** exclude recount baselines (`expected-test-counts.json` and any file the join writes as a floor) from
+  the currency set, or limit it to executable controls (`*.py`, `*.ps1`). Add a self-test: a tree behind main by one
+  floor-only join still claims.
+- **Drive mitigation:** running tracks merge `origin/main` before their next claim. This was mailed to T5 and T8 on
+  2026-10-19.

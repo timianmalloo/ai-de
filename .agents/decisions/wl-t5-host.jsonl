@@ -53,3 +53,11 @@
 {"agent": "wl-t5-host", "at": 1792390230.032396, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792390302.7161365, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/redaction-wiring-red.txt", "session": "wl-t5-host", "wi": ""}
 {"agent": "wl-t5-host", "at": 1792390302.7471366, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRedactionTests.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390457.1927016, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/redaction-wiring-green.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390457.2242785, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.691537, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/README.md", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.721259, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/measures.json", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.7498412, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/outcome-rows.json", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.777444, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/run-log.jsonl", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.804063, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1a/host/real-lane-stop/test-run.txt", "session": "wl-t5-host", "wi": ""}
+{"agent": "wl-t5-host", "at": 1792390611.8321059, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/Attempts/AttemptRealLaneStopTests.cs", "session": "wl-t5-host", "wi": ""}
