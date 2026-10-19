@@ -20,5 +20,15 @@ public static class RouteWords
     public static string Engine(string engineId) => engineId;
 
     /// <summary>The route of a fingerprint; a shape this does not know renders verbatim, never guessed.</summary>
-    public static string For(string fingerprint) => fingerprint;
+    public static string For(string fingerprint)
+    {
+        if (fingerprint == PtyFingerprint)
+        {
+            return TerminalWord;
+        }
+
+        return fingerprint.StartsWith(AcpPrefix, StringComparison.Ordinal) && fingerprint.Length > AcpPrefix.Length
+            ? Engine(fingerprint[AcpPrefix.Length..])
+            : fingerprint;
+    }
 }

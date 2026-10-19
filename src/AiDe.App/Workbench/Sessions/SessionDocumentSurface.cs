@@ -140,6 +140,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable, INoteb
         // turns; CV-1's run channel, caught up from construction.
         _thread = notebook.Thread;
         _feed = new ThreadFeed(_thread, _announcer, SurfaceId);
+        _feed.AttemptOf = ordinal => notebook.Runs.AttemptOf(ordinal)?.Attempt;
         _feed.FocusLeaveRequested += OnFeedLeave;
         _feed.TurnActionRequested += OnTurnAction;
         _feed.Stopped += ShowStoppedRow;

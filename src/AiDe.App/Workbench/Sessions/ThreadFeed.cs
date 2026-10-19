@@ -99,7 +99,21 @@ public sealed class ThreadFeed : FeedList, IDisposable
     public Func<bool> ReducedMotion { get; set; } = static () => !SystemParameters.ClientAreaAnimation;
 
     /// <summary>The attempt of a turn, read from the attempt host (never from composer state); null when the turn has none.</summary>
-    public Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf { get; set; } = static _ => null;
+    public Func<int, AiDe.Core.Store.Records.AttemptRow?> AttemptOf
+    {
+        get => _attemptOf;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            _attemptOf = value;
+            foreach (var row in _items)
+            {
+                row.Attempt = _attemptOf(row.Ordinal);
+            }
+        }
+    }
+
+    private Func<int, AiDe.Core.Store.Records.AttemptRow?> _attemptOf = static _ => null;
 
     /// <summary>The rows, in ordinal order — a rebuildable projection of the read model's turns.</summary>
     public IReadOnlyList<TurnItem> Rows => _items;
@@ -246,6 +260,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
                 var row = _items[i];
                 var wasLive = row.IsLive;
                 row.View = turn;
+                row.Attempt = AttemptOf(turn.Ordinal);
 
                 // The running turn shows its lines live; a concluded turn folds them (SC7).
                 if (row.IsLive)
@@ -259,7 +274,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
             }
             else
             {
-                var row = new TurnItem(turn) { IsFoldOpen = turn.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested };
+                var row = new TurnItem(turn) { Attempt = AttemptOf(turn.Ordinal), IsFoldOpen = turn.State is TurnState.Preparing or TurnState.Running or TurnState.Waiting or TurnState.StopRequested };
                 _items.Add(row);
             }
         }
@@ -615,7 +630,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         line.AppendChild(rows);
 
         // Provenance: one disclosure away, named for its turn, its state on the row (P8).
-        var provenance = Disclosure("provenance", nameof(TurnItem.ProvenanceName), nameof(TurnItem.IsProvenanceOpen));
+        var provenance = Disclosure("provenance", nameof(TurnItem.ProvenanceName), nameof(TurnItem.IsProvenanceOpen), helpBinding: nameof(TurnItem.BindingLine));
         provenance.AppendChild(ProvenanceTable());
         line.AppendChild(provenance);
 
@@ -676,6 +691,10 @@ public sealed class ThreadFeed : FeedList, IDisposable
     {
         var panel = F(typeof(StackPanel));
         panel.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 4));
+
+        var binding = Text(nameof(TurnItem.BindingLine), 12, "TextBrush", wrap: true);
+        binding.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 0, 4));
+        panel.AppendChild(binding);
 
         var rows = F(typeof(ItemsControl));
         rows.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(TurnItem.Decorations)));
@@ -1156,7 +1175,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// A disclosure = an <see cref="Expander"/> (native ExpandCollapse), not focusable itself, its
     /// state two-way on the row, its header the one stop (P8; spike Q11, Q13).
     /// </summary>
-    private static FrameworkElementFactory Disclosure(string? header, string? nameBinding, string openBinding, string? headerBinding = null)
+    private static FrameworkElementFactory Disclosure(string? header, string? nameBinding, string openBinding, string? headerBinding = null, string? helpBinding = null)
     {
         var expander = F(typeof(Expander));
         expander.SetValue(FrameworkElement.StyleProperty, new DynamicResourceExtension(DisclosureStyleKey));
@@ -1172,6 +1191,11 @@ public sealed class ThreadFeed : FeedList, IDisposable
         if (nameBinding is not null)
         {
             expander.SetBinding(AutomationProperties.NameProperty, new Binding(nameBinding));
+        }
+
+        if (helpBinding is not null)
+        {
+            expander.SetBinding(AutomationProperties.HelpTextProperty, new Binding(helpBinding));
         }
 
         expander.SetBinding(Expander.IsExpandedProperty, new Binding(openBinding) { Mode = BindingMode.TwoWay });
