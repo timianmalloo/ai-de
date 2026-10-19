@@ -156,7 +156,7 @@ public sealed class LayoutPersistence : IDisposable
             if (read.Layout is { } saved)
             {
                 // ADR-0045 §7: a saved session's pane is mapped to its notebook by stable id before admission.
-                var (zones, migrated) = Notebook.NotebookSlotMigration.Migrate(saved);
+                var (zones, migrated, keptPrompts) = Notebook.NotebookSlotMigration.Migrate(saved);
                 LastRestoreMigrated = migrated;
 
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
@@ -178,7 +178,8 @@ public sealed class LayoutPersistence : IDisposable
                     report.Dropped.Count > 0 ? LayoutErrorCodes.PartialRestore : null,
                     [.. report.Dropped.Select(d => Caption(d))],
                     [],
-                    $"{DropAnnouncement(report)} {redock.Report(_zoneService.Zones)}".TrimEnd());
+                    string.Join(" ", new[] { DropAnnouncement(report), KeptPromptsReport(migrated.Count, keptPrompts.Count), redock.Report(_zoneService.Zones) }
+                        .Where(part => !string.IsNullOrEmpty(part))));
                 LastRestore = result;
                 LastRestoreAppliedASavedArrangement = true;
                 return result;
@@ -295,6 +296,18 @@ public sealed class LayoutPersistence : IDisposable
             ? $"a second {caption} (the first was kept)"
             : caption;
     }
+
+    /// <summary>
+    /// Ruling 173 (3): the restore that migrates a slot says that its prompt drafts were kept as they were, because the
+    /// notebook does not replace them yet. Null when this restore migrated nothing (the sentence is the migration's, said
+    /// once) or the slot holds no prompt draft.
+    /// </summary>
+    private static string? KeptPromptsReport(int migrated, int kept) => (migrated, kept) switch
+    {
+        (0, _) or (_, 0) => null,
+        (_, 1) => "Kept 1 prompt draft as it was: prompt drafts do not become notebooks.",
+        _ => $"Kept {kept} prompt drafts as they were: prompt drafts do not become notebooks.",
+    };
 
     /// <summary>The drop-with-report sentence (spec §C4, plural forms as fixed there), or the plain restore sentence.</summary>
     private string DropAnnouncement(ZoneRestoreReport report)
