@@ -321,4 +321,146 @@ public sealed class ChecklistOperationsTests : IDisposable
             new DispositionRecordRequest(journey, "nb-1", obligation, "deferred", atCap), Actor).Disposition.Reason);
         Assert.Equal(2, Service.SetObligations(new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, atCap, true)])).Revision);
     }
+
+    // ---- B3: no adoption, one checklist per journey ----------------------------------------------
+
+    private IReadOnlyList<NotebookRow> NotebookRows()
+    {
+        using var reader = _workspace.Store.BeginRead();
+        return reader.ListNotebooks();
+    }
+
+    private static IEnumerable<(string Name, Action<ChecklistService> Call)> EveryOperation(string journeyId, string notebookId) =>
+    [
+        ("evaluate", s => s.Evaluate(new ChecklistEvaluateRequest(journeyId, notebookId, LiveSha))),
+        ("obligations.set", s => s.SetObligations(new ObligationsSetRequest(journeyId, notebookId, [new ObligationInput(null, "x", true)]))),
+        ("disposition.record", s => s.RecordDisposition(new DispositionRecordRequest(journeyId, notebookId, null, "intent-accepted"), Actor)),
+        ("evidence.link", s => s.LinkEvidence(new EvidenceLinkRequest(journeyId, notebookId, "obl-x", "dk-x", LiveSha), Actor)),
+        ("work.accept", s => s.Accept(new WorkAcceptRequest(journeyId, notebookId, LiveSha), Actor)),
+    ];
+
+    private void AssertEveryOperationRefused(string journeyId, string notebookId)
+    {
+        foreach (var (name, call) in EveryOperation(journeyId, notebookId))
+        {
+            var ex = Assert.Throws<WorkspaceStoreException>(() => call(Service));
+            Assert.True(ex.ErrorCode == StoreErrorCodes.WorkNotAWorkJourney, $"{name} gave {ex.ErrorCode}");
+        }
+    }
+
+    [Fact]
+    public void B3_TheWholeScenario_LeavesEveryNotebookDimRowByteIdentical()
+    {
+        var journey = OpenWork();
+        var before = NotebookRows();
+
+        var obligation = MandatoryObligation(journey);
+        Attempt("dk-1");
+        Link(journey, obligation, "dk-1");
+        Service.RecordDisposition(new DispositionRecordRequest(journey, "nb-1", obligation, "acknowledged"), Actor);
+        AcceptIntent(journey);
+        Accept(journey);
+
+        Assert.Equal(before, NotebookRows());
+    }
+
+    [Fact]
+    public void B3_ALegacyUnownedNotebook_IsRefusedOnEveryOperation_AndNeverAdopted()
+    {
+        var journey = OpenWork();
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            // A v2 store admits no new legacy row; only a migrated v1 file has them. Lift the guard in this temp store.
+            writer.ExecuteRawInternal("DROP TRIGGER trg_notebook_legacy_flag;");
+            writer.ExecuteRawInternal("""
+                INSERT INTO notebook_dim (notebook_id, version_no, owner_journey_id, legacy, recorded_at, ingress_seq)
+                VALUES ('nb-legacy', 1, NULL, 1, '2026-01-01T00:00:00.0000000Z', 900000);
+                """);
+            writer.Commit();
+        }
+
+        var before = NotebookRows();
+
+        AssertEveryOperationRefused(journey, "nb-legacy");
+        Assert.Equal(before, NotebookRows());
+    }
+
+    [Fact]
+    public void B3_ATerminalDraftNotebook_IsRefusedOnEveryOperation()
+    {
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            writer.ExecuteRawInternal($"""
+                INSERT INTO journey_dim (journey_id, version_no, purpose, origin_scope, title, recorded_at, ingress_seq)
+                VALUES ('{WorkspaceSchema.TerminalJourneyId}', 1, 'work', 'terminal', 'Terminal drafts', '2026-01-01T00:00:00.0000000Z', 900000);
+                INSERT INTO notebook_dim (notebook_id, version_no, owner_journey_id, legacy, recorded_at, ingress_seq)
+                VALUES ('nb-term', 1, '{WorkspaceSchema.TerminalJourneyId}', 0, '2026-01-01T00:00:00.0000000Z', 900001);
+                """);
+            writer.Commit();
+        }
+
+        AssertEveryOperationRefused(WorkspaceSchema.TerminalJourneyId, "nb-term");
+    }
+
+    [Fact]
+    public void B3_AnInvestigationJourneysNotebook_IsRefusedOnEveryOperation()
+    {
+        using (var writer = _workspace.Store.BeginWrite())
+        {
+            writer.AppendJourney(new JourneyRow("journey-inv", "investigation", "Why is it slow"));
+            writer.AppendNotebook(new NotebookRow("nb-inv", "journey-inv", Legacy: false));
+            writer.Commit();
+        }
+
+        AssertEveryOperationRefused("journey-inv", "nb-inv");
+    }
+
+    [Fact]
+    public void B3_ANotebookOwnedByAnotherJourney_AndAnUnknownJourney_AreRefused()
+    {
+        var journey = OpenWork();
+        OpenWork("nb-2");
+
+        AssertEveryOperationRefused(journey, "nb-2");
+        AssertEveryOperationRefused("journey-nobody", "nb-1");
+    }
+
+    [Fact]
+    public void B3_TwoJourneysWithTheSameObligationText_GetDistinctObligationIds()
+    {
+        var first = OpenWork();
+        var second = OpenWork("nb-2");
+
+        var one = MandatoryObligation(first);
+        var two = MandatoryObligation(second, "nb-2");
+
+        Assert.NotEqual(one, two);
+        Assert.StartsWith("obl-", one);
+        Assert.StartsWith("obl-", two);
+    }
+
+    [Fact]
+    public void B3_AWriteThatWouldCreateASecondChecklistForAJourney_IsRefusedAndWritesNothing()
+    {
+        var journey = OpenWork();
+
+        var ex = Assert.Throws<WorkspaceStoreException>(() => Service.SetObligations(
+            new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, "Tests pass", true)], ChecklistId: "checklist-b")));
+
+        Assert.Equal(StoreErrorCodes.WorkSecondChecklist, ex.ErrorCode);
+        using var reader = _workspace.Store.BeginRead();
+        Assert.Empty(reader.ReadObligationHistory("checklist-b"));
+        Assert.Empty(reader.ReadObligationHistory(journey));
+    }
+
+    [Fact]
+    public void B3_NamingTheJourneyAsTheChecklist_IsTheSameChecklist_NotASecond()
+    {
+        var journey = OpenWork();
+
+        var result = Service.SetObligations(
+            new ObligationsSetRequest(journey, "nb-1", [new ObligationInput(null, "Tests pass", true)], ChecklistId: journey));
+
+        Assert.Equal(1, result.Revision);
+    }
 }
