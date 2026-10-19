@@ -20,6 +20,9 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>The suffix of the one-time backup the first save after a dropping restore writes (ADR-0032 rule 3).</summary>
     public const string PrePerspectivesBackupSuffix = ".pre-perspectives.bak";
 
+    /// <summary>The suffix of the one-time backup the first save after a slot migration writes (ADR-0045 §7).</summary>
+    public const string PreNotebookBackupSuffix = ".pre-notebook.bak";
+
     /// <summary>The suffix of the backup a refused file is kept under before its slot is rewritten (ADR-0032 rule 4).</summary>
     public const string RefusedBackupSuffix = ".bak";
 
@@ -114,6 +117,12 @@ public sealed class LayoutPersistence : IDisposable
     /// </summary>
     public IReadOnlyList<DroppedSurface> LastRestoreDropped { get; private set; } = [];
 
+    /// <summary>
+    /// The notebooks the last <see cref="Restore"/> made from saved <c>session-document</c> placements (ADR-0045 §7), in
+    /// zone order. Empty when nothing was migrated or nothing restored.
+    /// </summary>
+    public IReadOnlyList<Surface> LastRestoreMigrated { get; private set; } = [];
+
     /// <summary>Why the last <see cref="SaveNow"/> wrote nothing, or null when it succeeded (or never ran).</summary>
     public string? LastSaveFailure { get; private set; }
 
@@ -142,15 +151,25 @@ public sealed class LayoutPersistence : IDisposable
         if (_zoneService is not null && _zoneStore is not null)
         {
             LastRestoreDropped = [];
+            LastRestoreMigrated = [];
             var read = _zoneStore.Read(_availableSurfaces, _restorableKinds);
-            if (read.Layout is { } zones)
+            if (read.Layout is { } saved)
             {
+                // ADR-0045 §7: a saved session's pane is mapped to its notebook by stable id before admission.
+                var (zones, migrated) = Notebook.NotebookSlotMigration.Migrate(saved);
+                LastRestoreMigrated = migrated;
+
                 // ADR-0032 rule 2: the host's service drops what this perspective does not admit and
                 // reports each drop; the announcement names caption, kind and the admitting
                 // perspective through the same result that reports a missing surface today.
                 var report = _zoneService.RestoreZones(zones);
                 LastRestoreDropped = report.Dropped;
-                _backupDue = report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true) : null;
+
+                // The first save after a migration keeps today's bytes once (ADR-0045 §7). That copy holds everything the
+                // pre-perspective one would, so a restore that both migrates and drops owes only the migration's.
+                _backupDue = migrated.Count > 0 ? (_zoneStore.FilePath + PreNotebookBackupSuffix, Once: true)
+                    : report.Dropped.Count > 0 ? (_zoneStore.FilePath + PrePerspectivesBackupSuffix, Once: true)
+                    : null;
 
                 var result = new RestoreResult(
                     _zoneService.Current,
