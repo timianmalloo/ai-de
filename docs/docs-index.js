@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9ba8744c0a8f6e0affde079ec6183d2c197f2fa460a7df916a34fe3798c79b06"
+      "sourceSha256": "132fe3301f5cc4e60f108461fbea8d100da39453736fb81e08003ebea4a6cea6"
     },
     {
       "id": "design-session-profiler",
@@ -19323,6 +19323,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "fb6ed74c81212da5b9a4840192cea1fe2de107f6a8820b4fad960592226c36c6"
     },
     {
+      "id": "coordination-workbench-loops-leader-handoff-4",
+      "path": "docs/coordination/workbench-loops-leader-handoff-4.md",
+      "title": "Leader hand-off 4 — workbench-loops drive (wl-leader4-20261020 → wl-leader5)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Fourth Leader's hand-off. T30's second batch and T26 (the WL-1b checklist kind) joined, both on the Owner's direction before the WL-S walk-through. The WL-1b demo script is confirmed against the code. T32 (the copy-pin class control) runs at hand-off. WL-S and WL-1b await the user's walk-throughs; T31, then T25, wait for USER DEMO DONE.",
+      "tags": [
+        "coordination",
+        "handoff",
+        "workbench-loops",
+        "leader"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-handoff-3",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "451ed48dfee816f090124c05d3181e2c60d29d6492a9c9457e9fcea60d8499df"
+    },
+    {
       "id": "plan-workbench-loops-drive-prompt",
       "path": "docs/plans/workbench-loops-drive-prompt.md",
       "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
@@ -22680,6 +22714,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-wl-copy-pin",
+      "path": "docs/proof/workbench-loops-support/copy-pin/README.md",
+      "title": "Evidence: T32 - every DESIGN.md copy row is pinned to the literal the code renders (DC-NEW-wl-t26-copy)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "One App test reads DESIGN.md and pins 17 copy id rows to the literal the code renders. 10 rows and 23 copy members with no match are named findings on shrink-only lists. A one-character change to ChecklistCopy.Empty turns CHK1 red. F1 is a comment-only commit in Core.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "implement",
+        "copy",
+        "design-md",
+        "defect-class"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2379bf59f75052300b0f329c583322771bfc51185f296232fed3cd61986e33c7"
+    },
+    {
+      "id": "proof-wl-copy-pin-handoff",
+      "path": "docs/proof/workbench-loops-support/copy-pin/handoff.md",
+      "title": "Hand-off: T32 wl-copy-pin",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "T32 is complete in one node: P1 test, mutation red, P2 comment, suites and ratchet. Nothing is half done.",
+      "tags": [
+        "workbench-loops",
+        "hand-off"
+      ],
+      "links": [
+        {
+          "to": "proof-wl-copy-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b819bfd05cb3a7256f92da53f2c88ae0e9805f2d5e88178b986bf23637658624"
+    },
+    {
       "id": "proof-wl-hygiene-pack-defects",
       "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md",
       "title": "Pack defects found while burning down main's red gates (T13, Ruling 151)",
@@ -23407,7 +23497,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3e6f07359fdd7ffcbe1f7ecca35932d354b74d834a6ba40cbcbb491fbb154ed"
+      "sourceSha256": "48afcb27696af14bbe2fa1c20e98f03d7f1a7327d5b6bfb989a778ad20c27ced"
     },
     {
       "id": "proof-workbench-loops-wl-1b-checklist",
@@ -25790,5 +25880,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "655e05d344db9791e758711317a0ed75459b4b9db907a27a7bc960598b462057"
+  "graphSha256": "363bc97f71bd4a18e22ac4e0c7d3062c28bd3bbc5f1e7d3d15755a229eac0398"
 };

@@ -66,3 +66,11 @@
 {"agent": "wl-leader4-20261020", "at": 1792464096.789955, "code": null, "kind": "allowed", "path": "docs/coordination/workbench-loops-leader-handoff-4.md", "session": "wl-leader4-20261020", "wi": ""}
 {"agent": "wl-leader4-20261020", "at": 1792464146.3068097, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-1b.md", "session": "wl-leader4-20261020", "wi": ""}
 {"agent": "wl-leader4-20261020", "at": 1792465107.926211, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465124.9739747, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader4-20261020.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.019114, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t32-copy-pin.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.0614352, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.1031315, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader4-20261020.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.1456413, "code": null, "kind": "allowed", "path": ".agents/log/wl-t32-copy-pin.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.1901715, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.230619, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792465125.2708263, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader4-20261020", "wi": ""}

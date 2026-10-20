@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T02:58:44Z",
+  "generated": "2026-10-20T03:24:29Z",
   "audit": [
     {
       "actor": null,
@@ -26999,24 +26999,126 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5BHQN0NRNDTEY093PXBSBKM",
-      "shortname": "join-wl1b-checklist-kind",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-20T02:20:03Z",
-      "session": "wl-leader4-20261020",
+      "done_when": "recount green except the Ruling 155 (3) excused probe; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
+      "id": "al-01M5BHQN0NRNDTEY093PXBSBKM",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader4-20261020",
+      "shortname": "join-wl1b-checklist-kind",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T02:20:02Z",
       "summary": "T26 n1-n3b joined (merge e69fdbeb). Recount: Core 3120/portable 2937/nonportable 183 Completed; App 1252 of 1265 passed, 2 NotExecuted (real adapter / real projection env), 1 Failed: AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation ('Space on the restored row's fold did not open it'), which failed ALONE on the join head e69fdbeb AND on the first parent 1731a1b2 in clean rt- trees (02:19Z) - excused under Ruling 155 (3), NOT CHECKED, an owed desk run; continued with --continue --docs-only. Joined before the WL-S walk-through on the Owner's direction. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T02:34:21Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 14735.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
+      "id": "al-01M5BJHT5SX7NEXVMPPQ3WTN6R",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T26 join e3943961",
+      "session": "wl-leader4-20261020",
+      "shortname": "join-wl1b-checklist-kind-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-19T22:28:46Z",
+      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1252/1265 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head e69fdbeb and on the first parent 1731a1b2 in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 1731a1b2, head e3943961: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T26 (Rulings 176-179): the checklist kind in the Right zone bound to the focused notebook's work journey; evidence currentness against the attempt's stored envelope sha (a null live sha reads NotRecorded); accept refused while blocked, naming the intent; saved review state is not acceptance; the service refuses another notebook's journey (M4); CHK1-CHK12 confirmed by the Owner (CHK3, CHK9 changed and pinned literally); the reopen refresh rides the visibility edge (M6 removed; M9 red). WL-1b is NOT accepted: owed T25 (perf), the WL-1b demo script and the user's walk-through.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/workbench-loops-leader-handoff-4.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T02:58:44Z",
+      "done_when": "T30 and T26 joined and pushed with step-8 records; T32 reported; hand-off 4 committed; designation released",
+      "duration_seconds": 1308.0,
+      "fan_out": 3,
+      "goal": "Hold the Leader seat: wait for the running nodes, close the Owner's join conditions, join T30 and T26, and hand off",
+      "id": "al-01M5BKYF2VEFMHG1BP62CG4060",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the Leader (fourth Leader of the workbench-loops drive, coord session wl-leader4-20261020). Read the kickoff and hand-off 3 and follow its Resume brief; T30 n5 and T26 n2 already running; WL-S walk-through staged, not started.",
+      "session": "wl-leader4-20261020",
+      "shortname": "wl-leader4-epoch4-close",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T02:36:56Z",
+      "summary": "Epoch 4 closed at the context ceiling. Joined T30's second batch (1731a1b2) and T26, the WL-1b checklist kind (26ac6861), both on the Owner's direction before the WL-S walk-through; both recounts excused one keyboard probe under Ruling 155 (3) after solo runs on head and parent; ratchets PASS 0/49. Dispatched and accepted T26 n3/n3b (copy CHK3/CHK9 pinned, M6 option (b), M9 red), T30 n6 (R21's real control, the 68-ban sweep) and T32 (the copy-pin class control, done at 4060b24f, join-ready). Added brief rule 23 and the classes DC-NEW-wl-t26-copy and DC-NEW-wl-t30-gate-evasion. Confirmed the WL-1b demo script against the code (656cf0a1). Hand-off 4 at c4400f84.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T02:48:53Z",
+      "done_when": "pin test green, mutation red, F1 commit, suites, ratchet",
+      "duration_seconds": 769.0,
+      "fan_out": 0,
+      "goal": "a copy change can never pass unseen",
+      "id": "al-01M5BKCE0JPHMSHBVNAGXEZGSF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T32 wl-copy-pin: pin every DESIGN.md copy row to the literal the code renders; F1 comment",
+      "session": "wl-t32-copy-pin",
+      "shortname": "wl-t32-copy-pin",
+      "skill": "implement",
+      "started_at": "2026-10-20T02:36:04Z",
+      "summary": "DesignCopyRowsArePinnedTests (17 pins, 7 unmatched rows + 3 not-copy, 23 unmatched members, mutation red); F1 comment-only commit",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5BNDJX8KFXS7YDQ2XV10JEG",
+      "shortname": "join-wl-copy-pin",
+      "datetime": "2026-10-20T03:24:28Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T32: DesignCopyRowsArePinnedTests pins 17 of 27 DESIGN.md copy rows to their rendered literals (mutation red), names 10 rows and 23 members on shrink-only lists; F1 comment-only fix recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+        "docs/proof/workbench-loops-support/copy-pin/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
-      "done_when": "recount green except the Ruling 155 (3) excused probe; ratchet PASS; step-8 recorded before push",
+      "goal": "Join T32 wl-copy-pin onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -27024,57 +27126,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-20T02:20:02Z",
+      "started_at": "2026-10-20T03:24:27Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5BJHT5SX7NEXVMPPQ3WTN6R",
-      "shortname": "join-wl1b-checklist-kind-step8",
-      "datetime": "2026-10-20T02:34:21Z",
-      "session": "wl-leader4-20261020",
-      "prompt": "Step 8 (Rulings 151/155/160) for the T26 join e3943961",
-      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1252/1265 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head e69fdbeb and on the first parent 1731a1b2 in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 1731a1b2, head e3943961: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T26 (Rulings 176-179): the checklist kind in the Right zone bound to the focused notebook's work journey; evidence currentness against the attempt's stored envelope sha (a null live sha reads NotRecorded); accept refused while blocked, naming the intent; saved review state is not acceptance; the service refuses another notebook's journey (M4); CHK1-CHK12 confirmed by the Owner (CHK3, CHK9 changed and pinned literally); the reopen refresh rides the visibility edge (M6 removed; M9 red). WL-1b is NOT accepted: owed T25 (perf), the WL-1b demo script and the user's walk-through.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-10-19T22:28:46Z",
-      "duration_seconds": 14735.0
-    },
-    {
-      "id": "al-01M5BKYF2VEFMHG1BP62CG4060",
-      "shortname": "wl-leader4-epoch4-close",
-      "datetime": "2026-10-20T02:58:44Z",
-      "session": "wl-leader4-20261020",
-      "prompt": "You are the Leader (fourth Leader of the workbench-loops drive, coord session wl-leader4-20261020). Read the kickoff and hand-off 3 and follow its Resume brief; T30 n5 and T26 n2 already running; WL-S walk-through staged, not started.",
-      "summary": "Epoch 4 closed at the context ceiling. Joined T30's second batch (1731a1b2) and T26, the WL-1b checklist kind (26ac6861), both on the Owner's direction before the WL-S walk-through; both recounts excused one keyboard probe under Ruling 155 (3) after solo runs on head and parent; ratchets PASS 0/49. Dispatched and accepted T26 n3/n3b (copy CHK3/CHK9 pinned, M6 option (b), M9 red), T30 n6 (R21's real control, the 68-ban sweep) and T32 (the copy-pin class control, done at 4060b24f, join-ready). Added brief rule 23 and the classes DC-NEW-wl-t26-copy and DC-NEW-wl-t30-gate-evasion. Confirmed the WL-1b demo script against the code (656cf0a1). Hand-off 4 at c4400f84.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/coordination/workbench-loops-leader-handoff-4.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Hold the Leader seat: wait for the running nodes, close the Owner's join conditions, join T30 and T26, and hand off",
-      "done_when": "T30 and T26 joined and pushed with step-8 records; T32 reported; hand-off 4 committed; designation released",
-      "tier": "T2",
-      "fan_out": 3,
-      "started_at": "2026-10-20T02:36:56Z",
-      "duration_seconds": 1308.0
     }
   ],
   "changes": [
