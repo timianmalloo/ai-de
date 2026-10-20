@@ -133,6 +133,45 @@ public sealed class SavedReviewStateIsNotAcceptanceTests : IDisposable
             region.Content = null;
         });
 
+    /// <summary>
+    /// M6 (T26 n3, option a): the restored checklist is already visible saying its notebook is not open (CHK10), and the
+    /// user reopens the notebook the way File → Recent sessions does (<c>MainWindow.ReopenSessionAsync</c>: the
+    /// session's config loaded from its workspace, then the shell's <see cref="WorkbenchShell.OpenSessionDocument"/>).
+    /// Nothing else happens: no tab switch, no perspective switch, no refresh call. The checklist the user is looking at
+    /// leaves CHK10 and shows its journey's obligations. What refreshes it is the reopen's own render: it re-parents every
+    /// pane it keeps, so the visible checklist gets a visibility edge and re-reads its notebook. No rebuild is needed.
+    /// </summary>
+    [Fact]
+    public Task AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions() =>
+        _harness.RunAsync(async (window, region, client) =>
+        {
+            using (var today = new WorkbenchShell(client, DataDirectory))
+            {
+                var perspectives = ChecklistHarness.Compose(today, region);
+                perspectives.Activate(PerspectiveSet.Factory, "test");
+                await _harness.OpenNotebookAsync(window, today, Created(Mine, "Plan the release"));
+                var surface = await OpenChecklistAsync(window, today, perspectives);
+                await ProposeAsync(window, surface, Deferred);
+                Assert.True(today.Factory.Service.Apply(new LayoutOperation.CloseSurface(SessionDocumentSurface.SurfaceIdFor(Mine))).Applied);
+                await SaveAndCloseAsync(window, today, region);
+            }
+
+            using var restarted = Restart(client, region);
+            Assert.Empty(restarted.ReviveRestoredSessionDocuments(Root));
+            var journey = await JourneyOf(client, Mine, "Plan the release");
+            var shown = await ChecklistHarness.ChecklistIn(window, restarted.Factory, ChecklistSurface.SurfaceIdFor(Mine));
+            Assert.True(shown.IsVisible, "the restored checklist is not visible, so this is not the case the Invalidate serves");
+            Assert.Equal(ChecklistCopy.NotOpen(journey), shown.AcceptanceLine);
+
+            restarted.OpenSessionDocument(new SessionConfigStore(Root, Mine).Load());
+
+            var visible = await ChecklistHarness.ChecklistIn(window, restarted.Factory, ChecklistSurface.SurfaceIdFor(Mine));
+            Assert.True(visible.IsVisible, "the reopen hid the checklist, so the user would not be looking at it");
+            Assert.NotEqual(ChecklistCopy.NotOpen(journey), visible.AcceptanceLine);
+            Assert.Equal([$"{Deferred}. {ChecklistCopy.EvidenceMissing} {ChecklistCopy.NoDisposition}"], ChecklistHarness.RowNames(visible));
+            region.Content = null;
+        });
+
     /// <summary>The session as File → New Session creates it: its <c>session.json</c> on disk, so a restart can revive it.</summary>
     private SessionConfig Created(string sessionId, string title) =>
         new SessionConfigStore(Root, sessionId).Create(title, Root, Accounts, Accounts[0], DateTimeOffset.UnixEpoch);
