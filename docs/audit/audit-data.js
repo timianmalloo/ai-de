@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T07:16:35Z",
+  "generated": "2026-10-20T07:39:31Z",
   "audit": [
     {
       "actor": null,
@@ -27229,6 +27229,59 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T05:15:51Z",
       "duration_seconds": 7244.0
+    },
+    {
+      "id": "al-01M5C3E5NN8YNQ4ZW3XKC3KN7F",
+      "shortname": "wl-t25-perf",
+      "datetime": "2026-10-20T07:29:27Z",
+      "session": "wl-t25-perf",
+      "prompt": "T25 wl1b-perf: measure WL-1b C1 - plan oracle, append overhead vs control store, evaluate p95 at 100x depth vs 100 ms",
+      "summary": "Wl1bPerf.cs + -- wl1b branch; C1a plans all indexed, C1b overhead sub-0.2ms, C1c evaluate p95 8.24ms at 100x depth (budget 100ms); Core 3119/0/1",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/perf/wl1b-perf-2026-10-20.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Turn WL-1b's Inferred performance claims into measured ones",
+      "done_when": "C1a/b/c green from Release with red files, Core suite green, ratchet run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T07:18:44Z",
+      "duration_seconds": 643.0
+    },
+    {
+      "id": "al-01M5C40J2TR4RFN8BSBBDC1YRH",
+      "shortname": "join-wl1b-perf",
+      "datetime": "2026-10-20T07:39:30Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl1b-perf into main",
+      "summary": "T25: bench -- wl1b (Release). C1a: control FULL SCAN red; 12 product reads indexed at 1x/100x breadth/100x depth. C1b: in-txn append overhead p95 <= 0.0024 ms, append+commit delta noise-level. C1c: checklist.evaluate p95 8.24 ms at 100x depth vs 100 ms (Inferred budget) PASS; no cache recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/perf/wl1b-perf-2026-10-20.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T25 wl1b-perf onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T07:39:29Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33139,6 +33192,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t31-loadflake"
+    },
+    {
+      "id": "mail-01M5C3YY5PZPBADQJPDA90G34F",
+      "ts": "2026-10-20T07:38:37Z",
+      "from": "wl-t25-perf",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t25-perf"
     }
   ]
 };
