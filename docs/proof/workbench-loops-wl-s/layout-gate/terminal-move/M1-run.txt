@@ -1,0 +1,28 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Mcp\AiDe.Mcp.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Core\AiDe.Core.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Daemon\AiDe.Daemon.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 551 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.App\AiDe.App.csproj (in 556 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 550 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 550 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 372 ms - AiDe.App.Tests.dll (net10.0)
