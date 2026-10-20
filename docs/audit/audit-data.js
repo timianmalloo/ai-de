@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T23:40:24Z",
+  "generated": "2026-10-20T01:01:56Z",
   "audit": [
     {
       "actor": null,
@@ -26776,6 +26776,54 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T22:50:47Z",
       "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M5BB3VBHJGBG08XED0JKV559",
+      "shortname": "wl-t26-checklist",
+      "datetime": "2026-10-20T00:24:23Z",
+      "session": "wl-t26-checklist",
+      "prompt": "T26 wl1b-checklist-kind n1: the minimal checklist kind, D1-D3 red then green through the real gesture (Ruling 180 (5) C2, Owner null-sha condition)",
+      "summary": "n1 at kick: D1 green (81195e13) and D2 green (c3ff46aa) with mutation reds M1-M3; checklist:<sessionId> identity per seam req-01M5B8W7NJRW7A1X4G21J2QKPT; DC-138 fix f399ec87; Core 3119/3120, App 1245/1253 (3 literal-table reds granted to n2 by req-01M5BAKZ9BAA28CF4R07PTRKGV, 3 desktop-hold); D3 not started",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Checklist/ChecklistSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "The minimal checklist kind: D1-D3 red then green on the real shell",
+      "done_when": "D1-D3 green with saved red/green proof, whole Core and App suites saved, README/handoff, audit entry, done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-19T23:42:04Z",
+      "duration_seconds": 2539.0
+    },
+    {
+      "id": "al-01M5BD8K7YV7DFB37BK8QF2KWV",
+      "shortname": "wl-t26-checklist",
+      "datetime": "2026-10-20T01:01:56Z",
+      "session": "wl-t26-checklist",
+      "prompt": "T26 n2: the three literal entries, the Owner's refusing test, D3 with the own-journey restore, and the one-live-sha ceiling, each red then green; whole suites; rule-22 ratchet",
+      "summary": "Literals green b306c7f9; refusing test M4 red 160bb519 -> green 2568c964; D3 M7/M5 red 559eb22d -> green 32831438 (M6 not a red); E ceiling M8 red ad6d2c8b -> green d5838812; Core 3119/0/1, App 1252 passed 3 failed (2 foreground desk runs owed, 1 keyboard fold test not T26's); ratchet: 3 expected derived-view refusals + verify-surface-ownership green->red (seam req-01M5BD7Y0K33J3FYQ2HEZ1S1W4)",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T26 n2: finish the minimal checklist kind's checks for the WL-1b join",
+      "done_when": "the literals, the refusing test, D3 and E are red then green, the whole suites and the ratchet are saved, the done mail is sent",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T00:28:24Z",
+      "duration_seconds": 2012.0
     }
   ],
   "changes": [
