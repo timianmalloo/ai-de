@@ -1,0 +1,16 @@
+T26 n2 rule-22 ratchet: run_ratchet.sh 48c2dc46 (origin/main) 2118bd31 (T26 head) wl-t26-checklist
+
+Refusal lines:
+REFUSE new findings    docs/ai-forward-pack/scripts/docs-graph.py  parent=1 head=1  new=1
+REFUSE new findings    tools/verify-derived-views.py  parent=1 head=1  new=2
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+REFUSE green->red      tools/verify-surface-ownership.py  parent=0 head=1  new=1
+
+Last line:
+ratchet: REFUSE - 4 refusal(s) over 49 gate(s)
+ratchet exit 1
+
+Reading:
+- docs-graph.py: EXPECTED (derived-view gate). validate reports 0 problems, 0 orphans, index drift only; join step 6 regenerates the index.
+- tools/verify-derived-views.py, tools/verify-site-figures.py: EXPECTED (derived-view gates; join step 6 regenerates them).
+- tools/verify-surface-ownership.py green->red: T26's. src/AiDe.App/Workbench/Checklist/ChecklistSurface.cs has no owner row in docs/collaboration/session-contracts.md section 2, a file outside T26's paths. Seam req-01M5BD7Y0K33J3FYQ2HEZ1S1W4 to wl-leader4-20261020 gives the exact row. NOT FIXED in this node.
