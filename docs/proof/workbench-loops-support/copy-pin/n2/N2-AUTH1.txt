@@ -1,0 +1,25 @@
+ROW AUTH1
+$ grep -rniF "Signed in" src
+src/AiDe.App/Workbench/Sessions/ConfigureProviderDialog.cs:128:        var signInState = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0), Text = "not signed in fro
+src/AiDe.App/Workbench/TerminalSurface.cs:269:    /// <para><b>Which is why it is assigned in the <c>WorkbenchShell</c> constructor</b> rather than
+src/AiDe.App/Workbench/WorkbenchShell.cs:762:        // The environment contract (docs/design/ux-agent-session-registration.md §3) is assigned in
+src/AiDe.Core/AgentPlane/EngineCatalog.cs:243:                // itself, so session/new is refused -32000 even when the operator is signed in
+src/AiDe.Core/AgentPlane/ProviderRegistry.cs:92:/// logins. A registry that shipped them would assert an account nobody had signed into. The rows
+(hits: 5)
+$ grep -rniF "does not mean" src
+src/AiDe.Core/Projections/GraphPaths.cs:54:/// <para><b>Directed, because dependency is directed.</b> <c>A depends_on B</c> does not mean B
+(hits: 1)
+$ grep -rniF "is qualified" src
+src/AiDe.Core/Projections/JoinProjection.cs:50:        // Every `has_type` read below is qualified by the SHAPE OF THE SUBJECT as well as the
+(hits: 1)
+$ grep -rniF "qualified" src
+src/AiDe.Core/Extraction/BoundedContextMap.cs:125:    /// Scope-qualified ids — <c>bicep:main#appName</c>, <c>table:Orders</c>, <c>schema:...</c> — are
+src/AiDe.Core/Extraction/CSharpExtractor.cs:583:    /// <c>MinimallyQualifiedFormat</c> rather than the full display string: a compartment reading
+src/AiDe.Core/Extraction/CSharpExtractor.cs:588:        type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+src/AiDe.Core/Extraction/CSharpExtractor.cs:1518:    /// the EF and SQL readers both emit unqualified names, and a third spelling would leave these
+src/AiDe.Core/Extraction/KnowledgeBody.cs:62:///   node ids are fully qualified (<c>TheTerrace.Infrastructure.Data.AppDbContext</c>) and prose
+src/AiDe.Core/Extraction/SqlSchemaExtractor.cs:350:    /// EF reader emits unqualified names, and two spellings of one table would leave the joins
+src/AiDe.Core/Presentation/CanvasGraphViewModel.cs:622:    /// <summary>The last path segment, so a canvas of fully-qualified names stays readable.</summary>
+src/AiDe.Core/Projections/GraphOverview.cs:198:        // A scope-qualified id names its container already; splitting past the marker would group
+(hits: 22)
+DECISION AUTH1: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.

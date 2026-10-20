@@ -32,6 +32,9 @@ public sealed class DesignCopyRowsArePinnedTests
 {
     private static readonly Regex IdRow = new(@"^\| (?<id>[A-Z]+[0-9]+[a-z]?) \| (?<cell>.*) \|$", RegexOptions.Compiled);
 
+    /// <summary>A row the Owner has ruled stale opens its cell with this mark, then the reason, then <c>)* </c>, then the original sentence.</summary>
+    private const string StaleMark = "*(stale: ";
+
     private const string SampleKey = "abcdefghij";
     private const string SampleKeyCut = "abcdefg";
     private const int SampleRevision = 4242;
@@ -42,41 +45,11 @@ public sealed class DesignCopyRowsArePinnedTests
         ["SC7"] = "not copy: a layout and behaviour description (outcome line, reply, N events collapsed)",
         ["SC8"] = "not copy: a keyboard and focus-order rule",
         ["SC9"] = "not copy: an announcement rule (what is never announced)",
-        ["NB1"] = "finding: no code renders \"Draft saved on this device.\"; the row is unbuilt or the sentence was removed",
-        ["RUN1"] = "finding: no code renders \"No reasoning summary supplied.\"",
-        ["RUN3"] = "finding: no code renders \"Response complete. Evidence still needs review.\"",
-        ["RUN4"] = "finding: no code renders \"Connection lost. The run outcome is unknown.\"; TurnCopy says \"Delivery is unknown: ...\" for the nearest state",
-        ["CHECK1"] = "finding: no code renders \"Acknowledged by you. Execution evidence is still missing.\"; ChecklistCopy.Acknowledged says a different sentence (CHK2)",
-        ["AUTH1"] = "finding: no code renders \"Signed in does not mean this route is qualified.\"",
-        ["DEMO1"] = "finding: no code renders \"Interactive prototype. Runs, accounts and evidence are simulated.\" (the sentence lives only in DESIGN.md)",
     };
 
     /// <summary>Copy constants and builders no DESIGN.md id row names. Shrink-only.</summary>
-    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
+    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
     {
-        ["ChecklistCopy.AcceptedEarlier"] = "no row: the stale-acceptance sentence has no id row in DESIGN.md",
-        ["ChecklistCopy.Acknowledge"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.AddObligation"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.Defer"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.LinkLatestRun"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.Loading"] = "no row: the loading sentence has no id row",
-        ["ChecklistCopy.Mandatory"] = "no row: label, not in an id row",
-        ["ChecklistCopy.MarkNeedsDecision"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.NewObligationName"] = "no row: default obligation name, not in an id row",
-        ["ChecklistCopy.NotConnected"] = "no row: the not-connected sentence has no id row",
-        ["DaemonNotebookRevisions.OpenRefusedCopy"] = "no row: a diagnostic reason, not in an id row",
-        ["SolutionTreeProjection.NotRecordedCopy"] = "no row: solution-tree projection copy, outside the id rows",
-        ["SolutionTreeProjection.PythonTsCopy"] = "no row: solution-tree projection copy, outside the id rows",
-        ["TurnCopy.DecorationLine"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.DurationText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.EditsText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.EventsText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.Name"] = "no row: SC10 UIA name derivation, no id row",
-        ["TurnCopy.OutcomeWord"] = "no row: SC7 names the outcome line but its row is layout; the words have no id row",
-        ["TurnCopy.QueuedSentence"] = "no row: the queued sentence has no id row",
-        ["TurnCopy.SessionSpend"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.SpendText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.SpokenDuration"] = "no row: SC-series derivation, the SC rows are layout",
     };
 
     private sealed record Pin(string RowId, string[] Rendered, string[] Members);
@@ -93,6 +66,34 @@ public sealed class DesignCopyRowsArePinnedTests
         Assert.True(method is not null, "LayoutPersistence.KeptPromptsReport is the builder DOCK4's singular is rendered by; it moved, so repoint this pin.");
         return (string)method!.Invoke(null, [1, 1])!;
     }
+
+    private static TurnView Turn(int ordinal, TurnState state, OutcomeView? outcome = null) =>
+        new(ordinal, "env-000" + ordinal, "words", [], state, outcome, null, [], "b", ThreadFixtures.T0);
+
+    private static ThreadSnapshot Snapshot(params TurnView[] turns) => new(turns, 1, true);
+
+    private static OutcomeView Outcome(Spend? spend = null) => new("lane", null, 0, spend, null, 0);
+
+    private static string Core(string typeName, string field)
+    {
+        var type = typeof(TurnCopy).Assembly.GetType(typeName);
+        Assert.True(type is not null, typeName + " moved, so repoint this pin.");
+        var f = type!.GetField(field, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+        Assert.True(f is not null, typeName + "." + field + " moved, so repoint this pin.");
+        return (string)f!.GetRawConstantValue()!;
+    }
+
+    private static string[] OutcomeWords() =>
+        Enum.GetValues<TurnState>().OrderBy(st => st != TurnState.Running)
+            .Select(st => TurnCopy.OutcomeWord(st, null))
+            .Append(N(TurnCopy.OutcomeWord(TurnState.Failed, SampleRevision)))
+            .ToArray();
+
+    private static string SessionSpendSample(string text) => text.Replace("12,400", "{sum}").Replace("40,000", "{cap}").Replace("(1 not", "({k} not");
+
+    private static string QueuedSample(string text) => text.Replace("b2", "{queued}").Replace("b1", "{behind}");
+
+    private static string Spent(Spend? spend) => spend is null ? TurnCopy.SpendText(null) : TurnCopy.SpendText(spend).Replace("424", "{n}");
 
     private static IReadOnlyList<Pin> Pins() =>
     [
@@ -120,9 +121,64 @@ public sealed class DesignCopyRowsArePinnedTests
             "CHK12",
             [N(ChecklistCopy.AcceptIntent(SampleRevision)), N(ChecklistCopy.IntentAccepted(SampleRevision)), ChecklistCopy.AcceptDeliverable],
             ["ChecklistCopy.AcceptIntent", "ChecklistCopy.IntentAccepted", "ChecklistCopy.AcceptDeliverable"]),
+        new("CHK13", [ChecklistCopy.AcceptedEarlier], ["ChecklistCopy.AcceptedEarlier"]),
+        new("CHK14", [ChecklistCopy.Acknowledge], ["ChecklistCopy.Acknowledge"]),
+        new("CHK15", [ChecklistCopy.AddObligation], ["ChecklistCopy.AddObligation"]),
+        new("CHK16", [ChecklistCopy.Defer], ["ChecklistCopy.Defer"]),
+        new("CHK17", [ChecklistCopy.LinkLatestRun], ["ChecklistCopy.LinkLatestRun"]),
+        new("CHK18", [ChecklistCopy.Loading], ["ChecklistCopy.Loading"]),
+        new("CHK19", [ChecklistCopy.Mandatory], ["ChecklistCopy.Mandatory"]),
+        new("CHK20", [ChecklistCopy.MarkNeedsDecision], ["ChecklistCopy.MarkNeedsDecision"]),
+        new("CHK21", [ChecklistCopy.NewObligationName], ["ChecklistCopy.NewObligationName"]),
+        new("CHK22", [ChecklistCopy.NotConnected], ["ChecklistCopy.NotConnected"]),
+        new("NB3", [DaemonNotebookRevisions.OpenRefusedCopy], ["DaemonNotebookRevisions.OpenRefusedCopy"]),
+        new("ST1", [Core("AiDe.Core.Projections.SolutionTreeProjection", "NotRecordedCopy")], ["SolutionTreeProjection.NotRecordedCopy"]),
+        new("ST2", [Core("AiDe.Core.Projections.SolutionTreeProjection", "PythonTsCopy")], ["SolutionTreeProjection.PythonTsCopy"]),
+        new("TURN1", OutcomeWords(), ["TurnCopy.OutcomeWord"]),
+        new("TURN2", [TurnCopy.Name(StopRequestedTurn()).Replace("b1", "{ordinal}").Replace("words", "{words}")], ["TurnCopy.Name"]),
+        new(
+            "TURN3",
+            [TurnCopy.DecorationLine([new("class", "free-form", "s", "r"), new("tier", "T0", "s", "r"), new("lease", "src/**", "s", "r"), new("shape", "goal block", "s", "r")])],
+            ["TurnCopy.DecorationLine"]),
+        new("TURN4", [N(TurnCopy.EditsText(SampleRevision)), TurnCopy.EditsText(1), TurnCopy.EditsText(null)], ["TurnCopy.EditsText"]),
+        new("TURN5", [Spent(new Spend(400, 0, 24, 1)), Spent(null)], ["TurnCopy.SpendText"]),
+        new("TURN6", [TurnCopy.EventsText(424).Replace("424", "{n}"), TurnCopy.EventsText(1)], ["TurnCopy.EventsText"]),
+        new(
+            "TURN7",
+            [TurnCopy.DurationText(new TimeSpan(0, 4, 12)), TurnCopy.DurationText(TimeSpan.FromSeconds(41)), TurnCopy.DurationText(new TimeSpan(1, 2, 0))],
+            ["TurnCopy.DurationText"]),
+        new("TURN8", [TurnCopy.SpokenDuration(new TimeSpan(0, 4, 12)), TurnCopy.SpokenDuration(TimeSpan.FromSeconds(41))], ["TurnCopy.SpokenDuration"]),
+        new(
+            "TURN9",
+            [
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1)))], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1))), Turn(2, TurnState.Completed, Outcome())], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1)))], 40_000)),
+            ],
+            ["TurnCopy.SessionSpend"]),
+        new(
+            "TURN10",
+            [
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(2, TurnState.Queued)))),
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(1, TurnState.Running), Turn(2, TurnState.Queued)))),
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(1, TurnState.Interrupted, Outcome()), Turn(2, TurnState.Queued)))),
+            ],
+            ["TurnCopy.QueuedSentence"]),
         new("DOCK1", [SessionDocumentSurface.PaneHiddenCopy], ["SessionDocumentSurface.PaneHiddenCopy"]),
         new("DOCK4", [KeptPromptsSingular(), "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks."], ["LayoutPersistence.KeptPromptsSentence"]),
     ];
+
+    private static bool IsStale(string cell) => cell.StartsWith(StaleMark, StringComparison.Ordinal);
+
+    /// <summary>The original sentence of a stale row: the text after the mark's reason, cut before any trailing annotation.</summary>
+    private static string StaleSentence(string cell)
+    {
+        var end = cell.IndexOf(")* ", StringComparison.Ordinal);
+        var sentence = end < 0 ? string.Empty : cell[(end + 3)..].Trim();
+        var note = sentence.IndexOf(" (", StringComparison.Ordinal);
+        return note < 0 ? sentence : sentence[..note];
+    }
 
     private static Dictionary<string, string> DesignRows()
     {
@@ -146,9 +202,8 @@ public sealed class DesignCopyRowsArePinnedTests
         return rows;
     }
 
-    private static HashSet<string> CopyMembers()
+    private static IEnumerable<(Type Type, FieldInfo Field)> CopyFields()
     {
-        var found = new HashSet<string>();
         foreach (var assembly in new[] { typeof(ChecklistCopy).Assembly, typeof(TurnCopy).Assembly })
         {
             foreach (var type in assembly.GetTypes())
@@ -159,22 +214,34 @@ public sealed class DesignCopyRowsArePinnedTests
                 {
                     if (isCopyType || f.Name.EndsWith("Copy", StringComparison.Ordinal))
                     {
-                        found.Add(type.Name + "." + f.Name);
+                        yield return (type, f);
                     }
                 }
+            }
+        }
+    }
 
-                if (isCopyType)
+    private static HashSet<string> CopyMembers()
+    {
+        var found = CopyFields().Select(x => x.Type.Name + "." + x.Field.Name).ToHashSet();
+        foreach (var assembly in new[] { typeof(ChecklistCopy).Assembly, typeof(TurnCopy).Assembly })
+        {
+            foreach (var type in assembly.GetTypes().Where(t => t.Name.EndsWith("Copy", StringComparison.Ordinal)))
+            {
+                const BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly;
+                foreach (var mth in type.GetMethods(all).Where(mth => mth.ReturnType == typeof(string) && !mth.IsSpecialName))
                 {
-                    foreach (var mth in type.GetMethods(all).Where(mth => mth.ReturnType == typeof(string) && !mth.IsSpecialName))
-                    {
-                        found.Add(type.Name + "." + mth.Name);
-                    }
+                    found.Add(type.Name + "." + mth.Name);
                 }
             }
         }
 
         return found;
     }
+
+    /// <summary>Every sentence the code is known to render: each pin's rendered text and each copy constant's value.</summary>
+    private static IEnumerable<string> RenderedCorpus() =>
+        Pins().SelectMany(p => p.Rendered).Concat(CopyFields().Select(x => (string)x.Field.GetRawConstantValue()!));
 
     [Fact]
     public void EveryPinnedRow_CarriesTheLiteralTheCodeRenders()
@@ -186,6 +253,12 @@ public sealed class DesignCopyRowsArePinnedTests
             if (!rows.TryGetValue(pin.RowId, out var cell))
             {
                 failures.Add($"{pin.RowId}: pinned, but DESIGN.md has no such id row");
+                continue;
+            }
+
+            if (IsStale(cell))
+            {
+                failures.Add($"{pin.RowId}: pinned, but the DESIGN.md row is marked stale; a stale row is not pinned (un-stale it, or drop the pin)");
                 continue;
             }
 
@@ -207,12 +280,15 @@ public sealed class DesignCopyRowsArePinnedTests
         var rows = DesignRows();
         var pinned = Pins().Select(p => p.RowId).ToHashSet();
         var failures = new List<string>();
-        failures.AddRange(rows.Keys.Where(id => !pinned.Contains(id) && !UnmatchedRows.ContainsKey(id))
+        var stale = rows.Where(r => IsStale(r.Value)).Select(r => r.Key).ToHashSet();
+        failures.AddRange(rows.Keys.Where(id => !stale.Contains(id) && !pinned.Contains(id) && !UnmatchedRows.ContainsKey(id))
             .Select(id => $"{id}: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows"));
         failures.AddRange(UnmatchedRows.Keys.Where(id => !rows.ContainsKey(id))
             .Select(id => $"{id}: stale UnmatchedRows entry, the DESIGN.md row is gone; delete it"));
         failures.AddRange(UnmatchedRows.Keys.Where(pinned.Contains)
             .Select(id => $"{id}: stale UnmatchedRows entry, the row is now pinned; delete it"));
+        failures.AddRange(UnmatchedRows.Keys.Where(stale.Contains)
+            .Select(id => $"{id}: on UnmatchedRows and marked stale in DESIGN.md; a stale row is neither pinned nor unmatched, delete the entry"));
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }
@@ -229,6 +305,18 @@ public sealed class DesignCopyRowsArePinnedTests
             .Select(m => $"{m}: stale UnmatchedMembers entry, the member is gone or no longer a copy member; delete it"));
         failures.AddRange(UnmatchedMembers.Keys.Where(covered.Contains)
             .Select(m => $"{m}: stale UnmatchedMembers entry, the member is now pinned; delete it"));
+
+        Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void AStaleRow_IsNotRenderedByAnyCode()
+    {
+        var corpus = RenderedCorpus().ToList();
+        var failures = DesignRows().Where(r => IsStale(r.Value))
+            .Where(r => StaleSentence(r.Value) is { Length: > 0 } sentence && corpus.Any(c => c.Contains(sentence, StringComparison.Ordinal)))
+            .Select(r => $"{r.Key}: stale row is rendered; un-stale it (\"{StaleSentence(r.Value)}\")")
+            .ToList();
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }

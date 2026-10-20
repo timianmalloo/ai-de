@@ -1,0 +1,4 @@
+ratchet origin/main 0bb8a132 vs head 6a287f7f
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=1
+EXPECTED: tools/verify-derived-views.py is a derived-view gate; join step 6 regenerates the views (rule 22).
+ratchet exit 1

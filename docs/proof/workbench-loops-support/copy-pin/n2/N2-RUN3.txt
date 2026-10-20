@@ -1,0 +1,10 @@
+ROW RUN3
+$ grep -rniF "Response complete" src
+(hits: 0)
+$ grep -rniF "still needs review" src
+(hits: 0)
+$ grep -rniF "needs review" src
+(hits: 0)
+$ grep -rniF "Evidence still" src
+(hits: 0)
+DECISION RUN3: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.

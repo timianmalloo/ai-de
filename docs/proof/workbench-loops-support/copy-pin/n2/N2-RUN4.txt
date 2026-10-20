@@ -1,0 +1,18 @@
+ROW RUN4
+$ grep -rniF "Connection lost" src
+(hits: 0)
+$ grep -rniF "outcome is unknown" src
+(hits: 0)
+$ grep -rniF "run outcome" src
+(hits: 0)
+$ grep -rniF "Connection" src
+src/AiDe.App/Workbench/WorkbenchShell.cs:784:        // Diagnostics needs no daemon connection: the installation layout is on disk and the
+src/AiDe.Core/Facts/Dispatch.cs:26:/// A stable principal, server-derived from the authenticated connection and invariant across
+src/AiDe.Core/Facts/Dispatch.cs:27:/// reconnects and core epochs. Never read from a command payload, and never connection-scoped —
+src/AiDe.Core/Facts/Dispatch.cs:28:/// a connection-scoped identity would void receipt dedup across the crash window it exists for.
+src/AiDe.Core/Ipc/CapabilityRegistry.cs:8:    string ConnectionId,
+src/AiDe.Core/Ipc/CapabilityRegistry.cs:31:/// <para><b>Bound to four things, checked in a fixed order</b> — connection, process, workspace,
+src/AiDe.Core/Ipc/CapabilityRegistry.cs:32:/// epoch. Each closes a distinct attack: replaying a token on a second connection; a different
+src/AiDe.Core/Ipc/CapabilityRegistry.cs:33:/// process on the same connection; reaching another workspace's daemon; and acting against state
+(hits: 282)
+DECISION RUN4: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.
