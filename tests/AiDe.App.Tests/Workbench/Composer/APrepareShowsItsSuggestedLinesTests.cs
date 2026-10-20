@@ -36,7 +36,7 @@ public sealed class APrepareShowsItsSuggestedLinesTests(ITestOutputHelper output
     /// announced exactly once; and Tab from the editor reaches each suggested line, whose UIA name starts
     /// <c>? suggested</c>. The fold stays open while the user works in it, and an unkept line still does not count.
     /// </summary>
-    [Fact]
+    [CheckedFact]
     public void OnePrepareThatSuggestsLines_OpensTheFold_LeavesFocus_AnnouncesTheCountOnce_AndTabReachesEachLine()
     {
         ComposerGesture.Drive(_fixture, async (window, document) =>
@@ -64,6 +64,11 @@ public sealed class APrepareShowsItsSuggestedLinesTests(ITestOutputHelper output
             output.WriteLine("announced: " + string.Join(" | ", announcer.Messages));
 
             Assert.True(fold.IsExpanded, "a prepare that suggested lines left them in the closed fold");
+            if (!inEditorBefore)
+            {
+                InputPreconditions.RequireForeground(new System.Windows.Interop.WindowInteropHelper(window).Handle, "typing into the editor");
+            }
+
             Assert.True(inEditorBefore, "the fixture could not put focus in the editor before the prepare (desk run owed: foreground not held)");
             Assert.True(InEditor(editor), $"the prepare moved focus out of the editor: {Describe(focusedAfter)}");
             Assert.False(fold.IsKeyboardFocusWithin, $"the prepare moved keyboard focus into a suggestion: {Describe(focusedAfter)}");

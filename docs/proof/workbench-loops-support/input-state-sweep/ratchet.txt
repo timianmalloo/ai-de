@@ -1,0 +1,7 @@
+step-8 ratchet, base 0f1e548d, head 42712cb5 (2nd run; the 1st refused verify-gate-self-tests, fixed in 42712cb5 - see README S4)
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 50 gate(s)
+Expected, derived-view gates regenerated at join step 6: docs-graph.py (index drift only: validate says 0 problems, 0 orphans, 1 index-drift item) and verify-site-figures.py.
+ratchet: REFUSE — 2 refusal(s) over 50 gate(s)
+ratchet exit 1

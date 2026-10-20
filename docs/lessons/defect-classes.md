@@ -8935,14 +8935,37 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   2026-10-20: T33 ruling (4) settled on this evidence, no desk run needed).
 - **Residual:** the cause of the held button is unknown. No test or src code sends mouse input (T33's read; keyboard
   only), and no one injected input. Not recorded: when the button went down, or what released it.
-- **Sweep:** owed. T36 (`wl-flake-remeasure`) re-measures, with the button released, every test that failed on this
-  machine in T31, T34 or the 2026-10-20 recounts (CtrlDigit and CtrlEnter also pass alone since the release). The sweep
-  node's scope is the tests T36 shows to be button-sensitive; the Owner rules on its brief.
+- **Instance 2 (2026-10-20, T36, the foreground window):**
+  `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective`
+  (`tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:137`) failed 10/10 with
+  "focus could not be put inside the page (foreground held=False ...)". `SendInput` reaches only the foreground window, so
+  a window that is not the foreground proves nothing about the chord. Another global state: the foreground window.
+- **Instance 3 (same):** `SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`
+  (`tests/AiDe.App.Tests/SolutionTreeChordTests.cs:10`) failed 10/10 with the probe's "foreground not held; SendInput would
+  prove another window" (probe exit code 2).
+- **Instance 4 (S3 recall, T37):** `APrepareShowsItsSuggestedLinesTests.OnePrepareThatSuggestsLines_...`
+  (`tests/AiDe.App.Tests/Workbench/Composer/APrepareShowsItsSuggestedLinesTests.cs:39`) asserted "desk run owed: foreground
+  not held" as a FAIL. It passes on this machine today.
+- **Instance 5 (S3 recall, T37):** `ComposerHostIntegrationTests.TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography`
+  (`tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs:126`) asserted `reached draft=True` while the probe prints
+  `os keystroke: foreground held=False` when it cannot send the key. It passes on this machine today.
+- **Sweep (T37, done):** the four tests above plus `S3-hits.txt` in
+  `docs/proof/workbench-loops-support/input-state-sweep/` (the search pattern is `s3-search.sh` there; 71 raw hits, 5 tests
+  converted, the rest listed in the README with a reason: brush `Foreground`, probe code, WPF-internal
+  `Keyboard.FocusedElement` assertions that are the product's behaviour, model `IsActive`).
 - **Derive:** a UI test whose control reads global input state records that state as a precondition. A non-default
   state is **NOT CHECKED** with that reason, never a FAIL and never a pass.
-- **Control (owed, the sweep node):** a precondition that reads the left-button state before the keyboard step and
-  reports NOT CHECKED when it reads down, with a red that shows the precondition firing.
-- **Status:** `open` until the sweep's control lands.
+- **Control (landed, T37):** `tests/AiDe.App.Tests/InputStatePrecondition.cs`: `InputPreconditions.RequireLeftButtonReleased`
+  (WPF's `Mouse.PrimaryDevice.LeftButton` decides; `GetAsyncKeyState` is evidence in the reason) and `RequireForeground`
+  (read after the test's own focus attempt), through the `IInputStateSource` seam, throw `NotCheckedException`; a
+  `[CheckedFact]` turns it into a runtime Skipped / NotExecuted with the reading as the reason (xUnit 2.9.3 has no
+  runtime skip of its own: S0 in the same folder). Red then green in `InputStatePreconditionTests`. The recount
+  (`tools/verify-test-run.py`) prints every NotExecuted result with its reason and refuses any that `expectedSkips` does
+  not name; `expectedSkips` names CtrlDigit and CtrlEnter and **not** the fold, so a skipped fold stops the join.
+- **Status:** `controlled`. The recount (`S5-recount.txt`) names the NOT CHECKED tests with their reasons and the fold
+  PASSED with the left button reading `0x0000` before and after. Not observed: the fold ending NOT CHECKED with the button
+  down (the button was never down during T37; the helper's red covers it through the seam). Residual: the precondition
+  reads the state at one instant, so a state that changes between the read and the key press is not seen.
 
 ### DC-NEW-wl-leader5-b — a seat that holds a lease, or that others rule through, blocks on a direct user prompt
 - **Class:** a coordination seat (the Leader: it holds the leader pin, and the Owner rules through it) calls a

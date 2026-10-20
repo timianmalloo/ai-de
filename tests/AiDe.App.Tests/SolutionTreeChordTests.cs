@@ -6,7 +6,10 @@ namespace AiDe.App.Tests;
 /// </summary>
 public sealed class SolutionTreeChordTests
 {
-    [Fact]
+    // The probe's own exit code for "its window is not the foreground window after its focus attempt".
+    private const int ProbeForegroundNotHeld = 2;
+
+    [CheckedFact]
     public void CtrlEnter_OnAFileArtifact_RequestsRevealInGraph()
     {
         var probe = ProbePath();
@@ -37,6 +40,11 @@ public sealed class SolutionTreeChordTests
         finally
         {
             DesktopHold.AnnounceEnd("grok-uv-ctrl-enter", process.Id, process.HasExited ? process.ExitCode : -1);
+        }
+
+        if (process.ExitCode == ProbeForegroundNotHeld)
+        {
+            throw new NotCheckedException($"NOT CHECKED: the probe's window was not the foreground window after its own focus attempt; SendInput would prove another window. Probe said: {stderr.Trim()}");
         }
 
         Assert.True(

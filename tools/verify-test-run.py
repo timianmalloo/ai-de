@@ -259,6 +259,21 @@ def non_passed(root: ET.Element) -> list[tuple[str, str, str]]:
     return named
 
 
+def not_checked_lines(results: list[tuple[str, str, str]]) -> list[str]:
+    """The report lines that name every NotExecuted result with its reason (B3: a skip is named, expected or not).
+
+    Only NotExecuted: a failure is reported by the findings path. The reason is the first line of the
+    result's Message, as `non_passed` read it, so a test that ends NOT CHECKED says why in the gate's own
+    output instead of only in the .trx.
+    """
+    lines: list[str] = []
+    for test, outcome, message in results:
+        if outcome == "NotExecuted":
+            lines.append(f"      [NOT CHECKED] {test}")
+            lines.append(f"        {message}")
+    return lines
+
+
 def read_counts(project_name: str) -> tuple[dict[str, int], str, list[tuple[str, str, str]]] | None:
     """Return (counters, outcome, non-passed results) for a project's result file, or None.
 
@@ -436,6 +451,8 @@ def main() -> int:
     # Per project, the non-passed results to print UNDER its findings — populated only for projects
     # that actually produced a finding, so a green run's expected skip is not reported as news.
     named: dict[str, list[tuple[str, str, str]]] = {}
+    # Per project, every NotExecuted result with its reason — printed on every run, green or red.
+    not_checked: dict[str, list[str]] = {}
 
     print()
     print(f"{'project':<28}{'total':>10}{'expected':>10}{'outcome':>14}")
@@ -454,6 +471,7 @@ def main() -> int:
             continue
 
         counters, outcome, results = result
+        not_checked[name] = not_checked_lines(results)
         total = counters["total"]
         expected = baseline.get(name)
         observed[name] = total
@@ -506,6 +524,11 @@ def main() -> int:
         print(f"{name:<28}{total:>10}{str(expected) if expected is not None else '—':>10}{flag:>14}")
 
     print()
+    for project_name, lines in not_checked.items():
+        if lines:
+            print(f"{project_name} — NOT CHECKED ({len(lines) // 2}), each with its reason:")
+            print("\n".join(lines))
+            print()
 
     if args.update:
         # AGAINST THE COMMITTED VALUE, NOT THE ONE ON DISK. The join runs `--update` three times in

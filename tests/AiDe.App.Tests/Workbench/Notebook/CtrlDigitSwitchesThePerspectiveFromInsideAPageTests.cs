@@ -29,7 +29,7 @@ public sealed class CtrlDigitSwitchesThePerspectiveFromInsideAPageTests : IDispo
 
     public void Dispose() => _workspace.Dispose();
 
-    [Fact]
+    [CheckedFact]
     public void CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective()
     {
         var config = _workspace.Session("keys from a page");
@@ -133,6 +133,8 @@ public sealed class CtrlDigitSwitchesThePerspectiveFromInsideAPageTests : IDispo
             }
         }
 
+        // Read after the attempts above: a window that is not the foreground cannot take the chord (DC-NEW-wl-t33-input-state).
+        InputPreconditions.RequireForeground(hwnd, "SendInput");
         throw new InvalidOperationException(
             $"environment: focus could not be put inside the page (foreground held={GetForegroundWindow() == hwnd}, os focus class='{focusClass}', page hasFocus={hasFocus})");
     }

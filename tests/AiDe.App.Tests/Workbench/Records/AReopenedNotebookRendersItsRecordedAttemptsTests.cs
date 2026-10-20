@@ -216,7 +216,7 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
     /// Brief check 3: a restored row's events are reached from the row by keyboard the way a live row's are — Tab from
     /// the row's container to its fold, Space opens it — and every folded event line is exposed to UI Automation.
     /// </summary>
-    [Fact]
+    [CheckedFact]
     public void ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation()
     {
         Sta.Pump(
@@ -260,7 +260,8 @@ public sealed class AReopenedNotebookRendersItsRecordedAttemptsTests : IDisposab
 
                 Assert.True(fold is not null, $"Tab from the restored row reached [{string.Join(", ", stops)}], never its fold \"{row.FoldHeader}\"");
 
-                // Space opens the fold.
+                // Space opens the fold — only when WPF reads the left button released (DC-NEW-wl-t33-input-state).
+                InputPreconditions.RequireLeftButtonReleased();
                 var source = PresentationSource.FromVisual(fold)!;
                 fold.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyDownEvent });
                 fold.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyUpEvent });

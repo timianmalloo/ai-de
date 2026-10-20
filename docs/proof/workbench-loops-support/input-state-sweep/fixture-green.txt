@@ -1,0 +1,1 @@
+self-test OK — new debt is refused, a stale frozen entry is reported, verify-test-run names the failures it counts, an unmoved baseline under a higher count is refused at the join, --update refuses to lower a committed floor unsaid, the floor reads `total` rather than `executed`, an unlisted NotExecuted result is a finding, and every NotExecuted result is named with its reason
