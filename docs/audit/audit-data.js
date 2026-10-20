@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T03:24:29Z",
+  "generated": "2026-10-20T03:39:08Z",
   "audit": [
     {
       "actor": null,
@@ -27128,6 +27128,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T03:24:27Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5BP8EGSM59HZEJ646SDG3QJ",
+      "shortname": "join-wl-copy-pin-step8",
+      "datetime": "2026-10-20T03:39:08Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T32 join 23c942be",
+      "summary": "Recount 1 (join head 18f43671): Core 3120 / portable 2937 / nonportable 183 Completed; App 1268 counted, 2 NotExecuted (real adapter, real projection env), 2 Failed: (a) AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head 18f43671 and on the first parent 30ce61ac in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; (b) NoDispatchOutsideTheHostTests.ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds ('Assert.Equal() Failure: Strings differ'), PASSING alone on head and parent: a load-only failure, 2nd recorded instance of this test under DC-NEW-wl-leader3-b (T31's subject). One full re-run per join (hand-off 3): recount 2 failed only (a); (b) passed. Continued with --continue --docs-only. Step 8 strict 6/48 (the same pre-existing gates). Ratchet vs 30ce61ac, head 23c942be: PASS 0/49. Release build 0 errors. T32 (DC-NEW-wl-t26-copy's class control): DesignCopyRowsArePinnedTests pins 17 of 27 DESIGN.md copy rows to the literal the code renders (mutation red on CHK1); 10 rows and 23 copy members on shrink-only lists, each with a reason; F1 comment-only (44dfcaf8). Owner rulings on the findings in obligations.md (30ce61ac): SC7-SC9 excluded, CHK6 partial accepted, NB1/RUN1/RUN3/RUN4/CHECK1/AUTH1/DEMO1 and the 23 members to T32 n2 after T31. No src or DESIGN.md change.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/copy-pin/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T32 wl-copy-pin onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-10-20T02:59:14Z",
+      "duration_seconds": 2394.0
     }
   ],
   "changes": [
