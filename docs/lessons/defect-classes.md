@@ -8758,6 +8758,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (3, 2026-10-20, the same test as (1)) `ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds` failed in the T32 join's
   first recount ("Assert.Equal() Failure: Strings differ"). It passed alone on the join head `18f43671` and on the first
   parent `30ce61ac`, and passed in the join's one full re-run. T32's diff touches no `src/`. Step-8 record `eb178bdb`.
+  (4, 2026-10-20, the same test as (1)) `ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds` failed with a 30 s
+  timeout in T32 n3's full App suite (`docs/proof/workbench-loops-support/copy-pin/n3/suite-app.txt`) and passed 1/1
+  alone (`suite-app-alone-deadholder.txt`). That makes three in-suite failures of this test against 0/10 in T31's
+  measurement. By the Owner's rule (a second event triggers the repro node), T34 `wl-deadholder-repro` reproduces it
+  read-only, after T33.
 - **Sweep:** every test the recounts and track suites have shown failing under load but passing alone.
 - **Derive:** a green re-run is not evidence of absence; a failure RATE is. A load-only failure is a defect until a
   deterministic repro, or NOT REPRODUCED with N stated, says otherwise.
