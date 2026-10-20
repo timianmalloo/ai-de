@@ -8744,3 +8744,23 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Prevent:** `EveryAdvisoryCallsSpendReachesTheOutcomeLineTests` drives two prepares and a send through the gesture, then reads the rendered outcome line.
 - **Status:** `controlled` for the compile spend. Partial for the class: no scan refuses a new per-turn reader of `LastCall`. A call whose wire reports no cost is still counted as nothing rather than marked *not recorded* on the line.
 - **Rule-11 lapse:** this entry landed one commit after the fix (`51d70fa7`), not in the same commit.
+
+### DC-NEW-wl-t28-compiled — recurrence (T30 n5, 2026-10-20): a gate that passed without driving the user's view
+- **Instance:** a prepare filled the suggested lines into the *Goal · Done when · Not in scope* fold, which is collapsed at
+  rest, and nothing on the prepare path opened it (`ComposerSurface.cs` `BuildStructure`, `PrepareTurnAsync`). The user
+  read *"prepared — press again to send"* with no suggestion on the screen, and the second Ctrl+Enter sent without them.
+  Node 4 found it by reading the code for the demo script (finding 1), not from a test.
+- **Why it survived (the controls it passed):** `AKeptSuggestedLineIsKeptTests` and `ThePrepareStatesWalkTests` drive the
+  real gesture (type, Ctrl+Enter) but read the lines' marks and text through the logical tree
+  (`StructureMarks`, `Logical<TextBox>`), which a collapsed fold still holds. Their oracle asked "is the suggestion
+  there?", never "can the user see or reach it?". The gesture was driven; the user's view was not.
+- **Sweep:** composer oracles that read a line inside a fold: the two files above, `ASentGoalLineSurvivesARestartTests`
+  (Keep through the invoke peer, which works on a hidden button) and `NothingSaysAnUnsentDraftIsSavedTests` (copy only).
+  Each reads through the logical tree. None asserted the fold's state or a Tab stop.
+- **Derive:** an oracle on a user-visible line asserts that it is visible and reachable: the fold's `IsExpanded`, a Tab walk
+  from the editor that lands on it, and its UIA name, as well as its content.
+- **Prevent:** `APrepareShowsItsSuggestedLinesTests` drives type and Ctrl+Enter, then asserts the fold is open, focus is
+  still in the editor, the count is announced once, and Tab from the editor reaches every suggested line by its
+  `? suggested` name (`A-shows-suggested-red.txt`, `A-shows-suggested-green.txt`).
+- **Status:** `controlled` for the suggested lines. Partial for the class: no scan refuses a composer oracle that reads
+  through the logical tree only.

@@ -828,12 +828,23 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         // THE MODEL'S LINES, MARKED derived — and under agentic-advisory a keep is the act that lets
         // one project (§A11): the line's own control, never a page message.
+        var suggested = 0;
         foreach (var (field, line) in _structureLines)
         {
             if (_gate.DerivedLines.TryGetValue(field, out var proposed))
             {
                 line.ShowDerived(proposed, _gate.LastCallOutcome == CallOutcomes.Suspect);
+                suggested++;
             }
+        }
+
+        // THE SUGGESTIONS ARE ON THE SCREEN (Ruling 180 (3), the Owner's shape; T30 n5): the fold opens, focus stays
+        // in the editor (nothing here moves it), and the count is said once, before the next action. Closing the fold
+        // again is the user's act, never the app's.
+        if (suggested > 0)
+        {
+            _structure.IsExpanded = true;
+            _announcer.Announce(new Announcement(SuggestedLinesAnnouncement(suggested), Urgency.Status, AnnouncementKind.Other));
         }
 
         var degraded = _gate.LastCallOutcome is { } outcome && !CallOutcomes.Agentic.Contains(outcome, StringComparer.Ordinal);
@@ -843,6 +854,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             degraded ? "prepared — " + (_gate.CompileLineText ?? string.Empty) + " — press again to send" : "prepared — press again to send",
             Urgency.Status);
     }
+
+    /// <summary>The one announcement of a prepare that suggested lines (DESIGN.md's composer status row; Ruling 180 (3)).</summary>
+    public static string SuggestedLinesAnnouncement(int count) =>
+        count == 1 ? "1 suggested line. Review it before you send." : $"{count} suggested lines. Review them before you send.";
 
     /// <summary>Shows the compile line with the control its state needs: Cancel while preparing, Prepare again when degraded or stale.</summary>
     private void ShowCompileLine(string text, bool preparing, bool degraded = false)
@@ -2296,7 +2311,6 @@ internal sealed class StructureLine
             Padding = new Thickness(2, 1, 2, 1),
         };
         _value.SetResourceReference(Control.BackgroundProperty, "SurfaceRaisedBrush");
-        AutomationProperties.SetName(_value, LabelOf(field));
         _value.TextChanged += (_, _) =>
         {
             if (_showing)
@@ -2435,8 +2449,13 @@ internal sealed class StructureLine
             AutomationProperties.SetHelpText(_value, string.Empty);
         }
 
-        _keep.Visibility = _mark.Text.StartsWith(ModelLineMark, StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
+        var suggested = _mark.Text.StartsWith(ModelLineMark, StringComparison.Ordinal);
+        _keep.Visibility = suggested ? Visibility.Visible : Visibility.Collapsed;
         AutomationProperties.SetItemStatus(_value, _mark.Text.TrimStart('—', '✓', '!', '?', ' '));
+
+        // A suggestion says so in its NAME too (T30 n5, the Owner's shape): Tab lands on "? suggested Goal", never on a
+        // line a reader takes for the user's own.
+        AutomationProperties.SetName(_value, suggested ? ModelLineMark + " " + LabelOf(Field) : LabelOf(Field));
     }
 
     private static string LabelOf(string field) => field switch

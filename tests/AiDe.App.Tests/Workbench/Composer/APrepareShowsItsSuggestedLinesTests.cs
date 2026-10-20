@@ -51,7 +51,7 @@ public sealed class APrepareShowsItsSuggestedLinesTests(ITestOutputHelper output
             ComposerGesture.Settle(document);
             var editor = ComposerGesture.Logical<FrameworkElement>(composer).Single(e => AutomationProperties.GetName(e) == "Message");
             Keyboard.Focus(editor);
-            var focusedBefore = Keyboard.FocusedElement;
+            var inEditorBefore = InEditor(editor);
             announcer.Clear();
 
             ComposerGesture.CtrlEnter(composer);
@@ -60,11 +60,12 @@ public sealed class APrepareShowsItsSuggestedLinesTests(ITestOutputHelper output
 
             var focusedAfter = Keyboard.FocusedElement;
             var counts = announcer.Messages.Count(m => m.Contains("suggested line", StringComparison.Ordinal));
-            output.WriteLine($"fold open: {fold.IsExpanded}; focus before: {Describe(focusedBefore)}; after: {Describe(focusedAfter)}; window active: {window.IsActive}");
+            output.WriteLine($"fold open: {fold.IsExpanded}; focus in the editor before: {inEditorBefore}; after: {InEditor(editor)} (WPF focus {Describe(focusedAfter)}); window active: {window.IsActive}");
             output.WriteLine("announced: " + string.Join(" | ", announcer.Messages));
 
             Assert.True(fold.IsExpanded, "a prepare that suggested lines left them in the closed fold");
-            Assert.Same(focusedBefore, focusedAfter);
+            Assert.True(inEditorBefore, "the fixture could not put focus in the editor before the prepare (desk run owed: foreground not held)");
+            Assert.True(InEditor(editor), $"the prepare moved focus out of the editor: {Describe(focusedAfter)}");
             Assert.False(fold.IsKeyboardFocusWithin, $"the prepare moved keyboard focus into a suggestion: {Describe(focusedAfter)}");
             Assert.Equal(1, counts);
             Assert.Contains(ThreeSuggested, announcer.Messages);
@@ -106,6 +107,29 @@ public sealed class APrepareShowsItsSuggestedLinesTests(ITestOutputHelper output
     /// <summary>The document's announcer: the composition passes a <see cref="RecordingAnnouncer"/> (as <c>ASendWhileATurnRunsOffersWaitOrParallelTests</c> reads it).</summary>
     private static RecordingAnnouncer Announcer(SessionDocumentSurface document) =>
         (RecordingAnnouncer)typeof(SessionDocumentSurface).GetField("_announcer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(document)!;
+
+    /// <summary>
+    /// Focus is in the editor: WPF's keyboard focus on its host, or Win32 focus inside the host's window (the browser takes
+    /// Win32 focus once it is up, and WPF's focused element then reads null, as <c>ComposerSurface.EditorHasFocus</c> says).
+    /// </summary>
+    private static bool InEditor(FrameworkElement editor)
+    {
+        if (ReferenceEquals(Keyboard.FocusedElement, editor))
+        {
+            return true;
+        }
+
+        var handle = ((System.Windows.Interop.HwndHost)editor).Handle;
+        var focus = GetFocus();
+        return handle != IntPtr.Zero && focus != IntPtr.Zero && (focus == handle || IsChild(handle, focus));
+    }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern IntPtr GetFocus();
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static extern bool IsChild(IntPtr parent, IntPtr child);
 
     private static string Describe(IInputElement? element) =>
         element is null ? "(none)" : $"{element.GetType().Name} \"{(element is DependencyObject d ? AutomationProperties.GetName(d) : string.Empty)}\"";

@@ -1,0 +1,111 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.TheFourStatesEachCarryAReasonAndANextAction [238 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.KeepingADerivedLineMarksItKeptAndItReachesTheRun [11 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.ADegradedCallShowsItsReasonAndPrepareAgainAndStillSends [14 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ANeedsLoginCompileEntersPreparedCompiledMechanicallyAndTheSecondGestureSends [2 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.UnderAdvisoryAKeptLineProjectsAndAnEditedLineCarriesTheEdit [2 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFailedCallIsCalledAgainOnPrepareAgain [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AToolCallMarksTheCompileSuspectAndItsLinesStillArrive [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ALeaseProposalIsDroppedAndCountedAndTheLeaseIsUnchanged [5 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic", reaches: True) [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic-advisory", reaches: False) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnchangedDraftAfterASuccessReusesWithZeroRequests [6 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic", keep: False) [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic-advisory", keep: True) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AQuestionWithNothingProposedIsSucceededNoStructureAndSendsAsAMessage [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.MechanicalOnlyStillSendsOnOneGestureWithNoCompileLine [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFullySuppliedStructureSkipsTheCallAndSaysWhoSuppliedIt [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ASendOnOtherBytesThanThePreparedOnesIsRefusedAsStale [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AGestureDuringPreparingIsIgnoredAndCancelYieldsAMechanicalEnvelopeThatSends [3 ms]
+  Passed AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved [556 ms]
+  Standard Output Messages:
+ read 319 strings across 6 moments: an unsent draft 91, suggested lines 98, a kept line 98, the settings row 30, the composer page composer.html 1, the composer page composer-host.html 1
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [346 ms]
+  Standard Output Messages:
+ compile calls 2; after the second prepare: Goal "Suggestion 1 for goal." marked "✓ kept"; draft goal "Suggestion 1 for goal."; Done when "Suggestion 2 for done_when." marked "? suggested"
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [266 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AModelDerivedLine_IsMarkedSuggested_OnScreenAndInUia_AndAKeptLineIsNot [248 ms]
+  Standard Output Messages:
+ suggested: mark "? suggested" · UIA ItemStatus "suggested"
+ kept: mark "✓ kept" · UIA ItemStatus "kept"
+
+
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AKeptGoal_IsInNeitherTheStoredRevisionNorTheRevivedDraft_AfterARestartThroughTheShellsRevive [675 ms]
+  Standard Output Messages:
+ before restart: draft goal "Suggestion 1 for goal."; mark "✓ kept"; editor "Rename the helper in the parser. Keep the public names."
+ stored head revision 2: body "Rename the helper in the parser. Keep the public names."
+ after restart: draft goal ""; shape FreeForm; editor ""
+
+
+  Passed AiDe.App.Tests.Composer.APrepareShowsItsSuggestedLinesTests.OnePrepareThatSuggestsLines_OpensTheFold_LeavesFocus_AnnouncesTheCountOnce_AndTabReachesEachLine [321 ms]
+  Standard Output Messages:
+ fold open: True; focus in the editor before: True; after: True (WPF focus WebView2 "Message"); window active: True
+ announced: Preparing… — the model is reading your draft | 3 suggested lines. Review them before you send. | prepared — press again to send
+ Tab reached: ? suggested Goal | ? suggested Done when | ? suggested Not in scope
+
+
+[xUnit.net 00:00:04.23]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [1 s]
+  Standard Output Messages:
+ before restart: b1 Completed; sent 263 chars; carries the goal line: True
+ after restart: 1 restored row(s); "Compiled prompt of b1"; row SentBytes 263 chars; disclosure shows 263 chars; equal to what was sent: True
+ disclosure text: "## goal
+
+Suggestion 1 for goal.
+
+## done_when
+
+Suggestion 1 for done_when.
+
+## not_in_scope
+
+Suggestion 1 for not_in_scope.
+
+## tier
+
+T1
+
+## fan_out_cap
+
+2
+
+## budget
+
+bounded by your subscription — not measured here
+
+## message
+
+Rename the helper in the parser.
+"
+
+
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.TheNotRecordedLine_IsTheCopyDesignMdNames [16 ms]
+
+Test Run Successful.
+Total tests: 26
+     Passed: 26
+ Total time: 4.6401 Seconds
