@@ -5,9 +5,8 @@ type: proof-pack
 status: draft
 owner: "@timianmalloo"
 links:
-  - rel: implements
-    target: lessons-defect-classes
-review-by: 2026-12-01
+  - { to: architecture, rel: implements }
+review-by: "2026-12-01"
 summary: "leader_prejoin.py gains --branch/--session: every path a branch changes needs a coord claim from the node's session, or coord must refuse to claim it. Red-green on a planted branch; two real joined branches refused."
 ---
 
