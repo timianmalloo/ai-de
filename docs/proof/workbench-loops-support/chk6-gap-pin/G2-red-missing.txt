@@ -1,0 +1,29 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Mcp\AiDe.Mcp.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Daemon\AiDe.Daemon.csproj (in 147 ms).
+  Restored C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Core\AiDe.Core.csproj (in 147 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-chk6-gap-pin\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.Folds.AcceptanceGapSentencesMatchDesignTests.EveryGapSentenceTheFoldWrites_IsAClauseOfDesignChk6_AndEveryClauseIsASentence [FAIL]
+  Failed AiDe.Core.Tests.Workbench.Folds.AcceptanceGapSentencesMatchDesignTests.EveryGapSentenceTheFoldWrites_IsAClauseOfDesignChk6_AndEveryClauseIsASentence [13 ms]
+  Error Message:
+   gap code 'intent-missing' has no clause in DESIGN.md CHK6 (the fold writes: Blocked — the intent notebook has no saved revision.)
+gap code 'evidence-stale' has no clause in DESIGN.md CHK6 (the fold writes: Blocked — “Tests pass” has only evidence from an earlier draft.)
+gap code 'evidence-not-recorded' has no clause in DESIGN.md CHK6 (the fold writes: Blocked — whether the evidence for “Tests pass” is current is not recorded.)
+gap code 'needs-decision' has no clause in DESIGN.md CHK6 (the fold writes: Blocked — “Tests pass” needs a decision.)
+  Stack Trace:
+     at AiDe.Core.Tests.Workbench.Folds.AcceptanceGapSentencesMatchDesignTests.EveryGapSentenceTheFoldWrites_IsAClauseOfDesignChk6_AndEveryClauseIsASentence() in C:\Projects\ai-de-wl-chk6-gap-pin\tests\AiDe.Core.Tests\Workbench\Folds\AcceptanceGapSentencesMatchDesignTests.cs:line 98
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 29 ms - AiDe.Core.Tests.dll (net10.0)

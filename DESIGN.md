@@ -1430,7 +1430,7 @@ Copy added by this section (review oracles quote these strings):
 | CHK3 | Satisfied by run {7-char key} (intent revision {n}). |
 | CHK4 | The evidence belongs to an earlier draft. Link evidence from the current draft. |
 | CHK5 | Evidence currentness is not recorded, so this does not count as current. |
-| CHK6 | Ready to accept. — or the first blocking gap, as the Core fold writes it (Blocked — “{obligation}” has no current evidence. · Blocked — intent revision {n} is not accepted. · Blocked — no obligations are declared for this work.) |
+| CHK6 | Ready to accept. — or the first blocking gap, as the Core fold writes it (Blocked — “{obligation}” has no current evidence. · Blocked — intent revision {n} is not accepted. · Blocked — no obligations are declared for this work. · Blocked — the intent notebook has no saved revision. · Blocked — “{obligation}” has only evidence from an earlier draft. · Blocked — whether the evidence for “{obligation}” is current is not recorded. · Blocked — “{obligation}” needs a decision.) |
 | CHK7 | Accepted: the declared deliverable at intent revision {n}. This records acceptance of the deliverable only. It does not say the work is implemented or merged. (Ruling 179: the only string that may say "implemented" or "merged") |
 | CHK8 | Not accepted. {the gap sentences} — read out in the polite live region when *Accept deliverable* is pressed while blocked; the button is never disabled for a gap |
 | CHK9 | This notebook has no work journey. It was made before work journeys existed. Obligations need a work journey. |

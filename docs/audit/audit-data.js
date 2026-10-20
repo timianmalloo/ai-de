@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T11:26:16Z",
+  "generated": "2026-10-20T11:48:06Z",
   "audit": [
     {
       "actor": null,
@@ -27614,6 +27614,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T11:11:34Z",
       "duration_seconds": 882.0
+    },
+    {
+      "id": "al-01M5CJ7RBW4GJQHNJH2MAP2RE3",
+      "shortname": "wl-t35-chk6-gap-pin",
+      "datetime": "2026-10-20T11:48:06Z",
+      "session": "wl-t35-chk6-gap-pin",
+      "prompt": "T35: pin AcceptanceFold gap sentences against DESIGN.md CHK6",
+      "summary": "Core test pins 7 gap sentences to CHK6 clauses; 4 clauses added to DESIGN.md; red, green, mutation red proven",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Workbench/Folds/AcceptanceGapSentencesMatchDesignTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "every AcceptanceFold gap sentence pinned against DESIGN.md CHK6",
+      "done_when": "test red then green, mutation red, suites and ratchet run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T11:28:57Z",
+      "duration_seconds": 1149.0
     }
   ],
   "changes": [
