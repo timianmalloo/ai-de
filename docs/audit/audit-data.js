@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T11:25:59Z",
+  "generated": "2026-10-20T11:26:16Z",
   "audit": [
     {
       "actor": null,
@@ -27590,6 +27590,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T11:12:14Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CGZS90XWTR68TN4QZMSPYB",
+      "shortname": "join-wl-deadholder-repro-step8",
+      "datetime": "2026-10-20T11:26:16Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T34 join 7fab1df4",
+      "summary": "Docs-only join (--docs-only, no App run): T34 changes only docs/proof/workbench-loops-support/deadholder-repro/**, the DC-NEW-wl-leader3-b Repro line in docs/lessons/defect-classes.md and the audit log (git diff --name-only 0b00e858 9165e569). Step 8 strict 6/49 (the same pre-existing gates as the T33 join). Ratchet vs 68f92ad2, head 7fab1df4: PASS 0/50. T34 observed (read-only, no cause claimed): ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds NOT REPRODUCED, N=10; the full App suite ran 10 times on 0b00e858 (09:59:36Z-11:00:42Z) with --blame-hang, the test passed in all 10, no hang file or dump was produced; each run failed only the known tests (3; 2 in run 5). Left button GetAsyncKeyState(0x01)=0x8000 in 10/10 samples at 10:05:27Z (after run 1) and at 11:00:55Z (after run 10, no suite running); SM_SWAPBUTTON=0; no input injected. Not captured: a reading before run 1, any failure state, the names of the known failures in runs 2-4 and 6-9. One assume: line in the README (the recorded failures came under shared load; these runs were on a quiet machine). Status of DC-NEW-wl-leader3-b stays partially-controlled.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/deadholder-repro/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T34 wl-deadholder-repro onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T11:11:34Z",
+      "duration_seconds": 882.0
     }
   ],
   "changes": [
