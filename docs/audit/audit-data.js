@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T13:11:27Z",
+  "generated": "2026-10-20T13:35:32Z",
   "audit": [
     {
       "actor": null,
@@ -27768,6 +27768,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T12:14:05Z",
       "duration_seconds": 3441.0
+    },
+    {
+      "id": "al-01M5CRCFVZEAYK7M0X2ZHX0QDY",
+      "shortname": "wl-t21-layout-gate-r2",
+      "datetime": "2026-10-20T13:35:32Z",
+      "session": "wl-t21-layout-gate-r2",
+      "prompt": "T21 n10: count App tests reading ContentFor/ActiveSurfaceId after a layout command with a by-hand render between; convert if any",
+      "summary": "count = 6; both reads added to the gate oracle; red named the 6; all 6 take the route; no finding; suites at known failures; ratchet PASS",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/r2/R2b-sweep.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "settle Owner R2 on the layout gate",
+      "done_when": "count recorded, gate widened, tests converted, suites and ratchet run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T13:13:29Z",
+      "duration_seconds": 1323.0
     }
   ],
   "changes": [
