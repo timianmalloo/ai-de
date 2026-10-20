@@ -29,6 +29,12 @@ rule 23 (new) is this lesson.
 - **(H3) The announcement name:** either name is fine once the gate is honest. If you rename it back, it is one commit
   with no behaviour change. Update the defect entry's "Slip in the fix" line to say the rename evaded the gate, and
   cite `DC-NEW-wl-t30-gate-evasion` (the Leader files that class on main).
+- **(H4) The sweep (Owner, required; added 01:12Z by mail and SendMessage).** List every test that bans src text
+  (`File.ReadAllText` / `EnumerateFiles` next to `DoesNotContain`, `Assert.False(…Contains…)` or a Regex ban). Per ban:
+  test file:line, token, the rule it cites, and its premise after Rulings 180-182: **holds**, **now live** or **stale**.
+  "Now live" and "stale" are findings for the Owner; change nothing. Table at `docs/proof/workbench-loops-wl-1a/prefill/H4-lexical-ban-sweep.md`, cited
+  in the README and the done mail; update the defect entry's Sweep line. Nothing beyond this instance: say so, with
+  the count of bans read.
 - **Then** the whole Core and App suites on your final head, and rule 22's ratchet. Name the head sha of each in the
   done mail. This node hands off for T30's second join.
 
