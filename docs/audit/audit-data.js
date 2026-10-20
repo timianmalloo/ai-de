@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T11:10:27Z",
+  "generated": "2026-10-20T11:12:16Z",
   "audit": [
     {
       "actor": null,
@@ -27561,6 +27561,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T09:58:54Z",
       "duration_seconds": 4293.0
+    },
+    {
+      "id": "al-01M5CG64FT2WGSN1APJMMZDQDB",
+      "shortname": "join-wl-deadholder-repro",
+      "datetime": "2026-10-20T11:12:15Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-deadholder-repro into main",
+      "summary": "T34 read-only repro of ADeadHolder under full App suite load: NOT REPRODUCED, N=10 on 0b00e858 with --blame-hang (no hang file or dump). Each run had the known failures (3; 2 in run 5). Left button GetAsyncKeyState(0x01)=0x8000 x10 at 10:05:27Z and at 11:00:55Z (no suite running); SM_SWAPBUTTON=0. Docs only. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/deadholder-repro/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T34's proof and register Repro line onto main",
+      "done_when": "docs-only join pushed; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T11:12:14Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33507,6 +33536,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t33-fold-diag"
+    },
+    {
+      "id": "mail-01M5CG31ZWSJJK63CV1H0WA30P",
+      "ts": "2026-10-20T11:10:35Z",
+      "from": "wl-t34-deadholder-repro",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t34-deadholder-repro"
     }
   ]
 };

@@ -1,0 +1,2 @@
+{"agent": "wl-leader5-20261020", "at": 1792490318.4936588, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t34-deadholder-repro", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-deadholder-repro"}
+{"at": 1792494635.004761, "from": "wl-t34-deadholder-repro", "kind": "done", "mail_id": "mail-01M5CG31ZWSJJK63CV1H0WA30P", "ref": null, "session": "wl-t34-deadholder-repro", "to": "wl-leader5-20261020", "type": "mail"}

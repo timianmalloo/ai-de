@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "686c5d7880e6005f31106e4fd7f1f46e291769a14e0ff7210d927c395319465c"
+      "sourceSha256": "e9338c9cf49015887dee62a008a73f476b3d27530bd7faea51622819b4870196"
     },
     {
       "id": "design-session-profiler",
@@ -22770,6 +22770,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "b819bfd05cb3a7256f92da53f2c88ae0e9805f2d5e88178b986bf23637658624"
     },
     {
+      "id": "proof-wl-deadholder-repro",
+      "path": "docs/proof/workbench-loops-support/deadholder-repro/README.md",
+      "title": "Evidence: T34 - ADeadHolder_NeverLocksTheUserOut under full-suite load, NOT REPRODUCED, N=10",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The full App suite ran 10 times on 0b00e858 with the hang collector. ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds passed in all 10. NOT REPRODUCED, N=10. No cause is claimed. The OS left-button state read 0x8000 in every sample taken.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "flake",
+        "read-only"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d4aa2630312f6cbb60177f813dc086419dbcebfbce8a1bc3bf5e7318bcce0c6f"
+    },
+    {
       "id": "proof-wl-fold-diag",
       "path": "docs/proof/workbench-loops-support/fold-diag/README.md",
       "title": "Evidence: T33 - the restored-row fold observed on origin/main and on d986e4a4 (no cause claimed)",
@@ -25955,5 +25981,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "92a667dc9651b38c21cc3115811c21da648f994bb46a7529e76f5d91753f1089"
+  "graphSha256": "bc94967c5febe59f6ffab607ff99839c2c453b367773b3288cfd0cafeb287985"
 };
