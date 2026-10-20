@@ -415,7 +415,7 @@ local store. `actor` is a process principal (`shell:<pid>`), not a person. No te
 - **Copy (load-bearing; Owner confirms; DESIGN.md rows in Track D):**
   - Empty: "No obligations yet. Add the conditions this work must meet."
   - Acknowledged: "Acknowledged — not satisfied. Acknowledging is not evidence."
-  - Satisfied: "Satisfied by run {7-char key} (revision {n})."
+  - Satisfied: "Satisfied by run {7-char key} (intent revision {n})."
   - Stale: "The evidence belongs to an earlier draft. Link evidence from the current draft."
   - Not recorded: "Evidence currentness is not recorded, so this does not count as current."
   - Gap line (ADR-0040 `:113`): "Blocked — “{obligation}” has no current evidence." · "Blocked — “{obligation}”

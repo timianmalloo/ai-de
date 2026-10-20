@@ -14,7 +14,8 @@ summary: >-
   refuses and reads out acceptance while the intent is unaccepted, and accepts the deliverable naming the intent
   revision only (D2, with R1 and the Owner's null-sha condition). Node 2: the three literal entries, the service
   refusing a journey that is not the notebook's, saved review state surviving a restart without acceptance (D3, with
-  the own-journey restore), and the one-live-sha ceiling pinned (E).
+  the own-journey restore), and the one-live-sha ceiling pinned (E). Node 3: the Owner's copy confirmation (CHK3 and
+  CHK9 changed, pinned by literal tests red first) and M6 settled by removing the checklist Invalidate (option b).
 ---
 
 # T26 checklist kind — node 1
@@ -141,8 +142,9 @@ as the user sees it on the surface:
 | Red on the old copy: CHK3 reads "(revision 1)", CHK9 reads "(pre-workbench)" | `2ce683f0` | `copy-red.txt` |
 | Green: `ChecklistCopy.cs`, DESIGN.md CHK3 and CHK9, design `:426`, in one commit | see `handoff.md` | `copy-green.txt` (12 of 12 checklist App tests) |
 
-The design doc's CHK3 line (`docs/design/workbench-loops-wl-1b.md:418`) still reads "(revision {n})". It is outside
-this node's grant (only `:426` was granted). Seam request `req-01M5BDHVX8T545SQC0V4BESVF9` asks for it.
+The design doc's CHK3 line (`docs/design/workbench-loops-wl-1b.md:418`) was outside the brief's grant (only `:426`).
+Seam request `req-01M5BDHVX8T545SQC0V4BESVF9` asked for it, the Leader granted it, and it now says "(intent revision
+{n})" (a follow-up commit, named in `handoff.md`).
 
 ## (G) M6 settled — option (b): the call is removed
 
