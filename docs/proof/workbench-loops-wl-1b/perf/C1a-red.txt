@@ -1,0 +1,32 @@
+WL-1B-PERF — obligations, evidence and acceptance (check C1)
+==============================================================================================================
+build           : Release
+runtime         : 10.0.11, no debugger
+1x shape        : 3 revisions, 3 attempts, 2 checklist revision(s) x 3 obligations, 3 links, 6 obligation dispositions, 1 intent + 1 work disposition
+100x breadth    : 100 journeys, each the 1x shape, in one store
+100x depth      : one journey, 3 revisions, 3 attempts, 1 checklist revision(s) x 300 obligations, 300 links, 600 obligation dispositions, 1 intent + 1 work disposition
+budget          : checklist.evaluate p95 <= 100 ms at 100x depth. INFERRED as a fit: the nearest stated budget is the
+                  selection/focus budget (NFR-02, workbench-loops-ux.md:389), not a budget set for evaluate (design R3).
+==============================================================================================================
+
+built 1x               1 journey(ies) in    0.2s · db 0.2 MiB
+built 100x breadth   100 journey(ies) in    6.6s · db 0.8 MiB
+built 100x depth       1 journey(ies) in    4.7s · db 0.5 MiB
+
+C1a  EXPLAIN QUERY PLAN (no full scan of evidence_link_fact, disposition_fact, checklist_obligation_fact, dispatch_attempt_fact)
+  -- 1x (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\81bcee2b5b414b87a2cf5e836de3b863\1x.db)
+  CONTROL (deliberately unindexed)                     **FULL SCAN**
+      SCAN checklist_obligation_fact
+  -- 100x breadth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\81bcee2b5b414b87a2cf5e836de3b863\100x-breadth.db)
+  CONTROL (deliberately unindexed)                     **FULL SCAN**
+      SCAN checklist_obligation_fact
+  -- 100x depth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\81bcee2b5b414b87a2cf5e836de3b863\100x-depth.db)
+  CONTROL (deliberately unindexed)                     **FULL SCAN**
+      SCAN checklist_obligation_fact
+
+==============================================================================================================
+RESULT: 3 check(s) FAILED —
+  - C1a 'CONTROL (deliberately unindexed)' performs a full scan on 1x
+  - C1a 'CONTROL (deliberately unindexed)' performs a full scan on 100x breadth
+  - C1a 'CONTROL (deliberately unindexed)' performs a full scan on 100x depth
+==============================================================================================================

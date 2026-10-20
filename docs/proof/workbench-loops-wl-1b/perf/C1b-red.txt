@@ -1,0 +1,119 @@
+WL-1B-PERF — obligations, evidence and acceptance (check C1)
+==============================================================================================================
+build           : Release
+runtime         : 10.0.11, no debugger
+1x shape        : 3 revisions, 3 attempts, 2 checklist revision(s) x 3 obligations, 3 links, 6 obligation dispositions, 1 intent + 1 work disposition
+100x breadth    : 100 journeys, each the 1x shape, in one store
+100x depth      : one journey, 3 revisions, 3 attempts, 1 checklist revision(s) x 300 obligations, 300 links, 600 obligation dispositions, 1 intent + 1 work disposition
+budget          : checklist.evaluate p95 <= 100 ms at 100x depth. INFERRED as a fit: the nearest stated budget is the
+                  selection/focus budget (NFR-02, workbench-loops-ux.md:389), not a budget set for evaluate (design R3).
+==============================================================================================================
+
+built 1x               1 journey(ies) in    0.2s · db 0.2 MiB
+built 100x breadth   100 journey(ies) in    7.1s · db 0.9 MiB
+built 100x depth       1 journey(ies) in    4.9s · db 0.5 MiB
+
+C1a  EXPLAIN QUERY PLAN (no full scan of evidence_link_fact, disposition_fact, checklist_obligation_fact, dispatch_attempt_fact)
+  -- 1x (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\e72bae7d95a543f58fe693afa1711359\1x.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+  -- 100x breadth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\e72bae7d95a543f58fe693afa1711359\100x-breadth.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+  -- 100x depth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\e72bae7d95a543f58fe693afa1711359\100x-depth.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+
+C1b  Append overhead: product store minus a control store without the WL-1b triggers and FK (reported, not gated)
+  base 1x: product has 6 WL-1b trigger(s) and 2 FK(s); control has 6 and 2
+  base 100x-depth: product has 6 WL-1b trigger(s) and 2 FK(s); control has 6 and 2
+
+==============================================================================================================
+RESULT: 2 check(s) FAILED —
+  - C1b the control store for 1x must lack exactly the WL-1b triggers and FK the product has
+  - C1b the control store for 100x-depth must lack exactly the WL-1b triggers and FK the product has
+==============================================================================================================

@@ -1,0 +1,147 @@
+WL-1B-PERF — obligations, evidence and acceptance (check C1)
+==============================================================================================================
+build           : Release
+runtime         : 10.0.11, no debugger
+1x shape        : 3 revisions, 3 attempts, 2 checklist revision(s) x 3 obligations, 3 links, 6 obligation dispositions, 1 intent + 1 work disposition
+100x breadth    : 100 journeys, each the 1x shape, in one store
+100x depth      : one journey, 3 revisions, 3 attempts, 1 checklist revision(s) x 300 obligations, 300 links, 600 obligation dispositions, 1 intent + 1 work disposition
+budget          : checklist.evaluate p95 <= 100 ms at 100x depth. INFERRED as a fit: the nearest stated budget is the
+                  selection/focus budget (NFR-02, workbench-loops-ux.md:389), not a budget set for evaluate (design R3).
+==============================================================================================================
+
+built 1x               1 journey(ies) in    0.2s · db 0.2 MiB
+built 100x breadth   100 journey(ies) in    7.1s · db 0.9 MiB
+built 100x depth       1 journey(ies) in    5.1s · db 0.5 MiB
+
+C1a  EXPLAIN QUERY PLAN (no full scan of evidence_link_fact, disposition_fact, checklist_obligation_fact, dispatch_attempt_fact)
+  -- 1x (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\31827caeadb24fd08f762c8b6c1d59ed\1x.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+  -- 100x breadth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\31827caeadb24fd08f762c8b6c1d59ed\100x-breadth.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+  -- 100x depth (C:\Users\malla\AppData\Local\Temp\aide-bench-wl1b\31827caeadb24fd08f762c8b6c1d59ed\100x-depth.db)
+  CONTROL (deliberately unindexed)                             **FULL SCAN**
+      SCAN checklist_obligation_fact
+  ReadJourney (SqlReadJourney)                                 indexed
+      SEARCH journey_dim USING INDEX ix_journey_latest (journey_id=?)
+  ReadNotebook (SqlReadNotebook)                               indexed
+      SEARCH notebook_dim USING INDEX ix_notebook_latest (notebook_id=?)
+  ReadNotebookRevision (SqlReadNotebookRevision)               indexed
+      SEARCH prompt_revision_fact USING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=? AND revision_no=?)
+  ReadAttempt (SqlReadAttempt)                                 indexed
+      SEARCH dispatch_attempt_fact USING INDEX sqlite_autoindex_dispatch_attempt_fact_1 (dispatch_key=?)
+  ReadAttemptsForNotebook (SqlReadAttemptsForNotebook)         indexed
+      SEARCH dispatch_attempt_fact USING INDEX ix_attempt_revision (draft_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadEvidenceLinksForSubject (SqlReadEvidenceLinksForSubject) indexed
+      SEARCH evidence_link_fact USING INDEX ix_evidence_link_subject (subject_kind=? AND subject_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligationHistory (SqlReadObligationHistory)             indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadObligations (SqlReadObligations)                         indexed
+      SEARCH checklist_obligation_fact USING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=? AND revision=?)
+      USE TEMP B-TREE FOR ORDER BY
+  ReadDispositions (SqlReadDispositions)                       indexed
+      SEARCH disposition_fact USING INDEX sqlite_autoindex_disposition_fact_1 (subject_kind=? AND subject_id=?)
+  ReadOutcomes (SqlReadOutcomes)                               indexed
+      SEARCH dispatch_outcome_fact USING INDEX sqlite_autoindex_dispatch_outcome_fact_1 (dispatch_key=?)
+  ReadLatestNotebookRevision (max revision_no)                 indexed
+      SEARCH prompt_revision_fact USING COVERING INDEX sqlite_autoindex_prompt_revision_fact_1 (draft_id=?)
+  ReadLatestChecklistRevision (max revision)                   indexed
+      SEARCH checklist_obligation_fact USING COVERING INDEX sqlite_autoindex_checklist_obligation_fact_1 (checklist_id=?)
+
+C1b  Append overhead: product store minus a control store without the WL-1b triggers and FK (reported, not gated)
+  base 1x: product has 6 WL-1b trigger(s) and 2 FK column(s); control has 0 and 0
+  row kind                   mode            product p50  product p95  control p50  control p95     d p50     d p95   (ms)
+  obligation                 in-txn               0.0092       0.0101       0.0091       0.0099    0.0001    0.0002
+  obligation                 append+commit        0.3399       0.4511       0.3363       0.4140    0.0036    0.0371
+  evidence link              in-txn               0.0076       0.0095       0.0075       0.0085    0.0001    0.0010
+  evidence link              append+commit        0.3938       0.5868       0.3367       0.5466    0.0571    0.0402
+  disposition: obligation    in-txn               0.0177       0.0192       0.0174       0.0195    0.0003   -0.0003
+  disposition: obligation    append+commit        0.3742       0.5142       0.3674       0.5146    0.0068   -0.0004
+  disposition: work          in-txn               0.0165       0.0181       0.0162       0.0174    0.0003    0.0007
+  disposition: work          append+commit        0.3737       0.5735       0.3669       0.5735    0.0068    0.0000
+  disposition: intent (FK)   in-txn               0.0169       0.0198       0.0165       0.0183    0.0004    0.0015
+  disposition: intent (FK)   append+commit        0.3507       0.4316       0.3796       0.5947   -0.0289   -0.1631
+  base 100x-depth: product has 6 WL-1b trigger(s) and 2 FK column(s); control has 0 and 0
+  row kind                   mode            product p50  product p95  control p50  control p95     d p50     d p95   (ms)
+  obligation                 in-txn               0.0093       0.0107       0.0095       0.0121   -0.0002   -0.0014
+  obligation                 append+commit        0.3435       0.4324       0.3360       0.4041    0.0075    0.0283
+  evidence link              in-txn               0.0080       0.0101       0.0078       0.0094    0.0002    0.0007
+  evidence link              append+commit        0.3701       0.4518       0.3347       0.4429    0.0354    0.0089
+  disposition: obligation    in-txn               0.0176       0.0200       0.0173       0.0189    0.0003    0.0011
+  disposition: obligation    append+commit        0.3596       0.4564       0.3908       0.5525   -0.0312   -0.0961
+  disposition: work          in-txn               0.0164       0.0296       0.0162       0.0179    0.0002    0.0117
+  disposition: work          append+commit        0.3684       0.4611       0.3464       0.4287    0.0220    0.0324
+  disposition: intent (FK)   in-txn               0.0164       0.0183       0.0163       0.0179    0.0001    0.0004
+  disposition: intent (FK)   append+commit        0.3791       0.4978       0.3877       0.4660   -0.0086    0.0318
+
+C1c  checklist.evaluate in process, p95 <= 100 ms at 100x depth (INFERRED budget)
+  checklist.evaluate @ 1x                    N=100  p50=     0.84ms p95=     1.11ms p99=     1.47ms min=    0.81 max=     1.62
+      cold      0.97ms · eligible=True · gaps=0 · closure=Accepted
+  checklist.evaluate @ 100x breadth          N=100  p50=     0.88ms p95=     0.99ms p99=     1.18ms min=    0.85 max=     3.79
+      cold      0.95ms · eligible=True · gaps=0 · closure=Accepted
+  checklist.evaluate @ 100x depth            N=100  p50=     6.75ms p95=     8.24ms p99=     8.68ms min=    6.57 max=    13.78  PASS (budget p95 <100ms)
+      cold      6.80ms · eligible=True · gaps=0 · closure=Accepted
+
+==============================================================================================================
+RESULT: every WL-1b check met.
+==============================================================================================================
