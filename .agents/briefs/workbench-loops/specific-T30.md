@@ -7,12 +7,18 @@ prepare opens (`ComposerSurface.cs:1648-1652`, `:831-837`). The user sees "prepa
 suggestions, and the second Ctrl+Enter sends without them. **This is first.**
 
 **This node (n5), each red then green, through the real gesture:**
-- **(A) A prepare that yields suggested lines shows them.** Type, press Ctrl+Enter once (advisory default, stubbed
-  compile returning three derived lines). The lines are visible, which means their fold is open, or they are rendered
-  outside it. Each line and its Keep are reachable by keyboard (Tab order) and named in UIA. A screen reader hears that
-  suggestions arrived, as one polite announcement. Red: today they sit in the closed fold. If the fold must stay
-  collapsible, the prepare opens it, and the user may close it again. Do not invent copy: name any new sentence in
-  DESIGN.md, and the Leader brings it to the Owner.
+- **(A) A prepare that yields suggested lines shows them. This is the Owner's exact shape, under Ruling 180 (3).** The
+  Owner checked origin/main: the Expander is `IsExpanded=false` (`ComposerSurface.cs:1648-1652`), and the `ShowDerived`
+  loop (:830-835) never opens it. Type, then press Ctrl+Enter once (advisory default, stubbed compile returning at least
+  one derived line). Then:
+  - the "Goal · Done when · Not in scope" fold **opens**;
+  - the focus **stays in the editor**, so the next keystroke never lands in a suggestion by surprise;
+  - the live region announces the count **once**, e.g. "N suggested lines. Review them before you send." Read the exact
+    string from DESIGN.md, or add a row there;
+  - each suggested line is reachable by **Tab from the editor** and carries `? suggested` as its UIA name prefix.
+  An unkept line still does not count at the second press (Ruling 180 as written). Re-collapsing the fold is the user's
+  act, never the app's. Red: today they sit in the closed fold. Register it as a **DC-NEW-wl-t28-compiled recurrence**,
+  a gate that passed without driving the user's view, in the same commit as the fix.
 - **(B) The first-50 reader** (seam `req-01M5B9DJWPJBEBCTP2GFJCZVRR`, granted): `tools/compile-eval/first-calls.py`
   as designed in your node-4 hand-off. Its `--self-test` output goes red then green, saved. This meets C4.
 - **(C) The four sheet tests that read the real `~/.aide/proof`** (`TheNewSessionSheetTests`,
