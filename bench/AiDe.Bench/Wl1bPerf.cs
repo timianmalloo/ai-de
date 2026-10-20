@@ -187,10 +187,11 @@ internal static class Wl1bPerf
         var failures = new List<string>();
         Console.WriteLine("C1a  EXPLAIN QUERY PLAN (no full scan of " + string.Join(", ", GuardedTables) + ")");
 
-        var plans = new List<(string Label, string Sql)>
+        var plans = new List<(string Label, string Sql, bool Control)>
         {
-            ("CONTROL (deliberately unindexed)", "SELECT obligation_id FROM checklist_obligation_fact WHERE text = $text;"),
+            ("CONTROL (deliberately unindexed)", "SELECT obligation_id FROM checklist_obligation_fact WHERE text = $text;", true),
         };
+        plans.AddRange(ProductReads());
 
         foreach (var population in populations)
         {
@@ -198,18 +199,23 @@ internal static class Wl1bPerf
             using var connection = new SqliteConnection(
                 new SqliteConnectionStringBuilder { DataSource = population.DatabasePath, Pooling = false }.ToString());
             connection.Open();
-            foreach (var (label, sql) in plans)
+            foreach (var (label, sql, control) in plans)
             {
                 var lines = Explain(connection, sql);
                 var scanned = lines.Where(l => l.Contains("SCAN", StringComparison.Ordinal))
                     .Any(l => GuardedTables.Any(t => l.Contains(t, StringComparison.Ordinal)));
-                Console.WriteLine($"  {label,-52} {(scanned ? "**FULL SCAN**" : "indexed")}");
+                Console.WriteLine($"  {label,-60} {(scanned ? "**FULL SCAN**" : "indexed")}");
                 foreach (var line in lines)
                 {
                     Console.WriteLine($"      {line}");
                 }
 
-                if (scanned)
+                // The control is the oracle's self-test: it must be seen to scan. A product read must not.
+                if (control && !scanned)
+                {
+                    failures.Add($"C1a the oracle did not flag its own unindexed control on {population.Name}");
+                }
+                else if (!control && scanned)
                 {
                     failures.Add($"C1a '{label}' performs a full scan on {population.Name}");
                 }
@@ -217,6 +223,40 @@ internal static class Wl1bPerf
         }
 
         return failures;
+    }
+
+    /// <summary>
+    /// Every read the acceptance fold's caller and the checklist service make. The named SQL is the product's own
+    /// (<c>internal const</c> on <see cref="StoreReader"/>, read by reflection so it cannot drift from a copy); the two
+    /// inline <c>max()</c> reads are quoted from their sources. Callers in <c>ChecklistOperations.cs</c>: Evaluate <c>:57</c>, SetObligations <c>:73</c>, RecordDisposition <c>:114</c>, LinkEvidence <c>:143</c>, Accept <c>:176</c>, Assess <c>:213</c>, RequireWorkJourney <c>:245</c>, RequireKnownObligation <c>:269</c>, RequireEligibleAttempt <c>:296</c>, Completed <c>:318</c>.
+    /// </summary>
+    private static IEnumerable<(string Label, string Sql, bool Control)> ProductReads()
+    {
+        (string Reader, string Constant)[] named =
+        [
+            ("ReadJourney", "SqlReadJourney"),
+            ("ReadNotebook", "SqlReadNotebook"),
+            ("ReadNotebookRevision", "SqlReadNotebookRevision"),
+            ("ReadAttempt", "SqlReadAttempt"),
+            ("ReadAttemptsForNotebook", "SqlReadAttemptsForNotebook"),
+            ("ReadEvidenceLinksForSubject", "SqlReadEvidenceLinksForSubject"),
+            ("ReadObligationHistory", "SqlReadObligationHistory"),
+            ("ReadObligations", "SqlReadObligations"),
+            ("ReadDispositions", "SqlReadDispositions"),
+            ("ReadOutcomes", "SqlReadOutcomes"),
+        ];
+        foreach (var (reader, constant) in named)
+        {
+            var field = typeof(StoreReader).GetField(constant, BindingFlags.NonPublic | BindingFlags.Static)
+                ?? throw new InvalidOperationException($"StoreReader.{constant} is gone; the oracle reads the product's own SQL.");
+            yield return ($"{reader} ({constant})", (string)field.GetRawConstantValue()!, false);
+        }
+
+        // StoreReader.Notebook.cs:10 and StoreReader.Workbench.cs:230, quoted.
+        yield return ("ReadLatestNotebookRevision (max revision_no)",
+            "SELECT max(revision_no) FROM prompt_revision_fact WHERE draft_id = $id;", false);
+        yield return ("ReadLatestChecklistRevision (max revision)",
+            "SELECT max(revision) FROM checklist_obligation_fact WHERE checklist_id = $c;", false);
     }
 
     private static List<string> Explain(SqliteConnection connection, string sql)
