@@ -8790,6 +8790,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   failing test's rate, then for each one a deterministic repro under load, or NOT REPRODUCED with N stated.
 - **Measured (2026-10-20, T31, N=10):** full Core+App on `84538f7f`, no test failed in Core (3120 results x 10). Neither named instance (`ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds`, `ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives`) failed: NOT REPRODUCED, N=10. In App, in-suite/alone: `CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective` 10/10 vs 9/10 (intermittent); `ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation` 10/10 vs 10/10 (fails-alone); `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` 10/10 vs 10/10 (fails-alone); `TheFloatingNotebook_RedocksToTheCenter_WithItsThreadDraftAndAttemptIntact_SayingNoHide_AndFocusInIt` 1/10 vs 0/10 (load-only); `AfterStop_TheTurnIsStopRequested_AndTheQueuedTurnStaysQueuedBehindIt` 1/10 vs 0/10 (load-only). Detail: `docs/proof/workbench-loops-support/loadflake/rates.md`.
 - **Repro (2026-10-20, T34):** NOT REPRODUCED, N=10: the full App suite ran 10 times on `0b00e858` with `--blame-hang`; ADeadHolder passed in all 10 (the 3 other failures per run are the known ones). `docs/proof/workbench-loops-support/deadholder-repro/README.md`.
+- **Load-only events (2026-10-20, the T21 n11 join, left button released):** recount 1 failed
+  `ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen` ("focus after the close is on
+  (none), not the landing"; event 1 on the load-only rows); the re-run failed `CtrlDigit_WithFocusInside…` and
+  `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`. Each passed alone on `ab759888` and `70bc5f5d`. Excused by the
+  Owner's ruling (a) on that join, not under Ruling 155 (3). T36 re-measures the list with the button released.
 - **Status:** `partially-controlled`, until the measurement track reports.
 - **DC-NEW-wl-leader2, an OWNER instance (2026-10-19, Ruling 182 (4)):** the ruling asserted that a sent turn's compiled
   prompt "is on the turn row's disclosure after a restart", citing Rulings 163 and 181 rather than a writer. T30 n3 read
@@ -8852,6 +8857,39 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   back (`7781a180`, no behaviour change), retired the `Suggest` clause with its reason (`02d6380f`) and added R21's real
   control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
   the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.
+
+### DC-NEW-wl-t33-input-state — a UI test whose result depends on global input state it never checks
+- **Class:** a UI test drives a control by keyboard and asserts the result, but the control's behaviour also reads
+  machine-wide input state that the test neither sets nor checks: here, whether the OS reports the left mouse button
+  down. When that state is not the default, the test fails on a machine with no code change, and every reading of the
+  failure ("a regression", "a flake", "the desktop has no foreground") points away from the cause.
+- **Mechanism (WPF; the Owner's reading of dotnet/wpf `ButtonBase.cs:654-690`, matched to our .NET 10 runtime as
+  Inferred):** Space KeyDown on a `ButtonBase` sets `IsPressed`, captures the mouse and marks the event Handled.
+  `OnKeyUp` clicks only when `GetMouseLeftButtonReleased()` is true (`:664-690`). With the left button reported down,
+  KeyUp keeps the capture, `IsPressed` goes false and no click follows. That is every T33 observation (Space KeyDown
+  Handled=True at the fold, IsPressed true then false, no click, the fold holding capture with LeftButton=Pressed).
+- **Instance 1 (2026-10-18 to 2026-10-20, the restored-row fold):**
+  `AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation`
+  (`tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs:220`), "Space on the
+  restored row's fold did not open it". It passed in the T30 first-join recount at `d986e4a4` and first failed at
+  `5d66bd0f`, with no `src/` or `tests/` diff between them. It failed alone in clean `rt-` trees on every join head and
+  parent from then until 2026-10-20 (T31 10/10 in the suite and 10/10 alone; T33 3/3 alone on `aa76bd6d` and on
+  `d986e4a4`). The left button read down all that day: `GetAsyncKeyState(VK_LBUTTON)=0x8000` in every sample (the
+  Owner at 10:00Z and 11:11:55Z with no App process; T34 at 10:05:27Z and 11:00:55Z). After a press and release before
+  17:50:41Z (sample `0x0001`, then `0x0000`), the button read `0x0000` (the Owner at 17:51:26Z; the Leader at 17:50:55Z
+  and 18:03:13Z), and the test PASSED alone on `70bc5f5d` (17:50:50Z), in T21 n11's suite and in both of the T21 n11
+  join's recounts. Same machine, same code; the button state is the one variable observed to change (Owner ruling,
+  2026-10-20: T33 ruling (4) settled on this evidence, no desk run needed).
+- **Residual:** the cause of the held button is unknown. No test or src code sends mouse input (T33's read; keyboard
+  only), and no one injected input. Not recorded: when the button went down, or what released it.
+- **Sweep:** owed. T36 (`wl-flake-remeasure`) re-measures, with the button released, every test that failed on this
+  machine in T31, T34 or the 2026-10-20 recounts (CtrlDigit and CtrlEnter also pass alone since the release). The sweep
+  node's scope is the tests T36 shows to be button-sensitive; the Owner rules on its brief.
+- **Derive:** a UI test whose control reads global input state records that state as a precondition. A non-default
+  state is **NOT CHECKED** with that reason, never a FAIL and never a pass.
+- **Control (owed, the sweep node):** a precondition that reads the left-button state before the keyboard step and
+  reports NOT CHECKED when it reads down, with a red that shows the precondition firing.
+- **Status:** `open` until the sweep's control lands.
 
 ### DC-NEW-wl-leader5-b — a seat that holds a lease, or that others rule through, blocks on a direct user prompt
 - **Class:** a coordination seat (the Leader: it holds the leader pin, and the Owner rules through it) calls a
