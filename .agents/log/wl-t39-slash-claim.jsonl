@@ -13,3 +13,4 @@
 {"agent": "wl-t39-slash-claim", "at": 1792534843.9961014, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 13, "session": "wl-t39-slash-claim", "wi": "WI-0"}
 {"agent": "wl-t39-slash-claim", "at": 1792534844.0846877, "kind": "release", "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md", "seq": 14, "session": "wl-t39-slash-claim", "wi": "WI-0"}
 {"agent": "wl-t39-slash-claim", "at": 1792534844.1721115, "kind": "release", "path": "docs/proof/workbench-loops-support/slash-claim", "seq": 15, "session": "wl-t39-slash-claim", "wi": "WI-0"}
+{"agent": "wl-t39-slash-claim", "at": 1792539980.6877904, "kind": "session-end", "path": "-", "seq": 16, "session": "wl-t39-slash-claim", "wi": "WI-0", "worktree": "ai-de"}

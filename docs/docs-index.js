@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f5e8437d277f3247553021037a4e5322669cf19d4cfbe8d1c722f88e1f2d0d55"
+      "sourceSha256": "c91d6781b5e901635443c87981e42486150b0c1080c9fd260889470b10d65394"
     },
     {
       "id": "design-session-profiler",
@@ -22872,6 +22872,138 @@ window.DOCS_INDEX = {
       "sourceSha256": "3be58ccee192622c1d5aebbe1f348f976bf77d49be333fe0fdac57e4c13967f0"
     },
     {
+      "id": "proof-wl-focus-none",
+      "path": "docs/proof/workbench-loops-support/focus-none/README.md",
+      "title": "Evidence: T40 - who held the foreground when focus landed on (none), N=10",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "A read-only 500 ms sampler through 10 full App runs. One focus (none) event, class (c). chrome.exe held the foreground in every sample, passing tests included. No cause is claimed.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "measurement",
+        "focus",
+        "foreground"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e0a3141cfd6d1adb78177e8fbe1c885a1dd06c2535cdbbbc2f3a8529c12d94e8"
+    },
+    {
+      "id": "proof-wl-focus-none-distribution",
+      "path": "docs/proof/workbench-loops-support/focus-none/distribution.md",
+      "title": "Evidence: T40 foreground-holder distribution",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Each process's share of the sampler rows, over all rows and over the runs only.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "measurement",
+        "focus"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a2f477202adf90464cc885277719a0f3f625e9ee2ffa13df7f6af0f9675f33c1"
+    },
+    {
+      "id": "proof-wl-focus-none-events",
+      "path": "docs/proof/workbench-loops-support/focus-none/F3-events.md",
+      "title": "Evidence: T40 events joined to the sampler",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Each focus (none) failure with the sampler rows inside its test span plus 2 s each side.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "measurement",
+        "focus"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "79a0dbf5f5738627c95ed89497accca8180f9992d2df17603f46182991da6fc1"
+    },
+    {
+      "id": "proof-wl-focus-none-outcomes",
+      "path": "docs/proof/workbench-loops-support/focus-none/F4-outcomes.md",
+      "title": "Evidence: T40 focus-none - what each outcome will mean (stated before any run)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The meaning of each outcome of the T40 foreground sampler, committed before run 1. No cause is claimed.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "measurement",
+        "focus",
+        "foreground"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "51ee74b463bd559c57bd14ce7a3e218c9210adaf8de79c32e552b61b4007b805"
+    },
+    {
+      "id": "proof-wl-focus-none-rates",
+      "path": "docs/proof/workbench-loops-support/focus-none/rates.md",
+      "title": "Evidence: T40 per-test non-pass rates over N full App runs",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Tests that failed or ended NOT CHECKED in any run, with T36's in-suite column beside them.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "measurement",
+        "focus"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fb62eaf5d65a02e034c606ffd0fba4512ecca38cc28ed9f984494ec44c9cc5f"
+    },
+    {
       "id": "proof-wl-fold-diag",
       "path": "docs/proof/workbench-loops-support/fold-diag/README.md",
       "title": "Evidence: T33 - the restored-row fold observed on origin/main and on d986e4a4 (no cause claimed)",
@@ -26168,5 +26300,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "f312c5d0a2b892d807c3e5bf072ed6358fa4bc0f8db6b97bc8ce75b5fed762c8"
+  "graphSha256": "407ad0b1a5a8c4e50a924ab38065f1eaf0fd4e5d7dc9c553d89abb166a9a2d97"
 };

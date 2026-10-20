@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T23:46:16Z",
+  "generated": "2026-10-20T23:46:42Z",
   "audit": [
     {
       "actor": null,
@@ -28102,100 +28102,177 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5DMPRQ59508S799CWBQ43MF",
-      "shortname": "join-wl-input-state-sweep",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/input-state-sweep/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-20T21:50:29Z",
-      "session": "wl-leader5-20261020",
-      "prompt": "the join of wl-input-state-sweep into main",
-      "summary": "T37 joined with the full recount: InputPreconditions reads WPF's left button (GetAsyncKeyState as evidence) and the foreground after the test's own focus attempt; a [CheckedFact] reports NOT CHECKED as an xUnit 2.9.3 runtime skip with the reason; the fold, CtrlDigit, CtrlEnter, APrepare and a fifth S3 hit converted; verify-test-run names each NotExecuted result with its reason (fixture in verify-gate-self-tests, red at 0f1e548d); expectedSkips names CtrlDigit and CtrlEnter; the pre-join claim refusal excused by the Owner's ruling (a) recount_seconds=638 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-support/input-state-sweep/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "join T37's input-state control onto main",
       "done_when": "recount green; ratchet PASS; step-8 recorded before push",
-      "tier": "T1",
+      "duration_seconds": 640.0,
       "fan_out": 0,
+      "goal": "join T37's input-state control onto main",
+      "id": "al-01M5DMPRQ59508S799CWBQ43MF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of wl-input-state-sweep into main",
+      "session": "wl-leader5-20261020",
+      "shortname": "join-wl-input-state-sweep",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-10-20T21:39:49Z",
-      "duration_seconds": 640.0
+      "summary": "T37 joined with the full recount: InputPreconditions reads WPF's left button (GetAsyncKeyState as evidence) and the foreground after the test's own focus attempt; a [CheckedFact] reports NOT CHECKED as an xUnit 2.9.3 runtime skip with the reason; the fold, CtrlDigit, CtrlEnter, APrepare and a fifth S3 hit converted; verify-test-run names each NotExecuted result with its reason (fixture in verify-gate-self-tests, red at 0f1e548d); expectedSkips names CtrlDigit and CtrlEnter; the pre-join claim refusal excused by the Owner's ruling (a) recount_seconds=638 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M5DNPF15XFAGRYZKQ4C4EJTK",
-      "shortname": "join-wl-input-state-sweep-step8",
-      "datetime": "2026-10-20T22:07:48Z",
-      "session": "wl-leader5-20261020",
-      "prompt": "Join T37 wl-input-state-sweep through conductor-join with the full recount, the step-8 ratchet and the push",
-      "summary": "Step 8 of join-wl-input-state-sweep (T37; merge 8e42987a, join commit 1d9f7482; full recount): run-verify-gates stopped on 4 of 49 (the pre-existing set less two). Ratchet against the parent 0d8385e7: PASS, 0 refusals over 50 gates; verify-derived-views and verify-site-figures went 1 -> 0. Release build: 0 errors. Recount: verify-test-run OK on every key; App 1279 total, 0 failed (baseline raised 1274 -> 1279 by the five helper tests); the fold, APrepare and the composer shell test PASSED; CtrlDigit and CtrlEnter PASSED (the foreground was held in this run: their own assertions ran; first suite pass on record after T31 10/10 and T36 10/10 failures). The NOT CHECKED report named each static skip with its reason. Pre-join: leader_prejoin refused 13 unclaimed paths (12 proof outputs and tools/verify-gate-self-tests.py), excused by the Owner's ruling (a), the last pre-join excuse. Near-miss: the Leader wrote specific-T39.md into the primary during step 4 and moved it out before step 7; not in the join commit.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-support/input-state-sweep/README.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "T37's input-state control on main with its step-8 record",
+      "datetime": "2026-10-20T22:07:48Z",
       "done_when": "recount OK; ratchet PASS; Release build 0 errors; pushed",
-      "tier": "T1",
+      "duration_seconds": 1917.0,
       "fan_out": 1,
+      "goal": "T37's input-state control on main with its step-8 record",
+      "id": "al-01M5DNPF15XFAGRYZKQ4C4EJTK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Join T37 wl-input-state-sweep through conductor-join with the full recount, the step-8 ratchet and the push",
+      "session": "wl-leader5-20261020",
+      "shortname": "join-wl-input-state-sweep-step8",
+      "skill": "execute-with-coordination",
       "started_at": "2026-10-20T21:35:51Z",
-      "duration_seconds": 1917.0
+      "summary": "Step 8 of join-wl-input-state-sweep (T37; merge 8e42987a, join commit 1d9f7482; full recount): run-verify-gates stopped on 4 of 49 (the pre-existing set less two). Ratchet against the parent 0d8385e7: PASS, 0 refusals over 50 gates; verify-derived-views and verify-site-figures went 1 -> 0. Release build: 0 errors. Recount: verify-test-run OK on every key; App 1279 total, 0 failed (baseline raised 1274 -> 1279 by the five helper tests); the fold, APrepare and the composer shell test PASSED; CtrlDigit and CtrlEnter PASSED (the foreground was held in this run: their own assertions ran; first suite pass on record after T31 10/10 and T36 10/10 failures). The NOT CHECKED report named each static skip with its reason. Pre-join: leader_prejoin refused 13 unclaimed paths (12 proof outputs and tools/verify-gate-self-tests.py), excused by the Owner's ruling (a), the last pre-join excuse. Near-miss: the Leader wrote specific-T39.md into the primary during step 4 and moved it out before step 7; not in the join commit.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M5DPDXM1EAEYEQJS0NT0TFS2",
-      "shortname": "wl-t39-slash-claim",
-      "datetime": "2026-10-20T22:20:36Z",
-      "session": "wl-t39-slash-claim",
-      "prompt": "T39: the join refuses a trailing-slash claim and a claimed-after-refusal path",
-      "summary": "leader_prejoin.py refuses slash claims and claimed-after-refusal; refusals ARE recorded in decisions (108), residual: CLI stale-controls/register/derived/TTL refusals unrecorded",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/workbench-loops-support/slash-claim/README.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "two more refusals in the join claim check",
+      "datetime": "2026-10-20T22:20:36Z",
       "done_when": "red-green fixture, L2-L5 done",
-      "tier": "T2",
+      "duration_seconds": 738.0,
       "fan_out": 0,
+      "goal": "two more refusals in the join claim check",
+      "id": "al-01M5DPDXM1EAEYEQJS0NT0TFS2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T39: the join refuses a trailing-slash claim and a claimed-after-refusal path",
+      "session": "wl-t39-slash-claim",
+      "shortname": "wl-t39-slash-claim",
+      "skill": "implement",
       "started_at": "2026-10-20T22:08:18Z",
-      "duration_seconds": 738.0
+      "summary": "leader_prejoin.py refuses slash claims and claimed-after-refusal; refusals ARE recorded in decisions (108), residual: CLI stale-controls/register/derived/TTL refusals unrecorded",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M5DTEN7ACHJFBH4V9Z1QAKY4",
-      "shortname": "join-wl-slash-claim",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/slash-claim/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-20T23:30:55Z",
-      "session": "wl-leader5-20261020",
+      "done_when": "docs-only join pushed; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "join T39's two claim refusals onto main",
+      "id": "al-01M5DTEN7ACHJFBH4V9Z1QAKY4",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of wl-slash-claim into main",
+      "session": "wl-leader5-20261020",
+      "shortname": "join-wl-slash-claim",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T23:30:54Z",
       "summary": "T39 joined docs-only: leader_prejoin refuses a session claim whose path ends in '/' (PD-6's false grant, naming the no-slash form) and a changed path whose newest recorded refusal for the session is newer than every claim covering it (108 recorded refused rows); fixture red 2488198d then green 1fc3675b; residual PD-7: the CLI's STALE-CONTROLS, REGISTER-CLASS, DERIVED-CLASS and TTL-CAP refusals write no record. Pre-join check: 14 checked, 3 exempt, 0 unclaimed. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/slash-claim/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T23:46:16Z",
+      "done_when": "ratchet PASS; Release build 0 errors; pushed",
+      "duration_seconds": 1870.0,
+      "fan_out": 1,
+      "goal": "T39's two claim refusals on main with the step-8 record",
+      "id": "al-01M5DVARPMBYASF056ER3ZH7Y2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Join T39 wl-slash-claim (docs-only) through conductor-join, the step-8 ratchet and the push",
+      "session": "wl-leader5-20261020",
+      "shortname": "join-wl-slash-claim-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T23:15:06Z",
+      "summary": "Step 8 of join-wl-slash-claim (T39, docs-only; merge 5758812a, join commit a94da540): run-verify-gates stopped on the pre-existing 4 of 49. Ratchet against the parent bf80a59a: PASS, 0 refusals over 50 gates. Its diff shows one more line in the already-red verify-ruling-citations (PD-1): Ruling 151 now cited in 6 files, partly by the Leader's PD-6/PD-7 text. Release build: 0 errors. Pre-join check (main's leader_prejoin): 14 checked, 3 exempt, 0 unclaimed, no excuse. The join waited for T40's App runs to end (Owner agreed) so its load did not confound T40's data. Overrun: 29 calls / 102,891 tokens against 20 / 40k (2.6x), ledgered under DC-NEW-wl-leader2-b; node-actuals.md row present.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-none/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T23:30:19Z",
+      "done_when": "F0-F7 written on N=10",
+      "duration_seconds": 4816.0,
+      "fan_out": 0,
+      "goal": "measure what holds the foreground when focus is (none)",
+      "id": "al-01M5DTDJK2F5SXXWQK0K9D600E",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T40 wl-focus-none: measure foreground and keyboard focus holder in focus (none) failures, N=10 App runs",
+      "session": "wl-t40-focus-none",
+      "shortname": "wl-t40-focus-none",
+      "skill": "implement",
+      "started_at": "2026-10-20T22:10:03Z",
+      "summary": "10 runs, 1 event (class c), chrome.exe held the foreground in 7722/7722 samples; NOT a cause",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5DVBH699KZE07MC854N3120",
+      "shortname": "join-wl-focus-none",
+      "datetime": "2026-10-20T23:46:41Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-focus-none into main",
+      "summary": "T40 joined docs-only: N=10 full App runs with a windowless read-only sampler (500 ms; foreground, GUI-thread active and focus windows). One event: run 5, ConsoleSplit CollapsingTheLeftHoldingTheSession, class (c) too coarse (the test ran 0.36 s, under the sampling gap). chrome.exe held the foreground in 7722 of 7722 rows, passes included; the host 0, the sampler 0. The hypothesis is neither confirmed nor refuted. CtrlDigit and CtrlEnter NOT CHECKED in 10 of 10 runs. F4 outcomes committed before run 1 (b29645aa), unchanged. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-support/slash-claim/README.md"
+        "docs/proof/workbench-loops-support/focus-none/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "join T39's two claim refusals onto main",
+      "goal": "join T40's focus-none measurement onto main",
       "done_when": "docs-only join pushed; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -28204,32 +28281,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-20T23:30:54Z",
+      "started_at": "2026-10-20T23:46:40Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5DVARPMBYASF056ER3ZH7Y2",
-      "shortname": "join-wl-slash-claim-step8",
-      "datetime": "2026-10-20T23:46:16Z",
-      "session": "wl-leader5-20261020",
-      "prompt": "Join T39 wl-slash-claim (docs-only) through conductor-join, the step-8 ratchet and the push",
-      "summary": "Step 8 of join-wl-slash-claim (T39, docs-only; merge 5758812a, join commit a94da540): run-verify-gates stopped on the pre-existing 4 of 49. Ratchet against the parent bf80a59a: PASS, 0 refusals over 50 gates. Its diff shows one more line in the already-red verify-ruling-citations (PD-1): Ruling 151 now cited in 6 files, partly by the Leader's PD-6/PD-7 text. Release build: 0 errors. Pre-join check (main's leader_prejoin): 14 checked, 3 exempt, 0 unclaimed, no excuse. The join waited for T40's App runs to end (Owner agreed) so its load did not confound T40's data. Overrun: 29 calls / 102,891 tokens against 20 / 40k (2.6x), ledgered under DC-NEW-wl-leader2-b; node-actuals.md row present.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-support/slash-claim/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "T39's two claim refusals on main with the step-8 record",
-      "done_when": "ratchet PASS; Release build 0 errors; pushed",
-      "tier": "T1",
-      "fan_out": 1,
-      "started_at": "2026-10-20T23:15:06Z",
-      "duration_seconds": 1870.0
     }
   ],
   "changes": [
