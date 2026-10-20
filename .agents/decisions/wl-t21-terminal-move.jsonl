@@ -1,0 +1,3 @@
+{"agent": "wl-t21-terminal-move", "at": 1792517446.3072796, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/layout-gate/terminal-move/M1-mutation.txt", "session": "wl-t21-terminal-move", "wi": ""}
+{"agent": "wl-t21-terminal-move", "at": 1792517446.3588996, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-wl-s/layout-gate/terminal-move/M1-run.txt", "session": "wl-t21-terminal-move", "wi": ""}
+{"agent": "wl-t21-terminal-move", "at": 1792517446.409311, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs", "session": "wl-t21-terminal-move", "wi": ""}

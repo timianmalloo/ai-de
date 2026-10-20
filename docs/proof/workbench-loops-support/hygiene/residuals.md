@@ -72,6 +72,8 @@ Steps I would add to the `ubuntu-latest` gates job in `.github/workflows/build.y
 
 **RES-1 addendum (Leader, 2026-10-19):** `tools/verify-no-account-identity.py` (T15, Ruling 157) joins this list. It runs in `python tools/run-verify-gates.py`, but no `.github/workflows/*.yml` step invokes it, so `verify-project-coverage` names it, and Ruling 151(3) never ratchets that gate. The step to add beside the others: `python tools/verify-no-account-identity.py` in the gates job. The workflow edit is the user's call, the same as for the two gates above.
 
+**RES-1 applied (Leader, 2026-10-20, the user's decision: self-tests only).** `.github/workflows/build.yml`'s gates job now runs `verify-preservation-workflow-policy.py` (`--self-test`, then against main), `verify-workbench-v2.py --self-test`, and `verify-no-account-identity.py` (`--self-test`, then the gate). Each step exited 0 locally before the commit. CI installs no Playwright, so the full v2 journey stays a local run. `verify-project-coverage` is now OK (43 tracked projects; no uninvoked gate).
+
 ## RES-4 — Earlier step-8 ratchets kept only the repo copy's raw ruling-citations output (Leader, 2026-10-19)
 
 - **What:** `gate_ratchet.py` before Ruling 160 wrote each gate's parent and head output to `<basename>.parent.txt` / `.head.txt` (old lines 99-100). The pack copy `docs/ai-forward-pack/scripts/verify-ruling-citations.py` and the repo copy `tools/verify-ruling-citations.py` share a basename. In sorted path order (old line 80, `names = sorted(...)`) the pack copy runs first, so the repo copy's iteration overwrote the pack copy's saved files.

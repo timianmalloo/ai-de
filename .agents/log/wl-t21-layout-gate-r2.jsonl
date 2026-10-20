@@ -6,3 +6,4 @@
 {"agent": "wl-t21-layout-gate-r2", "at": 1792502118.5103588, "kind": "claim", "path": "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs", "seq": 6, "session": "wl-t21-layout-gate-r2", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t21-layout-gate-r2", "at": 1792502280.2745929, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 7, "session": "wl-t21-layout-gate-r2", "ttl": 300.0, "wi": "workbench-loops"}
 {"at": 1792503355.4903343, "from": "wl-t21-layout-gate-r2", "kind": "done", "mail_id": "mail-01M5CRD632MQ8X58VDWCGBEK2S", "ref": null, "session": "wl-t21-layout-gate-r2", "to": "wl-leader5-20261020", "type": "mail"}
+{"agent": "wl-t21-layout-gate-r2", "at": 1792504955.0857198, "kind": "session-end", "path": "-", "seq": 9, "session": "wl-t21-layout-gate-r2", "wi": "WI-0", "worktree": "ai-de"}

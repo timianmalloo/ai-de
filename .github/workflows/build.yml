@@ -555,6 +555,31 @@ jobs:
         if: ${{ !cancelled() }}
         run: python docs/ai-forward-pack/scripts/verify-no-new-console-launches.py
 
+      # RES-1 (docs/proof/workbench-loops-support/hygiene/residuals.md), the user's decision 2026-10-20: self-tests only.
+      # The policy gate compares .github/workflows on HEAD with main through git, so it needs this job's fetch-depth: 0.
+      # verify-workbench-v2.py's full journey needs Playwright and Chromium, which this job does not install; it stays a
+      # local run, and its self-test here proves the gate can fail.
+      - name: Preservation workflow policy gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-preservation-workflow-policy.py --self-test
+
+      - name: Preservation workflow policy matches main
+        if: ${{ !cancelled() }}
+        run: python tools/verify-preservation-workflow-policy.py
+
+      - name: Workbench v2 gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-workbench-v2.py --self-test
+
+      # RES-1's addendum (T15, Ruling 157): no account email in tracked docs/proof or .agents.
+      - name: Account identity gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-no-account-identity.py --self-test
+
+      - name: No account identity in tracked proof
+        if: ${{ !cancelled() }}
+        run: python tools/verify-no-account-identity.py
+
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
   #
