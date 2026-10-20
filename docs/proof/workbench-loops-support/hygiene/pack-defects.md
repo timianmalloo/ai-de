@@ -115,6 +115,7 @@ PD-5 were already taken in this file, so it is PD-6).
 - **Proposed fix:** `_norm` strips a trailing `/`, or `coord claim` refuses a path that ends in `/`. Add a self-test
   case: a directory claim with a trailing slash covers a file inside it (or is refused).
 - **Interim (this repository):** brief-common.md rule 5 names the no-slash form and warns about the other
-  (4da62f20). Owed, T39: `leader_prejoin.py` refuses a join when the node's session holds a claim whose path ends
-  in `/`, naming the false grant and the no-slash form.
+  (4da62f20). Landed, T39 (2026-10-20): `leader_prejoin.py` refuses a join when the node's session holds a claim whose
+  path ends in `/`, naming the false grant and the no-slash form (red-green in
+  `tools/test-leader-prejoin-claims.py`; `docs/proof/workbench-loops-support/slash-claim/claims-green.txt`).
 - **Not fixed locally** (pack script; Ruling 151). Goes to the user as an upstream pack fix, beside PD-1 and PD-2.

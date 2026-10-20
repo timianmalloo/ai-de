@@ -8905,8 +8905,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (3) Instance 3 (2026-10-20): brief-common.md rule 5 says a claim's exit status is its result (non-zero is not
   granted; on `COORD-CLAIM-STALE-CONTROLS` merge origin/main and claim again before the edit), and the Leader's join
   pattern mails every running node to merge origin/main after a join that touches `tools/` or the pack scripts.
-  Owed, T39: `leader_prejoin.py` reports a changed path whose last coord-log outcome for it was a refusal as
-  "claimed-after-refusal" (prose with a residual if the coord log records no refusals).
+  (4) Landed, T39 `wl-slash-claim` (2026-10-20): `leader_prejoin.py` reports a changed path whose newest
+  `kind: refused` row in `.agents/decisions/<session>.jsonl` is newer than every claim covering it as
+  `claimed-after-refusal` (exit 1); red-green in `tools/test-leader-prejoin-claims.py`
+  (`docs/proof/workbench-loops-support/slash-claim/claims-red.txt`, `claims-green.txt`). The Leader's premise that
+  coord records no refusal was wrong: `.agents/decisions` holds 108 `refused` rows (`L2-refusals.txt`).
+  **Residual (measured in `coord-core.py` `cmd_claim`):** only a contention deny writes a refused row. A
+  `COORD-CLAIM-STALE-CONTROLS`, `-REGISTER-CLASS`, `-DERIVED-CLASS` or `-TTL-CAP` refusal at the CLI leaves no
+  record, so instance 3's own shape (an exit-3 stale-controls refusal) is NOT caught by this check; rule 5's
+  exit-status line stays prose for those four. Closing it needs `append_decision` on those paths in the pack
+  (Ruling 151: upstream).
 - **Residual:** a claim record shows that a claim exists, not that it came before the edit; the edit's time is not
   recorded anywhere the check can read. The check also ignores a claim's TTL and release.
 - **Status:** `controlled` (rule 5 corrected; T38's join check landed with C1 red-green and C2 on real branches).
