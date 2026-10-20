@@ -1,0 +1,5 @@
+REFUSE new findings    docs/ai-forward-pack/scripts/docs-graph.py  parent=1 head=1  new=1
+REFUSE new findings    tools/verify-derived-views.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 49 gate(s)
+ratchet exit 1
+Both refusals are expected derived-view gates (rule 22): docs-graph.py has 0 problems and 2 index-drift items; verify-derived-views.py regenerates at join step 6. Ran base 656cf0a1 (origin/main), head 049cc234.
