@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T08:40:08Z",
+  "generated": "2026-10-20T09:00:38Z",
   "audit": [
     {
       "actor": null,
@@ -27383,6 +27383,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T07:53:32Z",
       "duration_seconds": 2796.0
+    },
+    {
+      "id": "al-01M5C8N478SJ9WQGYCP5BCAGR0",
+      "shortname": "wl-t32-copy-pin-n3",
+      "datetime": "2026-10-20T09:00:38Z",
+      "session": "wl-t32-copy-pin-n3",
+      "prompt": "T32 n3: the three labels (superseded / not built / design-only) for the 7 stale DESIGN.md copy rows",
+      "summary": "Copy-pin test learns the three labels (red f48d528d, green 88020ea3); 7 rows relabelled; Core 3119/0, App 1265 pass + 3 known + 1 flake passing alone; ratchet only expected derived-views refusal",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "the 7 stale rows name their true state",
+      "done_when": "test knows 3 labels, rows relabelled, suites and ratchet run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T08:40:41Z",
+      "duration_seconds": 1197.0
     }
   ],
   "changes": [

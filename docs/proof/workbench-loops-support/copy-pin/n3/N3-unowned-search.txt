@@ -1,0 +1,9 @@
+# RUN3 / AUTH1 search, docs/ at 55645ff8
+## Response complete. Evidence still needs review
+docs/proof/workbench-loops-support/copy-pin/README.md:48:| RUN3 | no code renders "Response complete. Evidence still needs review." |
+(md/cs/json/js hits above; html hits:)
+docs/mockups/factory-workbench-v2.html
+docs/proposals/local-software-factory-v2-interactive.html
+## Signed in does not mean this route
+docs/proof/workbench-loops-support/copy-pin/README.md:51:| AUTH1 | no code renders "Signed in does not mean this route is qualified." |
+(md/cs/json/js hits above; html hits:)

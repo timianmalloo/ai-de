@@ -1,0 +1,4 @@
+ratchet base c0e415b8 head 1ee42a8c
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=1
+ratchet: REFUSE — 1 refusal(s) over 50 gate(s)
+EXPECTED: tools/verify-derived-views.py is a derived-view gate (join step 6 regenerates the views); it is the only refusal. 49 of 50 gates not refused.
