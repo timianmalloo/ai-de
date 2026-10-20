@@ -74,6 +74,34 @@ public sealed class DesignCopyRowsArePinnedTests
         return (string)method!.Invoke(null, [1, 1])!;
     }
 
+    private static TurnView Turn(int ordinal, TurnState state, OutcomeView? outcome = null) =>
+        new(ordinal, "env-000" + ordinal, "words", [], state, outcome, null, [], "b", ThreadFixtures.T0);
+
+    private static ThreadSnapshot Snapshot(params TurnView[] turns) => new(turns, 1, true);
+
+    private static OutcomeView Outcome(Spend? spend = null) => new("lane", null, 0, spend, null, 0);
+
+    private static string Core(string typeName, string field)
+    {
+        var type = typeof(TurnCopy).Assembly.GetType(typeName);
+        Assert.True(type is not null, typeName + " moved, so repoint this pin.");
+        var f = type!.GetField(field, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+        Assert.True(f is not null, typeName + "." + field + " moved, so repoint this pin.");
+        return (string)f!.GetRawConstantValue()!;
+    }
+
+    private static string[] OutcomeWords() =>
+        Enum.GetValues<TurnState>().OrderBy(st => st != TurnState.Running)
+            .Select(st => TurnCopy.OutcomeWord(st, null))
+            .Append(N(TurnCopy.OutcomeWord(TurnState.Failed, SampleRevision)))
+            .ToArray();
+
+    private static string SessionSpendSample(string text) => text.Replace("12,400", "{sum}").Replace("40,000", "{cap}").Replace("(1 not", "({k} not");
+
+    private static string QueuedSample(string text) => text.Replace("b2", "{queued}").Replace("b1", "{behind}");
+
+    private static string Spent(Spend? spend) => spend is null ? TurnCopy.SpendText(null) : TurnCopy.SpendText(spend).Replace("424", "{n}");
+
     private static IReadOnlyList<Pin> Pins() =>
     [
         new("NB2", [CurrentnessFold.StaleCopy, NotebookModel.StaleCopy], ["CurrentnessFold.StaleCopy", "NotebookModel.StaleCopy"]),
@@ -100,6 +128,50 @@ public sealed class DesignCopyRowsArePinnedTests
             "CHK12",
             [N(ChecklistCopy.AcceptIntent(SampleRevision)), N(ChecklistCopy.IntentAccepted(SampleRevision)), ChecklistCopy.AcceptDeliverable],
             ["ChecklistCopy.AcceptIntent", "ChecklistCopy.IntentAccepted", "ChecklistCopy.AcceptDeliverable"]),
+        new("CHK13", [ChecklistCopy.AcceptedEarlier], ["ChecklistCopy.AcceptedEarlier"]),
+        new("CHK14", [ChecklistCopy.Acknowledge], ["ChecklistCopy.Acknowledge"]),
+        new("CHK15", [ChecklistCopy.AddObligation], ["ChecklistCopy.AddObligation"]),
+        new("CHK16", [ChecklistCopy.Defer], ["ChecklistCopy.Defer"]),
+        new("CHK17", [ChecklistCopy.LinkLatestRun], ["ChecklistCopy.LinkLatestRun"]),
+        new("CHK18", [ChecklistCopy.Loading], ["ChecklistCopy.Loading"]),
+        new("CHK19", [ChecklistCopy.Mandatory], ["ChecklistCopy.Mandatory"]),
+        new("CHK20", [ChecklistCopy.MarkNeedsDecision], ["ChecklistCopy.MarkNeedsDecision"]),
+        new("CHK21", [ChecklistCopy.NewObligationName], ["ChecklistCopy.NewObligationName"]),
+        new("CHK22", [ChecklistCopy.NotConnected], ["ChecklistCopy.NotConnected"]),
+        new("NB3", [DaemonNotebookRevisions.OpenRefusedCopy], ["DaemonNotebookRevisions.OpenRefusedCopy"]),
+        new("ST1", [Core("AiDe.Core.Projections.SolutionTreeProjection", "NotRecordedCopy")], ["SolutionTreeProjection.NotRecordedCopy"]),
+        new("ST2", [Core("AiDe.Core.Projections.SolutionTreeProjection", "PythonTsCopy")], ["SolutionTreeProjection.PythonTsCopy"]),
+        new("TURN1", OutcomeWords(), ["TurnCopy.OutcomeWord"]),
+        new("TURN2", [TurnCopy.Name(StopRequestedTurn()).Replace("b1", "{ordinal}").Replace("words", "{words}")], ["TurnCopy.Name"]),
+        new(
+            "TURN3",
+            [TurnCopy.DecorationLine([new("class", "free-form", "s", "r"), new("tier", "T0", "s", "r"), new("lease", "src/**", "s", "r"), new("shape", "goal block", "s", "r")])],
+            ["TurnCopy.DecorationLine"]),
+        new("TURN4", [N(TurnCopy.EditsText(SampleRevision)), TurnCopy.EditsText(1), TurnCopy.EditsText(null)], ["TurnCopy.EditsText"]),
+        new("TURN5", [Spent(new Spend(400, 0, 24, 1)), Spent(null)], ["TurnCopy.SpendText"]),
+        new("TURN6", [TurnCopy.EventsText(424).Replace("424", "{n}"), TurnCopy.EventsText(1)], ["TurnCopy.EventsText"]),
+        new(
+            "TURN7",
+            [TurnCopy.DurationText(new TimeSpan(0, 4, 12)), TurnCopy.DurationText(TimeSpan.FromSeconds(41)), TurnCopy.DurationText(new TimeSpan(1, 2, 0))],
+            ["TurnCopy.DurationText"]),
+        new("TURN8", [TurnCopy.SpokenDuration(new TimeSpan(0, 4, 12)), TurnCopy.SpokenDuration(TimeSpan.FromSeconds(41))], ["TurnCopy.SpokenDuration"]),
+        new(
+            "TURN9",
+            [
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1)))], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1))), Turn(2, TurnState.Completed, Outcome())], null)),
+                SessionSpendSample(TurnCopy.SessionSpend([Turn(1, TurnState.Completed, Outcome(new Spend(12000, 0, 400, 1)))], 40_000)),
+            ],
+            ["TurnCopy.SessionSpend"]),
+        new(
+            "TURN10",
+            [
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(2, TurnState.Queued)))),
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(1, TurnState.Running), Turn(2, TurnState.Queued)))),
+                QueuedSample(TurnCopy.QueuedSentence(Snapshot(Turn(1, TurnState.Interrupted, Outcome()), Turn(2, TurnState.Queued)))),
+            ],
+            ["TurnCopy.QueuedSentence"]),
         new("DOCK1", [SessionDocumentSurface.PaneHiddenCopy], ["SessionDocumentSurface.PaneHiddenCopy"]),
         new("DOCK4", [KeptPromptsSingular(), "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks."], ["LayoutPersistence.KeptPromptsSentence"]),
     ];

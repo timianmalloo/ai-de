@@ -1347,6 +1347,13 @@ Verified against the task: browsing the tree is serial (one focused row); readin
 - `View source`
 - `Reveal in graph`
 
+Copy added by this section, as id rows (review oracles quote these strings):
+
+| ID | Canonical copy |
+|---|---|
+| ST1 | Not recorded — the disclosure on a folder the census could not read (I/O, permission or reparse point) |
+| ST2 | Python and TypeScript files are not listed individually. The scope folder is indexed. |
+
 Do not label skip-listed directories hidden or excluded. Do not say indexed folder.
 
 ### Motion inventory
@@ -1401,11 +1408,22 @@ Copy added by this section (review oracles quote these strings):
 |---|---|
 | NB1 | Draft saved on this device. |
 | NB2 | This output belongs to an earlier draft. Run again to refresh it. |
+| NB3 | notebook revisions are not recorded: the workspace refused to open this notebook ({reason}) — the notebook's revision state when the workspace refuses to open it (`DaemonNotebookRevisions.OpenRefusedCopy`) |
 | RUN1 | No reasoning summary supplied. |
 | RUN2 | Stop requested. Waiting for the harness to acknowledge. |
 | RUN3 | Response complete. Evidence still needs review. |
 | RUN4 | Connection lost. The run outcome is unknown. |
 | RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
+| TURN1 | running · waiting for you · completed · answered · lane exited {n} · failed · stopped by you · preparing · stop requested · delivery unknown · rejected · denied · over limit · outcome not recorded · queued · cancelled by you (`TurnCopy.OutcomeWord`: the outcome word of a turn state; SC7 names the outcome line) |
+| TURN2 | {ordinal}, {words} — the turn's UIA name: the ordinal, then the first 120 characters of what the operator typed, … when truncated (SC10) |
+| TURN3 | class free-form · tier T0 · lease src/** · goal block (`TurnCopy.DecorationLine`: the decoration line, name and value joined by ·, the shape by its value alone) |
+| TURN4 | {n} edits · 1 edit · edits not recorded (`TurnCopy.EditsText`) |
+| TURN5 | {n} tokens · tokens not recorded (`TurnCopy.SpendText`: never 0 for absent usage, Ruling 78) |
+| TURN6 | {n} events · 1 event (`TurnCopy.EventsText`) |
+| TURN7 | 4 min 12 s · 41 s · 1 h 02 min (`TurnCopy.DurationText`, at one precision) |
+| TURN8 | 4 minutes 12 seconds · 41 seconds (`TurnCopy.SpokenDuration`: the spoken form of a duration, SC9) |
+| TURN9 | {sum} tokens this session · bounded by your subscription — or spend not recorded · bounded by your subscription; {sum} tokens this session ({k} not recorded) · bounded by your subscription; with a cap: {sum} of {cap} · cap enforced (`TurnCopy.SessionSpend`: the header's budget state, Ruling 78) |
+| TURN10 | {queued} queued — or {queued} queued — sends after {behind}; when the queued turn waits on the operator: {behind} stopped by you; {queued} is waiting — Send it or cancel it (`TurnCopy.QueuedSentence`, Ruling 95; the outcome word is the behind turn's, here stopped by you) |
 | CHECK1 | Acknowledged by you. Execution evidence is still missing. |
 | CHK1 | No obligations yet. Add the conditions this work must meet. (WL-1b checklist, empty; `ChecklistCopy` holds every CHK string) |
 | CHK2 | Evidence missing. — the row's evidence label with no link; the human state is a separate label (Not reviewed. · Acknowledged — not satisfied. Acknowledging is not evidence. · Deferred — acceptance stays blocked. · Needs a decision.) |
@@ -1419,6 +1437,16 @@ Copy added by this section (review oracles quote these strings):
 | CHK10 | This checklist belongs to work journey {journey}. Its notebook is not open. Reopen it from File → Recent sessions to review this checklist. |
 | CHK11 | No notebook is focused. Open a notebook in Factory, then open its checklist. |
 | CHK12 | Accept intent (revision {n}) · Intent revision {n} is accepted. · Accept deliverable |
+| CHK13 | Accepted at an earlier intent revision. The intent has changed since, so this acceptance does not cover the current revision. (`ChecklistCopy.AcceptedEarlier`: the stale-acceptance sentence) |
+| CHK14 | Acknowledge — the row's button that records an acknowledgment (CHK2: it is not evidence) |
+| CHK15 | Add obligation — the button that adds a row to the checklist |
+| CHK16 | Defer — the row's button that defers the obligation (CHK2: acceptance stays blocked) |
+| CHK17 | Link the latest run — the row's button that links the session's latest run as evidence |
+| CHK18 | Loading the checklist… — shown while the obligations are read |
+| CHK19 | Mandatory — the label on an obligation that blocks acceptance |
+| CHK20 | Needs decision — the row's button that marks the obligation as needing a decision (CHK2: the state reads Needs a decision.) |
+| CHK21 | New obligation — the name a freshly added obligation starts with |
+| CHK22 | The workspace service is not connected, so obligations cannot be read or recorded. |
 | DOCK1 | Pane hidden. The run continues. |
 | DOCK4 | Kept 1 prompt draft as it was: prompt drafts do not become notebooks. — plural: Kept {N} prompt drafts as they were: prompt drafts do not become notebooks. (Ruling 173: said once, on the restore that migrates a slot) |
 | AUTH1 | Signed in does not mean this route is qualified. |
