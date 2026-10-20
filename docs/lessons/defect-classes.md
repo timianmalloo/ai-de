@@ -8795,6 +8795,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (none), not the landing"; event 1 on the load-only rows); the re-run failed `CtrlDigit_WithFocusInside…` and
   `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`. Each passed alone on `ab759888` and `70bc5f5d`. Excused by the
   Owner's ruling (a) on that join, not under Ruling 155 (3). T36 re-measures the list with the button released.
+- **Re-measured (2026-10-20, T36, N=10, left button released):** full Core+App on `44d2689b`, the button read `0x0000` in every sample (`mouse.txt`). Core: 3122 results, 0 failures in 10 runs. App: 1274 results, 2 to 3 failures per run. In suite / alone: `CtrlDigit_WithFocusInside…` 10/10 / 9/10 (intermittent); `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` 10/10 / 10/10 (fails-alone); `ARestoredRowsEvents_…` 0/10 / 0/10 (passes; T31 10/10 / 10/10); `CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen` 1/10 / 0/10 (load-only); `TheFactoryLanding_IsTheNotebookInTheCenter_…` 1/10 / 0/10 (load-only, new); `TheFloatingNotebook_…`, `AfterStop_…`, `ADeadHolder_…`, `ASessionWhoseChildExited_…` 0/10 / 0/10 (passes). No cause is claimed. `docs/proof/workbench-loops-support/flake-remeasure/rates.md`.
 - **Status:** `partially-controlled`, until the measurement track reports.
 - **DC-NEW-wl-leader2, an OWNER instance (2026-10-19, Ruling 182 (4)):** the ruling asserted that a sent turn's compiled
   prompt "is on the turn row's disclosure after a restart", citing Rulings 163 and 181 rather than a writer. T30 n3 read
