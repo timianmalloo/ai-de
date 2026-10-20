@@ -27,14 +27,22 @@ CONTRACT = "compile-first-calls/1"
 
 
 def first_calls(envelopes: dict[str, dict], limit: int = LIMIT) -> list[tuple[str, dict]]:
-    """(envelope id, called row) for the first `limit` called rows of the treatment arm."""
+    """(envelope id, called row) for the first `limit` model calls of the treatment arm: `score.py`'s arm (its :176-177),
+    each envelope's called rows in seq order, `reused` rows skipped (they are not model calls)."""
     treatment = [e for e in envelopes.values() if e["opened"] and e["opened"].get("compile_mode") in AGENTIC_MODES and e["called"]]
     treatment.sort(key=lambda e: (e["opened"]["at"], e["id"]))
-    calls = [(e["id"], c) for e in treatment for c in e["called"]]
+    calls = [(e["id"], c) for e in treatment for c in e["called"] if c.get("outcome") != "reused"]
     return calls[:limit]
 
 
+def _number(value) -> float | None:
+    return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
 def measure(values: list[float]) -> dict:
+    """Sum and percentiles over what was reported; with nothing reported every figure reads "not recorded", never 0."""
+    if not values:
+        return {"n_measured": 0, "sum": NOT_RECORDED, "p50": NOT_RECORDED, "p95": NOT_RECORDED}
     return {"n_measured": len(values), "sum": sum(values), "p50": percentile(values, 0.5), "p95": percentile(values, 0.95)}
 
 
@@ -43,10 +51,11 @@ def report(paths: list[Path]) -> dict:
     for p in paths:
         rows.extend(read_rows(p))
     calls = first_calls(fold(rows))
-    costs = [c.get("cost") or {} for _, c in calls]
-    tokens_in_cache = [float((cost.get("tokens_in") or 0) + (cost.get("cache_read") or 0)) for cost in costs]
-    tokens_out = [float(cost.get("tokens_out") or 0) for cost in costs]
-    latencies = [float(c.get("latency_ms") or 0) for _, c in calls]
+    costs = [c["cost"] for _, c in calls if isinstance(c.get("cost"), dict)]
+    # A figure is counted only when the wire reported it: a cost with no tokens_in or no cache_read is not 0.
+    tokens_in_cache = [a + b for a, b in ((_number(k.get("tokens_in")), _number(k.get("cache_read"))) for k in costs) if a is not None and b is not None]
+    tokens_out = [v for v in (_number(k.get("tokens_out")) for k in costs) if v is not None]
+    latencies = [v for v in (_number(c.get("latency_ms")) for _, c in calls) if v is not None]
     by_outcome: dict[str, int] = {}
     for _, c in calls:
         by_outcome[str(c.get("outcome"))] = by_outcome.get(str(c.get("outcome")), 0) + 1
