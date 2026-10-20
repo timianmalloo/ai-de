@@ -3712,12 +3712,8 @@ public sealed class WorkbenchShell : IDisposable
             // document. A surface not in the layout is built fresh regardless.
             Adapter.Invalidate([document.SurfaceId]);
 
-            // The same for this journey's checklist, in whichever host restored it: until now it said its notebook is
-            // not open, and the next Render rebuilds it bound to this one (seam req-01M5B8W7NJRW7A1X4G21J2QKPT).
-            foreach (var each in Hosts)
-            {
-                each.Adapter.Invalidate([Checklist.ChecklistSurface.SurfaceIdFor(config.SessionId)]);
-            }
+            // This journey's checklist, which said its notebook is not open, needs no rebuild: the next Render re-parents
+            // its pane, and that visibility edge re-reads its notebook (ChecklistSurface's IsVisibleChanged; T26 n3, M6).
         }
         else
         {

@@ -143,3 +143,49 @@ as the user sees it on the surface:
 
 The design doc's CHK3 line (`docs/design/workbench-loops-wl-1b.md:418`) still reads "(revision {n})". It is outside
 this node's grant (only `:426` was granted). Seam request `req-01M5BDHVX8T545SQC0V4BESVF9` asks for it.
+
+## (G) M6 settled — option (b): the call is removed
+
+M6 removes the checklist `Invalidate` from `RegisterSessionDocument` (`WorkbenchShell.cs:3714-3720` at `061330fa`).
+Node 2 found it was not a red (`d3-not-red-invalidate-mutation.txt`).
+
+**The (a)-shaped test.**
+`SavedReviewStateIsNotAcceptanceTests.AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions`
+follows the brief's gesture:
+
+1. The restored checklist is visible and says CHK10.
+2. The user reopens the notebook the way File → Recent sessions does: `MainWindow.ReopenSessionAsync`
+   (`MainWindow.xaml.cs:443`, the open at `:471`) loads the session config from its workspace, then calls `Shell.OpenSessionDocument`.
+3. Nothing else happens: no tab or perspective switch, and no `RefreshAsync` call.
+4. The test asserts that the checklist is still visible, no longer says CHK10, and shows its journey's obligation.
+
+The test is green with the call (`m6-green-with-call.txt`) and green under M6 (`m6-b-mutation-not-red.txt`).
+So no gesture of this shape can make M6 red.
+
+**The path that already refreshes the view.** A probe under M6 (`m6-b-probe-visibility-edges.txt`, temporary, not
+committed in the test) measured three things. The checklist after the reopen is the **same instance**. It gets one
+`IsVisibleChanged` edge (False) inside the reopen and one more (True) when the layout settles. The False edge's stack
+is `OpenSessionDocument` → `OpenReferenceDocument` → `WorkbenchAdapter.Render`.
+
+- `WorkbenchShell.cs:1930` (reached from `OpenSessionDocument` at `:3532`) — `OpenReferenceDocument` calls `host.Adapter.Render()` on every open, whether the add
+  applied or not.
+- `WorkbenchAdapter.cs:303` — `Render` frees every pane it keeps (`doc.Content = null`) and re-parents it into the new
+  layout. It has no early return, so the visible checklist always leaves the visual tree and comes back.
+- `ChecklistSurface.cs` constructor, the `IsVisibleChanged` handler — on the True edge it calls `RefreshAsync`.
+  `BindAsync` resolves its notebook lazily (`_notebook()`), so it now finds the reopened notebook and binds.
+
+The rebuild that the `Invalidate` asked for therefore gave the same result as the re-parent that every render already
+does. The call is removed, and a two-line comment at that place names the path, so it is not added back.
+
+| Step | Commit | Proof |
+| --- | --- | --- |
+| The (a)-shaped test green with the call, green under M6; the call removed; 13 of 13 checklist App tests green | see `handoff.md` | `m6-green-with-call.txt`, `m6-b-mutation-not-red.txt`, `m6-b-probe-visibility-edges.txt`, `m6-b-green-without-call.txt` |
+
+**Residuals.**
+
+- Inferred, not run: a checklist in a host other than Factory. The reopen renders only Factory. If the notebook's pane
+  is already in Factory's layout, the add is refused, so no perspective switch hides the checklist. A visible
+  checklist in another host would then keep saying CHK10 until that host's next render. This happens with or without
+  the call: `Invalidate` only marks a pane for the next render and does not render. So it does not separate M6 either.
+- Node 2's `RestoredWithAnotherNotebookFocused_…` test calls `rebound.RefreshAsync()` itself after the reopen. That
+  call hides the refresh path. The new test covers the path without it.
