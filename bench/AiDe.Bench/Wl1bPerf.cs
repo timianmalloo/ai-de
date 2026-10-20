@@ -1,0 +1,254 @@
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using AiDe.Core.Facts;
+using AiDe.Core.Ipc;
+using AiDe.Core.Store;
+using AiDe.Core.Store.Records;
+using Microsoft.Data.Sqlite;
+
+namespace AiDe.Bench;
+
+/// <summary>
+/// <b>WL-1b check C1 — the performance of obligations, evidence and acceptance</b>
+/// (<c>docs/design/workbench-loops-wl-1b.md</c>, "The bench"). Same shape as the P2 gate: an argument branch
+/// (<c>-- wl1b</c>), a <c>failures</c> list, and a non-zero exit when a check fails. P1's committed numbers are
+/// untouched because this runs only behind the argument (<c>Program.cs:15-17</c>).
+/// <para>Every population is built through the product's own writers (<see cref="NotebookService"/>,
+/// <see cref="ChecklistService"/>, <see cref="StoreWriter"/>); no row is inserted by raw SQL into a product table.</para>
+/// </summary>
+internal static class Wl1bPerf
+{
+    private const string LiveSha = "sha-live";
+    private const string Actor = "bench:wl1b";
+
+    /// <summary>The demo's shape, and the 100x depth shape (design "The bench": 300 obligations, 300 links, 600 dispositions).</summary>
+    private sealed record Shape(int Revisions, int Attempts, int ChecklistRevisions, int Obligations, int Links, int ObligationDispositions);
+
+    // assume: the demo's shape is the right 1x. Confirm: the Owner reads the bench header. If false: change the constants.
+    private static readonly Shape Demo = new(Revisions: 3, Attempts: 3, ChecklistRevisions: 2, Obligations: 3, Links: 3, ObligationDispositions: 6);
+
+    // assume: "one journey with 300 obligations" means one checklist revision of 300 (not two). Confirm: the Owner reads the
+    // bench header. If false: ChecklistRevisions = 2 doubles checklist_obligation_fact history for the same head list.
+    private static readonly Shape Depth = new(Revisions: 3, Attempts: 3, ChecklistRevisions: 1, Obligations: 300, Links: 300, ObligationDispositions: 600);
+
+    private const int BreadthJourneys = 100;
+
+    /// <summary>The tables a WL-1b read must never scan whole (design "The bench", measure 3).</summary>
+    private static readonly string[] GuardedTables =
+        ["evidence_link_fact", "disposition_fact", "checklist_obligation_fact", "dispatch_attempt_fact"];
+
+    private sealed record Population(string Name, string DatabasePath, string JourneyId, string NotebookId);
+
+    internal static int Run()
+    {
+        var failures = new List<string>();
+        var directory = Path.Combine(Path.GetTempPath(), "aide-bench-wl1b", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+
+        Console.WriteLine("WL-1B-PERF — obligations, evidence and acceptance (check C1)");
+        Console.WriteLine(new string('=', 110));
+        Console.WriteLine($"build           : {(IsDebug() ? "**DEBUG — not a valid measurement**" : "Release")}");
+        Console.WriteLine($"runtime         : {Environment.Version}, {(Debugger.IsAttached ? "DEBUGGER ATTACHED" : "no debugger")}");
+        Console.WriteLine($"1x shape        : {Describe(Demo)}");
+        Console.WriteLine($"100x breadth    : {BreadthJourneys} journeys, each the 1x shape, in one store");
+        Console.WriteLine($"100x depth      : one journey, {Describe(Depth)}");
+        Console.WriteLine("budget          : checklist.evaluate p95 <= 100 ms at 100x depth. INFERRED as a fit: the nearest stated budget is the");
+        Console.WriteLine("                  selection/focus budget (NFR-02, workbench-loops-ux.md:389), not a budget set for evaluate (design R3).");
+        Console.WriteLine(new string('=', 110));
+        Console.WriteLine();
+
+        var oneX = Build(directory, "1x", 1, Demo);
+        var breadth = Build(directory, "100x breadth", BreadthJourneys, Demo);
+        var depth = Build(directory, "100x depth", 1, Depth);
+
+        Console.WriteLine();
+        failures.AddRange(PlanOracle([oneX, breadth, depth]));
+
+        Console.WriteLine();
+        Console.WriteLine(new string('=', 110));
+        if (failures.Count == 0)
+        {
+            Console.WriteLine("RESULT: every WL-1b check met.");
+        }
+        else
+        {
+            Console.WriteLine($"RESULT: {failures.Count} check(s) FAILED —");
+            foreach (var failure in failures)
+            {
+                Console.WriteLine($"  - {failure}");
+            }
+        }
+
+        Console.WriteLine(new string('=', 110));
+
+        SqliteConnection.ClearAllPools();
+        try
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+        catch (IOException)
+        {
+            Console.WriteLine($"(left working directory in place: {directory})");
+        }
+
+        return failures.Count == 0 ? 0 : 1;
+    }
+
+    private static string Describe(Shape s) =>
+        $"{s.Revisions} revisions, {s.Attempts} attempts, {s.ChecklistRevisions} checklist revision(s) x {s.Obligations} obligations, " +
+        $"{s.Links} links, {s.ObligationDispositions} obligation dispositions, 1 intent + 1 work disposition";
+
+    // ---------------------------------------------------------------- populations (product writers only)
+
+    private static Population Build(string directory, string name, int journeys, Shape shape)
+    {
+        var path = Path.Combine(directory, name.Replace(' ', '-') + ".db");
+        var watch = Stopwatch.StartNew();
+        using (var store = WorkspaceStore.Open(path))
+        {
+            for (var i = 0; i < journeys; i++)
+            {
+                PopulateWork(store, $"{name.Replace(' ', '-')}-{i}", shape);
+            }
+        }
+
+        SqliteConnection.ClearAllPools();
+        watch.Stop();
+        Console.WriteLine(string.Create(CultureInfo.InvariantCulture,
+            $"built {name,-14} {journeys,3} journey(ies) in {watch.Elapsed.TotalSeconds,6:F1}s · db {new FileInfo(path).Length / 1024.0 / 1024.0:F1} MiB"));
+        var first = $"{name.Replace(' ', '-')}-0";
+        return new Population(name, path, $"journey-nb-{first}", $"nb-{first}");
+    }
+
+    /// <summary>One work journey in the given shape: notebook revisions, completed attempts, obligations, links, dispositions, acceptance.</summary>
+    private static void PopulateWork(WorkspaceStore store, string id, Shape shape)
+    {
+        var notebookId = $"nb-{id}";
+        var notebooks = new NotebookService(store);
+        var checklist = new ChecklistService(store);
+        var journeyId = notebooks.Open(new NotebookOpenRequest(notebookId, "Bench work")).JourneyId!;
+        for (var r = 1; r <= shape.Revisions; r++)
+        {
+            notebooks.SaveRevision(new NotebookSaveRequest(notebookId, $"intent v{r} of {id}"));
+        }
+
+        var keys = Enumerable.Range(0, shape.Attempts).Select(a => $"dk-{id}-{a}").ToList();
+        foreach (var key in keys)
+        {
+            using var writer = store.BeginWrite();
+            writer.AppendAttempt(new AttemptRow(key, "w", store.CoreEpoch, notebookId, shape.Revisions, "s", 1, LiveSha));
+            writer.AppendOutcome(new OutcomeRow(key, DispatchState.Dispatched));
+            writer.AppendOutcome(new OutcomeRow(key, DispatchState.ResponseComplete));
+            writer.Commit();
+        }
+
+        checklist.SetObligations(new ObligationsSetRequest(journeyId, notebookId,
+            [.. Enumerable.Range(0, shape.Obligations).Select(o => new ObligationInput(null, $"Obligation {o} v1", true))]));
+        string[] obligationIds;
+        using (var reader = store.BeginRead())
+        {
+            obligationIds = [.. reader.ReadObligations(journeyId, 1).Select(o => o.ObligationId)];
+        }
+
+        for (var c = 2; c <= shape.ChecklistRevisions; c++)
+        {
+            checklist.SetObligations(new ObligationsSetRequest(journeyId, notebookId,
+                [.. obligationIds.Select((o, n) => new ObligationInput(o, $"Obligation {n} v{c}", true))]));
+        }
+
+        for (var l = 0; l < shape.Links; l++)
+        {
+            checklist.LinkEvidence(new EvidenceLinkRequest(journeyId, notebookId, obligationIds[l % obligationIds.Length],
+                keys[l % keys.Count], LiveSha), Actor);
+        }
+
+        string[] kinds = ["deferred", "acknowledged"];
+        for (var d = 0; d < shape.ObligationDispositions; d++)
+        {
+            checklist.RecordDisposition(new DispositionRecordRequest(journeyId, notebookId,
+                obligationIds[d % obligationIds.Length], kinds[(d / obligationIds.Length) % kinds.Length]), Actor);
+        }
+
+        checklist.RecordDisposition(new DispositionRecordRequest(journeyId, notebookId, null, "intent-accepted"), Actor);
+        checklist.Accept(new WorkAcceptRequest(journeyId, notebookId, LiveSha), Actor);
+    }
+
+    // ---------------------------------------------------------------- C1a: the plan oracle
+
+    /// <summary>
+    /// Mirrors the P1-PERF-04 oracle (<c>Program.cs:264-318</c>): EXPLAIN QUERY PLAN per read, with the same
+    /// full-scan test (<c>Program.cs:298-308</c>: a plan line that contains SCAN and names the fact table). The
+    /// first query is a deliberately unindexed control, so a run can prove the oracle is able to fail.
+    /// </summary>
+    private static List<string> PlanOracle(IReadOnlyList<Population> populations)
+    {
+        var failures = new List<string>();
+        Console.WriteLine("C1a  EXPLAIN QUERY PLAN (no full scan of " + string.Join(", ", GuardedTables) + ")");
+
+        var plans = new List<(string Label, string Sql)>
+        {
+            ("CONTROL (deliberately unindexed)", "SELECT obligation_id FROM checklist_obligation_fact WHERE text = $text;"),
+        };
+
+        foreach (var population in populations)
+        {
+            Console.WriteLine($"  -- {population.Name} ({population.DatabasePath})");
+            using var connection = new SqliteConnection(
+                new SqliteConnectionStringBuilder { DataSource = population.DatabasePath, Pooling = false }.ToString());
+            connection.Open();
+            foreach (var (label, sql) in plans)
+            {
+                var lines = Explain(connection, sql);
+                var scanned = lines.Where(l => l.Contains("SCAN", StringComparison.Ordinal))
+                    .Any(l => GuardedTables.Any(t => l.Contains(t, StringComparison.Ordinal)));
+                Console.WriteLine($"  {label,-52} {(scanned ? "**FULL SCAN**" : "indexed")}");
+                foreach (var line in lines)
+                {
+                    Console.WriteLine($"      {line}");
+                }
+
+                if (scanned)
+                {
+                    failures.Add($"C1a '{label}' performs a full scan on {population.Name}");
+                }
+            }
+        }
+
+        return failures;
+    }
+
+    private static List<string> Explain(SqliteConnection connection, string sql)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "EXPLAIN QUERY PLAN " + sql;
+        foreach (Match name in Regex.Matches(sql, @"\$\w+"))
+        {
+            if (command.Parameters.Contains(name.Value))
+            {
+                continue;
+            }
+
+            command.Parameters.AddWithValue(name.Value, name.Value == "$rev" ? 1 : (object)"x");
+        }
+
+        using var reader = command.ExecuteReader();
+        var lines = new List<string>();
+        while (reader.Read())
+        {
+            lines.Add(reader.GetString(3));
+        }
+
+        return lines;
+    }
+
+    private static bool IsDebug()
+    {
+#if DEBUG
+        return true;
+#else
+        return false;
+#endif
+    }
+}

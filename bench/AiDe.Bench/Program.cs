@@ -34,6 +34,11 @@ if (args.Length > 0 && args[0].Equals("p2", StringComparison.OrdinalIgnoreCase))
     return await P2Perf.RunAsync();
 }
 
+if (args.Length > 0 && args[0].Equals("wl1b", StringComparison.OrdinalIgnoreCase))
+{
+    return Wl1bPerf.Run();
+}
+
 const int Samples = 30;                 // the architecture's stated minimum
 const double RefreshBudgetMs = 500;
 const double DescribeBudgetMs = 100;
