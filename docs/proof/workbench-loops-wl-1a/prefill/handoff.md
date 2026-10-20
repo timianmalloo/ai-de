@@ -1,6 +1,6 @@
 ---
 id: handoff-workbench-loops-wl-1a-prefill-n1
-title: "Hand-off: WL-1a T30 node 5 (the suggested lines are seen; the first-50 reader; the sheet tests' gate)"
+title: "Hand-off: WL-1a T30 node 6 (the privacy gate made honest about R21; the lexical-ban sweep)"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -11,11 +11,34 @@ links:
   - { to: proof-workbench-loops-wl-1a-prefill, rel: relates-to }
 review-by: "2026-11-19"
 summary: >-
-  T30 n5: a prepare that suggests lines opens the fold, keeps focus in the editor, announces the count once and names
-  each line '? suggested'; tools/compile-eval/first-calls.py reads the first 50 non-reused advisory calls; the four sheet
-  test files inject the compile-mode gate, with a guard. Each red then green. Next: T30's second join. Earlier nodes'
-  hand-offs are kept below.
+  T30 n6: the composer privacy gate's 'Suggest' clause is retired with its reason; R21's real control pins one
+  model-call site (ComposerSendGate.cs:148) with a mutation red; the announcement keeps its true name; a sweep of 68
+  lexical src bans finds none now live and one stale wording. Next: T30's second join. Earlier nodes' hand-offs are
+  kept below.
 ---
+
+# Hand-off — T30 node 6 (the Owner's join hold: R21)
+
+**Done (shas and proof in `README.md` § Node 6):**
+- (H1) the `Suggest` clause is retired, with its reason in the test: red `7781a180` (the true name back), green
+  `02d6380f`. `Assist` and `Promote` are kept for R20.
+- (H2) R21's control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (App, 2 facts): `6b90bd54`. Its red is a
+  mutation (`H2-red-mutation.txt`), and the green is `H2-green.txt`. The site is `ComposerSendGate.cs:148`, invoked at
+  `:660`, as the brief inferred. There is one site, so no mail to the Leader was needed.
+- (H3) `SuggestedLinesAnnouncement` again (`7781a180`, no behaviour change); the defect slip line cites
+  DC-NEW-wl-t30-gate-evasion (`b50a2e92`).
+- (H4) `H4-lexical-ban-sweep.md` (`0d49011b`): 68 bans, 63 hold, 1 answered, 4 stale in wording (finding F1), none now
+  live. The defect entry's Sweep line is updated.
+
+**Whole suites on `0d49011b` (board read before App: no demo, no join in flight):**
+- **Core:** 3119 passed, 0 failed, 1 skipped (`suite-core-node6.txt`).
+- **App:** 1247 passed, 3 failed, 2 skipped (`suite-app-node6.txt`). The three are node 4's and node 5's. On re-run
+  (`suite-app-node6-rerun.txt`, with the node-6 and (A) tests: 8 passed, 2 failed), `SolutionTreeChordTests` passed;
+  `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` (*foreground held=False*) and
+  `AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_…` (*Space on the restored row's fold did not
+  open it*) failed as before.
+
+**Next step:** T30's second join (the Leader). The ratchet result is in `ratchet.txt`.
 
 # Hand-off — T30 node 5
 
