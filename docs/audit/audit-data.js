@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T13:35:32Z",
+  "generated": "2026-10-20T13:48:34Z",
   "audit": [
     {
       "actor": null,
@@ -27792,6 +27792,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T13:13:29Z",
       "duration_seconds": 1323.0
+    },
+    {
+      "id": "al-01M5CS4AD4DDCV433YAKTNR08W",
+      "shortname": "join-wl-layout-gate-r2",
+      "datetime": "2026-10-20T13:48:33Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-layout-gate-r2 into main",
+      "summary": "T21 n10 (Owner's R2): R2a count = 6 App tests read ContentFor after a layout command with a by-hand render between (independent per-test line scan); red f9ba76f2 (gate oracles widened; names exactly the 6); green 6a016f39 (6 converted to the route; no rename; 0 product findings); 1 of 6 red with LayoutApplied unwired. No src change. Recount: App failed only the restored-row fold (NOT CHECKED, left button down; fails alone on 24293d5d and ae9aa693, Ruling 155 (3)). recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n10's R2 oracle widening onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T13:48:32Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33774,6 +33803,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-layout-gate"
+    },
+    {
+      "id": "mail-01M5CQSFD7C3PN3HQDP2JVSF80",
+      "ts": "2026-10-20T13:25:09Z",
+      "from": "wl-leader5-20261020",
+      "to": "wl-t21-layout-gate-r2",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader5-20261020"
+    },
+    {
+      "id": "mail-01M5CRD632MQ8X58VDWCGBEK2S",
+      "ts": "2026-10-20T13:35:55Z",
+      "from": "wl-t21-layout-gate-r2",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-layout-gate-r2"
     }
   ]
 };

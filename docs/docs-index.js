@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1e531a26851461c51bf719567563d82fe91e1bbf55382d8cf2517787aac79f47"
+      "sourceSha256": "299173a2145b63172d344aa13ac135f35fbb9109082ff955f8c872be7f13c9ff"
     },
     {
       "id": "design-session-profiler",
@@ -24101,7 +24101,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1bc0eaf6e35f3ce03533b740a5b5abd801b89cb445e26b1bec57f71874c7b32d"
+      "sourceSha256": "b1072b6dbff874062d9f40fd47a48427f4550a42b2d711b2b4d73e034dc3a917"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -26030,5 +26030,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "c8310827b3c1d0045a31d3d16c8bc2a21c11ceade69f20d532d40767899d0f01"
+  "graphSha256": "771d0e7e63da5d7ddb62d87228aca8207d2bf0e0e80fb0dd0cd70a0d0eb89a28"
 };
