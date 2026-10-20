@@ -22,3 +22,4 @@ src/AiDe.Core/Extraction/SqlSchemaExtractor.cs:350:    /// EF reader emits unqua
 src/AiDe.Core/Presentation/CanvasGraphViewModel.cs:622:    /// <summary>The last path segment, so a canvas of fully-qualified names stays readable.</summary>
 src/AiDe.Core/Projections/GraphOverview.cs:198:        // A scope-qualified id names its container already; splitting past the marker would group
 (hits: 22)
+DECISION AUTH1: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.

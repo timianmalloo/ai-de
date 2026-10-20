@@ -7,3 +7,4 @@ $ grep -rniF "evidence is still missing" src
 (hits: 0)
 $ grep -rniF "by you." src
 (hits: 0)
+DECISION CHECK1: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.

@@ -15,3 +15,4 @@ src/AiDe.Core/Ipc/CapabilityRegistry.cs:31:/// <para><b>Bound to four things, ch
 src/AiDe.Core/Ipc/CapabilityRegistry.cs:32:/// epoch. Each closes a distinct attack: replaying a token on a second connection; a different
 src/AiDe.Core/Ipc/CapabilityRegistry.cs:33:/// process on the same connection; reaching another workspace's daemon; and acting against state
 (hits: 282)
+DECISION RUN4: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.

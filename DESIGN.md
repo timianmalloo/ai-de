@@ -1406,13 +1406,13 @@ Copy added by this section (review oracles quote these strings):
 
 | ID | Canonical copy |
 |---|---|
-| NB1 | Draft saved on this device. |
+| NB1 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-NB1.txt); Owner ruling 2026-10-20)* Draft saved on this device. |
 | NB2 | This output belongs to an earlier draft. Run again to refresh it. |
 | NB3 | notebook revisions are not recorded: the workspace refused to open this notebook ({reason}) — the notebook's revision state when the workspace refuses to open it (`DaemonNotebookRevisions.OpenRefusedCopy`) |
-| RUN1 | No reasoning summary supplied. |
+| RUN1 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-RUN1.txt); Owner ruling 2026-10-20)* No reasoning summary supplied. |
 | RUN2 | Stop requested. Waiting for the harness to acknowledge. |
-| RUN3 | Response complete. Evidence still needs review. |
-| RUN4 | Connection lost. The run outcome is unknown. |
+| RUN3 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-RUN3.txt); Owner ruling 2026-10-20)* Response complete. Evidence still needs review. |
+| RUN4 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-RUN4.txt); TurnCopy says Delivery is unknown: for the nearest state (DeliveryUnknown, in TurnCopy.ReasonSentence); Owner ruling 2026-10-20)* Connection lost. The run outcome is unknown. |
 | RUN4a | Last event received: #{seq} at {HH:mm:ss}. — or, with no event: Last event received: not recorded. (Ruling 164: only on a DeliveryUnknown row, after its reason sentence; the HelpText repeats it.) |
 | TURN1 | running · waiting for you · completed · answered · lane exited {n} · failed · stopped by you · preparing · stop requested · delivery unknown · rejected · denied · over limit · outcome not recorded · queued · cancelled by you (`TurnCopy.OutcomeWord`: the outcome word of a turn state; SC7 names the outcome line) |
 | TURN2 | {ordinal}, {words} — the turn's UIA name: the ordinal, then the first 120 characters of what the operator typed, … when truncated (SC10) |
@@ -1424,7 +1424,7 @@ Copy added by this section (review oracles quote these strings):
 | TURN8 | 4 minutes 12 seconds · 41 seconds (`TurnCopy.SpokenDuration`: the spoken form of a duration, SC9) |
 | TURN9 | {sum} tokens this session · bounded by your subscription — or spend not recorded · bounded by your subscription; {sum} tokens this session ({k} not recorded) · bounded by your subscription; with a cap: {sum} of {cap} · cap enforced (`TurnCopy.SessionSpend`: the header's budget state, Ruling 78) |
 | TURN10 | {queued} queued — or {queued} queued — sends after {behind}; when the queued turn waits on the operator: {behind} stopped by you; {queued} is waiting — Send it or cancel it (`TurnCopy.QueuedSentence`, Ruling 95; the outcome word is the behind turn's, here stopped by you) |
-| CHECK1 | Acknowledged by you. Execution evidence is still missing. |
+| CHECK1 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-CHECK1.txt); ChecklistCopy.Acknowledged says CHK2; Owner ruling 2026-10-20)* Acknowledged by you. Execution evidence is still missing. |
 | CHK1 | No obligations yet. Add the conditions this work must meet. (WL-1b checklist, empty; `ChecklistCopy` holds every CHK string) |
 | CHK2 | Evidence missing. — the row's evidence label with no link; the human state is a separate label (Not reviewed. · Acknowledged — not satisfied. Acknowledging is not evidence. · Deferred — acceptance stays blocked. · Needs a decision.) |
 | CHK3 | Satisfied by run {7-char key} (intent revision {n}). |
@@ -1449,8 +1449,8 @@ Copy added by this section (review oracles quote these strings):
 | CHK22 | The workspace service is not connected, so obligations cannot be read or recorded. |
 | DOCK1 | Pane hidden. The run continues. |
 | DOCK4 | Kept 1 prompt draft as it was: prompt drafts do not become notebooks. — plural: Kept {N} prompt drafts as they were: prompt drafts do not become notebooks. (Ruling 173: said once, on the restore that migrates a slot) |
-| AUTH1 | Signed in does not mean this route is qualified. |
-| DEMO1 | Interactive prototype. Runs, accounts and evidence are simulated. |
+| AUTH1 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-AUTH1.txt); Owner ruling 2026-10-20)* Signed in does not mean this route is qualified. |
+| DEMO1 | *(stale: no code in src renders this sentence (0 hits, copy-pin/n2/N2-DEMO1.txt); the sentence exists only in this row; Owner ruling 2026-10-20)* Interactive prototype. Runs, accounts and evidence are simulated. |
 
 Motion inventory: focus/selection changes are immediate; optional status transitions use
 `{motion.fast}` and `{motion.ease}`; no animated layout, pulsing status or artificial typing.

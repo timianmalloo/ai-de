@@ -5,3 +5,4 @@ $ grep -rniF "No reasoning" src
 (hits: 0)
 $ grep -rniF "summary supplied" src
 (hits: 0)
+DECISION RUN1: marked stale in DESIGN.md (not rendered by composition either: the distinctive words of the row, searched above, appear in no src file as copy). The row left UnmatchedRows; the test AStaleRow_IsNotRenderedByAnyCode guards it.
