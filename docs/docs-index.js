@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e9338c9cf49015887dee62a008a73f476b3d27530bd7faea51622819b4870196"
+      "sourceSha256": "6bc00c096e6228b065503a8a63ff05e0cd906674f479d67618ff816fa6e12963"
     },
     {
       "id": "design-session-profiler",
@@ -22714,6 +22714,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "proof-wl-chk6-gap-pin",
+      "path": "docs/proof/workbench-loops-support/chk6-gap-pin/README.md",
+      "title": "Evidence: T35 - CHK6's gap sentences are pinned against DESIGN.md (DC-NEW-wl-t26-copy)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "A Core test reads DESIGN.md's CHK6 clause list and asserts each of the 7 gap sentences AcceptanceFold writes equals a clause. 4 clauses were missing from DESIGN.md and were added. The 3 existing clauses already equalled the code.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "implement",
+        "copy",
+        "design-md",
+        "defect-class"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a26fd099ce5a193b44f21ac87da1bdc773022b6e3575d6b7ad32d85ff72c0fc9"
+    },
+    {
       "id": "proof-wl-copy-pin",
       "path": "docs/proof/workbench-loops-support/copy-pin/README.md",
       "title": "Evidence: T32 - every DESIGN.md copy row is pinned to the literal the code renders (DC-NEW-wl-t26-copy)",
@@ -25981,5 +26009,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "bc94967c5febe59f6ffab607ff99839c2c453b367773b3288cfd0cafeb287985"
+  "graphSha256": "f1f25a5fafd7bffcd341ddabd5129c75ffd83cd14165a79a75fe1549204d42ec"
 };

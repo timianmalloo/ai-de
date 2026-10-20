@@ -1,0 +1,12 @@
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495783.0293012, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/G2-red-missing.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495783.0734785, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Workbench/Folds/AcceptanceGapSentencesMatchDesignTests.cs", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495847.1412451, "code": null, "kind": "allowed", "path": "DESIGN.md", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495847.1917129, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495847.2367432, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/G2-green.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495847.287036, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/G2-red-mutation.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792495847.334492, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/README.md", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792496358.3467445, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/suite-app.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792496358.392934, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/suite-green.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792496886.6565425, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792496886.7006216, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t35-chk6-gap-pin", "wi": ""}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792496886.7421584, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/chk6-gap-pin/ratchet.txt", "session": "wl-t35-chk6-gap-pin", "wi": ""}

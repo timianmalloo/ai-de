@@ -208,3 +208,13 @@
 {"agent": "wl-leader5-20261020", "at": 1792495560.2787514, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792495560.3212352, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792495560.3663626, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495577.0157678, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495577.0629625, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495577.1082757, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495593.1884303, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495708.4316206, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T35-wl-t35-chk6-gap-pin.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495708.478241, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495708.5209138, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T35.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495852.402176, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T21n9-wl-t21-layout-gate.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495852.4503021, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792495852.4944918, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T21n9.md", "session": "wl-leader5-20261020", "wi": ""}

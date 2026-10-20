@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T11:48:06Z",
+  "generated": "2026-10-20T12:00:38Z",
   "audit": [
     {
       "actor": null,
@@ -27638,6 +27638,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T11:28:57Z",
       "duration_seconds": 1149.0
+    },
+    {
+      "id": "al-01M5CJYPASE2AP63RYD793BGMP",
+      "shortname": "join-wl-chk6-gap-pin",
+      "datetime": "2026-10-20T12:00:37Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-chk6-gap-pin into main",
+      "summary": "T35: a Core test (AcceptanceGapSentencesMatchDesignTests) reads DESIGN.md's CHK6 clause list and asserts each of AcceptanceFold's 7 gap sentences equals a clause and each clause is a sentence; the 4 missing clauses added to CHK6 (copy only); red dab1a772 (4 named), green 266dbd0a, mutation red; no src change. Recount: App failed only the restored-row fold (NOT CHECKED, the OS reports the left button down; fails alone on f39c02d6 and 90a54301, Ruling 155 (3)). recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/chk6-gap-pin/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T35's CHK6 gap-clause pin onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T12:00:36Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33593,6 +33622,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t34-deadholder-repro"
+    },
+    {
+      "id": "mail-01M5CJ7ZWT49QG8436NES1HD12",
+      "ts": "2026-10-20T11:48:13Z",
+      "from": "wl-t35-chk6-gap-pin",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t35-chk6-gap-pin"
     }
   ]
 };
