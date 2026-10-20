@@ -122,7 +122,7 @@ public sealed class ComposerHostIntegrationTests
     /// The window is 800px tall — a laptop; the rule is height-independent, and the operator's
     /// screenshot at roughly 1000px showed the same inversion.</para>
     /// </remarks>
-    [Fact]
+    [CheckedFact]
     public void TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography()
     {
         var (exitCode, stdout, stderr) = RunProbe("--shell --height 800", TimeSpan.FromMinutes(6));
@@ -135,6 +135,14 @@ public sealed class ComposerHostIntegrationTests
         // keystroke reached the draft — each line could only be printed after it happened.
         Assert.Contains("fields=1 editors=1", stdout, StringComparison.Ordinal);
         Assert.Contains("writer >= reader: True", stdout, StringComparison.Ordinal);
+
+        // The probe prints whether it held the foreground after its own focus attempt; SendInput reaches only the foreground
+        // window, so a probe that did not hold it and reached no draft proves nothing about the draft (DC-NEW-wl-t33-input-state).
+        if (!stdout.Contains("reached draft=True", StringComparison.Ordinal) && stdout.Contains("os keystroke: foreground held=False", StringComparison.Ordinal))
+        {
+            throw new NotCheckedException("NOT CHECKED: the probe's window was not the foreground window after its own focus attempt (os keystroke: foreground held=False); SendInput would prove another window.");
+        }
+
         Assert.Contains("reached draft=True", stdout, StringComparison.Ordinal);
 
         // INV-0007 PHASE 3: the surface measured itself. The bounds, every handshake transition and
