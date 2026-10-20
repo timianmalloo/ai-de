@@ -1,0 +1,12 @@
+ROW DEMO1
+$ grep -rniF "Interactive prototype" src
+(hits: 0)
+$ grep -rniF "simulated" src
+src/AiDe.Core/Extraction/KnowledgeBody.cs:45:///   not visible now. And it measurably breaks the surface it was meant to enrich: simulated on the
+(hits: 1)
+$ grep -rniF "Runs, accounts" src
+(hits: 0)
+$ grep -rniF "prototype" src
+src/AiDe.App/Workbench/CanvasPage.cs:380:            function focusable() { return Array.prototype.slice.call(document.querySelectorAll('.node')); }
+src/AiDe.App/Workbench/CanvasPage.cs:647:              Array.prototype.slice.call(stage.querySelectorAll('.node')).forEach(function (n) { n.remove(); });
+(hits: 2)

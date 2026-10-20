@@ -45,13 +45,6 @@ public sealed class DesignCopyRowsArePinnedTests
         ["SC7"] = "not copy: a layout and behaviour description (outcome line, reply, N events collapsed)",
         ["SC8"] = "not copy: a keyboard and focus-order rule",
         ["SC9"] = "not copy: an announcement rule (what is never announced)",
-        ["NB1"] = "finding: no code renders \"Draft saved on this device.\"; the row is unbuilt or the sentence was removed",
-        ["RUN1"] = "finding: no code renders \"No reasoning summary supplied.\"",
-        ["RUN3"] = "finding: no code renders \"Response complete. Evidence still needs review.\"",
-        ["RUN4"] = "finding: no code renders \"Connection lost. The run outcome is unknown.\"; TurnCopy says \"Delivery is unknown: ...\" for the nearest state",
-        ["CHECK1"] = "finding: no code renders \"Acknowledged by you. Execution evidence is still missing.\"; ChecklistCopy.Acknowledged says a different sentence (CHK2)",
-        ["AUTH1"] = "finding: no code renders \"Signed in does not mean this route is qualified.\"",
-        ["DEMO1"] = "finding: no code renders \"Interactive prototype. Runs, accounts and evidence are simulated.\" (the sentence lives only in DESIGN.md)",
     };
 
     /// <summary>Copy constants and builders no DESIGN.md id row names. Shrink-only.</summary>

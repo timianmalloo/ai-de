@@ -1,0 +1,8 @@
+ROW NB1
+$ grep -rniF "Draft saved" src
+(hits: 0)
+$ grep -rniF "saved on this device" src
+(hits: 0)
+$ grep -rniF "on this device" src
+src/AiDe.Core/Facts/Dispatch.cs:9:    /// <summary>Processed on this device; no external provider is invoked.</summary>
+(hits: 1)

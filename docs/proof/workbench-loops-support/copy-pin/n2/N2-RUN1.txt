@@ -1,0 +1,7 @@
+ROW RUN1
+$ grep -rniF "reasoning summary" src
+(hits: 0)
+$ grep -rniF "No reasoning" src
+(hits: 0)
+$ grep -rniF "summary supplied" src
+(hits: 0)
