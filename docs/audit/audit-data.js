@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T12:45:54Z",
+  "generated": "2026-10-20T12:58:24Z",
   "audit": [
     {
       "actor": null,
@@ -27715,6 +27715,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T12:14:13Z",
       "duration_seconds": 1901.0
+    },
+    {
+      "id": "al-01M5CP8F79G77F0HNVFPPCEJRT",
+      "shortname": "join-wl-layout-gate",
+      "datetime": "2026-10-20T12:58:23Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-layout-gate into main",
+      "summary": "T21 n9: LayoutOraclesDriveTheCommandRouteTests (a test that reads the drawn layout after a layout command reaches it by the palette or DockHost's Controller.Execute, no by-hand render between; empty exception list; self-test). Red 6db0cad4 (8 named + node 2 + helper evasion), red 343dbe07 (V2b recall tightened: 11), green 221e05eb (11 converted, 0 product findings). No src change. Recount: App failed only the restored-row fold (NOT CHECKED, the left button reads down; fails alone on 1be124d0 and 970d3943, Ruling 155 (3)). recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n9's layout-command class gate onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T12:58:22Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33679,6 +33708,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t35-chk6-gap-pin"
+    },
+    {
+      "id": "mail-01M5CNEWYR29Z6WZC1JXE22J85",
+      "ts": "2026-10-20T12:44:25Z",
+      "from": "wl-leader5-20261020",
+      "to": "wl-t21-layout-gate",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader5-20261020"
+    },
+    {
+      "id": "mail-01M5CNHTRRHT8X2EZ129S2A41E",
+      "ts": "2026-10-20T12:46:02Z",
+      "from": "wl-t21-layout-gate",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-layout-gate"
     }
   ]
 };

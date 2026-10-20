@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6bc00c096e6228b065503a8a63ff05e0cd906674f479d67618ff816fa6e12963"
+      "sourceSha256": "1e531a26851461c51bf719567563d82fe91e1bbf55382d8cf2517787aac79f47"
     },
     {
       "id": "design-session-profiler",
@@ -24083,6 +24083,27 @@ window.DOCS_INDEX = {
       "sourceSha256": "6b31db2187219d5b06d2cc21f28379028b9f6f1938c427d3428efd12099338bf"
     },
     {
+      "id": "wl-s-layout-gate-readme",
+      "path": "docs/proof/workbench-loops-wl-s/layout-gate/README.md",
+      "title": "WL-S T21 node 9 - the layout-command class gate",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-20",
+      "reviewSuggested": [],
+      "summary": "T21 n9: LayoutOraclesDriveTheCommandRouteTests fails when an App test issues a layout command off the user's route, renders the adapter by hand, then reads the drawn layout. Red on 8 tests (6db0cad4), 11 after V2b tightened the oracle set (343dbe07); all 11 converted to the route, 0 exceptions, 0 product findings.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bc0eaf6e35f3ce03533b740a5b5abd801b89cb445e26b1bec57f71874c7b32d"
+    },
+    {
       "id": "spec-addendum-c-perspectives",
       "path": "docs/specs/addendum-c-perspectives.md",
       "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
@@ -26009,5 +26030,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "f1f25a5fafd7bffcd341ddabd5129c75ffd83cd14165a79a75fe1549204d42ec"
+  "graphSha256": "c8310827b3c1d0045a31d3d16c8bc2a21c11ceade69f20d532d40767899d0f01"
 };

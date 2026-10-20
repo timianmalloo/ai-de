@@ -1,2 +1,3 @@
 {"agent": "wl-leader5-20261020", "at": 1792495711.0137558, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t35-chk6-gap-pin", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-chk6-gap-pin"}
 {"at": 1792496893.8507047, "from": "wl-t35-chk6-gap-pin", "kind": "done", "mail_id": "mail-01M5CJ7ZWT49QG8436NES1HD12", "ref": null, "session": "wl-t35-chk6-gap-pin", "to": "wl-leader5-20261020", "type": "mail"}
+{"agent": "wl-t35-chk6-gap-pin", "at": 1792498435.2659874, "kind": "session-end", "path": "-", "seq": 3, "session": "wl-t35-chk6-gap-pin", "wi": "WI-0", "worktree": "ai-de"}
