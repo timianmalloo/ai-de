@@ -1,0 +1,29 @@
+
+Test run for C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.40]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [187 ms]
+  Standard Output Messages:
+ 228 files · 0 tests read the drawn layout after a layout command · 0 render by hand between · 0 named exceptions
+
+
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [9 ms]
+  Standard Output Messages:
+ Planted.cs::Node2Original: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInALocalFunction: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInAClassHelper: command `.Execute("workbench.closePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RenderTwoHelpersDeep: command `.Execute("workbench.maximizePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::ServiceOperationThenRender: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RailAfterACollapse: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.RailVisible(`)
+
+
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 0.7158 Seconds

@@ -41,17 +41,19 @@ public sealed class FloatBoundsPersistTests : IDisposable
     [Fact]
     public void AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle() =>
         Sta.Pump(
-            create: () => new DockingManager(),
+            create: () => new Border(),
             configure: window => { window.Width = 900; window.Height = 600; },
-            body: async (main, manager) =>
+            body: async (main, border) =>
             {
                 Directory.CreateDirectory(_dir);
                 var layoutPath = Path.Combine(_dir, "layout.json");
                 static TextBox Build(Surface surface) => new() { Text = surface.SurfaceId };
 
-                var service = new ZoneBackedLayoutService();
+                var host1 = FloatRenderTests.HostInto(border, Build);
+                var manager = host1.Manager;
+                var service = host1.Service;
                 var ids = service.Zones.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
-                var adapter = new WorkbenchAdapter(manager, service, Build);
+                var adapter = host1.Adapter;
                 adapter.ViewArrangementChanged += (_, _) =>
                 {
                     if (adapter.ReadLayoutFromView() is { } view)
@@ -59,12 +61,10 @@ public sealed class FloatBoundsPersistTests : IDisposable
                         service.ReconcileFromView(view);
                     }
                 };
-                adapter.Render();
                 await Task.Delay(200);
 
-                var floated = service.Apply(new LayoutOperation.MoveSurface("sessions", new DropTarget(string.Empty, DropKind.Float)));
-                Assert.True(floated.Applied, floated.Announcement);
-                adapter.Render();
+                // The pane floats the way the palette floats it: the controller verb, which draws it.
+                FloatRenderTests.FloatByTheRoute(host1, "sessions");
                 await Task.Delay(500);
 
                 // The user's move and resize: a rectangle on the work area, away from the default placement.
@@ -114,7 +114,7 @@ public sealed class FloatBoundsPersistTests : IDisposable
     [Fact]
     public void AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo() =>
         Sta.Pump(
-            create: () => new DockingManager(),
+            create: () => new Border(),
             configure: window =>
             {
                 // On the work area, so the default placement (48 into the workbench) is a usable one.
@@ -123,7 +123,7 @@ public sealed class FloatBoundsPersistTests : IDisposable
                 window.Width = 900;
                 window.Height = 600;
             },
-            body: async (main, manager) =>
+            body: async (main, border) =>
             {
                 Directory.CreateDirectory(_dir);
                 var layoutPath = Path.Combine(_dir, "layout.json");
@@ -131,10 +131,10 @@ public sealed class FloatBoundsPersistTests : IDisposable
                     SystemParameters.VirtualScreenLeft - 100_000, SystemParameters.VirtualScreenTop - 100_000, 640, 420);
 
                 // Before the restart: "sessions" floats at a rectangle no display covers, and is saved.
-                var before = new ZoneBackedLayoutService();
+                var beforeHost = FloatRenderTests.HostInto(border, surface => new TextBox { Text = surface.SurfaceId });
+                var before = beforeHost.Service;
                 var ids = before.Zones.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
-                var floated = before.Apply(new LayoutOperation.MoveSurface("sessions", new DropTarget(string.Empty, DropKind.Float)));
-                Assert.True(floated.Applied, floated.Announcement);
+                FloatRenderTests.FloatByTheRoute(beforeHost, "sessions");
                 var stack = Assert.Single(before.Zones.Floating);
                 before.RestoreZones(before.Zones with { Floating = [stack with { FloatingBounds = offScreen }] });
                 Assert.Equal(offScreen, Assert.Single(before.Zones.Floating).FloatingBounds);
@@ -148,6 +148,8 @@ public sealed class FloatBoundsPersistTests : IDisposable
                 var host = new ZoneBackedLayoutService();
                 using var persistence = new LayoutPersistence(host, layoutPath, ids, restorableKinds: SurfaceContentFactory.RestorableKinds);
                 var result = persistence.Restore();
+                var manager = new DockingManager();
+                main.Content = manager;
                 var adapter = new WorkbenchAdapter(manager, host, surface => new TextBox { Text = surface.SurfaceId });
                 adapter.Render();
                 await Task.Delay(500);

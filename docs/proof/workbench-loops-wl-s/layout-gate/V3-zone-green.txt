@@ -1,0 +1,23 @@
+
+Test run for C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept [383 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument [722 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.TheDefaultZoneLayout_RendersEverySurface_AsARealizedDocument [36 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface [42 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones [46 ms]
+[xUnit.net 00:00:01.73]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_LeavesTheActiveTabWhereTheUserPutIt [74 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_PreservesTheActiveSurface_WhenAnotherPaneOpens [37 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_RebuildsOnlyTheNamedPane_LeavingEveryOtherPaneUntouched [35 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.APlainReRender_KeepsTheActiveCenterDocumentActive_AfterThePaneControlsRealize [67 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ActivateInView_FocusesTheNamedSurface_ForTheDeliberateOpenCase [68 ms]
+
+Test Run Successful.
+Total tests: 10
+     Passed: 10
+ Total time: 2.1078 Seconds

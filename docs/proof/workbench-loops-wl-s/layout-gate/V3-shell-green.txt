@@ -1,0 +1,96 @@
+
+Test run for C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "none", heading: "No session open.") [14 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "two-dead", heading: "Nothing open here.") [10 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "left-live", heading: "The session is docked at the left.") [1 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "bottom-live", heading: "The session is docked at the bottom.") [< 1 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "left-live-collapsed", heading: "The session is docked at the left, collapsed — exp"···) [< 1 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "left-dead", heading: "Nothing open here.") [< 1 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(state: "two-live", heading: "The sessions are docked at the left.") [< 1 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileARestoredSessionAtLeftCouldNotBeRevived_TheCenterSays_NothingOpenHere [404 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen [265 ms]
+  Passed AiDe.App.Tests.Shell.CenterEmptyCopyTests.TheCopy_IsDerivedFromAdmission_UnderstandOffersTheViewMenu_ReviewNamesTheHostsThatAdmitAKind [2 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossAllHosts [51 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.AttachWorkspace_SwapsTheSampleContentSourceForTheRealOne [92 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.Announcements_ReachTheLiveRegionTheWindowDisplays [25 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.Controller_AdapterAndView_ShareOneLayoutService [22 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime [50 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.TheComposedShell_LeaksNoLibraryTypeNames [19 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.TheLiveRegion_IsMarkedPoliteAndNamed [23 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.ShowLedger_InFactory_WithTheNotebookInTheCenter_DocksInTheCenter_AndTheLandingIsTheCentersActiveTab [27 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable [36 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.OpeningAReferenceDocument_LeavesTheGraphTheActiveTabWhereItWas [21 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.AShowEntry_ForAOneInstanceKindHeldInACollapsedZone_ExpandsTheZoneAndActivatesIt [65 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.EverySurface_RendersContentRatherThanAnEmptyShell [19 ms]
+  Passed AiDe.App.Tests.WorkbenchShellTests.FindSurfaceId_WalksUpToTheOwningSurface [38 ms]
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheNotebookKindsRow_NamesTheCenterZone [1 ms]
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.AReopenedSessionDocument_FollowsTheSameZoneRule_AndRearrangesNothing [77 ms]
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget [167 ms]
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing [257 ms]
+[xUnit.net 00:00:02.44]     AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument [FAIL]
+[xUnit.net 00:00:02.44]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:02.44]                           ↓ (pos 9)
+[xUnit.net 00:00:02.44]       Expected: "session:s1"
+[xUnit.net 00:00:02.44]       Actual:   "session:s2"
+[xUnit.net 00:00:02.44]                           ↑ (pos 9)
+[xUnit.net 00:00:02.44]       Stack Trace:
+[xUnit.net 00:00:02.44]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:02.44]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:02.44]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs(274,0): at AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument()
+[xUnit.net 00:00:02.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:02.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.ANewNotebook_OpensInTheCenterZone_Docked_WithMaximizedNull [63 ms]
+  Passed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.NewSessionPlacement_IsGone_AndTheCreatePathCarriesNoMaximize [153 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept [52 ms]
+  Failed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument [250 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                    ↓ (pos 9)
+Expected: "session:s1"
+Actual:   "session:s2"
+                    ↑ (pos 9)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs:line 274
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.TheDefaultZoneLayout_RendersEverySurface_AsARealizedDocument [36 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface [38 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones [58 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_LeavesTheActiveTabWhereTheUserPutIt [38 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_PreservesTheActiveSurface_WhenAnotherPaneOpens [36 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_RebuildsOnlyTheNamedPane_LeavingEveryOtherPaneUntouched [35 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.APlainReRender_KeepsTheActiveCenterDocumentActive_AfterThePaneControlsRealize [74 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ActivateInView_FocusesTheNamedSurface_ForTheDeliberateOpenCase [61 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.LayoutPassesThatRearrangeNothing_RaiseNoArrangementChange [30 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADrag_EmitsALayoutMutationRecord_CarryingTheZoneAssignmentBeforeAndAfter [22 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ANativeDrag_MovesOnlyTheDraggedSurface_LeavingEveryBystanderInItsZone [16 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ASaveAfterADrag_WritesTheArrangementTheUserIsLookingAt [51 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ACrossPaneDrag_RaisesTheDockingModelsOwnUpdate_NotAWpfLayoutPass [15 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused [18 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.InCoding_TheSessionDraggedIntoTheCenterAndBack_FollowsTheDrops_WithTheBottomCollapsed [16 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(perspective: "understand", dragged: "evidence", onto: "graph", expectedBefore: Right, expectedAfter: Center, openEvidenceInTheRight: True) [14 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.TwoDragsWithNoCommandBetweenThem_EachReconcile_SoNeitherAccumulatesDrift [15 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.OpeningAWorkspace_AnnouncesWhatTheRestoreDid_AndRecordsTheBranchThatRan [32 ms]
+  Passed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragThatCannotBePlacedWithoutGuessing_IsRefusedAndAnnounced_AndThePanesReturn [17 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen [205 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [372 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheConsoleKindsRow_IsCodingsManyInstancesVerbRow_HomedInTheCenter [2 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionInTheCenter_TheConsoleIsASiblingTab [118 ms]
+[xUnit.net 00:00:04.39]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TwoSessionsOpenedOnOneDay_HaveDistinctSessionAndConsoleCaptions [252 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheVerb_OpensTheFocusedSessionsConsole_AndRefusesWithNoSessionFocused [153 ms]
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [204 ms]
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [3 ms]
+
+Test Run Failed.
+Total tests: 58
+     Passed: 57
+     Failed: 1
+ Total time: 4.7662 Seconds

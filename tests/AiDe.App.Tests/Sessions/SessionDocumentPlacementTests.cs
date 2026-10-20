@@ -190,14 +190,12 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             var closed = new List<string>();
             shell.Factory.Adapter.SurfaceClosed += (id, _) => closed.Add(id);
 
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CollapseByTheRoute(shell.Factory, ZonesToTree.LeftStackId);
             frame.Settle();
             Assert.Empty(closed);
             Assert.True(shell.Factory.Rails.RailVisible(ZoneId.Left));
 
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Left);
             frame.Settle();
             Assert.Same(document, frame.Document(surfaceId));
             Assert.Empty(closed);

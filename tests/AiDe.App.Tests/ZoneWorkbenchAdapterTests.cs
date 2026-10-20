@@ -271,21 +271,33 @@ public sealed class ZoneWorkbenchAdapterTests
     [Fact]
     public void Render_SelectsTheModelsActiveTab_NotTheFirstDocument()
     {
-        WithZoneWorkbench((adapter, service) =>
-        {
-            // The center starts on the graph (index 0). Activate a later tab in the model.
-            service.Apply(new LayoutOperation.ActivateSurface("sessions"));
-            adapter.Render();
+        AiDe.App.Tests.Sta.Pump(
+            create: () => new System.Windows.Controls.Border(),
+            configure: window => { window.Width = 900; window.Height = 600; },
+            body: async (main, border) =>
+            {
+                var host = AiDe.App.Tests.Shell.FloatRenderTests.HostInto(border, surface => new System.Windows.Controls.TextBox { Text = surface.SurfaceId });
+                await Task.Delay(200);
 
-            var pane = adapter.Manager.Layout!.Descendents().OfType<LayoutDocumentPane>()
-                .First(p => p.Children.OfType<LayoutDocument>().Any(d => d.ContentId == "sessions"));
-            var selected = pane.SelectedContent as LayoutDocument;
+                // What the Center's pane shows as selected, read from the drawn layout.
+                string? SelectedInTheView() =>
+                    (host.Manager.Layout!.Descendents().OfType<LayoutDocumentPane>()
+                        .First(p => p.Children.OfType<LayoutDocument>().Any(d => d.ContentId == "session:s2")).SelectedContent as LayoutDocument)?.ContentId;
 
-            // The rebuilt pane shows the model's active tab, not its first document (the desync
-            // that hid the surviving tab after a close, #11).
-            Assert.Equal("sessions", selected?.ContentId);
-            return true;
-        });
+                // The Center is stepped back to its first tab, then forward: the user's verb makes a later tab the model's active one.
+                host.Controller.FocusedStackId = host.Service.Current.FindStackOf("session:s1")!.Id;
+                host.Controller.FocusedSurfaceId = "session:s2";
+                Assert.True(host.Controller.Execute("workbench.previousSurface"));
+                await Task.Delay(200);
+                Assert.Equal("session:s1", SelectedInTheView());
+
+                Assert.True(host.Controller.Execute("workbench.nextSurface"));
+                await Task.Delay(200);
+
+                // The rebuilt pane shows the model's active tab, not its first document (the desync
+                // that hid the surviving tab after a close, #11).
+                Assert.Equal("session:s2", SelectedInTheView());
+            });
     }
 
     [Fact]

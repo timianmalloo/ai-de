@@ -285,9 +285,8 @@ public sealed class WorkbenchDragCompletedHookTests
                 h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("evidence", "view", "Evidence")));
                 h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("joins", "joins", "Joins")));
                 h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("contexts", "contexts", "Contexts")));
-                h.Zones.Apply(new LayoutOperation.MoveSurface("tree", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
-                h.Zones.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
-                h.Adapter.Render();
+                Assert.True(h.Host.Controller.Move("tree", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
+                AiDe.App.Tests.Shell.FloatRenderTests.CollapseByTheRoute(h.Host, ZonesToTree.LeftStackId);
                 Settle(h.Window, h.Adapter.Manager);
                 var heldBefore = h.Zones.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
 
