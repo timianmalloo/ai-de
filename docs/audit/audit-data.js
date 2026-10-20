@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T07:39:31Z",
+  "generated": "2026-10-20T07:52:22Z",
   "audit": [
     {
       "actor": null,
@@ -27282,6 +27282,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T07:39:29Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5C4R4D1R55KEG382KB75V2A",
+      "shortname": "join-wl1b-perf-step8",
+      "datetime": "2026-10-20T07:52:22Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T25 join 2872fa58",
+      "summary": "Join with --docs-only: the branch changes bench/AiDe.Bench (Program.cs: the wl1b argument branch only, P1 untouched; Wl1bPerf.cs new) and docs/proof/workbench-loops-wl-1b/perf/** only (git diff --name-only 782480e7 b6883207); no src or test change, and no test references the bench, so an App recount measures nothing of it. Release build of AiDe.sln 0 errors, and a --no-incremental Release build of AiDe.Bench 0 warnings 0 errors. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs 782480e7, head 2872fa58: PASS 0/50. T25 results, read in the committed Release proof (wl1b-perf-2026-10-20.txt): C1a the control unindexed query prints **FULL SCAN** and exits 1 (C1a-red), the 12 product reads are indexed at 1x, 100x breadth and 100x depth (4 use a temp b-tree for ORDER BY: a sort, not a scan); C1b in-transaction append overhead (product minus a no-trigger, no-FK control store) p95 <= 0.0024 ms, append+commit delta -0.08..+0.16 ms at p95 (noise next to ~0.4 ms commit), reported not gated; C1c checklist.evaluate p95 at 100x depth 8.24 ms vs 100 ms (Inferred budget, R3) PASS, red at 0.001 ms (C1c-red). No cache needed: the design's simplify trigger did not fire. Board read before and after every measured run; none discarded. Process slip self-reported by T25: one heredoc Python program (CT27), the later edits were files.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/perf/wl1b-perf-2026-10-20.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T25 wl1b-perf onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T07:18:41Z",
+      "duration_seconds": 2021.0
     }
   ],
   "changes": [
