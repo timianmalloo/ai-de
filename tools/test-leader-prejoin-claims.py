@@ -91,6 +91,37 @@ def main():
         rc, out = run(repo)
         expect("unreadable log -> exit 1", rc == 1 and "unreadable" in out, out)
 
+        write_log(repo, ["src/", "docs/c.md"])
+        rc, out = run(repo)
+        expect("trailing-slash claim -> exit 1 naming the false grant and the no-slash form",
+               rc == 1 and "src/" in out and "covers nothing" in out
+               and "coord claim --wi workbench-loops --path src" in out, out)
+
+        write_log(repo, ["src", "docs/c.md"])
+        rc, out = run(repo)
+        expect("no-slash directory claim still passes -> exit 0", rc == 0, out)
+
+        decisions = repo / ".agents" / "decisions"
+        decisions.mkdir(parents=True, exist_ok=True)
+
+        def write_decisions(*rows):
+            (decisions / f"{SESSION}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+
+        refused = {"kind": "refused", "session": SESSION, "path": "docs/c.md", "code": "COORD-REFUSED"}
+        write_log(repo, ["src", "docs/c.md"])
+        write_decisions(dict(refused, at=5.0))
+        rc, out = run(repo)
+        expect("last outcome for a changed path is a refusal -> exit 1 claimed-after-refusal",
+               rc == 1 and "claimed-after-refusal" in out and "docs/c.md" in out, out)
+
+        write_decisions(dict(refused, at=0.5))
+        rc, out = run(repo)
+        expect("a later claim answers the refusal -> exit 0", rc == 0, out)
+
+        write_decisions(dict(refused, at=5.0, session="wl-other-node"), dict(refused, at=5.0, path="elsewhere.txt"))
+        rc, out = run(repo)
+        expect("a refusal for another session or an unchanged path is ignored -> exit 0", rc == 0, out)
+
     for f in failures:
         print("FAIL " + f)
     print(f"test-leader-prejoin-claims: {'FAILED' if failures else 'ok'} ({len(failures)} failures)")
