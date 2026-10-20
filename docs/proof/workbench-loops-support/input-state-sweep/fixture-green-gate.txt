@@ -1,0 +1,1 @@
+verify-gate-self-tests: OK — 40 gate(s), 9 without a self-test, all frozen and none added.

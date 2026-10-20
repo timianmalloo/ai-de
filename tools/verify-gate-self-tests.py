@@ -350,6 +350,34 @@ def test_run_refuses_an_uncommitted_skip(root: Path) -> list[str]:
     return problems
 
 
+def test_run_names_each_not_checked_result_with_its_reason(root: Path) -> list[str]:
+    """DIRECTION 8 (T37, B3): every NotExecuted result is NAMED with its reason, even when expectedSkips lists it.
+
+    A test that ends NOT CHECKED (DC-NEW-wl-t33-input-state) keeps its reason only in the .trx; a green
+    run that hides it reads as a pass. The report must carry `[NOT CHECKED] <test>` and the reason line.
+    """
+    problems: list[str] = []
+    name = "Fixture.Tests.NotCheckedOnThisDesktop"
+    reason = "NOT CHECKED: the foreground window is 0x1 and the test's window is 0x2"
+    with tempfile.TemporaryDirectory() as tmp:
+        sandbox = Path(tmp) / "repo"
+        results = (TRX_RESULT.format(name="Fixture.Tests.Passes", outcome="Passed", message="")
+                   + TRX_RESULT.format(name=name, outcome="NotExecuted", message=reason + "\nsecond line"))
+        trx = TRX.format(results=results, outcome="Completed", total=2, executed=1, passed=1, failed=0)
+        tool = git_fixture(root, sandbox, trx, {"Fixture.Tests": 2}, skips=[name])
+        done = _run([sys.executable, str(tool), "--no-run"], sandbox)
+        output = done.stdout + done.stderr
+        if done.returncode != 0:
+            problems.append(f"a listed NotExecuted result was refused (exit {done.returncode}):\n{output}")
+        if f"[NOT CHECKED] {name}" not in output:
+            problems.append(f"the NotExecuted result was not NAMED as NOT CHECKED:\n{output}")
+        if reason not in output:
+            problems.append(f"the NotExecuted result's reason was not printed:\n{output}")
+        if "second line" in output:
+            problems.append(f"more than the reason's first line was printed:\n{output}")
+    return problems
+
+
 def test_run_names_its_failures(root: Path) -> list[str]:
     """DIRECTION 3: a counted failure must be NAMED.
 
@@ -481,7 +509,8 @@ def self_test(root: Path) -> int:
                 + test_run_refuses_upward_drift(root)
                 + test_run_refuses_a_lowered_baseline(root)
                 + test_run_floors_on_total_not_executed(root)
-                + test_run_refuses_an_uncommitted_skip(root))
+                + test_run_refuses_an_uncommitted_skip(root)
+                + test_run_names_each_not_checked_result_with_its_reason(root))
     if test_run:
         for finding in test_run:
             print(f"self-test FAILED: verify-test-run.py: {finding}", file=sys.stderr)
@@ -490,7 +519,7 @@ def self_test(root: Path) -> int:
     print("self-test OK — new debt is refused, a stale frozen entry is reported, verify-test-run "
           "names the failures it counts, an unmoved baseline under a higher count is refused at the "
           "join, --update refuses to lower a committed floor unsaid, the floor reads `total` rather "
-          "than `executed`, and an unlisted NotExecuted result is a finding")
+          "than `executed`, an unlisted NotExecuted result is a finding, and every NotExecuted result is named with its reason")
     return 0
 
 

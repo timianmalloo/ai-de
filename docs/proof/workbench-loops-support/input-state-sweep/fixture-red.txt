@@ -1,0 +1,15 @@
+fixture run against verify-test-run.py at 0f1e548d:
+FAILED: the NotExecuted result was not NAMED as NOT CHECKED:
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+Fixture.Tests                        2         2     Completed
+
+verify-test-run: OK — 2 tests counted across 1 project(s
+FAILED: the NotExecuted result's reason was not printed:
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+Fixture.Tests                        2         2     Completed
+
+verify-test-run: OK — 2 tests counted across 1 project(s), e
