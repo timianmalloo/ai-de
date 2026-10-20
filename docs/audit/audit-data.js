@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T12:00:38Z",
+  "generated": "2026-10-20T12:13:43Z",
   "audit": [
     {
       "actor": null,
@@ -27667,6 +27667,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T12:00:36Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CKPNTB5ER18HEG2Q9BWCES",
+      "shortname": "join-wl-chk6-gap-pin-step8",
+      "datetime": "2026-10-20T12:13:43Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T35 join 4f3c44f4",
+      "summary": "Full join (recount): T35 adds one Core test (tests/AiDe.Core.Tests/Workbench/Folds/AcceptanceGapSentencesMatchDesignTests.cs), the 4 missing gap clauses in DESIGN.md's CHK6 cell (copy only), the DC-NEW-wl-t26-copy Status line and proof under docs/proof/workbench-loops-support/chk6-gap-pin/ (git diff --name-only b5ff1fdf 866ae486; no src change). The test reads the expected text from DESIGN.md (Owner oracle rule) and drives AcceptanceFold to each of its 7 gap codes; red dab1a772 named the 4 missing clauses; mutation red (one clause changed in a scratch AcceptanceFold.cs, restored). Recount: Core green; App failed only ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, recorded NOT CHECKED (the OS reports the left mouse button down; Owner, 2026-10-20) and excused under Ruling 155 (3): it fails alone in clean rt- trees on the join head f39c02d6 and its first parent 90a54301 (\"Space on the restored row's fold did not open it\"). CtrlDigit and CtrlEnter passed in this recount. Continued with --docs-only. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs 90a54301, head 4f3c44f4: PASS 0/50. Release build 0 errors. The rt-t35j-parent tree's remove failed partway (\"Invalid argument\"); the leftover directory was deleted by hand.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/chk6-gap-pin/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T35 wl-chk6-gap-pin onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T11:28:45Z",
+      "duration_seconds": 2698.0
     }
   ],
   "changes": [
