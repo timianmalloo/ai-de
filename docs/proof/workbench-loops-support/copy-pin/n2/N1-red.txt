@@ -1,0 +1,48 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-copy-pin-n2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-copy-pin-n2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-copy-pin-n2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-copy-pin-n2\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList [FAIL]
+  Failed AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList [17 ms]
+  Error Message:
+   ChecklistCopy.AcceptedEarlier: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Acknowledge: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.AddObligation: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Defer: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.LinkLatestRun: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Loading: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Mandatory: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.MarkNeedsDecision: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.NewObligationName: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.NotConnected: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+DaemonNotebookRevisions.OpenRefusedCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+SolutionTreeProjection.NotRecordedCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+SolutionTreeProjection.PythonTsCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.DecorationLine: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.DurationText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.EditsText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.EventsText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.Name: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.OutcomeWord: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.QueuedSentence: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SessionSpend: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SpendText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SpokenDuration: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+  Stack Trace:
+     at AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList() in C:\Projects\ai-de-wl-copy-pin-n2\tests\AiDe.App.Tests\DesignCopyRowsArePinnedTests.cs:line 245
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     3, Skipped:     0, Total:     4, Duration: 40 ms - AiDe.App.Tests.dll (net10.0)

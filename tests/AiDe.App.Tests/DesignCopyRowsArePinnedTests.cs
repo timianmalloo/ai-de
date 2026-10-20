@@ -55,31 +55,8 @@ public sealed class DesignCopyRowsArePinnedTests
     };
 
     /// <summary>Copy constants and builders no DESIGN.md id row names. Shrink-only.</summary>
-    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
+    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
     {
-        ["ChecklistCopy.AcceptedEarlier"] = "no row: the stale-acceptance sentence has no id row in DESIGN.md",
-        ["ChecklistCopy.Acknowledge"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.AddObligation"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.Defer"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.LinkLatestRun"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.Loading"] = "no row: the loading sentence has no id row",
-        ["ChecklistCopy.Mandatory"] = "no row: label, not in an id row",
-        ["ChecklistCopy.MarkNeedsDecision"] = "no row: button label, not in an id row",
-        ["ChecklistCopy.NewObligationName"] = "no row: default obligation name, not in an id row",
-        ["ChecklistCopy.NotConnected"] = "no row: the not-connected sentence has no id row",
-        ["DaemonNotebookRevisions.OpenRefusedCopy"] = "no row: a diagnostic reason, not in an id row",
-        ["SolutionTreeProjection.NotRecordedCopy"] = "no row: solution-tree projection copy, outside the id rows",
-        ["SolutionTreeProjection.PythonTsCopy"] = "no row: solution-tree projection copy, outside the id rows",
-        ["TurnCopy.DecorationLine"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.DurationText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.EditsText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.EventsText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.Name"] = "no row: SC10 UIA name derivation, no id row",
-        ["TurnCopy.OutcomeWord"] = "no row: SC7 names the outcome line but its row is layout; the words have no id row",
-        ["TurnCopy.QueuedSentence"] = "no row: the queued sentence has no id row",
-        ["TurnCopy.SessionSpend"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.SpendText"] = "no row: SC-series derivation, the SC rows are layout",
-        ["TurnCopy.SpokenDuration"] = "no row: SC-series derivation, the SC rows are layout",
     };
 
     private sealed record Pin(string RowId, string[] Rendered, string[] Members);
