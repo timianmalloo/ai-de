@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T12:13:43Z",
+  "generated": "2026-10-20T12:45:54Z",
   "audit": [
     {
       "actor": null,
@@ -27691,6 +27691,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T11:28:45Z",
       "duration_seconds": 2698.0
+    },
+    {
+      "id": "al-01M5CNHK2NCBDHC24GQMWCTEQH",
+      "shortname": "wl-t21-layout-gate",
+      "datetime": "2026-10-20T12:45:54Z",
+      "session": "wl-t21-layout-gate",
+      "prompt": "T21 n9: gate that fails when an App test reads the drawn layout after a layout command not reached by the user's route",
+      "summary": "Gate red on 8 then 11 tests (V2/V2b), 11 converted to the route, 0 exceptions, 0 findings; Core 3121 pass, App 3 known failures; ratchet 3 expected derived-view refusals",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/Workbench/LayoutOraclesDriveTheCommandRouteTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "A gate fails when an App test checks the drawn layout after a layout command without the user's route",
+      "done_when": "Gate red first, recall step, sweep, suites, ratchet, done mail",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T12:14:13Z",
+      "duration_seconds": 1901.0
     }
   ],
   "changes": [
