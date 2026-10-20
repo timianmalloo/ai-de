@@ -8483,6 +8483,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   120 × (fastest s/call) and 200k ÷ (fastest tokens/min). T8's token rates are n1 10.5k, n2 8.9k, n3 8.5k and
   n4 9.3k tokens/min, so 200k is reached at about 19 min, earlier than the 21-min call kick. T8's kick is therefore
   at about 19 min, and both rates are re-derived after every node.
+- **Next instance (2026-10-20, T21 node 9, Sonnet; Owner: no class change):** 70 calls / about 260k against 120 / 200k
+  (harness `usage`: 260,387 tokens, 1,929 s, so about 8.1k tokens/min and 27.6 s/call). The Leader's lapse: the brief set
+  the kick at a flat 30 min instead of the ladder's 200k ÷ 8.1k ≈ 25 min, and the kick arrived after the node's suites.
+  T21 node 10's kick is set from this rate (100k cap: about 12 min). The count goes to the user with the budget-hook
+  decision, which stays theirs.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
 ### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it
