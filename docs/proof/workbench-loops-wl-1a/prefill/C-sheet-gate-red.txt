@@ -1,0 +1,66 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.28]     AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate [FAIL]
+[xUnit.net 00:00:00.28]       Assert.Empty() Failure: Collection was not empty
+[xUnit.net 00:00:00.28]       Collection: ["tests/AiDe.App.Tests/Composer/TheRunBindingComesFr"···, "tests/AiDe.App.Tests/Sessions/TheConfigureDialogIs"···, "tests/AiDe.App.Tests/Sessions/TheConfigureDialogIs"···, "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTe"···, "tests/AiDe.App.Tests/Sessions/TheSheetListsAccount"···, ···]
+[xUnit.net 00:00:00.28]       Stack Trace:
+[xUnit.net 00:00:00.28]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\NoSheetTestReadsTheRealProofDirectoryTests.cs(120,0): at AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate()
+[xUnit.net 00:00:00.28]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.28]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.28]       Output:
+[xUnit.net 00:00:00.28]         10 sites over an adapter root; 9 without an injected gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Composer/TheRunBindingComesFromTheProviderFileTests.cs:76: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheConfigureDialogIsTheFirstUseSurfaceTests.cs:95: a sheet reloaded over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheConfigureDialogIsTheFirstUseSurfaceTests.cs:99: a sheet reloaded over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs:40: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:61: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:65: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:69: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:78: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.28]         tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:110: a sheet over an adapter root with the real gate
+[xUnit.net 00:00:00.29]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate [64 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: ["tests/AiDe.App.Tests/Composer/TheRunBindingComesFr"···, "tests/AiDe.App.Tests/Sessions/TheConfigureDialogIs"···, "tests/AiDe.App.Tests/Sessions/TheConfigureDialogIs"···, "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTe"···, "tests/AiDe.App.Tests/Sessions/TheSheetListsAccount"···, ···]
+  Stack Trace:
+     at AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\NoSheetTestReadsTheRealProofDirectoryTests.cs:line 120
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ 10 sites over an adapter root; 9 without an injected gate
+ tests/AiDe.App.Tests/Composer/TheRunBindingComesFromTheProviderFileTests.cs:76: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheConfigureDialogIsTheFirstUseSurfaceTests.cs:95: a sheet reloaded over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheConfigureDialogIsTheFirstUseSurfaceTests.cs:99: a sheet reloaded over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs:40: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:61: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:65: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:69: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:78: a sheet over an adapter root with the real gate
+ tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs:110: a sheet over an adapter root with the real gate
+
+
+
+Test Run Failed.
+Total tests: 1
+     Failed: 1
+ Total time: 0.6197 Seconds
