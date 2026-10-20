@@ -8559,6 +8559,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control, extended (Owner, 2026-10-19):** the same resource is the user's desktop during a demo. Brief rule 20: while
   `USER DEMO IN PROGRESS` is the Owner's latest demo post on the board, no App suite, UI probe or real-lane test runs in
   any tree. Running tracks were told by mail at the rule's commit.
+- **Instance (rule 21, 2026-10-20, T37 `wl-input-state-sweep`):** the node committed its ratchet output folder
+  (`docs/proof/workbench-loops-support/input-state-sweep/ratchet/`, 103 files, about 1,790 lines of gate stdout) in
+  `42712cb5` and untracked it in `bab93d18`. The head tree is clean; the output stays in history. Owner ruling
+  (2026-10-20): joined as is, no history rewrite; git grep of that folder for the account identity patterns: 0 hits.
 
 ### DC-NEW-wl-t21-float-c — A saved node id meets a check weaker than the one its consumer enforces
 - **Shape:** an id is saved with the layout and read back, while new ids of the same kind are minted from a counter

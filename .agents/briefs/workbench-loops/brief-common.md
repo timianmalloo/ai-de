@@ -25,6 +25,9 @@ and a default.
    append-only and **never claimed**. Do not edit the test-count baseline; the join recounts.
 5. **Claim for the minutes of the edit:** `coord claim --wi workbench-loops --path <file>` (default TTL; `coord claim` refuses without `--wi` and does not read `AGENT_WI`) just before
    editing a file, `coord release` after the commit. Never a lifetime lease.
+   **At your first write, claim your proof directory as a directory lease:** `coord claim --wi workbench-loops --path {PROOF}` (no trailing slash: a claim on `{PROOF}/` is granted and
+   covers nothing, measured 2026-10-20). Output files written there by redirection then carry a claim; the join's
+   `leader_prejoin.py --branch --session` check refuses any changed path with no claim from your session.
 6. **A multi-line program is a file, then a run** — never a heredoc program. **A gate's exit status is
    never behind a pipe**: run the test/build on its own line and read `$?`, or redirect output to a
    file and then read the file.

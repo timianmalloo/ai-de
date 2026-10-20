@@ -411,3 +411,8 @@
 {"agent": "wl-leader5-20261020", "at": 1792532035.7844608, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792532035.8315217, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792532035.8810701, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792532085.6762931, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792532085.7243383, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792532085.7724664, "code": null, "kind": "allowed", "path": ".agents/log/wl-t37-input-state-sweep.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792532085.8189008, "code": null, "kind": "allowed", "path": ".agents/log/wl-t38-claim-check.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792532085.8646648, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader5-20261020", "wi": ""}
