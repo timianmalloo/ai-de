@@ -1,0 +1,6 @@
+Suites on 6a016f39 + docs (T21 n10).
+Core: Passed 3121, Failed 0, Skipped 1 (PurgeOfASymlinkedEnvelopeFile, symlink privilege).
+App: Total 1273, Passed 1268, Failed 3, Skipped 2.
+NOT CHECKED: ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation (the OS reports the left mouse button down; Owner 2026-10-20).
+Known failures (T31, N=10): CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective, CtrlEnter_OnAFileArtifact_RequestsRevealInGraph.
+No other failure. No finding T21n10-F<k>.

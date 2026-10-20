@@ -39,3 +39,7 @@ Lens A of the search listed 54 lines and missed one of the three (it had no rail
 ## The conversions
 
 Helpers in `FloatRenderTests.cs` (`HostInto`, `FloatByTheRoute`, `CollapseByTheRoute`, `CloseByTheRoute`, `StepBackByTheRoute`, `ExpandByTheRail`) run the route and render nothing themselves. 8 of the 11 tests go red when `DockHost`'s `LayoutApplied` wiring is removed (mutation files `V3-*-mutation-red.txt`; src restored). The other three cannot, for the reasons in `V3-sweep.txt`.
+
+## R2 (T21 n10): ContentFor and ActiveSurfaceId are view oracles
+
+Both read `Manager.Layout` (then the parked content), so the Owner ruled them view state. R2a counted, by a line scan that does not use the gate's regexes (`r2/R2a-search.py`, `r2/R2a-count.txt`), the App tests that read either one after a layout command with a by-hand render between: **count = 6**. R2b added both reads to the gate's oracle pattern; red named exactly those 6 (`r2/R2b-red.txt`); each now takes the route, with no rename (`r2/R2b-sweep.txt`); the gate is green (`r2/R2b-green.txt`). A mutation that unwires `LayoutApplied` turns 1 of the 6 red (`r2/R2b-mutation-red.txt`), and the sweep says why the other 5 are not sensitive to it. Residual unchanged: a command or render in another file's helper (`ChecklistHarness`, `ComposedCoding`) is not seen by the gate or by R2a.
