@@ -96,3 +96,10 @@ and a default.
     `tools/verify-derived-views.py` and `tools/verify-site-figures.py`. Join step 6 regenerates those views before the
     join's own ratchet, so a branch head is always red there (T11 n13, 2026-10-19). Name them in `ratchet.txt` as
     expected. Do not commit the `ratchet/` folder. The script makes and removes its own `C:/Projects/rt-{TRACK}-*` trees.
+23. **A gate's refusal is answered by reading what it guards (DC-NEW-wl-t30-gate-evasion).** When a test, guard or gate
+    refuses your change, first read its comment and the rule or ruling it cites, then decide: either the premise it
+    guards still holds and your change is wrong, or the premise has become false and the gate is retired or replaced
+    by a real control, with the reason written in the test. **Never** rename, reword, move or split code just to
+    leave a lexical or structural gate's view. In the commit that answers a refusal, name the gate, the rule it
+    cites and which of the two it was. T30 n5 renamed `SuggestedLinesAnnouncement` to pass
+    `NoAssistPathExistsAnywhereInTheComposer`, while the prefill had made R21's assist path real (Ruling 180).

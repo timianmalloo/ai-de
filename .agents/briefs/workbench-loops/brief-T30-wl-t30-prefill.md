@@ -1,43 +1,46 @@
-# Brief — T30 `wl-prefill` (AC-W01a, Rulings 180 and 182) · Claude Code · Opus · node 5
+# Brief — T30 `wl-prefill` (AC-W01a, Rulings 180 and 182) · Claude Code · Opus · node 6
 
-**Goal:** the user SEES the prefill. Ruling 180 (3) says derived lines are "visibly marked as suggested… editable
-inline"; AC-W01a says "visible before submission".
-**Node 4** (5f26781b, on the branch) found that on main the suggested lines are filled into a collapsed fold that no
-prepare opens (`ComposerSurface.cs:1648-1652`, `:831-837`). The user sees "prepared — press again to send" with no
-suggestions, and the second Ctrl+Enter sends without them. **This is first.**
+**Goal:** make the privacy gate honest about R21 before T30's second join. The Owner **holds the join** on this one item
+(2026-10-20 ~01:16Z; not a new ruling: it enforces R21, which Ruling 180 made live).
+**Node 5 is accepted as a branch node** (d3f76f11): (A) the suggested lines are visible (dc408cac), (B) first-calls.py,
+(C) the sheet-test gate. **But** 0528992b renamed `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement` only so that
+`ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer`
+(`tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs:105-117`) would pass. That test bans `Assist`,
+`Promote` and `Suggest` in the composer sources; its comment says the honest oracle is "there is nothing to call".
+`docs/notes/addendum-b-ratification.md:83-84` defers R21 (*"no assist path exists outside the subscription engines"*)
+because its test *"proves nothing while no assist path exists at all"*. Ruling 180's prefill **is** that assist path: a
+model call from the composer that suggests lines. The test went red for the right reason; the rename hid it. Brief
+rule 23 (new) is this lesson.
 
-**This node (n5), each red then green, through the real gesture:**
-- **(A) A prepare that yields suggested lines shows them. This is the Owner's exact shape, under Ruling 180 (3).** The
-  Owner checked origin/main: the Expander is `IsExpanded=false` (`ComposerSurface.cs:1648-1652`), and the `ShowDerived`
-  loop (:830-835) never opens it. Type, then press Ctrl+Enter once (advisory default, stubbed compile returning at least
-  one derived line). Then:
-  - the "Goal · Done when · Not in scope" fold **opens**;
-  - the focus **stays in the editor**, so the next keystroke never lands in a suggestion by surprise;
-  - the live region announces the count **once**, e.g. "N suggested lines. Review them before you send." Read the exact
-    string from DESIGN.md, or add a row there;
-  - each suggested line is reachable by **Tab from the editor** and carries `? suggested` as its UIA name prefix.
-  An unkept line still does not count at the second press (Ruling 180 as written). Re-collapsing the fold is the user's
-  act, never the app's. Red: today they sit in the closed fold. Register it as a **DC-NEW-wl-t28-compiled recurrence**,
-  a gate that passed without driving the user's view, in the same commit as the fix.
-- **(B) The first-50 reader** (seam `req-01M5B9DJWPJBEBCTP2GFJCZVRR`, granted): `tools/compile-eval/first-calls.py`
-  as designed in your node-4 hand-off. Its `--self-test` output goes red then green, saved. This meets C4.
-- **(C) The four sheet tests that read the real `~/.aide/proof`** (`TheNewSessionSheetTests`,
-  `TheRunBindingComesFromTheProviderFileTests`, `TheSheetListsAccountsWithDerivedStatesTests`,
-  `TheConfigureDialogIsTheFirstUseSurfaceTests`): inject the gate through `CompileModeGateInput`. **Seam granted here:**
-  the gate-injection lines in those four test files only. Red: a guard test that fails while any test constructs the
-  sheet with an adapter root and no injected gate. Then green.
-- **Then:** the prefill demo script's step for the suggestions (node 4's section) now shows them, so update its
-  "See:" line. Run rule 22's ratchet: this node hands off for T30's second join.
+**This node (n6), in this order:**
+- **(H1) Retire the `Suggest` clause** of `NoAssistPathExistsAnywhereInTheComposer`, and say why in the test: R21 is now
+  live (Ruling 180), and (H2) is its control. **Keep `Assist` and `Promote`** if they still guard R20 (the mention
+  expansion and the template transform, still unbuilt): read R20 in the same ratification note and say in the comment
+  which it is. If R20 no longer needs them, say so and keep them anyway (the Owner did not retire them).
+- **(H2) R21's real control**, a new Core or App test (your choice; say why). Every model call reachable from the
+  composer goes through the session's bound compile engine under gate 1: **one sanctioned call site, named by
+  file:line in the test**, and no other engine or client call in the composer sources (the same `ComposerSources()`
+  set, plus any file the sanctioned site's caller chain adds inside the composer). Inferred, not read through: the site
+  is the `Compiler` default at `src/AiDe.App/Workbench/Composer/ComposerSendGate.cs:148`
+  (`CompileCallHost.CompileAsync`), and gate 1 is `CompileModeGate`. Read both before you write the test; if the site
+  is elsewhere or there is more than one, stop and mail the Leader with what you found.
+  **Mutation red:** add a second model call outside the sanctioned site in a composer source, see the test red, revert.
+  Save the red as `H2-red-mutation.txt`, the green as `H2-green.txt`.
+- **(H3) The announcement name:** either name is fine once the gate is honest. If you rename it back, it is one commit
+  with no behaviour change. Update the defect entry's "Slip in the fix" line to say the rename evaded the gate, and
+  cite `DC-NEW-wl-t30-gate-evasion` (the Leader files that class on main).
+- **Then** the whole Core and App suites on your final head, and rule 22's ratchet. Name the head sha of each in the
+  done mail. This node hands off for T30's second join.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Every Opus node this epoch overran, and node 4
-measured 376k, so **hand off at 120k** by your own measured usage. **Kick** at 15 min by mail. Stop at the kick, even
-mid-check: commit what is green, then run the suite.
-**Rules 19, 20, 21 and 22 apply.** Check the board before every App run, as its own command. No real model call in any
-test.
+**Tier** T2 · **fan-out** 0 · **budget** 80 tool calls · 120k. **Hand off at 120k** by your own measured usage.
+**Kick** at 15 min by mail. Stop at the kick, even mid-check: commit what is green, then run the suite.
+**Rules 19, 20, 21, 22 and 23 apply.** Check the board before every App run, as its own command. A
+`USER DEMO IN PROGRESS` post with no later `USER DEMO DONE` means no App run of any kind. No real model call in any test.
 
 ## Owned authored paths
-As in node 4, plus the four sheet test files (the gate-injection lines only) and the new guard test. A change to the
-fold's shared component outside `ComposerSurface.cs` is a seam request.
+As in node 5, plus (granted for this node): `tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs`
+(the `NoAssistPathExistsAnywhereInTheComposer` fact and its comment only), and one new R21 test file in
+`tests/AiDe.Core.Tests/Composer/` or `tests/AiDe.App.Tests/Workbench/Composer/`. No src change outside the composer.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
@@ -137,3 +140,10 @@ and a default.
     `tools/verify-derived-views.py` and `tools/verify-site-figures.py`. Join step 6 regenerates those views before the
     join's own ratchet, so a branch head is always red there (T11 n13, 2026-10-19). Name them in `ratchet.txt` as
     expected. Do not commit the `ratchet/` folder. The script makes and removes its own `C:/Projects/rt-wl-t30-prefill-*` trees.
+23. **A gate's refusal is answered by reading what it guards (DC-NEW-wl-t30-gate-evasion).** When a test, guard or gate
+    refuses your change, first read its comment and the rule or ruling it cites, then decide: either the premise it
+    guards still holds and your change is wrong, or the premise has become false and the gate is retired or replaced
+    by a real control, with the reason written in the test. **Never** rename, reword, move or split code just to
+    leave a lexical or structural gate's view. In the commit that answers a refusal, name the gate, the rule it
+    cites and which of the two it was. T30 n5 renamed `SuggestedLinesAnnouncement` to pass
+    `NoAssistPathExistsAnywhereInTheComposer`, while the prefill had made R21's assist path real (Ruling 180).

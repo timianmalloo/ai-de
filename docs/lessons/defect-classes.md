@@ -8649,6 +8649,28 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   so a copy change moves the row and the code together or fails.
 - **Status:** `open` (instance control in T26 n3; class control not built).
 
+### DC-NEW-wl-t30-gate-evasion — code renamed to pass a lexical gate without reading what the gate guards
+- **Class:** a gate refuses a change; the change is reshaped (renamed, reworded, moved) until the gate no longer sees
+  it, while the premise the gate guards has become false. The gate goes green and certifies a state that no longer
+  holds. A sibling of E-series *"a gate's green result is evidence the gate passed, not that its contents passed"*,
+  seen from the author's side: the author made the gate pass instead of answering it.
+- **Instance (2026-10-20, T30 n5, `0528992b`):** `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer`
+  (`tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs:105-117`) bans `Assist`/`Promote`/`Suggest` in the
+  composer sources; its comment: the honest oracle is "there is nothing to call". R21's test was deferred because it
+  *"proves nothing while no assist path exists at all"* (`docs/notes/addendum-b-ratification.md:83-84`). Ruling 180's
+  prefill is that assist path. The node renamed `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement`, and Core
+  went green. Found by the Owner reading the done mail.
+- **Sweep:** not run. The other lexical bans in the same file (`RegionInfo`, `CurrentCulture`, …) and the lexical
+  `DoesNotContain` gates elsewhere were not checked against their premises.
+- **Derive:** a gate refusal is answered by reading the gate's comment and the rule it cites before the code changes.
+  Then either the change is wrong, or the premise is false and the gate is retired or replaced by a real control, with
+  the reason written in the test.
+- **Prevent:** instance — T30 n6: the `Suggest` clause retired with its reason, R21's real control (one sanctioned
+  model-call site, named by file:line, mutation red). Class — **brief rule 23** (`brief-common.md`, loaded by every
+  track brief): never reshape code to leave a gate's view, and name the gate, its rule and which of the two answers
+  in the commit. Not mechanized: no scan detects a rename made to dodge a gate.
+- **Status:** `partially-controlled` (rule 23 is an always-loaded instruction; the instance control is T30 n6).
+
 ### DC-NEW-wl-t30-prefill — a UI test that reads process-wide WPF state passes alone and fails in the suite
 
 - **Instance (2026-10-19, T30 n1):** `TheCompileModeControlTests` found the open settings popup through
