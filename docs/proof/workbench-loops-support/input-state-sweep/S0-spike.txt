@@ -1,0 +1,11 @@
+S0 spike, xUnit 2.9.3, no package change (2026-10-20)
+Mechanism: a [Fact] subclass with an [XunitTestCaseDiscoverer]; its XunitTestCase subclass overrides RunAsync and wraps the IMessageBus; a body that throws a NotChecked exception (derived from XunitException, so Sta.Rethrow keeps it as itself) arrives as ITestFailed; the bus re-queues it as TestSkipped(test, message).
+Tried: three tests (throws the skip exception / Assert.Equal(1,2) / passes).
+Console: [SKIP] for the thrower, [FAIL] for the real assertion, Passed:1 Failed:1 Skipped:1.
+trx: thrower outcome=NotExecuted with <ErrorInfo><Message>NOT CHECKED: spike reason</Message>; real assertion outcome=Failed; passer outcome=Passed. Counters notExecuted=0 in the trx summary (the per-result outcome is the signal).
+
+testName="AiDe.App.Tests.Spike37.SpikeTests.ThrowsTheSkipException"	outcome="NotExecuted"
+testName="AiDe.App.Tests.Spike37.SpikeTests.Passes"	outcome="Passed"
+testName="AiDe.App.Tests.Spike37.SpikeTests.FailsForReal"	outcome="Failed"
+outcome="Failed"	outcome="Error"
+outcome="Warning"	
