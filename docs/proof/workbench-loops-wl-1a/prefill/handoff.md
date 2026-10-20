@@ -1,6 +1,6 @@
 ---
 id: handoff-workbench-loops-wl-1a-prefill-n1
-title: "Hand-off: WL-1a T30 node 3 (Ruling 182 (2)-(4); the gate's real reason)"
+title: "Hand-off: WL-1a T30 node 4 (the prefill demo script; Ruling 180 (4) cost line; (6) compile-eval)"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -11,10 +11,54 @@ links:
   - { to: proof-workbench-loops-wl-1a-prefill, rel: relates-to }
 review-by: "2026-11-19"
 summary: >-
-  T30 n3: (A) no saved-state copy (mutation red), (B) a sent turn's compiled prompt survives a restart (real red; the
-  restored disclosure was empty), (C) the settings row states the gate's refusal for a demoted rung. Residual line in
-  the Proof Pack. Next: node 4 (cost line, first 50 calls, compile-eval, sheet-test gate seam, rule 22's ratchet).
+  T30 n4: the prefill demo script with its gesture table; every advisory call's spend reaches the turn's outcome line
+  (red then green); compile-eval self-tests pass and the real-corpus run is NOT RUN with its reason. Not done: the
+  granted first-50 reader tools/compile-eval/first-calls.py (stopped by the rule-16 kick before it started). Earlier
+  nodes' hand-offs are kept below.
 ---
+
+# Hand-off — T30 node 4
+
+**Done (shas in `README.md` § Node 4):**
+- (0) *Human demo script — the prefill* in `README.md`, with a gesture table citing file:line for every gesture and
+  string (`012edb30`). Two findings for the Owner: the suggested lines arrive inside a folded section that no prepare
+  opens, and the *not recorded* restored row cannot be reached through the UI on this build.
+- (A) the cost line: red `e04fcb02`, green `51d70fa7`, defect class `77cf5cd4`
+  (`EveryAdvisoryCallsSpendReachesTheOutcomeLineTests`).
+- (B) compile-eval: `score.py` and `ring.py` self-tests pass. The real-corpus run is NOT RUN, with the reason and the
+  command in `B-compile-eval-run.txt` (`bc08478c`). The AI-systems conditions are a checked list in `README.md`.
+
+**Not done — the next node's first item (granted, not started; the rule-16 kick came first):**
+`tools/compile-eval/first-calls.py`, seam `req-01M5B9DJWPJBEBCTP2GFJCZVRR`, granted with these conditions: stdlib only;
+reuse `score.py`'s `read_rows` and `fold`; leave `score.py` and `ring.py` unchanged; absent values read *not recorded*,
+never 0; `--self-test` red then green, with both outputs saved; not named `verify-*`; no network and no model. The
+design, as granted:
+1. The treatment arm exactly as `score.py:176-177` defines it.
+2. The FIRST 50 `called` rows, excluding `reused`.
+3. Report n, n with cost, n with latency, tokens in+cache and out (sum, p50, p95), latency p50/p95, outcomes by count,
+   and the envelope ids.
+4. The self-test fixture: 51 advisory calls, 3 reused, 2 with null cost and one mechanical-only control. The test
+   asserts it counts exactly the first 50 non-reused calls.
+
+The Leader asked that its command go into the demo script's **C4 line**: the C4 item of the checked list in `README.md`.
+
+**Residuals:** a compile call whose wire reports no cost adds nothing to the turn's spend, and the line does not say
+*not recorded* for it. A turn whose send the host refuses after the gate's submission loses that submission's compile
+spend from every line.
+
+**Ratchet (rule 22):** not run. The next step is node 5, not a join.
+
+**Whole suites (rule 18), board checked before each:**
+- **Core:** 3119 passed, 0 failed, 1 skipped (`suite-core-node4.txt`).
+- **App:** 1243 passed, 3 failed, 2 skipped (`suite-app-node4.txt`). The re-run of the three failed the same way
+  (`suite-app-node4-rerun.txt`):
+  - Node 1's foreground pair: `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` and `SolutionTreeChordTests`,
+    both *foreground not held*.
+  - `AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation`:
+    *Space on the restored row's fold did not open it*. It also fails with `ComposerSendGate.cs` set back to main's
+    `d986e4a4` copy, which is this branch's only src change (`suite-app-node4-baseline.txt`; the file was restored
+    after). So it is not caused by node 4. The join's recount passed it at `d986e4a4`. Inferred: desktop or focus
+    state on this machine. The Leader's re-run decides.
 
 # Hand-off — T30 node 3
 

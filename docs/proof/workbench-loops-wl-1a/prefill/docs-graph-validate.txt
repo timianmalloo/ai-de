@@ -1,5 +1,5 @@
 warning: 150 suggestion(s) - 148 review-suggested (V16), 2 stale (V13). Not failing the gate; run with --gate fail to treat them as errors.
-validate: 4 defect(s) - 0 problem(s), 0 orphan(s), 4 index-drift item(s).
+validate: 1 defect(s) - 0 problem(s), 0 orphan(s), 1 index-drift item(s).
 {
   "root": "docs",
   "today": "2026-10-19",
@@ -161,12 +161,9 @@ validate: 4 defect(s) - 0 problem(s), 0 orphan(s), 4 index-drift item(s).
   ],
   "orphans": [],
   "index_drift": [
-    "file not in index: note-wl-dr-prefill-goal-done",
-    "file not in index: proof-wl-prefill-assessment-handoff",
-    "file not in index: proof-workbench-loops-wl-1a-prefill",
-    "file not in index: handoff-workbench-loops-wl-1a-prefill-n1"
+    "handoff-workbench-loops-wl-1a-prefill-n1: index.summary != frontmatter.summary"
   ],
-  "defects": 4,
+  "defects": 1,
   "suggestions": 150,
   "by_type": {
     "adr": 45,
