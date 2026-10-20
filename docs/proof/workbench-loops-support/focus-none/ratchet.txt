@@ -1,0 +1,5 @@
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 50 gate(s)
+ratchet exit 1
+Expected, derived-view gates (join step 6 regenerates them): docs-graph.py (validate: 0 problems, 5 index-drift items) and tools/verify-site-figures.py. No other refusal.
