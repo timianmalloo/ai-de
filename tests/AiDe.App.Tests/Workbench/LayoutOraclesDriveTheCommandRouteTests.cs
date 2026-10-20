@@ -16,7 +16,9 @@ namespace AiDe.App.Tests.Perspectives;
 /// command is setup and is allowed; so is one after the last oracle (a deliberate second render). The four token sets:</para>
 /// <list type="bullet">
 /// <item><b>view oracle</b> (<see cref="Oracle"/>): what reads the drawn layout: the docking manager's layout tree or
-/// floating windows, a floating window's hosted content, the drawn-id set helper.</item>
+/// floating windows, a floating window's hosted content, the drawn-id set helper, the Center's drawn empty copy, a drawn
+/// rail. <b>Not an oracle:</b> <c>Adapter.ContentFor</c> (the adapter's content cache: a surface's lifetime, not the drawn
+/// arrangement) and reads of a content control's own state.</item>
 /// <item><b>layout command</b> (<see cref="Command"/>): what changes the layout model without the route: a
 /// <c>workbench.*</c> command id executed on a controller that is not a <c>DockHost</c>'s, or a non-<c>AddSurface</c>
 /// <c>LayoutOperation</c> applied to the service directly. <c>AddSurface</c> only opens panes: setup.</item>
@@ -40,7 +42,7 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
 
     /// <summary>Reads the drawn layout: the manager's layout tree or floating windows, hosted-content checks, the drawn-id helper.</summary>
     private static readonly Regex Oracle = new(
-        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(",
+        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(|\.CenterEmpty\(|\.RailVisible\(",
         RegexOptions.Compiled);
 
     /// <summary>A layout command off the route: a <c>workbench.*</c> id executed on a non-DockHost controller, or a non-AddSurface operation applied to the service.</summary>
@@ -114,9 +116,9 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
         var scan = Scan("Planted.cs", Planted);
         scan.Findings.ForEach(f => output.WriteLine(f.ToString()));
         Assert.Equal(
-            ["Planted.cs::Node2Original", "Planted.cs::RenderInALocalFunction", "Planted.cs::RenderInAClassHelper", "Planted.cs::RenderTwoHelpersDeep", "Planted.cs::ServiceOperationThenRender"],
+            ["Planted.cs::Node2Original", "Planted.cs::RenderInALocalFunction", "Planted.cs::RenderInAClassHelper", "Planted.cs::RenderTwoHelpersDeep", "Planted.cs::ServiceOperationThenRender", "Planted.cs::RailAfterACollapse"],
             scan.Findings.Select(f => f.Key));
-        Assert.Equal(6, scan.CommandThenOracle);
+        Assert.Equal(7, scan.CommandThenOracle);
     }
 
     /// <summary>One test that reads the drawn layout after a layout command with a by-hand render between.</summary>
@@ -289,7 +291,7 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
         return dir!.FullName;
     }
 
-    /// <summary>Five refused shapes and three accepted ones, as a test file would carry them.</summary>
+    /// <summary>Six refused shapes and three accepted ones, as a test file would carry them.</summary>
     private const string Planted = """
         namespace Planted;
 
@@ -341,6 +343,14 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
                 host.Service.Apply(new LayoutOperation.CloseSurface("x"));
                 host.Adapter.Render();
                 Assert.DoesNotContain("x", Drawn(host));
+            }
+
+            [Fact]
+            public void RailAfterACollapse()
+            {
+                shell.Factory.Service.Apply(new LayoutOperation.SetStackState("left", StackState.Collapsed));
+                shell.Factory.Adapter.Render();
+                Assert.True(shell.Factory.Rails.RailVisible(ZoneId.Left));
             }
 
             [Fact]

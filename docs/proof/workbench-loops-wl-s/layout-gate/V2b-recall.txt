@@ -1,0 +1,90 @@
+V2b recall of the layout-command gate (T21 n9). The search shares no regex with the gate.
+
+Search command (from the tree root):
+  python docs/proof/workbench-loops-wl-s/layout-gate/V2b-search.py tests/AiDe.App.Tests > docs/proof/workbench-loops-wl-s/layout-gate/V2b-candidates.txt
+Lens A: every test file that names a docking or layout type (DockHost, WorkbenchAdapter, LayoutOperation, ZoneBackedLayoutService,
+WorkbenchController, WorkbenchShell, CommandPalette, DockingManager, LayoutService), and in it every test that BOTH calls anything that can
+change the layout (Execute, Apply, HandleKey, a layout verb) AND reads anything of the view (Manager, FloatingWindows, HostedBy, Drawn,
+ContentFor, IsSelected, Descendents, Visuals, IsVisible, sizes, LayoutRoot, RootPanel).
+Lens B (added after the first run, see "Finding about the search" below): every test that renders the adapter by hand AND applies a
+non-AddSurface layout operation or a workbench.* command, whatever it reads.
+
+Distinct candidate tests (the gate's own planted fixtures, 8, excluded): 56.
+  matched by the gate ........ 11   (8 at the first run; 3 more after the oracle set was tightened, below)
+  missed by the gate ......... 0 now (3 at the first run: fixed by the tightening, V2 re-run in V2-red-tightened.txt)
+  out of class ............... 45  (reason on each line)
+
+Rule used for "out of class": the test (a) issues no layout command off the route (AddSurface only is setup; a drag through the
+DockingManager and a palette, host.Controller or shell Execute are the route); or (b) reads no drawn arrangement after the command
+(the adapter's ContentFor cache, a model read, a disposal, a content control's own state, a document's focus region).
+
+MATCHED (11) - V3 sweeps these
+  WorkbenchDragCompletedHookTests.cs::ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused
+  WorkbenchShellTests.cs::AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime
+  ZoneWorkbenchAdapterTests.cs::Render_SelectsTheModelsActiveTab_NotTheFirstDocument
+  Workbench/FloatBoundsPersistTests.cs::AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle
+  Workbench/FloatBoundsPersistTests.cs::AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo
+  Workbench/FloatGuardTests.cs::APaneSavedFloating_RestoresThroughLayoutPersistence_Floating_DrawnVisibleAndNeverDocked
+  Workbench/FloatReadBackRestartTests.cs::FloatingWindows_AreReadBackFromTheView_AndALayoutSavedWhileTheyFloat_RestoresThemFloatingAndVisible
+  Workbench/FloatRenderTests.cs::AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent
+  Sessions/ConsoleSplitPlacementTests.cs::WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument      [first run: MISSED, oracle CenterEmpty()]
+  Workbench/CenterEmptyCopyTests.cs::WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen   [first run: MISSED, oracle CenterEmpty()]
+  Sessions/SessionDocumentPlacementTests.cs::CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing   [first run: MISSED, oracle Rails.RailVisible(); lens A did not even list it, lens B did]
+
+OUT OF CLASS (45)
+ compliant, they ARE the user's route
+  Workbench/LayoutCommandsRenderTests.cs::FloatPane_ByThePalette_IsDrawnInAFloatingWindow_AndASecondRenderKeepsIt   palette route; its one by-hand render is after every oracle and is the documented second render
+  Workbench/LayoutCommandsRenderTests.cs::CollapsePane_ByThePalette_TakesTheZonesTabsOffTheView   palette route
+  Workbench/LayoutCommandsRenderTests.cs::MaximizePane_ByThePalette_LeavesOnlyTheMaximizedZoneDrawn   palette route
+  Workbench/LayoutCommandsRenderTests.cs::NextTab_ByThePalette_SelectsTheModelsActiveTabInTheView   palette route
+  WorkbenchDragCompletedHookTests.cs::InCoding_TheSessionDraggedIntoTheCenterAndBack_FollowsTheDrops_WithTheBottomCollapsed   the commands are drags through the DockingManager (the user's gesture); Apply is AddSurface setup
+  WorkbenchDragCompletedHookTests.cs::ADragThatCannotBePlacedWithoutGuessing_IsRefusedAndAnnounced_AndThePanesReturn   drag through the DockingManager; Apply is AddSurface setup
+  WorkbenchDragCompletedHookTests.cs::ASaveAfterADrag_WritesTheArrangementTheUserIsLookingAt   drag through the DockingManager; Apply is AddSurface setup
+  Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs::CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective   key route through the shell (known failure, T31)
+ no layout command off the route (AddSurface setup, or no command at all)
+  DockChromeButtonScopeTests.cs::AButtonInsideAPaneKeepsTheAppsChrome   AddSurface setup; reads chrome template
+  DockRoundedTabsTests.cs::TheDocumentTab_IsRounded_AndStillShowsItsTitle   AddSurface setup; reads tab template
+  PerspectiveShellTests.cs::TheLoomkeeperPanes_HaveAFocusTarget_InFactorysFirstRunState   AddSurface setup; ContentFor
+  Sessions/SessionDocumentPlacementTests.cs::ANewNotebook_OpensInTheCenterZone_Docked_WithMaximizedNull   no layout command; model reads
+  Workbench/CenterEmptyCopyTests.cs::WhileARestoredSessionAtLeftCouldNotBeRevived_TheCenterSays_NothingOpenHere   AddSurface setup only
+  Workbench/Composer/ASentGoalLineSurvivesARestartTests.cs::ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive   AddSurface setup; reads a content control
+  WorkbenchAdapterTests.cs::Render_ReusesExistingContent_WhenLayoutMutates_SoLiveSurfacesSurvive   AddSurface only; content identity
+  WorkbenchAdapterTests.cs::SurfaceContent_LooksThroughIslandChrome_WhileContentForReturnsTheWrapper   AddSurface only; content wrapper
+  ZoneWorkbenchAdapterTests.cs::Render_PreservesTheActiveSurface_WhenAnotherPaneOpens   AddSurface only (opening a pane is setup); the adapter is the subject
+  Workbench/Notebook/TheExecutionOpensFromOpenLogTests.cs::OpenLog_OpensOneExecutionForTheTurnsAttempt_InTheBottom_AndASecondPressFocusesIt   no layout command; model Collapsed read, ContentFor
+  Workbench/ALiveNotebookFloatsAndRedocksTests.cs::ALayoutSavedWithALiveNotebookFloating_RestoresItFloatingAtItsBounds_AndReadsItsRunningTurnBackAsDeliveryUnknown   a restore, not a layout command; its renders are the restore route's (MainWindow renders after a restore)
+ not a layout change, or Manager is only the window's content
+  Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs::ExecutingSessionCycleRegion_MovesTheFocusedDocumentForwardOneRegion   routed by shell.Execute; reads a document's focus region
+  Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs::ExecutingSessionCycleRegionBack_MovesTheFocusedDocumentBackwardOneRegion   same
+  SolutionTreeSurfaceTests.cs::EnterOnFileArtifact_RequestsViewSource_UnindexedDoubleClickDoesNotExpand   tree selection, not layout
+  SolutionTreeSurfaceTests.cs::ShowActivateError_ViewSourceAndReveal_RetryReraises_SelectionUnchanged   tree selection
+  SolutionTreeSurfaceTests.cs::ViewSourceFault_ShowsCouldNotOpenSource_RetryReinvokes_SelectionUnchanged   tree selection
+  WorkbenchShellTests.cs::FindSurfaceId_WalksUpToTheOwningSurface   Manager is the window's content
+  WorkbenchShellTests.cs::AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable   a content read
+ layout command, but the oracle is not the drawn arrangement (cache, model, disposal, count, a content control)
+  Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen   ContentFor and model
+  Sessions/ConsoleSplitPlacementTests.cs::WithTheSessionInTheCenter_TheConsoleIsASiblingTab   model tabs (center.Tabs) and zone content
+  Sessions/SessionDocumentPlacementTests.cs::TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget   ContentFor, LandingSurfaceFor (model)
+  TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal   terminal records
+  Workbench/Checklist/SavedReviewStateIsNotAcceptanceTests.cs::RestoredWithAnotherNotebookFocused_TheChecklistNamesItsOwnJourney_AndBindsNothingElse   BORDERLINE: the layout ops are restore fixtures; the oracle is a checklist button's IsVisible (a content control)
+  Workbench/Checklist/SavedReviewStateIsNotAcceptanceTests.cs::AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions   BORDERLINE: same
+  Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack   ContentFor identity (surface lifetime)
+  Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands   ContentFor, terminal start records
+  OpeningATerminalWithNoneOpenTests.cs::WithATerminalOpen_TheNextOneJoinsIt   terminal count and stack count (model)
+  PerspectiveShellTests.cs::TheLanding_IsTheRowsZonesActiveTab_CenterForEveryRow_ElseTheEmptyCopy   LandingSurfaceFor (model)
+  PerspectiveShellTests.cs::TheFactoryLanding_IsTheNotebook_WhenTheCoordinationKindsShareItsCenter   LandingSurfaceFor, ActiveSurfaceId
+  Workbench/Records/TheModelOutlivesItsSurfaceTests.cs::CreateHideMoveCloseAndReopen_NeverCreateOrDisposeTheNotebookModel   notebook model identity and disposal
+  WorkbenchAdapterTests.cs::Render_DisposesContent_OfSurfacesThatWereClosed   disposal of content
+  WorkbenchShellTests.cs::Controller_AdapterAndView_ShareOneLayoutService   BORDERLINE: workbench.resetLayout on the shell's controller then a hand render, oracle is `same` (service identity)
+  WorkbenchShellTests.cs::AShowEntry_ForAOneInstanceKindHeldInACollapsedZone_ExpandsTheZoneAndActivatesIt   model collapsed flag and counts
+  WorkbenchDragCompletedHookTests.cs::OpeningAWorkspace_AnnouncesWhatTheRestoreDid_AndRecordsTheBranchThatRan   MoveSurface then SaveNow; reads announcer and records, no render
+  ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface   ContentFor and model
+  ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones   model reads
+  ZoneWorkbenchAdapterTests.cs::AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept   BORDERLINE: adapter.ActiveSurfaceId after Activate + Render; the render is the subject (ActiveSurfaceId is not an oracle token)
+
+Finding about the search (the V2b step doing its job): lens A listed 54 lines and did not list SessionDocumentPlacementTests'
+CollapsingTheLeft...ThenExpanding test, because its only drawn read is Rails.RailVisible() and lens A's read set lacked it. Lens B (render +
+a non-AddSurface change, no read filter) caught it and 9 more. The 3 tests the gate missed at the first run were all of this kind: an
+oracle the gate's token set did not hold (CenterEmpty(), RailVisible()). The gate now holds both; V2 re-run: V2-red-tightened.txt.
+Residual (named in the gate's summary and in the done mail): ActiveSurfaceId and ContentFor are not oracles; the four BORDERLINE lines
+above are the Owner's to rule on.
