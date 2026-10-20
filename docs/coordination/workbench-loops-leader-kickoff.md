@@ -100,6 +100,9 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
 - **Joins**: only `conductor-join.py`; land on `main`; push after every join; never remove a worktree to
   resolve a conflict. Run `python -I .agents/briefs/workbench-loops/leader_prejoin.py <repo root> --branch <b>
   --session <node session>` first: it refuses a branch with a changed path the node never claimed.
+  Its refusal is a refused join unless the Owner ruled on that specific path before the join started (Owner,
+  2026-10-20; T37's was the last excuse). After any join that touches `tools/` or `docs/ai-forward-pack/scripts`,
+  mail every running node to `git merge origin/main` before its next claim (PD-4; DC-NEW-wl-t36-claim instance 3).
 
 ## Not in scope for you
 

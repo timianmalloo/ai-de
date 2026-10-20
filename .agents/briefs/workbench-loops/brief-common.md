@@ -28,6 +28,8 @@ and a default.
    **At your first write, claim your proof directory as a directory lease:** `coord claim --wi workbench-loops --path {PROOF}` (no trailing slash: a claim on `{PROOF}/` is granted and
    covers nothing, measured 2026-10-20). Output files written there by redirection then carry a claim; the join's
    `leader_prejoin.py --branch --session` check refuses any changed path with no claim from your session.
+   **A claim's exit status is its result:** non-zero means NOT granted, whatever the text says. On `COORD-CLAIM-STALE-CONTROLS`
+   (exit 3), run `git merge origin/main` in your tree and claim again before the edit; any other refusal, mail the Leader.
 6. **A multi-line program is a file, then a run** — never a heredoc program. **A gate's exit status is
    never behind a pipe**: run the test/build on its own line and read `$?`, or redirect output to a
    file and then read the file.

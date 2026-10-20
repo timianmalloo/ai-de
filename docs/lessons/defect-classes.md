@@ -8878,6 +8878,14 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `coord claim` first (the hook reported the paths free). Ledgered classless in `obligations.md` (threshold 2).
 - **Instance 2 (2026-10-20, T36 `wl-flake-remeasure`):** the node's first `coord claim` calls failed, and it edited
   the register before a claim was granted (granted claims at seq 2-3 of `.agents/log/wl-t36-flake-remeasure.jsonl`).
+- **Instance 3 (2026-10-20, T37 `wl-input-state-sweep`, the resumed fixture run):** `coord claim` on
+  `tools/verify-gate-self-tests.py` (and the fixture outputs) exited 3, `COORD-CLAIM-STALE-CONTROLS`: T38's join
+  (`c7a96a75`) put two commits touching `tools/` on origin/main that T37's tree lacked. The node read the refusal as
+  a warning ("the claims still went through") and edited the file; no session log holds the claim. Reproduced by
+  the Leader from T37's tree (exit 3, same code). Contributing cause: the Leader did not mail T37 to merge
+  origin/main after T38's join, the PD-4 drive mitigation, and its seam grant said to claim without saying the tree
+  was stale. Caught at the join by T38's check (13 unclaimed: the fixture file and 12 proof outputs). Owner ruling:
+  excused for this join, the LAST pre-join excuse.
 - **Sweep:** the instruction itself is wrong. brief-common.md rule 5 wrote `coord claim --path <file>`, and
   `coord claim` refuses without `--wi` (exit 2, "--wi and --path are required"; `coord-core.py:5475`); it does not
   read `AGENT_WI`, which rule 1 sets. A node that follows rule 5 literally gets a refusal, so T36's failures were the
@@ -8894,6 +8902,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   A missing, unreadable or empty-diff case refuses, never passes. Red on a planted branch:
   `tools/test-leader-prejoin-claims.py` (`docs/proof/workbench-loops-support/claim-check/C1-red.txt`, `C1-green.txt`).
   Run on two joined branches it refused both (`C2-real.txt`).
+  (3) Instance 3 (2026-10-20): brief-common.md rule 5 says a claim's exit status is its result (non-zero is not
+  granted; on `COORD-CLAIM-STALE-CONTROLS` merge origin/main and claim again before the edit), and the Leader's join
+  pattern mails every running node to merge origin/main after a join that touches `tools/` or the pack scripts.
+  Owed, T39: `leader_prejoin.py` reports a changed path whose last coord-log outcome for it was a refusal as
+  "claimed-after-refusal" (prose with a residual if the coord log records no refusals).
 - **Residual:** a claim record shows that a claim exists, not that it came before the edit; the edit's time is not
   recorded anywhere the check can read. The check also ignores a claim's TTL and release.
 - **Status:** `controlled` (rule 5 corrected; T38's join check landed with C1 red-green and C2 on real branches).
