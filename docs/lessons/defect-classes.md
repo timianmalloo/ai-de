@@ -8644,10 +8644,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   1). No tool or test pins a DESIGN.md copy row to the rendered literal (`tools/` has no copy gate). Not read one by one.
 - **Derive:** a copy oracle states the literal sentence the user reads, as the confirmed DESIGN.md row writes it, on the
   rendered surface. A constant may build the expected value only when a separate test pins that constant's literal.
-- **Prevent:** instance — T26 n3 (F): literal-pinning tests for CHK3 and CHK9, red on the old copy. Class — **not built**.
-  Candidate: a test that reads each DESIGN.md copy row (CHK, RUN, DOCK …) and asserts the matching constant's literal,
-  so a copy change moves the row and the code together or fails.
-- **Status:** `open` (instance control in T26 n3; class control not built).
+- **Prevent:** instance - T26 n3 (F): literal-pinning tests for CHK3 and CHK9, red on the old copy. Class - T32:
+  `tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs` reads every DESIGN.md id row and asserts it against the literal
+  the code renders (17 rows pinned). A row or a `*Copy` member with no match must be named on a shrink-only list with a
+  reason, or the test fails naming it; a stale entry fails. Mutation red: one `ChecklistCopy.Empty` character, CHK1 red
+  (`docs/proof/workbench-loops-support/copy-pin/P1-red-mutation.txt`). The 7 finding rows and 23 unmatched members are
+  the Owner's list (that folder's README). The 8 test files that assert through a `*Copy` constant are not rewritten.
+- **Status:** `controlled` (T32; the unmatched-row findings are with the Owner).
 
 ### DC-NEW-wl-t30-gate-evasion — code renamed to pass a lexical gate without reading what the gate guards
 - **Class:** a gate refuses a change; the change is reshaped (renamed, reworded, moved) until the gate no longer sees
