@@ -18,6 +18,6 @@ DONE. No finding T21n11-F1: the test passes on the route.
 - `M1-run.txt`: 1 passed.
 - `M1-mutation.txt`: `controller.LayoutApplied += adapter.Render;` (DockHost.cs:74) commented out in a scratch edit: 1 failed. File restored; `git diff --stat src/` empty.
 - `suite-core.txt`: 3121 passed, 1 skipped, 0 failed.
-- `suite-app.txt`: 1270 passed, 2 skipped, 2 failed, both known (T31): `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, `CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective`. The restored-row fold test: NOT CHECKED, the OS reports the left mouse button down. The layout gate is in the suite and passed.
+- `suite-app.txt`: 1270 passed, 2 skipped, 2 failed, both known (T31): `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph`, `CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective`. The restored-row fold test: PASSED in this suite (1270/2/2: no `[FAIL]` line for it in `suite-app.txt`). This line first read "NOT CHECKED, the OS reports the left mouse button down", which followed the brief and not the result; corrected at the join (Owner ruling, 2026-10-20, on the T21 n11 join). The layout gate is in the suite and passed.
 - `ratchet.txt`: PASS, 0 refusals over 50 gates.
 - Not done: nothing. No src change, no exception-list entry.

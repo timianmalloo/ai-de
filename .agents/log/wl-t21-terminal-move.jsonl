@@ -1,3 +1,4 @@
 {"agent": "wl-leader5-20261020", "at": 1792517362.6078696, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t21-terminal-move", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-layout-gate-terminal-move"}
 {"agent": "wl-t21-terminal-move", "at": 1792517399.8376813, "kind": "claim", "path": "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs", "seq": 2, "session": "wl-t21-terminal-move", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t21-terminal-move", "at": 1792517434.9072027, "kind": "claim", "path": "src/AiDe.App/Workbench/DockHost.cs", "seq": 3, "session": "wl-t21-terminal-move", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792518608.9333613, "from": "wl-t21-terminal-move", "kind": "done", "mail_id": "mail-01M5D6YP158VW79KCPJJ097G18", "ref": null, "session": "wl-t21-terminal-move", "to": "wl-leader5-20261020", "type": "mail"}

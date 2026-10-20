@@ -10872,7 +10872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dfa27c48d3884911659e5826fedc23f1c5adbbeaa74634f05c03c2e4c69223e6"
+      "sourceSha256": "4ff7e7f337b4bf076325d041f443fb2cdf74cd5f4d7928df36682f97da8e2dcc"
     },
     {
       "id": "defect-classes",
@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "299173a2145b63172d344aa13ac135f35fbb9109082ff955f8c872be7f13c9ff"
+      "sourceSha256": "8ceda194c9008a1dcfc2225b919fea703899f8feba419c85bcd7ad61944281c6"
     },
     {
       "id": "design-session-profiler",
@@ -22902,7 +22902,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc52b22f8eeed16c9b7b93101b26b6f4ce30d89dc5bdf668b7a638f10525089f"
+      "sourceSha256": "9ae3ad71c7af5700c7c423447d36f8253ab2dc6a63388cc9b317f616248ade52"
     },
     {
       "id": "proof-wl-identity-gate",
@@ -24102,6 +24102,27 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b1072b6dbff874062d9f40fd47a48427f4550a42b2d711b2b4d73e034dc3a917"
+    },
+    {
+      "id": "wl-s-layout-gate-terminal-move-readme",
+      "path": "docs/proof/workbench-loops-wl-s/layout-gate/terminal-move/README.md",
+      "title": "WL-S T21 node 11 - the terminal move on the route",
+      "type": "proof-pack",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-01-20",
+      "reviewSuggested": [],
+      "summary": "T21 n11: MovingTheParkedTerminalIntoAVisibleZone_LosesNoPane_MovesOnlyIt_AndBuildsIt moves terminal-1 from the collapsed Bottom into Left through host.Controller.Move. Green; red with LayoutApplied removed. Whole suites: only the two known App failures.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d7c076b12c4d9107450abea437b91ccab617e8a0638e173731bd4d02e6ef944d"
     },
     {
       "id": "spec-addendum-c-perspectives",
@@ -26030,5 +26051,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "771d0e7e63da5d7ddb62d87228aca8207d2bf0e0e80fb0dd0cd70a0d0eb89a28"
+  "graphSha256": "b00fc2c83bbf52476668eba9c46e838046176d38277f996560730ade96a9ff4b"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T17:49:36Z",
+  "generated": "2026-10-20T18:18:12Z",
   "audit": [
     {
       "actor": null,
@@ -27869,6 +27869,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T17:29:47Z",
       "duration_seconds": 1189.0
+    },
+    {
+      "id": "al-01M5D8J0N72J835C838MSZD6WG",
+      "shortname": "join-wl-layout-gate-terminal-move",
+      "datetime": "2026-10-20T18:18:10Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-layout-gate-terminal-move into main",
+      "summary": "T21 n11 (the Owner's ruling on T21 n10's lost case): ZoneWorkbenchAdapterTests.MovingTheParkedTerminalIntoAVisibleZone_LosesNoPane_MovesOnlyIt_AndBuildsIt moves terminal-1 from the collapsed Bottom into Left by host.Controller.Move; asserts no drawn pane lost, only terminal-1 moved, terminal-1 built on landing; green on the route (no T21n11-F1); red with LayoutApplied unwired. No src change. Recount 1: ConsoleSplitPlacementTests.CollapsingTheLeft... failed (load-only); re-run: CtrlDigit and CtrlEnter failed (load-only now); each passes alone on ab759888 and 70bc5f5d; excused by the Owner's ruling (option (a)), not Ruling 155 (3). README fold row corrected to PASSED. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/terminal-move/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n11's restored terminal-move case onto main",
+      "done_when": "recount green or excused; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T18:18:09Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33869,6 +33898,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-layout-gate-r2"
+    },
+    {
+      "id": "mail-01M5D6EKM27THVDGGEF3EYHZMZ",
+      "ts": "2026-10-20T17:41:22Z",
+      "from": "wl-leader5-20261020",
+      "to": "wl-t21-terminal-move",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader5-20261020"
+    },
+    {
+      "id": "mail-01M5D6YP158VW79KCPJJ097G18",
+      "ts": "2026-10-20T17:50:08Z",
+      "from": "wl-t21-terminal-move",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t21-terminal-move"
     }
   ]
 };
