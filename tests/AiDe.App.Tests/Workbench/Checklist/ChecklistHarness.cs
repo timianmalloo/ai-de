@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -19,7 +20,9 @@ using AiDe.Core.Ipc;
 using AiDe.Core.Presentation.Composer;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
+using AiDe.Core.Store;
 using AiDe.Core.Workbench;
+using Microsoft.Data.Sqlite;
 
 namespace AiDe.App.Tests.Checklist;
 
@@ -39,14 +42,17 @@ internal sealed class ChecklistHarness : IDisposable
         new(sessionId, title, Fixture.Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"));
 
     /// <summary>Starts the daemon endpoint, connects the client, and runs <paramref name="body"/> on a pumped STA window.</summary>
-    public async Task RunAsync(Func<Window, ContentControl, WorkspaceClient, Task> body)
+    public Task RunAsync(Func<Window, ContentControl, WorkspaceClient, Task> body) => RunAsync(Fixture.Store, body);
+
+    /// <summary><see cref="RunAsync(Func{Window, ContentControl, WorkspaceClient, Task})"/> over <paramref name="store"/> instead of the fixture's.</summary>
+    public static async Task RunAsync(WorkspaceStore store, Func<Window, ContentControl, WorkspaceClient, Task> body)
     {
         var pipe = "aide-t26-checklist-" + Guid.NewGuid().ToString("N");
-        var endpoint = new DaemonEndpoint(pipe, new CapabilityRegistry(), _ => Fixture.Store.CoreEpoch);
-        DaemonOperations.Register(endpoint, () => Fixture.Store.CoreEpoch);
-        WorkspaceOperations.RegisterNotebook(endpoint, new NotebookService(Fixture.Store));
-        WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(Fixture.Store));
-        WorkspaceOperations.RegisterChecklist(endpoint, new ChecklistService(Fixture.Store));
+        var endpoint = new DaemonEndpoint(pipe, new CapabilityRegistry(), _ => store.CoreEpoch);
+        DaemonOperations.Register(endpoint, () => store.CoreEpoch);
+        WorkspaceOperations.RegisterNotebook(endpoint, new NotebookService(store));
+        WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(store));
+        WorkspaceOperations.RegisterChecklist(endpoint, new ChecklistService(store));
         var server = new IpcServer(pipe, endpoint, new IpcServerOptions(StartupGrace: TimeSpan.FromSeconds(45)));
         using var life = new CancellationTokenSource(TimeSpan.FromSeconds(170));
         var running = server.RunAsync(life.Token);
@@ -65,6 +71,40 @@ internal sealed class ChecklistHarness : IDisposable
             await life.CancelAsync();
             try { await running; } catch (OperationCanceledException) { }
         }
+    }
+
+    /// <summary>
+    /// A store opened over a schema-v1 file whose one draft is <paramref name="sessionId"/>'s notebook: the migration
+    /// backfills it as a legacy notebook with no work journey, the only way such a notebook exists (Ruling 148 c). The v1
+    /// schema is read from the store's own frozen baseline, which is internal, so it is read by reflection.
+    /// </summary>
+    public WorkspaceStore LegacyStore(string sessionId)
+    {
+        var schema = typeof(WorkspaceStore).Assembly.GetType("AiDe.Core.Store.WorkspaceSchema", throwOnError: true)!;
+        const BindingFlags Internal = BindingFlags.NonPublic | BindingFlags.Static;
+        var create = (string)schema.GetField("CreateSql", Internal)!.GetRawConstantValue()!;
+        var v1Facts = (string[])schema.GetField("V1FactTables", Internal)!.GetValue(null)!;
+        var triggers = (string)schema.GetMethod("TriggerSql", Internal, [typeof(IEnumerable<string>)])!.Invoke(null, [v1Facts])!;
+
+        var path = Path.Combine(Fixture.Root, "legacy-" + Guid.NewGuid().ToString("N") + ".db");
+        using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = path, Pooling = false }.ToString()))
+        {
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = $"""
+                PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA recursive_triggers=ON;
+                {create}
+                {triggers}
+                INSERT INTO schema_version (version, applied_at) VALUES (1, '2026-10-01T00:00:00.0000000Z');
+                INSERT INTO core_state (id, core_epoch, ingress_seq) VALUES (1, 3, 1);
+                INSERT INTO prompt_revision_fact VALUES ($draft, 1, 'a pre-workbench draft', '2026-10-01T00:00:01Z', 1);
+                """;
+            command.Parameters.AddWithValue("$draft", NotebookId.ForSession(sessionId).Value);
+            command.ExecuteNonQuery();
+        }
+
+        SqliteConnection.ClearAllPools();
+        return WorkspaceStore.Open(path);
     }
 
     /// <summary>The window's composition: the router over the three hosts, with the active host's body in <paramref name="region"/>.</summary>
