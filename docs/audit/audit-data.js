@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-19T23:40:24Z",
+  "generated": "2026-10-20T00:29:27Z",
   "audit": [
     {
       "actor": null,
@@ -26776,6 +26776,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-19T22:50:47Z",
       "duration_seconds": 2977.0
+    },
+    {
+      "id": "al-01M5BBD4FM30XD83GN37C3E972",
+      "shortname": "wl-leader3-epoch3",
+      "datetime": "2026-10-20T00:29:27Z",
+      "session": "wl-leader3-20261019",
+      "prompt": "Leader 3 of the workbench-loops drive: join T17e first, wait for T21 n4/T11 n11 and join them, start WL-1b on branches (Owner corrections to hand-off 2)",
+      "summary": "Epoch 3 (14:55Z-00:4xZ is NOT a read: see the board for the release post). Ten joins pushed: T17e 64f713a4, T21 8608d4eb, T28 cf31f424 + 367f4de4 + 26ef801e, T11 d25d0311 (re-join after a ratchet refusal), WL-1b Core 69039edb (one integration branch, Owner-accepted), the float fix dc03007c (a live regression on main, measured by the Leader; re-join after a ratchet refusal), T21 n8 26e14f8b, T30 d986e4a4. WL-1a ACCEPTED by the user's demo; WL-S review-ready with its demo staged. Rulings 176-182 each committed alone. Controls: brief rules 18-22, the seam-request monitor, the join wrapper that waits for a free desktop, the abandoned-join procedure; defect classes DC-NEW-wl-leader3 (4 instances) and -b, DC-NEW-wl-leader2 recurrences (7, each corrected). Running at hand-off: T30 n5 (the prefill is invisible on main: first) and T26 n2. Hand-off 3 at e39bcdda.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/workbench-loops-leader-handoff-3.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T17e; join T21 and T11 when green; start WL-1b on branches; no WL-1b join before the user's WL-1a demo passes",
+      "done_when": "T17e on origin; T21 and T11 joined; WL-1b started red-first on branches",
+      "tier": "T2",
+      "fan_out": 5,
+      "started_at": "2026-10-20T00:28:06Z",
+      "duration_seconds": 81.0
     }
   ],
   "changes": [
@@ -32537,6 +32561,42 @@ window.AUDIT_DATA = {
     {
       "id": "mail-01M5B6WWX4B5CV3FB8CM7GVE97",
       "ts": "2026-10-19T23:10:41Z",
+      "from": "wl-t30-prefill",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t30-prefill"
+    },
+    {
+      "id": "mail-01M5B9K0PGB68X0MKCVBF43JAW",
+      "ts": "2026-10-19T23:57:43Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t26-checklist",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5B9K0SD2ABQC6GM0J5KP8EN",
+      "ts": "2026-10-19T23:57:43Z",
+      "from": "wl-leader3-20261019",
+      "to": "wl-t30-prefill",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader3-20261019"
+    },
+    {
+      "id": "mail-01M5BB4CMY2NKHJAGXRDKKYVYZ",
+      "ts": "2026-10-20T00:24:41Z",
+      "from": "wl-t26-checklist",
+      "to": "wl-leader3-20261019",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t26-checklist"
+    },
+    {
+      "id": "mail-01M5BB6HAT36K0241MN8AXM3H5",
+      "ts": "2026-10-20T00:25:51Z",
       "from": "wl-t30-prefill",
       "to": "wl-leader3-20261019",
       "kind": "done",
