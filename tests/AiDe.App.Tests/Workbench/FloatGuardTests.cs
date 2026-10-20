@@ -56,21 +56,21 @@ public sealed class FloatGuardTests : IDisposable
     [Fact]
     public void APaneSavedFloating_RestoresThroughLayoutPersistence_Floating_DrawnVisibleAndNeverDocked() =>
         Sta.Pump(
-            create: () => new DockingManager(),
+            create: () => new Border(),
             configure: window => { window.Width = 900; window.Height = 600; },
-            body: async (main, manager) =>
+            body: async (main, border) =>
             {
                 Directory.CreateDirectory(_dir);
                 var layoutPath = Path.Combine(_dir, "layout.json");
 
-                // Before the restart: a saved layout with one floating pane. The subject is the restore, so the float is
-                // the service's operation, with no view to draw it.
-                var before = new ZoneBackedLayoutService();
+                // Before the restart: a saved layout with one floating pane, floated the way the palette floats it.
+                var beforeHost = FloatRenderTests.HostInto(border, surface => new TextBox { Text = surface.SurfaceId });
+                var before = beforeHost.Service;
                 var ids = before.Zones.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
                 var stack = before.Current.AllStacks().First(s => s.Surfaces.Count > 0 && before.Zones.FindZoneOf(s.Surfaces[0].SurfaceId) is not null);
                 var floatedId = stack.Surfaces[0].SurfaceId;
-                var floated = before.Apply(new LayoutOperation.SetStackState(stack.Id, StackState.Floating));
-                Assert.True(before.Zones.Floating.Any(s => s.Surfaces.Any(x => x.SurfaceId == floatedId)), $"the service did not float {floatedId} in {stack.Id}; it said: {floated.Announcement}");
+                FloatRenderTests.FloatByTheRoute(beforeHost, floatedId);
+                Assert.True(before.Zones.Floating.Any(s => s.Surfaces.Any(x => x.SurfaceId == floatedId)), $"the route did not float {floatedId} in {stack.Id}");
                 using (var first = new LayoutPersistence(before, layoutPath, ids, restorableKinds: SurfaceContentFactory.RestorableKinds))
                 {
                     first.SaveNow();
@@ -81,6 +81,8 @@ public sealed class FloatGuardTests : IDisposable
                 var host = new ZoneBackedLayoutService();
                 using var persistence = new LayoutPersistence(host, layoutPath, ids, restorableKinds: SurfaceContentFactory.RestorableKinds);
                 var result = persistence.Restore();
+                var manager = new DockingManager();
+                main.Content = manager;
                 var adapter = new WorkbenchAdapter(manager, host, surface => new TextBox { Text = surface.SurfaceId });
                 adapter.Render();
                 await Task.Delay(500);

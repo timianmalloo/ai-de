@@ -84,9 +84,9 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.Null(frame.CenterEmpty());
 
             // One per session: a second RUN of the verb focuses the existing one, never adds a second.
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.ActivateSurface(sessionId)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.StepBackByTheRoute(shell.Factory, ConsoleId(config.SessionId));
             frame.Settle();
+            Assert.Equal(sessionId, shell.Factory.Adapter.ActiveSurfaceId);
             System.Windows.Input.Keyboard.Focus(document.ConsoleToggle);
             frame.Settle();
             Assert.Equal(sessionId, shell.Factory.Controller.FocusedSurfaceId);
@@ -118,8 +118,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             var reopened = shell.Factory.Adapter.ContentFor(ConsoleId(config.SessionId));
             Assert.True(reopened is not null && ReferenceEquals(document.Split, ComposedCoding.Visuals<ConsoleSurface>(reopened).SingleOrDefault()), "the reopened console does not host the document's own split");
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(sessionId)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CloseByTheRoute(shell.Factory, sessionId);
             frame.Settle();
             Assert.DoesNotContain(shell.Factory.Service.Zones.AllSurfaces(), s => s.Kind == "console");
             Assert.True(document.ConsoleToggle.IsChecked == false);

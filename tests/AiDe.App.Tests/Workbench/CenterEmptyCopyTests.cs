@@ -79,8 +79,7 @@ public sealed class CenterEmptyCopyTests : IDisposable
             frame.Settle();
             var notebookId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(notebookId));
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.MoveSurface(notebookId, new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack))).Applied);
-            shell.Factory.Adapter.Render();
+            Assert.True(shell.Factory.Controller.Move(notebookId, new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
             frame.Settle();
             Assert.Equal(ZoneId.Left, shell.Factory.Service.Zones.FindZoneOf(notebookId));
             var docked = frame.CenterEmpty();
@@ -103,17 +102,14 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.DoesNotContain(ComposedCoding.Visuals<Grid>(docked!), g => g.Focusable);
 
             // The Left collapsed with the session held: still docked there, behind its rail — said.
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CollapseByTheRoute(shell.Factory, ZonesToTree.LeftStackId);
             frame.Settle();
             Assert.Contains("The session is docked at the left, collapsed — expand the rail to reach it.", Texts(frame.CenterEmpty()!));
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Left);
             frame.Settle();
 
             // State 1 again after the session closes: the copy follows the model, render by render.
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(SessionDocumentSurface.SurfaceIdFor(config.SessionId))).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CloseByTheRoute(shell.Factory, SessionDocumentSurface.SurfaceIdFor(config.SessionId));
             frame.Settle();
             var again = frame.CenterEmpty();
             Assert.NotNull(again);

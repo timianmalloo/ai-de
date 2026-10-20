@@ -1,0 +1,34 @@
+V3 sweep (T21 n9): the 11 tests V2 named after V2b (V2-red-tightened.txt). One line per test: convert | list, and the evidence.
+All 11 are CONVERTED. Exceptions listed: 0. Product findings: 0 (no converted test failed on the route).
+"Converted" means the layout command now reaches the model through DockHost's controller (host.Controller.Execute / Move) or the
+rail button's automation peer, and the hand render before the oracle is gone; none was renamed, wrapped or moved to leave the regex.
+Helpers (HostInto, FloatByTheRoute, CollapseByTheRoute, CloseByTheRoute, StepBackByTheRoute, ExpandByTheRail) are in FloatRenderTests.cs;
+each runs the route (controller verb or rail invoke) and renders nothing itself.
+
+Mutation = src/AiDe.App/Workbench/DockHost.cs with `controller.LayoutApplied += adapter.Render;` replaced by a comment, tests re-run, src restored by
+`git checkout` (git status src: clean). Files: V3-float-mutation-red.txt, V3-shell-mutation-red.txt, V3-zone-mutation-red.txt.
+
+Workbench/FloatRenderTests.cs::AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent
+  convert: was service.Apply(MoveSurface Float) + adapter.Render(); now FloatByTheRoute (workbench.floatPane). Green: V3-float-green.txt. Mutation: RED.
+Workbench/FloatReadBackRestartTests.cs::FloatingWindows_AreReadBackFromTheView_AndALayoutSavedWhileTheyFloat_RestoresThemFloatingAndVisible
+  convert: first float by FloatByTheRoute; the native float and the restart stay as they were. Green: V3-float-green.txt. Mutation: RED.
+Workbench/FloatBoundsPersistTests.cs::AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle
+  convert: float by FloatByTheRoute on a DockHost; restart unchanged. Green: V3-float-green.txt. Mutation: RED.
+Workbench/FloatBoundsPersistTests.cs::AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo
+  convert: the saved float is made by FloatByTheRoute. Green: V3-float-green.txt. Mutation: stays green, and cannot be red: its oracles are all after the restart, which builds its own adapter (the restore route); the fixture float is only saved. The conversion changes what is saved: the user's float (SetStackState Floating), not MoveSurface Float.
+Workbench/FloatGuardTests.cs::APaneSavedFloating_RestoresThroughLayoutPersistence_Floating_DrawnVisibleAndNeverDocked
+  convert: same as the line above (SetStackState Floating by the route). Green: V3-float-green.txt. Mutation: stays green for the same reason.
+WorkbenchDragCompletedHookTests.cs::ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused
+  convert: the Left arrangement is made by Controller.Move (the keyboard/drop move) and CollapseByTheRoute; the drag stays the DockingManager's. Green: V3-shell-green.txt. Mutation: RED.
+WorkbenchShellTests.cs::AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime
+  convert: the sibling becomes the active tab through its own Show entry (surface.show.<kind>) instead of Service.Apply(ActivateSurface) + Render. Green: V3-shell-green.txt. Mutation: stays green: the claim is the model's active kind after a second Show (ActiveKindOf reads the model); the one view write that remains (IsSelected = true) is the user's click, not a read.
+ZoneWorkbenchAdapterTests.cs::Render_SelectsTheModelsActiveTab_NotTheFirstDocument
+  convert: now previousSurface then nextSurface on a DockHost, with the drawn selection read after each step (the first read is what makes it fail without the render). Green: V3-zone-green.txt. Mutation: RED (V3-zone-mutation-red.txt; the first version of this conversion ended where it started and passed under the mutation, so the intermediate read was added).
+Sessions/ConsoleSplitPlacementTests.cs::WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument
+  convert: the session becomes active by previousSurface from the console, and closes by workbench.closeSurface. Green: V3-shell-green.txt. Mutation: RED.
+Workbench/CenterEmptyCopyTests.cs::WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen
+  convert: Controller.Move, workbench.collapsePane, the rail's Expand button (automation peer Invoke, no desktop input), workbench.closeSurface. Green: V3-shell-green.txt. Mutation: RED.
+Sessions/SessionDocumentPlacementTests.cs::CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing
+  convert: workbench.collapsePane, then the rail's Expand button. Green: V3-shell-green.txt. Mutation: RED.
+
+Mutation summary: 8 of 11 go red when the route's draw is removed; 3 cannot (the two restore tests and AShowEntry), each for the reason on its line.

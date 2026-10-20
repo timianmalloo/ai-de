@@ -35,28 +35,27 @@ public sealed class FloatReadBackRestartTests : IDisposable
     [Fact]
     public void FloatingWindows_AreReadBackFromTheView_AndALayoutSavedWhileTheyFloat_RestoresThemFloatingAndVisible() =>
         Sta.Pump(
-            create: () => new DockingManager(),
+            create: () => new Border(),
             configure: window => { window.Width = 900; window.Height = 600; },
-            body: async (main, manager) =>
+            body: async (main, border) =>
             {
                 static TextBox Build(Surface surface) => new() { Text = surface.SurfaceId };
 
-                var service = new ZoneBackedLayoutService();
-                var adapter = new WorkbenchAdapter(manager, service, Build);
-                adapter.Render();
+                var host = FloatRenderTests.HostInto(border, Build);
+                var manager = host.Manager;
+                var service = host.Service;
+                var adapter = host.Adapter;
                 await Task.Delay(200);
 
-                // One pane floats through the service, and Render draws it.
-                var floated = service.Apply(new LayoutOperation.MoveSurface("sessions", new DropTarget(string.Empty, DropKind.Float)));
-                Assert.True(floated.Applied, floated.Announcement);
-                adapter.Render();
+                // One pane floats the way the palette floats it: the controller verb, which draws it.
+                var floatedByTheRoute = FloatRenderTests.FloatByTheRoute(host, "sessions");
                 await Task.Delay(300);
 
                 // A second pane floats through AvalonDock's own gesture. It comes from a zone holding two
                 // or more panes, so the pane it leaves keeps the zone in the view.
                 var nativeId = service.Zones.Zones.Values
                     .Select(z => z.Surfaces().ToList())
-                    .First(surfaces => surfaces.Count >= 2)[^1].SurfaceId;
+                    .First(surfaces => surfaces.Count >= 2 && !floatedByTheRoute.Contains(surfaces[^1].SurfaceId))[^1].SurfaceId;
                 manager.Layout.Descendents().OfType<LayoutDocument>().Single(d => d.ContentId == nativeId).Float();
                 await Task.Delay(500);
                 Assert.Equal(2, manager.Layout.FloatingWindows.Count);
@@ -64,10 +63,10 @@ public sealed class FloatReadBackRestartTests : IDisposable
                 // Read-back: the view maps, and the model takes both floating panes.
                 var view = adapter.ReadLayoutFromView();
                 Assert.NotNull(view);
-                Assert.Equal(new[] { "sessions", nativeId }.Order(StringComparer.Ordinal).ToArray(), view!.Floating.SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Order(StringComparer.Ordinal).ToArray(),
+                Assert.Equal(floatedByTheRoute.Append(nativeId).Order(StringComparer.Ordinal).ToArray(), view!.Floating.SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Order(StringComparer.Ordinal).ToArray(),
                     StringComparer.Ordinal);
                 Assert.True(service.ReconcileFromView(view), "the service refused the view's floating windows");
-                Assert.All(new[] { "sessions", nativeId }, id =>
+                Assert.All(floatedByTheRoute.Append(nativeId), id =>
                 {
                     Assert.Null(service.Zones.FindZoneOf(id));
                     Assert.Contains(service.Zones.Floating, s => s.Surfaces.Any(x => x.SurfaceId == id));
@@ -100,7 +99,7 @@ public sealed class FloatReadBackRestartTests : IDisposable
                 var windows = manager2.FloatingWindows.ToList();
                 Assert.Equal(2, windows.Count);
                 Assert.All(windows, w => Assert.True(w.IsVisible, "a restored floating window is not shown"));
-                foreach (var id in new[] { "sessions", nativeId })
+                foreach (var id in floatedByTheRoute.Append(nativeId))
                 {
                     var content = Assert.IsType<TextBox>(adapter2.ContentFor(id));
                     Assert.Equal(id, content.Text);

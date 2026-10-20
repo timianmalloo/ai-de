@@ -1,0 +1,7 @@
+T21 n9 suites at 221e05eb (raw runs: suite-core.txt, suite-app.txt).
+Core: 3121 passed, 0 failed, 1 skipped (3122).
+App: 1268 passed, 3 failed, 2 skipped (1273). All 3 failures are the known ones:
+  NOT CHECKED: the OS reports the left mouse button down - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation
+  known failure (T31, N=10) - SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph
+  known failure (T31, N=10) - CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective
+Product findings from this node (T21n9-F<k>): none. No converted test failed on the route.

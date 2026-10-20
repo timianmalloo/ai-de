@@ -25,25 +25,26 @@ public sealed class FloatRenderTests
     [Fact]
     public void AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent() =>
         Sta.Pump(
-            create: () => new DockingManager(),
+            create: () => new Border(),
             configure: window => { window.Width = 900; window.Height = 600; },
-            body: async (main, manager) =>
+            body: async (main, border) =>
             {
                 var builds = new Dictionary<string, int>(StringComparer.Ordinal);
-                var service = new ZoneBackedLayoutService();
-                var adapter = new WorkbenchAdapter(manager, service, surface =>
+                var host = HostInto(border, surface =>
                 {
                     builds[surface.SurfaceId] = builds.GetValueOrDefault(surface.SurfaceId) + 1;
                     return new TextBox { Text = surface.SurfaceId };
                 });
-                adapter.Render();
+                var manager = host.Manager;
+                var service = host.Service;
+                var adapter = host.Adapter;
                 await Task.Delay(200);
                 var dockedBefore = service.Zones.AllSurfaces().Select(s => s.SurfaceId).Where(id => id != "sessions").ToList();
 
-                var floated = service.Apply(new LayoutOperation.MoveSurface("sessions", new DropTarget(string.Empty, DropKind.Float)));
-                Assert.True(floated.Applied, floated.Announcement);
+                // The user's route: the controller's float verb on the focused pane (the palette runs it).
+                var floatedStack = FloatByTheRoute(host, "sessions");
+                dockedBefore = dockedBefore.Except(floatedStack).ToList();
                 Assert.True(service.Current.Floating.Count == 1, "the service did not float the pane");
-                adapter.Render();
                 await Task.Delay(500);
 
                 var model = Assert.Single(manager.Layout.FloatingWindows);
@@ -76,6 +77,77 @@ public sealed class FloatRenderTests
                     Assert.Contains(manager.Layout.RootPanel.Descendents().OfType<LayoutDocument>(), d => d.ContentId == id);
                 }
             });
+
+    /// <summary>
+    /// A Factory <see cref="DockHost"/> over <paramref name="content"/>, drawn in <paramref name="border"/>, as the shell builds one,
+    /// holding a Sessions pane on the left and two notebooks in the Center. Opening panes is setup.
+    /// </summary>
+    internal static DockHost HostInto(Border border, Func<Surface, FrameworkElement> content)
+    {
+        var host = DockHost.Create(PerspectiveSet.Factory, content, new RecordingAnnouncer(), (_, _) => { });
+        border.Child = host.Root;
+        foreach (var (stackId, surface) in new[]
+        {
+            (ZonesToTree.LeftStackId, new Surface("sessions", "sessions", "Sessions")),
+            (ZonesToTree.CenterStackId, new Surface("session:s1", "notebook", "S1")),
+            (ZonesToTree.CenterStackId, new Surface("session:s2", "notebook", "S2")),
+        })
+        {
+            if (host.Service.Current.FindStackOf(surface.SurfaceId) is null)
+            {
+                Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(stackId, surface)).Applied, $"the host refused {surface.SurfaceId}");
+            }
+        }
+
+        host.Adapter.Render();
+        return host;
+    }
+
+    /// <summary>
+    /// Floats the stack holding <paramref name="surfaceId"/> the way the palette does: it names the focused pane, then runs
+    /// <c>workbench.floatPane</c> on the host's own controller, whose <c>LayoutApplied</c> draws it. Returns the surface ids
+    /// that floated with it.
+    /// </summary>
+    internal static List<string> FloatByTheRoute(DockHost host, string surfaceId)
+    {
+        var stack = host.Service.Current.FindStackOf(surfaceId)!;
+        var floated = stack.Surfaces.Select(s => s.SurfaceId).ToList();
+        host.Controller.FocusedStackId = stack.Id;
+        host.Controller.FocusedSurfaceId = surfaceId;
+        Assert.True(host.Controller.Execute("workbench.floatPane"), "the controller refused workbench.floatPane");
+        return floated;
+    }
+
+    /// <summary>Collapses the stack the way the palette does: the focused pane named, then <c>workbench.collapsePane</c>.</summary>
+    internal static void CollapseByTheRoute(DockHost host, string stackId)
+    {
+        host.Controller.FocusedStackId = stackId;
+        Assert.True(host.Controller.Execute("workbench.collapsePane"), "the controller refused workbench.collapsePane");
+    }
+
+    /// <summary>Closes a surface the way the palette does: the focused surface named, then <c>workbench.closeSurface</c>.</summary>
+    internal static void CloseByTheRoute(DockHost host, string surfaceId)
+    {
+        host.Controller.FocusedStackId = host.Service.Current.FindStackOf(surfaceId)!.Id;
+        host.Controller.FocusedSurfaceId = surfaceId;
+        Assert.True(host.Controller.Execute("workbench.closeSurface"), "the controller refused workbench.closeSurface");
+    }
+
+    /// <summary>Activates the tab before <paramref name="surfaceId"/> in its stack the way the palette does: <c>workbench.previousSurface</c>.</summary>
+    internal static void StepBackByTheRoute(DockHost host, string surfaceId)
+    {
+        host.Controller.FocusedStackId = host.Service.Current.FindStackOf(surfaceId)!.Id;
+        host.Controller.FocusedSurfaceId = surfaceId;
+        Assert.True(host.Controller.Execute("workbench.previousSurface"), "the controller refused workbench.previousSurface");
+    }
+
+    /// <summary>Expands a collapsed zone the way the user does: the rail's button, invoked through its automation peer (no desktop input).</summary>
+    internal static void ExpandByTheRail(DockHost host, ZoneId zone)
+    {
+        var button = ComposedCoding.Visuals<Button>(host.Root).Single(b => System.Windows.Automation.AutomationProperties.GetName(b) == $"Expand the {zone}");
+        var peer = new System.Windows.Automation.Peers.ButtonAutomationPeer(button);
+        ((System.Windows.Automation.Provider.IInvokeProvider)peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.Invoke)).Invoke();
+    }
 
     /// <summary>True when <paramref name="element"/> is drawn in <paramref name="window"/>'s HWND or one of its child HWNDs.</summary>
     internal static bool HostedBy(Visual element, Window window)

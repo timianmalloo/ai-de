@@ -8736,6 +8736,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   applied; `DockHost.Create` wires it to `adapter.Render` (seam `req-01M5ATF6PNMEW0SX2KKZA34D4D`, granted).
 - **Control:** `LayoutCommandsRenderTests` (five tests, the palette over `DockHost.Create`'s own controller, oracles on
   the drawn view, no render by hand after the command) and `ALiveNotebookFloatsAndRedocksTests` (A).
+  The class gate (T21 n9): `LayoutOraclesDriveTheCommandRouteTests` scans every App test and fails when a test issues a
+  layout command off the route and then renders the adapter by hand before reading the drawn layout. It follows
+  same-file helpers and local functions three levels, so a wrapped render is still a render. Red on 11 tests at its
+  first run (the shape of T21 n2's test, in 11 other files); all 11 now take the route; the exception list is empty and
+  may only shrink. Proof: `docs/proof/workbench-loops-wl-s/layout-gate/`.
 - **Derive:** a view-state test drives the command route the user uses and reads the drawn view. A test that renders by
   hand after the command certifies a route no user has: T21 n2's
   `FloatPane_FloatsTheFocusedPane_DrawnInAFloatingWindow_VisibleAndFocusable` called `adapter.Render()` after
@@ -8743,8 +8748,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Residual (Inferred, not tested):** a render after a command reverts a native within-pane tab reorder the model has
   not seen, because that drag raises no signal (the known gap in `WorkbenchAdapter`'s `LayoutRoot.Updated` comment).
   Before this fix the next unrelated render reverted it the same way.
-- **Status:** `controlled` for the controller's routes. Candidate gate, not built: a sibling of
-  `ComposerContentOraclesDriveTheGestureTests` for layout-command tests.
+- **Status:** `controlled` for the controller's routes, and gated for the tests (T21 n9): a sibling of
+  `ComposerContentOraclesDriveTheGestureTests`. Residual: a render hidden in another file's helper, and the oracles
+  `ContentFor` and `ActiveSurfaceId`, are not seen by the gate (named in its summary comment).
 - DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
 
 ### DC-NEW-wl-leader3-b — Tests that fail only under full-suite load, and so are read as flakes and waved through

@@ -348,8 +348,7 @@ public sealed class WorkbenchShellTests
 
             // Make a sibling the active tab, in the model and in the view.
             var sibling = home.Surfaces.First(s => s.Kind != "daydreams");
-            Assert.True(host.Service.Apply(new LayoutOperation.ActivateSurface(sibling.SurfaceId)).Applied);
-            host.Adapter.Render();
+            Assert.True(shell.Controller.Execute($"surface.show.{sibling.Kind}"), $"the sibling kind {sibling.Kind} has no Show entry");
             AvalonDock.Layout.Extensions.Descendents(host.Manager.Layout).OfType<AvalonDock.Layout.LayoutDocument>()
                 .First(d => d.ContentId == sibling.SurfaceId).IsSelected = true;
             var before = ActiveKindOf(host, "daydreams");

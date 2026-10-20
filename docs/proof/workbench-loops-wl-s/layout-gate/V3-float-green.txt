@@ -1,0 +1,19 @@
+
+Test run for C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.FloatReadBackRestartTests.FloatingWindows_AreReadBackFromTheView_AndALayoutSavedWhileTheyFloat_RestoresThemFloatingAndVisible [2 s]
+  Passed AiDe.App.Tests.Perspectives.FloatGuardTests.TheRestoreGuardsCopy_DOCK3_AppearsNowhereInSrcOrDesignMd [79 ms]
+  Passed AiDe.App.Tests.Perspectives.FloatGuardTests.APaneSavedFloating_RestoresThroughLayoutPersistence_Floating_DrawnVisibleAndNeverDocked [683 ms]
+  Passed AiDe.App.Tests.Perspectives.FloatBoundsPersistTests.AFloatingWindowSavedOffEveryDisplay_RestoresAtTheDefaultPlacement_AndTheReportSaysSo [681 ms]
+  Passed AiDe.App.Tests.Perspectives.FloatBoundsPersistTests.AFloatingWindowMovedAndResized_IsSaved_AndAfterARestartOpensAtTheSameRectangle [1 s]
+[xUnit.net 00:00:07.12]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Shell.FloatRenderTests.AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent [1 s]
+
+Test Run Successful.
+Total tests: 6
+     Passed: 6
+ Total time: 7.4222 Seconds

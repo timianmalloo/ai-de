@@ -1,0 +1,116 @@
+
+Test run for C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.18]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.78]     AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen [FAIL]
+[xUnit.net 00:00:00.78]       Assert.NotNull() Failure: Value is null
+[xUnit.net 00:00:00.78]       Stack Trace:
+[xUnit.net 00:00:00.78]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.78]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.78]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Workbench\CenterEmptyCopyTests.cs(55,0): at AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen()
+[xUnit.net 00:00:00.78]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.78]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen [565 ms]
+  Error Message:
+   Assert.NotNull() Failure: Value is null
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileANotebookIsMovedToTheLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Workbench\CenterEmptyCopyTests.cs:line 55
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument [676 ms]
+[xUnit.net 00:00:01.53]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing [FAIL]
+[xUnit.net 00:00:01.53]       Assert.True() Failure
+[xUnit.net 00:00:01.53]       Expected: True
+[xUnit.net 00:00:01.53]       Actual:   False
+[xUnit.net 00:00:01.53]       Stack Trace:
+[xUnit.net 00:00:01.53]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:01.53]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:01.53]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sessions\SessionDocumentPlacementTests.cs(182,0): at AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing()
+[xUnit.net 00:00:01.53]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.53]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.55]     AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused [FAIL]
+[xUnit.net 00:00:01.55]       System.InvalidOperationException : the STA body threw
+[xUnit.net 00:00:01.55]       ---- System.InvalidOperationException : Sequence contains no matching element
+[xUnit.net 00:00:01.55]       Stack Trace:
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(212,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(48,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.WithRealizedWorkbench[T](Func`2 body)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(269,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused()
+[xUnit.net 00:00:01.55]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.55]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.55]         ----- Inner Stack Trace -----
+[xUnit.net 00:00:01.55]            at System.Linq.ThrowHelper.ThrowNoMatchException()
+[xUnit.net 00:00:01.55]            at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source, Func`2 predicate)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(606,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<DragDocumentIntoPane>g__Document|19_0(String id, <>c__DisplayClass19_0&)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(609,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.DragDocumentIntoPane(Harness h, String surfaceId, String ontoSurfaceId)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(293,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<>c.<ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused>b__9_0(Harness h)
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs(69,0): at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<>c__DisplayClass1_0`1.<WithRealizedWorkbench>b__0()
+[xUnit.net 00:00:01.55]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(46,0): at AiDe.App.Tests.Sta.<>c__DisplayClass1_0`1.<Run>b__0()
+[xUnit.net 00:00:01.79]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [FAIL]
+[xUnit.net 00:00:01.79]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:01.79]                  ↓ (pos 0)
+[xUnit.net 00:00:01.79]       Expected: "notebook:20261020T122650Z-31bffc29"
+[xUnit.net 00:00:01.79]       Actual:   "console:20261020T122650Z-31bffc29"
+[xUnit.net 00:00:01.79]                  ↑ (pos 0)
+[xUnit.net 00:00:01.79]       Stack Trace:
+[xUnit.net 00:00:01.79]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:01.79]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:01.79]         C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sessions\ConsoleSplitPlacementTests.cs(48,0): at AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument()
+[xUnit.net 00:00:01.79]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.79]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.79]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing [76 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sessions\SessionDocumentPlacementTests.cs:line 182
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused [20 ms]
+  Error Message:
+   System.InvalidOperationException : the STA body threw
+---- System.InvalidOperationException : Sequence contains no matching element
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 212
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.WithRealizedWorkbench[T](Func`2 body) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 48
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 269
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+----- Inner Stack Trace -----
+   at System.Linq.ThrowHelper.ThrowNoMatchException()
+   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source, Func`2 predicate)
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<DragDocumentIntoPane>g__Document|19_0(String id, <>c__DisplayClass19_0&) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 606
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.DragDocumentIntoPane(Harness h, String surfaceId, String ontoSurfaceId) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 609
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<>c.<ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused>b__9_0(Harness h) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 293
+   at AiDe.App.Tests.WorkbenchDragCompletedHookTests.<>c__DisplayClass1_0`1.<WithRealizedWorkbench>b__0() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\WorkbenchDragCompletedHookTests.cs:line 69
+   at AiDe.App.Tests.Sta.<>c__DisplayClass1_0`1.<Run>b__0() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 46
+  Passed AiDe.App.Tests.WorkbenchShellTests.AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime [91 ms]
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [140 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "notebook:20261020T122650Z-31bffc29"
+Actual:   "console:20261020T122650Z-31bffc29"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument() in C:\Projects\ai-de-wl-layout-gate\tests\AiDe.App.Tests\Sessions\ConsoleSplitPlacementTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Test Run Failed.
+Total tests: 6
+     Passed: 2
+     Failed: 4
+ Total time: 2.1762 Seconds
