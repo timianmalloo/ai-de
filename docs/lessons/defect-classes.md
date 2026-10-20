@@ -8875,11 +8875,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Derive:** a command a brief tells a node to run is run once by its author before the brief ships. A claim is
   checked at the join against the paths the branch changes, not trusted to the node.
 - **Prevent:** (1) brief-common.md rule 5 now reads `coord claim --wi workbench-loops --path <file>` (2026-10-20).
-  (2) Owed, T38 `wl-claim-check`: `leader_prejoin.py` refuses a join when a path the branch changes has no
-  `coord claim` from that node's session, with a red on a planted branch (Owner ruling, 2026-10-20).
+  (2) Landed, T38 `wl-claim-check` (2026-10-20): `leader_prejoin.py <root> --branch <b> --session <s>` refuses
+  (exit 1) when a path the branch changes has no `claim` event from that session, naming each path. Exempt: only what
+  coord itself refuses to claim (`.agents/**`, and the `register` and `derived` classes from coord-core's `classify`).
+  A missing, unreadable or empty-diff case refuses, never passes. Red on a planted branch:
+  `tools/test-leader-prejoin-claims.py` (`docs/proof/workbench-loops-support/claim-check/C1-red.txt`, `C1-green.txt`).
+  Run on two joined branches it refused both (`C2-real.txt`).
 - **Residual:** a claim record shows that a claim exists, not that it came before the edit; the edit's time is not
-  recorded anywhere the check can read.
-- **Status:** `partially-controlled` (rule 5 corrected) until T38's check lands.
+  recorded anywhere the check can read. The check also ignores a claim's TTL and release.
+- **Status:** `controlled` (rule 5 corrected; T38's join check landed with C1 red-green and C2 on real branches).
 
 ### DC-NEW-wl-t33-input-state — a UI test whose result depends on global input state it never checks
 - **Class:** a UI test drives a control by keyboard and asserts the result, but the control's behaviour also reads

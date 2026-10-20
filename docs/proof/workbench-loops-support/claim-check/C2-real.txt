@@ -1,0 +1,36 @@
+# C2: read-only runs against the primary checkout (root C:/Projects/ai-de); --base = fork point before the join merge
+$ leader_prejoin.py C:/Projects/ai-de --branch wl-flake-remeasure --session wl-t36-flake-remeasure --base 44d2689b
+leader-prejoin: clean (only coordination ledgers are uncommitted)
+leader-prejoin: claim check session wl-t36-flake-remeasure branch wl-flake-remeasure: checked 12, exempt 1 (register 1), unclaimed 9
+leader-prejoin: REFUSED - UNCLAIMED paths (no coord claim from this session covers them):
+  docs/proof/workbench-loops-support/flake-remeasure/alone.sh
+  docs/proof/workbench-loops-support/flake-remeasure/alone.txt
+  docs/proof/workbench-loops-support/flake-remeasure/build.txt
+  docs/proof/workbench-loops-support/flake-remeasure/mouse.txt
+  docs/proof/workbench-loops-support/flake-remeasure/ratchet.txt
+  docs/proof/workbench-loops-support/flake-remeasure/rates.md
+  docs/proof/workbench-loops-support/flake-remeasure/rates.py
+  docs/proof/workbench-loops-support/flake-remeasure/run-one.sh
+  docs/proof/workbench-loops-support/flake-remeasure/runs.txt
+exit=1
+
+$ leader_prejoin.py C:/Projects/ai-de --branch wl-chk6-gap-pin --session wl-t35-chk6-gap-pin --base b5ff1fdf
+leader-prejoin: clean (only coordination ledgers are uncommitted)
+leader-prejoin: claim check session wl-t35-chk6-gap-pin branch wl-chk6-gap-pin: checked 12, exempt 2 (derived 1, register 1), unclaimed 10
+leader-prejoin: REFUSED - UNCLAIMED paths (no coord claim from this session covers them):
+  DESIGN.md
+  docs/lessons/defect-classes.md
+  docs/proof/workbench-loops-support/chk6-gap-pin/G2-green.txt
+  docs/proof/workbench-loops-support/chk6-gap-pin/G2-red-missing.txt
+  docs/proof/workbench-loops-support/chk6-gap-pin/G2-red-mutation.txt
+  docs/proof/workbench-loops-support/chk6-gap-pin/README.md
+  docs/proof/workbench-loops-support/chk6-gap-pin/ratchet.txt
+  docs/proof/workbench-loops-support/chk6-gap-pin/suite-app.txt
+  docs/proof/workbench-loops-support/chk6-gap-pin/suite-green.txt
+  tests/AiDe.Core.Tests/Workbench/Folds/AcceptanceGapSentencesMatchDesignTests.cs
+exit=1
+
+$ without --base (joined branch: merge-base is its head)
+leader-prejoin: clean (only coordination ledgers are uncommitted)
+leader-prejoin: REFUSED - claim check not recorded: wl-chk6-gap-pin changes no path against 866ae48638b7 (already merged into main? pass --base <fork point>)
+exit=1

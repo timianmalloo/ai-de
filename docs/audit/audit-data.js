@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T20:46:55Z",
+  "generated": "2026-10-20T21:17:37Z",
   "audit": [
     {
       "actor": null,
@@ -27999,6 +27999,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T20:24:13Z",
       "duration_seconds": 1361.0
+    },
+    {
+      "id": "al-01M5DJTK4EM19155ZBSJGD1Q1D",
+      "shortname": "wl-t38-claim-check",
+      "datetime": "2026-10-20T21:17:37Z",
+      "session": "wl-t38-claim-check",
+      "prompt": "T38: the join refuses a branch whose changed paths have no coord claim from the node's session",
+      "summary": "leader_prejoin.py --branch/--session/--base claim check, coord classifier import, test red/green, C2 on two real branches (both refused), kickoff clause, DC controlled",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        ".agents/briefs/workbench-loops/leader_prejoin.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "claim check in leader_prejoin",
+      "done_when": "C1 red-green, C2 recorded, C3-C5 landed",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T20:53:32Z",
+      "duration_seconds": 1445.0
     }
   ],
   "changes": [

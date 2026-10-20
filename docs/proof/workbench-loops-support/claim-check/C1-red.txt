@@ -1,0 +1,25 @@
+FAIL two of three claimed -> exit 1: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL names the unclaimed path: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL all claimed, .agents exempt -> exit 0: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL reports session, branch, counts and the exempt class: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL directory leases cover files -> exit 0: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL --except carve-out is unclaimed -> exit 1: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL missing log -> exit 1 with reason: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+FAIL unreadable log -> exit 1: unexpected
+usage: python -I leader_prejoin.py <repo root>   exit: 0 clean, 1 refused, 2 usage
+
+test-leader-prejoin-claims: FAILED (8 failures)
