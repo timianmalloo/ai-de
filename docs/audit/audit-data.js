@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T23:30:56Z",
+  "generated": "2026-10-20T23:46:16Z",
   "audit": [
     {
       "actor": null,
@@ -28206,6 +28206,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T23:30:54Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5DVARPMBYASF056ER3ZH7Y2",
+      "shortname": "join-wl-slash-claim-step8",
+      "datetime": "2026-10-20T23:46:16Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T39 wl-slash-claim (docs-only) through conductor-join, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-slash-claim (T39, docs-only; merge 5758812a, join commit a94da540): run-verify-gates stopped on the pre-existing 4 of 49. Ratchet against the parent bf80a59a: PASS, 0 refusals over 50 gates. Its diff shows one more line in the already-red verify-ruling-citations (PD-1): Ruling 151 now cited in 6 files, partly by the Leader's PD-6/PD-7 text. Release build: 0 errors. Pre-join check (main's leader_prejoin): 14 checked, 3 exempt, 0 unclaimed, no excuse. The join waited for T40's App runs to end (Owner agreed) so its load did not confound T40's data. Overrun: 29 calls / 102,891 tokens against 20 / 40k (2.6x), ledgered under DC-NEW-wl-leader2-b; node-actuals.md row present.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/slash-claim/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T39's two claim refusals on main with the step-8 record",
+      "done_when": "ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T23:15:06Z",
+      "duration_seconds": 1870.0
     }
   ],
   "changes": [
