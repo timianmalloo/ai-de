@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T09:45:12Z",
+  "generated": "2026-10-20T09:58:34Z",
   "audit": [
     {
       "actor": null,
@@ -27513,6 +27513,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T09:45:10Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CBZ6FWDMWVX2AH2SA5VAWK",
+      "shortname": "join-wl-fold-diag-step8",
+      "datetime": "2026-10-20T09:58:34Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T33 join 4ff04440",
+      "summary": "Docs-only join (--docs-only, no App run): T33 changes only docs/proof/workbench-loops-support/fold-diag/** and the audit log (git diff --name-only aa76bd6d c1b96767). Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs aa76bd6d, head 4ff04440: PASS 0/50. T33 observed (read-only, no cause claimed): the real fold test fails alone 3/3 on aa76bd6d AND 3/3 on d986e4a4 today on this machine, so the T30 recount's pass at d986e4a4 is not reproduced (by the Owner's D2 rule: the cause is outside the repo). The scratch capture compiled unchanged at d986e4a4; captures are identical across the shas once object hashes, handles and clock text are normalised: Tab reaches the fold (3 stops); before Space the fold ToggleButton has keyboard focus, Expander Collapsed, mouse uncaptured and released; Space KeyDown is Handled=True already at the fold (and up the route), IsPressed true then false, no click follows; after Space IsExpanded, IsChecked and row.IsFoldOpen stay false and the fold holds mouse capture with the left button reported Pressed. Intermittent null keyboard focus on both shas. Not captured: the handler that set Handled (no PreviewKeyDown record), a real SendInput path, shas between d986e4a4 and 5d66bd0f, the WebView2 runtime version at run time, another machine. Three assume: lines in the README.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/fold-diag/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T33 wl-fold-diag onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T09:26:43Z",
+      "duration_seconds": 1911.0
     }
   ],
   "changes": [
