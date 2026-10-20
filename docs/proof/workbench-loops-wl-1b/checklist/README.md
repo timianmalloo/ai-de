@@ -10,9 +10,11 @@ links:
   - { to: architecture, rel: implements }
 review-by: "2026-11-18"
 summary: >-
-  Red and green evidence for T26 node 1: the checklist kind opens from View in Factory and Understand (D1), links a run,
+  Red and green evidence for T26: the checklist kind opens from View in Factory and Understand (D1), links a run,
   refuses and reads out acceptance while the intent is unaccepted, and accepts the deliverable naming the intent
-  revision only (D2, with R1 and the Owner's null-sha condition). D3 is node 2.
+  revision only (D2, with R1 and the Owner's null-sha condition). Node 2: the three literal entries, the service
+  refusing a journey that is not the notebook's, saved review state surviving a restart without acceptance (D3, with
+  the own-journey restore), and the one-live-sha ceiling pinned (E).
 ---
 
 # T26 checklist kind — node 1
@@ -57,4 +59,55 @@ gone, so the notebook has no envelope store and the call carries no live sha.
 - The Owner's confirmation of the checklist copy (design `:592`) is not recorded anywhere this node could find.
   The DESIGN.md rows CHK1–CHK12 follow the design's copy.
 - One live sha per evaluation (a `simplify:` in `ChecklistSurface.EvaluateAsync`): the newest head-revision run's own
-  envelope. The ceiling is one linked run per obligation at the head revision.
+  envelope. Node 2 restated the ceiling and pinned it (E, below).
+
+# T26 checklist kind — node 2
+
+| Check | Red | Green |
+|---|---|---|
+| (0) three literal entries (seam `req-01M5BAKZ9BAA28CF4R07PTRKGV`) | `suite-node1.txt` — the three node-1 reds | `literals-green.txt` — 3 of 3 (`b306c7f9`) |
+| Owner's refusing test | `refuse-red-mutation.txt` — **mutation** M4 in `ChecklistService.RequireWorkJourney` (`160bb519`) | `refuse-green.txt` — 1 of 1 (`2568c964`) |
+| D3 saved review state is not acceptance | `d3-red-restorable-mutation.txt` — **mutation** M7: `checklist` left out of `RestorableKinds` (`559eb22d`) | `d3-green.txt` — every checklist test, 10 of 10 (`32831438`) |
+| D3 own journey (Leader's condition, seam `req-01M5B8W7NJRW7A1X4G21J2QKPT`) | `d3-red-own-journey-mutation.txt` — **mutation** M5: `SessionDocumentFor` falls back to the focused notebook | same |
+| (E) one-live-sha ceiling | `e-red-oldest-sha-mutation.txt` — **mutation** M8: the oldest head-revision run's sha (`ad6d2c8b`) | `e-green.txt` — 1 of 1 (`d5838812`) |
+
+Every red is a mutation red; each mutation was reverted before its commit, and no node-2 commit changes product
+behaviour. The node-2 tests:
+
+- `TheServiceRefusesAJourneyThatIsNotTheNotebooksTests.EveryChecklistCall_WithAnotherNotebooksJourney_IsRefused_AndNothingIsWritten`.
+  Over the real client and daemon, all five checklist operations (evaluate, set, both disposition kinds, link, accept)
+  are called with notebook A and notebook B's journey. Each is refused with `AIDE-WORK-NOT-A-WORK-JOURNEY`, and neither
+  checklist moves. M4 removes the `owner_journey_id` clause, so the service passes the wrong journey. It touched
+  `src/AiDe.Core` (read only for T26) only as an uncommitted, reverted mutation.
+- `SavedReviewStateIsNotAcceptanceTests.DeferredAndNeedsDecision_SurviveARestart_WithNoAcceptedRow_AndTheSameGapLine`.
+  `deferred` and `needs-decision` are recorded through the row buttons, and the Factory slot is saved by the shell's
+  own `LayoutPersistence.SaveNow`. A new `WorkbenchShell` over the same data directory then restores it in its
+  constructor. Before the revive, the restored checklist names its own journey (`NotOpen`).
+  `ReviveRestoredSessionDocuments` then reopens the notebook. The rows and the gap line equal the saved ones, and the
+  store holds no `work` disposition row.
+- `SavedReviewStateIsNotAcceptanceTests.RestoredWithAnotherNotebookFocused_TheChecklistNamesItsOwnJourney_AndBindsNothingElse`.
+  The checklist's own notebook is closed, and another notebook is open and focused at the restart. The pane reads
+  `NotOpen(<its journey>)`, with no rows and no closing actions. It reopens, focus goes back to the other notebook,
+  and the checklist still shows its own journey's deferred row. The other journey's checklist stays empty.
+- `TheOneLiveShaCeilingTests.TwoLinkedRunsAtTheHeadRevision_ReadSatisfiedByTheNewest_AndAnOlderRunAloneReadsStale`.
+  It covers two completed runs at revision 1 with different projections (task class `implement`, then `investigate`).
+
+**Not a red, recorded (M6, `d3-not-red-invalidate-mutation.txt`):** D3 stays green with the checklist `Invalidate` in
+`RegisterSessionDocument` removed. The restored pane rebinds on its visibility edge when the host re-renders, so that
+invalidate is not D3's control. Not cited as one. `d3-green-first-run.txt` is the first run of the D3 tests, before the
+pre-revive `NotOpen` step was added. It was green with no mutation, which is why D3's reds are mutation reds.
+
+**The one-live-sha ceiling, as pinned (E).** The surface sends one live projection sha per evaluation: the newest
+head-revision run's own envelope. It holds while every head-revision run shares one projection. Past that ceiling,
+take two runs of one revision with different projections. A link to the OLDER run alone reads **Stale**, although
+that run ran from the current draft. An obligation that also links the newest run reads Satisfied by it, which is
+correct. The test asserts both readings, so it fails if the ceiling moves either way. The Core request was not
+widened (brief). Upgrade trigger: a user links an older head-revision run after a re-prepare that changed the
+projection. The request then takes a sha per dispatch key, which is a Core seam.
+
+## Residuals after node 2
+
+- **The checklist copy (DESIGN.md CHK1–CHK12) still awaits the Owner's confirmation** (design `:592`, the UX &
+  Accessibility condition). No ruling or mail recording it was found.
+- Rule 5: the node-2 test files under `tests/AiDe.App.Tests/Workbench/Checklist/` (an owned new path) were edited
+  without a per-edit claim. The source, test-table, README and hand-off edits were claimed.
