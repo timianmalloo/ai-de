@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T22:07:48Z",
+  "generated": "2026-10-20T22:20:36Z",
   "audit": [
     {
       "actor": null,
@@ -28153,6 +28153,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T21:35:51Z",
       "duration_seconds": 1917.0
+    },
+    {
+      "id": "al-01M5DPDXM1EAEYEQJS0NT0TFS2",
+      "shortname": "wl-t39-slash-claim",
+      "datetime": "2026-10-20T22:20:36Z",
+      "session": "wl-t39-slash-claim",
+      "prompt": "T39: the join refuses a trailing-slash claim and a claimed-after-refusal path",
+      "summary": "leader_prejoin.py refuses slash claims and claimed-after-refusal; refusals ARE recorded in decisions (108), residual: CLI stale-controls/register/derived/TTL refusals unrecorded",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/slash-claim/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "two more refusals in the join claim check",
+      "done_when": "red-green fixture, L2-L5 done",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T22:08:18Z",
+      "duration_seconds": 738.0
     }
   ],
   "changes": [
