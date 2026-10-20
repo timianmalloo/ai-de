@@ -1,0 +1,75 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\src\AiDe.App\AiDe.App.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\src\AiDe.Daemon\AiDe.Daemon.csproj (in 448 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\src\AiDe.Core\AiDe.Core.csproj (in 448 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\src\AiDe.Mcp\AiDe.Mcp.csproj (in 448 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 448 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 478 ms).
+  Restored C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 495 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl-copy-pin\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-copy-pin\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-copy-pin\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-copy-pin\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList [FAIL]
+[xUnit.net 00:00:00.27]     AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryDesignIdRow_IsPinnedOrNamedOnTheShrinkOnlyList [FAIL]
+  Failed AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList [23 ms]
+  Error Message:
+   ChecklistCopy.AcceptedEarlier: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Acknowledge: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.AddObligation: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Defer: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.LinkLatestRun: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Loading: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.Mandatory: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.MarkNeedsDecision: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.NewObligationName: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+ChecklistCopy.NotConnected: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+DaemonNotebookRevisions.OpenRefusedCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+SolutionTreeProjection.NotRecordedCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+SolutionTreeProjection.PythonTsCopy: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.DecorationLine: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.DurationText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.EditsText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.EventsText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.Name: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.OutcomeWord: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.QueuedSentence: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SessionSpend: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SpendText: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+TurnCopy.SpokenDuration: a copy constant or builder no DESIGN.md id row pins, and not on UnmatchedMembers
+  Stack Trace:
+     at AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryCopyConstant_IsPinnedOrNamedOnTheShrinkOnlyList() in C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.Tests\DesignCopyRowsArePinnedTests.cs:line 196
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryDesignIdRow_IsPinnedOrNamedOnTheShrinkOnlyList [3 ms]
+  Error Message:
+   SC7: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+SC8: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+SC9: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+NB1: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+RUN1: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+RUN3: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+RUN4: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+CHECK1: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+AUTH1: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+DEMO1: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows
+  Stack Trace:
+     at AiDe.App.Tests.DesignCopyRowsArePinnedTests.EveryDesignIdRow_IsPinnedOrNamedOnTheShrinkOnlyList() in C:\Projects\ai-de-wl-copy-pin\tests\AiDe.App.Tests\DesignCopyRowsArePinnedTests.cs:line 180
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:     1, Skipped:     0, Total:     3, Duration: 39 ms - AiDe.App.Tests.dll (net10.0)
