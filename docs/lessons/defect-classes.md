@@ -8882,6 +8882,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `coord claim` refuses without `--wi` (exit 2, "--wi and --path are required"; `coord-core.py:5475`); it does not
   read `AGENT_WI`, which rule 1 sets. A node that follows rule 5 literally gets a refusal, so T36's failures were the
   brief's. Every brief assembled from brief-common.md since rule 5 was written carries the same command.
+  The derive rule paid off on its first use (2026-10-20): the Leader ran rule 5's amended directory-lease command
+  before shipping it and found that a trailing-slash claim is granted and covers nothing (pack defect PD-6 in
+  `docs/proof/workbench-loops-support/hygiene/pack-defects.md`; T39 owes the join-side refusal).
 - **Derive:** a command a brief tells a node to run is run once by its author before the brief ships. A claim is
   checked at the join against the paths the branch changes, not trusted to the node.
 - **Prevent:** (1) brief-common.md rule 5 now reads `coord claim --wi workbench-loops --path <file>` (2026-10-20).

@@ -98,3 +98,23 @@ Filed by the Leader `wl-leader2-20261019` on 2026-10-19.
 - **Code (origin/main, docs/ai-forward-pack/scripts/coord-mail.py):** HELD_CAP = 100 at :72 carries `simplify: no archive verb until an inbox exceeds it`; that trigger has fired. The advisory is read-only (:412-415, stderr). The bounce is separate and counts UNACKED messages: send raises MAIL-FULL when queued() >= QUEUE_CAP (:312-313; QUEUE_CAP = 50 at :71; queued() at :210-214). So a large but fully acked inbox cannot bounce mail.
 - **Impact:** advisory noise only; no lost mail. The real cap (50 unacked) did bounce a done mail once (DC-NEW-wl-leader2 13th instance).
 - **Not fixed locally** (pack script). Upgrade: an archive verb that moves acked pairs to a dated archive file, or a lines advisory that counts only unacked.
+
+## PD-6 — `coord claim` accepts a trailing-slash path and grants a lease that covers nothing
+
+Filed by the Leader `wl-leader5-20261020` on 2026-10-20, on the Owner's ruling (the Owner named it PD-3; PD-3 to
+PD-5 were already taken in this file, so it is PD-6).
+
+- **Gate:** `coord claim` (`docs/ai-forward-pack/scripts/coord-core.py`; `_norm` at :186, `lease_covers` at :227).
+- **Finding (measured 2026-10-20 with coord's own `lease_covers`):** `coord claim --wi workbench-loops --path
+  docs/proof/workbench-loops-support/focus-none/` is granted, and the record keeps the trailing slash. That lease
+  covers neither `.../focus-none/README.md` nor `.../focus-none/runs/a.txt`. The same claim without the slash covers
+  both, and not `.../focus-none-other/x.txt`. A node that believes it holds the directory holds nothing that the
+  conflict check or the join's claim check can see.
+- **Why it is the pack's:** `_norm` swaps backslashes and collapses `**` only, so the slash survives into the record,
+  and `overlaps` compares the raw path by segment.
+- **Proposed fix:** `_norm` strips a trailing `/`, or `coord claim` refuses a path that ends in `/`. Add a self-test
+  case: a directory claim with a trailing slash covers a file inside it (or is refused).
+- **Interim (this repository):** brief-common.md rule 5 names the no-slash form and warns about the other
+  (4da62f20). Owed, T39: `leader_prejoin.py` refuses a join when the node's session holds a claim whose path ends
+  in `/`, naming the false grant and the no-slash form.
+- **Not fixed locally** (pack script; Ruling 151). Goes to the user as an upstream pack fix, beside PD-1 and PD-2.
