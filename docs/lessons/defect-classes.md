@@ -8903,6 +8903,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   waited until 17:29Z; the Owner's 14:25Z check went unanswered. The Owner diagnosed the cause at 14:40Z (Inferred then)
   and confirmed it later. A second fault hid the lapse: the Leader's watch treated any renew output naming the seat as
   success, and the refusal ("a lapsed designation is not renewed") names the seat.
+  A third fault lapsed the pin again (epoch 6, about 20:35Z; the Owner flagged it at about 20:45Z): the renew loop
+  ran inside a harness `Monitor`, which is killed at 30 min. It expired at about 20:31Z while a 600 s foreground
+  ratchet command held the Leader's turn, and nothing renewed until about 20:40Z, past the 300 s TTL. The renew
+  cadence itself was 100 s, under TTL/3 (`leader-watch.py`); the Owner's reading of a ~10-min cadence came from the
+  log's gap, which is the Monitor's dead time. Reclaimed at epoch 7.
 - **Sweep:** the Leader kickoff and brief-common.md named no rule against a direct user prompt; the Owner's channel
   rule ("I relay to the user") existed only in the Owner's messages. Nodes are sub-agents, so a node's prompt would
   block the Leader's background task instead.
@@ -8916,7 +8921,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   transcript was rejected. It runs only after the block, and the Leader's transcript id changes across a continuation
   (measured 2026-10-20: the scratchpad and subagents folder are `32e229b8-…`, the transcript is `fca5f2f8-….jsonl`), so
   no fixed path finds it.
-- **Status:** `partially-controlled` (prose + the watch's renew check). A gate is owed only if the user applies the
+  (4) The renew no longer lives in a capped watch: `leader-renew.py` (Leader's scratchpad) runs alone in an uncapped
+  background shell, renews every 90 s (TTL/3.3), and exits printing `RENEW-FAIL` on a lapse; the Monitor carries only
+  mail and board events.
+- **Status:** `partially-controlled` (prose + the watch's renew check + the uncapped renew loop). A gate is owed only if the user applies the
   PreToolUse deny; recorded for the user with the budget-hook decision.
 
 ### DC-NEW-wl-leader5 — a seat identity written as a literal where it must be resolved at send time

@@ -4,3 +4,4 @@
 {"agent": "wl-t36-flake-remeasure", "at": 1792527773.4809995, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 4, "session": "wl-t36-flake-remeasure", "wi": "WI-0"}
 {"agent": "wl-t36-flake-remeasure", "at": 1792527773.616346, "kind": "release", "path": "docs/proof/workbench-loops-support/flake-remeasure/README.md", "seq": 5, "session": "wl-t36-flake-remeasure", "wi": "WI-0"}
 {"at": 1792527773.7814322, "from": "wl-t36-flake-remeasure", "kind": "done", "mail_id": "mail-01M5DFPC2N5BH066T96M1P9FTT", "ref": null, "session": "wl-t36-flake-remeasure", "to": "wl-leader5-20261020", "type": "mail"}
+{"agent": "wl-t36-flake-remeasure", "at": 1792529224.2618015, "kind": "session-end", "path": "-", "seq": 7, "session": "wl-t36-flake-remeasure", "wi": "WI-0", "worktree": "ai-de"}
