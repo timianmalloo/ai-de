@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T22:07:48Z",
+  "generated": "2026-10-20T23:30:19Z",
   "audit": [
     {
       "actor": null,
@@ -28153,6 +28153,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T21:35:51Z",
       "duration_seconds": 1917.0
+    },
+    {
+      "id": "al-01M5DTDJK2F5SXXWQK0K9D600E",
+      "shortname": "wl-t40-focus-none",
+      "datetime": "2026-10-20T23:30:19Z",
+      "session": "wl-t40-focus-none",
+      "prompt": "T40 wl-focus-none: measure foreground and keyboard focus holder in focus (none) failures, N=10 App runs",
+      "summary": "10 runs, 1 event (class c), chrome.exe held the foreground in 7722/7722 samples; NOT a cause",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-none/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "measure what holds the foreground when focus is (none)",
+      "done_when": "F0-F7 written on N=10",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T22:10:03Z",
+      "duration_seconds": 4816.0
     }
   ],
   "changes": [
