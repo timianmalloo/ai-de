@@ -1,0 +1,6 @@
+{"agent": "wl-leader5-20261020", "at": 1792534084.6047528, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t39-slash-claim", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-slash-claim"}
+{"agent": "wl-t39-slash-claim", "at": 1792534098.6549523, "kind": "claim", "path": "docs/proof/workbench-loops-support/slash-claim", "seq": 2, "session": "wl-t39-slash-claim", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t39-slash-claim", "at": 1792534104.2416604, "kind": "claim", "path": "tools/test-leader-prejoin-claims.py", "seq": 3, "session": "wl-t39-slash-claim", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t39-slash-claim", "at": 1792534104.722458, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 4, "session": "wl-t39-slash-claim", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t39-slash-claim", "at": 1792534104.9086156, "kind": "claim", "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md", "seq": 5, "session": "wl-t39-slash-claim", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t39-slash-claim", "at": 1792534179.3773742, "kind": "claim", "path": "docs/proof/workbench-loops-support/slash-claim", "seq": 6, "session": "wl-t39-slash-claim", "ttl": 300.0, "wi": "workbench-loops"}

@@ -1,0 +1,6 @@
+{"agent": "wl-t39-slash-claim", "at": 1792534157.9838035, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/claims-red.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534158.0358417, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/count_kinds.py", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534158.0881612, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/refused_shape.py", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534158.141366, "code": null, "kind": "allowed", "path": "tools/test-leader-prejoin-claims.py", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534179.1611426, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/leader_prejoin.py", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534179.2111142, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/claims-green.txt", "session": "wl-t39-slash-claim", "wi": ""}
