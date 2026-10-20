@@ -16,7 +16,8 @@ SESSION = "wl-test-node"
 
 
 def git(repo, *args):
-    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True)
+    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True,
+                   encoding="utf-8", errors="replace")
 
 
 def build(repo):
@@ -46,7 +47,7 @@ def write_log(repo, claims, extra=()):
 
 def run(repo, session=SESSION):
     r = subprocess.run([sys.executable, "-I", str(TOOL), str(repo), "--branch", "node", "--session", session],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
     return r.returncode, r.stdout + r.stderr
 
 
