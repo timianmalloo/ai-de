@@ -72,6 +72,10 @@ internal static class Wl1bPerf
         failures.AddRange(AppendOverhead(directory, "100x-depth", Depth));
 
         Console.WriteLine();
+        Console.WriteLine($"C1c  checklist.evaluate in process, p95 <= {EvaluateBudgetMs} ms at 100x depth (INFERRED budget)");
+        failures.AddRange(EvaluateGate([oneX, breadth, depth]));
+
+        Console.WriteLine();
         Console.WriteLine(new string('=', 110));
         if (failures.Count == 0)
         {
@@ -455,6 +459,38 @@ internal static class Wl1bPerf
             writer.Commit();
         });
         return committed;
+    }
+
+    // ---------------------------------------------------------------- C1c: checklist.evaluate at 100x depth
+
+    // INFERRED as a fit (design R3): the nearest stated budget is NFR-02's selection/focus budget (workbench-loops-ux.md:389).
+    // A miss is the design's upgrade trigger for the `simplify:` marker (design :163-164): report it; the cache is not built here.
+    private const double EvaluateBudgetMs = 100;
+
+    private const int EvaluateSamples = 100;
+
+    /// <summary>In-process <see cref="ChecklistService.Evaluate"/> p95, gated at 100x depth; 1x and 100x breadth are reported, not gated.</summary>
+    private static List<string> EvaluateGate(IReadOnlyList<Population> populations)
+    {
+        var failures = new List<string>();
+        foreach (var population in populations)
+        {
+            using var store = WorkspaceStore.Open(population.DatabasePath);
+            var service = new ChecklistService(store);
+            var request = new ChecklistEvaluateRequest(population.JourneyId, population.NotebookId, LiveSha);
+            var probe = service.Evaluate(request);
+            var (warm, cold) = Measure.Run($"checklist.evaluate @ {population.Name}", EvaluateSamples, () => service.Evaluate(request));
+            var gated = population.Name == "100x depth";
+            Console.WriteLine("  " + warm.Format(gated ? EvaluateBudgetMs : null));
+            Console.WriteLine(string.Create(CultureInfo.InvariantCulture,
+                $"      cold {cold,9:F2}ms · eligible={probe.Evaluation.Eligible} · gaps={probe.Evaluation.Gaps.Count} · closure={probe.Closure.State}"));
+            if (gated && !warm.Meets(EvaluateBudgetMs))
+            {
+                failures.Add($"C1c checklist.evaluate p95 {warm.P95:F2}ms > {EvaluateBudgetMs}ms at 100x depth");
+            }
+        }
+
+        return failures;
     }
 
     private static bool IsDebug()
