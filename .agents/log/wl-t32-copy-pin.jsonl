@@ -1,2 +1,3 @@
 {"agent": "wl-leader4-20261020", "at": 1792463685.4838672, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t32-copy-pin", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-copy-pin"}
 {"at": 1792465078.3058815, "from": "wl-t32-copy-pin", "kind": "done", "mail_id": "mail-01M5BKX21157FCXN9FRQGSGV67", "ref": null, "session": "wl-t32-copy-pin", "to": "wl-leader4-20261020", "type": "mail"}
+{"agent": "wl-t32-copy-pin", "at": 1792467578.072921, "kind": "session-end", "path": "-", "seq": 3, "session": "wl-t32-copy-pin", "wi": "WI-0", "worktree": "ai-de"}

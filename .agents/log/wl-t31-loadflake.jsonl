@@ -1,0 +1,2 @@
+{"agent": "wl-leader5-20261020", "at": 1792473286.828479, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t31-loadflake", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-loadflake"}
+{"at": 1792479686.0498846, "from": "wl-t31-loadflake", "kind": "done", "mail_id": "mail-01M5C1TVD1BYCE4ANZ4WTX5Z85", "ref": null, "session": "wl-t31-loadflake", "to": "wl-leader5-20261020", "type": "mail"}
