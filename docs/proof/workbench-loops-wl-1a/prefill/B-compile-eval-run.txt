@@ -1,0 +1,25 @@
+== python tools/compile-eval/score.py --self-test  (2026-10-19T23:55:21Z, HEAD 77cf5cd4)
+SELF-TEST PASS (green as expected): contract holds; sample 50 / holdout 50; reused_skipped 5; acceptance 25/135
+SELF-TEST PASS (red as expected): report.metrics.acceptance.met: a verdict key — the reader recomputes floors, the report never writes one | split witness: sample and holdout overlap on ['20260913190000Z-00000000']
+SELF-TEST PASS (partial as expected): 7 envelopes → holdout 0, partial, p95 null
+exit 0
+
+== python tools/compile-eval/ring.py --self-test
+SELF-TEST PASS (canonicalisation): matches the C# fixture's constant
+SELF-TEST PASS (baseline): first observation establishes agentic with no transition logged
+SELF-TEST PASS (no-op): unchanged triple, no drift -> no re-score, no log row
+SELF-TEST PASS (re-score, no transition): triple changed, floors still hold -> rescored, mode unchanged
+SELF-TEST PASS (demote on regression): trigger=ring, one compile.mode.changed row, state demoted_at set
+SELF-TEST PASS (no flapping): unchanged triple after a demotion re-scores nothing and logs nothing further
+SELF-TEST PASS (re-admit): trigger=ring, readmitted_at watermark set, state back to agentic
+SELF-TEST PASS (drift trigger): a model_observed mismatch demotes with trigger=drift on an unchanged triple
+exit 0
+
+== The real-corpus run with ADR-0036's floors on the advisory path: NOT RUN
+Reason 1: this tree holds no envelope-events.jsonl (find . -name envelope-events.jsonl: none; no .aide/ folder).
+Reason 2: the machine's compile corpus lives in the workspaces the user opened (the primary checkout and the demo trees), which brief rule 2 forbids this node to touch.
+Reason 3: ~/.aide/proof holds no compile-eval-admission.json (listed: compile-pin-spike.frames.jsonl, compile-pin-spike.json), so Gate 2 has never been scored here.
+Inferred, not counted: fewer than 100 advisory called rows exist, because the advisory default reached File > New Session only at d986e4a4 today.
+Exact command (PowerShell, from a clean tree; --out keeps the report OUT of ~/.aide/proof so a read never admits Gate 2):
+  python tools/compile-eval/score.py ((Get-ChildItem <workspace>\.aide\sessions -Directory | Where-Object { Test-Path (Join-Path $_.FullName "envelope-events.jsonl") }).FullName) --out <tree>\docs\proof\workbench-loops-wl-1a\prefill\compile-eval-admission-read.json
+Then read holdout.n (needs 50), invariants and metrics against ADR-0036:107-126; CompileAdmissionGate recomputes the floors from the same numerators.

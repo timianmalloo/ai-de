@@ -131,6 +131,54 @@ defines the mark as the `?` glyph + the word *suggested* (Ruling 180 (3)). `Comp
 
 **Residual line:** added at the top of this file, in the same words as the WL-1a Proof Pack's (`aa8247ff`).
 
+## Node 4 — the demo script, the cost line, compile-eval (Ruling 180 (4), (6))
+
+**Result:** (0) the demo script is below. (A) the cost line is green, observed red first. (A)'s first-50 recorder is
+**not done**: its seam was granted (`req-01M5B9DJWPJBEBCTP2GFJCZVRR`) after the rule-16 kick, so it was not started.
+(B) ran the eval's self-tests; the real-corpus run is **NOT RUN**, with the reason and the exact command below. No test
+calls a model.
+
+| Item | Red | Green | Tests / output |
+|---|---|---|---|
+| **(0)** demo script | — | `012edb30` | *Human demo script — the prefill*, below, with its gesture table |
+| **(A)** every advisory call's spend reaches the outcome line | `e04fcb02` · `A-cost-line-red.txt` (*b1's outcome line reads "3,406 tokens", not 4,606*: the first call's 1,200 tokens were on no line) | `51d70fa7` · `A-cost-line-green.txt` (4,606 tokens; header *"4,606 tokens this session"*; 14 pass with the spend, kept-line and resend tests) | `EveryAdvisoryCallsSpendReachesTheOutcomeLineTests` (1, App) |
+| **(A)** first 50 advisory calls' cost and latency | not started | — | NOT DONE; design granted, in `handoff.md` |
+| **(B)** compile-eval | — | `B-compile-eval-run.txt`: `score.py --self-test` 3/3 PASS, `ring.py --self-test` 8/8 PASS | real corpus NOT RUN (below) |
+
+**(A), what changed.** `ComposerSendGate` sums every compile call with at least one request since the last send,
+including a call whose envelope a re-prepare abandoned while it ran, and the submission carries that sum to the turn.
+Before, it carried only the last envelope's `called.cost`. Defect class `DC-NEW-wl-t30-prefill-c` (`77cf5cd4`). A call
+whose wire reports no cost still adds nothing; it is not marked *not recorded* on the line (residual).
+
+**(B), the real corpus: NOT RUN.** This tree has no `envelope-events.jsonl`. The machine's corpus is in the workspaces
+the user opened, which are other trees (brief rule 2). `~/.aide/proof` holds no `compile-eval-admission.json`, so Gate 2
+was never scored here. Inferred, not counted: fewer than 100 advisory envelopes exist, since the default reached New
+Session only at `d986e4a4`. The command, with `--out` kept away from `~/.aide/proof` so a read never admits Gate 2, is
+in `B-compile-eval-run.txt`.
+
+### The AI Systems Engineer's conditions (`docs/notes/wl-dr-prefill-goal-done.md` §4), checked
+
+- [x] **C1, re-prepare half.** Keep writes the draft, so a kept line survives the next prepare (node 1 (C),
+      `AKeptSuggestedLineIsKeptTests`).
+- [ ] **C1, restart half.** Not met, by ruling: Ruling 182 (1) moves it to WL-2's draft store. The residual is stated at
+      the top of this file and in demo step 21.
+- [ ] **C2.** Currentness reads `projection_sha` from stored rows. Not T30's: the Leader moved it to T26 check D2
+      (`req-01M5AEKWQQYP4YK499Y5DN6GPD`, 16:20Z).
+- [x] **C3.** The settings row shows the real mode, the gate's reason and help that matches the mode (node 1 (B), node 2
+      (A), node 3 (C); `TheCompileModeControlTests`).
+- [ ] **C4.** The first 50 advisory `called` rows read for cost and latency. Not met: the reader is granted but not built
+      (handoff). The per-turn spend now reaches the outcome line for every call ((A) above). `score.py` reports cost and
+      latency over the holdout only (`score.py:276-337`).
+- [x] **Determinism under advisory.** Only operator bytes enter `projection_sha`: an unkept suggestion never reaches the
+      draft (node 1 (C), `ASuggestedLineThatIsNotKept_NeverReachesTheDraft`).
+- [x] **Model output can change access, kept behind a human gate.** Keep under advisory. `agentic` stays refused until
+      Gate 2 admits it (`CompileModeGate.cs:73-79`), and no admission report exists on this machine (listing above).
+- [x] **The eval harness exists and runs.** `score.py` and `ring.py` self-tests pass (`B-compile-eval-run.txt`).
+- [ ] **Residual: confabulated tool XML.** Read, not tested: the validator parses from the first `{` to the last `}`
+      and ignores the text around it (`CompileOutputValidator.cs:54`, `:174-179`). XML with no braces next to a valid
+      object is ignored, not marked malformed. Nothing executes text, and `tool_calls` is counted from the wire, so a
+      suggestion still needs Keep. No floor counts this case.
+
 ## Human demo script — the prefill
 
 *Written by T30 node 4 (`wl-t30-prefill`) for the Owner, at `71498c77`. Keyboard only. Every gesture, label and string
