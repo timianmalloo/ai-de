@@ -1,0 +1,6 @@
+ratchet base 0f1e548d head f34baca0 (after fixing verify-subprocess-utf8, my test's missing encoding=, DC-211 premise held)
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 50 gate(s)
+ratchet exit 1
+Expected derived-view refusals: docs-graph.py (validate: 0 problems, 1 index-drift item) and verify-site-figures.py; join step 6 regenerates both.
