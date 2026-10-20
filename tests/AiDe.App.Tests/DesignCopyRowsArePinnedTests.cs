@@ -26,14 +26,28 @@ namespace AiDe.App.Tests;
 /// plural form). A builder with arguments is rendered for a sample argument that is unique in the output, and that
 /// sample is then replaced back by the row's own placeholder (<c>{n}</c>, <c>{7-char key}</c>), so the comparison is
 /// the text around the placeholder.</para>
+/// <para>A row no code renders carries one of three labels (Owner, 2026-10-20), written as a marker at the start of
+/// the cell: <c>*(superseded by &lt;replacement&gt;: reason)* sentence</c>, <c>*(not built, owed by &lt;slice&gt;: reason)* sentence</c>
+/// or <c>*(design-only, no owning story: reason)* sentence</c>. The reason runs to the first <c>)* </c>. A labelled row
+/// is neither pinned nor on <see cref="UnmatchedRows"/>. If code later renders its sentence, the test fails and says
+/// to move the row back to a pin. A superseded row's replacement is a pinned row id (<c>CHK2</c>), a <c>*Copy</c> member
+/// (<c>TurnCopy.ReasonSentence</c>), or the word <c>mockup-only</c> (text that exists only in a mockup, so there is
+/// nothing to check). The plain <c>*(stale: …)*</c> marker is refused: it merged three different states.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
 public sealed class DesignCopyRowsArePinnedTests
 {
     private static readonly Regex IdRow = new(@"^\| (?<id>[A-Z]+[0-9]+[a-z]?) \| (?<cell>.*) \|$", RegexOptions.Compiled);
 
-    /// <summary>A row the Owner has ruled stale opens its cell with this mark, then the reason, then <c>)* </c>, then the original sentence.</summary>
-    private const string StaleMark = "*(stale: ";
+    private const string PlainStaleMark = "*(stale";
+
+    private enum Label { Superseded, NotBuilt, DesignOnly }
+
+    private sealed record Marker(Label Label, string Owner, string Sentence);
+
+    private static readonly Regex MarkerPattern = new(
+        @"^\*\((?:superseded by (?<repl>[^\s:]+)|not built, owed by (?<slice>[^:]+)|(?<design>design-only, no owning story)): .*?\)\* (?<sentence>.+)$",
+        RegexOptions.Compiled);
 
     private const string SampleKey = "abcdefghij";
     private const string SampleKeyCut = "abcdefg";
@@ -48,7 +62,8 @@ public sealed class DesignCopyRowsArePinnedTests
     };
 
     /// <summary>Copy constants and builders no DESIGN.md id row names. Shrink-only.</summary>
-    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
+    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
+
     {
     };
 
@@ -169,16 +184,31 @@ public sealed class DesignCopyRowsArePinnedTests
         new("DOCK4", [KeptPromptsSingular(), "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks."], ["LayoutPersistence.KeptPromptsSentence"]),
     ];
 
-    private static bool IsStale(string cell) => cell.StartsWith(StaleMark, StringComparison.Ordinal);
-
-    /// <summary>The original sentence of a stale row: the text after the mark's reason, cut before any trailing annotation.</summary>
-    private static string StaleSentence(string cell)
+    private static Marker? ParseMarker(string cell)
     {
-        var end = cell.IndexOf(")* ", StringComparison.Ordinal);
-        var sentence = end < 0 ? string.Empty : cell[(end + 3)..].Trim();
+        var m = MarkerPattern.Match(cell);
+        if (!m.Success)
+        {
+            return null;
+        }
+
+        var sentence = m.Groups["sentence"].Value.Trim();
         var note = sentence.IndexOf(" (", StringComparison.Ordinal);
-        return note < 0 ? sentence : sentence[..note];
+        sentence = note < 0 ? sentence : sentence[..note];
+        if (m.Groups["repl"].Success)
+        {
+            return new Marker(Label.Superseded, m.Groups["repl"].Value, sentence);
+        }
+
+        return m.Groups["slice"].Success
+            ? new Marker(Label.NotBuilt, m.Groups["slice"].Value.Trim(), sentence)
+            : new Marker(Label.DesignOnly, "no owning story", sentence);
     }
+
+    private static bool IsPlainStale(string cell) => cell.StartsWith(PlainStaleMark, StringComparison.Ordinal);
+
+    /// <summary>A row outside the pins: it carries a label, or the refused plain marker (reported by its own test).</summary>
+    private static bool IsExcluded(string cell) => ParseMarker(cell) is not null || IsPlainStale(cell);
 
     private static Dictionary<string, string> DesignRows()
     {
@@ -256,9 +286,9 @@ public sealed class DesignCopyRowsArePinnedTests
                 continue;
             }
 
-            if (IsStale(cell))
+            if (IsExcluded(cell))
             {
-                failures.Add($"{pin.RowId}: pinned, but the DESIGN.md row is marked stale; a stale row is not pinned (un-stale it, or drop the pin)");
+                failures.Add($"{pin.RowId}: pinned, but the DESIGN.md row carries a label; a labelled row is not pinned (remove the label, or drop the pin)");
                 continue;
             }
 
@@ -280,7 +310,7 @@ public sealed class DesignCopyRowsArePinnedTests
         var rows = DesignRows();
         var pinned = Pins().Select(p => p.RowId).ToHashSet();
         var failures = new List<string>();
-        var stale = rows.Where(r => IsStale(r.Value)).Select(r => r.Key).ToHashSet();
+        var stale = rows.Where(r => IsExcluded(r.Value)).Select(r => r.Key).ToHashSet();
         failures.AddRange(rows.Keys.Where(id => !stale.Contains(id) && !pinned.Contains(id) && !UnmatchedRows.ContainsKey(id))
             .Select(id => $"{id}: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows"));
         failures.AddRange(UnmatchedRows.Keys.Where(id => !rows.ContainsKey(id))
@@ -288,7 +318,7 @@ public sealed class DesignCopyRowsArePinnedTests
         failures.AddRange(UnmatchedRows.Keys.Where(pinned.Contains)
             .Select(id => $"{id}: stale UnmatchedRows entry, the row is now pinned; delete it"));
         failures.AddRange(UnmatchedRows.Keys.Where(stale.Contains)
-            .Select(id => $"{id}: on UnmatchedRows and marked stale in DESIGN.md; a stale row is neither pinned nor unmatched, delete the entry"));
+            .Select(id => $"{id}: on UnmatchedRows and labelled in DESIGN.md; a labelled row is neither pinned nor unmatched, delete the entry"));
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }
@@ -310,13 +340,71 @@ public sealed class DesignCopyRowsArePinnedTests
     }
 
     [Fact]
-    public void AStaleRow_IsNotRenderedByAnyCode()
+    public void ALabelledRow_IsNotRenderedByAnyCode()
     {
         var corpus = RenderedCorpus().ToList();
-        var failures = DesignRows().Where(r => IsStale(r.Value))
-            .Where(r => StaleSentence(r.Value) is { Length: > 0 } sentence && corpus.Any(c => c.Contains(sentence, StringComparison.Ordinal)))
-            .Select(r => $"{r.Key}: stale row is rendered; un-stale it (\"{StaleSentence(r.Value)}\")")
-            .ToList();
+        var failures = new List<string>();
+        foreach (var (id, cell) in DesignRows())
+        {
+            if (ParseMarker(cell) is not { Sentence.Length: > 0 } marker || !corpus.Any(c => c.Contains(marker.Sentence, StringComparison.Ordinal)))
+            {
+                continue;
+            }
+
+            failures.Add(marker.Label switch
+            {
+                Label.NotBuilt => $"{id}: now rendered; the owning slice {marker.Owner} landed it, move the row back to a pin (\"{marker.Sentence}\")",
+                Label.DesignOnly => $"{id}: now rendered; a slice landed this design-only sentence, move the row back to a pin (\"{marker.Sentence}\")",
+                _ => $"{id}: now rendered; it is not superseded by {marker.Owner}, move the row back to a pin (\"{marker.Sentence}\")",
+            });
+        }
+
+        Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void ASupersededRow_NamesAReplacementThatStillExists()
+    {
+        var pinned = Pins().Select(p => p.RowId).ToHashSet();
+        var members = CopyMembers();
+        var failures = new List<string>();
+        foreach (var (id, cell) in DesignRows())
+        {
+            if (ParseMarker(cell) is not { Label: Label.Superseded } marker)
+            {
+                continue;
+            }
+
+            var exists = marker.Owner switch
+            {
+                "mockup-only" => true,
+                var r when IdRow.IsMatch($"| {r} | x |") => pinned.Contains(r),
+                var r => members.Contains(r),
+            };
+            if (!exists)
+            {
+                failures.Add($"{id}: superseded by {marker.Owner}, which is neither a pinned row id nor a *Copy member; repoint it");
+            }
+        }
+
+        Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void NoRowCarriesThePlainStaleMarker_OrAMalformedLabel()
+    {
+        var failures = new List<string>();
+        foreach (var (id, cell) in DesignRows().Where(r => r.Value.StartsWith("*(", StringComparison.Ordinal)))
+        {
+            if (IsPlainStale(cell))
+            {
+                failures.Add($"{id}: use one of the three labels (superseded by <replacement>, not built owed by <slice>, design-only no owning story), not \"stale\"");
+            }
+            else if (ParseMarker(cell) is null)
+            {
+                failures.Add($"{id}: a marker that is none of the three labels, or has no reason, or no sentence after it");
+            }
+        }
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }
