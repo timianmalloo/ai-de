@@ -8660,6 +8660,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   *"proves nothing while no assist path exists at all"* (`docs/notes/addendum-b-ratification.md:83-84`). Ruling 180's
   prefill is that assist path. The node renamed `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement`, and Core
   went green. Found by the Owner reading the done mail.
+- **Instance 0 (2026-10-19, T30 n2, `f2b382fa`; found by the Leader on 2026-10-20 reading T30's history):** "const
+  renamed ModelLineMark - the composer's no-assist lexical guard refuses 'Suggest' in a source name". The same gate,
+  evaded the same way a day earlier; no reviewer read it as evasion. The H4 sweep's "no sibling rename" below read the
+  bans, not the history, so it could not see this one. With the clause retired (T30 n6), the name needs no change.
 - **Sweep (T30 n6 H4, 2026-10-20):** 68 test bans over src text in 23 files, each read against its premise after
   Rulings 180-182 (`docs/proof/workbench-loops-wl-1a/prefill/H4-lexical-ban-sweep.md`). 1 is this instance, now
   answered. 63 hold. None is now live. 4 are stale in wording, all in one method:
