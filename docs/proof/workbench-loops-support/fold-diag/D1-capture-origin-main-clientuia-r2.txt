@@ -1,0 +1,38 @@
+row events: 6; IsFoldOpen=False
+FocusItem(0)=True; focused is container=True
+=== S1 after FocusItem(0), before Tab ===
+Keyboard.FocusedElement = ListBoxItem#37b9181(Name='',AutoName='b1, first words')
+Keyboard.PrimaryDevice.Target = ListBoxItem#37b9181(Name='',AutoName='b1, first words'); ActiveSource=HwndSource
+window.IsActive=True window.IsKeyboardFocusWithin=True window.Left=-10000 Top=-10000 WindowState=Normal
+hwnd=0x150d07cc foregroundHwnd=0x150d07cc isForeground=True
+row.IsFoldOpen=False FoldHeader='4 events' FoldedEvents=4
+container.IsKeyboardFocused=True IsKeyboardFocusWithin=True
+mouse: Mouse.Captured=null Mouse.DirectlyOver=null fold.IsMouseOver= fold.IsMouseDirectlyOver= Mouse.LeftButton=Released posInWindow=9992.666666666666,9970
+--- UIA peer subtree of the row container ---
+- ListItem name='b1, first words' autoId='' class='ListBoxItem' kbFocusable=True hasKbFocus=True offscreen=False enabled=True  patterns=none
+  - Text name='b1' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='first words' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Provenance of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Provenance of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='provenance' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Compiled prompt of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Compiled prompt of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='compiled prompt' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='02:31' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+    - DataItem name='AiDe.App.Workbench.Sessions.ConversationRow' autoId='' class='ItemsControlItem' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+      - Text name='ok' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='completed' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='claude-code' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='edits not recorded · 6 tokens · 0 s · 6 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='4 events' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='4 events' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='4 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+UIA client FocusedElement = ControlType.ListItem name='b1, first words' autoId='' class='ListBoxItem' pid=14740 hwnd=0x0
+UIA client find name='4 events' = ControlType.Group autoId='' class='Expander' IsKeyboardFocusable=False HasKeyboardFocus=False IsOffscreen=False
+UIA client ExpandCollapse = Collapsed
+Tab stop 0: Keyboard.FocusedElement before MoveFocus is null; window.IsActive=True IsKeyboardFocusWithin=False foregroundIsWindow=True
+fold reached=False stops=[]
