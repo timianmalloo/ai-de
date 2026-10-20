@@ -24,7 +24,7 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
 | Seat | Coord session id | How to reach it |
 |---|---|---|
 | **Owner** (Fable 5.1, rules and demos; never authors) | `wl-owner-20261018` | `coord board post --to wl-owner-20261018` and `coord mail send --to wl-owner-20261018` are the channel — the Owner reads the board; `coord decide request --to wl-owner-20261018` for rulings; `SendMessage` to the session named **`ai-de-c3`** only if your tool set has it |
-| **Leader** (you) | `wl-leader-20261018` | you run as a separate Claude Code window on Opus with the env pre-set (the prefixes below are then redundant but harmless); if you were instead spawned as an agent the env is **not** pre-set, so prefix every coord, audit-log and git command with `AGENT_SESSION=wl-leader-20261018 AGENT_HOST=claude AGENT_WI=workbench-loops` (Bash form), and give every spawned track its own `AGENT_SESSION=<track-id>` the same way |
+| **Leader** (you) | your own session id: the Owner names it in your resume brief and pre-sets it as `$AGENT_SESSION` (never copy an earlier Leader's id) | you run as a separate Claude Code window on Opus with the env pre-set (the prefixes below are then redundant but harmless); if you were instead spawned as an agent the env is **not** pre-set, so prefix every coord, audit-log and git command with `AGENT_SESSION=<your id from the resume brief> AGENT_HOST=claude AGENT_WI=workbench-loops` (Bash form), and give every spawned track its own `AGENT_SESSION=<track-id>` the same way |
 
 ## Binding law — open these, do not quote from memory
 
@@ -38,7 +38,7 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
    for CO1 (the seat rules), CO17 (the kick ladder) and CO-L (leadership).
 4. Windows: run **`python`**, never `python3`. `coord` is not on PATH:
    `coord <verb>` = `python docs/ai-forward-pack/scripts/coord-core.py <verb>`;
-   `coord board post` = `python docs/ai-forward-pack/scripts/coord-board.py board post --to wl-owner-20261018 "<text>" --from wl-leader-20261018`;
+   `coord board post` = `python docs/ai-forward-pack/scripts/coord-board.py board post --to wl-owner-20261018 "<text>" --from $AGENT_SESSION`;
    `coord decide` = `python docs/ai-forward-pack/scripts/coord-decide.py …`; `coord mail` = `python docs/ai-forward-pack/scripts/coord-mail.py …`.
 
 ## What the Owner already did (measured 2026-10-18 21:49Z, do not redo)
@@ -54,15 +54,15 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
 - `git worktree list`: only the primary (`C:/Projects/ai-de` at `7439a0f7`). `coord session list`: 0 active.
 - **Leader designation is yours by this brief** (the Owner's written designation, CO-L). The TTL cap is
   900 s (`COORD-LEADER-TTL-CAP`), so the Owner did not pin ahead of your start: **your first coord
-  action is `coord leader pin wl-leader-20261018 --ttl 900`**, renew it (`coord leader renew`) at every
-  report and before every join, and `coord leader reclaim wl-leader-20261018` if it lapsed. Read
+  action is `coord leader pin $AGENT_SESSION --ttl 900`**, renew it (`coord leader renew`) at every
+  report and before every join, and `coord leader reclaim $AGENT_SESSION` if it lapsed. Read
   `coord leader who` before any join.
 - CLIs present: `claude` 2.1.302, `grok` 1.0.41, `agy` 1.4.2. Model ids are **not** qualified yet — the
   drive prompt tells you to confirm them against each CLI's models cache before dispatch.
 
 ## Your first turn — the analysis turn, then execution, no pause between
 
-1. First line: `python docs/ai-forward-pack/scripts/audit-log.py start --session wl-leader-20261018 --skill prepare-for-coordination`,
+1. First line: `python docs/ai-forward-pack/scripts/audit-log.py start --session $AGENT_SESSION --skill prepare-for-coordination`,
    then `coord session start`.
 2. Run **`/prepare-for-coordination`** exactly as the drive prompt's *"What the Leader does first"*
    paragraph specifies. Plan id **`coordination-workbench-loops`** (`docs/coordination/coordination-workbench-loops.md` + `.html`).

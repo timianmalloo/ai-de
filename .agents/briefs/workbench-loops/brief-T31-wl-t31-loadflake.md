@@ -51,7 +51,7 @@ and a parallel App run would change it. Do not start any other process that open
 **(M-hold) The user's demo stops you; it does not start you (Owner, 2026-10-20).** The run in flight finishes; start no
 new one. Write `runs.txt` with the runs so far, write `rates.md` from the completed runs only, headed
 **`PARTIAL - k of 10 runs, held by USER DEMO IN PROGRESS`**, and commit. Never extrapolate a rate to N. Then send
-`coord mail send --to wl-leader5-20261020 --kind note --body "T31 PARTIAL k/10, held by USER DEMO at <time>"` and end
+`coord mail send --to <the Leader: coord leader who, read now> --kind note --body "T31 PARTIAL k/10, held by USER DEMO at <time>"` and end
 your turn with the same line as your final message. The Leader resumes you on `USER DEMO DONE`. You then re-read the
 board and continue from run k+1. The partial header is replaced when N completes.
 
@@ -64,9 +64,6 @@ finish the run in flight, then do M2 to M6 on the runs completed, labelled PARTI
 **Rules 19, 20, 21 and 22 apply.** Rule 16's "never stop on your own wall-clock estimate" applies: the node ends at N=10,
 at the hold, at a kick or at the cap.
 
-**The Leader is `wl-leader5-20261020`, epoch 5.** Where the common rules below name any other Leader id or epoch, read
-these.
-
 ## Owned authored paths
 `docs/proof/workbench-loops-support/loadflake/**` (README, `runs.txt`, `rates.md`, `rates.py`, `build.txt`, `ratchet.txt`,
 `handoff.md`); the DC-NEW-wl-leader3-b entry's new Measured line in `docs/lessons/defect-classes.md`;
@@ -74,9 +71,12 @@ these.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
-You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader5-20261020`. The
+You are a **Sub-Agent** in the workbench-loops drive. **The Leader is whoever `coord leader who` names when you
+send.** Leaders hand off mid-track, so never write, remember or copy a Leader id or epoch. Before every mail or request
+to the Leader, run `python docs/ai-forward-pack/scripts/coord-core.py leader who` as its own command in the same turn.
+Send to the session on its `leader` line. If its `state` is not `live`, send anyway and say so in the body. The
 coordination plan is `docs/coordination/coordination-workbench-loops.md` (your row in "Tracks" and
-"Track contracts" is your contract). Leader epoch: **5**. Decision requests go to the Owner
+"Track contracts" is your contract). Decision requests go to the Owner
 `wl-owner-20261018` (`python docs/ai-forward-pack/scripts/coord-decide.py request --to wl-owner-20261018 ...`) — only
 for a genuine product trade-off the repo, spec, ADRs or a spike cannot answer, with a recommendation
 and a default.
@@ -89,7 +89,7 @@ and a default.
    (the primary checkout) or another track's tree. **Never call `EnterWorktree` or `ExitWorktree`.**
 3. **Windows:** run `python`, never `python3`. `coord <verb>` = `python docs/ai-forward-pack/scripts/coord-core.py <verb>`.
 4. **Owned authored paths** are listed below. You edit nothing else. Need a change outside them →
-   `coord request add --to wl-leader5-20261020 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
+   `coord request add --to <the Leader: coord leader who, read now> --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
    and carry on with what you own. `derived` files (docs/docs-index.js, docs/audit/audit-data.js,
    docs/audit/index.html, docs/api/*.md, docs/_site/*, docs/_meta.json) are regenerated at the join —
    do not edit or claim them. `register` files (docs/audit/*.jsonl, .agents/log/*.jsonl) are
@@ -114,7 +114,7 @@ and a default.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
     `DC-NEW-wl-t31-loadflake` (class / sweep / derive / prevent), in the same commit as the fix.
 12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "wl-t31-loadflake" --session wl-t31-loadflake --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
-    commit it; then `coord mail send --to wl-leader5-20261020 --kind done --body "<exit evidence: commits, test names, proof files>"`.
+    commit it; then `coord mail send --to <the Leader: coord leader who, read now> --kind done --body "<exit evidence: commits, test names, proof files>"`.
     Your final message to the Leader is the same exit-evidence report: every commit sha (red and green),
     every test name added, every proof file, the suite result with pass/fail counts, any seam request
     raised, anything not done. **Your "done" is evidence, not authority** — the Leader re-runs and reads back.

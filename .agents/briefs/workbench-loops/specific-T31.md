@@ -51,7 +51,7 @@ and a parallel App run would change it. Do not start any other process that open
 **(M-hold) The user's demo stops you; it does not start you (Owner, 2026-10-20).** The run in flight finishes; start no
 new one. Write `runs.txt` with the runs so far, write `rates.md` from the completed runs only, headed
 **`PARTIAL - k of 10 runs, held by USER DEMO IN PROGRESS`**, and commit. Never extrapolate a rate to N. Then send
-`coord mail send --to wl-leader5-20261020 --kind note --body "T31 PARTIAL k/10, held by USER DEMO at <time>"` and end
+`coord mail send --to <the Leader: coord leader who, read now> --kind note --body "T31 PARTIAL k/10, held by USER DEMO at <time>"` and end
 your turn with the same line as your final message. The Leader resumes you on `USER DEMO DONE`. You then re-read the
 board and continue from run k+1. The partial header is replaced when N completes.
 
@@ -63,9 +63,6 @@ suite result in the done mail).
 finish the run in flight, then do M2 to M6 on the runs completed, labelled PARTIAL as in (M-hold).
 **Rules 19, 20, 21 and 22 apply.** Rule 16's "never stop on your own wall-clock estimate" applies: the node ends at N=10,
 at the hold, at a kick or at the cap.
-
-**The Leader is `wl-leader5-20261020`, epoch 5.** Where the common rules below name any other Leader id or epoch, read
-these.
 
 ## Owned authored paths
 `docs/proof/workbench-loops-support/loadflake/**` (README, `runs.txt`, `rates.md`, `rates.py`, `build.txt`, `ratchet.txt`,
