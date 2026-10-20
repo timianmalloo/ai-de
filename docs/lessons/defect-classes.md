@@ -8827,3 +8827,25 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   back (`7781a180`, no behaviour change), retired the `Suggest` clause with its reason (`02d6380f`) and added R21's real
   control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
   the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.
+
+### DC-NEW-wl-leader5 — a seat identity written as a literal where it must be resolved at send time
+- **Class:** a coordination template (the common track brief, the Leader kickoff, an Owner tick prompt) names a seat
+  by its session id or epoch. Seats hand off mid-drive, so the literal goes stale at the next hand-off. Every message
+  addressed from it then goes to a session that is gone, and nothing refuses the send.
+- **Instances (2026-10-20):** (1) `.agents/briefs/workbench-loops/brief-common.md` named `wl-leader3-20261019` and
+  `Leader epoch: **3**` through two later Leaders (wl-leader4, wl-leader5). T32's assembled brief told it to mail its
+  done report to wl-leader3; it reached wl-leader4 only because a kick mail told it to mail whoever `coord leader who`
+  named. (2) The Leader kickoff carried the template id `wl-leader-20261018` in six places, so each resume brief had to
+  say "substitute your id" by hand. (3) The Owner's own tick prompt named wl-leader3 (Owner, fixed by the Owner).
+- **Sweep:** `wl-leader[0-9]` and `epoch [0-9]` over `.agents/briefs/workbench-loops/` and the kickoff. The live
+  templates were `brief-common.md`, `specific-T31.md`, T31's assembled brief and the kickoff, all fixed in `b2592594`.
+  The briefs of finished tracks and the hand-off notes name the seat of their moment. They are records and are not
+  rewritten.
+- **Derive:** a template says how to resolve a seat (`coord leader who` before each send, `$AGENT_SESSION` for the
+  reader's own id) and never names one. Only a record of one moment may name a seat.
+- **Prevent:** `tools/verify-no-literal-seat-ids.py` (run by the pack's gate line at every join's step 8) refuses a
+  Leader session id or a Leader epoch in any `.agents/briefs/*/brief-common.md` or `docs/coordination/*-kickoff.md`.
+  It was observed failing on the templates at `2a92f604` (10 literals) and passes at `b2592594`; `--self-test` covers
+  a clean template, each literal shape and an empty tree.
+- **Status:** `controlled` for the templates the gate reads. The Owner's tick prompt lives outside the repo, and no
+  gate reads it.
