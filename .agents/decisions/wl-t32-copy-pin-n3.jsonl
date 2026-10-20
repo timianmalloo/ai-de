@@ -1,0 +1,9 @@
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485744.1488762, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/n3/L1-red.txt", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485744.1919167, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/n3/N3-unowned-search.txt", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485744.2329257, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.0284057, "code": null, "kind": "allowed", "path": "DESIGN.md", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.0740213, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.1170325, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/n3/L1-red-b.txt", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.1646707, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/n3/L1-red-c.txt", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.2071917, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/n3/L2-green.txt", "session": "wl-t32-copy-pin-n3", "wi": ""}
+{"agent": "wl-t32-copy-pin-n3", "at": 1792485798.2511585, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs", "session": "wl-t32-copy-pin-n3", "wi": ""}

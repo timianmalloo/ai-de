@@ -1,0 +1,2 @@
+{"agent": "wl-leader5-20261020", "at": 1792485625.8606055, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t32-copy-pin-n3", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-copy-pin-n3"}
+{"at": 1792486851.871714, "from": "wl-t32-copy-pin-n3", "kind": "done", "mail_id": "mail-01M5C8NH8ZBHBSE023SDWJB8MR", "ref": null, "session": "wl-t32-copy-pin-n3", "to": "wl-leader5-20261020", "type": "mail"}
