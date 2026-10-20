@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T07:52:22Z",
+  "generated": "2026-10-20T08:27:38Z",
   "audit": [
     {
       "actor": null,
@@ -27306,6 +27306,59 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T07:18:41Z",
       "duration_seconds": 2021.0
+    },
+    {
+      "id": "al-01M5C62MV8DCC1HC03C90DPRN1",
+      "shortname": "wl-t32-copy-pin-n2",
+      "datetime": "2026-10-20T08:15:35Z",
+      "session": "wl-t32-copy-pin-n2",
+      "prompt": "T32 n2: empty the copy-pin shrink-only lists per the Owner's rulings",
+      "summary": "23 copy members got DESIGN.md rows and pins (UnmatchedMembers empty); 7 unrendered rows marked stale with zero-hit searches; stale-row convention added to DesignCopyRowsArePinnedTests",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "empty UnmatchedMembers and UnmatchedRows as far as the rulings allow",
+      "done_when": "N1 N2 N3 red-green, App and Core suites, ratchet",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T07:53:35Z",
+      "duration_seconds": 1320.0
+    },
+    {
+      "id": "al-01M5C6RNZG8R0CNMBRY969YC13",
+      "shortname": "join-wl-copy-pin-n2",
+      "datetime": "2026-10-20T08:27:37Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "T32 n2 (Owner rulings on T32's findings): UnmatchedMembers empty (CHK13-22, TURN1-10, NB3, ST1-2 pinned); NB1 RUN1 RUN3 RUN4 CHECK1 AUTH1 DEMO1 marked stale with 0-hit searches; AStaleRow_IsNotRenderedByAnyCode; UnmatchedRows SC7-SC9 only recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/copy-pin/n2/N2-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T32 n2 wl-copy-pin-n2 onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T08:27:36Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33225,6 +33278,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t25-perf"
+    },
+    {
+      "id": "mail-01M5C62YXH5577HWP1NAC9KYSV",
+      "ts": "2026-10-20T08:15:46Z",
+      "from": "wl-t32-copy-pin-n2",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t32-copy-pin-n2"
     }
   ]
 };

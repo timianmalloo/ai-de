@@ -4,3 +4,4 @@
 {"at": 1792481917.1106067, "from": "wl-t25-perf", "kind": "done", "mail_id": "mail-01M5C3YY5PZPBADQJPDA90G34F", "ref": null, "session": "wl-t25-perf", "to": "wl-leader5-20261020", "type": "mail"}
 {"agent": "wl-t25-perf", "at": 1792481933.3747923, "kind": "release", "path": "bench/AiDe.Bench/Wl1bPerf.cs", "seq": 5, "session": "wl-t25-perf", "wi": "WI-0"}
 {"agent": "wl-t25-perf", "at": 1792481933.4690077, "kind": "release", "path": "bench/AiDe.Bench/Program.cs", "seq": 6, "session": "wl-t25-perf", "wi": "WI-0"}
+{"agent": "wl-t25-perf", "at": 1792482746.4820702, "kind": "session-end", "path": "-", "seq": 7, "session": "wl-t25-perf", "wi": "WI-0", "worktree": "ai-de"}
