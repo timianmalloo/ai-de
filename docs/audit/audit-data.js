@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T09:44:18Z",
+  "generated": "2026-10-20T09:45:12Z",
   "audit": [
     {
       "actor": null,
@@ -27484,6 +27484,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T09:26:58Z",
       "duration_seconds": 1040.0
+    },
+    {
+      "id": "al-01M5CB6PQ7WMVZ3P3T1QE284WP",
+      "shortname": "join-wl-fold-diag",
+      "datetime": "2026-10-20T09:45:11Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-fold-diag into main",
+      "summary": "T33 (read-only): the real test fails alone 3/3 on aa76bd6d AND 3/3 on d986e4a4 today; captures identical across shas once normalised: Space KeyDown Handled=True at the fold, IsPressed true then false, no click, IsExpanded/IsChecked/IsFoldOpen stay false, the fold holds mouse capture after the Space; intermittent null keyboard focus on both. No cause claimed. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/fold-diag/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T33 wl-fold-diag onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T09:45:10Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33421,6 +33450,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t32-copy-pin-n3"
+    },
+    {
+      "id": "mail-01M5CB5KESCQQ8CF7DCGFPKQHK",
+      "ts": "2026-10-20T09:44:35Z",
+      "from": "wl-t33-fold-diag",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t33-fold-diag"
     }
   ]
 };

@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d71d18096d662da29a0e5dbeed9ea1321fefa9f4831d031db8261b13e462935b"
+      "sourceSha256": "686c5d7880e6005f31106e4fd7f1f46e291769a14e0ff7210d927c395319465c"
     },
     {
       "id": "design-session-profiler",
@@ -22770,6 +22770,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "b819bfd05cb3a7256f92da53f2c88ae0e9805f2d5e88178b986bf23637658624"
     },
     {
+      "id": "proof-wl-fold-diag",
+      "path": "docs/proof/workbench-loops-support/fold-diag/README.md",
+      "title": "Evidence: T33 - the restored-row fold observed on origin/main and on d986e4a4 (no cause claimed)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The real test fails alone on origin/main (aa76bd6d) and on d986e4a4, with the same message, 3 of 3 runs each. A scratch capture repeating its steps shows the same state on both: the Space key is handled at the fold, IsPressed turns on then off, no click follows, IsExpanded and IsFoldOpen stay false. No difference between the shas was observed. No cause is claimed.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "diagnosis",
+        "read-only",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "20fe0492295073924864d3138940ea82db2ff655bb603e4817830b1b361bff92"
+    },
+    {
       "id": "proof-wl-hygiene-pack-defects",
       "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md",
       "title": "Pack defects found while burning down main's red gates (T13, Ruling 151)",
@@ -25928,5 +25955,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "e12e941518fa16ec1cdb507d88d1ff6aca046225cbf31c5331cb082bdda24c7f"
+  "graphSha256": "92a667dc9651b38c21cc3115811c21da648f994bb46a7529e76f5d91753f1089"
 };
