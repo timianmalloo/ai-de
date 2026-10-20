@@ -1,6 +1,6 @@
 ---
 id: handoff-workbench-loops-wl-1a-prefill-n1
-title: "Hand-off: WL-1a T30 node 4 (the prefill demo script; Ruling 180 (4) cost line; (6) compile-eval)"
+title: "Hand-off: WL-1a T30 node 5 (the suggested lines are seen; the first-50 reader; the sheet tests' gate)"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -11,11 +11,38 @@ links:
   - { to: proof-workbench-loops-wl-1a-prefill, rel: relates-to }
 review-by: "2026-11-19"
 summary: >-
-  T30 n4: the prefill demo script with its gesture table; every advisory call's spend reaches the turn's outcome line
-  (red then green); compile-eval self-tests pass and the real-corpus run is NOT RUN with its reason. Not done: the
-  granted first-50 reader tools/compile-eval/first-calls.py (stopped by the rule-16 kick before it started). Earlier
-  nodes' hand-offs are kept below.
+  T30 n5: a prepare that suggests lines opens the fold, keeps focus in the editor, announces the count once and names
+  each line '? suggested'; tools/compile-eval/first-calls.py reads the first 50 non-reused advisory calls; the four sheet
+  test files inject the compile-mode gate, with a guard. Each red then green. Next: T30's second join. Earlier nodes'
+  hand-offs are kept below.
 ---
+
+# Hand-off — T30 node 5
+
+**Done (shas and proof in `README.md` § Node 5), each red then green:**
+- (A) the Owner's shape: red `2eba9709`, green `dc408cac` (`APrepareShowsItsSuggestedLinesTests`; the
+  DC-NEW-wl-t28-compiled recurrence is in the same commit).
+- (B) `tools/compile-eval/first-calls.py`: red `8b57a205`, green `ed24b2e8` (`--self-test`).
+- (C) the four sheet test files inject the gate: red `f2630c47`, green `a39dcefa` (`NoSheetTestReadsTheRealProofDirectoryTests`).
+- The demo script's step 11 now reads what the user sees after a prepare; finding 1 is marked fixed; C4 is checked.
+
+**Not done / owed:** the first-50 reader has not been run over a real corpus (no `envelope-events.jsonl` in this tree; the
+command is in the C4 line). The Tab count from the editor to the first suggested line is **rehearse** in the demo.
+
+**Next step:** T30's second join (the Leader). The ratchet result is below.
+
+**Rename after the (A) green:** `0528992b` renames `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement`, because
+Core's `NoAssistPathExistsAnywhereInTheComposer` refuses `Suggest` in composer sources. No behaviour changed.
+
+**Whole suites (rule 18), board checked before each App run:**
+- **Core at `0528992b`:** 3119 passed, 0 failed, 1 skipped (`suite-core-node5-rerun.txt`). At `a39dcefa` it had 1
+  failure, the rename's cause (`suite-core-node5.txt`).
+- **App at `a39dcefa`:** 1245 passed, 3 failed, 2 skipped (`suite-app-node5.txt`). **At `0528992b`**, (A) and its
+  neighbours, the guard and the three: 31 passed, 3 failed (`suite-app-node5-rerun.txt`). The three are node 4's: the
+  foreground pair (`CtrlDigitSwitchesThePerspectiveFromInsideAPageTests`, `SolutionTreeChordTests`: owed desk runs) and
+  `AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_…` (fails on main's code too, per node 4).
+
+**Ratchet (rule 22):** see `ratchet.txt`.
 
 # Hand-off — T30 node 4
 

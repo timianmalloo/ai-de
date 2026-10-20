@@ -166,9 +166,12 @@ in `B-compile-eval-run.txt`.
       (`req-01M5AEKWQQYP4YK499Y5DN6GPD`, 16:20Z).
 - [x] **C3.** The settings row shows the real mode, the gate's reason and help that matches the mode (node 1 (B), node 2
       (A), node 3 (C); `TheCompileModeControlTests`).
-- [ ] **C4.** The first 50 advisory `called` rows read for cost and latency. Not met: the reader is granted but not built
-      (handoff). The per-turn spend now reaches the outcome line for every call ((A) above). `score.py` reports cost and
-      latency over the holdout only (`score.py:276-337`).
+- [x] **C4.** The first 50 advisory `called` rows read for cost and latency: the reader is built (node 5 (B)) and its
+      self-test passes. The command, run over the user's session directories (never this tree, which holds no
+      `envelope-events.jsonl`), is
+      `python tools/compile-eval/first-calls.py "<workspace>/.aide/sessions" --out "<a file outside ~/.aide/proof>"`.
+      The per-turn spend reaches the outcome line for every call (node 4 (A)). **Not run on the real corpus here**, for
+      node 4's reason (`B-compile-eval-run.txt`): the recording is owed at the next desk run with real sessions.
 - [x] **Determinism under advisory.** Only operator bytes enter `projection_sha`: an unkept suggestion never reaches the
       draft (node 1 (C), `ASuggestedLineThatIsNotKept_NeverReachesTheDraft`).
 - [x] **Model output can change access, kept behind a human gate.** Keep under advisory. `agentic` stays refused until
@@ -178,6 +181,56 @@ in `B-compile-eval-run.txt`.
       and ignores the text around it (`CompileOutputValidator.cs:54`, `:174-179`). XML with no braces next to a valid
       object is ignored, not marked malformed. Nothing executes text, and `tool_calls` is counted from the wire, so a
       suggestion still needs Keep. No floor counts this case.
+
+## Node 5 — the suggested lines are seen; the first-50 reader; the sheet tests' gate (Ruling 180 (3), (4))
+
+**Result:** (A), (B) and (C) are each green, observed red first. No test calls a model.
+
+| Item | Red | Green | Tests / output |
+|---|---|---|---|
+| **(A)** a prepare that yields suggested lines shows them (the Owner's shape) | `2eba9709` · `A-shows-suggested-red.txt` (*a prepare that suggested lines left them in the closed fold*) | `dc408cac` · `A-shows-suggested-green.txt` (26/26 with the suggested-line, prepare-walk, degrade, saved-copy and restart neighbours) | `APrepareShowsItsSuggestedLinesTests` (1, App) |
+| **(B)** `tools/compile-eval/first-calls.py`, the first 50 advisory calls' cost and latency (C4; seam `req-01M5B9DJWPJBEBCTP2GFJCZVRR`) | `8b57a205` · `B-first-calls-red.txt` (a naive window counted 3 reused rows and read absent cost as 0) | `ed24b2e8` · `B-first-calls-green.txt` (`SELF-TEST PASS`; `score.py` and `ring.py` self-tests still pass, both unchanged) | `--self-test` |
+| **(C)** the four sheet test files inject the compile-mode gate | `f2630c47` · `C-sheet-gate-red.txt` (10 sites over an adapter root, 9 with the real gate) | `a39dcefa` · `C-sheet-gate-green.txt` (10 sites, 0 bare; 37/37 with the four files) | `NoSheetTestReadsTheRealProofDirectoryTests` (1, App) |
+
+**(A), what changed.** `PrepareTurnAsync` counts the lines it fills. When there is at least one, it opens the fold and
+announces *"{n} suggested lines. Review them before you send."* once, as a status, before *"prepared — press again to
+send"*. Nothing on that path moves focus. A suggested line's UIA Name is `? suggested {label}`, and its keep button and
+ItemStatus are as before. The test drives type and Ctrl+Enter on the product's composition, checks that focus is in the
+editor before and after (WPF focus on the editor's host, or Win32 focus inside its window), counts the announcements,
+and walks Tab from the editor through the page's `focus.leave` verb, then WPF's Tab traversal. DESIGN.md's *Derived
+structure* row names the string, the name and the rule that only the user closes the fold. Registered as a
+**DC-NEW-wl-t28-compiled recurrence** in `docs/lessons/defect-classes.md`, in the fix commit.
+
+**(B), what it reads.** The treatment arm exactly as `score.py:176-177` defines it. Each envelope's `called` rows in seq
+order, `reused` rows skipped, the first 50 taken. It reports n, n with cost, n with latency, tokens in+cache and out
+(sum, p50, p95), latency p50/p95, outcomes by count, and the envelope ids. A figure the wire did not report is left out
+and counted as not measured. With none reported it reads *not recorded*, never 0. It imports `read_rows`, `fold` and
+`percentile` from `score.py`. The self-test fixture is 54 advisory `called` rows (51 model calls, 3 reused), 2 model
+calls with no cost, and one mechanical-only control. The self-test writes its fixture to a throwaway temp directory
+that it deletes.
+
+**(C), what the guard reads.** Every `.cs` under `tests/AiDe.App.Tests` and `tests/AiDe.Core.Tests`. Each sheet built
+with a named `adapterInstallRoot:` that is not `null` must set `CompileModeGateInput` in its initializer, and so must
+each `NewSessionFlow` with an adapter root. A `Reload(registry, root)` with a root needs every sheet in its file to
+carry the injection. The injected gate is `CompileModeGate.Evaluate(root, <root>/proof)`, a directory with no pin
+artifact, so Gate 1 refuses the same way on every machine. Limit: an adapter root passed by position is not seen.
+
+**A slip, fixed (`0528992b`).** The (A) green `dc408cac` named the announcement `SuggestedLinesAnnouncement`. The whole
+Core suite then failed one test, `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer`, which
+refuses the substring `Suggest` in the composer's sources (`suite-core-node5.txt`). The member is now
+`ReviewLinesAnnouncement` (`ComposerSurface.cs:847`, `:859`), and DESIGN.md's row names it. No behaviour changed.
+
+**Whole suites (board checked before each App run; no demo, no join in flight):**
+- **Core:** at `dc408cac`-plus-(B)-(C) (head `a39dcefa`): 3118 passed, **1 failed** (the slip above), 1 skipped
+  (`suite-core-node5.txt`). At head **`0528992b`**: **3119 passed, 0 failed, 1 skipped** (`suite-core-node5-rerun.txt`).
+- **App:** at head `a39dcefa`: **1245 passed, 3 failed, 2 skipped** of 1250 (`suite-app-node5.txt`). At head
+  **`0528992b`**, (A), its five neighbour classes, the guard and the three failures re-run: **31 passed, 3 failed**
+  (`suite-app-node5-rerun.txt`). The three are node 4's:
+  - `CtrlDigitSwitchesThePerspectiveFromInsideAPageTests` (*foreground held=False*) and `SolutionTreeChordTests`
+    (*foreground not held*): **owed desk runs**, not failures.
+  - `AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation`
+    (*Space on the restored row's fold did not open it*): it failed the same way at node 4 with the branch's only src
+    change reverted to main's copy (`suite-app-node4-baseline.txt`). The join's recount decides.
 
 ## Human demo script — the prefill
 
@@ -222,10 +275,13 @@ first run. Every GUI step is **owed to the user** until a person runs it.*
     result; record it and continue with the lines left blank.
 
 ### 3. The suggested lines: edit one, keep the others, read Keep's help
-11. The structure stays folded after a prepare (finding 1 below). Reach the fold's header *"Goal · Done when · Not in
-    scope"* (UIA "Goal, Done when, Not in scope"; **rehearse** the Tab count) and press **Space** to open it.
-    **Expect:** each line the model proposed shows its value with the mark **`? suggested`** and a **keep** button.
-    In UIA the line's ItemStatus reads `suggested`, without the glyph.
+11. **See:** the prepare opened the *"Goal · Done when · Not in scope"* fold by itself (node 5 (A)), and the cursor is
+    still in the editor. A screen reader says *"3 suggested lines. Review them before you send."* once, then
+    *"prepared — press again to send"* (the count is the number of lines the model proposed). Each proposed line shows
+    its value with the mark **`? suggested`** and a **keep** button. Press **Tab** from the editor (**rehearse** the
+    count): the stops include each line, named **"? suggested Goal"**, **"? suggested Done when"** and **"? suggested
+    Not in scope"** in UIA, and the line's ItemStatus reads `suggested`, without the glyph. The fold stays open; only
+    you close it.
 12. **Tab** to the **Keep Goal** button. In Accessibility Insights (or Narrator), read its HelpText. **Expect, exactly:**
     *"Keep the suggested line as written. A suggestion counts only once you keep or edit it; a kept line stays in your
     draft until you send it. It is not yet kept when AI-DE restarts."* Press **Space**. **Expect:** the Goal mark reads
@@ -269,12 +325,11 @@ first run. Every GUI step is **owed to the user** until a person runs it.*
     Nothing on the composer ever says they were saved (node 3 (A)).
 
 ### Findings for the Owner (read from code, not run)
-1. **The suggested lines arrive inside a folded section.** The structure fold is collapsed at rest
-   (`ComposerSurface.cs:1648-1652`), and a prepare only fills the lines (`:831-837`). Nothing in the prepare path opens
-   the fold. The only code that opens it is a refusal that names a line (`:1674`); `StructureOpen` has no product
-   caller. So after step 9 the user sees *"prepared — press again to send"* but no suggestion until they open the fold.
-   A second Ctrl+Enter would send without the suggested lines, because unkept suggestions never count. This is not
-   changed here; it is the Owner's call whether a prepare that proposed lines should open the fold.
+1. **Fixed in node 5 (A): the suggested lines arrived inside a folded section.** At `71498c77` the structure fold was
+   collapsed at rest and a prepare only filled the lines, so the user saw *"prepared — press again to send"* with no
+   suggestion. The Owner ruled the shape (brief n5 (A)): a prepare that yields suggested lines opens the fold, keeps
+   focus in the editor, announces the count once, and each line is a Tab stop named `? suggested …`
+   (`ComposerSurface.cs:831-848`, `:2458`). An unkept line still does not count at the second press.
 2. **The not-recorded restored row is unreachable through the UI today** (step 20). It becomes reachable when a template
    catalog or an attach control is wired.
 
@@ -301,7 +356,9 @@ first run. Every GUI step is **owed to the user** until a person runs it.*
 | 10 | *"prepared — press again to send"* | `ComposerSurface.cs:842-844` |
 | 10 | *"Compiled on {model} · {family} · read {k} turns · {rationale}"*, k = 0 here | `src/AiDe.Core/Compilation/CompileLine.cs:49`; `ComposerSendGate.cs:739` |
 | 10 | Degraded: *"compiled mechanically — {reason}"* with Prepare again | `CompileLine.cs:53-55`; `ComposerSurface.cs:853` |
-| 11 | Fold header *"Goal · Done when · Not in scope"*, UIA "Goal, Done when, Not in scope", collapsed at rest | `ComposerSurface.cs:1648-1657` |
+| 11 | Fold header *"Goal · Done when · Not in scope"*, UIA "Goal, Done when, Not in scope", collapsed at rest | `ComposerSurface.cs:1663-1672` (at `a39dcefa`) |
+| 11 | A prepare with suggested lines opens the fold and announces *"{n} suggested lines. Review them before you send."* once; focus is not moved | `ComposerSurface.cs:831-848`, `:859-860` (`ReviewLinesAnnouncement`); `APrepareShowsItsSuggestedLinesTests` |
+| 11 | A suggested line's UIA Name is `? suggested {label}` | `ComposerSurface.cs:2458` (at `a39dcefa`) |
 | 11 | Mark `? suggested`; UIA ItemStatus without the glyph; keep button shown only then | `ComposerSurface.cs:2279`, `:2432`, `:2438-2439` |
 | 12 | Button content *keep*, UIA Name "Keep {Goal / Done when / Not in scope}", HelpText = KeepHelp | `ComposerSurface.cs:2313-2315`, `:2442-2448` |
 | 12 | KeepHelp, exact | `ComposerSurface.cs:2276` |
