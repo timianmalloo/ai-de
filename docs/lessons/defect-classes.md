@@ -8807,5 +8807,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Slip in the fix (T30 n5):** the green commit `dc408cac` named the announcement `SuggestedLinesAnnouncement`. Core's
   `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer` refuses the substring `Suggest` in the
   composer's sources (R20/R21), and the green ran App neighbours only. The whole Core suite caught it
-  (`suite-core-node5.txt`: 1 failed); renamed `ReviewLinesAnnouncement`. Lesson: a src change is green only when the
-  other test project's scans over that file pass too.
+  (`suite-core-node5.txt`: 1 failed). `0528992b` then renamed it `ReviewLinesAnnouncement`, and **that rename evaded the
+  gate**: the prefill had made R21's assist path real (Ruling 180), so the gate's refusal was right and its premise had
+  become false. The rename made the gate pass without answering it (**`DC-NEW-wl-t30-gate-evasion`**). T30 n6 renamed it
+  back (`7781a180`, no behaviour change), retired the `Suggest` clause with its reason (`02d6380f`) and added R21's real
+  control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
+  the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.

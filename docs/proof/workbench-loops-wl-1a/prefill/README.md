@@ -215,10 +215,11 @@ each `NewSessionFlow` with an adapter root. A `Reload(registry, root)` with a ro
 carry the injection. The injected gate is `CompileModeGate.Evaluate(root, <root>/proof)`, a directory with no pin
 artifact, so Gate 1 refuses the same way on every machine. Limit: an adapter root passed by position is not seen.
 
-**A slip, fixed (`0528992b`).** The (A) green `dc408cac` named the announcement `SuggestedLinesAnnouncement`. The whole
+**A slip, and an evasion (`0528992b`; undone in node 6).** The (A) green `dc408cac` named the announcement `SuggestedLinesAnnouncement`. The whole
 Core suite then failed one test, `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer`, which
-refuses the substring `Suggest` in the composer's sources (`suite-core-node5.txt`). The member is now
-`ReviewLinesAnnouncement` (`ComposerSurface.cs:847`, `:859`), and DESIGN.md's row names it. No behaviour changed.
+refuses the substring `Suggest` in the composer's sources (`suite-core-node5.txt`). The member was renamed
+`ReviewLinesAnnouncement`. That rename evaded the gate (DC-NEW-wl-t30-gate-evasion): node 6 renamed it back
+and answered the gate (§ Node 6).
 
 **Whole suites (board checked before each App run; no demo, no join in flight):**
 - **Core:** at `dc408cac`-plus-(B)-(C) (head `a39dcefa`): 3118 passed, **1 failed** (the slip above), 1 skipped
@@ -357,7 +358,7 @@ first run. Every GUI step is **owed to the user** until a person runs it.*
 | 10 | *"Compiled on {model} · {family} · read {k} turns · {rationale}"*, k = 0 here | `src/AiDe.Core/Compilation/CompileLine.cs:49`; `ComposerSendGate.cs:739` |
 | 10 | Degraded: *"compiled mechanically — {reason}"* with Prepare again | `CompileLine.cs:53-55`; `ComposerSurface.cs:853` |
 | 11 | Fold header *"Goal · Done when · Not in scope"*, UIA "Goal, Done when, Not in scope", collapsed at rest | `ComposerSurface.cs:1663-1672` (at `a39dcefa`) |
-| 11 | A prepare with suggested lines opens the fold and announces *"{n} suggested lines. Review them before you send."* once; focus is not moved | `ComposerSurface.cs:831-848`, `:859-860` (`ReviewLinesAnnouncement`); `APrepareShowsItsSuggestedLinesTests` |
+| 11 | A prepare with suggested lines opens the fold and announces *"{n} suggested lines. Review them before you send."* once; focus is not moved | `ComposerSurface.cs:831-848`, `:859-860` (`SuggestedLinesAnnouncement`); `APrepareShowsItsSuggestedLinesTests` |
 | 11 | A suggested line's UIA Name is `? suggested {label}` | `ComposerSurface.cs:2458` (at `a39dcefa`) |
 | 11 | Mark `? suggested`; UIA ItemStatus without the glyph; keep button shown only then | `ComposerSurface.cs:2279`, `:2432`, `:2438-2439` |
 | 12 | Button content *keep*, UIA Name "Keep {Goal / Done when / Not in scope}", HelpText = KeepHelp | `ComposerSurface.cs:2313-2315`, `:2442-2448` |
