@@ -60,7 +60,7 @@ public sealed class InputStatePreconditionTests
     {
         var recorded = new List<IMessageSinkMessage>();
         using var bus = new NotCheckedBus(new RecordingBus(recorded));
-        var test = new FakeTest();
+        var test = RealTest();
 
         bus.QueueMessage(new TestFailed(test, 0m, string.Empty, new NotCheckedException("NOT CHECKED: reason")));
         bus.QueueMessage(new TestFailed(test, 0m, string.Empty, new XunitException("a real failure")));
@@ -86,10 +86,13 @@ public sealed class InputStatePreconditionTests
         }
     }
 
-    private sealed class FakeTest : LongLivedMarshalByRefObject, ITest
+    /// <summary>A real xUnit test of this very method, so the message types find the collection and method they read.</summary>
+    private static XunitTest RealTest()
     {
-        public string DisplayName => "fake";
-
-        public ITestCase TestCase => null!;
+        var type = typeof(InputStatePreconditionTests);
+        var collection = new TestCollection(new TestAssembly(Reflector.Wrap(type.Assembly)), null, "input-state-precondition");
+        var method = new TestMethod(new TestClass(collection, Reflector.Wrap(type)), Reflector.Wrap(type.GetMethod(nameof(AForegroundThatIsTheTestsWindow_IsChecked))!));
+        var testCase = new XunitTestCase(new NullMessageSink(), TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, method);
+        return new XunitTest(testCase, "input-state-precondition");
     }
 }

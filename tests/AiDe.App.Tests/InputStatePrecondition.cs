@@ -42,12 +42,30 @@ public sealed class NotCheckedException(string message) : XunitException(message
 /// <summary>Preconditions on machine-wide input state: not default means NOT CHECKED (a skip), never a failure and never a pass.</summary>
 public static class InputPreconditions
 {
+    /// <summary>The left button must read released in WPF's own view; the async reading is recorded in the reason and does not decide.</summary>
     public static void RequireLeftButtonReleased(IInputStateSource? source = null)
     {
+        source ??= DesktopInputState.Instance;
+        if (source.WpfLeftButtonDown)
+        {
+            throw new NotCheckedException(
+                "NOT CHECKED: the left mouse button reads down (Mouse.PrimaryDevice.LeftButton=Pressed, "
+                + $"GetAsyncKeyState(VK_LBUTTON)={(source.AsyncLeftButtonDown ? "down" : "up")}); "
+                + "a key press on a button is released only when WPF's own view of the button reads released.");
+        }
     }
 
+    /// <summary>Read after the test's own focus attempt: <paramref name="window"/> must be the foreground window. Held, the test's assertions run and may fail.</summary>
     public static void RequireForeground(IntPtr window, string what, IInputStateSource? source = null)
     {
+        source ??= DesktopInputState.Instance;
+        var foreground = source.Foreground;
+        if (foreground != window)
+        {
+            throw new NotCheckedException(
+                $"NOT CHECKED: the foreground window is 0x{foreground.ToInt64():x} and the test's window is 0x{window.ToInt64():x}; "
+                + $"{what} would prove another window.");
+        }
     }
 }
 
@@ -86,7 +104,10 @@ public sealed class CheckedTestCase : XunitTestCase
 /// <summary>Re-queues a failure whose exception is <see cref="NotCheckedException"/> as a skip with its message as the reason; every other message passes through.</summary>
 public sealed class NotCheckedBus(IMessageBus inner) : IMessageBus
 {
-    public bool QueueMessage(IMessageSinkMessage message) => inner.QueueMessage(message);
+    public bool QueueMessage(IMessageSinkMessage message) =>
+        message is ITestFailed { ExceptionTypes.Length: > 0 } failed && failed.ExceptionTypes[0] == typeof(NotCheckedException).FullName
+            ? inner.QueueMessage(new TestSkipped(failed.Test, failed.Messages[0]))
+            : inner.QueueMessage(message);
 
     public void Dispose() => inner.Dispose();
 }
