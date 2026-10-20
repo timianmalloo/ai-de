@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T20:24:40Z",
+  "generated": "2026-10-20T20:46:55Z",
   "audit": [
     {
       "actor": null,
@@ -27975,6 +27975,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T20:24:38Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5DH2BF1M2RWKKN7XZA5V88A",
+      "shortname": "join-wl-flake-remeasure-step8",
+      "datetime": "2026-10-20T20:46:54Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T36 wl-flake-remeasure (docs-only) through conductor-join, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-flake-remeasure (T36, docs-only; merge 5d937b54, join commit a3156ff0): run-verify-gates stopped on the 5 pre-existing gates (5 of 49), as on every join since RES-1. Ratchet against the parent 44d2689b: PASS, 0 refusals over 50 gates. Release build: 0 errors. Pin: epoch 6 lapsed during the ratchet (the watch Monitor expired at 30 min and was not re-armed in time); reclaimed at epoch 7; the renew now runs in an uncapped background shell every 90 s (TTL 300 s / 3.3). A --continue after step 8 re-ran steps 5-7 and wrote a second join commit with a duplicate audit entry; both were removed before the push (never pushed).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/flake-remeasure/rates.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T36's measurement on main with its step-8 record",
+      "done_when": "ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T20:24:13Z",
+      "duration_seconds": 1361.0
     }
   ],
   "changes": [
