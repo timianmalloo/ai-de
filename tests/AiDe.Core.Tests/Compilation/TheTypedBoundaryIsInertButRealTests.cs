@@ -240,7 +240,7 @@ public sealed class TheTypedBoundaryIsInertButRealTests
         Assert.NotEqual(baseline, CompilePromptAssembler.InputsSha(Source, facts, AllOpen, null, ["01J"]));
     }
 
-    /// <summary>The rung is inert: nothing in the compilation context references the agent plane's prompt call.</summary>
+    /// <summary>Core's compilation context makes no model call. The App's CompileCallHost, reached only from ComposerSendGate's Compiler, is the one call site (R21, Ruling 180).</summary>
     [Fact]
     public void NothingInTheCompilationContextCallsAModel()
     {
