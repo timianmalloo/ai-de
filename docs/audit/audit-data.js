@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T09:26:01Z",
+  "generated": "2026-10-20T09:44:18Z",
   "audit": [
     {
       "actor": null,
@@ -27460,6 +27460,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T08:40:38Z",
       "duration_seconds": 2722.0
+    },
+    {
+      "id": "al-01M5CB52AX1B13BGX717WVYDD1",
+      "shortname": "wl-t33-fold-diag",
+      "datetime": "2026-10-20T09:44:18Z",
+      "session": "wl-t33-fold-diag",
+      "prompt": "T33 wl-fold-diag: observe why the restored-row fold test fails (read-only, no cause claimed)",
+      "summary": "Scratch capture on aa76bd6d and d986e4a4: identical state on both; real test fails alone 3 of 3 on each; no sha difference observed. Proof only, no src or committed test change.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/fold-diag/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Observe the restored-row fold failure on origin/main and d986e4a4",
+      "done_when": "README with two captures side by side, observed difference or none, what was not captured",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T09:26:58Z",
+      "duration_seconds": 1040.0
     }
   ],
   "changes": [

@@ -1,0 +1,10 @@
+Step-8 ratchet, base aa76bd6d, head 25401971 (proof commit), run_ratchet.sh wl-t33-fold-diag
+REFUSE green->red      docs/ai-forward-pack/scripts/docs-graph.py  parent=0 head=1  new=1
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 50 gate(s)
+ratchet exit 1
+
+Both refusals are derived-view gates named in rule 22 as expected at a branch head:
+ - docs-graph.py: its only defect is index drift (file not in index: proof-wl-fold-diag); 0 problems, 0 orphans.
+ - verify-site-figures.py: 'exit 1: 6 stale, 0 unknown, out of 14 checked'; parent exit was 1 too (derived site figures, regenerated at join step 6).
+No other gate refused (48 of 50 ok).
