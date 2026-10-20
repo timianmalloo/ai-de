@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T02:20:05Z",
+  "generated": "2026-10-20T02:34:21Z",
   "audit": [
     {
       "actor": null,
@@ -27026,6 +27026,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T02:20:02Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5BJHT5SX7NEXVMPPQ3WTN6R",
+      "shortname": "join-wl1b-checklist-kind-step8",
+      "datetime": "2026-10-20T02:34:21Z",
+      "session": "wl-leader4-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T26 join e3943961",
+      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1252/1265 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head e69fdbeb and on the first parent 1731a1b2 in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 1731a1b2, head e3943961: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T26 (Rulings 176-179): the checklist kind in the Right zone bound to the focused notebook's work journey; evidence currentness against the attempt's stored envelope sha (a null live sha reads NotRecorded); accept refused while blocked, naming the intent; saved review state is not acceptance; the service refuses another notebook's journey (M4); CHK1-CHK12 confirmed by the Owner (CHK3, CHK9 changed and pinned literally); the reopen refresh rides the visibility edge (M6 removed; M9 red). WL-1b is NOT accepted: owed T25 (perf), the WL-1b demo script and the user's walk-through.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-19T22:28:46Z",
+      "duration_seconds": 14735.0
     }
   ],
   "changes": [
