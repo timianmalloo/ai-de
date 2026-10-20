@@ -8853,6 +8853,33 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
   the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.
 
+### DC-NEW-wl-leader5-b — a seat that holds a lease, or that others rule through, blocks on a direct user prompt
+- **Class:** a coordination seat (the Leader: it holds the leader pin, and the Owner rules through it) calls a
+  blocking prompt to the user (`AskUserQuestion`). The session stops until the user answers. Its lease is not renewed,
+  so it lapses, and the messages, rulings and dispatches routed through the seat queue unread. Nothing outside the
+  session sees why.
+- **Instance 1 (2026-10-20, wl-leader5):** at about 14:05Z the Leader asked the user about RES-1 and the call-budget
+  hook with `AskUserQuestion`. The user answered at about 17:25Z. In between: the leader pin (epoch 5) lapsed at
+  14:24:04Z and could only be reclaimed (epoch 6, about 17:36Z); the Owner's ruling of about 14:05Z dispatching T21 n11
+  waited until 17:29Z; the Owner's 14:25Z check went unanswered. The Owner diagnosed the cause at 14:40Z (Inferred then)
+  and confirmed it later. A second fault hid the lapse: the Leader's watch treated any renew output naming the seat as
+  success, and the refusal ("a lapsed designation is not renewed") names the seat.
+- **Sweep:** the Leader kickoff and brief-common.md named no rule against a direct user prompt; the Owner's channel
+  rule ("I relay to the user") existed only in the Owner's messages. Nodes are sub-agents, so a node's prompt would
+  block the Leader's background task instead.
+- **Derive:** a seat others depend on never blocks on the user. A question for the user is a message to the Owner,
+  who relays it. A lease holder's watch treats only a confirmed renewal as success.
+- **Prevent:** (1) Prose, always loaded: the Leader kickoff's cadence section and brief-common.md rule 24
+  (2026-10-20). (2) The Leader's watch (a session tool, `leader-watch.py` in the Leader's scratchpad) now prints
+  `RENEW-FAIL` for any renew output that does not start `renew`. (3) No check that prevents the prompt could be built
+  by the Leader. The preventive control is a PreToolUse deny of `AskUserQuestion` for the Leader's session, and that is
+  a `.claude/settings.json` change, so it is the user's decision, beside the call-budget hook. A detective check on the
+  transcript was rejected. It runs only after the block, and the Leader's transcript id changes across a continuation
+  (measured 2026-10-20: the scratchpad and subagents folder are `32e229b8-…`, the transcript is `fca5f2f8-….jsonl`), so
+  no fixed path finds it.
+- **Status:** `partially-controlled` (prose + the watch's renew check). A gate is owed only if the user applies the
+  PreToolUse deny; recorded for the user with the budget-hook decision.
+
 ### DC-NEW-wl-leader5 — a seat identity written as a literal where it must be resolved at send time
 - **Class:** a coordination template (the common track brief, the Leader kickoff, an Owner tick prompt) names a seat
   by its session id or epoch. Seats hand off mid-drive, so the literal goes stale at the next hand-off. Every message

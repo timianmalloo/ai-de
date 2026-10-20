@@ -106,3 +106,7 @@ and a default.
     leave a lexical or structural gate's view. In the commit that answers a refusal, name the gate, the rule it
     cites and which of the two it was. T30 n5 renamed `SuggestedLinesAnnouncement` to pass
     `NoAssistPathExistsAnywhereInTheComposer`, while the prefill had made R21's assist path real (Ruling 180).
+24. **Never prompt the user directly (DC-NEW-wl-leader5-b).** No node and no Leader calls `AskUserQuestion`. A question
+    for the user goes in your mail to the Leader, who sends it to the Owner; the Owner relays it. A direct prompt blocks
+    the session until the user answers. The Leader's did for about three hours on 2026-10-20: its pin lapsed, and the
+    Owner's rulings queued unread.

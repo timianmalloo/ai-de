@@ -297,3 +297,12 @@
 {"agent": "wl-leader5-20261020", "at": 1792517360.054549, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T21n11-wl-t21-terminal-move.md", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792517360.1011872, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792517360.1440265, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T21n11.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.473003, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.525202, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.5756826, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t21-terminal-move.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.6265435, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.674441, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.7242577, "code": null, "kind": "allowed", "path": ".agents/log/wl-t21-layout-gate-r2.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.7741528, "code": null, "kind": "allowed", "path": ".agents/log/wl-t21-terminal-move.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.8270082, "code": null, "kind": "allowed", "path": ".github/workflows/build.yml", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792517735.879331, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/residuals.md", "session": "wl-leader5-20261020", "wi": ""}

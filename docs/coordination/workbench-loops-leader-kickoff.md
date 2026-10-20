@@ -88,6 +88,9 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
   track's state and worktree, open requests, and the exact resume line. The Owner respawns you with a
   resume brief whose first line is the `audit-log.py start` marker; your worktrees, branches, board and
   ledger survive the hand-off because they live in the repo, not in your context.
+- **Never prompt the user directly (DC-NEW-wl-leader5-b).** The Leader never calls `AskUserQuestion`. A question for
+  the user goes to the Owner by `SendMessage` to `ai-de-c3` (and the board); the Owner relays it. A direct prompt
+  blocks this session until the user answers: the leader pin lapses and rulings queue unread.
 - **Decision requests**: `coord decide request --to wl-owner-20261018 --deadline 1200 --fallback "<default>" …`
   with a recommendation, **and** a `SendMessage` to `ai-de-c3` naming the request id. The Owner rules with
   `coord decide rule next`; you read the ruling back, you never apply a default early.
