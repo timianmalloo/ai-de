@@ -1,0 +1,13 @@
+== wl-input-state-sweep, session wl-t37-input-state-sweep, --base 0d8385e7 (merge 8e42987a first parent)
+leader-prejoin: REFUSED - the join's step 7 would sweep these uncommitted paths into the join commit:
+  ?? docs/proof/workbench-loops-support/slash-claim/L2-refusals.txt
+  ?? docs/proof/workbench-loops-support/slash-claim/L3-real.txt
+  commit or hold them first (a ruling is committed alone; Leader notes in their own commit)
+exit=1
+
+== own branch wl-slash-claim, session wl-t39-slash-claim
+leader-prejoin: REFUSED - the join's step 7 would sweep these uncommitted paths into the join commit:
+  ?? docs/proof/workbench-loops-support/slash-claim/L2-refusals.txt
+  ?? docs/proof/workbench-loops-support/slash-claim/L3-real.txt
+  commit or hold them first (a ruling is committed alone; Leader notes in their own commit)
+exit=1

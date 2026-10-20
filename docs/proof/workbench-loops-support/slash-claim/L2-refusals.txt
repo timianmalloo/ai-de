@@ -1,0 +1,13 @@
+L2 - does coord record a claim refusal? (read from docs/ai-forward-pack/scripts/coord-core.py; not edited)
+Correction to the brief's premise: .agents/decisions DOES hold refusals.
+Counts on this tree (primary checkout differs by 4 allowed/claim rows only):
+  .agents/log/*.jsonl      claim 3989, release 3279, heartbeat 1159, leader 1399, owner-review-stop 3214, ... (no refusal kind)
+  .agents/decisions/*.jsonl allowed 18146, not_checked 132, refused 108  (all code COORD-REFUSED, 23 sessions)
+Code paths (cmd_claim, coord-core.py ~5475-5545):
+  recorded as kind "refused" via append_decision (:5542): a contention deny (check() == deny); also the edit hook (:2796, :2834).
+  NOT recorded (print + return 3, no append_decision): COORD-CLAIM-STALE-CONTROLS (:5491), COORD-CLAIM-REGISTER-CLASS,
+  COORD-CLAIM-DERIVED-CLASS, COORD-CLAIM-TTL-CAP. COORD-CLAIM-SELF/usage return 2/after, unrecorded.
+Result: (2) built for the recorded kind (a changed path whose newest refused row for the session is newer than every
+covering claim -> exit 1 claimed-after-refusal). Residual: the T36 instance-3 case (an exit-3 stale-controls refusal)
+leaves no record, so the check cannot see it; rule 5's exit-status line stays prose for those four refusals.
+Scripts: count_kinds.py, refused_shape.py (same folder).
