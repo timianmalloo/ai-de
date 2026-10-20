@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T18:34:00Z",
+  "generated": "2026-10-20T20:24:40Z",
   "audit": [
     {
       "actor": null,
@@ -27922,6 +27922,59 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T17:29:34Z",
       "duration_seconds": 3866.0
+    },
+    {
+      "id": "al-01M5DFP30SRCYSCEFPZSJRY1K7",
+      "shortname": "wl-t36-flake-remeasure",
+      "datetime": "2026-10-20T20:22:44Z",
+      "session": "wl-t36-flake-remeasure",
+      "prompt": "T36: re-derive the failing-test list with the left button released: N=10 full runs, each named test alone x10",
+      "summary": "Core 0 failures in 10 runs; App 2-3 per run; fold now passes; CtrlDigit and CtrlEnter still fail; two new load-only 1/10 events. No cause claimed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/flake-remeasure/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Re-measure the known-failure list with the button released",
+      "done_when": "rates.md, README, register line and ratchet committed; done mail sent",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T18:34:58Z",
+      "duration_seconds": 6466.0
+    },
+    {
+      "id": "al-01M5DFSKJ00869V6JWFFTF47FT",
+      "shortname": "join-wl-flake-remeasure",
+      "datetime": "2026-10-20T20:24:39Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-flake-remeasure into main",
+      "summary": "T36 joined docs-only: N=10 full runs with the left button released (0x0000 in all 22 samples); the fold passes 0/10 in suite and alone (T31 10/10); CtrlDigit 10/10 and 9/10 alone, CtrlEnter 10/10 and 10/10 alone, unchanged from T31; two load-only events (ConsoleSplit run 4, TheFactoryLanding run 6) recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/flake-remeasure/rates.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T36's measurement onto main",
+      "done_when": "docs-only join pushed; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T20:24:38Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -33940,6 +33993,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t21-terminal-move"
+    },
+    {
+      "id": "mail-01M5DFPC2N5BH066T96M1P9FTT",
+      "ts": "2026-10-20T20:22:53Z",
+      "from": "wl-t36-flake-remeasure",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t36-flake-remeasure"
     }
   ]
 };

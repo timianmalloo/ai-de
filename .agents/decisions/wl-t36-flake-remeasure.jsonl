@@ -1,0 +1,12 @@
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.193984, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.2423987, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/README.md", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.2886498, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/alone.sh", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.3362918, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/alone.txt", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.3815389, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/build.txt", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.4287548, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/mouse.txt", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.472521, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/rates.md", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.51953, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/rates.py", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.5642307, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/run-one.sh", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527184.610207, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/runs.txt", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527764.9876068, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t36-flake-remeasure", "wi": ""}
+{"agent": "wl-t36-flake-remeasure", "at": 1792527765.0507226, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/flake-remeasure/ratchet.txt", "session": "wl-t36-flake-remeasure", "wi": ""}
