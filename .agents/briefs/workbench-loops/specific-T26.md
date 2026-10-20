@@ -2,9 +2,11 @@
 
 **Goal (design row T26):** the minimal `checklist` kind, WL-1b's only user-facing part.
 **Node 1 is accepted as a branch node** (f4285f32): D1 and D2 are green, D2's reds are three mutation reds (accept
-while blocked; R1; the Owner's null-sha), and the surface refreshes on visibility. **Leader reading accepted:** the
-surface id is `checklist:<sessionId>`. The service must always be called with the journey resolved from that session's
-notebook (`owner_journey_id`), never a journey derived in the App.
+while blocked; R1; the Owner's null-sha), and the surface refreshes on visibility. **Owner accepted:** the
+surface id `checklist:<sessionId>` is a **placement key only**. The stored id stays `checklist_id = journey_id`
+(Ruling 176), resolved from the session's notebook one-to-one (`owner_journey_id`), never derived in the App.
+**Owner's condition, a check in this node:** add a test that the service **refuses** a call whose journey does not
+match the session's notebook. It is red first, by a mutation that passes the wrong journey.
 
 **This node (n2), in this order:**
 - **(0) The three literal entries** (seam `req-01M5BAKZ9BAA28CF4R07PTRKGV`, granted). In `PerspectiveMenuTests.cs`: the
