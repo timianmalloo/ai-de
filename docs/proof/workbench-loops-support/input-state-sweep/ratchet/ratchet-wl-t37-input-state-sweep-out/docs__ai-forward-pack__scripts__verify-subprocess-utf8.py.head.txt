@@ -1,4 +1,0 @@
-text-mode subprocess calls that let the locale choose the codec (2):
-  tools/verify-front-door-exit-evidence.py:63: run(... text=True) without encoding=
-  tools/verify-front-door-exit-evidence.py:57: run(... text=True) without encoding=
-fix: add encoding="utf-8", errors="replace" to the call (prompt-log.py has the worked example)

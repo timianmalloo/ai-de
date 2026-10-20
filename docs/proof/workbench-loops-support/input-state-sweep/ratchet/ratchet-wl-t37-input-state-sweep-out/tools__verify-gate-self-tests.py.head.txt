@@ -1,2 +1,0 @@
-verify-gate-self-tests: FAILED
-  - verify-test-run.py now HAS a --self-test but is still on the frozen list. Remove it: a debt list that keeps names it no longer owns stops describing the debt, and the next reader cannot tell which entries are real.

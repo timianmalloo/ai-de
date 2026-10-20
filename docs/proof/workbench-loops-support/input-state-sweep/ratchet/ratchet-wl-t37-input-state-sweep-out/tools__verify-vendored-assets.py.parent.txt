@@ -1,1 +1,0 @@
-verify-vendored-assets: 2 vendored file(s) across 1 manifest(s) match their recorded hashes, sizes, lockfile and provenance.

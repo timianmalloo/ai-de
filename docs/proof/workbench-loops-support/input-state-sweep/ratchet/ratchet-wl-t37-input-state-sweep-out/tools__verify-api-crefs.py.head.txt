@@ -1,1 +1,0 @@
-verify-api-crefs: OK — 5,072 declared name(s) known, 2409 unresolved span(s), none of them a dropped first character.

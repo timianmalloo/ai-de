@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T20:46:55Z",
+  "generated": "2026-10-20T21:33:36Z",
   "audit": [
     {
       "actor": null,
@@ -27999,6 +27999,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T20:24:13Z",
       "duration_seconds": 1361.0
+    },
+    {
+      "id": "al-01M5DKQVNXA7KQW460VHG3ZC2Y",
+      "shortname": "wl-t37-input-state-sweep",
+      "datetime": "2026-10-20T21:33:36Z",
+      "session": "wl-t37-input-state-sweep",
+      "prompt": "T37: UI tests read the global input state they depend on and end NOT CHECKED when it is not the default",
+      "summary": "Runtime skip for xUnit 2.9.3 (discoverer + bus rewrite), InputPreconditions helper, 5 tests converted, recount prints NotExecuted reasons, expectedSkips names CtrlDigit and CtrlEnter, register controlled; App 0 failed",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/input-state-sweep/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "the control owed by DC-NEW-wl-t33-input-state",
+      "done_when": "helper red then green, tests converted, recount names NOT CHECKED with reasons, suites green",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T20:53:27Z",
+      "duration_seconds": 2409.0
     }
   ],
   "changes": [

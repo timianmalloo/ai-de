@@ -1,1 +1,0 @@
-self-test: the oracle reddens on every clause it claims to check

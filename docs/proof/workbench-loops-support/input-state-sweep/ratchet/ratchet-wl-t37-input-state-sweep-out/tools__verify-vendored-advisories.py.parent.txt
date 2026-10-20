@@ -1,2 +1,0 @@
-  vendor-src/composer-bundle/package-lock.json: re-scanned now - info=0, low=0, moderate=0, high=0, critical=0
-verify-vendored-advisories: 1 manifest(s) carry a current advisory record, and the scan was re-run against every lockfile they name.

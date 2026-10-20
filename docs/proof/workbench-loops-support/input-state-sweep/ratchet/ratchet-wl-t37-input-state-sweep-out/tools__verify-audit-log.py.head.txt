@@ -1,4 +1,0 @@
-audit-log.jsonl          1047 entries, 0 duplicate id(s)
-change-log.jsonl          161 entries, 0 duplicate id(s)
-
-verify-audit-log: OK — 1,208 entr(ies) across 2 log(s); every id is claimed by exactly one entry.

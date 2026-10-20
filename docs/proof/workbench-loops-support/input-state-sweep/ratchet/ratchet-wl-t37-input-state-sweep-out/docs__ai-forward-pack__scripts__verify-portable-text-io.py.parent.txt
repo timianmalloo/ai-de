@@ -1,8 +1,0 @@
-text I/O that is not portable across Windows and macOS (5):
-  tools/verify-front-door-exit-evidence.py:592: write_text(...) without newline="\n"
-  tools/verify-front-door-exit-evidence.py:585: write_text(...) without newline="\n"
-  tools/verify-front-door-exit-evidence.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
-  tools/compile-eval/first-calls.py:177: write_text(...) without newline="\n"
-  tools/compile-eval/first-calls.py:1: prints from a __main__ entry with no stdio reconfigure guard (cp1252 console)
-fix: newline="\n" on every text write (audit-log.py:465 is the example); the stdio guard from
-     pack-doctor.py at the top of every printing script; drop text=True from mkstemp

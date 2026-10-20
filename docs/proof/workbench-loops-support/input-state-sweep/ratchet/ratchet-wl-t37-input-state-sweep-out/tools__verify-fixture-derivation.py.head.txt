@@ -1,1 +1,0 @@
-verify-fixture-derivation: OK — no test restates the product's own list (36 identifier(s) watched).

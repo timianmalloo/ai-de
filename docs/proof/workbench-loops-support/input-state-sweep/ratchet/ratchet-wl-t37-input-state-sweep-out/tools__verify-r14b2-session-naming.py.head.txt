@@ -1,1 +1,0 @@
-verify-r14b2-session-naming: OK — no new out-of-container "session" symbol since origin/main.
