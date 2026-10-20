@@ -1,0 +1,71 @@
+tests/AiDe.App.CanvasProbe/Program.cs:22:/// delivers to the FOREGROUND window, which neither a test host nor a shell-launched probe can hold
+tests/AiDe.App.CanvasProbe/Program.cs:111:        SetForegroundWindow(new WindowInteropHelper(window).Handle);
+tests/AiDe.App.CanvasProbe/Program.cs:142:        SetForegroundWindow(new WindowInteropHelper(window).Handle);
+tests/AiDe.App.CanvasProbe/Program.cs:264:        SetForegroundWindow(new WindowInteropHelper(window).Handle);
+tests/AiDe.App.CanvasProbe/Program.cs:409:    private static extern bool SetForegroundWindow(IntPtr hWnd);
+tests/AiDe.App.ComposerProbe/Program.cs:430:    /// (<c>SendInput</c>) needs the foreground window, which a probe launched from a tool host cannot
+tests/AiDe.App.ComposerProbe/Program.cs:536:            SetForegroundWindow(new WindowInteropHelper(window).Handle);
+tests/AiDe.App.ComposerProbe/Program.cs:805:            // (2) The OS path: SendInput, which reaches whatever the FOREGROUND window's thread has
+tests/AiDe.App.ComposerProbe/Program.cs:808:            SetForegroundWindow(hwnd);
+tests/AiDe.App.ComposerProbe/Program.cs:810:            var foreground = GetForegroundWindow() == hwnd;
+tests/AiDe.App.ComposerProbe/Program.cs:816:                $"os keystroke: foreground held={foreground}, SendInput injected={sent}, reached draft={osTyped}");
+tests/AiDe.App.ComposerProbe/Program.cs:1286:        private static extern IntPtr GetForegroundWindow();
+tests/AiDe.App.ComposerProbe/Program.cs:1306:    private static extern bool SetForegroundWindow(IntPtr hWnd);
+tests/AiDe.App.ComposerProbe/Program.SessionRender.cs:177:            SetForegroundWindow(new WindowInteropHelper(window).Handle);
+tests/AiDe.App.SolutionTreeProbe/Program.cs:79:        SetForegroundWindow(hwnd);
+tests/AiDe.App.SolutionTreeProbe/Program.cs:98:        SetForegroundWindow(hwnd);
+tests/AiDe.App.SolutionTreeProbe/Program.cs:117:        if (GetForegroundWindow() != hwnd)
+tests/AiDe.App.SolutionTreeProbe/Program.cs:119:            Console.Error.WriteLine("foreground not held; SendInput would prove another window");
+tests/AiDe.App.SolutionTreeProbe/Program.cs:254:    private static extern bool SetForegroundWindow(IntPtr hWnd);
+tests/AiDe.App.SolutionTreeProbe/Program.cs:257:    private static extern IntPtr GetForegroundWindow();
+tests/AiDe.App.Tests/CanvasFocusIntegrationTests.cs:41:    /// goes to the FOREGROUND window, so an off-screen or background one would swallow every
+tests/AiDe.App.Tests/InputStatePrecondition.cs:17:    /// <summary><c>GetForegroundWindow()</c>.</summary>
+tests/AiDe.App.Tests/InputStatePrecondition.cs:30:    public IntPtr Foreground => GetForegroundWindow();
+tests/AiDe.App.Tests/InputStatePrecondition.cs:36:    private static extern IntPtr GetForegroundWindow();
+tests/AiDe.App.Tests/InputStatePrecondition.cs:58:    /// <summary>Read after the test's own focus attempt: <paramref name="window"/> must be the foreground window. Held, the test's assertions run and may fail.</summary>
+tests/AiDe.App.Tests/InputStatePrecondition.cs:66:                $"NOT CHECKED: the foreground window is 0x{foreground.ToInt64():x} and the test's window is 0x{window.ToInt64():x}; "
+tests/AiDe.App.Tests/InputStatePreconditionTests.cs:46:        Assert.Contains("foreground window", thrown.Message, StringComparison.Ordinal);
+tests/AiDe.App.Tests/PaneRenderTests.cs:19:/// <para><b>In-process on an STA thread, deliberately.</b> The canvas needs a real foreground window
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:87:                Assert.True(items[0].IsKeyboardFocused);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:91:                Assert.True(items[1].IsKeyboardFocused);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:98:                Assert.True(items[0].IsKeyboardFocused);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:100:                Assert.True(items[2].IsKeyboardFocused);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:239:                Assert.Same(after, Keyboard.FocusedElement);                          // one stop, then out
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:250:                Assert.Same(after, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:254:                Assert.True(((PerspectiveRailItem)Keyboard.FocusedElement!).MoveFocus(new TraversalRequest(FocusNavigationDirection.Previous)));
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:255:                Assert.Same(button, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/PerspectiveRailTests.cs:319:                Assert.True(items[^1].IsKeyboardFocused);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadAnnouncesAndExposesRealPropertiesTests.cs:320:                Assert.Same(header, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:95:                Assert.Same(feed.ItemContainerGenerator.ContainerFromIndex(0), Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:100:                Assert.Same(second, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:109:                Assert.Same(feed.ItemContainerGenerator.ContainerFromIndex(39), Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:122:                Assert.Same(feed.ItemContainerGenerator.ContainerFromIndex(1), Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:186:                Assert.Same(container, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:204:                Assert.Same(composer, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:208:                Assert.Equal("2 events", AutomationProperties.GetName((DependencyObject)Keyboard.FocusedElement));
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:365:                Assert.Same(container, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:425:                Assert.Same(jumpButton, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs:513:                Assert.DoesNotContain(ThreadFixtures.Visuals<Button>(focused), b => b.IsKeyboardFocused);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:384:                Assert.Same(region, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:389:                Assert.Same(region, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:407:                Assert.Same(region, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:449:                Assert.Same(stop, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:504:                Assert.Same(region, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs:516:                Assert.Same(compiled, Keyboard.FocusedElement);
+tests/AiDe.App.Tests/SolutionTreeChordTests.cs:9:    // The probe's own exit code for "its window is not the foreground window after its focus attempt".
+tests/AiDe.App.Tests/SolutionTreeChordTests.cs:47:            throw new NotCheckedException($"NOT CHECKED: the probe's window was not the foreground window after its own focus attempt; SendInput would prove another window. Probe said: {stderr.Trim()}");
+tests/AiDe.App.Tests/Sta.cs:53:        // FOREGROUND thread, and a live foreground thread keeps the process alive — so when the Join
+tests/AiDe.App.Tests/Sta.cs:97:    /// on-screen and activated, because <c>SendInput</c> goes to the FOREGROUND window and an
+tests/AiDe.App.Tests/Workbench/ALiveNotebookFloatsAndRedocksTests.cs:164:                    Assert.True(live.Document.IsKeyboardFocusWithin, $"the focus is not in the redocked notebook; it is on {Keyboard.FocusedElement?.GetType().Name ?? "nothing"}");
+tests/AiDe.App.Tests/Workbench/Composer/APrepareShowsItsSuggestedLinesTests.cs:72:            Assert.True(inEditorBefore, "the fixture could not put focus in the editor before the prepare (desk run owed: foreground not held)");
+tests/AiDe.App.Tests/Workbench/Composer/APrepareShowsItsSuggestedLinesTests.cs:74:            Assert.False(fold.IsKeyboardFocusWithin, $"the prepare moved keyboard focus into a suggestion: {Describe(focusedAfter)}");
+tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:124:            SetForegroundWindow(hwnd);
+tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:130:            if (GetForegroundWindow() == hwnd && focusClass.StartsWith("Chrome_", StringComparison.Ordinal) && hasFocus == "\"true\"")
+tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:139:            $"environment: focus could not be put inside the page (foreground held={GetForegroundWindow() == hwnd}, os focus class='{focusClass}', page hasFocus={hasFocus})");
+tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:225:    private static extern IntPtr GetForegroundWindow();
+tests/AiDe.App.Tests/Workbench/Notebook/CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:229:    private static extern bool SetForegroundWindow(IntPtr hWnd);
+tests/AiDe.App.Tests/Workbench/Records/AReopenedNotebookRendersItsRecordedAttemptsTests.cs:247:                Assert.Same(container, Keyboard.FocusedElement);
+tests/AiDe.Core.Tests/WorkbenchCommandTests.cs:82:        Assert.True(session.IsActive);
+tests/AiDe.Core.Tests/WorkbenchCommandTests.cs:120:        Assert.False(session.IsActive);
+tests/AiDe.Core.Tests/WorkbenchCommandTests.cs:135:        Assert.False(session.IsActive);
+tests/AiDe.Core.Tests/WorkbenchCommandTests.cs:150:        Assert.True(session.IsActive);

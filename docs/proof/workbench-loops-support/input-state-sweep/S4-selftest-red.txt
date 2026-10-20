@@ -1,0 +1,5 @@
+verify-test-run --self-test: FAILED
+  - [NOT CHECKED] Ns.A.NotChecked
+  - NOT CHECKED: the foreground window is 0x1 and the test's window is 0x2
+  - [NOT CHECKED] Ns.A.SkippedNoReason
+  - (the .trx carries no message for this result)

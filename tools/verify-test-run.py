@@ -259,6 +259,42 @@ def non_passed(root: ET.Element) -> list[tuple[str, str, str]]:
     return named
 
 
+def not_checked_lines(results: list[tuple[str, str, str]]) -> list[str]:
+    """The report lines that name every NotExecuted result with its reason."""
+    return []
+
+
+_PLANTED_TRX = """<TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010"><Results>
+<UnitTestResult testName="Ns.A.Passes" outcome="Passed" />
+<UnitTestResult testName="Ns.A.NotChecked" outcome="NotExecuted"><Output><ErrorInfo><Message>NOT CHECKED: the foreground window is 0x1 and the test's window is 0x2
+second line</Message></ErrorInfo></Output></UnitTestResult>
+<UnitTestResult testName="Ns.A.Fails" outcome="Failed"><Output><ErrorInfo><Message>boom</Message></ErrorInfo></Output></UnitTestResult>
+<UnitTestResult testName="Ns.A.SkippedNoReason" outcome="NotExecuted" />
+</Results></TestRun>"""
+
+
+def self_test() -> int:
+    """A planted .trx: every NotExecuted result is named with its reason, and nothing else is reported as NOT CHECKED."""
+    lines = not_checked_lines(non_passed(ET.fromstring(_PLANTED_TRX)))
+    expected = [
+        "[NOT CHECKED] Ns.A.NotChecked",
+        "NOT CHECKED: the foreground window is 0x1 and the test's window is 0x2",
+        "[NOT CHECKED] Ns.A.SkippedNoReason",
+        "(the .trx carries no message for this result)",
+    ]
+    text = "\n".join(lines)
+    problems = [e for e in expected if e not in text]
+    if "Ns.A.Fails" in text or "Ns.A.Passes" in text:
+        problems.append("a Passed or Failed result was reported as NOT CHECKED")
+    if problems:
+        print("verify-test-run --self-test: FAILED")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    print("verify-test-run --self-test: OK")
+    return 0
+
+
 def read_counts(project_name: str) -> tuple[dict[str, int], str, list[tuple[str, str, str]]] | None:
     """Return (counters, outcome, non-passed results) for a project's result file, or None.
 
@@ -351,11 +387,16 @@ def main() -> int:
     parser.add_argument("--key", metavar="NAME",
                         help="baseline key and result-file name for a filtered half "
                              "(e.g. AiDe.Core.Tests.portable)")
+    parser.add_argument("--self-test", dest="self_test", action="store_true",
+                        help="check the NOT CHECKED report against a planted .trx and exit")
     parser.add_argument("--refuse-upward-drift", dest="drift_base", metavar="BASE",
                         help="the join's line: also refuse a candidate whose executed count EXCEEDS "
                              "its baseline while that key's baseline did not move between BASE and "
                              "this tree (BASE is a rev, e.g. HEAD^1). Not for CI.")
     args = parser.parse_args()
+
+    if args.self_test:
+        return self_test()
 
     if args.filter_expr and not args.key:
         print("verify-test-run: --filter needs --key, or the half would be measured against the "
