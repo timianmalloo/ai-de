@@ -8764,3 +8764,8 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `? suggested` name (`A-shows-suggested-red.txt`, `A-shows-suggested-green.txt`).
 - **Status:** `controlled` for the suggested lines. Partial for the class: no scan refuses a composer oracle that reads
   through the logical tree only.
+- **Slip in the fix (T30 n5):** the green commit `dc408cac` named the announcement `SuggestedLinesAnnouncement`. Core's
+  `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer` refuses the substring `Suggest` in the
+  composer's sources (R20/R21), and the green ran App neighbours only. The whole Core suite caught it
+  (`suite-core-node5.txt`: 1 failed); renamed `ReviewLinesAnnouncement`. Lesson: a src change is green only when the
+  other test project's scans over that file pass too.

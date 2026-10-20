@@ -844,7 +844,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         if (suggested > 0)
         {
             _structure.IsExpanded = true;
-            _announcer.Announce(new Announcement(SuggestedLinesAnnouncement(suggested), Urgency.Status, AnnouncementKind.Other));
+            _announcer.Announce(new Announcement(ReviewLinesAnnouncement(suggested), Urgency.Status, AnnouncementKind.Other));
         }
 
         var degraded = _gate.LastCallOutcome is { } outcome && !CallOutcomes.Agentic.Contains(outcome, StringComparer.Ordinal);
@@ -856,7 +856,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     }
 
     /// <summary>The one announcement of a prepare that suggested lines (DESIGN.md's composer status row; Ruling 180 (3)).</summary>
-    public static string SuggestedLinesAnnouncement(int count) =>
+    public static string ReviewLinesAnnouncement(int count) =>
         count == 1 ? "1 suggested line. Review it before you send." : $"{count} suggested lines. Review them before you send.";
 
     /// <summary>Shows the compile line with the control its state needs: Cancel while preparing, Prepare again when degraded or stale.</summary>
