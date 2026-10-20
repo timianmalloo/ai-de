@@ -111,3 +111,35 @@ projection. The request then takes a sha per dispatch key, which is a Core seam.
   Accessibility condition). No ruling or mail recording it was found.
 - Rule 5: the node-2 test files under `tests/AiDe.App.Tests/Workbench/Checklist/` (an owned new path) were edited
   without a per-edit claim. The source, test-table, README and hand-off edits were claimed.
+
+# T26 checklist kind — node 3
+
+## (F) The Owner's copy confirmation (Owner, 2026-10-20 ~01:10Z; carried by the T26 n3 brief, 0481ee2d)
+
+The Owner read DESIGN.md:1410-1421 at b82eba50. The Owner's decision:
+
+- **Confirmed as written:** CHK1, CHK2, CHK4, CHK5, CHK6, CHK7, CHK8, CHK10, CHK11 and CHK12.
+- **Changed, exactly:**
+  - CHK3 → `Satisfied by run {7-char key} (intent revision {n}).` One term, "intent revision", everywhere.
+  - CHK9 → `This notebook has no work journey. It was made before work journeys existed. Obligations need a work journey.`
+    "(pre-workbench)" was internal jargon the user has never seen.
+
+This closes the residual "the checklist copy still awaits the Owner's confirmation" from nodes 1 and 2.
+
+**Red first.** No test pinned either sentence before this node: every test read the `ChecklistCopy` member the surface
+renders, so a copy change could never go red. `TheChecklistSaysTheOwnersCopyTests` asserts each sentence as a literal,
+as the user sees it on the surface:
+
+- `CHK3_ALinkedRun_ReadsSatisfiedByRun_AtItsIntentRevision` drives the link gesture (View → New checklist, Add
+  obligation, Link the latest run) and reads the row's UIA name.
+- `CHK9_ANotebookMadeBeforeWorkJourneys_SaysItHasNoWorkJourney` opens the checklist over a notebook the v1 → v2
+  migration backfilled as legacy (no work journey). That is the only way such a notebook exists (Ruling 148 c), so
+  `ChecklistHarness.LegacyStore` writes a v1 file from the store's own frozen baseline and opens it.
+
+| Step | Commit | Proof |
+| --- | --- | --- |
+| Red on the old copy: CHK3 reads "(revision 1)", CHK9 reads "(pre-workbench)" | `2ce683f0` | `copy-red.txt` |
+| Green: `ChecklistCopy.cs`, DESIGN.md CHK3 and CHK9, design `:426`, in one commit | see `handoff.md` | `copy-green.txt` (12 of 12 checklist App tests) |
+
+The design doc's CHK3 line (`docs/design/workbench-loops-wl-1b.md:418`) still reads "(revision {n})". It is outside
+this node's grant (only `:426` was granted). Seam request `req-01M5BDHVX8T545SQC0V4BESVF9` asks for it.

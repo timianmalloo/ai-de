@@ -30,7 +30,7 @@ public static class ChecklistCopy
 
     public const string Ready = "Ready to accept.";
 
-    public const string NotAWorkJourney = "This notebook is unassigned (pre-workbench). Obligations need a work journey.";
+    public const string NotAWorkJourney = "This notebook has no work journey. It was made before work journeys existed. Obligations need a work journey.";
 
     /// <summary>The opener's refusal with no notebook to take the journey from, and the pane of an id that names no journey.</summary>
     public const string NoNotebook = "No notebook is focused. Open a notebook in Factory, then open its checklist.";
@@ -67,9 +67,9 @@ public static class ChecklistCopy
 
     public const string AcceptedEarlier = "Accepted at an earlier intent revision. The intent has changed since, so this acceptance does not cover the current revision.";
 
-    /// <summary>"Satisfied by run {7-char key} (revision {n})."</summary>
-    public static string Satisfied(string dispatchKey, int revision) =>
-        string.Create(CultureInfo.InvariantCulture, $"Satisfied by run {dispatchKey[..Math.Min(7, dispatchKey.Length)]} (revision {revision}).");
+    /// <summary>"Satisfied by run {7-char key} (intent revision {n})."</summary>
+    public static string Satisfied(string dispatchKey, int intentRevision) =>
+        string.Create(CultureInfo.InvariantCulture, $"Satisfied by run {dispatchKey[..Math.Min(7, dispatchKey.Length)]} (intent revision {intentRevision}).");
 
     /// <summary>The Accepted line: it names the intent revision by number and claims nothing about implementation (Ruling 179).</summary>
     public static string Accepted(int intentRevision) =>
