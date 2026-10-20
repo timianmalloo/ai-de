@@ -32,6 +32,9 @@ public sealed class DesignCopyRowsArePinnedTests
 {
     private static readonly Regex IdRow = new(@"^\| (?<id>[A-Z]+[0-9]+[a-z]?) \| (?<cell>.*) \|$", RegexOptions.Compiled);
 
+    /// <summary>A row the Owner has ruled stale opens its cell with this mark, then the reason, then <c>)* </c>, then the original sentence.</summary>
+    private const string StaleMark = "*(stale: ";
+
     private const string SampleKey = "abcdefghij";
     private const string SampleKeyCut = "abcdefg";
     private const int SampleRevision = 4242;
@@ -124,6 +127,17 @@ public sealed class DesignCopyRowsArePinnedTests
         new("DOCK4", [KeptPromptsSingular(), "Kept {N} prompt drafts as they were: prompt drafts do not become notebooks."], ["LayoutPersistence.KeptPromptsSentence"]),
     ];
 
+    private static bool IsStale(string cell) => cell.StartsWith(StaleMark, StringComparison.Ordinal);
+
+    /// <summary>The original sentence of a stale row: the text after the mark's reason, cut before any trailing annotation.</summary>
+    private static string StaleSentence(string cell)
+    {
+        var end = cell.IndexOf(")* ", StringComparison.Ordinal);
+        var sentence = end < 0 ? string.Empty : cell[(end + 3)..].Trim();
+        var note = sentence.IndexOf(" (", StringComparison.Ordinal);
+        return note < 0 ? sentence : sentence[..note];
+    }
+
     private static Dictionary<string, string> DesignRows()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -146,9 +160,8 @@ public sealed class DesignCopyRowsArePinnedTests
         return rows;
     }
 
-    private static HashSet<string> CopyMembers()
+    private static IEnumerable<(Type Type, FieldInfo Field)> CopyFields()
     {
-        var found = new HashSet<string>();
         foreach (var assembly in new[] { typeof(ChecklistCopy).Assembly, typeof(TurnCopy).Assembly })
         {
             foreach (var type in assembly.GetTypes())
@@ -159,22 +172,34 @@ public sealed class DesignCopyRowsArePinnedTests
                 {
                     if (isCopyType || f.Name.EndsWith("Copy", StringComparison.Ordinal))
                     {
-                        found.Add(type.Name + "." + f.Name);
+                        yield return (type, f);
                     }
                 }
+            }
+        }
+    }
 
-                if (isCopyType)
+    private static HashSet<string> CopyMembers()
+    {
+        var found = CopyFields().Select(x => x.Type.Name + "." + x.Field.Name).ToHashSet();
+        foreach (var assembly in new[] { typeof(ChecklistCopy).Assembly, typeof(TurnCopy).Assembly })
+        {
+            foreach (var type in assembly.GetTypes().Where(t => t.Name.EndsWith("Copy", StringComparison.Ordinal)))
+            {
+                const BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly;
+                foreach (var mth in type.GetMethods(all).Where(mth => mth.ReturnType == typeof(string) && !mth.IsSpecialName))
                 {
-                    foreach (var mth in type.GetMethods(all).Where(mth => mth.ReturnType == typeof(string) && !mth.IsSpecialName))
-                    {
-                        found.Add(type.Name + "." + mth.Name);
-                    }
+                    found.Add(type.Name + "." + mth.Name);
                 }
             }
         }
 
         return found;
     }
+
+    /// <summary>Every sentence the code is known to render: each pin's rendered text and each copy constant's value.</summary>
+    private static IEnumerable<string> RenderedCorpus() =>
+        Pins().SelectMany(p => p.Rendered).Concat(CopyFields().Select(x => (string)x.Field.GetRawConstantValue()!));
 
     [Fact]
     public void EveryPinnedRow_CarriesTheLiteralTheCodeRenders()
@@ -186,6 +211,12 @@ public sealed class DesignCopyRowsArePinnedTests
             if (!rows.TryGetValue(pin.RowId, out var cell))
             {
                 failures.Add($"{pin.RowId}: pinned, but DESIGN.md has no such id row");
+                continue;
+            }
+
+            if (IsStale(cell))
+            {
+                failures.Add($"{pin.RowId}: pinned, but the DESIGN.md row is marked stale; a stale row is not pinned (un-stale it, or drop the pin)");
                 continue;
             }
 
@@ -207,12 +238,15 @@ public sealed class DesignCopyRowsArePinnedTests
         var rows = DesignRows();
         var pinned = Pins().Select(p => p.RowId).ToHashSet();
         var failures = new List<string>();
-        failures.AddRange(rows.Keys.Where(id => !pinned.Contains(id) && !UnmatchedRows.ContainsKey(id))
+        var stale = rows.Where(r => IsStale(r.Value)).Select(r => r.Key).ToHashSet();
+        failures.AddRange(rows.Keys.Where(id => !stale.Contains(id) && !pinned.Contains(id) && !UnmatchedRows.ContainsKey(id))
             .Select(id => $"{id}: a DESIGN.md copy row no code literal is pinned to, and not on UnmatchedRows"));
         failures.AddRange(UnmatchedRows.Keys.Where(id => !rows.ContainsKey(id))
             .Select(id => $"{id}: stale UnmatchedRows entry, the DESIGN.md row is gone; delete it"));
         failures.AddRange(UnmatchedRows.Keys.Where(pinned.Contains)
             .Select(id => $"{id}: stale UnmatchedRows entry, the row is now pinned; delete it"));
+        failures.AddRange(UnmatchedRows.Keys.Where(stale.Contains)
+            .Select(id => $"{id}: on UnmatchedRows and marked stale in DESIGN.md; a stale row is neither pinned nor unmatched, delete the entry"));
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }
@@ -229,6 +263,18 @@ public sealed class DesignCopyRowsArePinnedTests
             .Select(m => $"{m}: stale UnmatchedMembers entry, the member is gone or no longer a copy member; delete it"));
         failures.AddRange(UnmatchedMembers.Keys.Where(covered.Contains)
             .Select(m => $"{m}: stale UnmatchedMembers entry, the member is now pinned; delete it"));
+
+        Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+    }
+
+    [Fact]
+    public void AStaleRow_IsNotRenderedByAnyCode()
+    {
+        var corpus = RenderedCorpus().ToList();
+        var failures = DesignRows().Where(r => IsStale(r.Value))
+            .Where(r => StaleSentence(r.Value) is { Length: > 0 } sentence && corpus.Any(c => c.Contains(sentence, StringComparison.Ordinal)))
+            .Select(r => $"{r.Key}: stale row is rendered; un-stale it (\"{StaleSentence(r.Value)}\")")
+            .ToList();
 
         Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
     }
