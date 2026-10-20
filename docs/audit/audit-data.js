@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T09:58:34Z",
+  "generated": "2026-10-20T11:10:27Z",
   "audit": [
     {
       "actor": null,
@@ -27537,6 +27537,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T09:26:43Z",
       "duration_seconds": 1911.0
+    },
+    {
+      "id": "al-01M5CG2TZD8QR99ZC9JJQQXKQQ",
+      "shortname": "wl-t34-deadholder-repro",
+      "datetime": "2026-10-20T11:10:27Z",
+      "session": "wl-t34-deadholder-repro",
+      "prompt": "T34: reproduce ADeadHolder failing under full App suite load, read-only",
+      "summary": "NOT REPRODUCED, N=10 on 0b00e858; ADeadHolder passed 10/10; no cause claimed; mouse button state observed 0x8000",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/deadholder-repro/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Reproduce ADeadHolder under load and capture where it waits",
+      "done_when": "10 runs or first failure, README, register Repro line, ratchet",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T09:58:54Z",
+      "duration_seconds": 4293.0
     }
   ],
   "changes": [
