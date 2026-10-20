@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T03:39:08Z",
+  "generated": "2026-10-20T07:01:17Z",
   "audit": [
     {
       "actor": null,
@@ -27152,6 +27152,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T02:59:14Z",
       "duration_seconds": 2394.0
+    },
+    {
+      "id": "al-01M5C1TK6Y4F7TTVY4F477Q6JD",
+      "shortname": "wl-t31-loadflake",
+      "datetime": "2026-10-20T07:01:17Z",
+      "session": "wl-t31-loadflake",
+      "prompt": "T31 wl-loadflake: measure DC-NEW-wl-leader3-b failure rate over N=10 full Core+App runs",
+      "summary": "10 runs; Core 0 failures; App 3 stable env-bound failures + 2 single-event load-only; both named instances NOT REPRODUCED; alone x10 per failing test; register Measured line",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/loadflake/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "replace re-run with a measured failure rate",
+      "done_when": "N=10 runs, rates.md, alone x10, classification, register line, ratchet",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T05:15:54Z",
+      "duration_seconds": 6323.0
     }
   ],
   "changes": [
