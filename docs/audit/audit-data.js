@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T21:50:30Z",
+  "generated": "2026-10-20T22:07:48Z",
   "audit": [
     {
       "actor": null,
@@ -28129,6 +28129,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T21:39:49Z",
       "duration_seconds": 640.0
+    },
+    {
+      "id": "al-01M5DNPF15XFAGRYZKQ4C4EJTK",
+      "shortname": "join-wl-input-state-sweep-step8",
+      "datetime": "2026-10-20T22:07:48Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T37 wl-input-state-sweep through conductor-join with the full recount, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-input-state-sweep (T37; merge 8e42987a, join commit 1d9f7482; full recount): run-verify-gates stopped on 4 of 49 (the pre-existing set less two). Ratchet against the parent 0d8385e7: PASS, 0 refusals over 50 gates; verify-derived-views and verify-site-figures went 1 -> 0. Release build: 0 errors. Recount: verify-test-run OK on every key; App 1279 total, 0 failed (baseline raised 1274 -> 1279 by the five helper tests); the fold, APrepare and the composer shell test PASSED; CtrlDigit and CtrlEnter PASSED (the foreground was held in this run: their own assertions ran; first suite pass on record after T31 10/10 and T36 10/10 failures). The NOT CHECKED report named each static skip with its reason. Pre-join: leader_prejoin refused 13 unclaimed paths (12 proof outputs and tools/verify-gate-self-tests.py), excused by the Owner's ruling (a), the last pre-join excuse. Near-miss: the Leader wrote specific-T39.md into the primary during step 4 and moved it out before step 7; not in the join commit.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/input-state-sweep/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T37's input-state control on main with its step-8 record",
+      "done_when": "recount OK; ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T21:35:51Z",
+      "duration_seconds": 1917.0
     }
   ],
   "changes": [
