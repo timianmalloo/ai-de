@@ -233,6 +233,30 @@ and answered the gate (§ Node 6).
     (*Space on the restored row's fold did not open it*): it failed the same way at node 4 with the branch's only src
     change reverted to main's copy (`suite-app-node4-baseline.txt`). The join's recount decides.
 
+## Node 6 — the privacy gate made honest about R21 (the Owner's join hold; brief rule 23)
+
+**Result:** the composer gate no longer bans the word *Suggest*; R21 has a real control instead. No test calls a model.
+
+| Item | Red | Green | Tests / output |
+|---|---|---|---|
+| **(H1)** retire the `Suggest` clause of `NoAssistPathExistsAnywhereInTheComposer`, with its reason | `7781a180` · `H1-red.txt` (the true name back; the gate finds `Suggest`, 1 failed) | `02d6380f` · `H1-green.txt` (6/6) | `ThePrivacyResidualsAreCoveredTests` (Core) |
+| **(H2)** R21's control: one sanctioned model-call site, `ComposerSendGate.cs:148` (invoked at `:660`), under gate 1 | `H2-red-mutation.txt` (a second `CompileCallHost.CompileAsync` in `ComposerSurface.cs`, reverted; 1 failed) | `6b90bd54` · `H2-green.txt` (2/2) | `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (2, App) |
+| **(H3)** the name and the defect line | — | `7781a180` (rename back, no behaviour change), `b50a2e92` (slip line cites DC-NEW-wl-t30-gate-evasion) | — |
+| **(H4)** the sweep for DC-NEW-wl-t30-gate-evasion | — | `H4-lexical-ban-sweep.md`: 68 bans, 63 hold, 1 answered, 4 stale in wording (F1), none now live | — |
+
+**(H1).** The answer to the gate (rule 23): its premise has become false. Ruling 27 deferred R21 because its test
+*"proves nothing while no assist path exists at all"*, and Ruling 180's prefill is that path. `Assist` and `Promote`
+stay: they guard R20 (the assist transform; promote-to-goal-block, assist-powered in addendum B), which is unbuilt.
+
+**(H2), why App.** The model-calling host set is reflected from `AiDe.App` (every `[CapabilityTier]` carrier) and the site
+is matched with `nameof`, so a renamed host breaks the build instead of leaving the scan's view. The second fact drives
+the surface: mechanical-only sends with zero calls, and agentic-advisory reaches the site once. Gate 1's store refusal
+is Core's `TheCompileModeLadderIsGatedTests`. Not seen: a call through an alias of the delegate.
+
+**(H4) finding F1 for the Owner:** `TheTypedBoundaryIsInertButRealTests.NothingInTheCompilationContextCallsAModel`
+says *"the rung is inert"*, but the advisory rung calls a model through App's `CompileCallHost`. Its bans still hold
+for Core's compilation context. Nothing was changed.
+
 ## Human demo script — the prefill
 
 *Written by T30 node 4 (`wl-t30-prefill`) for the Owner, at `71498c77`. Keyboard only. Every gesture, label and string

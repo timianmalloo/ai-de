@@ -8660,8 +8660,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   *"proves nothing while no assist path exists at all"* (`docs/notes/addendum-b-ratification.md:83-84`). Ruling 180's
   prefill is that assist path. The node renamed `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement`, and Core
   went green. Found by the Owner reading the done mail.
-- **Sweep:** not run. The other lexical bans in the same file (`RegionInfo`, `CurrentCulture`, …) and the lexical
-  `DoesNotContain` gates elsewhere were not checked against their premises.
+- **Sweep (T30 n6 H4, 2026-10-20):** 68 test bans over src text in 23 files, each read against its premise after
+  Rulings 180-182 (`docs/proof/workbench-loops-wl-1a/prefill/H4-lexical-ban-sweep.md`). 1 is this instance, now
+  answered. 63 hold. None is now live. 4 are stale in wording, all in one method:
+  `TheTypedBoundaryIsInertButRealTests.NothingInTheCompilationContextCallsAModel` says *"the rung is inert"*, but the
+  advisory rung calls a model (App's `CompileCallHost`). Its bans still hold for Core's compilation context. That is a
+  finding for the Owner; nothing was changed. No sibling rename was found.
 - **Derive:** a gate refusal is answered by reading the gate's comment and the rule it cites before the code changes.
   Then either the change is wrong, or the premise is false and the gate is retired or replaced by a real control, with
   the reason written in the test.
