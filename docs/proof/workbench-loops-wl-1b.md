@@ -62,9 +62,11 @@ removal is a new revision only).
 with a stub harness over a real daemon and store, not with a real adapter.*
 
 ### 0. Build and launch
-Run from a **clean worktree of origin/main**, never the primary checkout (as the WL-1a script, step 0).
-1. `dotnet build AiDe.sln -c Release`
-2. Run `src/AiDe.App/bin/Release/net10.0-windows/AiDe.App.exe`.
+Run from a **clean worktree of origin/main**, never the primary checkout (as the WL-1a script, step 0). The Owner
+staged one: `C:\Projects\ai-de-demo-main` at `afe52a97`, Release built, 0 errors.
+1. In that tree: `dotnet build AiDe.sln -c Release`
+2. Run `C:\Projects\ai-de-demo-main\src\AiDe.App\bin\Release\net10.0-windows\AiDe.App.exe` and open
+   `C:\Projects\ai-de-demo-main` as the workspace.
 
 ### 1. Declare the work
 3. **Ctrl+1** (Factory). **Ctrl+N** opens *New session*; create a session as in WL-1a steps 3-4. In the editor, type a
@@ -121,8 +123,12 @@ Run from a **clean worktree of origin/main**, never the primary checkout (as the
 
 ### Still owed
 - A person runs steps 3 and 6 on the real lane. No test covers them with a real adapter.
-- Not confirmed in code: the status line after *New checklist* (no literal "Checklist opened." was found); that closing the window saves the layout (the tests call the save directly); that a workspace must
-  be reopened for the revive; the Alt+V route to the View menu.
+- Not confirmed in code: the status line after *New checklist* (no literal "Checklist opened." was found); that a
+  workspace must be reopened for the revive.
+- Read in code (Owner, then the Leader, at `afe52a97`): **Alt+V** opens View: `PerspectiveMenu.cs:44` `MenuOrder` has
+  `_View`, and `:86` builds the menus from it. **Closing saves the layout:** `MainWindow.xaml.cs:96` `Closed` calls
+  `Shell.Dispose`; `WorkbenchShell.cs:3455-3457` disposes each host; `LayoutPersistence.Dispose` (:480-491) calls
+  `SaveNow` (:308). The host-to-persistence dispose link is Inferred (both ends read, not the middle).
 
 ## Acceptance
 
