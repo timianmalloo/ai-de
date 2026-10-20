@@ -224,7 +224,8 @@ public sealed class PerspectiveMenuTests
             ("daydreams",        ["factory"], SurfaceContentFactory.Instances.One),
             ("search",           ["factory"], SurfaceContentFactory.Instances.Many),
             ("codeviewer",       ["factory", "understand"], SurfaceContentFactory.Instances.Many),
-            ("diagnostics",      ["factory"], SurfaceContentFactory.Instances.One),
+            ("checklist",        ["factory", "understand"], SurfaceContentFactory.Instances.Many),   // WL-1b T26: one per journey
+            ("diagnostics",     ["factory"], SurfaceContentFactory.Instances.One),
             ("canvas",           ["understand"], SurfaceContentFactory.Instances.One),
             ("view",             ["understand"], SurfaceContentFactory.Instances.One),
             ("classdiagram",     ["understand"], SurfaceContentFactory.Instances.Many),
@@ -312,7 +313,7 @@ public sealed class PerspectiveMenuTests
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Raise score dispute on the latest scored episode", "Clear the status message",
              "Cycle session region", "Cycle session region backward", "Session console",
-             "New search", "New code viewer", "Show diagnostics",
+             "New search", "New code viewer", "New checklist", "Show diagnostics",
              "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"],
             Titles(factory, "_View"));
         Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(factory, "_Prompt"));
@@ -342,7 +343,7 @@ public sealed class PerspectiveMenuTests
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
              "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
-             "Show contexts", "Show joins", "Show solution tree", "Show entry-points", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
+             "Show contexts", "Show joins", "Show solution tree", "Show entry-points", "New code viewer", "New checklist"],                 // Ruling 94: no "Show provenance" — the kind is retired
             Titles(understand, "_View"));
         Assert.Equal(Titles(factory, "_Edit"), Titles(understand, "_Edit"));
         Assert.Equal(Titles(factory, "_Window"), Titles(understand, "_Window"));
