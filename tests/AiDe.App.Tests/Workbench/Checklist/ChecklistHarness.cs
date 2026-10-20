@@ -123,9 +123,10 @@ internal sealed class ChecklistHarness : IDisposable
     }
 
     /// <summary>Types the words and sends them through the stub harness, which answers: one Completed turn.</summary>
-    public async Task<string> RunToCompletionAsync(Window window, SessionDocumentSurface document, string words)
+    /// <param name="taskClass">The run's task class; another class over the same words is a new projection of the same revision.</param>
+    public async Task<string> RunToCompletionAsync(Window window, SessionDocumentSurface document, string words, string taskClass = "implement")
     {
-        ConfigureStub(document, "implement");
+        ConfigureStub(document, taskClass);
         Fixture.ReleaseRun();
         var turns = document.Notebook.Thread.Current.Turns.Count;
         document.Composer.Draft.SetFreeFormText(words);
