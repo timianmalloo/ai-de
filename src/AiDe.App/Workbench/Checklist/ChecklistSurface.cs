@@ -221,9 +221,11 @@ public sealed class ChecklistSurface : ContentControl
             new ChecklistEvaluateRequest(bound.JourneyId, bound.NotebookId), CancellationToken.None).ConfigureAwait(true);
 
         // simplify: one live sha per evaluation — the newest current-revision run's own envelope — because the Core
-        // request carries one LiveProjectionSha for every link. Ceiling: one linked run per obligation at the head
-        // revision. Upgrade trigger: two linked runs at one revision with different projections; then the request
-        // takes a sha per dispatch key (a Core seam).
+        // request carries one LiveProjectionSha for every link. Ceiling: every head-revision run shares one projection.
+        // Past it, a link to an older run of another projection reads stale although it ran from the current draft; an
+        // obligation that also links the newest run reads satisfied by it (pinned by TheOneLiveShaCeilingTests).
+        // Upgrade trigger: a user links an older run of the head revision after a re-prepare that changed the
+        // projection; then the request takes a sha per dispatch key (a Core seam).
         var live = await LiveShaAsync(bound.Document, unprojected.EvidenceCandidates.LastOrDefault()).ConfigureAwait(true);
         var result = live is null
             ? unprojected
