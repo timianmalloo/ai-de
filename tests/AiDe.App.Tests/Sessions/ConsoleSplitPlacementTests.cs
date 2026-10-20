@@ -148,8 +148,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
 
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CollapseByTheRoute(shell.Factory, ZonesToTree.LeftStackId);
             frame.Settle();
 
             Assert.Equal(ZoneId.Center, shell.Factory.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
