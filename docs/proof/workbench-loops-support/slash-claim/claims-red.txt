@@ -1,0 +1,12 @@
+FAIL trailing-slash claim -> exit 1 naming the false grant and the no-slash form: unexpected
+leader-prejoin: clean (only coordination ledgers are uncommitted)
+leader-prejoin: claim check session wl-test-node branch node: checked 4, exempt 1 (coordination-record 1), unclaimed 2
+leader-prejoin: REFUSED - UNCLAIMED paths (no coord claim from this session covers them):
+  src/a.txt
+  src/b.txt
+
+FAIL last outcome for a changed path is a refusal -> exit 1 claimed-after-refusal: unexpected
+leader-prejoin: clean (only coordination ledgers are uncommitted)
+leader-prejoin: claim check session wl-test-node branch node: checked 4, exempt 1 (coordination-record 1), unclaimed 0
+
+test-leader-prejoin-claims: FAILED (2 failures)
