@@ -1,0 +1,4 @@
+Suites via tools/verify-test-run.py (Core + App, full), 2026-10-20 21:00-21:08Z; left button 0x0000 before and after (mouse.txt)
+AiDe.App.Tests: <Counters total="1279" executed="1275" passed="1275" failed="0" error="0" notExecuted="0" /
+AiDe.Core.Tests: <Counters total="3122" executed="3121" passed="3121" failed="0" error="0" notExecuted="0" /
+App: 1279 total, 1275 passed, 0 failed, 4 NotExecuted (total - executed), named with their reasons in S5-recount.txt. Core: 3122 total, 3121 passed, 0 failed, 1 NotExecuted.

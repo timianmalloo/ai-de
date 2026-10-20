@@ -1,0 +1,22 @@
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+AiDe.App.Tests                    1279      1274     Completed
+AiDe.Core.Tests                   3122      3122     Completed
+
+AiDe.App.Tests — NOT CHECKED (4), each with its reason:
+      [NOT CHECKED] AiDe.App.Tests.Canvas.KnowledgeModeRealProjectionTests.Understand_TheDockedCanvasInKnowledgeInclusiveMode_ShowsAKnownKnowledgeNodeWithItsTypedEdges_AndOffHidesIt
+        the real daemon projection over a repository: set AIDE_REAL_PROJECTION_ROOT to the repository root
+      [NOT CHECKED] AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective
+        NOT CHECKED: the foreground window is 0xa80450 and the test's window is 0x227e07cc; SendInput would prove another window.
+      [NOT CHECKED] AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph
+        NOT CHECKED: the probe's window was not the foreground window after its own focus attempt; SendInput would prove another window. Probe said: foreground not held; SendInput would prove another window
+      [NOT CHECKED] AiDe.App.Tests.Conductor.Attempts.AttemptRealLaneStopTests.Stop_OnTheRealClaudeCodeLane_EndsInTheAdrsTerminal_AndIsRecorded
+        the real claude-code lane: set AIDE_REAL_ADAPTER_ROOT (and AIDE_REAL_LANE_EVIDENCE to keep the run's evidence)
+
+AiDe.Core.Tests — NOT CHECKED (1), each with its reason:
+      [NOT CHECKED] AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched
+        this host cannot create a file symbolic link (IOException: enable Developer Mode or run elevated); the refusal is covered by the directory-junction fixture
+
+verify-test-run: OK — 4401 tests counted across 2 project(s), every project met its baseline and every skip was one the baseline names.
+exit=0
