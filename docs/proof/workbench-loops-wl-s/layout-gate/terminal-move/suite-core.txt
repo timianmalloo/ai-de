@@ -1,0 +1,18 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 153 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 153 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 153 ms).
+  3 of 6 projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-layout-gate-terminal-move\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-wl-layout-gate-terminal-move\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:01:22.92]     AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [SKIP]
+  Skipped AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched [1 ms]
+
+Passed!  - Failed:     0, Passed:  3121, Skipped:     1, Total:  3122, Duration: 2 m 19 s - AiDe.Core.Tests.dll (net10.0)
