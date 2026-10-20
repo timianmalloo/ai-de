@@ -11,7 +11,9 @@ a `claim` event in <repo root>/.agents/log/<s>.jsonl (exact path, or a directory
 be exempt because coord refuses to claim it. The exemption is coord-core.py's own: the coordination record
 (.agents/**, COORD-CLAIM-SELF) and the register and derived classes from `classify`. A missing or unreadable log refuses.
 Exit 0 = clean, start the join; 1 = refused (foreign or unclaimed paths listed); 2 = usage (the check did not run).
-Usage: python -I leader_prejoin.py <repo root> [--branch <b> --session <s>]
+--base <rev> replaces the merge-base (to re-check a branch already merged into main, where the merge-base is its
+own head and the diff is empty); an empty diff refuses rather than passes.
+Usage: python -I leader_prejoin.py <repo root> [--branch <b> --session <s> [--base <rev>]]
 """
 import importlib.util
 import json
@@ -19,13 +21,17 @@ import pathlib
 import subprocess
 import sys
 
-USAGE = ("usage: python -I leader_prejoin.py <repo root> [--branch <b> --session <s>]   "
+USAGE = ("usage: python -I leader_prejoin.py <repo root> [--branch <b> --session <s> [--base <rev>]]   "
          "exit: 0 clean, 1 refused, 2 usage")
 ARGV = sys.argv[1:]
-BRANCH = SESSION = None
-if len(ARGV) == 5 and ARGV[1] == "--branch" and ARGV[3] == "--session":
+BRANCH = SESSION = BASE = None
+if len(ARGV) in (5, 7) and ARGV[1] == "--branch" and ARGV[3] == "--session":
     BRANCH, SESSION = ARGV[2], ARGV[4]
-    ARGV = ARGV[:1]
+    if len(ARGV) == 7 and ARGV[5] == "--base":
+        BASE = ARGV[6]
+        ARGV = ARGV[:1]
+    elif len(ARGV) == 5:
+        ARGV = ARGV[:1]
 if len(ARGV) != 1 or ARGV[0].startswith("-"):
     print(USAGE)
     sys.exit(2)
@@ -93,14 +99,18 @@ except (OSError, ValueError, KeyError, AttributeError) as exc:
     print(f"leader-prejoin: REFUSED - claim check not recorded: session log {log} unreadable ({exc})")
     sys.exit(1)
 
-base = git_out("merge-base", "main", BRANCH)
+base = BASE or git_out("merge-base", "main", BRANCH)
 changed = [p for p in git_out("diff", "--name-only", base, BRANCH).splitlines() if p]
+if not changed:
+    print(f"leader-prejoin: REFUSED - claim check not recorded: {BRANCH} changes no path against {base[:12]} "
+          "(already merged into main? pass --base <fork point>)")
+    sys.exit(1)
 unclaimed, exempt = [], {}
 for path in changed:
     if coord._norm(path).split("/")[0] == coord.COORD_DIRNAME:
         exempt.setdefault("coordination-record", []).append(path)
         continue
-    klass, _why = coord.classify(ROOT, path)
+    klass, _why = coord.classify(ROOT / coord.COORD_DIRNAME, path)
     if klass in ("register", "derived"):
         exempt.setdefault(klass, []).append(path)
     elif not any(coord.lease_covers(lease, path) for lease in leases):

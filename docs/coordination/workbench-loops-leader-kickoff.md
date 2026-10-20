@@ -98,7 +98,8 @@ model `claude-opus-5-5`, running in `C:\Projects\ai-de` (the primary checkout, b
   keyboard steps, the expected observations — and the Proof Pack path. The Owner runs it against the
   built app and replies *accept* or *refuse* with what it saw. No join of a slice before that reply.
 - **Joins**: only `conductor-join.py`; land on `main`; push after every join; never remove a worktree to
-  resolve a conflict.
+  resolve a conflict. Run `python -I .agents/briefs/workbench-loops/leader_prejoin.py <repo root> --branch <b>
+  --session <node session>` first: it refuses a branch with a changed path the node never claimed.
 
 ## Not in scope for you
 
