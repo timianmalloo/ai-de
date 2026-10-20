@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T21:17:37Z",
+  "generated": "2026-10-20T21:18:44Z",
   "audit": [
     {
       "actor": null,
@@ -28023,6 +28023,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-10-20T20:53:32Z",
       "duration_seconds": 1445.0
+    },
+    {
+      "id": "al-01M5DJWKGK3NW1TNERTW8CNTF3",
+      "shortname": "join-wl-claim-check",
+      "datetime": "2026-10-20T21:18:43Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-claim-check into main",
+      "summary": "T38 joined docs-only: leader_prejoin.py --branch --session [--base] refuses a join when a changed path has no coord claim from the node's session (coord's classify and lease_covers imported; .agents, register and derived classes exempt; a missing log or empty diff refuses). C1 red then green (6 cases). C2: wl-flake-remeasure and wl-chk6-gap-pin both refused (9/12 and 10/12 unclaimed). Own branch: 11 checked, 3 exempt, 0 unclaimed. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/claim-check/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T38's claim check onto main",
+      "done_when": "docs-only join pushed; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-20T21:18:42Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -34050,6 +34079,33 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t36-flake-remeasure"
+    },
+    {
+      "id": "mail-01M5DJ4NKZ21PBBQC7ADZCEQPD",
+      "ts": "2026-10-20T21:05:39Z",
+      "from": "wl-leader5-20261020",
+      "to": "wl-t38-claim-check",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader5-20261020"
+    },
+    {
+      "id": "mail-01M5DJDQ4QRKX6YRNBDHGX8FZW",
+      "ts": "2026-10-20T21:10:35Z",
+      "from": "wl-leader5-20261020",
+      "to": "wl-t37-input-state-sweep",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader5-20261020"
+    },
+    {
+      "id": "mail-01M5DJVB0CYBD8HK6H5AMHX3P8",
+      "ts": "2026-10-20T21:18:02Z",
+      "from": "wl-t38-claim-check",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t38-claim-check"
     }
   ]
 };

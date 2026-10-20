@@ -10872,7 +10872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ff7e7f337b4bf076325d041f443fb2cdf74cd5f4d7928df36682f97da8e2dcc"
+      "sourceSha256": "a82c1ddac2c660efdfa279bbb746401840cdfa7c93202cc6201bb2f7c3aeac54"
     },
     {
       "id": "defect-classes",
@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a06ff2935264eb7b246c82a8934fbd312c4bae100eecfc559cd86756f03b9cf8"
+      "sourceSha256": "b86ba8224bb79a4378b5a874bfd798c4b228ce69ad0e22d9919fcad6af4347e9"
     },
     {
       "id": "design-session-profiler",
@@ -23074,6 +23074,27 @@ window.DOCS_INDEX = {
       "sourceSha256": "da08488473376677cca17ef6b0bc0b11cc303a59c014db276be676bf590ee56e"
     },
     {
+      "id": "proof-wl-t38-claim-check",
+      "path": "docs/proof/workbench-loops-support/claim-check/README.md",
+      "title": "T38 wl-claim-check: the join refuses a branch with unclaimed changed paths",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "leader_prejoin.py gains --branch/--session: every path a branch changes needs a coord claim from the node's session, or coord must refuse to claim it. Red-green on a planted branch; two real joined branches refused.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dd67f53daecd023ab6ed52247dc0f1eba16bdbdacea1c915dd535d710b64b7d3"
+    },
+    {
       "id": "proof-workbench-loops-20261018",
       "path": "docs/proof/workbench-loops-20261018.md",
       "title": "Notebook workbench proposal — interaction and review proof",
@@ -26099,5 +26120,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "efcde9c13cec9dadd891495a56fb0a5033789448b2981031e4ab1777eab3948e"
+  "graphSha256": "2206351e12fd5fe6a3d4c5c824e63e19c7dacccb3bb0c5da99acf722c2f4b863"
 };
