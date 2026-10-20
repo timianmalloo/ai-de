@@ -87,9 +87,19 @@ public sealed class ChecklistSurface : ContentControl
         body.Children.Add(_closing);
         Content = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
 
+        // Shown, it re-evaluates (a reopen, a restore, a perspective switch back); hidden, it stops listening. A
+        // visibility edge, not Loaded: nothing here is one-time initialisation (DC-138).
         Show(ChecklistCopy.Loading);
-        Loaded += (_, _) => LastAction = RefreshAsync();
-        Unloaded += (_, _) => Watch(null);
+        IsVisibleChanged += (_, shown) =>
+        {
+            if (shown.NewValue is true)
+            {
+                LastAction = RefreshAsync();
+                return;
+            }
+
+            Watch(null);
+        };
     }
 
     /// <summary>The checklist surface id of the journey whose intent notebook <paramref name="sessionId"/> names.</summary>
