@@ -1,0 +1,4 @@
+ratchet origin/main 470c81e7 -> head b1fce6cd (wl-t25-perf)
+REFUSE green->red      tools/verify-derived-views.py  parent=0 head=1  new=1
+ratchet: REFUSE — 1 refusal(s) over 50 gate(s)
+EXPECTED: tools/verify-derived-views.py is a derived-view gate (regenerated at join step 6, DC-NEW-wl-leader3 rule 22). It is the only refusal; no other gate went green->red.
