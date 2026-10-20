@@ -1,0 +1,91 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Core\AiDe.Core.csproj (in 167 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 167 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Daemon\AiDe.Daemon.csproj (in 167 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Mcp\AiDe.Mcp.csproj (in 167 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.App\AiDe.App.csproj (in 517 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 517 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 517 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 517 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 529 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 517 ms).
+  Restored C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 517 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.09]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.21]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.43]     AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [FAIL]
+[xUnit.net 00:00:00.43]       6 test(s) read the drawn layout after a layout command that no user route reaches (DC-NEW-wl-t21-float-d):
+TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface: command `.Apply(new LayoutOperation.MoveSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]       Stack Trace:
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Workbench\LayoutOraclesDriveTheCommandRouteTests.cs(105,0): at AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException()
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.43]       Output:
+[xUnit.net 00:00:00.43]         228 files · 7 tests read the drawn layout after a layout command · 6 render by hand between · 0 named exceptions
+[xUnit.net 00:00:00.43]           REFUSED   TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]           REFUSED   ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface: command `.Apply(new LayoutOperation.MoveSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]           REFUSED   ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]           REFUSED   Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]           REFUSED   Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.43]           REFUSED   Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+[xUnit.net 00:00:00.44]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [193 ms]
+  Error Message:
+   6 test(s) read the drawn layout after a layout command that no user route reaches (DC-NEW-wl-t21-float-d):
+TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface: command `.Apply(new LayoutOperation.MoveSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException() in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Workbench\LayoutOraclesDriveTheCommandRouteTests.cs:line 105
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ 228 files · 7 tests read the drawn layout after a layout command · 6 render by hand between · 0 named exceptions
+   REFUSED   TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+   REFUSED   ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface: command `.Apply(new LayoutOperation.MoveSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+   REFUSED   ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+   REFUSED   Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+   REFUSED   Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+   REFUSED   Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.ContentFor(`)
+
+
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [8 ms]
+  Standard Output Messages:
+ Planted.cs::Node2Original: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInALocalFunction: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInAClassHelper: command `.Execute("workbench.closePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RenderTwoHelpersDeep: command `.Execute("workbench.maximizePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::ServiceOperationThenRender: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RailAfterACollapse: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.RailVisible(`)
+
+
+
+Test Run Failed.
+Total tests: 2
+     Passed: 1
+     Failed: 1
+ Total time: 0.7801 Seconds

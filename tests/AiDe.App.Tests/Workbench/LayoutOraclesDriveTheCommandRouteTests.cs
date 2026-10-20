@@ -17,8 +17,9 @@ namespace AiDe.App.Tests.Perspectives;
 /// <list type="bullet">
 /// <item><b>view oracle</b> (<see cref="Oracle"/>): what reads the drawn layout: the docking manager's layout tree or
 /// floating windows, a floating window's hosted content, the drawn-id set helper, the Center's drawn empty copy, a drawn
-/// rail. <b>Not an oracle:</b> <c>Adapter.ContentFor</c> (the adapter's content cache: a surface's lifetime, not the drawn
-/// arrangement) and reads of a content control's own state.</item>
+/// rail, and the adapter's two reads of the drawn tree, <c>ContentFor</c> and <c>ActiveSurfaceId</c> (they walk
+/// <c>Manager.Layout</c>, then the parked content; Owner R2, T21 n10). <b>Not an oracle:</b> reads of a content
+/// control's own state.</item>
 /// <item><b>layout command</b> (<see cref="Command"/>): what changes the layout model without the route: a
 /// <c>workbench.*</c> command id executed on a controller that is not a <c>DockHost</c>'s, or a non-<c>AddSurface</c>
 /// <c>LayoutOperation</c> applied to the service directly. <c>AddSurface</c> only opens panes: setup.</item>
@@ -42,7 +43,7 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
 
     /// <summary>Reads the drawn layout: the manager's layout tree or floating windows, hosted-content checks, the drawn-id helper.</summary>
     private static readonly Regex Oracle = new(
-        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(|\.CenterEmpty\(|\.RailVisible\(",
+        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(|\.CenterEmpty\(|\.RailVisible\(|\.ContentFor\(|\.ActiveSurfaceId\b",
         RegexOptions.Compiled);
 
     /// <summary>A layout command off the route: a <c>workbench.*</c> id executed on a non-DockHost controller, or a non-AddSurface operation applied to the service.</summary>
