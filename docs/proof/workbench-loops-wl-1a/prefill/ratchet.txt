@@ -3,3 +3,9 @@ REFUSE new findings    tools/verify-derived-views.py  parent=1 head=1  new=2
 REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
 ratchet: REFUSE — 3 refusal(s) over 49 gate(s)
 ratchet exit 1
+
+== T30 node 5 ratchet (rule 22): origin/main 48c2dc46 vs head 7f8de2be, 2026-10-20T01:07:34Z
+REFUSE new findings    tools/verify-derived-views.py  parent=1 head=1  new=2
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+ratchet: REFUSE — 2 refusal(s) over 49 gate(s)
+Expected (derived-view gates; join step 6 regenerates them): tools/verify-derived-views.py, tools/verify-site-figures.py. No other refusal; docs-graph.py did not refuse.
