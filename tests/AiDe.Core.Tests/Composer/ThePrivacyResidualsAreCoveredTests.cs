@@ -104,15 +104,27 @@ public sealed class ThePrivacyResidualsAreCoveredTests
     [Fact]
     public void NoAssistPathExistsAnywhereInTheComposer()
     {
-        // R20 and R21 are Phase 3. "An assist call is made" is a clause on two of F4's own bullets,
-        // and the honest oracle for a call that must not happen is that there is nothing to call.
+        // R20 is Phase 3 and still unbuilt. "An assist call is made" is a clause on two of F4's own
+        // bullets, and the honest oracle for a call that must not happen is that there is nothing to call.
+        //
+        // 'Assist' and 'Promote' still guard R20, which is unbuilt: 'Assist' names R20's assist transform
+        // (apply-template and its assist.* events, addendum B R20; docs/notes/addendum-b-ratification.md:41,
+        // :56), and 'Promote' names promote-to-goal-block, which addendum B makes assist-powered (spec :161,
+        // :263). Kept as the Owner left them.
+        //
+        // The 'Suggest' clause is RETIRED (T30 n6, 2026-10-20). It guarded R21, deferred by Ruling 27
+        // because its test "proves nothing while no assist path exists at all" (ratification note :83-84).
+        // Ruling 180's prefill made that assist path real: Prepare calls the bound model, and the composer
+        // shows its "suggested" lines. The premise is false, so a lexical ban on the word only invites a
+        // rename (DC-NEW-wl-t30-gate-evasion). R21's real control is
+        // AiDe.App.Tests OnlyTheSanctionedSiteCallsAModelFromTheComposerTests: one model-call site in the
+        // composer, under compile-mode gate 1.
         foreach (var path in ComposerSources())
         {
             var text = File.ReadAllText(path);
 
             Assert.DoesNotContain("Assist", text, StringComparison.Ordinal);
             Assert.DoesNotContain("Promote", text, StringComparison.Ordinal);
-            Assert.DoesNotContain("Suggest", text, StringComparison.Ordinal);
         }
     }
 

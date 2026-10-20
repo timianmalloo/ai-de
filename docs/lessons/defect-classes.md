@@ -8660,8 +8660,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   *"proves nothing while no assist path exists at all"* (`docs/notes/addendum-b-ratification.md:83-84`). Ruling 180's
   prefill is that assist path. The node renamed `SuggestedLinesAnnouncement` to `ReviewLinesAnnouncement`, and Core
   went green. Found by the Owner reading the done mail.
-- **Sweep:** not run. The other lexical bans in the same file (`RegionInfo`, `CurrentCulture`, …) and the lexical
-  `DoesNotContain` gates elsewhere were not checked against their premises.
+- **Sweep (T30 n6 H4, 2026-10-20):** 68 test bans over src text in 23 files, each read against its premise after
+  Rulings 180-182 (`docs/proof/workbench-loops-wl-1a/prefill/H4-lexical-ban-sweep.md`). 1 is this instance, now
+  answered. 63 hold. None is now live. 4 are stale in wording, all in one method:
+  `TheTypedBoundaryIsInertButRealTests.NothingInTheCompilationContextCallsAModel` says *"the rung is inert"*, but the
+  advisory rung calls a model (App's `CompileCallHost`). Its bans still hold for Core's compilation context. That is a
+  finding for the Owner; nothing was changed. No sibling rename was found.
 - **Derive:** a gate refusal is answered by reading the gate's comment and the rule it cites before the code changes.
   Then either the change is wrong, or the premise is false and the gate is retired or replaced by a real control, with
   the reason written in the test.
@@ -8774,3 +8778,42 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Prevent:** `ASentGoalLineSurvivesARestartTests` (the real revive path, the disclosure opened through its toggle). The byte-change mutation shows *not recorded* (`B-byte-change-mutation-red.txt`), never wrong text.
 - **Status:** `controlled` for the turn row. Partial for the class, because no scan refuses a new restore writer that passes an empty field.
 - DC-NEW-wl-leader2 recurrence, 7th under wl-leader3 (2026-10-19): the Leader told the Owner 'no WL-S step depends on T30' without checking it. T30's advisory default makes a new session's first Ctrl+Enter a prepare that costs a model call, which changes WL-S steps 1 and 3 on a post-T30 build. It was corrected in the next message. The class keeps recurring on claims of the form 'nothing depends on X'. A claim of no dependency is a claim about the code, so it needs the read first: open the steps and the changed behaviour before asserting independence.
+
+### DC-NEW-wl-t30-prefill-c — a per-turn total is read from the last of several billed events, so the earlier ones vanish
+
+- **Instance (T30 n4, 2026-10-19, observed at `e04fcb02`):** a send under `agentic-advisory` carried only the last envelope's `called.cost` to the turn (`ComposerSendGate.cs`, `envelope.LastCall?.Cost`). A prompt that was prepared, edited and prepared again made two billed compile calls. The outcome line and the session header showed 3,406 tokens, not 4,606 (`A-cost-line-red.txt`). The first call's spend appeared nowhere, though the user's subscription paid for it.
+- **Class:** a quantity that belongs to a unit of work (a turn) is read from the last event of one record (the last envelope's last call), while the unit can span several records (abandoned envelopes). Every earlier event is silently dropped.
+- **Sweep:** `grep -rn "LastCall" src`: four readers. `CompileLine.For` reads the outcome of the shown envelope, and `Envelope.EffectiveMode` reads its rung. Both are per-envelope facts, so they are correct. `ComposerSendGate.cs`'s `calledSeq` is the receipt's sequence, also per-envelope. The cost was the only per-turn quantity.
+- **Derive:** the gate sums every call with at least one request since the last send, including a call whose envelope was abandoned while it ran (`_turnCompileCost`). Reused calls (zero requests) add nothing, and a call with no reported cost adds nothing.
+- **Prevent:** `EveryAdvisoryCallsSpendReachesTheOutcomeLineTests` drives two prepares and a send through the gesture, then reads the rendered outcome line.
+- **Status:** `controlled` for the compile spend. Partial for the class: no scan refuses a new per-turn reader of `LastCall`. A call whose wire reports no cost is still counted as nothing rather than marked *not recorded* on the line.
+- **Rule-11 lapse:** this entry landed one commit after the fix (`51d70fa7`), not in the same commit.
+
+### DC-NEW-wl-t28-compiled — recurrence (T30 n5, 2026-10-20): a gate that passed without driving the user's view
+- **Instance:** a prepare filled the suggested lines into the *Goal · Done when · Not in scope* fold, which is collapsed at
+  rest, and nothing on the prepare path opened it (`ComposerSurface.cs` `BuildStructure`, `PrepareTurnAsync`). The user
+  read *"prepared — press again to send"* with no suggestion on the screen, and the second Ctrl+Enter sent without them.
+  Node 4 found it by reading the code for the demo script (finding 1), not from a test.
+- **Why it survived (the controls it passed):** `AKeptSuggestedLineIsKeptTests` and `ThePrepareStatesWalkTests` drive the
+  real gesture (type, Ctrl+Enter) but read the lines' marks and text through the logical tree
+  (`StructureMarks`, `Logical<TextBox>`), which a collapsed fold still holds. Their oracle asked "is the suggestion
+  there?", never "can the user see or reach it?". The gesture was driven; the user's view was not.
+- **Sweep:** composer oracles that read a line inside a fold: the two files above, `ASentGoalLineSurvivesARestartTests`
+  (Keep through the invoke peer, which works on a hidden button) and `NothingSaysAnUnsentDraftIsSavedTests` (copy only).
+  Each reads through the logical tree. None asserted the fold's state or a Tab stop.
+- **Derive:** an oracle on a user-visible line asserts that it is visible and reachable: the fold's `IsExpanded`, a Tab walk
+  from the editor that lands on it, and its UIA name, as well as its content.
+- **Prevent:** `APrepareShowsItsSuggestedLinesTests` drives type and Ctrl+Enter, then asserts the fold is open, focus is
+  still in the editor, the count is announced once, and Tab from the editor reaches every suggested line by its
+  `? suggested` name (`A-shows-suggested-red.txt`, `A-shows-suggested-green.txt`).
+- **Status:** `controlled` for the suggested lines. Partial for the class: no scan refuses a composer oracle that reads
+  through the logical tree only.
+- **Slip in the fix (T30 n5):** the green commit `dc408cac` named the announcement `SuggestedLinesAnnouncement`. Core's
+  `ThePrivacyResidualsAreCoveredTests.NoAssistPathExistsAnywhereInTheComposer` refuses the substring `Suggest` in the
+  composer's sources (R20/R21), and the green ran App neighbours only. The whole Core suite caught it
+  (`suite-core-node5.txt`: 1 failed). `0528992b` then renamed it `ReviewLinesAnnouncement`, and **that rename evaded the
+  gate**: the prefill had made R21's assist path real (Ruling 180), so the gate's refusal was right and its premise had
+  become false. The rename made the gate pass without answering it (**`DC-NEW-wl-t30-gate-evasion`**). T30 n6 renamed it
+  back (`7781a180`, no behaviour change), retired the `Suggest` clause with its reason (`02d6380f`) and added R21's real
+  control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
+  the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.

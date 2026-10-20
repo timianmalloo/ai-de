@@ -1,0 +1,125 @@
+HEAD 0528992b, src/tests changes: 0
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.21]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.KeepingASuggestedGoal_ThenPreparingAgain_TheKeptGoalIsStillThere [767 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.ASuggestedLineThatIsNotKept_NeverReachesTheDraft [255 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AModelDerivedLine_IsMarkedSuggested_OnScreenAndInUia_AndAKeptLineIsNot [283 ms]
+  Passed AiDe.App.Tests.Composer.AKeptSuggestedLineIsKeptTests.AKeptGoal_IsInNeitherTheStoredRevisionNorTheRevivedDraft_AfterARestartThroughTheShellsRevive [782 ms]
+  Passed AiDe.App.Tests.Composer.APrepareShowsItsSuggestedLinesTests.OnePrepareThatSuggestsLines_OpensTheFold_LeavesFocus_AnnouncesTheCountOnce_AndTabReachesEachLine [275 ms]
+[xUnit.net 00:00:23.37]     AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [FAIL]
+[xUnit.net 00:00:23.37]       Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+[xUnit.net 00:00:23.37]       
+[xUnit.net 00:00:23.37]       Stack Trace:
+[xUnit.net 00:00:23.37]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\SolutionTreeChordTests.cs(42,0): at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph()
+[xUnit.net 00:00:23.37]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:23.37]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph [20 s]
+  Error Message:
+   Ctrl+Enter probe failed with exit code 2.  foreground not held; SendInput would prove another window
+
+  Stack Trace:
+     at AiDe.App.Tests.SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\SolutionTreeChordTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.TheFourStatesEachCarryAReasonAndANextAction [72 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.KeepingADerivedLineMarksItKeptAndItReachesTheRun [10 ms]
+  Passed AiDe.App.Tests.Composer.ThePrepareStatesWalkTests.ADegradedCallShowsItsReasonAndPrepareAgainAndStillSends [7 ms]
+  Passed AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.ATurnSentBeforeTheReadBackFinishes_WaitsForIt_AndIsB3_AndEveryRowNamesItsOwnAttempt [1 s]
+  Passed AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.AKilledAttemptWithNoEvents_ReopensAsDeliveryUnknown_WithLastEventNotRecorded [490 ms]
+  Passed AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.AHostKilledMidRun_ReopensAsDeliveryUnknown_WithTheAttemptsLastSeqAndTs_AndItsBindingLine [412 ms]
+[xUnit.net 00:00:26.54]     AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation [FAIL]
+[xUnit.net 00:00:26.54]       Space on the restored row's fold did not open it
+[xUnit.net 00:00:26.54]       Stack Trace:
+[xUnit.net 00:00:26.54]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:26.54]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:26.54]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Records\AReopenedNotebookRendersItsRecordedAttemptsTests.cs(222,0): at AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation()
+[xUnit.net 00:00:26.54]            at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+[xUnit.net 00:00:26.54]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:26.54]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation [1 s]
+  Error Message:
+   Space on the restored row's fold did not open it
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Records\AReopenedNotebookRendersItsRecordedAttemptsTests.cs:line 222
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Passed AiDe.App.Tests.Records.AReopenedNotebookRendersItsRecordedAttemptsTests.AReopenedNotebook_RendersOneRowPerRecordedAttempt_InDispatchOrder_AndTheNextTurnContinuesAfterThem [811 ms]
+  Passed AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate [79 ms]
+  Passed AiDe.App.Tests.Composer.NothingSaysAnUnsentDraftIsSavedTests.TheComposer_ItsSuggestedAndKeptMarks_AndTheSettingsRow_SayNothingIsSaved [365 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ANeedsLoginCompileEntersPreparedCompiledMechanicallyAndTheSecondGestureSends [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.UnderAdvisoryAKeptLineProjectsAndAnEditedLineCarriesTheEdit [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFailedCallIsCalledAgainOnPrepareAgain [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AToolCallMarksTheCompileSuspectAndItsLinesStillArrive [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ALeaseProposalIsDroppedAndCountedAndTheLeaseIsUnchanged [2 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic", reaches: True) [2 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnkeptDerivedLineReachesTheRunOnlyUnderAgentic(mode: "agentic-advisory", reaches: False) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AnUnchangedDraftAfterASuccessReusesWithZeroRequests [7 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic", keep: False) [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(mode: "agentic-advisory", keep: True) [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AQuestionWithNothingProposedIsSucceededNoStructureAndSendsAsAMessage [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.MechanicalOnlyStillSendsOnOneGestureWithNoCompileLine [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AFullySuppliedStructureSkipsTheCallAndSaysWhoSuppliedIt [1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.ASendOnOtherBytesThanThePreparedOnesIsRefusedAsStale [< 1 ms]
+  Passed AiDe.App.Tests.Composer.ThePreparedTurnDegradesVisiblyTests.AGestureDuringPreparingIsIgnoredAndCancelYieldsAMechanicalEnvelopeThatSends [2 ms]
+[xUnit.net 00:00:35.73]     AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [FAIL]
+[xUnit.net 00:00:35.73]       System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+[xUnit.net 00:00:35.73]       ---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+[xUnit.net 00:00:35.73]       Stack Trace:
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(209,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(187,0): at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds)
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs(37,0): at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective()
+[xUnit.net 00:00:35.73]            at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+[xUnit.net 00:00:35.73]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:35.73]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:35.73]         ----- Inner Stack Trace -----
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs(136,0): at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.FocusInsideAsync(Window window, WebView2 page, Func`1 focus)
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs(66,0): at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.<>c__DisplayClass2_0.<<CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective>b__1>d.MoveNext()
+[xUnit.net 00:00:35.73]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:35.73]         C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs(140,0): at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext()
+  Failed AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective [7 s]
+  Error Message:
+   System.InvalidOperationException : this test needs a real window and the WebView2 runtime. environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+---- System.InvalidOperationException : environment: focus could not be put inside the page (foreground held=False, os focus class='Chrome_WidgetWin_1', page hasFocus="true")
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 209
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 37
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.FocusInsideAsync(Window window, WebView2 page, Func`1 focus) in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 136
+   at AiDe.App.Tests.Kinds.CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.<>c__DisplayClass2_0.<<CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective>b__1>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Notebook\CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.cs:line 66
+--- End of stack trace from previous location ---
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_2`1.<<Pump>b__2>d.MoveNext() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Sta.cs:line 140
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.ASentTurnsGoalLine_IsOnTheRestoredRowsCompiledPromptDisclosure_AfterARestartThroughTheShellsRevive [1 s]
+[xUnit.net 00:00:37.25]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.ASentGoalLineSurvivesARestartTests.TheNotRecordedLine_IsTheCopyDesignMdNames [17 ms]
+
+Test Run Failed.
+Total tests: 34
+     Passed: 31
+     Failed: 3
+ Total time: 37.6647 Seconds
+app exit=1

@@ -1,0 +1,44 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     AiDe.App.Tests.Composer.OnlyTheSanctionedSiteCallsAModelFromTheComposerTests.EveryModelCallInTheComposerIsTheOneSanctionedSite [FAIL]
+  Failed AiDe.App.Tests.Composer.OnlyTheSanctionedSiteCallsAModelFromTheComposerTests.EveryModelCallInTheComposerIsTheOneSanctionedSite [13 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+Expected: ["src/AiDe.App/Workbench/Composer/ComposerSendGate.c"···]
+Actual:   ["src/AiDe.App/Workbench/Composer/ComposerSendGate.c"···, "src/AiDe.App/Workbench/Composer/ComposerSurface.cs"···]
+                                                                    ↑ (pos 1)
+  Stack Trace:
+     at AiDe.App.Tests.Composer.OnlyTheSanctionedSiteCallsAModelFromTheComposerTests.EveryModelCallInTheComposerIsTheOneSanctionedSite() in C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\Workbench\Composer\OnlyTheSanctionedSiteCallsAModelFromTheComposerTests.cs:line 77
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 225 ms - AiDe.App.Tests.dll (net10.0)
+
+=== The mutation (reverted after this run) ===
+diff --git a/src/AiDe.App/Workbench/Composer/ComposerSurface.cs b/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
+index 5b714255..a23bd8c6 100644
+--- a/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
++++ b/src/AiDe.App/Workbench/Composer/ComposerSurface.cs
+@@ -798,6 +798,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
+     /// entered with the compile line and its next-action control — every state with a reason string
+     /// in voice (§A11; US-D5).
+     /// </summary>
++    internal static System.Threading.Tasks.Task<AiDe.App.Conductor.CompileResult> SecondModelCall(AiDe.App.Conductor.CompileRequest request) => AiDe.App.Conductor.CompileCallHost.CompileAsync(request);
++
+     public async Task PrepareTurnAsync()
+     {
+         if (_context is null)

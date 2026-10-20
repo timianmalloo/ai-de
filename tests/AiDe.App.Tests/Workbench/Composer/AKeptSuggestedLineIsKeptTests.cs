@@ -241,8 +241,9 @@ public sealed class AKeptSuggestedLineIsKeptTests(ITestOutputHelper output) : ID
     private static string DraftGoal(ComposerSurface composer) =>
         composer.Draft.GoalValues.TryGetValue(GoalBlockFields.GoalKey, out var value) ? value : string.Empty;
 
+    /// <summary>The line labelled <paramref name="name"/>; while it is a suggestion its UIA name is <c>? suggested {name}</c> (T30 n5).</summary>
     private static TextBox Line(ComposerSurface composer, string name) =>
-        ComposerGesture.Logical<TextBox>(composer).Single(b => AutomationProperties.GetName(b) == name);
+        ComposerGesture.Logical<TextBox>(composer).Single(b => AutomationProperties.GetName(b) == name || AutomationProperties.GetName(b) == StructureLine.ModelLineMark + " " + name);
 
     internal static Button KeepButton(ComposerSurface composer, string name) =>
         ComposerGesture.Logical<Button>(composer).Single(b => AutomationProperties.GetName(b) == "Keep " + name);

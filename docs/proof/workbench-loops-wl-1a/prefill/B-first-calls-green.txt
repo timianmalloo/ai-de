@@ -1,0 +1,2 @@
+SELF-TEST PASS: the first 50 non-reused advisory calls of 51 (3 reused, 1 control excluded); n_with_cost 48; tokens in+cache sum 230496; latency p50 826 ms; an empty corpus reads 'not recorded'
+exit=0
