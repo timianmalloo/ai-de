@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T21:18:44Z",
+  "generated": "2026-10-20T21:33:54Z",
   "audit": [
     {
       "actor": null,
@@ -28052,6 +28052,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T21:18:42Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5DKRD784PC80T7RY1RE0281",
+      "shortname": "join-wl-claim-check-step8",
+      "datetime": "2026-10-20T21:33:54Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T38 wl-claim-check (docs-only) through conductor-join, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-claim-check (T38, docs-only: no src or tests/ change; merge 77ad6d45, join commit db125e6e): run-verify-gates stopped on the 5 pre-existing gates (5 of 49). Ratchet against the parent 0f1e548d: PASS, 0 refusals over 50 gates. Release build: 0 errors. Pre-join: T38's own claim check on its branch, 11 checked, 3 exempt, 0 unclaimed. Overrun, registered under DC-NEW-wl-leader2-b: about 121k tokens and 41 calls against 80k and 40 (1,486 s).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/claim-check/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T38's claim check on main with its step-8 record",
+      "done_when": "ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T20:53:23Z",
+      "duration_seconds": 2431.0
     }
   ],
   "changes": [
