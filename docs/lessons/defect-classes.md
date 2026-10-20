@@ -8488,6 +8488,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the kick at a flat 30 min instead of the ladder's 200k ÷ 8.1k ≈ 25 min, and the kick arrived after the node's suites.
   T21 node 10's kick is set from this rate (100k cap: about 12 min). The count goes to the user with the budget-hook
   decision, which stays theirs.
+- **Next instance (2026-10-20, T21 node 10, Sonnet):** 50 calls / about 158k against 60 / 100k (harness `usage`:
+  158,509 tokens, 1,364 s, about 7.0k tokens/min). The kick went at 12 min, as the ladder gave it, and the node finished
+  at about 23 min. So the ladder's kick, sent on time, did not hold the cap: the node finished its suites after the
+  kick, as rule 18 requires, and a node's whole-suite run alone exceeds a 100k cap. Only the seam-level hook stops a
+  node; that decision stays the user's.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
 ### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it
