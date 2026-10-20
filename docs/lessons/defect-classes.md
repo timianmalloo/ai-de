@@ -8859,6 +8859,28 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   control, `OnlyTheSanctionedSiteCallsAModelFromTheComposerTests` (`6b90bd54`). Lesson: a src change is green only when
   the other test project's scans over that file pass too, and a scan's refusal is answered by reading what it guards.
 
+### DC-NEW-wl-t36-claim — a node edits a file before it holds a coord claim on it
+- **Class:** a node edits (and commits) a file on its branch with no granted `coord claim` from its own session for
+  that path at the time of the edit. Two writers can then meet on one file with nothing recording the overlap, and the
+  join cannot tell a claimed edit from an unclaimed one. The pre-commit hook's "paths free" report hides it: free is
+  not claimed.
+- **Instance 1 (2026-10-20, T35 `wl-chk6-gap-pin`):** DESIGN.md and `docs/lessons/defect-classes.md` edited with no
+  `coord claim` first (the hook reported the paths free). Ledgered classless in `obligations.md` (threshold 2).
+- **Instance 2 (2026-10-20, T36 `wl-flake-remeasure`):** the node's first `coord claim` calls failed, and it edited
+  the register before a claim was granted (granted claims at seq 2-3 of `.agents/log/wl-t36-flake-remeasure.jsonl`).
+- **Sweep:** the instruction itself is wrong. brief-common.md rule 5 wrote `coord claim --path <file>`, and
+  `coord claim` refuses without `--wi` (exit 2, "--wi and --path are required"; `coord-core.py:5475`); it does not
+  read `AGENT_WI`, which rule 1 sets. A node that follows rule 5 literally gets a refusal, so T36's failures were the
+  brief's. Every brief assembled from brief-common.md since rule 5 was written carries the same command.
+- **Derive:** a command a brief tells a node to run is run once by its author before the brief ships. A claim is
+  checked at the join against the paths the branch changes, not trusted to the node.
+- **Prevent:** (1) brief-common.md rule 5 now reads `coord claim --wi workbench-loops --path <file>` (2026-10-20).
+  (2) Owed, T38 `wl-claim-check`: `leader_prejoin.py` refuses a join when a path the branch changes has no
+  `coord claim` from that node's session, with a red on a planted branch (Owner ruling, 2026-10-20).
+- **Residual:** a claim record shows that a claim exists, not that it came before the edit; the edit's time is not
+  recorded anywhere the check can read.
+- **Status:** `partially-controlled` (rule 5 corrected) until T38's check lands.
+
 ### DC-NEW-wl-t33-input-state — a UI test whose result depends on global input state it never checks
 - **Class:** a UI test drives a control by keyboard and asserts the result, but the control's behaviour also reads
   machine-wide input state that the test neither sets nor checks: here, whether the OS reports the left mouse button

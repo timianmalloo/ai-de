@@ -23,7 +23,7 @@ and a default.
    docs/audit/index.html, docs/api/*.md, docs/_site/*, docs/_meta.json) are regenerated at the join —
    do not edit or claim them. `register` files (docs/audit/*.jsonl, .agents/log/*.jsonl) are
    append-only and **never claimed**. Do not edit the test-count baseline; the join recounts.
-5. **Claim for the minutes of the edit:** `coord claim --path <file>` (default TTL) just before
+5. **Claim for the minutes of the edit:** `coord claim --wi workbench-loops --path <file>` (default TTL; `coord claim` refuses without `--wi` and does not read `AGENT_WI`) just before
    editing a file, `coord release` after the commit. Never a lifetime lease.
 6. **A multi-line program is a file, then a run** — never a heredoc program. **A gate's exit status is
    never behind a pipe**: run the test/build on its own line and read `$?`, or redirect output to a
