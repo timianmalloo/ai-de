@@ -8755,6 +8755,9 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `TerminalHostInLifePathTests.ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives` failed in the T21 n8
   join's first recount ("the helper never wrote 'child-exited=' to its report"), passed 3/3 alone on the join head
   `be5a497a`, and 3/3 on the first parent `aa8247ff`. The join's source diff touches no terminal-host or process code.
+  (3, 2026-10-20, the same test as (1)) `ADeadHolder_NeverLocksTheUserOut_TheNextOpenSucceeds` failed in the T32 join's
+  first recount ("Assert.Equal() Failure: Strings differ"). It passed alone on the join head `18f43671` and on the first
+  parent `30ce61ac`, and passed in the join's one full re-run. T32's diff touches no `src/`. Step-8 record `eb178bdb`.
 - **Sweep:** every test the recounts and track suites have shown failing under load but passing alone.
 - **Derive:** a green re-run is not evidence of absence; a failure RATE is. A load-only failure is a defect until a
   deterministic repro, or NOT REPRODUCED with N stated, says otherwise.
