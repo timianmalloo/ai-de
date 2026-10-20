@@ -1,3 +1,4 @@
+using System.IO;
 using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Automation;
@@ -7,6 +8,7 @@ using AiDe.App.Workbench;
 using AiDe.App.Workbench.Checklist;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Ipc;
+using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
 using AiDe.Core.Workbench.Records.Folds;
 
@@ -85,7 +87,9 @@ public sealed class TheChecklistAcceptsTheDeliverableTests : IDisposable
             Assert.Equal([$"{Obligation}. {ChecklistCopy.Satisfied(key, 1)} {ChecklistCopy.NoDisposition}"], ChecklistHarness.RowNames(surface));
             Assert.Equal(ChecklistCopy.Ready, surface.AcceptanceLine);
 
-            // A re-prepare with the draft unchanged (the revision's own words): the live compile is a new envelope.
+            // A re-prepare with the draft unchanged (the revision's own words) and the task class changed: the class is in
+            // the projection's domain, so the live compile is a new projection over the same revision.
+            _harness.ConfigureStub(document, "investigate");
             document.Composer.Draft.SetFreeFormText(Words);
             await document.Composer.PrepareTurnAsync();
             await ChecklistHarness.SettleAsync(window);
@@ -102,14 +106,24 @@ public sealed class TheChecklistAcceptsTheDeliverableTests : IDisposable
     public Task WithNoLiveSha_TheEvidenceReadsNotRecorded_WithItsGap_NeverSatisfied() =>
         _harness.RunAsync(async (window, region, client) =>
         {
-            var (shell, document, surface, _) = await LinkedAsync(window, region, client);
-            using var held = shell;
+            var (shell, _, linked, key) = await LinkedAsync(window, region, client);
+            Assert.Equal([$"{Obligation}. {ChecklistCopy.Satisfied(key, 1)} {ChecklistCopy.NoDisposition}"], ChecklistHarness.RowNames(linked));
+            region.Content = null;
+            shell.Dispose();
 
-            // The attempt's envelope can no longer be read: the call carries no live sha.
-            document.Envelopes!.Dispose();
-            await ChecklistHarness.PressAsync(window, surface, $"{ChecklistCopy.Acknowledge}: {Obligation}");
+            // The window closes, and the session's compile history is lost with its directory: the reopened notebook has
+            // no envelope store, so the attempt's own envelope cannot be read and the call carries no live sha.
+            Directory.Delete(SessionPaths.SessionDirectory(_harness.Fixture.Root, SessionId), recursive: true);
+            using var reopened = new WorkbenchShell(client);
+            var perspectives = ChecklistHarness.Compose(reopened, region);
+            perspectives.Activate(PerspectiveSet.Factory, "test");
+            reopened.OpenSessionDocument(_harness.Config(SessionId, "Plan the release"));
+            await ChecklistHarness.SettleAsync(window);
+            Assert.Null(ChecklistHarness.DocumentOf(reopened, SessionId).Envelopes);
 
-            Assert.Equal([$"{Obligation}. {ChecklistCopy.NotRecorded} {ChecklistCopy.Acknowledged}"], ChecklistHarness.RowNames(surface));
+            await ChecklistHarness.OpenChecklistFromViewAsync(window, reopened, perspectives);
+            var surface = await ChecklistHarness.ChecklistIn(window, reopened.Factory, ChecklistSurface.SurfaceIdFor(SessionId));
+            Assert.Equal([$"{Obligation}. {ChecklistCopy.NotRecorded} {ChecklistCopy.NoDisposition}"], ChecklistHarness.RowNames(surface));
             Assert.Equal($"Blocked — whether the evidence for “{Obligation}” is current is not recorded.", surface.AcceptanceLine);
             region.Content = null;
         });

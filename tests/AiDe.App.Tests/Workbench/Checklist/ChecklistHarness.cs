@@ -10,10 +10,13 @@ using AiDe.App.Tests.Records;
 using AiDe.App.Tests.Shell;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Checklist;
+using AiDe.App.Workbench.Composer;
 using AiDe.App.Workbench.Records;
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Ipc;
+using AiDe.Core.Presentation.Composer;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
@@ -92,10 +95,37 @@ internal sealed class ChecklistHarness : IDisposable
         return document!;
     }
 
+    /// <summary>
+    /// <see cref="NotebookFixture.ConfigureStub(SessionDocumentSurface)"/>'s wiring with the task class the window would
+    /// pass: the class is in the projection's domain and the draft is not, so changing it changes the live compile
+    /// while the draft stays the same.
+    /// </summary>
+    public void ConfigureStub(SessionDocumentSurface document, string taskClass)
+    {
+        var install = Path.Combine(Fixture.Root, "install");
+        Conductor.StubAcpAdapter.Install(install);
+        document.Composer.Configure(
+            new SessionConfig(NotebookFixture.SessionId, "Binding", Fixture.Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
+            new ComposerSendContext(
+                RepositoryRoot: Fixture.Root,
+                DataDirectory: Path.Combine(Fixture.Root, "data"),
+                AdapterInstallRoot: install,
+                EngineId: "claude-code",
+                Model: "claude-sonnet-5",
+                AccountLabel: "max",
+                TaskClass: taskClass,
+                ProofPackArtifacts: [],
+                Providers: [new ProviderRow("anthropic", ProviderAuth.Subscription, [new ProviderAccount("max", AccountHealth.Ready)])]),
+            ComposerFields.FreeForm(),
+            new AttachmentGate(Fixture.Root, new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max"));
+        document.Composer.Gate.Compiler = (_, _) => throw new OperationCanceledException();
+        document.Composer.Draft.SwitchTo(ComposerShape.FreeForm);
+    }
+
     /// <summary>Types the words and sends them through the stub harness, which answers: one Completed turn.</summary>
     public async Task<string> RunToCompletionAsync(Window window, SessionDocumentSurface document, string words)
     {
-        Fixture.ConfigureStub(document);
+        ConfigureStub(document, "implement");
         Fixture.ReleaseRun();
         var turns = document.Notebook.Thread.Current.Turns.Count;
         document.Composer.Draft.SetFreeFormText(words);
@@ -195,6 +225,11 @@ internal sealed class ChecklistHarness : IDisposable
         }
 
         Assert.True(condition(), what());
+    }
+
+    private sealed class NeverAsked : IAttachmentAffirmation
+    {
+        public bool Confirm(OutsideWorkspaceAffirmation affirmation) => false;
     }
 
     private static void Invoke(UIElement element)
