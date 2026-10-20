@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T08:27:38Z",
+  "generated": "2026-10-20T08:40:08Z",
   "audit": [
     {
       "actor": null,
@@ -27359,6 +27359,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T08:27:36Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5C7FJYEJ55YPA63RYQS1QWE",
+      "shortname": "join-wl-copy-pin-n2-step8",
+      "datetime": "2026-10-20T08:40:08Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T32 n2 join 2b4c1ad4",
+      "summary": "Recount (join head 80d436b8): Core 3120 Completed; App 1269 counted, 2 NotExecuted (real lane, real projection env), 1 Failed - ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head 80d436b8 and on the first parent c9802b02 in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run (T31: 10/10 in suite, 10/10 alone). CtrlDigit and SolutionTreeChord passed in this recount. Continued with --continue --docs-only. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs c9802b02, head 2b4c1ad4: PASS 0/50. Release build 0 errors. T32 n2 (Owner rulings on T32's findings): UnmatchedMembers empty (23 members pinned to new DESIGN.md rows CHK13-22, TURN1-10, NB3, ST1-2); NB1 RUN1 RUN3 RUN4 CHECK1 AUTH1 DEMO1 marked '*(stale: ...)*' with saved 0-hit searches; the stale-row convention (AStaleRow_IsNotRenderedByAnyCode) red first; UnmatchedRows SC7-SC9 only. No src change. Follow-up: the Owner ruled the single 'stale' label wrong (three cases: superseded, not built, design-only) -> T32 n3.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/copy-pin/n2/N2-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T32 n2 wl-copy-pin-n2 onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T07:53:32Z",
+      "duration_seconds": 2796.0
     }
   ],
   "changes": [
