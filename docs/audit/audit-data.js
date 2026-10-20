@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T07:01:56Z",
+  "generated": "2026-10-20T07:16:35Z",
   "audit": [
     {
       "actor": null,
@@ -27205,6 +27205,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T07:01:53Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5C2PKB5WHMJFD15EA61V5ZG",
+      "shortname": "join-wl-loadflake-step8",
+      "datetime": "2026-10-20T07:16:35Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T31 join 09f15802",
+      "summary": "Docs-only join (--docs-only: no recount, no App run; the branch changes only docs/proof/workbench-loops-support/loadflake/**, the DC-NEW-wl-leader3-b Measured line and its audit entry, checked by git diff --name-only 84538f7f 80c6e18d). Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs ea62014e, head 09f15802: PASS 0/50. T31 measured N=10 full Core+App runs on 84538f7f (~8.3 min each): Core 0 failures in 3120 x 10. App in-suite / alone (each N=10): CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage 10/10 / 9/10 (intermittent; needs a real window and WebView2); ARestoredRowsEvents (restored-row fold) 10/10 / 10/10 (fails-alone); SolutionTreeChord CtrlEnter 10/10 / 10/10 (fails-alone; foreground not held); ALiveNotebookFloatsAndRedocks TheFloatingNotebook_RedocksToTheCenter 1/10 (run 7) / 0/10 (load-only, one event); ASendWhileATurnRuns AfterStop_TheTurnIsStopRequested 1/10 (run 8) / 0/10 (load-only, one event). Named instances ADeadHolder_NeverLocksTheUserOut and ASessionWhoseChildExited: NOT REPRODUCED, N=10. No cause is claimed for any row. DC-NEW-wl-leader3-b stays partially-controlled (a repro node is owed for the two load-only rows).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/loadflake/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T31 wl-loadflake onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T05:15:51Z",
+      "duration_seconds": 7244.0
     }
   ],
   "changes": [
