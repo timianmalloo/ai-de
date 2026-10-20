@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T09:13:19Z",
+  "generated": "2026-10-20T09:26:01Z",
   "audit": [
     {
       "actor": null,
@@ -27436,6 +27436,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T09:13:17Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CA3JWCCAWE51B6WAH51Y9A",
+      "shortname": "join-wl-copy-pin-n3-step8",
+      "datetime": "2026-10-20T09:26:00Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T32 n3 join a4325b06",
+      "summary": "Recount (join head feec20bf): Core 3120 Completed; App 1271 counted, 2 NotExecuted (real lane, real projection env), 1 Failed - ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, failing ALONE on the join head feec20bf and on the first parent c0e415b8 in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED (T33 diagnoses it, read-only). Continued with --continue --docs-only. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs c0e415b8, head a4325b06: PASS 0/50. Release build 0 errors. T32 n3 (Owner three-label ruling): RUN4 superseded by TurnCopy.ReasonSentence (SessionThread.cs:348), CHECK1 by CHK2 (ChecklistCopy.cs:19), DEMO1 mockup-only; NB1 not built (WL-2 draft store, ADR-0043), RUN1 not built (WL-4: workbench-loops-ux.md:686 makes it load-bearing copy, architecture.md:1509 is WL-4's slice row naming it); RUN3 and AUTH1 design-only, no owning story. The test refuses the plain stale marker, fails a labelled not-built/design-only row once rendered (naming the slice), a superseded row whose replacement is gone, and a superseded row whose old sentence returns. T32 n3's track suite saw ADeadHolder fail under load (30 s timeout; 1/1 alone): DC-NEW-wl-leader3-b instance 4 -> T34 after T33 (Owner).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/copy-pin/n3/L2-green.txt"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T32 n3 wl-copy-pin-n3 onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T08:40:38Z",
+      "duration_seconds": 2722.0
     }
   ],
   "changes": [
