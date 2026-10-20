@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9ce1227eb67d790d0e51058eb63853d81d8584965a0fc5b1934790c2e6734e38"
+      "sourceSha256": "f5e8437d277f3247553021037a4e5322669cf19d4cfbe8d1c722f88e1f2d0d55"
     },
     {
       "id": "design-session-profiler",
@@ -22923,7 +22923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "265f3e922dbae0722f37235ae2d33f04e0e059eafaec1a7fb05955ea0f584e8c"
+      "sourceSha256": "24f1689a9afb236061ec924b96fedcf0a62fac76288ad706e16addd7ee5f3795"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -23120,6 +23120,27 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "dd67f53daecd023ab6ed52247dc0f1eba16bdbdacea1c915dd535d710b64b7d3"
+    },
+    {
+      "id": "proof-wl-t39-slash-claim",
+      "path": "docs/proof/workbench-loops-support/slash-claim/README.md",
+      "title": "T39 wl-slash-claim: the join refuses a trailing-slash claim and a claimed-after-refusal path",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "leader_prejoin.py gains two refusals: a session claim whose path ends in / (PD-6 false grant), and a changed path whose newest refused decision row is newer than every covering claim. Red-green on a planted branch; one residual: CLI claim refusals other than contention leave no record.",
+      "tags": [],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66db7ae61dedde6e9e67e69ec37a014c41c005c364815d45fd811c48e104cb54"
     },
     {
       "id": "proof-workbench-loops-20261018",
@@ -26147,5 +26168,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "38ac0b05c7aab9d8bc6506ca2aef883edd701afa1875ffba4709531e13cede46"
+  "graphSha256": "f312c5d0a2b892d807c3e5bf072ed6358fa4bc0f8db6b97bc8ce75b5fed762c8"
 };

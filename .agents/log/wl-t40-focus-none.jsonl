@@ -1,2 +1,5 @@
 {"agent": "wl-leader5-20261020", "at": 1792534190.0335119, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t40-focus-none", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-focus-none"}
 {"agent": "wl-t40-focus-none", "at": 1792534207.6956575, "kind": "claim", "path": "docs/proof/workbench-loops-support/focus-none", "seq": 2, "session": "wl-t40-focus-none", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t40-focus-none", "at": 1792538434.319248, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 3, "session": "wl-t40-focus-none", "ttl": 300.0, "wi": "workbench-loops"}
+{"agent": "wl-t40-focus-none", "at": 1792538434.7163682, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 4, "session": "wl-t40-focus-none", "ttl": 300.0, "wi": "workbench-loops"}
+{"at": 1792539030.5698216, "from": "wl-t40-focus-none", "kind": "done", "mail_id": "mail-01M5DTDX19YSRJ4CRVXGDH8RZ6", "ref": null, "session": "wl-t40-focus-none", "to": "wl-leader5-20261020", "type": "mail"}
