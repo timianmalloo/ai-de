@@ -8966,6 +8966,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   PASSED with the left button reading `0x0000` before and after. Not observed: the fold ending NOT CHECKED with the button
   down (the button was never down during T37; the helper's red covers it through the seam). Residual: the precondition
   reads the state at one instant, so a state that changes between the read and the key press is not seen.
+- **The control's first positive observation (2026-10-20, the T37 join's recount, step-8 `5f102fa3`):** with the
+  foreground held, CtrlDigit and CtrlEnter ran their own assertions and PASSED in the full App suite (1,279 total,
+  0 failed): their first suite pass on record, after 10/10 failures in T31 (button down) and T36 (button released).
+  The precondition hid nothing: when the state was the default, the test ran and passed (Owner, 2026-10-20).
 
 ### DC-NEW-wl-leader5-b — a seat that holds a lease, or that others rule through, blocks on a direct user prompt
 - **Class:** a coordination seat (the Leader: it holds the leader pin, and the Owner rules through it) calls a

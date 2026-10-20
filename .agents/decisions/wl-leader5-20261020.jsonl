@@ -471,3 +471,15 @@
 {"agent": "wl-leader5-20261020", "at": 1792534182.2710907, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792534182.3201654, "code": null, "kind": "allowed", "path": ".agents/log/wl-t39-slash-claim.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792534205.014458, "code": "COORD-REFUSED", "kind": "refused", "path": "docs/lessons/defect-classes.md", "session": "wl-leader5-20261020", "wi": "workbench-loops"}
+{"agent": "wl-leader5-20261020", "at": 1792534930.372511, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-common.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.4191108, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/node-actuals.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.4671822, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.5259173, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.5824938, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t39-slash-claim.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.6306908, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t40-focus-none.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.6791337, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.726701, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.7758954, "code": null, "kind": "allowed", "path": ".agents/log/wl-t39-slash-claim.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.8265781, "code": null, "kind": "allowed", "path": ".agents/log/wl-t40-focus-none.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.8791866, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534930.9252636, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md", "session": "wl-leader5-20261020", "wi": ""}
