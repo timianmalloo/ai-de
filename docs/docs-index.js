@@ -10872,7 +10872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a82c1ddac2c660efdfa279bbb746401840cdfa7c93202cc6201bb2f7c3aeac54"
+      "sourceSha256": "dd46e6a3ea12a01768a0aab8b8ca70cceb74bbb01c6aa2ac8ec3a22c4717f9dc"
     },
     {
       "id": "defect-classes",
@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b86ba8224bb79a4378b5a874bfd798c4b228ce69ad0e22d9919fcad6af4347e9"
+      "sourceSha256": "9ce1227eb67d790d0e51058eb63853d81d8584965a0fc5b1934790c2e6734e38"
     },
     {
       "id": "design-session-profiler",
@@ -22923,7 +22923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "847c3f4bf52d6fa3c8d16cc869fcccb8393dc435abb3c90fc623788c94757e20"
+      "sourceSha256": "265f3e922dbae0722f37235ae2d33f04e0e059eafaec1a7fb05955ea0f584e8c"
     },
     {
       "id": "proof-wl-hygiene-residuals",
@@ -22977,6 +22977,33 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5ba4a76daba33ff0bb5e0804c8f87b9accf668fc42e14da3761d6f19371a2a1c"
+    },
+    {
+      "id": "proof-wl-input-state-sweep",
+      "path": "docs/proof/workbench-loops-support/input-state-sweep/README.md",
+      "title": "Evidence: T37 - UI tests read the global input state they depend on, and end NOT CHECKED when it is not the default",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "A runtime skip for xUnit 2.9.3 with no new package, a precondition helper for the left button and the foreground window, five tests converted, and a recount that names every NotExecuted result with its reason. App: 0 failed.",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "input-state",
+        "flaky-tests",
+        "defect-class"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "902c8e027a21746ab0dfd53ac0304763da40b311efdc4d0864986c6d923b5b17"
     },
     {
       "id": "proof-wl-loadflake",
@@ -26120,5 +26147,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "2206351e12fd5fe6a3d4c5c824e63e19c7dacccb3bb0c5da99acf722c2f4b863"
+  "graphSha256": "38ac0b05c7aab9d8bc6506ca2aef883edd701afa1875ffba4709531e13cede46"
 };
