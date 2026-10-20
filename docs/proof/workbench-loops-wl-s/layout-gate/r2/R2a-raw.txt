@@ -1,0 +1,58 @@
+tests/AiDe.App.Tests/PerspectiveShellTests.cs::TheFactoryLanding_IsTheNotebook_WhenTheCoordinationKindsShareItsCenter
+   M 180: factory.Adapter.Render();
+   R 186: Assert.Equal("ledger", factory.Adapter.ActiveSurfaceId);
+   C 190: Assert.True(factory.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
+   M 191: factory.Adapter.Render();
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen
+   C 151: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.
+   M 152: shell.Factory.Adapter.Render();
+   R 156: Assert.NotNull(shell.Factory.Adapter.ContentFor(ConsoleId(config.SessionId)));
+   C 160: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied
+   M 161: shell.Factory.Adapter.Render();
+tests/AiDe.App.Tests/Sessions/SessionDocumentPlacementTests.cs::TheFactoryLanding_IsTheNotebookInTheCenter_ElseTheCentersEmptyCopy_EachWithAFocusTarget
+   R 110: var copy = shell.Factory.Adapter.ContentFor(empty!);
+   R 117: var content = shell.Factory.Adapter.ContentFor(surfaceId);
+   C 129: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.
+   M 130: shell.Factory.Adapter.Render();
+tests/AiDe.App.Tests/TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal
+   C 222: Assert.True(shell.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked
+   M 223: shell.Adapter.Render();
+   R 237: (shell.Adapter.ContentFor(id) as IDisposable)?.Dispose();
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack
+   C 44: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackStat
+   M 45: shell.Factory.Adapter.Render();
+   R 47: var built = shell.Factory.Adapter.ContentFor("terminal-1");
+   C 51: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackStat
+   M 52: shell.Factory.Adapter.Render();
+   R 54: Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));   // parked, alive
+   C 57: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackStat
+   M 58: shell.Factory.Adapter.Render();
+   R 60: Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));
+tests/AiDe.App.Tests/Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands
+   R 93: Assert.Null(shell.Factory.Adapter.ContentFor("terminal-1"));
+   C 98: Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackStat
+   M 99: shell.Factory.Adapter.Render();
+   R 101: Assert.NotNull(shell.Factory.Adapter.ContentFor("terminal-1"));
+tests/AiDe.App.Tests/Workbench/FloatRenderTests.cs::AFloatedPane_IsDrawnAsADockLibraryFloatingWindow_VisibleFocusableAndHoldingItsContent
+   R 55: var content = Assert.IsType<TextBox>(adapter.ContentFor("sessions"));
+   R 69: Assert.Equal("sessions", adapter.ActiveSurfaceId);
+   R 74: var docked = adapter.ContentFor(id);
+   M 102: host.Adapter.Render();
+   C 117: Assert.True(host.Controller.Execute("workbench.floatPane"), "the controller refused workbench.floatPane");
+   C 125: Assert.True(host.Controller.Execute("workbench.collapsePane"), "the controller refused workbench.collapsePane"
+   C 133: Assert.True(host.Controller.Execute("workbench.closeSurface"), "the controller refused workbench.closeSurface"
+   C 141: Assert.True(host.Controller.Execute("workbench.previousSurface"), "the controller refused workbench.previousSu
+tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs::AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept
+   M 133: adapter.Render();
+   R 134: var afterRender = adapter.ActiveSurfaceId;
+   C 139: Assert.True(service.Apply(new LayoutOperation.ActivateSurface("doc-c")).Applied);
+   R 141: var afterOperator = adapter.ActiveSurfaceId;
+   R 144: return (afterRender, afterOperator, adapter.ActiveSurfaceId);
+tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface
+   C 230: service.Apply(new LayoutOperation.MoveSurface(
+   M 232: adapter.Render();
+   R 237: Assert.NotNull(adapter.ContentFor(id));
+tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones
+   C 259: service.Apply(new LayoutOperation.CloseSurface("domain"));
+   M 260: adapter.Render();
+   R 262: Assert.Null(adapter.ContentFor("domain")); // gone from the view

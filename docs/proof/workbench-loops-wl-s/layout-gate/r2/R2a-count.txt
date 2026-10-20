@@ -1,0 +1,17 @@
+R2a: App tests that read ContentFor( / ActiveSurfaceId after a layout command with a by-hand Render() between. Base fb09fe4b.
+Search 1: grep -rnE 'ContentFor\(|ActiveSurfaceId' tests/AiDe.App.Tests --include=*.cs  (all reads, 70 lines)
+Search 2: python docs/proof/workbench-loops-wl-s/layout-gate/r2/R2a-search.py (per-test line scan: layout command C, by-hand render M, read R; no helper inlining, not the gate's regexes). Raw output: R2a-raw.txt
+Command = non-AddSurface LayoutOperation via Service.Apply, or workbench.* Execute off the route (the gate's own definition of a layout command).
+
+Tests with C then M then R (file:line command, render, read):
+1 Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen  151, 152, 156
+2 TerminalSurfaceStopLineTests.cs::TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal  222, 223, 237
+3 Workbench/CollapsedBottomTests.cs::CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack  44, 45, 47 (also 51/52/54, 57/58/60)
+4 Workbench/CollapsedBottomTests.cs::TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands  98, 99, 101
+5 ZoneWorkbenchAdapterTests.cs::MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface  230, 232, 237
+6 ZoneWorkbenchAdapterTests.cs::ClosingACenterDocument_DoesNotDisturbTheOtherZones  259, 260, 262
+
+Excluded, with reason: SessionDocumentPlacementTests::TheFactoryLanding_... (command 129, render 130, no read after); PerspectiveShellTests::TheFactoryLanding_... (reads precede the command at 190/191); ZoneWorkbenchAdapterTests AfterAWholeArrangementReplacement (render and read precede ActivateSurface 139; no render between 139 and 141); FloatRenderTests (commands by the route); AddSurface/RestoreZones/RefreshInPlace/ActivateInView tests (setup, not a layout command in the gate's sense).
+Residual: a command or render in another file's helper (ChecklistHarness, ComposedCoding) is not seen by either search.
+
+count = 6

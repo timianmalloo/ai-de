@@ -1,4 +1,5 @@
 using System.Windows;
+using AiDe.App.Tests.Shell;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -219,26 +220,58 @@ public sealed class ZoneWorkbenchAdapterTests
         });
     }
 
+    /// <summary>
+    /// A Factory <see cref="DockHost"/> drawn in an offscreen window (Sessions on the left, two notebooks in the Center), so a
+    /// layout command reaches the view the way the user's does: through the host's controller, whose <c>LayoutApplied</c> draws it.
+    /// </summary>
+    private static T WithDockHost<T>(Func<DockHost, T> assert) =>
+        OnStaThread(() =>
+        {
+            var border = new System.Windows.Controls.Border();
+            var host = FloatRenderTests.HostInto(border, s => new System.Windows.Controls.TextBlock { Text = s.SurfaceId });
+            var window = new Window
+            {
+                Content = border,
+                Width = 900,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+
+            window.Show();
+            host.Adapter.Render();
+            window.UpdateLayout();
+            host.Manager.UpdateLayout();
+
+            try { return assert(host); }
+            finally { window.Close(); }
+        });
+
     [Fact]
     public void MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface()
     {
-        WithZoneWorkbench((adapter, service) =>
+        WithDockHost(host =>
         {
-            var before = service.Zones.AllSurfaces().Select(s => s.SurfaceId).ToList();
+            var adapter = host.Adapter;
+            var service = host.Service;
+            // A collapsed zone parks its panes unbuilt (Ruling 88), so the panes drawn are the expanded zones'.
+            var before = Enum.GetValues<ZoneId>().Where(z => !service.Zones.Zone(z).Collapsed)
+                .SelectMany(z => service.Zones.Zone(z).Surfaces()).Select(s => s.SurfaceId).ToList();
             var leftBefore = service.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
 
-            service.Apply(new LayoutOperation.MoveSurface(
-                "terminal-1", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
-            adapter.Render();
+            Assert.True(host.Controller.Move("session:s2", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
 
             // No pane lost at the view: every surface is still realized.
             foreach (var id in before)
             {
-                Assert.NotNull(adapter.ContentFor(id));
+                Assert.True(adapter.ContentFor(id) is not null, $"{id} has no drawn content after the move");
             }
 
-            // Only the terminal moved; the Left zone's prior explorers stayed put (containment).
-            Assert.Equal(ZoneId.Left, service.Zones.FindZoneOf("terminal-1"));
+            // Only the moved notebook moved; the Left zone's prior explorers stayed put (containment).
+            Assert.Equal(ZoneId.Left, service.Zones.FindZoneOf("session:s2"));
             foreach (var id in leftBefore)
             {
                 Assert.Equal(ZoneId.Left, service.Zones.FindZoneOf(id));
@@ -251,15 +284,16 @@ public sealed class ZoneWorkbenchAdapterTests
     [Fact]
     public void ClosingACenterDocument_DoesNotDisturbTheOtherZones()
     {
-        WithZoneWorkbench((adapter, service) =>
+        WithDockHost(host =>
         {
+            var adapter = host.Adapter;
+            var service = host.Service;
             var leftBefore = service.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
             var bottomBefore = service.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId).ToList();
 
-            service.Apply(new LayoutOperation.CloseSurface("domain"));
-            adapter.Render();
+            FloatRenderTests.CloseByTheRoute(host, "session:s1");
 
-            Assert.Null(adapter.ContentFor("domain")); // gone from the view
+            Assert.Null(adapter.ContentFor("session:s1")); // gone from the view
             Assert.Equal(leftBefore, service.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList());
             Assert.Equal(bottomBefore, service.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId).ToList());
             return true;

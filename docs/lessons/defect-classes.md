@@ -8754,8 +8754,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   not seen, because that drag raises no signal (the known gap in `WorkbenchAdapter`'s `LayoutRoot.Updated` comment).
   Before this fix the next unrelated render reverted it the same way.
 - **Status:** `controlled` for the controller's routes, and gated for the tests (T21 n9): a sibling of
-  `ComposerContentOraclesDriveTheGestureTests`. Residual: a render hidden in another file's helper, and the oracles
-  `ContentFor` and `ActiveSurfaceId`, are not seen by the gate (named in its summary comment).
+  `ComposerContentOraclesDriveTheGestureTests`. Residual: a render hidden in another file's helper is not seen by the gate
+  (named in its summary comment). Owner R2 settled (T21 n10, 2026-10-20): `ContentFor` and `ActiveSurfaceId` read the drawn
+  tree, so they are now view oracles in the gate. R2a counted 6 tests that read one after a layout command with a by-hand
+  render between; all 6 now take the user's route (`layout-gate/r2/R2b-sweep.txt`), none a finding.
 - DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
 
 ### DC-NEW-wl-leader3-b — Tests that fail only under full-suite load, and so are read as flakes and waved through

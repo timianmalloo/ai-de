@@ -41,21 +41,18 @@ public sealed class CollapsedBottomTests
             {
                 using var frame = ComposedCoding.Show(1440, 900);
                 var shell = frame.Shell;
-                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Factory.Adapter.Render();
+                FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Bottom);
                 frame.Settle();
                 var built = shell.Factory.Adapter.ContentFor("terminal-1");
                 Assert.NotNull(built);
                 Assert.Single(Records(lines, "terminal.start"));
 
-                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Collapsed)).Applied);
-                shell.Factory.Adapter.Render();
+                FloatRenderTests.CollapseByTheRoute(shell.Factory, ZonesToTree.BottomStackId);
                 frame.Settle();
                 Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));   // parked, alive
                 Assert.Empty(Records(lines, "terminal.stop"));
 
-                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Factory.Adapter.Render();
+                FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Bottom);
                 frame.Settle();
                 Assert.Same(built, shell.Factory.Adapter.ContentFor("terminal-1"));
                 Assert.Single(Records(lines, "terminal.start"));
@@ -95,8 +92,7 @@ public sealed class CollapsedBottomTests
                 Assert.True(shell.Factory.Rails.RailVisible(ZoneId.Bottom), "the collapsed Bottom shows no rail — the terminal is not one gesture away");
 
                 // The gesture: the rail expands the zone; the terminal is built now, once.
-                Assert.True(shell.Factory.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-                shell.Factory.Adapter.Render();
+                FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Bottom);
                 frame.Settle();
                 Assert.NotNull(shell.Factory.Adapter.ContentFor("terminal-1"));
                 Assert.Single(TerminalStarts(lines));

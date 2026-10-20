@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using AiDe.App.Tests.Shell;
 using AiDe.App.Workbench;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Dispatch;
@@ -214,13 +215,14 @@ public sealed class TerminalSurfaceStopLineTests
         {
             using var capture = new SinkCapture();
 
-            using var shell = new WorkbenchShell(queries: null);
+            using var frame = ComposedCoding.Show(1440, 900);
+            var shell = frame.Shell;
 
             // Coding's default Bottom is collapsed and its terminal not started until the rail is
             // expanded (Ruling 88; CollapsedBottomTests) — the operator's gesture, made here, so
             // the shell holds a LIVE terminal to write a stop for.
-            Assert.True(shell.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
-            shell.Adapter.Render();
+            FloatRenderTests.ExpandByTheRail(shell.Factory, ZoneId.Bottom);
+            frame.Settle();
             var ids = shell.Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces)
                 .Where(s => s.Kind == "terminal")

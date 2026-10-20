@@ -1,0 +1,57 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.09]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.21]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.82]     AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones [FAIL]
+[xUnit.net 00:00:00.82]       Assert.Null() Failure: Value is not null
+[xUnit.net 00:00:00.82]       Expected: null
+[xUnit.net 00:00:00.82]       Actual:   TextBlock { ActualHeight = 0, ActualWidth = 0, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }
+[xUnit.net 00:00:00.82]       Stack Trace:
+[xUnit.net 00:00:00.82]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Sta.cs(203,0): at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint)
+[xUnit.net 00:00:00.82]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Sta.cs(67,0): at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds)
+[xUnit.net 00:00:00.82]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs(19,0): at AiDe.App.Tests.ZoneWorkbenchAdapterTests.OnStaThread[T](Func`1 work)
+[xUnit.net 00:00:00.82]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs(228,0): at AiDe.App.Tests.ZoneWorkbenchAdapterTests.WithDockHost[T](Func`2 assert)
+[xUnit.net 00:00:00.82]         C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs(287,0): at AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones()
+[xUnit.net 00:00:00.82]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.82]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.43]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal [515 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface [36 ms]
+  Failed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones [33 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   TextBlock { ActualHeight = 0, ActualWidth = 0, AllowDrop = False, AreAnyTouchesCaptured = False, AreAnyTouchesCapturedWithin = False, ··· }
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Run[T](Func`1 body, Int32 timeoutSeconds) in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\Sta.cs:line 67
+   at AiDe.App.Tests.ZoneWorkbenchAdapterTests.OnStaThread[T](Func`1 work) in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs:line 19
+   at AiDe.App.Tests.ZoneWorkbenchAdapterTests.WithDockHost[T](Func`2 assert) in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs:line 228
+   at AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones() in C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\ZoneWorkbenchAdapterTests.cs:line 287
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen [306 ms]
+  Passed AiDe.App.Tests.Shell.CollapsedBottomTests.TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands [147 ms]
+  Passed AiDe.App.Tests.Shell.CollapsedBottomTests.CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack [154 ms]
+
+Test Run Failed.
+Total tests: 6
+     Passed: 5
+     Failed: 1
+ Total time: 1.8694 Seconds

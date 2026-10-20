@@ -1,0 +1,51 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-layout-gate-r2\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-layout-gate-r2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.19]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen [724 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument [340 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheConsoleKindsRow_IsCodingsManyInstancesVerbRow_HomedInTheCenter [7 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionInTheCenter_TheConsoleIsASiblingTab [185 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TwoSessionsOpenedOnOneDay_HaveDistinctSessionAndConsoleCaptions [290 ms]
+  Passed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheVerb_OpensTheFocusedSessionsConsole_AndRefusesWithNoSessionFocused [200 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept [58 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_SelectsTheModelsActiveTab_NotTheFirstDocument [699 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.TheDefaultZoneLayout_RendersEverySurface_AsARealizedDocument [61 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface [32 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ClosingACenterDocument_DoesNotDisturbTheOtherZones [31 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_LeavesTheActiveTabWhereTheUserPutIt [35 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.Render_PreservesTheActiveSurface_WhenAnotherPaneOpens [34 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.RefreshInPlace_RebuildsOnlyTheNamedPane_LeavingEveryOtherPaneUntouched [33 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.APlainReRender_KeepsTheActiveCenterDocumentActive_AfterThePaneControlsRealize [93 ms]
+  Passed AiDe.App.Tests.ZoneWorkbenchAdapterTests.ActivateInView_FocusesTheNamedSurface_ForTheDeliberateOpenCase [36 ms]
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.APaneWhoseStartFailed_WritesOneDisposedStop_WithNoSessionAndNoCode [31 ms]
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.TheShellsDispose_WritesOneOwnerClosingStopPerLiveTerminal [122 ms]
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.TheAssemblyInstallsANoOpSink_SoFixturesDoNotWriteTheOperatorsLog [< 1 ms]
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.ADisposedTerminalPane_WritesATerminalStopLineForItsSurface [20 ms]
+  Passed AiDe.App.Tests.TerminalSurfaceStopLineTests.AShellThatExits_WritesChildExitedWithTheCode_AndTheLaterDisposeWritesNoSecondStop [89 ms]
+[xUnit.net 00:00:03.84]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [233 ms]
+  Passed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [2 ms]
+  Passed AiDe.App.Tests.Shell.CollapsedBottomTests.TheDefaultBottomsTerminal_IsNotBuiltUntilTheZoneExpands [106 ms]
+  Passed AiDe.App.Tests.Shell.CollapsedBottomTests.CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack [140 ms]
+
+Test Run Successful.
+Total tests: 25
+     Passed: 25
+ Total time: 4.2295 Seconds
