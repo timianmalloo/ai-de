@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T01:55:09Z",
+  "generated": "2026-10-20T02:08:12Z",
   "audit": [
     {
       "actor": null,
@@ -26901,6 +26901,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T01:55:07Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5BH1Y81C33BJXFE9WBK5GXV",
+      "shortname": "join-wl-prefill-2-step8",
+      "datetime": "2026-10-20T02:08:12Z",
+      "session": "wl-leader4-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T30 second join 4caa88a9",
+      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1247/1252 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, which failed ALONE on the join head 4e8ad0cc and on the first parent 5d66bd0f in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 5d66bd0f, head 4caa88a9: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T30 n4-n6: the outcome line counts every compile call; a prepare opens the fold with focus kept, announces the count once, names each line '? suggested'; tools/compile-eval/first-calls.py; the four sheet test files inject the gate; R21's real control pins ComposerSendGate.cs:148 as the composer's one model-call site (mutation red), the privacy gate's Suggest ban retired with its reason; 68-ban sweep (63 hold, 4 stale wording -> T32, 0 now live). Owed: desk runs (CtrlDigit, SolutionTreeChord, the restored-row fold); the prefill demo for the user on a fresh tree.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "AC-W01a: the user sees and reviews the model's suggested goal and done lines before sending, and the composer's one model call is pinned",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T01:39:56Z",
+      "duration_seconds": 1696.0
     }
   ],
   "changes": [
