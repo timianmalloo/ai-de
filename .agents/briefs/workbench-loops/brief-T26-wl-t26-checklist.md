@@ -1,55 +1,35 @@
-# Brief — T26 `wl1b-checklist-kind` (slice WL-1b) · Claude Code · Opus · node 1
+# Brief — T26 `wl1b-checklist-kind` (slice WL-1b) · Claude Code · Opus · node 2
 
-**Goal (design row T26):** the minimal `checklist` kind. It is WL-1b's only user-facing part: a user evaluates one
-mandatory obligation, links evidence, sees acceptance blocked with the named gap, records a disposition, and accepts
-the declared deliverable without claiming implementation (AC-W03c).
-**On main:** the WL-1b Core (folds, the checklist service, one currentness definition; `69039edb`), WL-S (T11 kinds, T21
-float; `d25d0311`, `26e14f8b`), and T30 (`d986e4a4`). Design: `docs/design/workbench-loops-wl-1b.md`: § The minimal
-checklist kind (:309-327), § UI and interaction design (:402-431), Test plan D1–D3 (:465-467), risk R1 (:523-524).
+**Goal (design row T26):** the minimal `checklist` kind, WL-1b's only user-facing part.
+**Node 1 is accepted as a branch node** (f4285f32): D1 and D2 are green, D2's reds are three mutation reds (accept
+while blocked; R1; the Owner's null-sha), and the surface refreshes on visibility. **Leader reading accepted:** the
+surface id is `checklist:<sessionId>`. The service must always be called with the journey resolved from that session's
+notebook (`owner_journey_id`), never a journey derived in the App.
 
-**This node (n1), each red then green, through the real gesture on the real shell composition:**
-- **(D1) The demo path, headless.** The checklist kind opens from View in Factory and Understand. Empty → propose an
-  obligation → "evidence missing". Acknowledge → "Acknowledged — not satisfied", still blocked.
-- **(D2) Link, gap, intent, accept, extended by the Owner:**
-  - Link the completed run → satisfied.
-  - *Accept deliverable* → a refusal is read out naming "intent revision 1 is not accepted".
-  - Accept the intent, then accept → the Accepted line names the intent revision by number, and no string says
-    "implemented" or "merged" except the negating sentence (Ruling 179).
-  - **Ruling 180 (5) / C2:** the App passes the attempt's **stored** envelope projection sha. Use
-    `ComposerSendGate.CurrentProjectionSha(envelope)` over the **attempt's own** envelope, as
-    `SessionDocumentSurface.cs:728` does, and never the composer's current or next envelope (R1).
-  - Red: with the composer cleared after the run, **and** after a re-prepare that changes the live compile while the
-    draft is unchanged, the evidence still reads Current.
-  - **Owner's null-sha condition:** a call with no live sha reads NotRecorded (gap `evidence-not-recorded`), never
-    Satisfied. The fold already returns NotRecorded for a null side (`CurrentnessFold.cs:53-55`), so drive the red at the
-    caller, as a mutation that coalesces null to the ran sha.
-- **(D3) Saved review state is not acceptance.** Record `deferred` and `needs-decision`, save the layout, then restart:
-  the checklist restores with the same states, `work` has no `accepted` row, and the gap line is unchanged.
+**This node (n2), in this order:**
+- **(0) The three literal entries** (seam `req-01M5BAKZ9BAA28CF4R07PTRKGV`, granted). In `PerspectiveMenuTests.cs`: the
+  expected-kinds row with Kinds.Count 21 → 22 (:238), and "New checklist" after "New code viewer" in the Factory
+  (:315) and Understand (:345) View literals. In `MainMenuTests.cs:167`: "New checklist" after "New code viewer".
+  Keep them literal; the three node-1 reds turn green.
+- **(D3) Saved review state is not acceptance**, red then green through the real gesture. Record `deferred` and
+  `needs-decision`, save the layout, then restart through the shell's revive. The checklist restores with the same
+  states, `work` has no `accepted` row, and the gap line is unchanged.
+  **Plus the Leader's condition from seam `req-01M5B8W7NJRW7A1X4G21J2QKPT`:** restore with a DIFFERENT notebook focused.
+  The checklist must still show its OWN journey, and if its notebook is not open, it says so and names the journey,
+  binding nothing else.
+- **(E) The one-live-sha `simplify:`** (node 1). The surface passes the newest current-revision run's envelope sha for
+  every link. Write a test that pins the ceiling: an obligation with two linked runs at the head revision. Either it
+  reads correctly, or the ceiling is stated in the README. Do not widen the Core request.
+- **Then** run rule 22's ratchet, because this node hands off for the WL-1b checklist join. Also record that the
+  checklist copy (DESIGN.md CHK1–CHK12) awaits the Owner's confirmation (design :592).
 
-**Read first (rule 14):**
-- `ZoneId.Right` on main; the design's `assume:` falls back to `Zone: null`.
-- D6's switch rule, now on main with T11 (reflection test `EverySurfaceEntryIsHandledByEveryReaderTests`). The kind adds
-  no `SurfaceEntry` subtype.
-- `KindAllowListsTests`, and T11's `SurfaceContentFactory` rows (`notebook`, `execution`).
-- The WL-S design §4 row contract.
+**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Node 1 measured 321k, so **hand off at 120k** by
+your own measured usage. **Kick** at 15 min by mail. Stop at the kick, even mid-check: commit what is green, then run
+the suite.
+**Rules 19, 20, 21 and 22 apply.** Check the board before every App run, as its own command.
 
-**Tier** T2 · **fan-out** 0 · **budget** 120 tool calls · 200k. Every Opus node this epoch overran, so **hand off at
-150k** by your own measured usage. **Kick** at 15 min by mail.
-**Rules 19, 20, 21 and 22 apply.** The user's WL-S walk-through may start at any moment: check the board before every
-App run, as its own command. A desktop-hold result is re-run after 2 min and logged.
-
-## Owned authored paths (design row T26)
-- `src/AiDe.App/Workbench/SurfaceContentFactory.cs` (the `checklist` row only)
-- new `src/AiDe.App/Workbench/Checklist/**`
-- `tests/AiDe.App.Tests/Workbench/KindAllowListsTests.cs` (the column entry only)
-- new `tests/AiDe.App.Tests/Workbench/Checklist/**`
-- `DESIGN.md` (the checklist copy rows only; **granted here**)
-- `docs/proof/workbench-loops-wl-1b/checklist/**`
-
-The Core service and folds are read only; a change there is a seam request.
-
-## Not in scope
-The 100× perf run (T25). Assessments. WL-1c.
+## Owned authored paths
+As in node 1, plus the three granted literal entries.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
