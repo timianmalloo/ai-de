@@ -37,10 +37,47 @@ public sealed class DesignCopyRowsArePinnedTests
     private const int SampleRevision = 4242;
 
     /// <summary>Rows that are layout or behaviour descriptions, or whose sentence no code renders. Shrink-only.</summary>
-    private static readonly IReadOnlyDictionary<string, string> UnmatchedRows = new Dictionary<string, string>();
+    private static readonly IReadOnlyDictionary<string, string> UnmatchedRows = new Dictionary<string, string>
+    {
+        ["SC7"] = "not copy: a layout and behaviour description (outcome line, reply, N events collapsed)",
+        ["SC8"] = "not copy: a keyboard and focus-order rule",
+        ["SC9"] = "not copy: an announcement rule (what is never announced)",
+        ["NB1"] = "finding: no code renders \"Draft saved on this device.\"; the row is unbuilt or the sentence was removed",
+        ["RUN1"] = "finding: no code renders \"No reasoning summary supplied.\"",
+        ["RUN3"] = "finding: no code renders \"Response complete. Evidence still needs review.\"",
+        ["RUN4"] = "finding: no code renders \"Connection lost. The run outcome is unknown.\"; TurnCopy says \"Delivery is unknown: ...\" for the nearest state",
+        ["CHECK1"] = "finding: no code renders \"Acknowledged by you. Execution evidence is still missing.\"; ChecklistCopy.Acknowledged says a different sentence (CHK2)",
+        ["AUTH1"] = "finding: no code renders \"Signed in does not mean this route is qualified.\"",
+        ["DEMO1"] = "finding: no code renders \"Interactive prototype. Runs, accounts and evidence are simulated.\" (the sentence lives only in DESIGN.md)",
+    };
 
     /// <summary>Copy constants and builders no DESIGN.md id row names. Shrink-only.</summary>
-    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>();
+    private static readonly IReadOnlyDictionary<string, string> UnmatchedMembers = new Dictionary<string, string>
+    {
+        ["ChecklistCopy.AcceptedEarlier"] = "no row: the stale-acceptance sentence has no id row in DESIGN.md",
+        ["ChecklistCopy.Acknowledge"] = "no row: button label, not in an id row",
+        ["ChecklistCopy.AddObligation"] = "no row: button label, not in an id row",
+        ["ChecklistCopy.Defer"] = "no row: button label, not in an id row",
+        ["ChecklistCopy.LinkLatestRun"] = "no row: button label, not in an id row",
+        ["ChecklistCopy.Loading"] = "no row: the loading sentence has no id row",
+        ["ChecklistCopy.Mandatory"] = "no row: label, not in an id row",
+        ["ChecklistCopy.MarkNeedsDecision"] = "no row: button label, not in an id row",
+        ["ChecklistCopy.NewObligationName"] = "no row: default obligation name, not in an id row",
+        ["ChecklistCopy.NotConnected"] = "no row: the not-connected sentence has no id row",
+        ["DaemonNotebookRevisions.OpenRefusedCopy"] = "no row: a diagnostic reason, not in an id row",
+        ["SolutionTreeProjection.NotRecordedCopy"] = "no row: solution-tree projection copy, outside the id rows",
+        ["SolutionTreeProjection.PythonTsCopy"] = "no row: solution-tree projection copy, outside the id rows",
+        ["TurnCopy.DecorationLine"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.DurationText"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.EditsText"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.EventsText"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.Name"] = "no row: SC10 UIA name derivation, no id row",
+        ["TurnCopy.OutcomeWord"] = "no row: SC7 names the outcome line but its row is layout; the words have no id row",
+        ["TurnCopy.QueuedSentence"] = "no row: the queued sentence has no id row",
+        ["TurnCopy.SessionSpend"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.SpendText"] = "no row: SC-series derivation, the SC rows are layout",
+        ["TurnCopy.SpokenDuration"] = "no row: SC-series derivation, the SC rows are layout",
+    };
 
     private sealed record Pin(string RowId, string[] Rendered, string[] Members);
 
