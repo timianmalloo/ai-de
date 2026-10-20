@@ -77,7 +77,7 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
             "C:/repo", "w-1", providers.Registry, DateTimeOffset.UnixEpoch,
             fallbackDefault: engine => providers.FallbackDefaultAccount(engine) is { } f ? new AccountRef(f.Provider, f.Label) : null,
             adapterInstallRoot: AiDe.App.Tests.Sessions.InstalledAdapterRoot.Create(Path.Combine(Path.GetTempPath(), "aide-run-binding-" + Guid.NewGuid().ToString("n"))))
-        { TaskClass = "investigate" };
+        { TaskClass = "investigate", CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
 
         // sheet → the session's ACCOUNTS (Ruling 105): both accounts are selected; the first ready
         // one is the default. No engine id is stored on the session.

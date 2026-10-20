@@ -58,16 +58,16 @@ public sealed class TheSheetListsAccountsWithDerivedStatesTests : IDisposable
         Assert.Equal("claude-code", row.EngineId);
 
         // An adapter root whose entry module is missing: composed by ResolveLaunch, not on disk.
-        var missing = new NewSessionSheetViewModel(_root, _root, registry, Now, adapterInstallRoot: Path.Combine(_root, "empty"));
+        var missing = new NewSessionSheetViewModel(_root, _root, registry, Now, adapterInstallRoot: Path.Combine(_root, "empty")) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
         Assert.Equal(AccountRowState.NotConfigured, Assert.Single(missing.AccountRows, r => r.ProviderId == "anthropic").State);
 
         // Installed: ready health → ready.
-        var installed = new NewSessionSheetViewModel(_root, _root, registry, Now, adapterInstallRoot: InstalledRoot());
+        var installed = new NewSessionSheetViewModel(_root, _root, registry, Now, adapterInstallRoot: InstalledRoot()) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
         Assert.Equal(AccountRowState.Ready, Assert.Single(installed.AccountRows, r => r.ProviderId == "anthropic").State);
 
         // Installed, needs-login → needs sign-in.
         var needsLogin = new NewSessionSheetViewModel(
-            _root, _root, Registry(Anthropic(new ProviderAccount("max", AccountHealth.NeedsLogin))), Now, adapterInstallRoot: InstalledRoot());
+            _root, _root, Registry(Anthropic(new ProviderAccount("max", AccountHealth.NeedsLogin))), Now, adapterInstallRoot: InstalledRoot()) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
         Assert.Equal(AccountRowState.NeedsSignIn, Assert.Single(needsLogin.AccountRows, r => r.ProviderId == "anthropic").State);
     }
 
@@ -75,7 +75,7 @@ public sealed class TheSheetListsAccountsWithDerivedStatesTests : IDisposable
     [Fact]
     public void EveryCatalogProviderAppears_AndAProviderWithNoAccountsRendersOneConfigureRow()
     {
-        var sheet = new NewSessionSheetViewModel(_root, _root, Registry(), Now, adapterInstallRoot: InstalledRoot());
+        var sheet = new NewSessionSheetViewModel(_root, _root, Registry(), Now, adapterInstallRoot: InstalledRoot()) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
 
         var providers = EngineCatalog.Rows.Select(r => r.Provider).Distinct(StringComparer.Ordinal).ToList();
         Assert.Equal(providers, sheet.AccountRows.Select(r => r.ProviderId).Distinct(StringComparer.Ordinal));
@@ -108,7 +108,7 @@ public sealed class TheSheetListsAccountsWithDerivedStatesTests : IDisposable
         Assert.Null(created.Config.DefaultAccount);
 
         var ready = new NewSessionSheetViewModel(
-            _root, _root, Registry(Anthropic(new ProviderAccount("max", AccountHealth.Ready))), Now, adapterInstallRoot: InstalledRoot());
+            _root, _root, Registry(Anthropic(new ProviderAccount("max", AccountHealth.Ready))), Now, adapterInstallRoot: InstalledRoot()) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
         Assert.Null(ready.ReadinessFooter);
         Assert.Equal(new AccountRef("anthropic", "max"), ready.Create(Now).Config.DefaultAccount);
     }

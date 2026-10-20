@@ -90,7 +90,7 @@ public sealed class TheConfigureDialogIsTheFirstUseSurfaceTests : IDisposable
 
         // The sheet, reloaded from the written file, shows the account — needs sign-in once the
         // adapter is installed, not configured until then (the weaker of the two).
-        var sheet = new NewSessionSheetViewModel(_home, _home, new ProviderRegistry([]), DateTimeOffset.UtcNow, adapterInstallRoot: null);
+        var sheet = new NewSessionSheetViewModel(_home, _home, new ProviderRegistry([]), DateTimeOffset.UtcNow, adapterInstallRoot: null) { CompileModeGateInput = root => AiDe.Core.Sessions.CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
         Assert.Null(Assert.Single(sheet.AccountRows, r => r.ProviderId == "anthropic").Account);
         sheet.Reload(read.Registry, read.AdapterInstallRoot);
         var row = Assert.Single(sheet.AccountRows, r => r.ProviderId == "anthropic");

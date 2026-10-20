@@ -1,0 +1,68 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-prefill\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-prefill\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-prefill\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-prefill\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-wl-prefill\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.09]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.20]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.21]   Starting:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.NoSheetTestReadsTheRealProofDirectoryTests.EverySheetBuiltOverAnAdapterRoot_InjectsTheCompileModeGate [75 ms]
+  Standard Output Messages:
+ 10 sites over an adapter root; 0 without an injected gate
+
+
+  Passed AiDe.App.Tests.Sessions.TheSheetListsAccountsWithDerivedStatesTests.EveryCatalogProviderAppears_AndAProviderWithNoAccountsRendersOneConfigureRow [53 ms]
+  Passed AiDe.App.Tests.Sessions.TheSheetListsAccountsWithDerivedStatesTests.TheRenderedSheetShowsGroupsStatesAndTheFooter [318 ms]
+  Passed AiDe.App.Tests.Sessions.TheSheetListsAccountsWithDerivedStatesTests.TheRowStateIsTheWeakerOfLaunchPathAndHealth [29 ms]
+  Passed AiDe.App.Tests.Sessions.TheSheetListsAccountsWithDerivedStatesTests.CreateStaysEnabledAndTheFooterIsTruthfulWhenNothingIsReady [59 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.NoLeaseLeavesTheSheet [19 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: 10, tokens: 0) [11 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: 0, tokens: 10) [16 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANonPositiveCapIsRefusedAtTheSheet(requests: -1, tokens: 10) [10 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheDefaultNameIsADateSlug [8 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ATypedDuplicateNameIsSuffixedOnCreate_AndTheAnnouncementSaysSo [10 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.SignInIsClaudeCodeOnly_AndReprobesOnReturn [16 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetOpensAnsweredWithFreeForm_AndAClearedClassStillBlocks [8 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.EveryCatalogEngineIsListed_ConfiguredOrNot [21 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.CreateWritesTheSessionAndEmitsItsOpenEvent [33 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANeedsLoginEngineIsNeverOfferedToTheRouter [31 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANegativeOrUnwrittenFanOutCeilingBlocksCreateByName(ceiling: -1) [7 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ANegativeOrUnwrittenFanOutCeilingBlocksCreateByName(ceiling: null) [12 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetCreatesOnDefaultsWithZeroRequiredInputs [19 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.NoParameterDefaultCanSupplyATaskClass [1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ACapIsOptional_EnforcedDeliberately_AndWrittenToTheSession [12 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetsHealthValuesAreReferenceEqualToTheRegistrys [12 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheFourCutFieldsAreAbsentFromTheSheet [1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_AndAFailedOpenCreatesNothing [1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports [2 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheSheetRendersThatSentence [26 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.WithAnActiveWorkspaceTheSheetOpensPreBound [2 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.ASheetCannotBeConstructedWithoutAWorkspace [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.WithNoWorkspaceTheChooserInterposes_AndCancelAbortsCleanly [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_AndAWindowThatStillReportsNoneCreatesNothing [< 1 ms]
+  Passed AiDe.App.Tests.Sessions.TheNewSessionSheetTests.TheDefaultNameTakesACounter_WhenASessionOfThatNameAlreadyExistsInTheWorkspace [37 ms]
+  Passed AiDe.App.Tests.Sessions.TheConfigureDialogIsTheFirstUseSurfaceTests.ANativeProvidersDialogShowsItsInstallLineAsCitedCopy [257 ms]
+  Passed AiDe.App.Tests.Sessions.TheConfigureDialogIsTheFirstUseSurfaceTests.TheDialogShowsPrerequisitesRefusesACheckoutRootAndWritesTheFile [476 ms]
+  Passed AiDe.App.Tests.Composer.TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate [18 ms]
+  Passed AiDe.App.Tests.Composer.TheRunBindingComesFromTheProviderFileTests.EveryRunSideFieldOfTheRequestIsAValueFromTheFile [99 ms]
+  Passed AiDe.App.Tests.Composer.TheRunBindingComesFromTheProviderFileTests.AnAmbiguousAccountRefusesOnTheComposerNamingTheField [44 ms]
+[xUnit.net 00:00:02.00]   Finished:    AiDe.App.Tests
+  Passed AiDe.App.Tests.Composer.TheRunBindingComesFromTheProviderFileTests.TheAttachAffirmationNamesTheSameProviderAndAccountTheRunBills [2 ms]
+
+Test Run Successful.
+Total tests: 37
+     Passed: 37
+ Total time: 2.3953 Seconds

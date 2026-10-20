@@ -38,7 +38,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
     // the weaker of launch path and health); codex's entry module is unobserved in the catalog on
     // this tree, so an openai account can only ever read "not configured" here.
     private NewSessionSheetViewModel Sheet(ProviderRegistry? registry = null, Func<string, bool>? login = null, Func<ProviderRegistry>? reprobe = null) =>
-        new(_root, _root, registry ?? Registry(), Now, login, reprobe, adapterInstallRoot: InstalledAdapterRoot.Create(_root));
+        new(_root, _root, registry ?? Registry(), Now, login, reprobe, adapterInstallRoot: InstalledAdapterRoot.Create(_root)) { CompileModeGateInput = root => CompileModeGate.Evaluate(root, Path.Combine(root, "proof")) };
 
     // ── binding (R13 b1) ──────────────────────────────────────────────────────────────────
 
