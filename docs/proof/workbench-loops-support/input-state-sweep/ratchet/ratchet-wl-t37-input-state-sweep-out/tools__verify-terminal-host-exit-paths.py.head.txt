@@ -1,0 +1,2 @@
+verify-terminal-host-exit-paths: FAILED
+  no .trx results under <ROOT>\artifacts\test-results — the test step did not run, so no exit path was measured

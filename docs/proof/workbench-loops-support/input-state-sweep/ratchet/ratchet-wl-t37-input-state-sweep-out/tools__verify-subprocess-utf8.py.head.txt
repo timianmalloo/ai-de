@@ -1,0 +1,1 @@
+verify-subprocess-utf8: OK — every text-mode subprocess under tools/ and spikes/ states its encoding (1 allowlisted with a reason).

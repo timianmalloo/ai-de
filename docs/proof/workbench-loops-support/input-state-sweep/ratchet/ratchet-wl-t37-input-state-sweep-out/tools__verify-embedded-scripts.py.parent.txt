@@ -1,0 +1,1 @@
+verify-embedded-scripts: OK — 13 embedded script block(s) parse (node --check).

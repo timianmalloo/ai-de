@@ -1,0 +1,317 @@
+{
+ "parent": "C:\\Projects\\rt-wl-t37-input-state-sweep-p",
+ "head": "C:\\Projects\\rt-wl-t37-input-state-sweep-h",
+ "gates": {
+  "docs/ai-forward-pack/scripts/docs-graph.py": {
+   "parent_exit": 0,
+   "head_exit": 1,
+   "new_findings": [
+    "exit 1: validate: 1 defect(s) - 0 problem(s), 0 orphan(s), 1 index-drift item(s)."
+   ],
+   "verdict": "REFUSE green->red"
+  },
+  "docs/ai-forward-pack/scripts/verify-compiled-prompt.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-documented-commands.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-no-conflict-markers.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-no-machine-paths.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-no-new-console-launches.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-portable-text-io.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-ruling-citations.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "excluded (PD-1)"
+  },
+  "docs/ai-forward-pack/scripts/verify-skill-contracts.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "docs/ai-forward-pack/scripts/verify-subprocess-utf8.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-aide-gitignore.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-api-crefs.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-audit-capture.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-audit-log.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-bounds-are-enforced.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-capture-instruction.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-cited-controls.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-containment-comparisons.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-defect-register.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-derived-views.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-design-modes.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-embedded-scripts.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-extractor-generation.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-fixture-derivation.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-front-door-exit-attended.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-front-door-exit-evidence.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-gate-self-tests.py": {
+   "parent_exit": 0,
+   "head_exit": 1,
+   "new_findings": [
+    "verify-test-run.py now HAS a --self-test but is still on the frozen list. Remove it: a debt list that keeps names it no longer owns stops describing the debt, and the next reader cannot tell which entries are real."
+   ],
+   "verdict": "REFUSE green->red"
+  },
+  "tools/verify-harness-diagnostics.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-id-allocators.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-mockup-audits.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-no-account-identity.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-no-literal-seat-ids.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-node-reuse-control.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-perf-assertions.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-preservation-workflow-policy.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-project-coverage.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "excluded (recount)"
+  },
+  "tools/verify-published-layout.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-r14b2-session-naming.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-ruling-citations.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok (strict)"
+  },
+  "tools/verify-site-figures.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [
+    "exit 1: 6 stale, 0 unknown, out of 14 checked"
+   ],
+   "verdict": "REFUSE new findings"
+  },
+  "tools/verify-standins.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-stranded-audit.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-subprocess-utf8.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-surface-ownership.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-terminal-host-exit-paths.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "excluded (recount)"
+  },
+  "tools/verify-test-run.py": {
+   "parent_exit": 1,
+   "head_exit": 1,
+   "new_findings": [],
+   "verdict": "excluded (recount)"
+  },
+  "tools/verify-ui-craft-floor.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-vendored-advisories.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-vendored-assets.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  },
+  "tools/verify-workbench-v2.py": {
+   "parent_exit": 0,
+   "head_exit": 0,
+   "new_findings": [],
+   "verdict": "ok"
+  }
+ },
+ "refusals": [
+  "docs/ai-forward-pack/scripts/docs-graph.py",
+  "tools/verify-gate-self-tests.py",
+  "tools/verify-site-figures.py"
+ ]
+}

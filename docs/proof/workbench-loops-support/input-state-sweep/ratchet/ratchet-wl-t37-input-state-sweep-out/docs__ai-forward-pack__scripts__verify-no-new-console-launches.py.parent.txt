@@ -1,0 +1,1 @@
+verify-no-new-console-launches: OK - 898 file(s) read under src, tests, no CREATE_NEW_CONSOLE launch.

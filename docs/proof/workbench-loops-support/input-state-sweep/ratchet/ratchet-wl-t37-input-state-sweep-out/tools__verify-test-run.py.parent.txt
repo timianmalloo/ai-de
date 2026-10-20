@@ -1,0 +1,9 @@
+
+project                          total  expected       outcome
+--------------------------------------------------------------
+AiDe.App.Tests                       —      1274    NO RESULTS
+AiDe.Core.Tests                      —      3122    NO RESULTS
+
+verify-test-run: FAILED
+  - AiDe.App.Tests: produced no usable result file — the test host almost certainly crashed
+  - AiDe.Core.Tests: produced no usable result file — the test host almost certainly crashed

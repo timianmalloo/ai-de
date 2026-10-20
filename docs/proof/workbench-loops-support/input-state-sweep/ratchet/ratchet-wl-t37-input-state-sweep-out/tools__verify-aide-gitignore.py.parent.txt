@@ -1,0 +1,1 @@
+verify-aide-gitignore: OK — .aide/prompt-drafts.json, .aide/nested/whatever.json ignored.

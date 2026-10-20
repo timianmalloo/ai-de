@@ -1,0 +1,5 @@
+verify-derived-views: FAILED
+  - 1 of 1 file(s) under docs/docs-index.js are not what the generator produces — derived from the frontmatter of every artifact under docs/, so they are stale or were merged by hand. This is the shape a rebase leaves behind: no conflict marker, and wrong (DC-060). Stale: docs/docs-index.js. Fix: run `python docs/ai-forward-pack/scripts/docs-graph.py derive` and commit the result.
+      docs/docs-index.js: first difference at byte 422401 of 1033319 (regenerated 1033319)
+        committed:   ...b' "diagrams": [],\n      "sourceSha256": "a06ff2935264eb7b246c82a8934fbd312c4bae100eecfc559cd86756f03b'
+        regenerated: ...b' "diagrams": [],\n      "sourceSha256": "3905300565cae5910711badb0935c210171a50c0d27c4ffa91b33066ffe1'

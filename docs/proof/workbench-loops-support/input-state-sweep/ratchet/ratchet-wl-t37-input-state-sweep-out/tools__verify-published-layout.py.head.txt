@@ -1,0 +1,1 @@
+verify-published-layout: OK — the published shell finds daemon/AiDe.Daemon.exe, mcp/AiDe.Mcp.exe.

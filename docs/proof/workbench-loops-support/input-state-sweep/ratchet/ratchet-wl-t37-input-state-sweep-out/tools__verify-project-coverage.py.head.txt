@@ -1,0 +1,3 @@
+verify-project-coverage: 43 tracked project(s) — 19 in AiDe.sln, 24 outside, 0 exempt.
+  built 24 project(s) outside the solution in 30s
+verify-project-coverage: OK — 43 tracked project(s), 19 in AiDe.sln; every one compiles.

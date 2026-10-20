@@ -1,0 +1,2 @@
+verify-bounds-are-enforced: OK — 25 bound constant(s), every one compared, clamped or taken against in code.
+  Note: this checks that a bound is APPLIED, not that a comment describing it is true. The prose half of the class still needs a reader.

@@ -1,0 +1,1 @@
+verify-stranded-audit: OK — 55 worktree(s), 0 reported, no append-only log left uncommitted in a tree this session can commit in.

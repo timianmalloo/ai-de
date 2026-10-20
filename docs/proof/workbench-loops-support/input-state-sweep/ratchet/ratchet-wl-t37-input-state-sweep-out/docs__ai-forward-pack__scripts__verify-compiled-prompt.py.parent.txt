@@ -1,0 +1,10 @@
+direction 1: added done_when clause refused - ok
+direction 2: added not_in_scope clause refused - ok
+direction 3: trace to a phrase absent from raw refused - ok
+direction 4: missing field refused - ok
+direction 5: raw hash mismatch refused - ok
+direction 6: complete marker accepted - ok
+direction 7: incomplete marker refused - ok
+direction 8: trace to a missing assumption id refused - ok
+direction 9: assumption-only trace without consequential+DR refused - ok
+self-test OK: nine directions behave; every refusal matches the grammar

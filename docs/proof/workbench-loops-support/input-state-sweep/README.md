@@ -52,8 +52,8 @@ reason in `<ErrorInfo><Message>`; a real assertion in the same class stays `Fail
 | 6 | comments (`CanvasFocusIntegrationTests`, `PaneRenderTests`, `Sta.cs`) | prose, no assertion |
 
 ## S4 - visibility
-`tools/verify-test-run.py` now prints every NotExecuted result with its reason on every run (`not_checked_lines`), green or red, and
-`--self-test` checks that on a planted `.trx` (`S4-selftest-red.txt`, `S4-selftest-green.txt`). No existing check was weakened.
+`tools/verify-test-run.py` now prints every NotExecuted result with its reason on every run (`not_checked_lines`), green or red; `S5-recount.txt` is that output on the real `.trx` files. No existing check was weakened.
+The brief asked for a `--self-test`. I added one (red `NameError`-free stub, then green) and `tools/verify-gate-self-tests.py` refused it (rule 23, premise read: its comment at line 119 says this tool is frozen on purpose and its behaviours are proven from that file's fixtures, which drive the tool's real command line; a `--self-test` flag makes the frozen entry STALE). The premise holds, so the flag is removed and the gate is green again. **Owed, not done (outside my owned paths):** a fixture in `tools/verify-gate-self-tests.py` that plants a NotExecuted `.trx` result and expects the `[NOT CHECKED]` line with its reason. Raised as a seam request.
 `expectedSkips` as committed names CtrlDigit and CtrlEnter, and not the fold (it passes here; if it skips, the recount refuses and the join stops).
 The App baseline (`minimumTotal` 1274) is untouched, as the brief says; this branch counts 1279 (the 5 helper tests), so the join's re-baseline owes 1279.
 

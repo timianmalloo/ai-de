@@ -1,0 +1,1 @@
+no literal seat id or Leader epoch in 3 template(s)

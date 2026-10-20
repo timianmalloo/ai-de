@@ -1,0 +1,4 @@
+STALE collaboration.html: defect-classes says 258, source says 259
+STALE index.html: defect-classes says 258, source says 259
+STALE index.html: defect-classes says 258, source says 259
+3 stale, 0 unknown, out of 14 checked

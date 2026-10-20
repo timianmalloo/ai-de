@@ -1,0 +1,1 @@
+verify-design-modes: OK - 30 colour roles, each with a light value; accent-contrast and border-strong declared.
