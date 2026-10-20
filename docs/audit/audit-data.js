@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T18:18:12Z",
+  "generated": "2026-10-20T18:34:00Z",
   "audit": [
     {
       "actor": null,
@@ -27898,6 +27898,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T18:18:09Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5D9EZSMX36YMQ0TS8BTYDVF",
+      "shortname": "join-wl-layout-gate-terminal-move-step8",
+      "datetime": "2026-10-20T18:34:00Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n11 join 094ab3a9",
+      "summary": "Full join (recount, one re-run): T21 n11 adds ZoneWorkbenchAdapterTests.MovingTheParkedTerminalIntoAVisibleZone_LosesNoPane_MovesOnlyIt_AndBuildsIt (terminal-1 from the collapsed Bottom into Left by host.Controller.Move; no drawn pane lost, only terminal-1 moved, terminal-1 built on landing); green on the route, so no finding T21n11-F1; red with DockHost.cs:74's LayoutApplied wiring removed (scratch, restored). 70bc5f5d..ab759888 changes only that test file (+38), its proof and docs/audit (Owner-verified). No src change. Recount 1: App failed only ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen (\"focus after the close is on (none), not the landing\"); one full re-run: it passed, and CtrlDigit and CtrlEnter failed. Each of the three passes alone in clean rt- trees on ab759888 and 70bc5f5d, so each is load-only here, excused by the Owner's ruling (option (a)), NOT under Ruling 155 (3); ConsoleSplit is event 1 on the load-only rows. The restored-row fold PASSED in both recounts (the left button reads released since before 17:50:41Z). The node's README fold row (\"NOT CHECKED, left button down\") followed the brief, not the result; corrected to PASSED in the join commit 094ab3a9 (Owner). Hard-stop trial: kick at 17:41:22Z, done mail at 17:50:08Z, so the node did not stop at the kick (its claim \"all steps finished before the kick\" is wrong); 16 calls / about 82k against 40 / 80k; nothing left undone. Step 8 strict 5/49 (one fewer than before RES-1). Ratchet vs 70bc5f5d, head 094ab3a9: PASS 0/50. Release build 0 errors.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/terminal-move/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n11 wl-layout-gate-terminal-move onto main",
+      "done_when": "recount green or excused; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T17:29:34Z",
+      "duration_seconds": 3866.0
     }
   ],
   "changes": [
