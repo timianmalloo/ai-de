@@ -1,0 +1,46 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-loadflake\spikes\agent-dispatch\AgentDispatchSpike.csproj (in 86 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\spikes\watcher-coord-contract\WatcherCoordContractSpike.csproj (in 86 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\src\AiDe.Daemon\AiDe.Daemon.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\src\AiDe.App\AiDe.App.csproj (in 645 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\src\AiDe.Core\AiDe.Core.csproj (in 645 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\bench\AiDe.Bench\AiDe.Bench.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\src\AiDe.Mcp\AiDe.Mcp.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\spikes\watcher-otlp-receive\WatcherOtlpReceiveSpike.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 645 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\spikes\watcher-otlp-ingest\WatcherOtlpIngestSpike.csproj (in 646 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 647 ms).
+  Restored C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 647 ms).
+  AgentDispatchSpike -> C:\Projects\ai-de-wl-loadflake\spikes\agent-dispatch\bin\Debug\net10.0-windows\AgentDispatchSpike.dll
+  WatcherCoordContractSpike -> C:\Projects\ai-de-wl-loadflake\spikes\watcher-coord-contract\bin\Debug\net10.0\WatcherCoordContractSpike.dll
+  AiDe.Core -> C:\Projects\ai-de-wl-loadflake\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  WatcherOtlpIngestSpike -> C:\Projects\ai-de-wl-loadflake\spikes\watcher-otlp-ingest\bin\Debug\net10.0\WatcherOtlpIngestSpike.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-loadflake\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-loadflake\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  WatcherOtlpReceiveSpike -> C:\Projects\ai-de-wl-loadflake\spikes\watcher-otlp-receive\bin\Debug\net10.0\WatcherOtlpReceiveSpike.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Bench -> C:\Projects\ai-de-wl-loadflake\bench\AiDe.Bench\bin\Debug\net10.0\AiDe.Bench.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+  AiDe.App -> C:\Projects\ai-de-wl-loadflake\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-loadflake\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:10.01
