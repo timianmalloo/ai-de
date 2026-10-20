@@ -282,6 +282,44 @@ public sealed class ZoneWorkbenchAdapterTests
     }
 
     [Fact]
+    public void MovingTheParkedTerminalIntoAVisibleZone_LosesNoPane_MovesOnlyIt_AndBuildsIt()
+    {
+        WithDockHost(host =>
+        {
+            var adapter = host.Adapter;
+            var service = host.Service;
+            var zonesBefore = service.Zones.Zone(ZoneId.Bottom).Surfaces().Concat(
+                Enum.GetValues<ZoneId>().Where(z => z != ZoneId.Bottom).SelectMany(z => service.Zones.Zone(z).Surfaces()))
+                .ToDictionary(s => s.SurfaceId, s => service.Zones.FindZoneOf(s.SurfaceId));
+            var visibleBefore = Enum.GetValues<ZoneId>().Where(z => !service.Zones.Zone(z).Collapsed)
+                .SelectMany(z => service.Zones.Zone(z).Surfaces()).Select(s => s.SurfaceId).ToList();
+
+            Assert.Equal(ZoneId.Bottom, service.Zones.FindZoneOf("terminal-1"));
+            Assert.True(service.Zones.Zone(ZoneId.Bottom).Collapsed, "the fixture's Bottom is expected collapsed (Ruling 88)");
+
+            Assert.True(host.Controller.Move("terminal-1", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
+
+            // No pane lost at the view: what was drawn is still drawn.
+            foreach (var id in visibleBefore)
+            {
+                Assert.True(adapter.ContentFor(id) is not null, $"{id} has no drawn content after the move");
+            }
+
+            // Only the terminal moved.
+            Assert.Equal(ZoneId.Left, service.Zones.FindZoneOf("terminal-1"));
+            foreach (var (id, zone) in zonesBefore.Where(p => p.Key != "terminal-1"))
+            {
+                Assert.Equal(zone, service.Zones.FindZoneOf(id));
+            }
+
+            // The point of the case: the parked, unbuilt terminal is built once it lands in a visible zone.
+            Assert.True(adapter.ContentFor("terminal-1") is not null, "terminal-1 landed in Left but has no drawn content");
+            Assert.Contains(host.Manager.Layout!.Descendents().OfType<LayoutContent>(), c => c.ContentId == "terminal-1");
+            return true;
+        });
+    }
+
+    [Fact]
     public void ClosingACenterDocument_DoesNotDisturbTheOtherZones()
     {
         WithDockHost(host =>

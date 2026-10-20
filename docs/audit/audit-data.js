@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T14:02:30Z",
+  "generated": "2026-10-20T17:49:36Z",
   "audit": [
     {
       "actor": null,
@@ -27845,6 +27845,30 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-10-20T13:13:20Z",
       "duration_seconds": 2950.0
+    },
+    {
+      "id": "al-01M5D6XP1NP1E8PEJ03D67F4ZT",
+      "shortname": "wl-t21-terminal-move",
+      "datetime": "2026-10-20T17:49:36Z",
+      "session": "wl-t21-terminal-move",
+      "prompt": "T21 n11: terminal-1 move from collapsed Bottom restored on the route as its own test",
+      "summary": "Added MovingTheParkedTerminalIntoAVisibleZone test; green, red under LayoutApplied mutation; suites only known failures; ratchet PASS",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "terminal move case on the route, built on land",
+      "done_when": "test green, mutation red, suites and ratchet run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-20T17:29:47Z",
+      "duration_seconds": 1189.0
     }
   ],
   "changes": [
