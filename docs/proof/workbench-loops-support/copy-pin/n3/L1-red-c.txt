@@ -1,0 +1,26 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-copy-pin-n3\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-copy-pin-n3\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-copy-pin-n3\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-copy-pin-n3\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     AiDe.App.Tests.DesignCopyRowsArePinnedTests.ASupersededRow_NamesAReplacementThatStillExists [FAIL]
+  Failed AiDe.App.Tests.DesignCopyRowsArePinnedTests.ASupersededRow_NamesAReplacementThatStillExists [5 ms]
+  Error Message:
+   RUN4: superseded by TurnCopy.ReasonSentenceRenamed, which is neither a pinned row id nor a *Copy member; repoint it
+  Stack Trace:
+     at AiDe.App.Tests.DesignCopyRowsArePinnedTests.ASupersededRow_NamesAReplacementThatStillExists() in C:\Projects\ai-de-wl-copy-pin-n3\tests\AiDe.App.Tests\DesignCopyRowsArePinnedTests.cs:line 390
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     5, Skipped:     0, Total:     6, Duration: 49 ms - AiDe.App.Tests.dll (net10.0)

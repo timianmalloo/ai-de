@@ -46,7 +46,7 @@ public sealed class DesignCopyRowsArePinnedTests
     private sealed record Marker(Label Label, string Owner, string Sentence);
 
     private static readonly Regex MarkerPattern = new(
-        @"^\*\((?:superseded by (?<repl>[^\s:]+)|not built, owed by (?<slice>[^:]+)|(?<design>design-only, no owning story)): .*?\)\* (?<sentence>.+)$",
+        @"^\*\((?:superseded by (?<repl>[^\s:]+)|not built, owed by (?<slice>.+?)|(?<design>design-only, no owning story)): .*?\)\* (?<sentence>.+)$",
         RegexOptions.Compiled);
 
     private const string SampleKey = "abcdefghij";

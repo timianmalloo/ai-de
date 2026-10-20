@@ -8650,7 +8650,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   reason, or the test fails naming it; a stale entry fails. Mutation red: one `ChecklistCopy.Empty` character, CHK1 red
   (`docs/proof/workbench-loops-support/copy-pin/P1-red-mutation.txt`). The 7 finding rows and 23 unmatched members are
   the Owner's list (that folder's README). The 8 test files that assert through a `*Copy` constant are not rewritten.
-- **Status:** `controlled` (T32 n2, 2026-10-20: UnmatchedMembers is empty (the 23 members have rows CHK13-22, TURN1-10, NB3, ST1-2); the 7 unrendered rows are marked stale in DESIGN.md with a zero-hit search each, and a stale row that any code renders fails the test; UnmatchedRows keeps SC7-SC9 as accepted exclusions; CHK6 stays a partial pin).
+- **Status:** `controlled` (T32 n2, 2026-10-20: UnmatchedMembers is empty (the 23 members have rows CHK13-22, TURN1-10, NB3, ST1-2); the 7 unrendered rows carry one of three labels in DESIGN.md, not a bare "stale" (T32 n3, Owner 2026-10-20): superseded by <replacement> (RUN4, CHECK1, DEMO1), not built, owed by <slice> (NB1, RUN1), design-only, no owning story (RUN3, AUTH1); a labelled row that any code renders fails the test and says to move it back to a pin, a superseded row whose replacement is gone fails, and the plain stale marker is refused; UnmatchedRows keeps SC7-SC9 as accepted exclusions; CHK6 stays a partial pin).
 
 ### DC-NEW-wl-t30-gate-evasion — code renamed to pass a lexical gate without reading what the gate guards
 - **Class:** a gate refuses a change; the change is reshaped (renamed, reworded, moved) until the gate no longer sees
