@@ -2634,6 +2634,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "5f57489baab5fcee025234d8ae517c6984a62d2ec42dee4d3254f17290995e83"
     },
     {
+      "id": "api-aide-app-workbench-checklist",
+      "path": "docs/api/AiDe.App.Workbench.Checklist.md",
+      "title": "API: AiDe.App.Workbench.Checklist",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Checklist: 2 types, 37 members, 41% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ae14ef23777dd0c1bbee53cbb50b7c121d0a611db9b0bbfdcc390628554db023"
+    },
+    {
       "id": "api-aide-app-workbench-composer",
       "path": "docs/api/AiDe.App.Workbench.Composer.md",
       "title": "API: AiDe.App.Workbench.Composer",
@@ -10340,7 +10365,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9389530607168ad739da4576b9793bc5a9e98d998163344599229bfaab6ca223"
+      "sourceSha256": "2b97025a5552685e7313af0215a56ad0220afdc489cf834b5e2ddaa809f8f432"
     },
     {
       "id": "design-workbench-loops-wl-s",
@@ -23385,6 +23410,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "b3e6f07359fdd7ffcbe1f7ecca35932d354b74d834a6ba40cbcbb491fbb154ed"
     },
     {
+      "id": "proof-workbench-loops-wl-1b-checklist",
+      "path": "docs/proof/workbench-loops-wl-1b/checklist/README.md",
+      "title": "Evidence — WL-1b T26: the minimal checklist kind",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Red and green evidence for T26: the checklist kind opens from View in Factory and Understand (D1), links a run, refuses and reads out acceptance while the intent is unaccepted, and accepts the deliverable naming the intent revision only (D2, with R1 and the Owner's null-sha condition). Node 2: the three literal entries, the service refusing a journey that is not the notebook's, saved review state surviving a restart without acceptance (D3, with the own-journey restore), and the one-live-sha ceiling pinned (E). Node 3: the Owner's copy confirmation (CHK3 and CHK9 changed, pinned by literal tests red first) and M6 settled by removing the checklist Invalidate (option b).",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "checklist"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d57e58fb9b4913f5fd4f100b4ce6c472b83a80ef7bf59448e95c71041f309d0d"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1b-checklist-handoff",
+      "path": "docs/proof/workbench-loops-wl-1b/checklist/handoff.md",
+      "title": "Hand-off — WL-1b T26 checklist kind after node 3",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1b",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "T26 node 3 is done: the Owner's copy confirmation (CHK3 and CHK9 changed, pinned by literal tests that were red first) and M6 settled by option (b), the checklist Invalidate removed with the refreshing path named. The next step is the WL-1b checklist join.",
+      "tags": [
+        "workbench-loops",
+        "handoff",
+        "checklist"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-workbench-loops-wl-1b-checklist",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ae775015499bc43e722f1ed4b7b444ec9558cb41e4fd7b0a9c838aa8c5f48a8d"
+    },
+    {
       "id": "proof-workbench-loops-wl-1b-currentness",
       "path": "docs/proof/workbench-loops-wl-1b/currentness/README.md",
       "title": "Proof: WL-1b currentness (T27 wl1b-currentness, node 1)",
@@ -25711,5 +25790,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "24e7c09fef5317d820d80cf462af07a10a7c08efefe6365e010d512e636db98a"
+  "graphSha256": "655e05d344db9791e758711317a0ed75459b4b9db907a27a7bc960598b462057"
 };

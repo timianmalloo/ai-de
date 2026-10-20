@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T02:08:12Z",
+  "generated": "2026-10-20T02:20:05Z",
   "audit": [
     {
       "actor": null,
@@ -26850,47 +26850,172 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M5BFF5NHN5TN9MBVCCS0FHXE",
-      "shortname": "wl-t30-prefill",
-      "datetime": "2026-10-20T01:40:28Z",
-      "session": "wl-t30-prefill",
-      "prompt": "T30 n6: make the composer privacy gate honest about R21 before T30's second join (H1-H4)",
-      "summary": "H1 retired the Suggest clause of NoAssistPathExistsAnywhereInTheComposer with its reason (red 7781a180, green 02d6380f); H2 OnlyTheSanctionedSiteCallsAModelFromTheComposerTests pins ComposerSendGate.cs:148/:660 under gate 1, mutation red (6b90bd54); H3 SuggestedLinesAnnouncement restored, defect slip line cites DC-NEW-wl-t30-gate-evasion (b50a2e92); H4 sweep of 68 lexical src bans: 63 hold, 1 answered, 4 stale wording (F1), none now live (0d49011b). Core 3119/0/1, App 1247/3/2 (the three known) at 0d49011b; ratchet 3 expected derived-view refusals.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/Workbench/Composer/OnlyTheSanctionedSiteCallsAModelFromTheComposerTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "The composer privacy gate is honest about R21: the Suggest clause retired with its reason, R21 has a real one-site control, the rename undone, and the lexical-ban class swept",
+      "datetime": "2026-10-20T01:40:28Z",
       "done_when": "H1-H4 committed with red and green proof, whole Core and App suites run on the head, rule 22 ratchet run, done mail sent",
-      "tier": "T2",
+      "duration_seconds": 1740.0,
       "fan_out": 0,
+      "goal": "The composer privacy gate is honest about R21: the Suggest clause retired with its reason, R21 has a real one-site control, the rename undone, and the lexical-ban class swept",
+      "id": "al-01M5BFF5NHN5TN9MBVCCS0FHXE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T30 n6: make the composer privacy gate honest about R21 before T30's second join (H1-H4)",
+      "session": "wl-t30-prefill",
+      "shortname": "wl-t30-prefill",
+      "skill": "implement",
       "started_at": "2026-10-20T01:11:28Z",
-      "duration_seconds": 1740.0
+      "summary": "H1 retired the Suggest clause of NoAssistPathExistsAnywhereInTheComposer with its reason (red 7781a180, green 02d6380f); H2 OnlyTheSanctionedSiteCallsAModelFromTheComposerTests pins ComposerSendGate.cs:148/:660 under gate 1, mutation red (6b90bd54); H3 SuggestedLinesAnnouncement restored, defect slip line cites DC-NEW-wl-t30-gate-evasion (b50a2e92); H4 sweep of 68 lexical src bans: 63 hold, 1 answered, 4 stale wording (F1), none now live (0d49011b). Core 3119/0/1, App 1247/3/2 (the three known) at 0d49011b; ratchet 3 expected derived-view refusals.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M5BGA0SWFDN7J0QBM25SVYFD",
-      "shortname": "join-wl-prefill-2",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+      ],
+      "compiled": false,
       "datetime": "2026-10-20T01:55:08Z",
+      "done_when": "recount green except the Ruling 155 (3) excused probe; ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "AC-W01a: the user sees and reviews the model's suggested goal and done lines before sending, and the composer's one model call is pinned",
+      "id": "al-01M5BGA0SWFDN7J0QBM25SVYFD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "wl-leader4-20261020",
+      "shortname": "join-wl-prefill-2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T01:55:07Z",
+      "summary": "T30 n4-n6 joined (merge 4e8ad0cc). Recount: Core 3120/portable 2937/nonportable 183 Completed; App 1247 of 1252 passed, 2 NotExecuted (real adapter / real projection env), 1 Failed: AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation ('Space on the restored row's fold did not open it'), which failed ALONE on the join head 4e8ad0cc AND on the first parent 5d66bd0f in clean rt- trees (01:54Z) - excused under Ruling 155 (3), NOT CHECKED, an owed desk run; continued with --continue --docs-only only to skip a recount that cannot pass unattended. Joined before the WL-S walk-through on the Owner's direction. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T02:08:12Z",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "duration_seconds": 1696.0,
+      "fan_out": 0,
+      "goal": "AC-W01a: the user sees and reviews the model's suggested goal and done lines before sending, and the composer's one model call is pinned",
+      "id": "al-01M5BH1Y81C33BJXFE9WBK5GXV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T30 second join 4caa88a9",
+      "session": "wl-leader4-20261020",
+      "shortname": "join-wl-prefill-2-step8",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-10-20T01:39:56Z",
+      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1247/1252 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, which failed ALONE on the join head 4e8ad0cc and on the first parent 5d66bd0f in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 5d66bd0f, head 4caa88a9: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T30 n4-n6: the outcome line counts every compile call; a prepare opens the fold with focus kept, announces the count once, names each line '? suggested'; tools/compile-eval/first-calls.py; the four sheet test files inject the gate; R21's real control pins ComposerSendGate.cs:148 as the composer's one model-call site (mutation red), the privacy gate's Suggest ban retired with its reason; 68-ban sweep (63 hold, 4 stale wording -> T32, 0 now live). Owed: desk runs (CtrlDigit, SolutionTreeChord, the restored-row fold); the prefill demo for the user on a fresh tree.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/Checklist/ChecklistSurface.cs"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T00:24:23Z",
+      "done_when": "D1-D3 green with saved red/green proof, whole Core and App suites saved, README/handoff, audit entry, done mail",
+      "duration_seconds": 2539.0,
+      "fan_out": 0,
+      "goal": "The minimal checklist kind: D1-D3 red then green on the real shell",
+      "id": "al-01M5BB3VBHJGBG08XED0JKV559",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T26 wl1b-checklist-kind n1: the minimal checklist kind, D1-D3 red then green through the real gesture (Ruling 180 (5) C2, Owner null-sha condition)",
+      "session": "wl-t26-checklist",
+      "shortname": "wl-t26-checklist",
+      "skill": "implement",
+      "started_at": "2026-10-19T23:42:04Z",
+      "summary": "n1 at kick: D1 green (81195e13) and D2 green (c3ff46aa) with mutation reds M1-M3; checklist:<sessionId> identity per seam req-01M5B8W7NJRW7A1X4G21J2QKPT; DC-138 fix f399ec87; Core 3119/3120, App 1245/1253 (3 literal-table reds granted to n2 by req-01M5BAKZ9BAA28CF4R07PTRKGV, 3 desktop-hold); D3 not started",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T01:01:56Z",
+      "done_when": "the literals, the refusing test, D3 and E are red then green, the whole suites and the ratchet are saved, the done mail is sent",
+      "duration_seconds": 2012.0,
+      "fan_out": 0,
+      "goal": "T26 n2: finish the minimal checklist kind's checks for the WL-1b join",
+      "id": "al-01M5BD8K7YV7DFB37BK8QF2KWV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T26 n2: the three literal entries, the Owner's refusing test, D3 with the own-journey restore, and the one-live-sha ceiling, each red then green; whole suites; rule-22 ratchet",
+      "session": "wl-t26-checklist",
+      "shortname": "wl-t26-checklist",
+      "skill": "implement",
+      "started_at": "2026-10-20T00:28:24Z",
+      "summary": "Literals green b306c7f9; refusing test M4 red 160bb519 -> green 2568c964; D3 M7/M5 red 559eb22d -> green 32831438 (M6 not a red); E ceiling M8 red ad6d2c8b -> green d5838812; Core 3119/0/1, App 1252 passed 3 failed (2 foreground desk runs owed, 1 keyboard fold test not T26's); ratchet: 3 expected derived-view refusals + verify-surface-ownership green->red (seam req-01M5BD7Y0K33J3FYQ2HEZ1S1W4)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-10-20T01:37:11Z",
+      "done_when": "F and G green with proof, whole suites run, ratchet run, done mail sent to the Leader",
+      "duration_seconds": 1834.0,
+      "fan_out": 0,
+      "goal": "Close the Owner's two pre-join conditions on T26: copy confirmation (F) and M6 (G)",
+      "id": "al-01M5BF94XNX56DJSWVF1XWH1DC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T26 n3: (F) the Owner's copy confirmation, CHK3 and CHK9 changed with a literal-pinning test red first; (G) settle mutation M6; then whole Core and App suites and rule 22's ratchet",
+      "session": "wl-t26-checklist",
+      "shortname": "wl-t26-checklist",
+      "skill": "implement",
+      "started_at": "2026-10-20T01:06:37Z",
+      "summary": "F: red 2ce683f0, green 9f7d557a (ChecklistCopy, DESIGN.md CHK3/CHK9, design :426; :418 in 2b8ec3eb via granted seam). G: option (b), test 4e4b0710 green with and under M6, call removed 02f9c02d; path WorkbenchShell.cs:1930 -> WorkbenchAdapter.cs:303 re-parent -> ChecklistSurface IsVisibleChanged. Suites on 02f9c02d: Core 3119/1s/0f; App 1256/2s/2f (node 2's known two). Ratchet 0481ee2d..2b8ec3eb: 3 expected derived-view refusals only.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M5BHQN0NRNDTEY093PXBSBKM",
+      "shortname": "join-wl1b-checklist-kind",
+      "datetime": "2026-10-20T02:20:03Z",
       "session": "wl-leader4-20261020",
       "prompt": "the join of the resolved merge into main",
-      "summary": "T30 n4-n6 joined (merge 4e8ad0cc). Recount: Core 3120/portable 2937/nonportable 183 Completed; App 1247 of 1252 passed, 2 NotExecuted (real adapter / real projection env), 1 Failed: AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation ('Space on the restored row's fold did not open it'), which failed ALONE on the join head 4e8ad0cc AND on the first parent 5d66bd0f in clean rt- trees (01:54Z) - excused under Ruling 155 (3), NOT CHECKED, an owed desk run; continued with --continue --docs-only only to skip a recount that cannot pass unattended. Joined before the WL-S walk-through on the Owner's direction. recount_seconds=0 (docs_only=True).",
+      "summary": "T26 n1-n3b joined (merge e69fdbeb). Recount: Core 3120/portable 2937/nonportable 183 Completed; App 1252 of 1265 passed, 2 NotExecuted (real adapter / real projection env), 1 Failed: AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation ('Space on the restored row's fold did not open it'), which failed ALONE on the join head e69fdbeb AND on the first parent 1731a1b2 in clean rt- trees (02:19Z) - excused under Ruling 155 (3), NOT CHECKED, an owed desk run; continued with --continue --docs-only. Joined before the WL-S walk-through on the Owner's direction. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
+        "docs/proof/workbench-loops-wl-1b/checklist/README.md"
       ],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "AC-W01a: the user sees and reviews the model's suggested goal and done lines before sending, and the composer's one model call is pinned",
+      "goal": "WL-1b: the user reviews one work journey's obligations and evidence and accepts the deliverable only when nothing blocks it",
       "done_when": "recount green except the Ruling 155 (3) excused probe; ratchet PASS; step-8 recorded before push",
       "tier": "T1",
       "fan_out": 0,
@@ -26899,32 +27024,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-10-20T01:55:07Z",
+      "started_at": "2026-10-20T02:20:02Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M5BH1Y81C33BJXFE9WBK5GXV",
-      "shortname": "join-wl-prefill-2-step8",
-      "datetime": "2026-10-20T02:08:12Z",
-      "session": "wl-leader4-20261020",
-      "prompt": "Step 8 (Rulings 151/155/160) for the T30 second join 4caa88a9",
-      "summary": "Recount: Core 3120 / portable 2937 / nonportable 183 Completed; App 1247/1252 passed, 2 NotExecuted (real adapter, real projection env), 1 Failed - AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, which failed ALONE on the join head 4e8ad0cc and on the first parent 5d66bd0f in clean rt- trees (Ruling 155 (3)): excused, NOT CHECKED, an owed desk run; continued with --continue --docs-only. Step 8 strict 6/48. Ratchet vs 5d66bd0f, head 4caa88a9: PASS 0/49; repo verify-ruling-citations ok (strict). Release build 0 errors. Joined before the user's WL-S walk-through on the Owner's direction. T30 n4-n6: the outcome line counts every compile call; a prepare opens the fold with focus kept, announces the count once, names each line '? suggested'; tools/compile-eval/first-calls.py; the four sheet test files inject the gate; R21's real control pins ComposerSendGate.cs:148 as the composer's one model-call site (mutation red), the privacy gate's Suggest ban retired with its reason; 68-ban sweep (63 hold, 4 stale wording -> T32, 0 now live). Owed: desk runs (CtrlDigit, SolutionTreeChord, the restored-row fold); the prefill demo for the user on a fresh tree.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/workbench-loops-wl-1a/prefill/README.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "AC-W01a: the user sees and reviews the model's suggested goal and done lines before sending, and the composer's one model call is pinned",
-      "done_when": "ratchet PASS; step-8 recorded before push",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-10-20T01:39:56Z",
-      "duration_seconds": 1696.0
     }
   ],
   "changes": [

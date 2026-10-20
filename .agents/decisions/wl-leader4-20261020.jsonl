@@ -34,3 +34,9 @@
 {"agent": "wl-leader4-20261020", "at": 1792461315.2471397, "code": null, "kind": "allowed", "path": "site/index.html", "session": "wl-leader4-20261020", "wi": ""}
 {"agent": "wl-leader4-20261020", "at": 1792461315.2867904, "code": null, "kind": "allowed", "path": "site/model.html", "session": "wl-leader4-20261020", "wi": ""}
 {"agent": "wl-leader4-20261020", "at": 1792461315.3304324, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.0975475, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader4-20261020.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.1397595, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.17744, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader3-20261019.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.2221448, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader4-20261020.jsonl", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.2618406, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader4-20261020", "wi": ""}
+{"agent": "wl-leader4-20261020", "at": 1792462093.3062098, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader4-20261020", "wi": ""}
