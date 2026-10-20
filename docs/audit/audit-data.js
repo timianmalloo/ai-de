@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T13:48:34Z",
+  "generated": "2026-10-20T14:02:30Z",
   "audit": [
     {
       "actor": null,
@@ -27821,6 +27821,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T13:48:32Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CSXVZSN9A0KR9XAH720HN9",
+      "shortname": "join-wl-layout-gate-r2-step8",
+      "datetime": "2026-10-20T14:02:30Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n10 join 56ad1ab5",
+      "summary": "Full join (recount): T21 n10 (the Owner's R2 on T21 n9's gate). R2a: by a per-test line scan independent of the gate (docs/proof/workbench-loops-wl-s/layout-gate/r2/R2a-search.py) and a plain grep, 6 App tests read WorkbenchAdapter.ContentFor after a layout command with a by-hand render between; none read ActiveSurfaceId that way. R2b: red f9ba76f2 (the gate's oracle pattern gains .ContentFor( and .ActiveSurfaceId and names exactly the 6), green 6a016f39 (the 6 take the route through the FloatRenderTests helpers and a new WithDockHost fixture; no rename; 0 product findings); with DockHost's LayoutApplied unwired (scratch, reverted) 1 of 6 goes red, the other 5 reasoned in R2b-sweep.txt. Leader read: no src diff (git diff --stat fb09fe4b 5d5ca077 -- src empty); WithDockHost renders once by hand after window.Show and before any command (setup). Coverage change sent to the Owner: ZoneWorkbenchAdapterTests' move test now moves the notebook session:s2, not terminal-1 (a collapsed Bottom parks its terminal unbuilt, Ruling 88). Recount: Core green; App failed only ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, NOT CHECKED (the OS reports the left mouse button down), excused under Ruling 155 (3): it fails alone in clean rt- trees on the join head 24293d5d and its first parent ae9aa693. Continued with --docs-only. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs ae9aa693, head 56ad1ab5: PASS 0/50. Release build 0 errors. Node budget: 50 calls / about 158k against 60 / 100k (1,364 s, about 7.0k tokens/min), the kick sent at 12 min by the ladder.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n10 wl-layout-gate-r2 onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T13:13:20Z",
+      "duration_seconds": 2950.0
     }
   ],
   "changes": [
