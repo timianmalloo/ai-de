@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T12:58:24Z",
+  "generated": "2026-10-20T13:11:27Z",
   "audit": [
     {
       "actor": null,
@@ -27744,6 +27744,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T12:58:22Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5CQ0BZGP3BXNAJ62JHZE04M",
+      "shortname": "join-wl-layout-gate-step8",
+      "datetime": "2026-10-20T13:11:26Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Step 8 (Rulings 151/155/160) for the T21 n9 join e366066a",
+      "summary": "Full join (recount): T21 n9 adds the layout-command class gate tests/AiDe.App.Tests/Workbench/LayoutOraclesDriveTheCommandRouteTests.cs (empty exception list, planted self-test) and converts 11 view-state tests in 10 files to the user's route (DockHost Controller.Execute of workbench.floatPane / closeSurface / previousSurface / collapsePane, Controller.Move, the rail button through its automation peer); proof under docs/proof/workbench-loops-wl-s/layout-gate/; DC-NEW-wl-t21-float-d Control and Status lines (git diff --name-only 277e72d2 e632c9bf; no src change). Leader read: the exception list is empty; FloatRenderTests.FloatByTheRoute/CloseByTheRoute/StepBackByTheRoute (:111-142) set the focused stack and surface and call host.Controller.Execute, so the conversions take the route rather than rename a call. Reds: 6db0cad4 (8 named; node 2's test and a helper-wrapped evasion copy also named), 343dbe07 (V2b recall: 56 candidates, 3 missed then covered; 11 named); green 221e05eb; 0 product findings; 8 of 11 red with DockHost's LayoutApplied wiring removed (scratch, restored). Recount: Core green; App failed only ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation, NOT CHECKED (the OS reports the left mouse button down; Owner, 2026-10-20), excused under Ruling 155 (3): it fails alone in clean rt- trees on the join head 1be124d0 and its first parent 970d3943. Continued with --docs-only. Step 8 strict 6/49 (the same pre-existing gates). Ratchet vs 970d3943, head e366066a: PASS 0/50. Release build 0 errors. Node budget: about 260k tokens against the 200k cap, 70 tool calls (reported to the Owner). Residuals R1-R4 sent to the Owner for ruling.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-wl-s/layout-gate/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Join T21 n9 wl-layout-gate onto main",
+      "done_when": "ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-20T12:14:05Z",
+      "duration_seconds": 3441.0
     }
   ],
   "changes": [
