@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T03:39:08Z",
+  "generated": "2026-10-20T05:34:08Z",
   "audit": [
     {
       "actor": null,

@@ -8839,13 +8839,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   say "substitute your id" by hand. (3) The Owner's own tick prompt named wl-leader3 (Owner, fixed by the Owner).
 - **Sweep:** `wl-leader[0-9]` and `epoch [0-9]` over `.agents/briefs/workbench-loops/` and the kickoff. The live
   templates were `brief-common.md`, `specific-T31.md`, T31's assembled brief and the kickoff, all fixed in `b2592594`.
-  The briefs of finished tracks and the hand-off notes name the seat of their moment. They are records and are not
-  rewritten.
+  T32's brief, which T32 n2 reuses, was reassembled from the fixed template (Owner). The briefs of finished tracks
+  and the hand-off notes name the seat of their moment. They are records and are not rewritten.
 - **Derive:** a template says how to resolve a seat (`coord leader who` before each send, `$AGENT_SESSION` for the
   reader's own id) and never names one. Only a record of one moment may name a seat.
-- **Prevent:** `tools/verify-no-literal-seat-ids.py` (run by the pack's gate line at every join's step 8) refuses a
-  Leader session id or a Leader epoch in any `.agents/briefs/*/brief-common.md` or `docs/coordination/*-kickoff.md`.
-  It was observed failing on the templates at `2a92f604` (10 literals) and passes at `b2592594`; `--self-test` covers
-  a clean template, each literal shape and an empty tree.
-- **Status:** `controlled` for the templates the gate reads. The Owner's tick prompt lives outside the repo, and no
-  gate reads it.
+- **Prevent:** `tools/verify-no-literal-seat-ids.py` refuses a Leader session id or an epoch outside a quoted (`>`)
+  history line. It runs at two points. (a) The templates: every `.agents/briefs/*/brief-common.md` and
+  `docs/coordination/*-kickoff.md`, on the build workflow and at every join's step 8. It was observed failing on the
+  templates at `2a92f604` (10 literals) and passes at `b2592594`. (b) Each brief at assembly:
+  `.agents/briefs/workbench-loops/assemble_brief.py` runs `--brief` on its output and refuses, without keeping the
+  brief, naming each line. It was observed refusing T32's brief assembled from the `2a92f604` template (4 lines).
+  The Leader also runs `--brief` on a brief before dispatch. `--self-test` covers each shape.
+- **Status:** `controlled` for the templates and for every brief assembled by `assemble_brief.py`. The Owner's tick
+  prompt lives outside the repo, and no gate reads it.

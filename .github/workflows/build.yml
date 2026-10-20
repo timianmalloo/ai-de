@@ -240,6 +240,15 @@ jobs:
           python tools/verify-design-modes.py --self-test
           python tools/verify-design-modes.py
 
+      # DC-NEW-wl-leader5. Leaders hand off mid-drive, so a Leader id written into the common track brief went
+      # stale and a track mailed its done report to a session that was gone. Templates resolve the seat at send
+      # time; this refuses a literal Leader id or epoch in them.
+      - name: No literal seat id in the coordination templates
+        if: ${{ !cancelled() }}
+        run: |
+          python tools/verify-no-literal-seat-ids.py --self-test
+          python tools/verify-no-literal-seat-ids.py
+
       # A vendored half-megabyte ES-module bundle (`src/AiDe.App/Web/vendor/`) is executable that no
       # compiler type-checks, no test imports by name and no reviewer reads. Everything that makes it
       # trustworthy is a claim in the manifest beside it, and a claim nothing re-reads is prose.

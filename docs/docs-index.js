@@ -10872,7 +10872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5b6341d865150654ed127dc395dab75246beb9b481d13ea247c8c962e9a3a4b"
+      "sourceSha256": "dfa27c48d3884911659e5826fedc23f1c5adbbeaa74634f05c03c2e4c69223e6"
     },
     {
       "id": "defect-classes",
@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "132fe3301f5cc4e60f108461fbea8d100da39453736fb81e08003ebea4a6cea6"
+      "sourceSha256": "7e285d947d3268962510230de088cb6ebd1fa459b9aed82bfde34732c10d0a4c"
     },
     {
       "id": "design-session-profiler",
@@ -25880,5 +25880,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "363bc97f71bd4a18e22ac4e0c7d3062c28bd3bbc5f1e7d3d15755a229eac0398"
+  "graphSha256": "e6cf75575601848b94ba3af80e44d6126fefb846dd17a6c3590bf164436469fa"
 };

@@ -4,13 +4,16 @@ Leaders hand off mid-drive, so a Leader id written into a template goes stale at
 named wl-leader3-20261019 and epoch 3 for two epochs, and T32's brief sent its done mail to a session that was gone.
 A template says how to resolve the seat at send time (`coord leader who`, `$AGENT_SESSION`) and never names one.
 
-Checked: every `.agents/briefs/*/brief-common.md` and every `docs/coordination/*-kickoff.md`. A track's assembled
-brief and a hand-off note are records of one moment, so they may name the seat of that moment.
+Checked with no argument: every `.agents/briefs/*/brief-common.md` and every `docs/coordination/*-kickoff.md`. With
+`--brief`, the named files only: `.agents/briefs/workbench-loops/assemble_brief.py` runs it on every brief it writes,
+and the Leader runs it on a brief before dispatch. A quoted history line (Markdown `>`) may name a past seat; nothing
+else may. Briefs of finished tracks and hand-off notes are records of one moment and are not scanned.
 
   python tools/verify-no-literal-seat-ids.py [--root DIR]
+  python tools/verify-no-literal-seat-ids.py --brief FILE [FILE ...]
   python tools/verify-no-literal-seat-ids.py --self-test    prove the gate can fail
 
-Exit 0 clean, 1 a literal found, 2 no template found (the check did not run).
+Exit 0 clean, 1 a literal found, 2 nothing to check (the check did not run).
 """
 import argparse
 import re
@@ -28,29 +31,47 @@ for _stream in (sys.stdout, sys.stderr):
 TEMPLATES = (".agents/briefs/*/brief-common.md", "docs/coordination/*-kickoff.md")
 LITERALS = (
     (re.compile(r"\b[a-z]+-leader\d*-\d{8}\b"), "a Leader session id"),
-    (re.compile(r"\b[Ll]eader epoch\W{0,6}\d"), "a Leader epoch"),
+    (re.compile(r"\b[Ee]poch\W{0,6}\d"), "a Leader epoch"),
 )
 
 
-def check(root):
-    files = sorted(path for pattern in TEMPLATES for path in root.glob(pattern))
-    if not files:
-        print("SEAT-ID-NOT-CHECKED: no template found under " + str(root))
-        return 2
+def literals(path):
+    """Each literal seat id or epoch in `path` outside a quoted history line, as 'line: what 'text''."""
     found = []
-    for path in files:
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        for number, line in enumerate(lines, 1):
-            for pattern, what in LITERALS:
-                for match in pattern.finditer(line):
-                    found.append(f"{path.relative_to(root).as_posix()}:{number}: {what} '{match.group(0)}'")
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    for number, line in enumerate(lines, 1):
+        if line.lstrip().startswith(">"):
+            continue
+        for pattern, what in LITERALS:
+            found.extend(f"{number}: {what} '{match.group(0)}'" for match in pattern.finditer(line))
+    return found
+
+
+def report(files, label):
+    if not files:
+        print(f"SEAT-ID-NOT-CHECKED: no {label} to check")
+        return 2
+    found = [f"{name}:{item}" for name, path in files for item in literals(path)]
     if found:
         print("SEAT-ID-LITERAL: resolve the seat at send time ('coord leader who', $AGENT_SESSION) instead of naming it:")
         for item in found:
             print("  " + item)
         return 1
-    print(f"no literal seat id or Leader epoch in {len(files)} template(s)")
+    print(f"no literal seat id or Leader epoch in {len(files)} {label}(s)")
     return 0
+
+
+def check(root):
+    paths = sorted(path for pattern in TEMPLATES for path in root.glob(pattern))
+    return report([(path.relative_to(root).as_posix(), path) for path in paths], "template")
+
+
+def check_briefs(paths):
+    missing = [str(path) for path in paths if not path.is_file()]
+    if missing:
+        print("SEAT-ID-NOT-CHECKED: no such brief: " + ", ".join(missing))
+        return 2
+    return report([(str(path), path) for path in paths], "brief")
 
 
 def self_test():
@@ -59,6 +80,7 @@ def self_test():
         ("clean", "The Leader is whoever `coord leader who` names when you send.\n", 0),
         ("id", "The Leader is `wl-leader3-20261019`.\n", 1),
         ("epoch", "Leader epoch: **3**.\n", 1),
+        ("history", "> T32's brief mailed wl-leader3-20261019 at epoch 3.\n", 0),
         ("empty", None, 2),
     )
     failures = []
@@ -72,20 +94,30 @@ def self_test():
             code = check(root)
         if code != want:
             failures.append(f"{name}: exit {code}, expected {want}")
+    with tempfile.TemporaryDirectory() as tmp:
+        brief = Path(tmp) / "brief-T0.md"
+        brief.write_text("Mail `wl-leader5-20261020` when done.\n", encoding="utf-8", newline="\n")
+        for name, paths, want in (("brief", [brief], 1), ("no brief", [Path(tmp) / "gone.md"], 2)):
+            if (code := check_briefs(paths)) != want:
+                failures.append(f"{name}: exit {code}, expected {want}")
     if failures:
         print("self-test FAILED: " + "; ".join(failures))
         return 1
-    print("self-test OK - a clean template, a literal id, a literal epoch and an empty tree each exit as declared.")
+    print("self-test OK - a clean template, a literal id, a literal epoch, a quoted history line, an empty tree, "
+          "a literal in a --brief file and a missing brief each exit as declared.")
     return 0
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent)
+    parser.add_argument("--brief", type=Path, nargs="+", help="check these briefs instead of the templates")
     parser.add_argument("--self-test", action="store_true", help="prove the gate can fail")
     args = parser.parse_args()
     if args.self_test:
         return self_test()
+    if args.brief:
+        return check_briefs(args.brief)
     return check(args.root)
 
 

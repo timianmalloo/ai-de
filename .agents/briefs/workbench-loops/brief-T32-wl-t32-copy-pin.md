@@ -40,9 +40,12 @@ finding, not a fix. A src or DESIGN.md change is a seam request.
 
 ## Standing rules for this track (CTX-F — every line binds)
 
-You are a **Sub-Agent** in the workbench-loops drive. The Leader is `wl-leader3-20261019`. The
+You are a **Sub-Agent** in the workbench-loops drive. **The Leader is whoever `coord leader who` names when you
+send.** Leaders hand off mid-track, so never write, remember or copy a Leader id or epoch. Before every mail or request
+to the Leader, run `python docs/ai-forward-pack/scripts/coord-core.py leader who` as its own command in the same turn.
+Send to the session on its `leader` line. If its `state` is not `live`, send anyway and say so in the body. The
 coordination plan is `docs/coordination/coordination-workbench-loops.md` (your row in "Tracks" and
-"Track contracts" is your contract). Leader epoch: **3**. Decision requests go to the Owner
+"Track contracts" is your contract). Decision requests go to the Owner
 `wl-owner-20261018` (`python docs/ai-forward-pack/scripts/coord-decide.py request --to wl-owner-20261018 ...`) — only
 for a genuine product trade-off the repo, spec, ADRs or a spike cannot answer, with a recommendation
 and a default.
@@ -55,7 +58,7 @@ and a default.
    (the primary checkout) or another track's tree. **Never call `EnterWorktree` or `ExitWorktree`.**
 3. **Windows:** run `python`, never `python3`. `coord <verb>` = `python docs/ai-forward-pack/scripts/coord-core.py <verb>`.
 4. **Owned authored paths** are listed below. You edit nothing else. Need a change outside them →
-   `coord request add --to wl-leader3-20261019 --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
+   `coord request add --to <the Leader: coord leader who, read now> --deadline 1800 --fallback "<what you do meanwhile>" "<the request>"`
    and carry on with what you own. `derived` files (docs/docs-index.js, docs/audit/audit-data.js,
    docs/audit/index.html, docs/api/*.md, docs/_site/*, docs/_meta.json) are regenerated at the join —
    do not edit or claim them. `register` files (docs/audit/*.jsonl, .agents/log/*.jsonl) are
@@ -80,7 +83,7 @@ and a default.
 11. A new defect class you discover → append it at the end of `docs/lessons/defect-classes.md` with id
     `DC-NEW-wl-t32-copy-pin` (class / sweep / derive / prevent), in the same commit as the fix.
 12. **Last actions:** `python docs/ai-forward-pack/scripts/audit-log.py append --shortname "wl-t32-copy-pin" --session wl-t32-copy-pin --skill implement --kind skill --prompt "<your goal line>" --summary "<what landed>" --artifact <main file> --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out 0`;
-    commit it; then `coord mail send --to wl-leader3-20261019 --kind done --body "<exit evidence: commits, test names, proof files>"`.
+    commit it; then `coord mail send --to <the Leader: coord leader who, read now> --kind done --body "<exit evidence: commits, test names, proof files>"`.
     Your final message to the Leader is the same exit-evidence report: every commit sha (red and green),
     every test name added, every proof file, the suite result with pass/fail counts, any seam request
     raised, anything not done. **Your "done" is evidence, not authority** — the Leader re-runs and reads back.
