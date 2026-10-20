@@ -1,0 +1,2 @@
+{"agent": "wl-leader5-20261020", "at": 1792534190.0335119, "kind": "session-start", "path": "-", "seq": 1, "session": "wl-t40-focus-none", "tree": "worktree", "wi": "WI-0", "worktree": "ai-de-wl-focus-none"}
+{"agent": "wl-t40-focus-none", "at": 1792534207.6956575, "kind": "claim", "path": "docs/proof/workbench-loops-support/focus-none", "seq": 2, "session": "wl-t40-focus-none", "ttl": 300.0, "wi": "workbench-loops"}

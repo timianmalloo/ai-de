@@ -30,6 +30,8 @@ and a default.
    `leader_prejoin.py --branch --session` check refuses any changed path with no claim from your session.
    **A claim's exit status is its result:** non-zero means NOT granted, whatever the text says. On `COORD-CLAIM-STALE-CONTROLS`
    (exit 3), run `git merge origin/main` in your tree and claim again before the edit; any other refusal, mail the Leader.
+   This line is prose for the CLI's STALE-CONTROLS, REGISTER-CLASS, DERIVED-CLASS and TTL-CAP refusals: they write no
+   record, so the join's claimed-after-refusal check cannot see them (PD-7).
 6. **A multi-line program is a file, then a run** — never a heredoc program. **A gate's exit status is
    never behind a pipe**: run the test/build on its own line and read `$?`, or redirect output to a
    file and then read the file.

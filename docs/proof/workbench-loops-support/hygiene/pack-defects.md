@@ -118,3 +118,19 @@ PD-5 were already taken in this file, so it is PD-6).
   (4da62f20). Owed, T39: `leader_prejoin.py` refuses a join when the node's session holds a claim whose path ends
   in `/`, naming the false grant and the no-slash form.
 - **Not fixed locally** (pack script; Ruling 151). Goes to the user as an upstream pack fix, beside PD-1 and PD-2.
+
+## PD-7 — `coord claim`'s CLI refusals exit 3 and write no record
+
+Filed by the Leader `wl-leader5-20261020` on 2026-10-20, on the Owner's ruling.
+
+- **Gate:** `coord claim` (`docs/ai-forward-pack/scripts/coord-core.py`, the `args.cmd == "claim"` branch).
+- **Finding (T39 `wl-slash-claim`, `docs/proof/workbench-loops-support/slash-claim/`):** the refusals
+  `COORD-CLAIM-STALE-CONTROLS`, `COORD-CLAIM-REGISTER-CLASS`, `COORD-CLAIM-DERIVED-CLASS` and `COORD-CLAIM-TTL-CAP`
+  exit 3 and write no event. Only the contention deny and the edit hook write `refused` rows to `.agents/decisions`
+  (108 rows on 2026-10-20). So no downstream check can see that a claim was refused. T37's instance 3 of
+  DC-NEW-wl-t36-claim (a stale-controls refusal read as a warning) leaves no trace that the join can read.
+- **Proposed fix:** every claim refusal appends a `refused` decision row with its code, session and path, as the
+  contention deny does. Self-test: a stale-controls refusal leaves one `refused` row.
+- **Interim (this repository):** brief-common.md rule 5's exit-status line, prose for these four codes; T39's
+  claimed-after-refusal check covers only the refusals that are recorded.
+- **Not fixed locally** (pack script; Ruling 151). Goes to the user with PD-1, PD-2 and PD-6.

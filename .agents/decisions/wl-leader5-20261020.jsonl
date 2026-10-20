@@ -462,3 +462,12 @@
 {"agent": "wl-leader5-20261020", "at": 1792534153.8005433, "code": "COORD-REFUSED", "kind": "refused", "path": "docs/proof/workbench-loops-support/slash-claim/refused_shape.py", "session": "wl-leader5-20261020", "wi": "workbench-loops"}
 {"agent": "wl-leader5-20261020", "at": 1792534153.853589, "code": "COORD-REFUSED", "kind": "refused", "path": "tools/test-leader-prejoin-claims.py", "session": "wl-leader5-20261020", "wi": "workbench-loops"}
 {"agent": "wl-leader5-20261020", "at": 1792534172.0800645, "code": "COORD-REFUSED", "kind": "refused", "path": "docs/lessons/defect-classes.md", "session": "wl-leader5-20261020", "wi": "workbench-loops"}
+{"agent": "wl-leader5-20261020", "at": 1792534181.9796188, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T40-wl-t40-focus-none.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.0295455, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.0775237, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T40.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.1258035, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.1743426, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t39-slash-claim.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.226798, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.2710907, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534182.3201654, "code": null, "kind": "allowed", "path": ".agents/log/wl-t39-slash-claim.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792534205.014458, "code": "COORD-REFUSED", "kind": "refused", "path": "docs/lessons/defect-classes.md", "session": "wl-leader5-20261020", "wi": "workbench-loops"}

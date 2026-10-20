@@ -4,3 +4,12 @@
 {"agent": "wl-t39-slash-claim", "at": 1792534158.141366, "code": null, "kind": "allowed", "path": "tools/test-leader-prejoin-claims.py", "session": "wl-t39-slash-claim", "wi": ""}
 {"agent": "wl-t39-slash-claim", "at": 1792534179.1611426, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/leader_prejoin.py", "session": "wl-t39-slash-claim", "wi": ""}
 {"agent": "wl-t39-slash-claim", "at": 1792534179.2111142, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/claims-green.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534191.3599076, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/L2-refusals.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534191.4165177, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/L3-real.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534233.4039497, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534233.4580426, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/hygiene/pack-defects.md", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534233.5045714, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/L3-real.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534233.5523474, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/README.md", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534836.7060192, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/slash-claim/ratchet.txt", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534837.3620899, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-t39-slash-claim", "wi": ""}
+{"agent": "wl-t39-slash-claim", "at": 1792534837.4104593, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t39-slash-claim", "wi": ""}
