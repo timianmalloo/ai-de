@@ -1,0 +1,9 @@
+SELF-TEST FAILED:
+  envelope ids are not the first 50 non-reused calls in order: first difference at 5
+  3 reused rows were counted
+  n_with_cost 50, expected 48 (two calls reported no cost)
+  tokens in+cache {'n_measured': 50, 'sum': 216090.0, 'p50': 4802.0, 'p95': 4802.0}, expected n 48 and sum 230496
+  tokens out sum 18000.0, expected 19200
+  by_outcome {'succeeded': 46, 'timed_out': 1, 'reused': 3}
+  an empty corpus must read 'not recorded', never 0: {'n_measured': 0, 'sum': 0, 'p50': None, 'p95': None}, {'n_measured': 0, 'sum': 0, 'p50': None, 'p95': None}
+exit=1
