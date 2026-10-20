@@ -1,0 +1,313 @@
+using System.Globalization;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Threading;
+using AiDe.App.Conductor;
+using AiDe.App.Tests.Sessions.Thread;
+using AiDe.App.Workbench;
+using AiDe.App.Workbench.Records;
+using AiDe.App.Workbench.Sessions;
+using AiDe.Core.AgentPlane;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
+using AiDe.Core.Ipc;
+using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
+using AiDe.Core.Store.Records;
+
+namespace AiDe.App.Tests.Records;
+
+/// <summary>T33 scratch capture: never committed under tests/. Repeats the restored-row fold test and records state.</summary>
+public sealed class ZFoldDiagCaptureTests : IDisposable
+{
+    private readonly NotebookFixture _fixture = new();
+    private readonly StringBuilder _log = new();
+
+    public void Dispose() => _fixture.Dispose();
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    private string LockFile => Path.Combine(_fixture.Root, ".aide", "attempt-host.lock");
+
+    private AttemptScope Scope => new("ws-t17", _fixture.Store.CoreEpoch, SessionGeneration: 1);
+
+    private void L(string line) => _log.AppendLine(line);
+
+    private static async Task UntilAsync(Window window, Func<bool> condition, Func<string> what)
+    {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(20);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(20);
+            await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        }
+
+        Assert.True(condition(), what());
+    }
+
+    private static bool Ended(NotebookModel model, int index) =>
+        model.Thread.Current.Turns.Count > index && model.Thread.Current.Turns[index].State is not (TurnState.Running or TurnState.Preparing);
+
+    private async Task<(AttemptHost Host, NotebookModel Model, SessionDocumentSurface Surface)> ReopenAsync(Window window, IAttemptLedger? ledger = null)
+    {
+        var host = await AttemptHost.OpenAsync(ledger ?? new BoundaryDispatcher(_fixture.Store), LockFile, CancellationToken.None);
+        var model = _fixture.NewModel();
+        var opened = new TaskCompletionSource<IAttemptHost>(TaskCreationOptions.RunContinuationsAsynchronously);
+        model.Runs.BindHostWhenOpen(() => opened.Task, Scope);
+        var surface = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+        window.Content = surface;
+        _fixture.ConfigureStub(surface);
+        opened.SetResult(host);
+        await surface.LastReadBack.WaitAsync(NotebookFixture.Bound);
+        await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+        return (host, model, surface);
+    }
+
+    private static void Close(Window window, AttemptHost host, NotebookModel model, SessionDocumentSurface surface)
+    {
+        window.Content = null;
+        surface.Dispose();
+        model.Dispose();
+        host.Dispose();
+    }
+
+    private static string Desc(object? o)
+    {
+        if (o is null)
+        {
+            return "null";
+        }
+
+        var name = o is FrameworkElement fe ? fe.Name : "";
+        var aname = o is DependencyObject d ? AutomationProperties.GetName(d) : "";
+        return $"{o.GetType().Name}#{o.GetHashCode():x}(Name='{name}',AutoName='{aname}')";
+    }
+
+    private static string Pat(AutomationPeer peer)
+    {
+        var sb = new StringBuilder();
+        if (peer.GetPattern(PatternInterface.ExpandCollapse) is IExpandCollapseProvider ec)
+        {
+            sb.Append($" ExpandCollapse={ec.ExpandCollapseState}");
+        }
+
+        if (peer.GetPattern(PatternInterface.Toggle) is IToggleProvider tg)
+        {
+            sb.Append($" Toggle={tg.ToggleState}");
+        }
+
+        if (peer.GetPattern(PatternInterface.Invoke) is not null)
+        {
+            sb.Append(" Invoke");
+        }
+
+        return sb.Length == 0 ? " patterns=none" : sb.ToString();
+    }
+
+    private void Tree(AutomationPeer? peer, int depth, int max)
+    {
+        if (peer is null || depth > max)
+        {
+            return;
+        }
+
+        string Safe(Func<object?> f)
+        {
+            try { return Convert.ToString(f(), CultureInfo.InvariantCulture) ?? "null"; }
+            catch (Exception ex) { return "ERR:" + ex.GetType().Name; }
+        }
+
+        L($"{new string(' ', depth * 2)}- {Safe(() => peer.GetAutomationControlType())} name='{Safe(() => peer.GetName())}' autoId='{Safe(() => peer.GetAutomationId())}' class='{Safe(() => peer.GetClassName())}' kbFocusable={Safe(() => peer.IsKeyboardFocusable())} hasKbFocus={Safe(() => peer.HasKeyboardFocus())} offscreen={Safe(() => peer.IsOffscreen())} enabled={Safe(() => peer.IsEnabled())} {Safe(() => Pat(peer))}");
+        foreach (var child in peer.GetChildren() ?? [])
+        {
+            Tree(child, depth + 1, max);
+        }
+    }
+
+    private async Task Snapshot(string step, Window window, ListBoxItem container, ToggleButton? fold, TurnItem row)
+    {
+        L($"=== {step} ===");
+        L($"Keyboard.FocusedElement = {Desc(Keyboard.FocusedElement)}");
+        L($"Keyboard.PrimaryDevice.Target = {Desc(Keyboard.PrimaryDevice.Target)}; ActiveSource={(Keyboard.PrimaryDevice.ActiveSource is null ? "null" : Keyboard.PrimaryDevice.ActiveSource.GetType().Name)}");
+        L($"window.IsActive={window.IsActive} window.IsKeyboardFocusWithin={window.IsKeyboardFocusWithin} window.Left={window.Left} Top={window.Top} WindowState={window.WindowState}");
+        var hwnd = new WindowInteropHelper(window).Handle;
+        L($"hwnd=0x{hwnd.ToInt64():x} foregroundHwnd=0x{GetForegroundWindow().ToInt64():x} isForeground={GetForegroundWindow() == hwnd}");
+        L($"row.IsFoldOpen={row.IsFoldOpen} FoldHeader='{row.FoldHeader}' FoldedEvents={row.FoldedEvents.Count()}");
+        L($"container.IsKeyboardFocused={container.IsKeyboardFocused} IsKeyboardFocusWithin={container.IsKeyboardFocusWithin}");
+        if (fold is not null)
+        {
+            var exp = fold.TemplatedParent as Expander;
+            L($"fold: {Desc(fold)} IsChecked={fold.IsChecked} IsKeyboardFocused={fold.IsKeyboardFocused} IsFocused={fold.IsFocused} IsEnabled={fold.IsEnabled} IsVisible={fold.IsVisible} Focusable={fold.Focusable} IsTabStop={KeyboardNavigation.GetIsTabStop(fold)} IsPressed={fold.IsPressed} IsMouseCaptured={fold.IsMouseCaptured} ActualSize={fold.ActualWidth}x{fold.ActualHeight}");
+            L($"expander: {Desc(exp)} IsExpanded={exp?.IsExpanded} IsKeyboardFocusWithin={exp?.IsKeyboardFocusWithin}");
+        }
+
+        L($"mouse: Mouse.Captured={Desc(Mouse.Captured)} Mouse.DirectlyOver={Desc(Mouse.DirectlyOver)} fold.IsMouseOver={fold?.IsMouseOver} fold.IsMouseDirectlyOver={fold?.IsMouseDirectlyOver} Mouse.LeftButton={Mouse.LeftButton} posInWindow={Mouse.GetPosition(window)}");
+        L("--- UIA peer subtree of the row container ---");
+        Tree(UIElementAutomationPeer.CreatePeerForElement(container), 0, 14);
+
+        var foldName = row.FoldHeader;
+        if (Environment.GetEnvironmentVariable("FOLD_DIAG_CLIENT_UIA") != "1")
+        {
+            L("UIA client calls: skipped in this mode (no await between steps, as in the real test)");
+            return;
+        }
+
+        var uia = await Task.Run(() =>
+        {
+            var sb = new StringBuilder();
+            try
+            {
+                var f = AutomationElement.FocusedElement;
+                sb.AppendLine(f is null
+                    ? "UIA client FocusedElement = null"
+                    : $"UIA client FocusedElement = {f.Current.ControlType.ProgrammaticName} name='{f.Current.Name}' autoId='{f.Current.AutomationId}' class='{f.Current.ClassName}' pid={f.Current.ProcessId} hwnd=0x{f.Current.NativeWindowHandle:x}");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine("UIA client FocusedElement ERR " + ex.GetType().Name + ": " + ex.Message);
+            }
+
+            try
+            {
+                var root = AutomationElement.FromHandle(hwnd);
+                var found = root.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, foldName));
+                if (found is null)
+                {
+                    sb.AppendLine($"UIA client find name='{foldName}' = null (window offscreen={root.Current.IsOffscreen})");
+                }
+                else
+                {
+                    sb.AppendLine($"UIA client find name='{foldName}' = {found.Current.ControlType.ProgrammaticName} autoId='{found.Current.AutomationId}' class='{found.Current.ClassName}' IsKeyboardFocusable={found.Current.IsKeyboardFocusable} HasKeyboardFocus={found.Current.HasKeyboardFocus} IsOffscreen={found.Current.IsOffscreen}");
+                    if (found.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out var p))
+                    {
+                        sb.AppendLine($"UIA client ExpandCollapse = {((ExpandCollapsePattern)p).Current.ExpandCollapseState}");
+                    }
+
+                    if (found.TryGetCurrentPattern(TogglePattern.Pattern, out var t))
+                    {
+                        sb.AppendLine($"UIA client Toggle = {((TogglePattern)t).Current.ToggleState}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine("UIA client find ERR " + ex.GetType().Name + ": " + ex.Message);
+            }
+
+            return sb.ToString();
+        });
+        L(uia.TrimEnd());
+    }
+
+    private void Hook(UIElement el, string label)
+    {
+        el.AddHandler(UIElement.PreviewKeyDownEvent, new KeyEventHandler((s, e) => L($"[route] PreviewKeyDown at {label} ({Desc(s)}): key={e.Key} src={Desc(e.OriginalSource)} Handled={e.Handled}")), true);
+        el.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler((s, e) => L($"[route] KeyDown at {label} ({Desc(s)}): key={e.Key} src={Desc(e.OriginalSource)} Handled={e.Handled}")), true);
+        el.AddHandler(UIElement.PreviewKeyUpEvent, new KeyEventHandler((s, e) => L($"[route] PreviewKeyUp at {label} ({Desc(s)}): key={e.Key} src={Desc(e.OriginalSource)} Handled={e.Handled}")), true);
+        el.AddHandler(UIElement.KeyUpEvent, new KeyEventHandler((s, e) => L($"[route] KeyUp at {label} ({Desc(s)}): key={e.Key} src={Desc(e.OriginalSource)} Handled={e.Handled}")), true);
+    }
+
+    [Fact]
+    public void Capture()
+    {
+        var outPath = Environment.GetEnvironmentVariable("FOLD_DIAG_OUT") ?? throw new InvalidOperationException("FOLD_DIAG_OUT is not set");
+        try
+        {
+            Sta.Pump(
+                create: () => new Border(),
+                configure: window => { window.Width = 1200; window.Height = 800; },
+                body: async (window, _) =>
+                {
+                    Directory.CreateDirectory(SessionPaths.SessionDirectory(_fixture.Root, NotebookFixture.SessionId));
+                    _fixture.ReleaseRun();
+
+                    var (host, model, surface) = await ReopenAsync(window);
+                    surface.Composer.Draft.SetFreeFormText("first words");
+                    await NotebookFixture.SendAndSettleAsync(surface);
+                    await UntilAsync(window, () => Ended(model, 0), () => "A never ended");
+                    Close(window, host, model, surface);
+
+                    (host, model, surface) = await ReopenAsync(window);
+                    await UntilAsync(window, () => surface.Thread.Rows.Count >= 1, () => "the reopened notebook renders no row");
+                    var feed = surface.Thread;
+                    var row = Assert.Single(feed.Rows);
+                    L($"row events: {row.View.Events.Count}; IsFoldOpen={row.IsFoldOpen}");
+                    feed.UpdateLayout();
+
+                    var focusItem = feed.FocusItem(0);
+                    var container = ThreadFixtures.Container(feed, 0);
+                    L($"FocusItem(0)={focusItem}; focused is container={ReferenceEquals(container, Keyboard.FocusedElement)}");
+                    await Snapshot("S1 after FocusItem(0), before Tab", window, container, null, row);
+
+                    ToggleButton? fold = null;
+                    var stops = new List<string>();
+                    for (var i = 0; i < 8 && fold is null; i++)
+                    {
+                        if (Keyboard.FocusedElement is not UIElement from)
+                        {
+                            L($"Tab stop {i}: Keyboard.FocusedElement before MoveFocus is {Desc(Keyboard.FocusedElement)}; window.IsActive={window.IsActive} IsKeyboardFocusWithin={window.IsKeyboardFocusWithin} foregroundIsWindow={GetForegroundWindow() == new WindowInteropHelper(window).Handle}");
+                            break;
+                        }
+
+                        from.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                        var focused = (DependencyObject)Keyboard.FocusedElement;
+                        stops.Add(AutomationProperties.GetName(focused));
+                        L($"Tab stop {i}: {Desc(focused)}");
+                        if (AutomationProperties.GetName(focused) == row.FoldHeader)
+                        {
+                            fold = focused as ToggleButton;
+                        }
+                    }
+
+                    L($"fold reached={(fold is not null)} stops=[{string.Join(", ", stops)}]");
+                    if (fold is null)
+                    {
+                        return;
+                    }
+
+                    await Snapshot("S2 on the fold, before Space", window, container, fold, row);
+
+                    Hook(window, "window");
+                    Hook(container, "rowContainer");
+                    if (fold.TemplatedParent is Expander exp)
+                    {
+                        Hook(exp, "expander");
+                    }
+
+                    Hook(fold, "fold");
+
+                    var source = PresentationSource.FromVisual(fold)!;
+                    L($"PresentationSource={source.GetType().Name}");
+                    L("--- raising KeyDown Space ---");
+                    var down = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyDownEvent };
+                    fold.RaiseEvent(down);
+                    L($"after KeyDown raise: down.Handled={down.Handled} fold.IsPressed={fold.IsPressed} fold.IsChecked={fold.IsChecked} row.IsFoldOpen={row.IsFoldOpen}");
+                    L("--- raising KeyUp Space ---");
+                    var up = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Space) { RoutedEvent = UIElement.KeyUpEvent };
+                    fold.RaiseEvent(up);
+                    L($"after KeyUp raise: up.Handled={up.Handled} fold.IsPressed={fold.IsPressed} fold.IsChecked={fold.IsChecked} row.IsFoldOpen={row.IsFoldOpen}");
+                    await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                    feed.UpdateLayout();
+                    await Snapshot("S3 after Space (after dispatcher drain and UpdateLayout)", window, container, fold, row);
+                    L($"RESULT row.IsFoldOpen={row.IsFoldOpen}");
+
+                    Close(window, host, model, surface);
+                });
+        }
+        finally
+        {
+            File.WriteAllText(outPath, _log.ToString());
+        }
+    }
+}

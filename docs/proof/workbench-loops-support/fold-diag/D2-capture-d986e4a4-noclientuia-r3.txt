@@ -1,0 +1,120 @@
+row events: 6; IsFoldOpen=False
+FocusItem(0)=True; focused is container=True
+=== S1 after FocusItem(0), before Tab ===
+Keyboard.FocusedElement = ListBoxItem#37b9181(Name='',AutoName='b1, first words')
+Keyboard.PrimaryDevice.Target = ListBoxItem#37b9181(Name='',AutoName='b1, first words'); ActiveSource=HwndSource
+window.IsActive=True window.IsKeyboardFocusWithin=True window.Left=-10000 Top=-10000 WindowState=Normal
+hwnd=0x151f07cc foregroundHwnd=0x151f07cc isForeground=True
+row.IsFoldOpen=False FoldHeader='4 events' FoldedEvents=4
+container.IsKeyboardFocused=True IsKeyboardFocusWithin=True
+mouse: Mouse.Captured=null Mouse.DirectlyOver=null fold.IsMouseOver= fold.IsMouseDirectlyOver= Mouse.LeftButton=Released posInWindow=9992.666666666666,9970
+--- UIA peer subtree of the row container ---
+- ListItem name='b1, first words' autoId='' class='ListBoxItem' kbFocusable=True hasKbFocus=True offscreen=False enabled=True  patterns=none
+  - Text name='b1' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='first words' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Provenance of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Provenance of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='provenance' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Compiled prompt of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Compiled prompt of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='compiled prompt' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='02:33' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+    - DataItem name='AiDe.App.Workbench.Sessions.ConversationRow' autoId='' class='ItemsControlItem' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+      - Text name='ok' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='completed' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='claude-code' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='edits not recorded · 6 tokens · 0 s · 6 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='4 events' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='4 events' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='4 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+UIA client calls: skipped in this mode (no await between steps, as in the real test)
+Tab stop 0: ToggleButton#2ac40c(Name='',AutoName='Provenance of b1')
+Tab stop 1: ToggleButton#dcf7d8(Name='',AutoName='Compiled prompt of b1')
+Tab stop 2: ToggleButton#2768c05(Name='',AutoName='4 events')
+fold reached=True stops=[Provenance of b1, Compiled prompt of b1, 4 events]
+=== S2 on the fold, before Space ===
+Keyboard.FocusedElement = ToggleButton#2768c05(Name='',AutoName='4 events')
+Keyboard.PrimaryDevice.Target = ToggleButton#2768c05(Name='',AutoName='4 events'); ActiveSource=HwndSource
+window.IsActive=True window.IsKeyboardFocusWithin=True window.Left=-10000 Top=-10000 WindowState=Normal
+hwnd=0x151f07cc foregroundHwnd=0x151f07cc isForeground=True
+row.IsFoldOpen=False FoldHeader='4 events' FoldedEvents=4
+container.IsKeyboardFocused=False IsKeyboardFocusWithin=True
+fold: ToggleButton#2768c05(Name='',AutoName='4 events') IsChecked=False IsKeyboardFocused=True IsFocused=True IsEnabled=True IsVisible=True Focusable=True IsTabStop=True IsPressed=False IsMouseCaptured=False ActualSize=68x24
+expander: Expander#1a81d94(Name='',AutoName='4 events') IsExpanded=False IsKeyboardFocusWithin=True
+mouse: Mouse.Captured=null Mouse.DirectlyOver=null fold.IsMouseOver=False fold.IsMouseDirectlyOver=False Mouse.LeftButton=Released posInWindow=9992.666666666666,9970
+--- UIA peer subtree of the row container ---
+- ListItem name='b1, first words' autoId='' class='ListBoxItem' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='b1' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='first words' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Provenance of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Provenance of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='provenance' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Compiled prompt of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Compiled prompt of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='compiled prompt' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='02:33' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+    - DataItem name='AiDe.App.Workbench.Sessions.ConversationRow' autoId='' class='ItemsControlItem' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+      - Text name='ok' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='completed' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='claude-code' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='edits not recorded · 6 tokens · 0 s · 6 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='4 events' autoId='' class='Expander' kbFocusable=False hasKbFocus=True offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='4 events' autoId='' class='Button' kbFocusable=True hasKbFocus=True offscreen=False enabled=True  Toggle=Off
+      - Text name='4 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+UIA client calls: skipped in this mode (no await between steps, as in the real test)
+PresentationSource=HwndSource
+--- raising KeyDown Space ---
+[route] KeyDown at fold (ToggleButton#2768c05(Name='',AutoName='4 events')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyDown at expander (Expander#1a81d94(Name='',AutoName='4 events')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyDown at rowContainer (ListBoxItem#37b9181(Name='',AutoName='b1, first words')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyDown at window (Window#23527c5(Name='',AutoName='')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+after KeyDown raise: down.Handled=True fold.IsPressed=True fold.IsChecked=False row.IsFoldOpen=False
+--- raising KeyUp Space ---
+[route] KeyUp at fold (ToggleButton#2768c05(Name='',AutoName='4 events')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyUp at expander (Expander#1a81d94(Name='',AutoName='4 events')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyUp at rowContainer (ListBoxItem#37b9181(Name='',AutoName='b1, first words')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+[route] KeyUp at window (Window#23527c5(Name='',AutoName='')): key=Space src=ToggleButton#2768c05(Name='',AutoName='4 events') Handled=True
+after KeyUp raise: up.Handled=True fold.IsPressed=False fold.IsChecked=False row.IsFoldOpen=False
+=== S3 after Space (after dispatcher drain and UpdateLayout) ===
+Keyboard.FocusedElement = null
+Keyboard.PrimaryDevice.Target = null; ActiveSource=null
+window.IsActive=True window.IsKeyboardFocusWithin=False window.Left=-10000 Top=-10000 WindowState=Normal
+hwnd=0x151f07cc foregroundHwnd=0x151f07cc isForeground=True
+row.IsFoldOpen=False FoldHeader='4 events' FoldedEvents=4
+container.IsKeyboardFocused=False IsKeyboardFocusWithin=False
+fold: ToggleButton#2768c05(Name='',AutoName='4 events') IsChecked=False IsKeyboardFocused=False IsFocused=True IsEnabled=True IsVisible=True Focusable=True IsTabStop=True IsPressed=False IsMouseCaptured=False ActualSize=68x24
+expander: Expander#1a81d94(Name='',AutoName='4 events') IsExpanded=False IsKeyboardFocusWithin=False
+mouse: Mouse.Captured=null Mouse.DirectlyOver=null fold.IsMouseOver=False fold.IsMouseDirectlyOver=False Mouse.LeftButton=Released posInWindow=9992.666666666666,9970
+--- UIA peer subtree of the row container ---
+- ListItem name='b1, first words' autoId='' class='ListBoxItem' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='b1' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='first words' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Provenance of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Provenance of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='provenance' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='Compiled prompt of b1' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='Compiled prompt of b1' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='compiled prompt' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='02:33' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+    - DataItem name='AiDe.App.Workbench.Sessions.ConversationRow' autoId='' class='ItemsControlItem' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+      - Text name='ok' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='completed' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='claude-code' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='edits not recorded · 6 tokens · 0 s · 6 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Group name='4 events' autoId='' class='Expander' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  ExpandCollapse=Collapsed
+    - Button name='4 events' autoId='' class='Button' kbFocusable=True hasKbFocus=False offscreen=False enabled=True  Toggle=Off
+      - Text name='4 events' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=False enabled=True  patterns=none
+  - Text name='' autoId='' class='TextBlock' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+  - List name='' autoId='' class='ItemsControl' kbFocusable=False hasKbFocus=False offscreen=True enabled=True  patterns=none
+UIA client calls: skipped in this mode (no await between steps, as in the real test)
+RESULT row.IsFoldOpen=False
