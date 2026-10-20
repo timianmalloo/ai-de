@@ -1,0 +1,14 @@
+{"agent": "wl-t32-copy-pin", "at": 1792463914.6350722, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/P1-red.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792463914.6766272, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792463940.9451547, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/P1-green.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792463940.988744, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/DesignCopyRowsArePinnedTests.cs", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792463958.6346579, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Compilation/TheTypedBoundaryIsInertButRealTests.cs", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792463978.9787788, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.323653, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.365707, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/P1-red-mutation.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.4058552, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/README.md", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.4473867, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/handoff.md", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.4900405, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/suite-app-rerun.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.5333283, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/suite-app.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792464538.5732787, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/suite-core.txt", "session": "wl-t32-copy-pin", "wi": ""}
+{"agent": "wl-t32-copy-pin", "at": 1792465068.8343263, "code": null, "kind": "allowed", "path": "docs/proof/workbench-loops-support/copy-pin/ratchet.txt", "session": "wl-t32-copy-pin", "wi": ""}

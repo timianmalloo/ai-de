@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T02:34:21Z",
+  "generated": "2026-10-20T02:58:44Z",
   "audit": [
     {
       "actor": null,
@@ -27051,6 +27051,30 @@ window.AUDIT_DATA = {
       "duration_source": "session-start-hook",
       "started_at": "2026-10-19T22:28:46Z",
       "duration_seconds": 14735.0
+    },
+    {
+      "id": "al-01M5BKYF2VEFMHG1BP62CG4060",
+      "shortname": "wl-leader4-epoch4-close",
+      "datetime": "2026-10-20T02:58:44Z",
+      "session": "wl-leader4-20261020",
+      "prompt": "You are the Leader (fourth Leader of the workbench-loops drive, coord session wl-leader4-20261020). Read the kickoff and hand-off 3 and follow its Resume brief; T30 n5 and T26 n2 already running; WL-S walk-through staged, not started.",
+      "summary": "Epoch 4 closed at the context ceiling. Joined T30's second batch (1731a1b2) and T26, the WL-1b checklist kind (26ac6861), both on the Owner's direction before the WL-S walk-through; both recounts excused one keyboard probe under Ruling 155 (3) after solo runs on head and parent; ratchets PASS 0/49. Dispatched and accepted T26 n3/n3b (copy CHK3/CHK9 pinned, M6 option (b), M9 red), T30 n6 (R21's real control, the 68-ban sweep) and T32 (the copy-pin class control, done at 4060b24f, join-ready). Added brief rule 23 and the classes DC-NEW-wl-t26-copy and DC-NEW-wl-t30-gate-evasion. Confirmed the WL-1b demo script against the code (656cf0a1). Hand-off 4 at c4400f84.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/workbench-loops-leader-handoff-4.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Hold the Leader seat: wait for the running nodes, close the Owner's join conditions, join T30 and T26, and hand off",
+      "done_when": "T30 and T26 joined and pushed with step-8 records; T32 reported; hand-off 4 committed; designation released",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-10-20T02:36:56Z",
+      "duration_seconds": 1308.0
     }
   ],
   "changes": [
@@ -32934,6 +32958,24 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t30-prefill"
+    },
+    {
+      "id": "mail-01M5BKG5T6JBDVX18BJB8XVR2H",
+      "ts": "2026-10-20T02:50:56Z",
+      "from": "wl-leader4-20261020",
+      "to": "wl-t32-copy-pin",
+      "kind": "kick",
+      "ref": null,
+      "session": "wl-leader4-20261020"
+    },
+    {
+      "id": "mail-01M5BKX21157FCXN9FRQGSGV67",
+      "ts": "2026-10-20T02:57:58Z",
+      "from": "wl-t32-copy-pin",
+      "to": "wl-leader4-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t32-copy-pin"
     }
   ]
 };
