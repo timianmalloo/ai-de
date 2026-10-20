@@ -182,6 +182,7 @@ does. The call is removed, and a two-line comment at that place names the path, 
 | Step | Commit | Proof |
 | --- | --- | --- |
 | The (a)-shaped test green with the call, green under M6; the call removed; 13 of 13 checklist App tests green | see `handoff.md` | `m6-green-with-call.txt`, `m6-b-mutation-not-red.txt`, `m6-b-probe-visibility-edges.txt`, `m6-b-green-without-call.txt` |
+| M9 (Owner): the reopen test depends on the visibility refresh. Replacing `RefreshAsync()` in the `IsVisibleChanged` handler (`ChecklistSurface.cs:93-97`) with `Task.CompletedTask` turns `AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions` red (`"Add obligation" is disabled`); reverted, 3 of 3 green | see `handoff.md` | `m9-red-visibility-refresh-mutation.txt`, `m9-green.txt` |
 
 **Residuals.**
 

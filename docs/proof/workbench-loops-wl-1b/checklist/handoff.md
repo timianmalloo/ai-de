@@ -54,3 +54,5 @@ The two conditions the Owner set before the T26 join are closed. Detail is in `R
 **Ratchet:** see `ratchet.txt`.
 
 **Next step:** the WL-1b checklist join.
+
+**M9 (Owner):** the reopen test depends on the visibility refresh. With `RefreshAsync()` in the `IsVisibleChanged` handler replaced by `Task.CompletedTask` it is red (`"Add obligation" is disabled`; `m9-red-visibility-refresh-mutation.txt`). Reverted, `git diff src` empty, 3 of 3 green (`m9-green.txt`).
