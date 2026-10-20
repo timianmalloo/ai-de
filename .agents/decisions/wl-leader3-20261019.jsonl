@@ -556,3 +556,13 @@
 {"agent": "wl-leader3-20261019", "at": 1792456055.7189445, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T26.md", "session": "wl-leader3-20261019", "wi": ""}
 {"agent": "wl-leader3-20261019", "at": 1792456055.7614608, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T30.md", "session": "wl-leader3-20261019", "wi": ""}
 {"agent": "wl-leader3-20261019", "at": 1792456139.9607165, "code": null, "kind": "allowed", "path": "docs/coordination/workbench-loops-leader-handoff-3.md", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.5466356, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader3-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.5884693, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t26-checklist.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.6273158, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-t30-prefill.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.6686728, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader2-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.7088475, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader3-20261019.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.7478454, "code": null, "kind": "allowed", "path": ".agents/log/wl-t26-checklist.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.7898724, "code": null, "kind": "allowed", "path": ".agents/log/wl-t30-prefill.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.828736, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.869176, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader3-20261019", "wi": ""}
+{"agent": "wl-leader3-20261019", "at": 1792456177.9095492, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader3-20261019", "wi": ""}

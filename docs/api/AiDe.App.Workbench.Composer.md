@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 140 members, 95% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 141 members, 95% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**16 public types · 140 public members · 95% documented.**
+**16 public types · 141 public members · 95% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -419,6 +419,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `bool PrepareAgainVisible` | Whether the *Prepare again* control is on the screen. |
 | `bool CancelVisible` | Whether the *Cancel* control is on the screen. |
 | `Task PrepareTurnAsync()` | The preparing gesture: the envelope opened, the model called for the open lines, Prepare entered with the compile line and its next-action control — every state with a reason string in voice (§A11; US-D5). |
+| `string SuggestedLinesAnnouncement(int count)` | The one announcement of a prepare that suggested lines (DESIGN.md's composer status row; Ruling 180 (3)). |
 | `bool OnAcceleratorKey(uint virtualKey, bool controlHeld, bool isKeyDown)` | Handles a WebView2 accelerator. Ctrl-Enter is the send, and it is marked handled so the page never sees it either (Security C11). |
 | `void MarkReady()` | **(gap)** |
 | `void SetFieldText(string fieldId, long revision, string text)` | **(gap)** |

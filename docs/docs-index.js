@@ -2643,7 +2643,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 140 members, 95% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 16 types, 141 members, 95% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2656,7 +2656,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "376c9786955483258fed3ed9fdbdd21f355987bcc192fc0c2a9a012971e6105b"
+      "sourceSha256": "5fb1191b67dc4ea2e2504fb7baec5a2a40d3b7deb65100a099a57e5697258785"
     },
     {
       "id": "api-aide-app-workbench-execution",
@@ -10882,7 +10882,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e20be165622dd36d5eba6b24f8a95dcb389fe8905bbcbe44f98596881e549524"
+      "sourceSha256": "9ba8744c0a8f6e0affde079ec6183d2c197f2fa460a7df916a34fe3798c79b06"
     },
     {
       "id": "design-session-profiler",
@@ -14334,7 +14334,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f3d3a7bb0df8f1132afe9e84d5c0cb2c4105ab562ea4c3285e153f24c92c43c9"
+      "sourceSha256": "2f0a20974424c3f05d9f9415dc86f4e96292b10f3ee2be9921092ff07b53b3e4"
     },
     {
       "id": "session-profiles",
@@ -19264,6 +19264,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "05dd48661a59c93b470d757e06843efb6066a8ffda01a7db3aa4a61c02b91af3"
     },
     {
+      "id": "coordination-workbench-loops-leader-handoff-3",
+      "path": "docs/coordination/workbench-loops-leader-handoff-3.md",
+      "title": "Leader hand-off 3 — workbench-loops drive (wl-leader3-20261019 → wl-leader4)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-18",
+      "reviewSuggested": [],
+      "summary": "Third Leader's hand-off. WL-1a accepted by the user's demo; WL-S review-ready with its demo script staged; WL-1b Core, T28's compiled-field fix and T30's prefill joined. T30 n5 (the prefill is invisible: first) and T26 n2 (the checklist kind) run at hand-off. Controls added this epoch, and a resume brief.",
+      "tags": [
+        "coordination",
+        "handoff",
+        "workbench-loops",
+        "leader"
+      ],
+      "links": [
+        {
+          "to": "coordination-workbench-loops",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-kickoff",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-workbench-loops-leader-handoff-2",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fb6ed74c81212da5b9a4840192cea1fe2de107f6a8820b4fad960592226c36c6"
+    },
+    {
       "id": "plan-workbench-loops-drive-prompt",
       "path": "docs/plans/workbench-loops-drive-prompt.md",
       "title": "Drive prompt — implement the workbench-loops architecture autonomously under coordination",
@@ -19430,14 +19464,14 @@ window.DOCS_INDEX = {
     {
       "id": "handoff-workbench-loops-wl-1a-prefill-n1",
       "path": "docs/proof/workbench-loops-wl-1a/prefill/handoff.md",
-      "title": "Hand-off: WL-1a T30 node 3 (Ruling 182 (2)-(4); the gate's real reason)",
+      "title": "Hand-off: WL-1a T30 node 6 (the privacy gate made honest about R21; the lexical-ban sweep)",
       "type": "proof-pack",
       "status": "draft",
       "owner": "@timianmalloo",
       "phase": "workbench-loops WL-1a",
       "reviewBy": "2026-11-19",
       "reviewSuggested": [],
-      "summary": "T30 n3: (A) no saved-state copy (mutation red), (B) a sent turn's compiled prompt survives a restart (real red; the restored disclosure was empty), (C) the settings row states the gate's refusal for a demoted rung. Residual line in the Proof Pack. Next: node 4 (cost line, first 50 calls, compile-eval, sheet-test gate seam, rule 22's ratchet).",
+      "summary": "T30 n6: the composer privacy gate's 'Suggest' clause is retired with its reason; R21's real control pins one model-call site (ComposerSendGate.cs:148) with a mutation red; the announcement keeps its true name; a sweep of 68 lexical src bans finds none now live and one stale wording. Next: T30's second join. Earlier nodes' hand-offs are kept below.",
       "tags": [
         "workbench-loops",
         "wl-1a",
@@ -19457,7 +19491,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d95e25b19646cb800b701ba6b26fadbf2a6fbd5f102f3c0aec7020a307bd1ea6"
+      "sourceSha256": "7924054ef14c4dab309bf20677848963bf442b59fb61f8f3364caec2173b689a"
     },
     {
       "id": "proof-accounts-and-first-use",
@@ -23086,7 +23120,39 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4d8b05dc58f3b70874b76a6b2a675745fba4700bfcd632020968ae87a3f48b52"
+      "sourceSha256": "a7acf80b450bbeeddd9c4c346dbbf1c3997775572ea4372014e3c5dac2db0af3"
+    },
+    {
+      "id": "proof-workbench-loops-wl-1a-prefill-h4-sweep",
+      "path": "docs/proof/workbench-loops-wl-1a/prefill/H4-lexical-ban-sweep.md",
+      "title": "WL-1a T30 n6 (H4): the lexical-ban sweep for DC-NEW-wl-t30-gate-evasion",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops WL-1a",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "Every test ban over src text (DoesNotContain, DoesNotMatch, Assert.False(...Contains), or a census that collects offenders), read against its premise after Rulings 180-182. 68 bans read, 1 already answered (the retired 'Suggest' clause), 63 hold, 4 stale in wording (one method). Nothing is now live. Nothing was changed.",
+      "tags": [
+        "workbench-loops",
+        "wl-1a",
+        "defect-sweep",
+        "gate-evasion",
+        "ruling-180",
+        "ruling-182"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-workbench-loops-wl-1a-prefill",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "97c814c71428d0f1df8add4ff5403d736162c775b9266efb9920d00ae0d09469"
     },
     {
       "id": "proof-workbench-loops-wl-1a-readback",
@@ -25645,5 +25711,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "1fc361d8eba94ac3a6f58b2b28544698f3a2283cee11a3b6b250ccc8bbafaeb4"
+  "graphSha256": "24e7c09fef5317d820d80cf462af07a10a7c08efefe6365e010d512e636db98a"
 };
