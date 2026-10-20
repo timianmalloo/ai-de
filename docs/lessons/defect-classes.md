@@ -8631,6 +8631,24 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   comes after the command that prints it, never in the same batch. This is still a process control, so the class stays
   `partially-controlled`.
 
+### DC-NEW-wl-t26-copy — sibling of DC-NEW-wl-t28-compiled: a copy oracle reads the same constant the code renders, so a change to the words can never go red
+- **Class:** an oracle that shares its source with the code under test. A test asserts the user-visible sentence as
+  `Assert.Equal(XCopy.Y, shown)`, and the surface renders `XCopy.Y`. The words can change, or drift from the DESIGN.md
+  row the Owner confirmed, and every test stays green. It is DC-NEW-wl-t28-compiled's shape seen from the other side:
+  there, the oracle never drives the user's gesture; here, it never states what the user reads.
+- **Instance (2026-10-20, T26 n2 → n3):** the Owner changed CHK3 and CHK9. Every checklist test read
+  `ChecklistCopy.Satisfied` / `ChecklistCopy.NotAWorkJourney` (`TheChecklistAcceptsTheDeliverableTests.cs:45`,
+  `TheOneLiveShaCeilingTests.cs:45`), so no test could go red on the old copy. Found by the Leader while briefing the
+  change; the Owner named the class.
+- **Sweep (main at 0481ee2d):** 8 App test files assert through a `*Copy` constant (`TurnCopy` 36 uses, `SavedStateCopy`
+  1). No tool or test pins a DESIGN.md copy row to the rendered literal (`tools/` has no copy gate). Not read one by one.
+- **Derive:** a copy oracle states the literal sentence the user reads, as the confirmed DESIGN.md row writes it, on the
+  rendered surface. A constant may build the expected value only when a separate test pins that constant's literal.
+- **Prevent:** instance — T26 n3 (F): literal-pinning tests for CHK3 and CHK9, red on the old copy. Class — **not built**.
+  Candidate: a test that reads each DESIGN.md copy row (CHK, RUN, DOCK …) and asserts the matching constant's literal,
+  so a copy change moves the row and the code together or fails.
+- **Status:** `open` (instance control in T26 n3; class control not built).
+
 ### DC-NEW-wl-t30-prefill — a UI test that reads process-wide WPF state passes alone and fails in the suite
 
 - **Instance (2026-10-19, T30 n1):** `TheCompileModeControlTests` found the open settings popup through
