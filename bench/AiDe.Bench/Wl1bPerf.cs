@@ -297,7 +297,7 @@ internal static class Wl1bPerf
     /// <summary>
     /// A store from the same DDL text the product runs, minus the WL-1b triggers and the FK (Data &amp; Persistence Architect,
     /// condition 3: never hand-copied). The definitions are the product's own, read by reflection; the bootstrap mirrors
-    /// <c>WorkspaceStore.EnsureSchema</c> (<c>WorkspaceStore.cs:287-305</c>), so <see cref="WorkspaceStore.Open"/> finds a store
+    /// <c>WorkspaceStore.EnsureSchema</c> (<c>WorkspaceStore.cs:308-327</c>), so <see cref="WorkspaceStore.Open"/> finds a store
     /// that already exists and leaves it alone.
     /// </summary>
     private static void CreateControlStore(string path)
@@ -310,8 +310,16 @@ internal static class Wl1bPerf
         var triggerSql = (Func<IEnumerable<string>, string>)Delegate.CreateDelegate(typeof(Func<IEnumerable<string>, string>),
             schema.GetMethod("TriggerSql", Any, [typeof(IEnumerable<string>)])!);
 
-        var v2 = Text("V2Sql");
-        var triggers = triggerSql(factTables);
+        // The FK is one clause of the disposition_fact table (WorkspaceSchema.cs:347); the triggers are the no-update/no-delete pair
+        // TriggerSql writes for each fact table. A clause that is not found is a refusal, so the control can never silently equal the product.
+        var v2 = Regex.Replace(Text("V2Sql"),
+            @"[ \t]*FOREIGN KEY \(notebook_id, revision_no\) REFERENCES prompt_revision_fact \(draft_id, revision_no\),\r?\n", "");
+        if (v2 == Text("V2Sql"))
+        {
+            throw new InvalidOperationException("the disposition FK clause is not in V2Sql; the control store would equal the product.");
+        }
+
+        var triggers = triggerSql(factTables.Where(t => !WlTables.Contains(t, StringComparer.Ordinal)));
 
         using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
         {
@@ -381,30 +389,30 @@ internal static class Wl1bPerf
         var controlPath = Path.Combine(directory, $"overhead-{name}-control.db");
         CreateControlStore(controlPath);
 
-        var (productGuards, productFks) = (0L, 0L);
         using (var product = WorkspaceStore.Open(productPath))
         {
             PopulateWork(product, "ovh", shape);
         }
 
-        (productGuards, productFks) = WlGuards(productPath);
+        var (productGuards, productFks) = WlGuards(productPath);
         using (var control = WorkspaceStore.Open(controlPath))
         {
             PopulateWork(control, "ovh", shape);
         }
 
         var (controlGuards, controlFks) = WlGuards(controlPath);
-        Console.WriteLine($"  base {name}: product has {productGuards} WL-1b trigger(s) and {productFks} FK(s); control has {controlGuards} and {controlFks}");
+        Console.WriteLine($"  base {name}: product has {productGuards} WL-1b trigger(s) and {productFks} FK column(s); control has {controlGuards} and {controlFks}");
         if (productGuards == 0 || productFks == 0 || controlGuards != 0 || controlFks != 0)
         {
             failures.Add($"C1b the control store for {name} must lack exactly the WL-1b triggers and FK the product has");
             return failures;
         }
 
-        var journeyId = "journey-nb-ovh-0";
-        var notebookId = "nb-ovh-0";
+        var journeyId = "journey-nb-ovh";
+        var notebookId = "nb-ovh";
         string obligationId;
-        using (var reader = WorkspaceStore.Open(productPath).BeginRead())
+        using (var peek = WorkspaceStore.Open(productPath))
+        using (var reader = peek.BeginRead())
         {
             obligationId = reader.ReadObligations(journeyId, reader.ReadLatestChecklistRevision(journeyId)!.Value)[0].ObligationId;
         }
