@@ -8493,6 +8493,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   at about 23 min. So the ladder's kick, sent on time, did not hold the cap: the node finished its suites after the
   kick, as rule 18 requires, and a node's whole-suite run alone exceeds a 100k cap. Only the seam-level hook stops a
   node; that decision stays the user's.
+- **Next instances (2026-10-20, T38 and T37, Sonnet, run in parallel):** T38 `wl-claim-check`: 41 calls / about
+  121k against 40 / 80k (harness `usage`: 121,296 tokens, 1,486 s, about 4.9k tokens/min). T37
+  `wl-input-state-sweep`: 93 calls / about 191k against 60 / 120k (190,797 tokens, 2,451 s, about 4.7k tokens/min).
+  Both kicks went out on the ladder (T38 at about 12 min, T37 at about 17 min) and both nodes finished well after.
+  The ladder's rate came from T21 n10 (about 7.0k tokens/min); these two nodes ran at about 4.8k, so the kicks
+  came early by rate and still did not hold the cap. Only the seam-level hook stops a node; that stays the user's.
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
 ### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it

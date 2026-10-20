@@ -8,3 +8,4 @@
 {"agent": "wl-t38-claim-check", "at": 1792529648.1274984, "kind": "claim", "path": "docs/proof/workbench-loops-support/claim-check/ratchet.txt", "seq": 8, "session": "wl-t38-claim-check", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t38-claim-check", "at": 1792529777.0701578, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 9, "session": "wl-t38-claim-check", "ttl": 300.0, "wi": "workbench-loops"}
 {"at": 1792531082.2529151, "from": "wl-t38-claim-check", "kind": "done", "mail_id": "mail-01M5DJVB0CYBD8HK6H5AMHX3P8", "ref": null, "session": "wl-t38-claim-check", "to": "wl-leader5-20261020", "type": "mail"}
+{"agent": "wl-t38-claim-check", "at": 1792532040.3145347, "kind": "session-end", "path": "-", "seq": 11, "session": "wl-t38-claim-check", "wi": "WI-0", "worktree": "ai-de"}
