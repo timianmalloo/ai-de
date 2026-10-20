@@ -415,7 +415,7 @@ local store. `actor` is a process principal (`shell:<pid>`), not a person. No te
 - **Copy (load-bearing; Owner confirms; DESIGN.md rows in Track D):**
   - Empty: "No obligations yet. Add the conditions this work must meet."
   - Acknowledged: "Acknowledged — not satisfied. Acknowledging is not evidence."
-  - Satisfied: "Satisfied by run {7-char key} (revision {n})."
+  - Satisfied: "Satisfied by run {7-char key} (intent revision {n})."
   - Stale: "The evidence belongs to an earlier draft. Link evidence from the current draft."
   - Not recorded: "Evidence currentness is not recorded, so this does not count as current."
   - Gap line (ADR-0040 `:113`): "Blocked — “{obligation}” has no current evidence." · "Blocked — “{obligation}”
@@ -423,7 +423,7 @@ local store. `actor` is a process principal (`shell:<pid>`), not a person. No te
     declared for this work."
   - Accepted: "Accepted: the declared deliverable at intent revision {n}. This records acceptance of the
     deliverable only. It does not say the work is implemented or merged."
-  - Not a work journey: "This notebook is unassigned (pre-workbench). Obligations need a work journey."
+  - Not a work journey: "This notebook has no work journey. It was made before work journeys existed. Obligations need a work journey."
 - *Accept deliverable* is **enabled** while blocked: pressing it calls `work.accept`, so the store gives the
   refusal and the gaps are read out (polite live region). That is the opposite of a silent disabled button.
 - **Accessibility:** every action and state has a UIA name. The row's name joins the obligation and both state

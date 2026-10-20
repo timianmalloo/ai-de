@@ -164,7 +164,7 @@ public sealed class MainMenuTests
         Assert.Contains(dispute, view);
         Assert.True(view.IndexOf(dispute) < view.IndexOf(loomkeeper[0]), "the catalog verb precedes the derived group (PS-M2)");
         Assert.Equal(
-            ["New search", "New code viewer", "Show diagnostics", .. loomkeeper],
+            ["New search", "New code viewer", "New checklist", "Show diagnostics", .. loomkeeper],
             view.Where(t => t.StartsWith("New ", StringComparison.Ordinal) || t.StartsWith("Show ", StringComparison.Ordinal)).ToList());
 
         foreach (var other in new[] { PerspectiveSet.Review, PerspectiveSet.Understand })

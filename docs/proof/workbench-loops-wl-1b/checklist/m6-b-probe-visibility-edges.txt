@@ -1,0 +1,179 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.98]     AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions [FAIL]
+  Failed AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions [1 s]
+  Error Message:
+   PROBE same=True edgesAfterOpen=1 edges=2
+False@   at System.Environment.get_StackTrace()
+   at AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.<>c__DisplayClass13_0.<AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions>b__1(Object _, DependencyPropertyChangedEventArgs e) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\SavedReviewStateIsNotAcceptanceTests.cs:line 167
+   at System.Windows.UIElement.OnIsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.UIElement.UpdateIsVisibleCache()
+   at System.Windows.UIElement.InvalidateForceInheritPropertyOnChildren(Visual v, DependencyProperty property)
+   at System.Windows.UIElement.OnIsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.UIElement.UpdateIsVisibleCache()
+   at System.Windows.UIElement.OnVisualParentChanged(DependencyObject oldParent)
+   at System.Windows.Media.Visual.FireOnVisualParentChanged(DependencyObject oldParent)
+   at System.Windows.Media.Visual.RemoveVisualChild(Visual child)
+   at System.Windows.FrameworkElement.set_TemplateChild(UIElement value)
+   at System.Windows.StyleHelper.DetachGeneratedSubTree(FrameworkElement feContainer, FrameworkContentElement fceContainer)
+   at System.Windows.StyleHelper.DoTemplateInvalidations(FrameworkElement feContainer, FrameworkTemplate oldFrameworkTemplate)
+   at System.Windows.Controls.ContentPresenter.OnTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.DependencyObject.UpdateEffectiveValue(EntryIndex entryIndex, DependencyProperty dp, PropertyMetadata metadata, EffectiveValueEntry oldEntry, EffectiveValueEntry& newEntry, Boolean coerceWithDeferredReference, Boolean coerceWithCurrentValue, OperationType operationType)
+   at System.Windows.DependencyObject.SetValueCommon(DependencyProperty dp, Object value, PropertyMetadata metadata, Boolean coerceWithDeferredReference, Boolean coerceWithCurrentValue, OperationType operationType, Boolean isInternal)
+   at System.Windows.DependencyObject.SetValue(DependencyProperty dp, Object value)
+   at System.Windows.Controls.ContentPresenter.OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.DependencyObject.UpdateEffectiveValue(EntryIndex entryIndex, DependencyProperty dp, PropertyMetadata metadata, EffectiveValueEntry oldEntry, EffectiveValueEntry& newEntry, Boolean coerceWithDeferredReference, Boolean coerceWithCurrentValue, OperationType operationType)
+   at System.Windows.DependencyObject.InvalidateProperty(DependencyProperty dp, Boolean preserveCurrentValue)
+   at System.Windows.Data.BindingExpression.TransferValue(Object newValue, Boolean isASubPropertyChange)
+   at MS.Internal.Data.PropertyPathWorker.UpdateSourceValueState(Int32 k, ICollectionView collectionView, Object newValue, Boolean isASubPropertyChange)
+   at MS.Internal.Data.ClrBindingWorker.OnSourcePropertyChanged(Object o, String propName)
+   at System.Windows.WeakEventManager.ListenerList`1.DeliverEvent(Object sender, EventArgs e, Type managerType)
+   at System.ComponentModel.PropertyChangedEventManager.OnPropertyChanged(Object sender, PropertyChangedEventArgs args)
+   at AvalonDock.Layout.LayoutElement.RaisePropertyChanged(String propertyName)
+   at AvalonDock.Layout.LayoutContent.set_Content(Object value)
+   at AiDe.App.Workbench.WorkbenchAdapter.Render() in C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.App\Workbench\WorkbenchAdapter.cs:line 303
+   at AiDe.App.Workbench.WorkbenchShell.OpenReferenceDocument(DockHost host, Surface surface, String okMessage, String noPaneMessage, String intoStackId) in C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.App\Workbench\WorkbenchShell.cs:line 1930
+   at AiDe.App.Workbench.WorkbenchShell.OpenSessionDocument(SessionConfig config) in C:\Projects\ai-de-wl1b-checklist-kind\src\AiDe.App\Workbench\WorkbenchShell.cs:line 3532
+   at AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.<AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions>b__13_0(Window window, ContentControl region, WorkspaceClient client) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\SavedReviewStateIsNotAcceptanceTests.cs:line 168
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+   at System.Windows.Threading.DispatcherOperation.InvokeImpl()
+   at MS.Internal.CulturePreservingExecutionContext.CallbackWrapper(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at MS.Internal.CulturePreservingExecutionContext.Run(CulturePreservingExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Windows.Threading.DispatcherOperation.Invoke()
+   at System.Windows.Threading.Dispatcher.ProcessQueue()
+   at System.Windows.Threading.Dispatcher.WndProcHook(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)
+   at MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)
+   at MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+   at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)
+   at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method, Object arg)
+   at MS.Win32.HwndSubclass.SubclassWndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam)
+   at MS.Win32.UnsafeNativeMethods.DispatchMessage(MSG& msg)
+   at MS.Win32.UnsafeNativeMethods.DispatchMessage(MSG& msg)
+   at System.Windows.Threading.Dispatcher.PushFrameImpl(DispatcherFrame frame)
+   at System.Windows.Threading.DispatcherOperation.Wait(TimeSpan timeout)
+   at System.Windows.Threading.Dispatcher.InvokeImpl(DispatcherOperation operation, CancellationToken cancellationToken, TimeSpan timeout)
+   at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)
+   at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method)
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_0`1.<Pump>b__0() in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 148
+   at System.Threading.Thread.StartCallback()
+=====
+True@   at System.Environment.get_StackTrace()
+   at AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.<>c__DisplayClass13_0.<AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions>b__1(Object _, DependencyPropertyChangedEventArgs e) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\SavedReviewStateIsNotAcceptanceTests.cs:line 167
+   at System.Windows.UIElement.OnIsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.UIElement.UpdateIsVisibleCache()
+   at System.Windows.UIElement.InvalidateForceInheritPropertyOnChildren(Visual v, DependencyProperty property)
+   at System.Windows.UIElement.OnIsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+   at System.Windows.FrameworkElement.OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+   at System.Windows.DependencyObject.NotifyPropertyChange(DependencyPropertyChangedEventArgs args)
+   at System.Windows.UIElement.UpdateIsVisibleCache()
+   at System.Windows.UIElement.OnVisualParentChanged(DependencyObject oldParent)
+   at System.Windows.Media.Visual.FireOnVisualParentChanged(DependencyObject oldParent)
+   at System.Windows.Media.Visual.AddVisualChild(Visual child)
+   at System.Windows.Controls.ContentPresenter.UseContentTemplate.BuildVisualTree(FrameworkElement container)
+   at System.Windows.StyleHelper.ApplyTemplateContent(UncommonField`1 dataField, DependencyObject container, FrameworkElementFactory templateRoot, Int32 lastChildIndex, HybridDictionary childIndexFromChildID, FrameworkTemplate frameworkTemplate)
+   at System.Windows.FrameworkTemplate.ApplyTemplateContent(UncommonField`1 templateDataField, FrameworkElement container)
+   at System.Windows.FrameworkElement.ApplyTemplate()
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at MS.Internal.Helper.MeasureElementWithSingleChild(UIElement element, Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Border.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Control.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at MS.Internal.Helper.MeasureElementWithSingleChild(UIElement element, Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Border.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Grid.MeasureCell(Int32 cell, Boolean forceInfinityV)
+   at System.Windows.Controls.Grid.MeasureCellsGroup(Int32 cellsHead, Size referenceSize, Boolean ignoreDesiredSizeU, Boolean forceInfinityV, Boolean& hasDesiredSizeUChanged)
+   at System.Windows.Controls.Grid.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Control.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Grid.MeasureCell(Int32 cell, Boolean forceInfinityV)
+   at System.Windows.Controls.Grid.MeasureCellsGroup(Int32 cellsHead, Size referenceSize, Boolean ignoreDesiredSizeU, Boolean forceInfinityV, Boolean& hasDesiredSizeUChanged)
+   at System.Windows.Controls.Grid.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.ContextLayoutManager.UpdateLayout()
+   at AiDe.App.Tests.Checklist.ChecklistHarness.SettleAsync(Window window, Int32 rounds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 252
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at AiDe.App.Tests.Checklist.ChecklistHarness.SettleAsync(Window window, Int32 rounds)
+   at AiDe.App.Tests.Checklist.ChecklistHarness.ChecklistIn(Window window, DockHost host, String surfaceId) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 200
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at AiDe.App.Tests.Checklist.ChecklistHarness.ChecklistIn(Window window, DockHost host, String surfaceId)
+   at AiDe.App.Tests.Checklist.SavedReviewStateIsNotAcceptanceTests.<AVisibleChecklistSayingItsNotebookIsNotOpen_ShowsItsObligations_WhenTheNotebookIsReopenedFromRecentSessions>b__13_0(Window window, ContentControl region, WorkspaceClient client) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\SavedReviewStateIsNotAcceptanceTests.cs:line 171
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+   at System.Windows.Threading.DispatcherOperation.InvokeImpl()
+   at MS.Internal.CulturePreservingExecutionContext.CallbackWrapper(Object obj)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at MS.Internal.CulturePreservingExecutionContext.Run(CulturePreservingExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Windows.Threading.DispatcherOperation.Invoke()
+   at System.Windows.Threading.Dispatcher.ProcessQueue()
+   at System.Windows.Threading.Dispatcher.WndProcHook(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)
+   at MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)
+   at MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+   at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)
+   at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method, Object arg)
+   at MS.Win32.HwndSubclass.SubclassWndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam)
+   at MS.Win32.UnsafeNativeMethods.DispatchMessage(MSG& msg)
+   at MS.Win32.UnsafeNativeMethods.DispatchMessage(MSG& msg)
+   at System.Windows.Threading.Dispatcher.PushFrameImpl(DispatcherFrame frame)
+   at System.Windows.Threading.DispatcherOperation.Wait(TimeSpan timeout)
+   at System.Windows.Threading.Dispatcher.InvokeImpl(DispatcherOperation operation, CancellationToken cancellationToken, TimeSpan timeout)
+   at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)
+   at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method)
+   at AiDe.App.Tests.Sta.<>c__DisplayClass3_0`1.<Pump>b__0() in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 148
+   at System.Threading.Thread.StartCallback()
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(WorkspaceStore store, Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 63
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(WorkspaceStore store, Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 63
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(WorkspaceStore store, Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 73
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

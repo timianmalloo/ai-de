@@ -1,0 +1,18 @@
+T26 node 3 - rule 22 step-8 ratchet
+Command: RATCHET_OUT_DIR=C:/Projects/ai-de-wl1b-checklist-kind/docs/proof/workbench-loops-wl-1b/checklist/ratchet sh .agents/briefs/workbench-loops/run_ratchet.sh 0481ee2d 2b8ec3eb wl-t26-checklist
+Parent 0481ee2d = the origin/main this branch merges (061330fa). origin/main has since moved to 7a441974, which is not in this branch; the join merges it.
+Head 2b8ec3eb (code identical to 02f9c02d, where the suites ran; 2b8ec3eb adds only docs and proof files).
+
+Refusal lines:
+REFUSE new findings    docs/ai-forward-pack/scripts/docs-graph.py  parent=1 head=1  new=1
+REFUSE new findings    tools/verify-derived-views.py  parent=1 head=1  new=2
+REFUSE new findings    tools/verify-site-figures.py  parent=1 head=1  new=1
+
+Last line:
+ratchet: REFUSE - 3 refusal(s) over 49 gate(s)
+
+All three are the derived-view gates the brief names as expected (join step 6 regenerates them):
+- docs-graph.py: "validate: 3 defect(s) - 0 problem(s), 0 orphan(s), 3 index-drift item(s)." Index drift only.
+- verify-derived-views.py: docs/audit/audit-data.js and docs/_meta.json stale (derived; regenerated at the join).
+- verify-site-figures.py: "7 stale, 0 unknown, out of 14 checked" (derived).
+No other gate went green -> red. verify-surface-ownership.py and verify-cited-controls.py are ok.

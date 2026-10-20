@@ -1,0 +1,20 @@
+
+Test run for C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.22]     AiDe.App.Tests.Checklist.TheChecklistAcceptsTheDeliverableTests.TheEvidenceStaysCurrent_AfterTheComposerClears_AndAfterARePrepareThatChangesTheLiveCompile [FAIL]
+  Failed AiDe.App.Tests.Checklist.TheChecklistAcceptsTheDeliverableTests.TheEvidenceStaysCurrent_AfterTheComposerClears_AndAfterARePrepareThatChangesTheLiveCompile [2 s]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                       ↓ (pos 0)
+Expected: <generated> ["The plan names every risk it accepts. Satisfied by"···]
+Actual:   <generated> ["The plan names every risk it accepts. Evidence mis"···]
+                       ↑ (pos 0)
+  Stack Trace:
+     at AiDe.App.Tests.Sta.Rethrow(Exception failure, String environmentHint) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 203
+   at AiDe.App.Tests.Sta.Pump[T](Func`1 create, Func`3 body, Func`2 content, Action`1 configure, Int32 timeoutSeconds) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Sta.cs:line 187
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 57
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 57
+   at AiDe.App.Tests.Checklist.ChecklistHarness.RunAsync(Func`4 body) in C:\Projects\ai-de-wl1b-checklist-kind\tests\AiDe.App.Tests\Workbench\Checklist\ChecklistHarness.cs:line 67
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 2 s - AiDe.App.Tests.dll (net10.0)

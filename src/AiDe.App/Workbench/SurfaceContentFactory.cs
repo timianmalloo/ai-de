@@ -221,6 +221,16 @@ public sealed class SurfaceContentFactory(
             static (_, s) => new CodeViewerView(s.Title),
             Perspectives: [PerspectiveSet.Factory, PerspectiveSet.Understand], Instances.Many, new SurfaceEntry.Derived("_View")),
 
+        // One work journey's checklist (the WL-1b design, "The minimal checklist kind"; AC-W03c): identity
+        // `checklist:<sessionId>`, one per journey (Ruling 176), in the Right zone. Admitted to Understand (ADR-0045 :62)
+        // and Factory, where the work notebook foregrounds acceptance obligations (spec :665) and checklists dock beside
+        // it (:618). The opener takes the journey from the focused notebook; the surface rebinds to its own one after.
+        new(Checklist.ChecklistSurface.Kind, "Checklist",
+            "One work journey's obligations, their evidence and review states, and whether its deliverable can be accepted.",
+            static (f, s) => f.ChecklistOf(s),
+            Perspectives: [PerspectiveSet.Factory, PerspectiveSet.Understand], Instances.Many, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Right),
+
         new("diagnostics", "Diagnostics",
             "The last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
             static (_, s) => new DiagnosticsSurface(s.Title),
@@ -400,6 +410,21 @@ public sealed class SurfaceContentFactory(
         };
         text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         return text;
+    }
+
+    /// <summary>
+    /// The checklist of the journey a <c>checklist:&lt;sessionId&gt;</c> surface names, bound to that session's notebook
+    /// when it is open — resolved by the notebook's own surface id at every refresh, never by focus.
+    /// </summary>
+    private AiDe.App.Workbench.Checklist.ChecklistSurface ChecklistOf(Surface surface)
+    {
+        var sessionId = AiDe.App.Workbench.Checklist.ChecklistSurface.SessionIdOf(surface.SurfaceId);
+        return new AiDe.App.Workbench.Checklist.ChecklistSurface(
+            queries as AiDe.Core.Ipc.WorkspaceClient,
+            sessionId,
+            () => sessionId is null
+                ? null
+                : sessionDocumentFor?.Invoke(new Surface(AiDe.App.Workbench.Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId), AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, sessionId)));
     }
 
     /// <summary>

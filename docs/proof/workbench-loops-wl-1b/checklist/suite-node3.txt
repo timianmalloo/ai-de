@@ -1,0 +1,14 @@
+T26 node 3 - whole suites, run on HEAD 02f9c02d (after F green 9f7d557a and G 4e4b0710 + 02f9c02d)
+
+Core  (suite-node3-core.txt): Passed 3119, Skipped 1, Failed 0, Total 3120.
+App   (suite-node3-app.txt):  Passed 1256, Skipped 2, Failed 2, Total 1260. Board read before the run: no USER DEMO IN PROGRESS, no join in flight.
+
+The two App failures are node 2's known ones (handoff.md after node 2). Neither is a checklist test:
+- CtrlDigitSwitchesThePerspectiveFromInsideAPageTests.CtrlDigit_WithFocusInsideTheComposerOrTheCanvasPage_SwitchesThePerspective
+  "focus could not be put inside the page (foreground held=False ...)" - environment (no foreground for an unattended run); owed desk run.
+- AReopenedNotebookRendersItsRecordedAttemptsTests.ARestoredRowsEvents_AreReachedFromTheRowByKeyboard_AndExposedToUiAutomation
+  "Space on the restored row's fold did not open it". Re-run alone: same failure (suite-node3-app-rerun.txt, 1 of 5).
+  Re-run alone with the M6 call restored (the file at 4e4b0710): same failure (suite-node3-app-rerun-with-call.txt).
+  So the M6 removal does not cause it. Owed desk run, as node 2 recorded.
+
+Checklist App tests: 13 of 13 green (m6-b-green-without-call.txt), including the 3 tests added in this node.
