@@ -4,3 +4,4 @@
 {"agent": "wl-t41-focus-oracle-route", "at": 1792541108.6063507, "kind": "claim", "path": "tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs", "seq": 4, "session": "wl-t41-focus-oracle-route", "ttl": 300.0, "wi": "workbench-loops"}
 {"agent": "wl-t41-focus-oracle-route", "at": 1792541673.7526846, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 5, "session": "wl-t41-focus-oracle-route", "ttl": 300.0, "wi": "workbench-loops"}
 {"at": 1792542381.6685722, "from": "wl-t41-focus-oracle-route", "kind": "done", "mail_id": "mail-01M5DXM5K4YXCHEFRKSHQPZA3K", "ref": null, "session": "wl-t41-focus-oracle-route", "to": "wl-leader5-20261020", "type": "mail"}
+{"agent": "wl-t41-focus-oracle-route", "at": 1792544001.3398883, "kind": "session-end", "path": "-", "seq": 7, "session": "wl-t41-focus-oracle-route", "wi": "WI-0", "worktree": "ai-de"}
