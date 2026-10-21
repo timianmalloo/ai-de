@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-21T00:01:32Z",
+  "generated": "2026-10-21T00:37:45Z",
   "audit": [
     {
       "actor": null,
@@ -28308,6 +28308,59 @@ window.AUDIT_DATA = {
       "duration_source": "session-start-hook",
       "started_at": "2026-10-20T09:56:05Z",
       "duration_seconds": 50726.0
+    },
+    {
+      "id": "al-01M5DWZRARWXVW06B0DS2D6VMY",
+      "shortname": "wl-t41-focus-oracle-route",
+      "datetime": "2026-10-21T00:15:12Z",
+      "session": "wl-t41-focus-oracle-route",
+      "prompt": "T41: widen the layout-command gate to focus and live-region oracles; convert named tests to the route",
+      "summary": "Gate widened (red named ConsoleSplit CollapsingTheLeft); converted to CloseByTheRoute; T41-F1 recorded; Core 3121 and App 1275 green; alone 10/10",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-oracle-route/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "gate counts focus and live-region oracles after a layout command",
+      "done_when": "red names ConsoleSplit; converted; suites green; register; README",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-10-21T00:03:51Z",
+      "duration_seconds": 681.0
+    },
+    {
+      "id": "al-01M5DY8ZYYSE129GCDH18KXR2X",
+      "shortname": "join-wl-focus-oracle-route",
+      "datetime": "2026-10-21T00:37:44Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "the join of wl-focus-oracle-route into main",
+      "summary": "T41 joined with the full recount: LayoutOraclesDriveTheCommandRouteTests' oracle set widened to Keyboard.FocusedElement, FocusManager.GetFocusedElement, IsKeyboardFocusWithin and LiveRegion.Text after a layout command (red c7cfee1c named only ConsoleSplit CollapsingTheLeftHoldingTheSession; three planted shapes caught); ConsoleSplit's Apply(CloseSurface) plus hand Render converted to FloatRenderTests.CloseByTheRoute; G2 recall 4 hits, TheFactoryLanding not the same shape; finding T41-F1 (one (none) on the route in a filtered run); no src change recount_seconds=658 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-oracle-route/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "join T41's focus-oracle gate onto main",
+      "done_when": "recount green; ratchet PASS; step-8 recorded before push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-10-21T00:26:44Z",
+      "duration_seconds": 660.0
     }
   ],
   "changes": [
@@ -34416,6 +34469,15 @@ window.AUDIT_DATA = {
       "kind": "done",
       "ref": null,
       "session": "wl-t40-focus-none"
+    },
+    {
+      "id": "mail-01M5DXM5K4YXCHEFRKSHQPZA3K",
+      "ts": "2026-10-21T00:26:21Z",
+      "from": "wl-t41-focus-oracle-route",
+      "to": "wl-leader5-20261020",
+      "kind": "done",
+      "ref": null,
+      "session": "wl-t41-focus-oracle-route"
     }
   ]
 };

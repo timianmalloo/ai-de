@@ -525,3 +525,8 @@
 {"agent": "wl-leader5-20261020", "at": 1792540897.331329, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792540897.3824868, "code": null, "kind": "allowed", "path": ".agents/log/wl-t40-focus-none.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792540897.4342196, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792541014.6659493, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/brief-T41-wl-t41-focus-oracle-route.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792541014.7150834, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/obligations.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792541014.7648692, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/specific-T41.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792541014.8190632, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792541014.8704598, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}

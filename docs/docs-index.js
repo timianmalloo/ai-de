@@ -10907,7 +10907,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c91d6781b5e901635443c87981e42486150b0c1080c9fd260889470b10d65394"
+      "sourceSha256": "958f7ddee8ebcb0637866eb468e628a5906d3c953cd96f629959bc4c8a81e4dd"
     },
     {
       "id": "design-session-profiler",
@@ -23004,6 +23004,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "5fb62eaf5d65a02e034c606ffd0fba4512ecca38cc28ed9f984494ec44c9cc5f"
     },
     {
+      "id": "proof-wl-focus-oracle-route",
+      "path": "docs/proof/workbench-loops-support/focus-oracle-route/README.md",
+      "title": "Evidence: T41 - the layout gate counts focus and live-region reads; ConsoleSplit takes the route",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "workbench-loops",
+      "reviewBy": "2026-11-19",
+      "reviewSuggested": [],
+      "summary": "The class gate now reads keyboard-focus and live-region oracles. On today's tree it named one test, ConsoleSplit CollapsingTheLeft. That test now closes by the route. Docs-and-test only; no src change. No cause is claimed for focus (none).",
+      "tags": [
+        "workbench-loops",
+        "evidence",
+        "gate",
+        "focus",
+        "live-region"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "60461ee67da543b8a4e4b5191d4b520f34081fb8bcf11d83d7f4454ab4d327d6"
+    },
+    {
       "id": "proof-wl-fold-diag",
       "path": "docs/proof/workbench-loops-support/fold-diag/README.md",
       "title": "Evidence: T33 - the restored-row fold observed on origin/main and on d986e4a4 (no cause claimed)",
@@ -26300,5 +26327,5 @@ window.DOCS_INDEX = {
       "artifactId": "proof-worktree-cleanup-20261017"
     }
   ],
-  "graphSha256": "407ad0b1a5a8c4e50a924ab38065f1eaf0fd4e5d7dc9c553d89abb166a9a2d97"
+  "graphSha256": "4e7cac53e1679a1ebde930d77ede65a8b3d888145244331bec9f422090fce44c"
 };
