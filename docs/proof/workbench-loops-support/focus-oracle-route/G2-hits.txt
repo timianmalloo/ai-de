@@ -1,0 +1,4 @@
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:98	WithTheNotebookInTheCenter_TheSplitOpensInTheCenterZone_AsAConsoleDocument	['StepBackByTheRoute']	LiveRegion.Text
+tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs:162	CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen	['.Apply(new LayoutOperation.CloseSurface', '.Render()', 'CollapseByTheRoute']	LiveRegion.Text
+tests/AiDe.App.Tests/Workbench/LayoutOraclesDriveTheCommandRouteTests.cs:362	RepoRoot	['.Apply(new LayoutOperation.CloseSurface', '.Apply(new LayoutOperation.SetStackState', '.Execute("workbench.closePane"', '.Execute("workbench.floatPane"', '.Execute("workbench.maximizePane"', '.Render()']	Keyboard.FocusedElement
+tests/AiDe.App.Tests/WorkbenchShellTests.cs:103	Announcements_ReachTheLiveRegionTheWindowDisplays	['.Execute("workbench.toggleLock"']	LiveRegion.Text

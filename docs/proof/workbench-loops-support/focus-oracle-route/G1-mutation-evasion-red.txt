@@ -1,0 +1,38 @@
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.27]     AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [FAIL]
+  Failed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute [41 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                                                                                                ↓ (pos 6)
+Expected: <generated>                         [···, "Planted.cs::ServiceOperationThenRender", "Planted.cs::RailAfterACollapse", "Planted.cs::FocusAfterAnOffRouteClose", "Planted.cs::FocusAliasedThroughAHelper", "Planted.cs::LiveRegionAfterAnOffRouteClose"]
+Actual:   ListSelectIterator<Finding, string> [···, "Planted.cs::ServiceOperationThenRender", "Planted.cs::RailAfterACollapse"]
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.TheGate_RefusesNode2sShape_InAnyWrapping_AndAcceptsTheRoute() in C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\Workbench\LayoutOraclesDriveTheCommandRouteTests.cs:line 119
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ Planted.cs::Node2Original: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInALocalFunction: command `.Execute("workbench.floatPane"` then a by-hand adapter render, then the drawn layout is read (`.FloatingWindows`)
+ Planted.cs::RenderInAClassHelper: command `.Execute("workbench.closePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RenderTwoHelpersDeep: command `.Execute("workbench.maximizePane"` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::ServiceOperationThenRender: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`Drawn(`)
+ Planted.cs::RailAfterACollapse: command `.Apply(new LayoutOperation.SetStackState` then a by-hand adapter render, then the drawn layout is read (`.RailVisible(`)
+
+
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 49 ms - AiDe.App.Tests.dll (net10.0)

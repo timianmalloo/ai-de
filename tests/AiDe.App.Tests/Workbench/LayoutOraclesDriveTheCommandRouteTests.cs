@@ -18,7 +18,9 @@ namespace AiDe.App.Tests.Perspectives;
 /// <item><b>view oracle</b> (<see cref="Oracle"/>): what reads the drawn layout: the docking manager's layout tree or
 /// floating windows, a floating window's hosted content, the drawn-id set helper, the Center's drawn empty copy, a drawn
 /// rail, and the adapter's two reads of the drawn tree, <c>ContentFor</c> and <c>ActiveSurfaceId</c> (they walk
-/// <c>Manager.Layout</c>, then the parked content; Owner R2, T21 n10). <b>Not an oracle:</b> reads of a content
+/// <c>Manager.Layout</c>, then the parked content; Owner R2, T21 n10), and the two landings a layout command leaves: a
+/// keyboard-focus read (<c>Keyboard.FocusedElement</c>, <c>FocusManager.GetFocusedElement</c>, <c>IsKeyboardFocusWithin</c>)
+/// and the live-region text (<c>.LiveRegion.Text</c>; T41). <b>Not an oracle:</b> reads of a content
 /// control's own state.</item>
 /// <item><b>layout command</b> (<see cref="Command"/>): what changes the layout model without the route: a
 /// <c>workbench.*</c> command id executed on a controller that is not a <c>DockHost</c>'s, or a non-<c>AddSurface</c>
@@ -43,7 +45,7 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
 
     /// <summary>Reads the drawn layout: the manager's layout tree or floating windows, hosted-content checks, the drawn-id helper.</summary>
     private static readonly Regex Oracle = new(
-        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(|\.CenterEmpty\(|\.RailVisible\(|\.ContentFor\(|\.ActiveSurfaceId\b",
+        @"\.Manager\.(?:Layout|FloatingWindows)\b|\.FloatingWindows\b|\bHostedBy\(|\bDrawn\(|\.CenterEmpty\(|\.RailVisible\(|\.ContentFor\(|\.ActiveSurfaceId\b|\bKeyboard\.FocusedElement\b|\bFocusManager\.GetFocusedElement\(|\bIsKeyboardFocusWithin\b|\.LiveRegion\.Text\b",
         RegexOptions.Compiled);
 
     /// <summary>A layout command off the route: a <c>workbench.*</c> id executed on a non-DockHost controller, or a non-AddSurface operation applied to the service.</summary>
@@ -117,9 +119,9 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
         var scan = Scan("Planted.cs", Planted);
         scan.Findings.ForEach(f => output.WriteLine(f.ToString()));
         Assert.Equal(
-            ["Planted.cs::Node2Original", "Planted.cs::RenderInALocalFunction", "Planted.cs::RenderInAClassHelper", "Planted.cs::RenderTwoHelpersDeep", "Planted.cs::ServiceOperationThenRender", "Planted.cs::RailAfterACollapse"],
+            ["Planted.cs::Node2Original", "Planted.cs::RenderInALocalFunction", "Planted.cs::RenderInAClassHelper", "Planted.cs::RenderTwoHelpersDeep", "Planted.cs::ServiceOperationThenRender", "Planted.cs::RailAfterACollapse", "Planted.cs::FocusAfterAnOffRouteClose", "Planted.cs::FocusAliasedThroughAHelper", "Planted.cs::LiveRegionAfterAnOffRouteClose"],
             scan.Findings.Select(f => f.Key));
-        Assert.Equal(7, scan.CommandThenOracle);
+        Assert.Equal(10, scan.CommandThenOracle);
     }
 
     /// <summary>One test that reads the drawn layout after a layout command with a by-hand render between.</summary>
@@ -292,7 +294,7 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
         return dir!.FullName;
     }
 
-    /// <summary>Six refused shapes and three accepted ones, as a test file would carry them.</summary>
+    /// <summary>Nine refused shapes and three accepted ones, as a test file would carry them.</summary>
     private const string Planted = """
         namespace Planted;
 
@@ -355,6 +357,31 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
             }
 
             [Fact]
+            public void FocusAfterAnOffRouteClose()
+            {
+                host.Service.Apply(new LayoutOperation.CloseSurface("x"));
+                host.Adapter.Render();
+                var focused = Keyboard.FocusedElement as DependencyObject;
+                Assert.True(focused is not null);
+            }
+
+            [Fact]
+            public void FocusAliasedThroughAHelper()
+            {
+                host.Service.Apply(new LayoutOperation.SetStackState("s", StackState.Collapsed));
+                host.Adapter.Render();
+                Assert.True(LandedInside(document));
+            }
+
+            [Fact]
+            public void LiveRegionAfterAnOffRouteClose()
+            {
+                host.Service.Apply(new LayoutOperation.CloseSurface("x"));
+                host.Adapter.Render();
+                Assert.Equal("Console closed.", shell.LiveRegion.Text);
+            }
+
+            [Fact]
             public void SetupRenderOnly()
             {
                 host.Service.Apply(new LayoutOperation.AddSurface("c", surface));
@@ -386,6 +413,12 @@ public sealed class LayoutOraclesDriveTheCommandRouteTests(ITestOutputHelper out
             {
                 shell.Factory.Service.Apply(new LayoutOperation.SetStackState("s", StackState.Floating));
                 Assert.Single(manager.FloatingWindows);
+            }
+
+            private static bool LandedInside(DependencyObject ancestor)
+            {
+                var read = FocusManager.GetFocusedElement(window);
+                return read is not null;
             }
 
             private static void Redraw(WorkbenchAdapter adapter) => adapter.Render();

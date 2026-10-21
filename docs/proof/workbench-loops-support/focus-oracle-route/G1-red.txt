@@ -1,0 +1,42 @@
+
+  Determining projects to restore...
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.App\AiDe.App.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Core\AiDe.Core.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Daemon\AiDe.Daemon.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Mcp\AiDe.Mcp.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj (in 189 ms).
+  Restored C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\AiDe.App.Tests.csproj (in 189 ms).
+  AiDe.Core -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.App -> C:\Projects\ai-de-wl-focus-oracle-route\src\AiDe.App\bin\Debug\net10.0-windows\AiDe.App.dll
+  AiDe.App.TerminalProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.TerminalProbe\bin\Debug\net10.0-windows\AiDe.App.TerminalProbe.dll
+  AiDe.App.CanvasProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.CanvasProbe\bin\Debug\net10.0-windows\AiDe.App.CanvasProbe.dll
+  AiDe.App.WebHostProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.WebHostProbe\bin\Debug\net10.0-windows\AiDe.App.WebHostProbe.dll
+  AiDe.App.SolutionTreeProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.SolutionTreeProbe\bin\Debug\net10.0-windows\AiDe.App.SolutionTreeProbe.dll
+  AiDe.App.ContrastProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ContrastProbe\bin\Debug\net10.0-windows\AiDe.App.ContrastProbe.dll
+  AiDe.App.ComposerProbe -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.ComposerProbe\bin\Debug\net10.0-windows\AiDe.App.ComposerProbe.dll
+  AiDe.App.Tests -> C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+Test run for C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.41]     AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [FAIL]
+  Failed AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException [176 ms]
+  Error Message:
+   1 test(s) read the drawn layout after a layout command that no user route reaches (DC-NEW-wl-t21-float-d):
+Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.LiveRegion.Text`)
+  Stack Trace:
+     at AiDe.App.Tests.Perspectives.LayoutOraclesDriveTheCommandRouteTests.EveryLayoutOracleAfterALayoutCommand_IsReachedByTheUsersRoute_OrIsNamedAnException() in C:\Projects\ai-de-wl-focus-oracle-route\tests\AiDe.App.Tests\Workbench\LayoutOraclesDriveTheCommandRouteTests.cs:line 105
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ 230 files · 2 tests read the drawn layout after a layout command · 1 render by hand between · 0 named exceptions
+   REFUSED   Sessions/ConsoleSplitPlacementTests.cs::CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen: command `.Apply(new LayoutOperation.CloseSurface` then a by-hand adapter render, then the drawn layout is read (`.LiveRegion.Text`)
+
+
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 193 ms - AiDe.App.Tests.dll (net10.0)
