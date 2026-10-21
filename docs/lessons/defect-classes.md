@@ -8499,6 +8499,11 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Both kicks went out on the ladder (T38 at about 12 min, T37 at about 17 min) and both nodes finished well after.
   The ladder's rate came from T21 n10 (about 7.0k tokens/min); these two nodes ran at about 4.8k, so the kicks
   came early by rate and still did not hold the cap. Only the seam-level hook stops a node; that stays the user's.
+- **Next instance (2026-10-20, T39 `wl-slash-claim`, Sonnet):** 29 calls / about 103k against 20 / 40k (harness
+  `usage`: 102,891 tokens, 760 s), 2.6x the cap: 3 of the last 3 nodes at or above 1.5x. The Owner read it as caps
+  set below what the work costs and ruled GO19 calibration: caps from the median of the last 3-5 nodes of the same
+  shape plus 25% (`.agents/briefs/workbench-loops/node-actuals.md`). T40, the first node run with its kick withdrawn
+  to finish N=10, ended at 112,675 against 120k (0.94).
 - **Status:** `partially-controlled` until the hook is applied (brief rule 16 + the Leader's kick ladder).
 
 ### DC-NEW-wl-t11-kinds — A source-scan guard credits a new member's match to the member a hand-kept list names above it

@@ -15,11 +15,12 @@ suite), **gate+sweep** (a test or gate change plus converted tests and App suite
 | T38 | gate | 40 / 80k | 41 | 121,296 | 1,486 | 1.52 |
 | T37 | gate+sweep | 60 / 120k | 116 | 199,206 (incl. the +25k fixture resume) | 2,662 | 1.66 |
 | T39 | gate | 20 / 40k | 29 | 102,891 | 760 | 2.57 |
+| T40 | measure | 60 / 120k (kick withdrawn to finish N=10; hard stop 150k) | 43 | 112,675 | 4,838 | 0.94 |
 
 ## Caps from this table (median + 25%)
 
 - **gate** (T38, T39; 2 nodes, below the 3-node floor, so Inferred): median 35 calls / about 112k -> **44 calls / 140k**.
 - **gate+sweep** (T21 n9, n10, n11, T37): median 70 calls (n9, n10, T37 recorded) / about 179k -> **88 calls / 224k**.
-- **measure** (T36 only; T40 pending): 1 node, so Inferred: 42 calls / 103k -> **53 calls / 129k**; re-derive at T40's join.
+- **measure** (T36, T40; 2 nodes, so Inferred): median 43 calls / about 108k -> **54 calls / 135k**.
 
 Every cap above is planned; the next join's row is the check on it.
