@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-20T23:46:42Z",
+  "generated": "2026-10-21T00:01:32Z",
   "audit": [
     {
       "actor": null,
@@ -28283,6 +28283,31 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-20T23:46:40Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M5DW6PP12XXHJD6W83H5KGJA",
+      "shortname": "join-wl-focus-none-step8",
+      "datetime": "2026-10-21T00:01:31Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T40 wl-focus-none (read-only, docs-only) through conductor-join, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-focus-none (T40, read-only, docs-only; merge d49c23a7, join commit f545f7be): run-verify-gates stopped on the pre-existing 4 of 49. Ratchet against the parent 883d7e7b: PASS, 0 refusals over 50 gates. Release build: 0 errors. Pre-join check: 15 checked, 2 exempt, 0 unclaimed, 0 claimed-after-refusal, no excuse: the first node whose proof outputs pass under rule 5's directory lease. A4 held: F4-outcomes.md has one commit (b29645aa), before run 1. Usage: 43 calls / 112,675 tokens against 60 / 120k (0.94); the Leader's ladder kick was withdrawn so N reached 10 (Owner informed).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-none/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T40's focus-none measurement on main with the step-8 record",
+      "done_when": "ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-10-20T09:56:05Z",
+      "duration_seconds": 50726.0
     }
   ],
   "changes": [
