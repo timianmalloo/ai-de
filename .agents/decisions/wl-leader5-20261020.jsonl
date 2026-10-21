@@ -549,3 +549,6 @@
 {"agent": "wl-leader5-20261020", "at": 1792543997.8709037, "code": null, "kind": "allowed", "path": ".agents/log/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792543997.9189377, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "wl-leader5-20261020", "wi": ""}
 {"agent": "wl-leader5-20261020", "at": 1792543997.9684613, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792544001.8476856, "code": null, "kind": "allowed", "path": ".agents/briefs/workbench-loops/node-actuals.md", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792544001.8973777, "code": null, "kind": "allowed", "path": ".agents/decisions/wl-leader5-20261020.jsonl", "session": "wl-leader5-20261020", "wi": ""}
+{"agent": "wl-leader5-20261020", "at": 1792544001.9498262, "code": null, "kind": "allowed", "path": ".agents/log/wl-t41-focus-oracle-route.jsonl", "session": "wl-leader5-20261020", "wi": ""}

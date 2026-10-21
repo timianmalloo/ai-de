@@ -8824,6 +8824,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Owner's ruling (a) on that join, not under Ruling 155 (3). T36 re-measures the list with the button released.
 - **Re-measured (2026-10-20, T36, N=10, left button released):** full Core+App on `44d2689b`, the button read `0x0000` in every sample (`mouse.txt`). Core: 3122 results, 0 failures in 10 runs. App: 1274 results, 2 to 3 failures per run. In suite / alone: `CtrlDigit_WithFocusInside…` 10/10 / 9/10 (intermittent); `CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` 10/10 / 10/10 (fails-alone); `ARestoredRowsEvents_…` 0/10 / 0/10 (passes; T31 10/10 / 10/10); `CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen` 1/10 / 0/10 (load-only); `TheFactoryLanding_IsTheNotebookInTheCenter_…` 1/10 / 0/10 (load-only, new); `TheFloatingNotebook_…`, `AfterStop_…`, `ADeadHolder_…`, `ASessionWhoseChildExited_…` 0/10 / 0/10 (passes). No cause is claimed. `docs/proof/workbench-loops-support/flake-remeasure/rates.md`.
 - **Re-measured (2026-10-20, T40, focus-none, N=10):** a read-only sampler (500 ms) ran through 10 full App runs on `d1f07262`; App 1275 passed, 4 skipped, 0 failed in 9 runs and 1 failed in run 5 (`CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen`, "focus after the close is on (none)"). One event, class (c) by the committed rule (the test spanned 0.36 s, shorter than the 500 ms gap, 1 row inside). chrome.exe held the foreground in 7722 of 7722 rows, with `hwndFocus` on its window every row, passing tests included; the test host held it in 0 rows and the sampler's own PID in 0. So "another process holds the foreground" was true all through, and does not separate the failing test from the 1275 tests that passed. CtrlDigit and CtrlEnter were NOT CHECKED in 10/10 runs, consistent with that. No cause claimed; see `docs/proof/workbench-loops-support/focus-none/README.md`. No new class: no repeatable non-host holder.
+- **After T41 (2026-10-21, `wl-focus-oracle-route`, step-8 `d2144ac6`):** ConsoleSplit's off-route close
+  (`Service.Apply(CloseSurface)` plus a hand `Render()`) was a real gap in the layout-command gate, now closed: the
+  gate reads focus and live-region oracles and the test closes by `CloseByTheRoute`. It was **not** shown to be
+  the cause of "(none)": T41-F1 is one "(none)" on the route (a filtered 4-test run), so the rate on the route is
+  about 1 in 13 recorded runs (passed 10/10 alone, in T41's suite and in the join's recount). The Owner's Inferred
+  mechanism ("the by-hand path skips the route's focus landing") is withdrawn. No cause is claimed.
+  `TheFactoryLanding_...` (1 event, T36 run 6) has a different shape (no off-route command, no hand render).
+  **Re-open trigger (Owner):** when either test reaches 3 events on the route-driven shape, the first node is a
+  read-only, in-process capture at the assert of `window.IsActive`, `FocusManager.GetFocusedElement(window)` and
+  the dispatcher state, with no src change. No node is queued until then.
 - **Status:** `partially-controlled`, until the measurement track reports.
 - **DC-NEW-wl-leader2, an OWNER instance (2026-10-19, Ruling 182 (4)):** the ruling asserted that a sent turn's compiled
   prompt "is on the turn row's disclosure after a restart", citing Rulings 163 and 181 rather than a writer. T30 n3 read
