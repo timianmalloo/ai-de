@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-10-21T00:37:45Z",
+  "generated": "2026-10-21T00:53:17Z",
   "audit": [
     {
       "actor": null,
@@ -28361,6 +28361,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-21T00:26:44Z",
       "duration_seconds": 660.0
+    },
+    {
+      "id": "al-01M5DZ5F04VH9NBA9EBJ51RY9Q",
+      "shortname": "join-wl-focus-oracle-route-step8",
+      "datetime": "2026-10-21T00:53:16Z",
+      "session": "wl-leader5-20261020",
+      "prompt": "Join T41 wl-focus-oracle-route through conductor-join with the full recount, the step-8 ratchet and the push",
+      "summary": "Step 8 of join-wl-focus-oracle-route (T41; merge 1ba53d07, join commit 45fa70a2; full recount): run-verify-gates stopped on the pre-existing 4 of 49. Ratchet against the parent 8edbca0f: PASS, 0 refusals over 50 gates. Release build: 0 errors. Recount: verify-test-run OK on every key; App 1279 total, 0 failed; ConsoleSplit CollapsingTheLeftHoldingTheSession PASSED in the suite on the route (T41-F1, one (none) on the route in a filtered 4-test run, did not recur here); the widened gate and its fixture passed; CtrlDigit and CtrlEnter passed (foreground held). Pre-join check: 26 checked, 1 exempt, 0 unclaimed, 0 claimed-after-refusal, no excuse. Usage: 31 calls / 104,970 tokens against the first calibrated cap 88 / 224k (0.47).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/workbench-loops-support/focus-oracle-route/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "T41's focus-oracle gate on main with the step-8 record",
+      "done_when": "recount OK; ratchet PASS; Release build 0 errors; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-21T00:26:06Z",
+      "duration_seconds": 1630.0
     }
   ],
   "changes": [
