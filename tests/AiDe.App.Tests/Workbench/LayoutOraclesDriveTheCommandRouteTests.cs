@@ -18,7 +18,9 @@ namespace AiDe.App.Tests.Perspectives;
 /// <item><b>view oracle</b> (<see cref="Oracle"/>): what reads the drawn layout: the docking manager's layout tree or
 /// floating windows, a floating window's hosted content, the drawn-id set helper, the Center's drawn empty copy, a drawn
 /// rail, and the adapter's two reads of the drawn tree, <c>ContentFor</c> and <c>ActiveSurfaceId</c> (they walk
-/// <c>Manager.Layout</c>, then the parked content; Owner R2, T21 n10). <b>Not an oracle:</b> reads of a content
+/// <c>Manager.Layout</c>, then the parked content; Owner R2, T21 n10), and the two landings a layout command leaves: a
+/// keyboard-focus read (<c>Keyboard.FocusedElement</c>, <c>FocusManager.GetFocusedElement</c>, <c>IsKeyboardFocusWithin</c>)
+/// and the live-region text (<c>.LiveRegion.Text</c>; T41). <b>Not an oracle:</b> reads of a content
 /// control's own state.</item>
 /// <item><b>layout command</b> (<see cref="Command"/>): what changes the layout model without the route: a
 /// <c>workbench.*</c> command id executed on a controller that is not a <c>DockHost</c>'s, or a non-<c>AddSurface</c>

@@ -8778,6 +8778,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (named in its summary comment). Owner R2 settled (T21 n10, 2026-10-20): `ContentFor` and `ActiveSurfaceId` read the drawn
   tree, so they are now view oracles in the gate. R2a counted 6 tests that read one after a layout command with a by-hand
   render between; all 6 now take the user's route (`layout-gate/r2/R2b-sweep.txt`), none a finding.
+- **Instance (T41, 2026-10-21): a focus oracle after an off-route command, missed by the oracle set.**
+  `ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen` applied `LayoutOperation.CloseSurface`
+  to the service, rendered by hand, then read `shell.LiveRegion.Text` and `Keyboard.FocusedElement`. The gate's oracle set
+  held the drawn layout only, so it passed the shape (command, by-hand render, oracle). The test failed with focus on
+  "(none)" in 3 of about 31 recorded full runs (T21 n11, T36 run 4, T40 run 5).
+- **Control (widened, T41):** the gate's `Oracle` also counts `Keyboard.FocusedElement`, `FocusManager.GetFocusedElement`,
+  `IsKeyboardFocusWithin` and `.LiveRegion.Text`. Red on today's tree named exactly that one test
+  (`docs/proof/workbench-loops-support/focus-oracle-route/G1-red.txt`); three planted shapes (a focus read after an off-route
+  close, one reached through a same-file helper, a live-region read) are refused
+  (`G1-mutation-evasion-red.txt`, `-green.txt`). The test now closes by `FloatRenderTests.CloseByTheRoute`.
+- **Residual (T41):** a focus read in another file's helper is not seen. A route test that reads focus can still fail
+  with "(none)" under load (finding T41-F1 in the README); the gate guards the route, not the foreground.
 - DC-NEW-wl-leader2 recurrence, 5th under wl-leader3 (2026-10-19): the resolution of req-01M5AX0QTKS8YPY5VXCDEY6H3T says 'Leader 20:21Z'. The next clock read was 20:20:45Z, so the time was written without a read, against the control set at b9e740d5. The resolution text is append-only and stays as written; this line is the correction. The process control did not hold for a time typed inside a resolution string, so the next instance takes a mechanical form: resolution strings carry $(date -u +%H:%M:%SZ) from the shell, never a typed time.
 
 ### DC-NEW-wl-leader3-b — Tests that fail only under full-suite load, and so are read as flakes and waved through

@@ -156,8 +156,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
 
             // The tab's close with the Left collapsed: "Console closed.", and focus on the landing
             // (the notebook in the Center), not dropped on the window.
-            Assert.True(shell.Factory.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied);
-            shell.Factory.Adapter.Render();
+            FloatRenderTests.CloseByTheRoute(shell.Factory, ConsoleId(config.SessionId));
             frame.Settle();
             Assert.Equal("Console closed.", shell.LiveRegion.Text);
             var focused = System.Windows.Input.Keyboard.FocusedElement as System.Windows.DependencyObject;
